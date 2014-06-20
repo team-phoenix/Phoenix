@@ -1,0 +1,13 @@
+<RCC>
+<qresource prefix="/">
+    <file>main.qml</file>
+    <file>assets/gear-a.png</file>
+    <file>assets/play.png</file>
+    <file>assets/pause.png</file>
+    <file>assets/navicon-round.png</file>
+    <file>assets/arrow-expand.png</file>
+    <file>assets/arrow-shrink.png</file>
+    <file>assets/power.png</file>
+    <file>assets/star.png</file>
+</qresource>
+</RCC>
