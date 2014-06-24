@@ -99,11 +99,22 @@ void GLWindow::setRun( bool run ) {
 
 void GLWindow::initGL() {
 
-    qreal ratio = window()->devicePixelRatio();
-    int w = int(ratio * window()->width());
-    int h = int(ratio * window()->height());
+    qreal pixel_ratio = window()->devicePixelRatio();
+    int w = int(pixel_ratio * window()->width());
+    int h = int(pixel_ratio * window()->height());
 
-    glViewport( (w/2) - ((core->getMinWidth() )/ 2), 0, w, h);
+    qreal window_aspect = (double)w / h;
+    qreal desired_aspect = core->getAspectRatio();
+    quint32 corew = h * desired_aspect;
+    quint32 coreh = w / desired_aspect;
+
+    if(fabsf(window_aspect - desired_aspect) < 0.0001f) {
+        // no need
+    } else if(window_aspect > desired_aspect) {
+        glViewport( (w - corew) / 2, 0, corew, h );
+    } else {
+        glViewport( 0, (h - coreh) / 2, w, coreh );
+    }
 
     glDisable(GL_DEPTH_TEST);
 
