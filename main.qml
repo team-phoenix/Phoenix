@@ -3,6 +3,7 @@ import QtQuick.Controls 1.1
 import QtQuick.Controls.Styles 1.1
 import QtQuick.Layouts 1.1
 import QtGraphicalEffects 1.0
+
 import GLWindow 1.0
 
 ApplicationWindow {
@@ -14,9 +15,9 @@ ApplicationWindow {
 
     GLWindow {
         id: glWindow;
-        libcore: "../bsnes_balanced_libretro.dll";
-        game: "";
-        run: true;
+        libcore: "C:/Users/robert/Desktop/leesstuff/snes9x_libretro.dll";
+        game: "C:/Users/robert/Desktop/leesstuff/past.sfc";
+        run: false;
 
         // Eventually have GLWindow not load anything on creation
         // Will run when core and game paths have been entered through
@@ -28,6 +29,7 @@ ApplicationWindow {
 
         // Also keep last used core loaded on
         // frontend startup. Will hopefully reduce load time of game.
+
     }
 
     Rectangle {
@@ -77,7 +79,7 @@ ApplicationWindow {
                     bottom: parent.bottom;
                 }
                 width: 200;
-                spacing: 20;
+                spacing: 25;
 
                 Button {
                     id: settingsBtn;
@@ -104,13 +106,27 @@ ApplicationWindow {
                     onClicked: Qt.quit(0);
                 }
 
+
                 Button {
-                    id: play;
+                    id: rewindBtn;
+                    anchors.verticalCenter: parent.verticalCenter;
+                    style: ButtonStyle {
+                        background: Image {
+                            source: "assets/ios7-rewind.png";
+                            sourceSize.width: 25;
+                            sourceSize.height: 25;
+                        }
+                    }
+                    onClicked: glWindow.rewind ? glWindow.rewind = false : glWindow.rewind = true;
+                }
+
+                Button {
+                    id: playBtn;
                     property string iconImage: "assets/play.png";
                     anchors.verticalCenter: parent.verticalCenter;
                     style: ButtonStyle {
                         background: Image {
-                            source: play.iconImage;
+                            source: playBtn.iconImage;
                             sourceSize.width: 20;
                             sourceSize.height: 20;
                         }
@@ -118,15 +134,17 @@ ApplicationWindow {
                     onClicked:  {
                         if (glWindow.run) {
                             glWindow.run = false
-                            play.iconImage = "assets/pause.png";
+                            playBtn.iconImage = "assets/play.png";
                         }
                         else {
                             glWindow.run = true;
-                            play.iconImage = "assets/play.png";
+                            playBtn.iconImage = "assets/pause.png";
                         }
                     }
 
                 }
+
+
             }
 
             Row {
