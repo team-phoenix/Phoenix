@@ -105,8 +105,8 @@ void GLWindow::initGL() {
 
     qreal window_aspect = (double)w / h;
     qreal desired_aspect = core->getAspectRatio();
-    quint32 corew = h * desired_aspect;
-    quint32 coreh = w / desired_aspect;
+    ulong corew = h * desired_aspect;
+    ulong coreh = w / desired_aspect;
 
     if(fabsf(window_aspect - desired_aspect) < 0.0001f) {
         // no need
@@ -163,8 +163,9 @@ void GLWindow::setTexture( QOpenGLTexture::Filter min_scale, QOpenGLTexture::Fil
 
     qDebug() << pixel_size;
     m_texture = new QOpenGLTexture( QImage( ( const uchar * )core->getImageData(),
-                                            core->getPitch() / 4,
+                                            core->getMinWidth(),
                                             core->getMinHeight(),
+                                            core->getPitch(),
                                             QImage::Format_RGB32 ).mirrored() );
 
     m_texture->setMinMagFilters(min_scale, max_scale);
