@@ -1,6 +1,6 @@
 
-#ifndef VIDEO-GL_H
-#define VIDEO-GL_H
+#ifndef VIDEO_GL_H
+#define VIDEO_GL_H
 
 #include <QtQuick/QQuickItem>
 #include <QtQuick/qquickwindow.h>
@@ -93,4 +93,4 @@ private:
 
 };
 
-#endif // VIDEO-GL_H
+#endif // VIDEO_GL_H
