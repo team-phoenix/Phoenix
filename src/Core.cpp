@@ -17,11 +17,9 @@ LibretroSymbols::LibretroSymbols() {
 // |    Static variables    |
 // |________________________|
 
-// Create a temp variable that is a pointer to Core
-Q_GLOBAL_STATIC(Core, Core_ptr)
 
-// core == Core*
-Core* Core::core = Core_ptr;
+// Must always point to the current Core
+Core* Core::core = NULL;
 
 //  ________________________
 // |                        |
@@ -41,6 +39,7 @@ Core::Core() {
     mPitch = 0;
     mWidth = 0;
     //mPixelFormat = retro_pixel_format;
+    Core::core = this;
 
 } // Core::Core()
 
@@ -54,6 +53,7 @@ Core::~Core() {
         delete mRetroSystemInfo;
     if (mSymbols)
         delete mSymbols;
+    Core::core = NULL;
 
 } // Core::~Core()
 
