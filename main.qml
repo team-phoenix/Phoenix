@@ -18,6 +18,7 @@ ApplicationWindow {
         libcore: "C:/Users/robert/Desktop/leesstuff/snes9x_libretro.dll";
         game: "C:/Users/robert/Desktop/leesstuff/past.sfc";
         run: false;
+        sampleRate: 44100;
 
         // Eventually have GLWindow not load anything on creation
         // Will run when core and game paths have been entered through
@@ -106,20 +107,6 @@ ApplicationWindow {
                     onClicked: Qt.quit(0);
                 }
 
-
-                Button {
-                    id: rewindBtn;
-                    anchors.verticalCenter: parent.verticalCenter;
-                    style: ButtonStyle {
-                        background: Image {
-                            source: "assets/ios7-rewind.png";
-                            sourceSize.width: 25;
-                            sourceSize.height: 25;
-                        }
-                    }
-                    onClicked: glWindow.rewind ? glWindow.rewind = false : glWindow.rewind = true;
-                }
-
                 Button {
                     id: playBtn;
                     property string iconImage: "assets/play.png";
@@ -153,7 +140,28 @@ ApplicationWindow {
                     rightMargin: 50;
                     verticalCenter: parent.verticalCenter;
                 }
-                spacing: 60;
+                spacing: 45;
+
+                /*Button {
+                    id: audioBtn;
+                    anchors.verticalCenter: parent.verticalCenter;
+                    property string backgroundImage: "assets/volume-mute.png"
+                    style: ButtonStyle {
+                        background: Image {
+                            id: volumeBackground;
+                            source: audioBtn.backgroundImage;
+                            sourceSize.width: 35;
+                            sourceSize.height: 35;
+                        }
+                    }
+                    onClicked: {
+                        if (backgroundImage === "assets/volume-mute.png")
+                            backgroundImage = "assets/ios7-volume-high.png";
+                        else
+                            backgroundImage = "assets/volume-mute.png";
+                    }
+
+                }*/
 
                 Button {
                     id: qualityBtn;

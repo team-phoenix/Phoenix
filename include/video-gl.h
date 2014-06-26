@@ -3,35 +3,36 @@
 #define VIDEO-GL_H
 
 #include <QtQuick/QQuickItem>
+#include <QtQuick/qquickwindow.h>
 #include <QtGui/QOpenGLShaderProgram>
+#include <QtGui/QOpenGLShaderProgram>
+#include <QtGui/QOpenGLContext>
 #include <QOpenGLTexture>
+#include <QImage>
+#include <QByteArray>
 
+#include "qdebug.h"
 #include "core.h"
+#include "audio.h"
 
-
-//! [1]
-class GLWindow : public QQuickItem
-{
+class GLWindow : public QQuickItem {
     Q_OBJECT
 
-    Q_PROPERTY(qreal t READ t WRITE setT NOTIFY tChanged)
     Q_PROPERTY(QUrl libcore READ libcore WRITE setCore NOTIFY libcoreChanged)
     Q_PROPERTY(QUrl game READ game WRITE setGame NOTIFY gameChanged)
     Q_PROPERTY(bool run READ run WRITE setRun NOTIFY runChanged)
-
-
+    Q_PROPERTY(double sampleRate READ sampleRate WRITE setSampleRate NOTIFY sampleRateChanged)
 
 public:
     GLWindow();
     ~GLWindow();
 
-    qreal t() const { return m_t; }
-    void setT( qreal t );
     void initShader();
     void initGL();
     void setCore( QUrl libcore );
     void setGame( QUrl game);
     void setRun( bool run );
+    void setSampleRate(double sampleRate );
     void setTexture( QOpenGLTexture::Filter min_scale,
                      QOpenGLTexture::Filter max_scale);
 
@@ -47,16 +48,19 @@ public:
         return m_run;
     }
 
+    double sampleRate() const {
+        return m_sample_rate;
+    }
+
 signals:
-    void tChanged();
     void libcoreChanged();
     void gameChanged();
     void runChanged();
+    void sampleRateChanged();
 
 public slots:
     void paint();
     void cleanup();
-    void sync();
 
 private slots:
     void handleWindowChanged( QQuickWindow *win );
@@ -66,12 +70,13 @@ private:
     QOpenGLTexture *m_texture;
     Core *core;
 
-    qreal m_t;
-    qreal m_thread_t;
-
     QUrl m_libcore;
     QUrl m_game;
     bool m_run;
+
+    // Audio
+    Audio *audio;
+    double m_sample_rate;
 
     static inline QImage::Format retroToQImageFormat( enum retro_pixel_format fmt ) {
         static QImage::Format format_table[3] = {
@@ -87,6 +92,5 @@ private:
     }
 
 };
-//! [1]
 
 #endif // VIDEO-GL_H

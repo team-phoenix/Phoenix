@@ -1,20 +1,13 @@
 
 #include "video-gl.h"
 
-#include <QtQuick/qquickwindow.h>
-#include <QtGui/QOpenGLShaderProgram>
-#include <QtGui/QOpenGLContext>
-#include <QImage>
-#include "qdebug.h"
-
-GLWindow::GLWindow()
-    : m_program(0)
-    , m_t(0)
-    , m_thread_t(0)
-    , m_texture(0)
-    , m_libcore("")
-    , m_game("")
-{
+GLWindow::GLWindow() {
+    m_program = 0;
+    m_texture = 0;
+    m_libcore = "";
+    m_game = "";
+    audio = new Audio();
+    m_sample_rate = 0;
 
 
 //#ifdef Q_OS_WIN32
@@ -27,7 +20,7 @@ GLWindow::GLWindow()
     QString game_path = "../test_roms/Chrono Trigger (U) [!].smc";
 #endif
 
-    const char *core_path = "C:/Users/robert/Desktop/leesstuff/bsnes_balanced_libretro.dll";
+    const char *core_path = "C:/Users/robert/Desktop/leesstuff/snes9x_libretro.dll";
     const char *game_path = "C:/Users/robert/Desktop/leesstuff/past.sfc";
 
     core = new Core();
@@ -49,16 +42,11 @@ GLWindow::~GLWindow() {
         delete m_program;
     if (m_texture)
         delete m_texture;
-}
+    if (audio->running()) {
+        audio->unload();
+        delete audio;
+    }
 
-void GLWindow::setT(qreal t)
-{
-    if (t == m_t)
-        return;
-    m_t = t;
-    emit tChanged();
-    if (window())
-        window()->update();
 }
 
 void GLWindow::handleWindowChanged(QQuickWindow *win)
@@ -69,7 +57,6 @@ void GLWindow::handleWindowChanged(QQuickWindow *win)
         // a Qt::DirectConnection
 
         connect(win, SIGNAL(beforeRendering()), this, SLOT(paint()), Qt::DirectConnection);
-        connect(win, SIGNAL(beforeSynchronizing()), this, SLOT(sync()), Qt::DirectConnection);
 
         // If we allow QML to do the clearing, they would clear what we paint
         // and nothing would show.
@@ -97,6 +84,12 @@ void GLWindow::setRun( bool run ) {
 
 }
 
+void GLWindow::setSampleRate( double sampleRate ) {
+
+    audio->setSampleRate(sampleRate);
+
+}
+
 void GLWindow::initGL() {
 
     qreal pixel_ratio = window()->devicePixelRatio();
@@ -110,9 +103,11 @@ void GLWindow::initGL() {
 
     if(fabsf(window_aspect - desired_aspect) < 0.0001f) {
         // no need
-    } else if(window_aspect > desired_aspect) {
+    }
+    else if(window_aspect > desired_aspect) {
         glViewport( (w - corew) / 2, 0, corew, h );
-    } else {
+    }
+    else {
         glViewport( 0, (h - coreh) / 2, w, coreh );
     }
 
@@ -227,6 +222,12 @@ void GLWindow::paint() {
         // Draws processed triangle stip onto the screen.
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
+        //int16_t audio_data[] = { core->getLeftChannel(), core->getRightChannel() };
+
+        //audio->play( QByteArray( (const char *)audio_data, sizeof(audio_data) ) );
+
+        audio->play( core->getAudioData(), core->getAudioFrames() );
+
         // Disables location 0
         m_program->disableAttributeArray(0);
         m_program->disableAttributeArray(1);
@@ -252,9 +253,3 @@ void GLWindow::cleanup()
 
 
 }
-
-void GLWindow::sync()
-{
-    m_thread_t = m_t;
-}
-
