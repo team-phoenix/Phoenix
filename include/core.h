@@ -87,7 +87,7 @@ public:
     float getAspectRatio();
 
     // Audio
-    int16_t getAudioData();
+    const int16_t *getAudioData();
     size_t getAudioFrames();
     int16_t getLeftChannel();
     int16_t getRightChannel();
@@ -137,7 +137,7 @@ private:
 
     // Audio
     size_t audio_frames;
-    int16_t audio_data;
+    const int16_t *audio_data;
     int16_t left_channel;
     int16_t right_channel;
 

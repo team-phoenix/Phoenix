@@ -40,7 +40,7 @@ Core::Core() {
     mWidth = 0;
     mPixelFormat = RETRO_PIXEL_FORMAT_UNKNOWN;
 
-    audio_data = 0;
+    audio_data = NULL;
     audio_frames = 0;
     left_channel = 0;
     right_channel = 0;
@@ -85,7 +85,9 @@ void Core::doFrame() {
 // Getters
 
 QMap<unsigned, bool> Core::getKeyBoard() {
+
     return mKeyboard;
+
 }
 
 // Video
@@ -158,7 +160,7 @@ retro_pixel_format Core::getPixelFormat() {
 // Audio
 // [2]
 
-int16_t Core::getAudioData() {
+const int16_t *Core::getAudioData() {
 
     return audio_data;
 
@@ -330,7 +332,7 @@ void Core::audioSampleCallback( int16_t left, int16_t right ) {
 
 size_t Core::audioSampleBatchCallback( const int16_t *data, size_t frames ) {
 
-    core->audio_data = *(size_t *)data;
+    core->audio_data = data;
     core->audio_frames = frames;
     //qDebug() << "frames: " << frames;
     //qDebug() << "Core::audioSampleBatchCallback";
