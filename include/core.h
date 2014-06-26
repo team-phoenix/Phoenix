@@ -84,14 +84,13 @@ public:
     size_t getPitch();
     retro_pixel_format getPixelFormat();
     retro_system_info getSystemInfo();
+    float getAspectRatio();
 
     // Audio
     int16_t getAudioData();
     size_t getAudioFrames();
     int16_t getLeftChannel();
     int16_t getRightChannel();
-
-    float getAspectRatio();
 
     // System Timing
     double getFps();
@@ -119,29 +118,30 @@ private:
     // Information about the core
     retro_system_av_info *mRetroSystemAVInfo;
     retro_system_info *mRetroSystemInfo;
+
     // Do something with retro_variable
     retro_input_descriptor mRetroInputDescriptor;
     retro_game_geometry mRetroGameGeometry;
     retro_system_timing mRetroSystemTiming;
     bool mRetroFullpathNeeded;
     
-    // Game data
+    // Game
     QByteArray mGameData;
     
-    // Video stuff
+    // Video
     unsigned mHeight;
     const void *mImageData;
     size_t mPitch;
     unsigned mWidth;
     retro_pixel_format mPixelFormat;
 
-    // Audio stuff
+    // Audio
     size_t audio_frames;
     int16_t audio_data;
     int16_t left_channel;
     int16_t right_channel;
 
-    // Input stuff
+    // Input
     QMap<unsigned, bool> mKeyboard;
     QMap<unsigned, bool> mJoystick;
 
