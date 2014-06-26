@@ -7,8 +7,11 @@ QT += widgets core gui multimedia qml quick
 
 LIBS += 
 
-# Input
-HEADERS += include/Core.h include/openglwindow.h
-SOURCES += src/main.cpp src/openglwindow.cpp src/Core.cpp
+HEADERS += include/core.h   \
+           include/video-gl.h
+
+SOURCES += src/main.cpp     \
+           src/video-gl.cpp \
+           src/core.cpp
 
 RESOURCES = qml.qrc

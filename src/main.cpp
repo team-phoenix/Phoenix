@@ -3,8 +3,8 @@
 #include <QQuickWindow>
 #include <QtQuick/QQuickView>
 
-#include "openglwindow.h"
-#include "Core.h"
+#include "video-gl.h"
+#include "core.h"
 
 int main( int argc, char *argv[] ) {
     QGuiApplication a( argc, argv );
