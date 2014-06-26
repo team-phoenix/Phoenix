@@ -15,8 +15,6 @@ ApplicationWindow {
 
     GLWindow {
         id: glWindow;
-        libcore: "C:/Users/robert/Desktop/leesstuff/snes9x_libretro.dll";
-        game: "C:/Users/robert/Desktop/leesstuff/past.sfc";
         run: false;
         sampleRate: 44100;
 
@@ -30,6 +28,11 @@ ApplicationWindow {
 
         // Also keep last used core loaded on
         // frontend startup. Will hopefully reduce load time of game.
+
+        Component.onCompleted: {
+            libcore = "C:/Users/robert/Desktop/leesstuff/snes9x_libretro.dll";
+            game =  "C:/Users/robert/Desktop/leesstuff/past.sfc";
+        }
 
     }
 
