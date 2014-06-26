@@ -18,8 +18,8 @@
 class GLWindow : public QQuickItem {
     Q_OBJECT
 
-    Q_PROPERTY(QUrl libcore READ libcore WRITE setCore NOTIFY libcoreChanged)
-    Q_PROPERTY(QUrl game READ game WRITE setGame NOTIFY gameChanged)
+    Q_PROPERTY(QString libcore READ libcore WRITE setCore NOTIFY libcoreChanged)
+    Q_PROPERTY(QString game READ game WRITE setGame NOTIFY gameChanged)
     Q_PROPERTY(bool run READ run WRITE setRun NOTIFY runChanged)
     Q_PROPERTY(double sampleRate READ sampleRate WRITE setSampleRate NOTIFY sampleRateChanged)
 
@@ -29,18 +29,18 @@ public:
 
     void initShader();
     void initGL();
-    void setCore( QUrl libcore );
-    void setGame( QUrl game);
+    void setCore( QString libcore );
+    void setGame( QString game);
     void setRun( bool run );
     void setSampleRate(double sampleRate );
     void setTexture( QOpenGLTexture::Filter min_scale,
                      QOpenGLTexture::Filter max_scale);
 
-    QUrl libcore() const {
+    QString libcore() const {
         return m_libcore;
     }
 
-    QUrl game() const {
+    QString game() const {
         return m_game;
     }
 
@@ -70,8 +70,8 @@ private:
     QOpenGLTexture *m_texture;
     Core *core;
 
-    QUrl m_libcore;
-    QUrl m_game;
+    QString m_libcore;
+    QString m_game;
     bool m_run;
 
     // Audio

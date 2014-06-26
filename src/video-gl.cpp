@@ -15,23 +15,20 @@ GLWindow::GLWindow() {
     //QString game_path = "../test_roms/Chrono Trigger (U) [!].smc";
 //#endif
 
-#ifdef Q_OS_LINUX
-    QString core_path = "../libretro-super/dist/unix/bsnes_balanced_libretro.so";
-    QString game_path = "../test_roms/Chrono Trigger (U) [!].smc";
-#endif
-
-    const char *core_path = "C:/Users/robert/Desktop/leesstuff/snes9x_libretro.dll";
-    const char *game_path = "C:/Users/robert/Desktop/leesstuff/past.sfc";
+//#ifdef Q_OS_LINUX
+    //QString core_path = "../libretro-super/dist/unix/bsnes_balanced_libretro.so";
+    //QString game_path = "../test_roms/Chrono Trigger (U) [!].smc";
+//#endif
 
     core = new Core();
-    if (!core->loadCore(core_path)) {
-        qDebug() << "Core was not loaded";
-        exit(EXIT_FAILURE);
-    }
-    if (!core->loadGame(game_path)) {
-        qDebug() << "Game was not loaded";
-        exit(EXIT_FAILURE);
-    }
+    //if (!core->loadCore(core_path)) {
+       // qDebug() << "Core was not loaded";
+        //exit(EXIT_FAILURE);
+    //}
+    //if (!core->loadGame(game_path)) {
+        //qDebug() << "Game was not loaded";
+        //exit(EXIT_FAILURE);
+    //}
 
     connect(this, SIGNAL(windowChanged(QQuickWindow*)), this, SLOT(handleWindowChanged(QQuickWindow*)));
 }
@@ -65,16 +62,24 @@ void GLWindow::handleWindowChanged(QQuickWindow *win)
     }
 }
 
-void GLWindow::setCore( QUrl libcore ) {
-    //core = temp_core;
-    qDebug() << libcore.path(QUrl::PrettyDecoded);
-    qDebug() << QString::fromUtf8(libcore.path().toUtf8());
-    //core->loadCore(QString::fromUtf8(libcore.path().toUtf8()));
+void GLWindow::setCore( QString libcore ) {
+
+    qDebug() << "Core: " << libcore;
+    if ( !core->loadCore(libcore.toStdString().c_str() )) {
+        qDebug() << "Core was not loaded";
+        exit(EXIT_FAILURE);
+    }
+
 }
 
-void GLWindow::setGame( QUrl game ) {
-    qDebug() << game.path(QUrl::FullyEncoded);
-    qDebug() << QString::fromUtf8(game.path().toUtf8());
+void GLWindow::setGame( QString game ) {
+
+    qDebug() << "Game: " << game;
+    if ( !core->loadGame(game.toStdString().c_str() )) {
+        qDebug() << "Core was not loaded";
+        exit(EXIT_FAILURE);
+    }
+
 }
 
 
