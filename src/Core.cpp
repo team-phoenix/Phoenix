@@ -38,7 +38,7 @@ Core::Core() {
     mImageData = NULL;
     mPitch = 0;
     mWidth = 0;
-    //mPixelFormat = retro_pixel_format;
+    mPixelFormat = RETRO_PIXEL_FORMAT_UNKNOWN;
     Core::core = this;
 
 } // Core::Core()
@@ -136,7 +136,7 @@ size_t Core::getPitch() {
 
 
 retro_pixel_format Core::getPixelFormat() {
-    qDebug() << "pformat 2: " << Core::core->mPixelFormat;
+
     return mPixelFormat;
 
 } // Core::getPixelFormat()
@@ -341,10 +341,7 @@ bool Core::environmentCallback( unsigned cmd, void *data ) {
             qDebug() << "\tRETRO_ENVIRONMENT_SET_PIXEL_FORMAT (10) (handled)";
             
             retro_pixel_format *pixelformat = ( enum retro_pixel_format * )data;
-            
             Core::core->mPixelFormat = *pixelformat;
-            qDebug() << "format: " << Core::core->mPixelFormat;
-
 
             switch( *pixelformat ) {
                 case RETRO_PIXEL_FORMAT_0RGB1555:

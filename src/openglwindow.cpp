@@ -158,18 +158,15 @@ void GLWindow::initShader() {
 
 void GLWindow::setTexture( QOpenGLTexture::Filter min_scale, QOpenGLTexture::Filter max_scale ) {
 
-    // Texture must be mirrored, since opengl reverses the direction
-    unsigned int pixel_size = (core->getPixelFormat() == RETRO_PIXEL_FORMAT_XRGB8888) ? 4 : 2;
+    QImage::Format frame_format = retroToQImageFormat(core->getPixelFormat());
 
-    qDebug() << pixel_size;
     m_texture = new QOpenGLTexture( QImage( ( const uchar * )core->getImageData(),
                                             core->getMinWidth(),
                                             core->getMinHeight(),
                                             core->getPitch(),
-                                            QImage::Format_RGB32 ).mirrored() );
+                                            frame_format ).mirrored() );
 
     m_texture->setMinMagFilters(min_scale, max_scale);
-
 
     m_texture->setWrapMode(QOpenGLTexture::ClampToEdge);
 

@@ -62,7 +62,6 @@ private slots:
     void handleWindowChanged( QQuickWindow *win );
 
 private:
-
     QOpenGLShaderProgram *m_program;
     QOpenGLTexture *m_texture;
     Core *core;
@@ -74,6 +73,18 @@ private:
     QUrl m_game;
     bool m_run;
 
+    static inline QImage::Format retroToQImageFormat( enum retro_pixel_format fmt ) {
+        static QImage::Format format_table[3] = {
+            QImage::Format_RGB16,   // RETRO_PIXEL_FORMAT_0RGB1555
+            QImage::Format_RGB32,   // RETRO_PIXEL_FORMAT_XRGB8888
+            QImage::Format_RGB16    // RETRO_PIXEL_FORMAT_RGB565
+        };
+
+        if(fmt >= 0 && fmt < (sizeof(format_table)/sizeof(QImage::Format))) {
+            return format_table[fmt];
+        }
+        return QImage::Format_Invalid;
+    }
 
 };
 //! [1]
