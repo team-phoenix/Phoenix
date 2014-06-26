@@ -149,7 +149,7 @@ LibretroSymbols* Core::getSymbols() {
 
 // Load a libretro core at the given path
 // Returns: true if successful, false otherwise
-bool Core::loadCore( QString path ) {
+bool Core::loadCore( const char *path ) {
 
     qDebug() << "Core::loadCore(" << path << ")";
     
@@ -214,7 +214,7 @@ bool Core::loadCore( QString path ) {
 
 // Load a game with the given path
 // Returns: true if the game was successfully loaded, false otherwise
-bool Core::loadGame( QString path ) {
+bool Core::loadGame( const char *path ) {
 
     qDebug() << "Core::loadGame(" << path << ")";
     
@@ -224,15 +224,11 @@ bool Core::loadGame( QString path ) {
     // full path needed, pass this file path to the core
 
     if( mRetroFullpathNeeded ) {
-        const char *path_cstr = path.toStdString().c_str();
-        game_info.path = path_cstr;
+        game_info.path = path;
         game_info.data = NULL;
         game_info.size = 0;
         game_info.meta = "";
 
-        
-        qDebug() << "path:" << path;
-        qDebug() << "path_cstr" << path_cstr;
     }
 
     // full path not needed, read the file to a buffer and pass that to the core
