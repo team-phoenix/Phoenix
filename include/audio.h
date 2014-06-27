@@ -28,11 +28,14 @@ public slots:
         }
     }
 
+    void runChanged( bool isRunning );
+
 private slots:
     void threadStarted( );
 
 private:
-    QAudioFormat afmt; // owned
+    bool isRunning; // is core running
+    QAudioFormat afmt;
     QAudioOutput *aout;
     AudioIO *m_aio;
     QThread thread;

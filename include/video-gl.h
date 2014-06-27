@@ -55,7 +55,7 @@ public:
 signals:
     void libcoreChanged();
     void gameChanged();
-    void runChanged();
+    void runChanged( bool );
     void sampleRateChanged();
 
 public slots:

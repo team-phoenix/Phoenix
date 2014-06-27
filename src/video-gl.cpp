@@ -3,11 +3,9 @@
 
 #include "audio.h"
 
-GLWindow::GLWindow() {
-    m_program = 0;
-    m_texture = 0;
-    m_libcore = "";
-    m_game = "";
+GLWindow::GLWindow() :
+          m_program(0), m_texture(0),
+          m_libcore(""), m_game("") {
 
 
 //#ifdef Q_OS_WIN32
@@ -38,6 +36,7 @@ GLWindow::GLWindow() {
     format.setByteOrder(QAudioFormat::LittleEndian);
     format.setCodec("audio/pcm");
     audio = new Audio(format);
+    connect(this, SIGNAL(runChanged(bool)), audio, SLOT(runChanged(bool)));
     Q_CHECK_PTR(audio);
     audio->start();
     core->aio = audio->aio();
@@ -94,9 +93,8 @@ void GLWindow::setGame( QString game ) {
 
 
 void GLWindow::setRun( bool run ) {
-
     m_run = run;
-
+    emit runChanged(run);
 }
 
 void GLWindow::setSampleRate( double sampleRate ) {
@@ -184,7 +182,7 @@ void GLWindow::setTexture( QOpenGLTexture::Filter min_scale, QOpenGLTexture::Fil
 
 void GLWindow::paint() {
     // Produces 1 frame of data
-    if (m_run || true) {
+    if (m_run) {
         core->doFrame();
 
         // Sets viewport size, and enables / disables opengl functionality.
