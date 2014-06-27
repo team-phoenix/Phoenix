@@ -15,6 +15,7 @@
 #include <QLibrary>
 
 #include "libretro.h"
+#include "audioio.h"
 
 // Helper for resolving libretro methods
 #define resolved_sym( name ) mSymbols->name = ( typeof( mSymbols->name ) )mLibretroCore->resolve( #name );
@@ -74,6 +75,7 @@ public:
     void doFrame();
     LibretroSymbols *getSymbols();
     QString getLibraryName();
+    AudioIO *aio;
     
     // Video
     const void *getImageData();

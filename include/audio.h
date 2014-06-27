@@ -1,30 +1,41 @@
+
 #ifndef AUDIO_H
 #define AUDIO_H
 
-#include <QByteArray>
+#include <QObject>
+#include <QThread>
+#include <QDebug>
 #include <QAudioOutput>
-#include <QAudioDeviceInfo>
-#include <QAudioInput>
-#include <QIODevice>
+#include "audioio.h"
 
-#include "core.h"
-
-class Audio {
+class Audio : public QObject {
+    Q_OBJECT
 public:
-    Audio();
-    void play( QByteArray data );
-    void play( int16_t left, int16_t right );
-    void play( const int16_t *data, size_t frames );
-    
-    bool setSampleRate( double );
-    void unload();
-    bool running();
-    bool underrun;
-    
+    Audio( QAudioFormat, QObject * = 0 );
+    ~Audio();
+
+    void start( );
+
+    AudioIO* aio() const {
+        return m_aio;
+    }
+
+public slots:
+    void stateChanged(QAudio::State s) {
+        qDebug() << "state:" << s << " " <<aout->error();
+        if(aout->error() == QAudio::UnderrunError) {
+            aout->start(m_aio);
+        }
+    }
+
+private slots:
+    void threadStarted( );
+
 private:
-    QAudioOutput *audio_output;
-    QIODevice *io_device;
-    double sample_rate;
+    QAudioFormat afmt; // owned
+    QAudioOutput *aout;
+    AudioIO *m_aio;
+    QThread thread;
 };
 
-#endif // AUDIO_H
+#endif

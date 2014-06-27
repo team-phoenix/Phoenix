@@ -30,6 +30,7 @@ Core::Core() {
 
     mLibretroCore = NULL;
     mImageData = NULL;
+    aio = NULL;
     mRetroSystemAVInfo = new retro_system_av_info;
     mRetroSystemInfo = new retro_system_info;
     mSymbols = new LibretroSymbols;
@@ -332,8 +333,10 @@ void Core::audioSampleCallback( int16_t left, int16_t right ) {
 
 size_t Core::audioSampleBatchCallback( const int16_t *data, size_t frames ) {
 
-    core->audio_data = data;
-    core->audio_frames = frames;
+//    core->audio_data = data;
+//    core->audio_frames = frames;
+    if(core->aio)
+        core->aio->write((const char *)data, frames * sizeof(int16_t) * 2);
     //qDebug() << "frames: " << frames;
     //qDebug() << "Core::audioSampleBatchCallback";
 
@@ -343,8 +346,6 @@ size_t Core::audioSampleBatchCallback( const int16_t *data, size_t frames ) {
 
 bool Core::environmentCallback( unsigned cmd, void *data ) {
 
-    qDebug() << "Core::environmentCallback:";
-    
     switch( cmd ) {
     
         case RETRO_ENVIRONMENT_SET_ROTATION: // 1
@@ -439,7 +440,7 @@ bool Core::environmentCallback( unsigned cmd, void *data ) {
             break;
             
         case RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE: // 17
-            qDebug() << "\tRETRO_ENVIRONMENT_GET_VARIABLE_UPDATE (17)";
+//            qDebug() << "\tRETRO_ENVIRONMENT_GET_VARIABLE_UPDATE (17)";
             break;
             
         case RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME: // 18
