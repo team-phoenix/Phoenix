@@ -16,6 +16,8 @@ ApplicationWindow {
     GLWindow {
         id: glWindow;
         run: false;
+        focus: true;
+        Keys.onEnterPressed: console.log("enter")
 
         // Eventually have GLWindow not load anything on creation
         // Will run when core and game paths have been entered through
@@ -29,8 +31,8 @@ ApplicationWindow {
         // frontend startup. Will hopefully reduce load time of game.
 
         Component.onCompleted: {
-            libcore = "C:/Users/robert/Desktop/leesstuff/snes9x_libretro.dll";
-            game =  "C:/Users/robert/Desktop/leesstuff/past.sfc";
+            libcore = "C:/Users/lee/Desktop/32_Cores/snes9x_libretro.dll";
+            game =  "C:/Users/lee/Documents/Emulation/SNES/Chrono Trigger (USA).sfc";
         }
 
     }
