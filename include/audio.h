@@ -8,17 +8,22 @@
 #include <QAudioOutput>
 #include "audioio.h"
 
+
 class Audio : public QObject {
     Q_OBJECT
 public:
-    Audio( QAudioFormat, QObject * = 0 );
+    Audio( QObject * = 0 );
     ~Audio();
 
     void start( );
+    void setFormat( QAudioFormat _afmt );
 
     AudioIO* aio() const {
         return m_aio;
     }
+
+signals:
+    void formatChanged( );
 
 public slots:
     void stateChanged(QAudio::State s) {
@@ -32,6 +37,7 @@ public slots:
 
 private slots:
     void threadStarted( );
+    void handleFormatChanged( );
 
 private:
     bool isRunning; // is core running

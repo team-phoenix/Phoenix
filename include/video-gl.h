@@ -53,8 +53,8 @@ public:
     }
 
 signals:
-    void libcoreChanged();
-    void gameChanged();
+    void libcoreChanged( QString );
+    void gameChanged( QString );
     void runChanged( bool );
     void sampleRateChanged();
 
@@ -77,6 +77,7 @@ private:
     // Audio
     Audio *audio;
     double m_sample_rate;
+    void updateAudioFormat();
 
     static inline QImage::Format retroToQImageFormat( enum retro_pixel_format fmt ) {
         static QImage::Format format_table[3] = {

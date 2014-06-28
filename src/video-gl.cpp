@@ -28,19 +28,11 @@ GLWindow::GLWindow() :
         //exit(EXIT_FAILURE);
     //}
 
-    QAudioFormat format;
-    format.setSampleSize(16);
-    format.setSampleRate(32000);
-    format.setChannelCount(2);
-    format.setSampleType(QAudioFormat::SignedInt);
-    format.setByteOrder(QAudioFormat::LittleEndian);
-    format.setCodec("audio/pcm");
-    audio = new Audio(format);
+    audio = new Audio();
     connect(this, SIGNAL(runChanged(bool)), audio, SLOT(runChanged(bool)));
     Q_CHECK_PTR(audio);
     audio->start();
     core->aio = audio->aio();
-
 
 
     connect(this, SIGNAL(windowChanged(QQuickWindow*)), this, SLOT(handleWindowChanged(QQuickWindow*)));
@@ -72,23 +64,22 @@ void GLWindow::handleWindowChanged(QQuickWindow *win)
 }
 
 void GLWindow::setCore( QString libcore ) {
-
     qDebug() << "Core: " << libcore;
     if ( !core->loadCore(libcore.toStdString().c_str() )) {
         qDebug() << "Core was not loaded";
         exit(EXIT_FAILURE);
     }
-
+    emit libcoreChanged(libcore);
 }
 
 void GLWindow::setGame( QString game ) {
-
     qDebug() << "Game: " << game;
     if ( !core->loadGame(game.toStdString().c_str() )) {
         qDebug() << "Core was not loaded";
         exit(EXIT_FAILURE);
     }
-
+    updateAudioFormat();
+    emit gameChanged(game);
 }
 
 
@@ -98,9 +89,19 @@ void GLWindow::setRun( bool run ) {
 }
 
 void GLWindow::setSampleRate( double sampleRate ) {
-
 //    audio->setSampleRate(sampleRate);
+}
 
+void GLWindow::updateAudioFormat() {
+    QAudioFormat format;
+    format.setSampleSize(16);
+    format.setSampleRate(core->getSampleRate());
+    format.setChannelCount(2);
+    format.setSampleType(QAudioFormat::SignedInt);
+    format.setByteOrder(QAudioFormat::LittleEndian);
+    format.setCodec("audio/pcm");
+    // TODO test format
+    audio->setFormat(format);
 }
 
 void GLWindow::initGL() {
