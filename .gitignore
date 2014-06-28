@@ -31,5 +31,9 @@ debug/
 
 *.autosave
 
+# Vim
+
+.*.swp
+
 # Phoenix executable
 phoenix*
