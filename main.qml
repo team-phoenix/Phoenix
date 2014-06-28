@@ -11,7 +11,7 @@ ApplicationWindow {
     width: 800;
     height: 600;
     visible: true;
-    visibility: "FullScreen";
+    visibility: "Windowed";
 
     GLWindow {
         id: glWindow;
@@ -190,7 +190,13 @@ ApplicationWindow {
 
                 Button {
                     id: resizeBtn;
-                    onClicked: root.visibility = "Windowed";
+                    onClicked: {
+                        if (root.visibility === 5)
+                            root.visibility = "Windowed";
+                        else
+                            root.visibility = "FullScreen";
+                    }
+
                     anchors.verticalCenter: parent.verticalCenter;
                     style: ButtonStyle {
                         background: Image {
