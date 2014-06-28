@@ -28,6 +28,7 @@ GLWindow::GLWindow() :
         //exit(EXIT_FAILURE);
     //}
 
+    frame_count = 0;
     audio = new Audio();
     connect(this, SIGNAL(runChanged(bool)), audio, SLOT(runChanged(bool)));
     Q_CHECK_PTR(audio);
@@ -231,20 +232,23 @@ void GLWindow::setTexture( QOpenGLTexture::Filter min_scale, QOpenGLTexture::Fil
 void GLWindow::paint() {
     // Produces 1 frame of data
 
-
     if (m_run) {
 
+        frame_count = 1;
         core->doFrame();
 
     }
 
     if (!m_texture) {
-    // sets texture from image
 
+        // Must render for 1 frame if m_run is defaulted to false
+        if (frame_count != 1) {
+            frame_count = 1;
+            core->doFrame();
+        }
+        // Sets texture from core->getImageData();
         setTexture( QOpenGLTexture::Linear, QOpenGLTexture::Nearest );
-
     }
-
 
     // Sets viewport size, and enables / disables opengl functionality.
     initGL();
