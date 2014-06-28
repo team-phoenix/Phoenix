@@ -213,6 +213,7 @@ void GLWindow::initShader() {
 
 void GLWindow::setTexture( QOpenGLTexture::Filter min_scale, QOpenGLTexture::Filter max_scale ) {
 
+
     QImage::Format frame_format = retroToQImageFormat(core->getPixelFormat());
 
     m_texture = new QOpenGLTexture( QImage( ( const uchar * )core->getImageData(),
@@ -229,6 +230,8 @@ void GLWindow::setTexture( QOpenGLTexture::Filter min_scale, QOpenGLTexture::Fil
 
 void GLWindow::paint() {
     // Produces 1 frame of data
+
+
     if (m_run) {
 
         core->doFrame();
@@ -236,10 +239,12 @@ void GLWindow::paint() {
     }
 
     if (!m_texture) {
-        // sets texture from image
+    // sets texture from image
+
         setTexture( QOpenGLTexture::Linear, QOpenGLTexture::Nearest );
 
     }
+
 
     // Sets viewport size, and enables / disables opengl functionality.
     initGL();
