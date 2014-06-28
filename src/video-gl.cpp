@@ -100,6 +100,47 @@ void GLWindow::updateAudioFormat() {
     audio->setFormat(format);
 }
 
+void GLWindow::keyPressEvent(QKeyEvent *event) {
+    switch(event->key()) {
+        case Qt::Key_Escape:
+            qDebug() << "Esc pressed";
+            break;
+        case Qt::Key_Return:
+            qDebug() << "Return pressed";
+            break;
+        case Qt::Key_Space:
+            qDebug() << "Space pressed";
+            break;
+        case Qt::Key_Left:
+            qDebug() << "Left pressed";
+            break;
+        case Qt::Key_Right:
+            qDebug() << "Right pressed";
+            break;
+        case Qt::Key_Down:
+            qDebug() << "Down pressed";
+            break;
+        case Qt::Key_Up:
+            qDebug() << "Up pressed";
+            break;
+        case Qt::Key_A:
+            qDebug() << "A pressed";
+            break;
+        case Qt::Key_S:
+            qDebug() << "S pressed";
+            break;
+        case Qt::Key_W:
+            qDebug() << "W pressed";
+            break;
+        case Qt::Key_D:
+            qDebug() << "D pressed";
+            break;
+        default:
+            qDebug() <<  "Key not handled";
+            break;
+    }
+}
+
 void GLWindow::initGL() {
 
     qreal pixel_ratio = window()->devicePixelRatio();

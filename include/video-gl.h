@@ -46,6 +46,10 @@ public:
         return m_run;
     }
 
+
+protected:
+    void keyPressEvent(QKeyEvent *event);
+
 signals:
     void libcoreChanged( QString );
     void gameChanged( QString );
