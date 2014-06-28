@@ -63,6 +63,13 @@ void GLWindow::handleWindowChanged(QQuickWindow *win)
     }
 }
 
+void GLWindow::setWindowVisibility(QString windowVisibility) {
+
+    m_win_visibility = windowVisibility;
+    emit windowVisibilityChanged( windowVisibility );
+
+}
+
 void GLWindow::setCore( QString libcore ) {
     qDebug() << "Core: " << libcore;
     if ( !core->loadCore(libcore.toStdString().c_str() )) {
@@ -104,6 +111,7 @@ void GLWindow::keyPressEvent(QKeyEvent *event) {
     switch(event->key()) {
         case Qt::Key_Escape:
             qDebug() << "Esc pressed";
+            emit windowVisibilityChanged("Windowed");
             break;
         case Qt::Key_Return:
             qDebug() << "Return pressed";
@@ -139,6 +147,7 @@ void GLWindow::keyPressEvent(QKeyEvent *event) {
             qDebug() <<  "Key not handled";
             break;
     }
+
 }
 
 void GLWindow::initGL() {

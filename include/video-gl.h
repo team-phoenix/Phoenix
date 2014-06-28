@@ -21,6 +21,7 @@ class GLWindow : public QQuickItem {
     Q_PROPERTY(QString libcore READ libcore WRITE setCore NOTIFY libcoreChanged)
     Q_PROPERTY(QString game READ game WRITE setGame NOTIFY gameChanged)
     Q_PROPERTY(bool run READ run WRITE setRun NOTIFY runChanged)
+    Q_PROPERTY(QString windowVisibility READ windowVisibility WRITE setWindowVisibility NOTIFY windowVisibilityChanged)
 
 public:
     GLWindow();
@@ -31,6 +32,7 @@ public:
     void setCore( QString libcore );
     void setGame( QString game);
     void setRun( bool run );
+    void setWindowVisibility( QString windowVisibility );
     void setTexture( QOpenGLTexture::Filter min_scale,
                      QOpenGLTexture::Filter max_scale);
 
@@ -46,6 +48,10 @@ public:
         return m_run;
     }
 
+    QString windowVisibility() const {
+        return m_win_visibility;
+    }
+
 
 protected:
     void keyPressEvent(QKeyEvent *event);
@@ -54,6 +60,7 @@ signals:
     void libcoreChanged( QString );
     void gameChanged( QString );
     void runChanged( bool );
+    void windowVisibilityChanged( QString windowVisibility );
 
 public slots:
     void paint();
@@ -63,17 +70,26 @@ private slots:
     void handleWindowChanged( QQuickWindow *win );
 
 private:
+    // Video
+    // [1]
     QOpenGLShaderProgram *m_program;
     QOpenGLTexture *m_texture;
     Core *core;
+    // [1]
 
+    // Qml defined variables
+    // [2]
     QString m_libcore;
     QString m_game;
+    QString m_win_visibility;
     bool m_run;
+    //[2]
 
     // Audio
+    //[3]
     Audio *audio;
     void updateAudioFormat();
+    //[3]
 
     static inline QImage::Format retroToQImageFormat( enum retro_pixel_format fmt ) {
         static QImage::Format format_table[3] = {
