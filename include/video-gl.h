@@ -21,7 +21,6 @@ class GLWindow : public QQuickItem {
     Q_PROPERTY(QString libcore READ libcore WRITE setCore NOTIFY libcoreChanged)
     Q_PROPERTY(QString game READ game WRITE setGame NOTIFY gameChanged)
     Q_PROPERTY(bool run READ run WRITE setRun NOTIFY runChanged)
-    Q_PROPERTY(double sampleRate READ sampleRate WRITE setSampleRate NOTIFY sampleRateChanged)
 
 public:
     GLWindow();
@@ -32,7 +31,6 @@ public:
     void setCore( QString libcore );
     void setGame( QString game);
     void setRun( bool run );
-    void setSampleRate(double sampleRate );
     void setTexture( QOpenGLTexture::Filter min_scale,
                      QOpenGLTexture::Filter max_scale);
 
@@ -48,15 +46,10 @@ public:
         return m_run;
     }
 
-    double sampleRate() const {
-        return m_sample_rate;
-    }
-
 signals:
     void libcoreChanged( QString );
     void gameChanged( QString );
     void runChanged( bool );
-    void sampleRateChanged();
 
 public slots:
     void paint();
@@ -76,7 +69,6 @@ private:
 
     // Audio
     Audio *audio;
-    double m_sample_rate;
     void updateAudioFormat();
 
     static inline QImage::Format retroToQImageFormat( enum retro_pixel_format fmt ) {

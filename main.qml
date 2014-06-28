@@ -16,7 +16,6 @@ ApplicationWindow {
     GLWindow {
         id: glWindow;
         run: false;
-        sampleRate: 44100;
 
         // Eventually have GLWindow not load anything on creation
         // Will run when core and game paths have been entered through

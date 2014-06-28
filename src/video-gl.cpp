@@ -88,10 +88,6 @@ void GLWindow::setRun( bool run ) {
     emit runChanged(run);
 }
 
-void GLWindow::setSampleRate( double sampleRate ) {
-//    audio->setSampleRate(sampleRate);
-}
-
 void GLWindow::updateAudioFormat() {
     QAudioFormat format;
     format.setSampleSize(16);
