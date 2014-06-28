@@ -180,77 +180,80 @@ void GLWindow::setTexture( QOpenGLTexture::Filter min_scale, QOpenGLTexture::Fil
 void GLWindow::paint() {
     // Produces 1 frame of data
     if (m_run) {
+
         core->doFrame();
 
-        // Sets viewport size, and enables / disables opengl functionality.
-        initGL();
+    }
 
-        if (!m_texture) {
-            // sets texture from image
-            setTexture( QOpenGLTexture::Linear, QOpenGLTexture::Nearest );
-        }
-
-        // Binds texture to opengl context
-        m_texture->bind();
-
-        if (!m_program) {
-            // constructs vertex & frag shaders and links them.
-            initShader();
-        }
-
-
-        // Makes this shader program the current shader affecting the window.
-        m_program->bind();
-
-        // Allows 0 to be used as variable id
-        m_program->enableAttributeArray(0);
-        m_program->enableAttributeArray(1);
-
-        // Holds vertice values for triangle strip.
-        // GLfloat is a cross platform macro for standard float
-        // Triangle strip coords
-        GLfloat values[] = {
-            -1, -1,
-            1, -1,
-            -1, 1,
-            1, 1
-        };
-
-        // Texture coords
-        GLfloat texture[] = {
-            0, 0,
-            1, 0,
-            0, 1,
-            1, 1,
-        };
-
-        // Sets location 0 equal to vertices in values array
-        m_program->setAttributeArray(0, QOpenGLTexture::Float32, values, 2);
-
-        m_program->setAttributeArray(1, QOpenGLTexture::Float32, texture, 2);
-
-        // Draws processed triangle stip onto the screen.
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-        //int16_t audio_data[] = { core->getLeftChannel(), core->getRightChannel() };
-
-        //audio->play( QByteArray( (const char *)audio_data, sizeof(audio_data) ) );
-
-        //audio->play( core->getAudioData(), core->getAudioFrames() );
-
-        // Disables location 0
-        m_program->disableAttributeArray(0);
-        m_program->disableAttributeArray(1);
-        m_program->release();
-        m_texture->release();
-
-        delete m_texture;
-        m_texture = 0;
-
-        // Loop forever;
-        window()->update();
+    if (!m_texture) {
+        // sets texture from image
+        setTexture( QOpenGLTexture::Linear, QOpenGLTexture::Nearest );
 
     }
+
+    // Sets viewport size, and enables / disables opengl functionality.
+    initGL();
+
+    // Binds texture to opengl context
+    m_texture->bind();
+
+    if (!m_program) {
+        // constructs vertex & frag shaders and links them.
+        initShader();
+    }
+
+
+    // Makes this shader program the current shader affecting the window.
+    m_program->bind();
+
+    // Allows 0 to be used as variable id
+    m_program->enableAttributeArray(0);
+    m_program->enableAttributeArray(1);
+
+    // Holds vertice values for triangle strip.
+    // GLfloat is a cross platform macro for standard float
+    // Triangle strip coords
+    GLfloat values[] = {
+        -1, -1,
+        1, -1,
+        -1, 1,
+        1, 1
+    };
+
+    // Texture coords
+    GLfloat texture[] = {
+        0, 0,
+        1, 0,
+        0, 1,
+        1, 1,
+    };
+
+    // Sets location 0 equal to vertices in values array
+    m_program->setAttributeArray(0, QOpenGLTexture::Float32, values, 2);
+
+    m_program->setAttributeArray(1, QOpenGLTexture::Float32, texture, 2);
+
+    // Draws processed triangle stip onto the screen.
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+    //int16_t audio_data[] = { core->getLeftChannel(), core->getRightChannel() };
+
+    //audio->play( QByteArray( (const char *)audio_data, sizeof(audio_data) ) );
+
+    //audio->play( core->getAudioData(), core->getAudioFrames() );
+
+    m_program->disableAttributeArray(0);
+    m_program->disableAttributeArray(1);
+    m_program->release();
+    m_texture->release();
+
+    if (m_run) {
+        delete m_texture;
+        m_texture = 0;
+    }
+
+    // Loop forever;
+    window()->update();
 }
 
 void GLWindow::cleanup()
