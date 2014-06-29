@@ -13,11 +13,38 @@ ApplicationWindow {
     visible: true;
     visibility: "Windowed";
 
+    MouseArea {
+        id: rootMouse;
+        anchors.fill: parent;
+        hoverEnabled: true
+        onEntered: toolBar.visible = true;
+        onExited: toolBar.visible = false;
+        onMouseXChanged: {
+            cursorShape = Qt.ArrowCursor;
+            mouseTimer.restart();
+        }
+
+    }
+
+    Timer {
+        id: mouseTimer;
+        interval: 2000;
+        running: true;
+        onTriggered: rootMouse.cursorShape = Qt.BlankCursor;
+    }
+
     GLWindow {
         id: glWindow;
         run: false; // default must be true
         focus: true;
-        Keys.onEnterPressed: console.log("enter")
+        onRunChanged: {
+            if (run)
+                playBtn.iconImage = "assets/pause.png";
+            else
+                playBtn.iconImage = "assets/play.png";
+        }
+
+
         onWindowVisibilityChanged: visibility = windowVisibility;
 
         // Eventually have GLWindow not load anything on creation
@@ -46,7 +73,7 @@ ApplicationWindow {
         color: "#5a5a5a";
         opacity: 0.3;
         anchors {
-            bottom: rect.top;
+            bottom: toolBar.top;
             left: parent.left;
             leftMargin: 10;
             bottomMargin: 10;
@@ -55,7 +82,8 @@ ApplicationWindow {
     }
 
     Rectangle {
-        id: rect;
+        id: toolBar;
+        visible: false;
         anchors {
             left: parent.left
             right: parent.right;
@@ -64,8 +92,14 @@ ApplicationWindow {
         }
 
         height: 35;
-        color: "#353434";
+        color: "#1e1e1e";
         radius: 4
+
+        MouseArea {
+            anchors.fill: parent;
+            hoverEnabled: true
+            onEntered: toolBar.visible = true;
+        }
         //border.width: 1
         //border.color: "white"
 
@@ -126,11 +160,9 @@ ApplicationWindow {
                     onClicked:  {
                         if (glWindow.run) {
                             glWindow.run = false
-                            playBtn.iconImage = "assets/play.png";
                         }
                         else {
                             glWindow.run = true;
-                            playBtn.iconImage = "assets/pause.png";
                         }
                     }
 
