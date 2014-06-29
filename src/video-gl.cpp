@@ -52,8 +52,9 @@ GLWindow::~GLWindow() {
     delete core;
     if (m_program)
         delete m_program;
-    if (m_texture)
+    if (m_texture) {
         delete m_texture;
+    }
 
 }
 
@@ -295,8 +296,8 @@ void GLWindow::setTexture( QOpenGLTexture::Filter min_scale, QOpenGLTexture::Fil
     QImage::Format frame_format = retroToQImageFormat(core->getPixelFormat());
 
     m_texture = new QOpenGLTexture( QImage( ( const uchar * )core->getImageData(),
-                                            core->getMinWidth(),
-                                            core->getMinHeight(),
+                                            core->getBaseWidth(),
+                                            core->getBaseHeight(),
                                             core->getPitch(),
                                             frame_format ).mirrored() );
 

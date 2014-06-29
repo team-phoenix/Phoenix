@@ -18,7 +18,7 @@
 #include "audioio.h"
 
 // Helper for resolving libretro methods
-#define resolved_sym( name ) mSymbols->name = ( typeof( mSymbols->name ) )mLibretroCore->resolve( #name );
+#define resolved_sym( name ) symbols->name = ( typeof( symbols->name ) )libretro_core->resolve( #name );
 
 struct LibretroSymbols {
 
@@ -79,8 +79,8 @@ public:
     
     // Video
     const void *getImageData();
-    unsigned getMinWidth();
-    unsigned getMinHeight();
+    unsigned getBaseWidth();
+    unsigned getBaseHeight();
     unsigned getMaxWidth();
     unsigned getMaxHeight();
     size_t getPitch();
@@ -99,8 +99,7 @@ public:
     double getSampleRate();
 
     // Input
-
-    QMap<unsigned, bool> getKeyBoard();
+    void setInputStateCallBack( bool is_pressed, unsigned port, unsigned device, unsigned index, unsigned id );
 
     // Initilization methods
     bool loadCore( const char * path );
@@ -112,30 +111,30 @@ public:
 private:
 
     // Handle to the libretro core
-    QLibrary *mLibretroCore;
+    QLibrary *libretro_core;
     
     // Struct containing libretro methods
-    LibretroSymbols *mSymbols;
+    LibretroSymbols *symbols;
     
     // Information about the core
-    retro_system_av_info *mRetroSystemAVInfo;
-    retro_system_info *mRetroSystemInfo;
+    retro_system_av_info *system_av_info;
+    retro_system_info *system_info;
 
     // Do something with retro_variable
-    retro_input_descriptor mRetroInputDescriptor;
-    retro_game_geometry mRetroGameGeometry;
-    retro_system_timing mRetroSystemTiming;
-    bool mRetroFullpathNeeded;
+    retro_input_descriptor input_descriptor;
+    retro_game_geometry game_geometry;
+    retro_system_timing system_timing;
+    bool full_path_needed;
     
     // Game
-    QByteArray mGameData;
+    QByteArray game_data;
     
     // Video
-    unsigned mHeight;
-    const void *mImageData;
+    unsigned video_height;
+    const void *video_data;
     size_t mPitch;
     unsigned mWidth;
-    retro_pixel_format mPixelFormat;
+    retro_pixel_format pixel_format;
 
     // Audio
     size_t audio_frames;
@@ -144,8 +143,7 @@ private:
     int16_t right_channel;
 
     // Input
-    QMap<unsigned, bool> mKeyboard;
-    QMap<unsigned, bool> mJoystick;
+    QMap<unsigned, bool> joypad;
 
     // Callbacks
     static void audioSampleCallback( int16_t left, int16_t right );

@@ -28,18 +28,18 @@ Core* Core::core = NULL;
 
 Core::Core() {
 
-    mLibretroCore = NULL;
-    mImageData = NULL;
+    libretro_core = NULL;
+    video_data = NULL;
     aio = NULL;
-    mRetroSystemAVInfo = new retro_system_av_info;
-    mRetroSystemInfo = new retro_system_info;
-    mSymbols = new LibretroSymbols;
+    system_av_info = new retro_system_av_info;
+    system_info = new retro_system_info;
+    symbols = new LibretroSymbols;
 
-    mHeight = 0;
-    mImageData = NULL;
+    video_height = 0;
+    video_data = NULL;
     mPitch = 0;
     mWidth = 0;
-    mPixelFormat = RETRO_PIXEL_FORMAT_UNKNOWN;
+    pixel_format = RETRO_PIXEL_FORMAT_UNKNOWN;
 
     audio_data = NULL;
     audio_frames = 0;
@@ -52,14 +52,14 @@ Core::Core() {
 
 Core::~Core() {
 
-    if (mLibretroCore)
-        delete mLibretroCore;
-    if (mRetroSystemAVInfo)
-        delete mRetroSystemAVInfo;
-    if (mRetroSystemInfo)
-        delete mRetroSystemInfo;
-    if (mSymbols)
-        delete mSymbols;
+    if (libretro_core)
+        delete libretro_core;
+    if (system_av_info)
+        delete system_av_info;
+    if (system_info)
+        delete system_info;
+    if (symbols)
+        delete symbols;
     Core::core = NULL;
 
 } // Core::~Core()
@@ -76,10 +76,10 @@ void Core::doFrame() {
 	core = this;
 
 	// Tell the core to run a frame
-    mSymbols->retro_run();
+    symbols->retro_run();
 
-    if (mSymbols->retro_audio)
-        mSymbols->retro_audio();
+    if (symbols->retro_audio)
+        symbols->retro_audio();
     
 } // void doFrame()
 
@@ -90,50 +90,50 @@ void Core::doFrame() {
 
 const void *Core::getImageData() {
 
-    return mImageData;
+    return video_data;
 
 } // const void *Core::getImageData()
 
-unsigned Core::getMinHeight() {
+unsigned Core::getBaseHeight() {
 
-    return mHeight;
+    return video_height;
 
     
-} // unsigned Core::getMinHeight()
+} // unsigned Core::getBaseHeight()
 
-unsigned Core::getMinWidth() {
+unsigned Core::getBaseWidth() {
 
     return mWidth;
 
-} // Core::getMinWidth()
+} // Core::getBaseWidth()
 
 unsigned Core::getMaxHeight() {
 
-    return mRetroSystemAVInfo->geometry.max_height;
+    return system_av_info->geometry.max_height;
 
 } // unsigned Core::getMaxHeight()
 
 unsigned Core::getMaxWidth() {
 
-    return mRetroSystemAVInfo->geometry.max_width;
+    return system_av_info->geometry.max_width;
 
 } // unsigned Core::getMaxWidth();
 
 float Core::getAspectRatio() {
 
-    return mRetroSystemAVInfo->geometry.aspect_ratio;
+    return system_av_info->geometry.aspect_ratio;
 
 } // unsigned Core::getAspectRatio();
 
 double Core::getFps() {
 
-    return mRetroSystemAVInfo->timing.fps;
+    return system_av_info->timing.fps;
 
 } // double Core::getFps()
 
 double Core::getSampleRate() {
 
-    return mRetroSystemAVInfo->timing.sample_rate;
+    return system_av_info->timing.sample_rate;
 
 } // double Core::getSampleRate()
 
@@ -146,7 +146,7 @@ size_t Core::getPitch() {
 
 retro_pixel_format Core::getPixelFormat() {
 
-    return mPixelFormat;
+    return pixel_format;
 
 } // Core::getPixelFormat()
 
@@ -195,7 +195,7 @@ void Core::setInputStateCallBack(bool is_pressed, unsigned port, unsigned device
 
 LibretroSymbols* Core::getSymbols() {
 
-    return mSymbols;
+    return symbols;
 
 } // LibretroSymbols *RasterWindow::getSymbols()
 
@@ -205,10 +205,10 @@ bool Core::loadCore( const char *path ) {
 
     qDebug() << "Core::loadCore(" << path << ")";
     
-    mLibretroCore = new QLibrary( path );
-    mLibretroCore->load();
+    libretro_core = new QLibrary( path );
+    libretro_core->load();
 
-    if( mLibretroCore->isLoaded() ) {
+    if( libretro_core->isLoaded() ) {
     
         // Resolve symbols
         resolved_sym( retro_set_environment );
@@ -237,19 +237,19 @@ bool Core::loadCore( const char *path ) {
         resolved_sym( retro_get_memory_size );
         
         // Set callbacks
-        mSymbols->retro_set_environment( environmentCallback );
-        mSymbols->retro_set_audio_sample( audioSampleCallback );
-        mSymbols->retro_set_audio_sample_batch( audioSampleBatchCallback );
-        mSymbols->retro_set_input_poll( inputPollCallback );
-        mSymbols->retro_set_input_state( inputStateCallback );
-        mSymbols->retro_set_video_refresh( videoRefreshCallback );
+        symbols->retro_set_environment( environmentCallback );
+        symbols->retro_set_audio_sample( audioSampleCallback );
+        symbols->retro_set_audio_sample_batch( audioSampleBatchCallback );
+        symbols->retro_set_input_poll( inputPollCallback );
+        symbols->retro_set_input_state( inputStateCallback );
+        symbols->retro_set_video_refresh( videoRefreshCallback );
         
         // Init the core
-        mSymbols->retro_init();
+        symbols->retro_init();
         
         // Get some info about the game
-        mSymbols->retro_get_system_info( mRetroSystemInfo );
-        mRetroFullpathNeeded = mRetroSystemInfo -> need_fullpath;
+        symbols->retro_get_system_info( system_info );
+        full_path_needed = system_info -> need_fullpath;
         
         return true;
         
@@ -275,7 +275,7 @@ bool Core::loadGame( const char *path ) {
     
     // full path needed, pass this file path to the core
 
-    if( mRetroFullpathNeeded ) {
+    if( full_path_needed ) {
         game_info.path = path;
         game_info.data = NULL;
         game_info.size = 0;
@@ -293,26 +293,26 @@ bool Core::loadGame( const char *path ) {
         }
 
         // read into memory
-        mGameData = game.readAll();
+        game_data = game.readAll();
         
         game_info.path = NULL;
-        game_info.data = mGameData.data();
+        game_info.data = game_data.data();
         game_info.size = game.size();
         game_info.meta = "";
         
     }
     
     // attempt to load the game
-    bool ret = mSymbols->retro_load_game( &game_info );
+    bool ret = symbols->retro_load_game( &game_info );
     
     // Get some info about the game
     if( ret ) {
     
-        mSymbols->retro_get_system_av_info( mRetroSystemAVInfo );
-        mRetroGameGeometry = mRetroSystemAVInfo->geometry;
-        mRetroSystemTiming = mRetroSystemAVInfo->timing;
-        //mWidth = mRetroGameGeometry.max_width;
-        //mHeight = mRetroGameGeometry.max_height;
+        symbols->retro_get_system_av_info( system_av_info );
+        game_geometry = system_av_info->geometry;
+        system_timing = system_av_info->timing;
+        //mWidth = game_geometry.max_width;
+        //video_height = game_geometry.max_height;
         return true;
         
     }
@@ -392,7 +392,7 @@ bool Core::environmentCallback( unsigned cmd, void *data ) {
             qDebug() << "\tRETRO_ENVIRONMENT_SET_PIXEL_FORMAT (10) (handled)";
             
             retro_pixel_format *pixelformat = ( enum retro_pixel_format * )data;
-            Core::core->mPixelFormat = *pixelformat;
+            Core::core->pixel_format = *pixelformat;
 
             switch( *pixelformat ) {
                 case RETRO_PIXEL_FORMAT_0RGB1555:
@@ -420,13 +420,13 @@ bool Core::environmentCallback( unsigned cmd, void *data ) {
         
         case RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS: // 11
             qDebug() << "\tRETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS (11) (handled)";
-            Core::core->mRetroInputDescriptor = *( retro_input_descriptor * )data;
+            Core::core->input_descriptor = *( retro_input_descriptor * )data;
             return true;
             break;
             
         case RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK: // 12
             qDebug() << "\tRETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK (12) (handled)";
-            Core::core->mSymbols->retro_keyboard_event = ( typeof( mSymbols->retro_keyboard_event ) )data;
+            Core::core->symbols->retro_keyboard_event = ( typeof( symbols->retro_keyboard_event ) )data;
             break;
             
         case RETRO_ENVIRONMENT_SET_DISK_CONTROL_INTERFACE: // 13
@@ -461,7 +461,7 @@ bool Core::environmentCallback( unsigned cmd, void *data ) {
         
         case RETRO_ENVIRONMENT_SET_FRAME_TIME_CALLBACK: // 21
             qDebug() << "RETRO_ENVIRONMENT_SET_FRAME_TIME_CALLBACK (21)";
-            Core::core->mSymbols->retro_frame_time = ( typeof( mSymbols->retro_frame_time ) )data;
+            Core::core->symbols->retro_frame_time = ( typeof( symbols->retro_frame_time ) )data;
             break;
             
         case RETRO_ENVIRONMENT_SET_AUDIO_CALLBACK: // 22
@@ -580,9 +580,9 @@ void Core::logCallback( enum retro_log_level level, const char *fmt, ... ) {
 
 void Core::videoRefreshCallback( const void *data, unsigned width, unsigned height, size_t pitch ) {
 
-    core->mImageData = data;
+    core->video_data = data;
     core->mWidth = width;
-    core->mHeight = height;
+    core->video_height = height;
     core->mPitch = pitch;
 
     return;
