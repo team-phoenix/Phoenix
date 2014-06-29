@@ -37,8 +37,8 @@ Core::Core() {
 
     video_height = 0;
     video_data = NULL;
-    mPitch = 0;
-    mWidth = 0;
+    video_pitch = 0;
+    video_width = 0;
     pixel_format = RETRO_PIXEL_FORMAT_UNKNOWN;
 
     audio_data = NULL;
@@ -52,13 +52,9 @@ Core::Core() {
 
 Core::~Core() {
 
-    if (libretro_core)
         delete libretro_core;
-    if (system_av_info)
         delete system_av_info;
-    if (system_info)
         delete system_info;
-    if (symbols)
         delete symbols;
     Core::core = NULL;
 
@@ -103,7 +99,7 @@ unsigned Core::getBaseHeight() {
 
 unsigned Core::getBaseWidth() {
 
-    return mWidth;
+    return video_width;
 
 } // Core::getBaseWidth()
 
@@ -139,7 +135,7 @@ double Core::getSampleRate() {
 
 size_t Core::getPitch() {
 
-    return mPitch;
+    return video_pitch;
     
 } // size_t Core::getPitch()
 
@@ -150,7 +146,7 @@ retro_pixel_format Core::getPixelFormat() {
 
 } // Core::getPixelFormat()
 
-// [1]
+// ~[1]
 
 // Audio
 // [2]
@@ -177,9 +173,9 @@ int16_t Core::getRightChannel() {
 
     return right_channel;
 
-} // Core::getLeftChannel()
+} // Core::getRightChannel()
 
-// [2]
+// ~[2]
 
 // Input
 // [3]
@@ -191,7 +187,7 @@ void Core::setInputStateCallBack(bool is_pressed, unsigned port, unsigned device
 
 } // Core::setInputStateCallBack(unsigned port, unsigned device, unsigned index, unsigned id)
 
-// [3]
+// ~[3]
 
 LibretroSymbols* Core::getSymbols() {
 
@@ -311,7 +307,7 @@ bool Core::loadGame( const char *path ) {
         symbols->retro_get_system_av_info( system_av_info );
         game_geometry = system_av_info->geometry;
         system_timing = system_av_info->timing;
-        //mWidth = game_geometry.max_width;
+        //video_width = game_geometry.max_width;
         //video_height = game_geometry.max_height;
         return true;
         
@@ -581,9 +577,9 @@ void Core::logCallback( enum retro_log_level level, const char *fmt, ... ) {
 void Core::videoRefreshCallback( const void *data, unsigned width, unsigned height, size_t pitch ) {
 
     core->video_data = data;
-    core->mWidth = width;
+    core->video_width = width;
     core->video_height = height;
-    core->mPitch = pitch;
+    core->video_pitch = pitch;
 
     return;
     

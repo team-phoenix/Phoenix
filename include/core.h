@@ -132,8 +132,8 @@ private:
     // Video
     unsigned video_height;
     const void *video_data;
-    size_t mPitch;
-    unsigned mWidth;
+    size_t video_pitch;
+    unsigned video_width;
     retro_pixel_format pixel_format;
 
     // Audio
