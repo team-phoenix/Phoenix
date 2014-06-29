@@ -177,13 +177,16 @@ void GLWindow::keyPressEvent(QKeyEvent *event) {
 
     switch(event->key()) {
         case Qt::Key_Escape:
-            qDebug() << "Esc pressed";
             emit windowVisibilityChanged("Windowed");
+            break;
+        case Qt::Key_Space:
+            if (m_run)
+                setRun(false);
+            else
+                setRun(true);
             break;
         case Qt::Key_Return:
             id = RETRO_DEVICE_ID_JOYPAD_START;
-            break;
-        case Qt::Key_Space:
             break;
         case Qt::Key_Left:
             id = RETRO_DEVICE_ID_JOYPAD_LEFT;
