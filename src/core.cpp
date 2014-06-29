@@ -53,7 +53,7 @@ Core::Core() {
 Core::~Core() {
 
     if (mLibretroCore)
-        mLibretroCore->deleteLater();
+        delete mLibretroCore;
     if (mRetroSystemAVInfo)
         delete mRetroSystemAVInfo;
     if (mRetroSystemInfo)
