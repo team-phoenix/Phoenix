@@ -3,9 +3,7 @@
 
 #include "audio.h"
 
-GLWindow::GLWindow() :
-          m_program(0), m_texture(0),
-          m_libcore(""), m_game("") {
+GLWindow::GLWindow() {
 
 
 //#ifdef Q_OS_WIN32
@@ -27,6 +25,11 @@ GLWindow::GLWindow() :
         //qDebug() << "Game was not loaded";
         //exit(EXIT_FAILURE);
     //}
+
+    m_program = 0;
+    m_texture = 0;
+    m_libcore = "";
+    m_game = "";
 
     id = 0;
     device = RETRO_DEVICE_JOYPAD;
@@ -124,52 +127,39 @@ void GLWindow::keyReleaseEvent(QKeyEvent *event) {
 
     switch(event->key()) {
         case Qt::Key_Return:
-            qDebug() << "Return released";
             id = RETRO_DEVICE_ID_JOYPAD_START;
             break;
         case Qt::Key_Space:
-            qDebug() << "Space released";
             break;
         case Qt::Key_Left:
-            qDebug() << "Left released";
             id = RETRO_DEVICE_ID_JOYPAD_LEFT;
             break;
         case Qt::Key_Right:
-            qDebug() << "Right released";
             id = RETRO_DEVICE_ID_JOYPAD_RIGHT;
             break;
         case Qt::Key_Down:
-            qDebug() << "Down released";
             id = RETRO_DEVICE_ID_JOYPAD_DOWN;
             break;
         case Qt::Key_Up:
-            qDebug() << "Up released";
             id = RETRO_DEVICE_ID_JOYPAD_UP ;
             break;
         case Qt::Key_A:
-            qDebug() << "A released ( A pad)";
             id = RETRO_DEVICE_ID_JOYPAD_A;
             break;
         case Qt::Key_S:
-            qDebug() << "S released ( B pad)";
             id = RETRO_DEVICE_ID_JOYPAD_B;
             break;
         case Qt::Key_W:
-            qDebug() << "W released";
             break;
         case Qt::Key_D:
-            qDebug() << "D released";
             break;
         case Qt::Key_X:
-            qDebug() << "X released ( X pad)";
             id = RETRO_DEVICE_ID_JOYPAD_X;
             break;
         case Qt::Key_Z:
-            qDebug() << "Z released (Y pad)";
             id = RETRO_DEVICE_ID_JOYPAD_Y;
             break;
         default:
-            qDebug() << "Key not handled";
             break;
     }
 
@@ -191,48 +181,36 @@ void GLWindow::keyPressEvent(QKeyEvent *event) {
             emit windowVisibilityChanged("Windowed");
             break;
         case Qt::Key_Return:
-            qDebug() << "Return pressed";
             id = RETRO_DEVICE_ID_JOYPAD_START;
             break;
         case Qt::Key_Space:
-            qDebug() << "Space pressed";
             break;
         case Qt::Key_Left:
-            qDebug() << "Left pressed";
             id = RETRO_DEVICE_ID_JOYPAD_LEFT;
             break;
         case Qt::Key_Right:
-            qDebug() << "Right pressed";
             id = RETRO_DEVICE_ID_JOYPAD_RIGHT;
             break;
         case Qt::Key_Down:
-            qDebug() << "Down pressed";
             id = RETRO_DEVICE_ID_JOYPAD_DOWN;
             break;
         case Qt::Key_Up:
-            qDebug() << "Up pressed";
             id = RETRO_DEVICE_ID_JOYPAD_UP ;
             break;
         case Qt::Key_A:
-            qDebug() << "A pressed ( A pad)";
             id = RETRO_DEVICE_ID_JOYPAD_A;
             break;
         case Qt::Key_S:
-            qDebug() << "S pressed ( B pad)";
             id = RETRO_DEVICE_ID_JOYPAD_B;
             break;
         case Qt::Key_W:
-            qDebug() << "W pressed";
             break;
         case Qt::Key_D:
-            qDebug() << "D pressed";
             break;
         case Qt::Key_X:
-            qDebug() << "X pressed ( X pad)";
             id = RETRO_DEVICE_ID_JOYPAD_X;
             break;
         case Qt::Key_Z:
-            qDebug() << "Z pressed (Y pad)";
             id = RETRO_DEVICE_ID_JOYPAD_Y;
             break;
         default:
