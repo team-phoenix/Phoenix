@@ -12,15 +12,20 @@ ApplicationWindow {
     height: 600;
     visible: true;
     visibility: "Windowed";
+    title: "Phoenix";
 
     MouseArea {
         id: rootMouse;
         anchors.fill: parent;
         hoverEnabled: true
         onEntered: toolBar.visible = true;
-        onExited: toolBar.visible = false;
         onMouseXChanged: {
-            cursorShape = Qt.ArrowCursor;
+            if (cursorShape !== Qt.ArrowCursor)
+                cursorShape = Qt.ArrowCursor;
+            if (!toolBar.visible)
+                toolBar.visible = true;
+
+
             mouseTimer.restart();
         }
 
@@ -30,7 +35,16 @@ ApplicationWindow {
         id: mouseTimer;
         interval: 2000;
         running: true;
-        onTriggered: rootMouse.cursorShape = Qt.BlankCursor;
+
+        onTriggered: {
+            rootMouse.cursorShape = Qt.BlankCursor;
+            if (bubbleMenu.visible)
+                bubbleMenu.visible = false;
+
+
+            toolBar.visible = false;
+        }
+
     }
 
     GLWindow {
@@ -43,6 +57,7 @@ ApplicationWindow {
             else
                 playBtn.iconImage = "assets/play.png";
         }
+
 
 
         onWindowVisibilityChanged: visibility = windowVisibility;
@@ -68,15 +83,15 @@ ApplicationWindow {
     Rectangle {
         id: bubbleMenu;
         visible: false;
-        width: 200;
+        width: 100;
         height: 300;
-        color: "#5a5a5a";
-        opacity: 0.3;
+        color: "#363535";
+        radius: 3;
         anchors {
             bottom: toolBar.top;
-            left: parent.left;
-            leftMargin: 10;
-            bottomMargin: 10;
+            right: parent.right;
+            rightMargin: 175;
+            bottomMargin: 25;
         }
 
     }
@@ -121,18 +136,6 @@ ApplicationWindow {
                 width: 200;
                 spacing: 25;
 
-                Button {
-                    id: settingsBtn;
-                    anchors.verticalCenter: parent.verticalCenter;
-                    onClicked: bubbleMenu.visible ? bubbleMenu.visible = false : bubbleMenu.visible = true;
-                    style: ButtonStyle {
-                        background: Image {
-                            source: "assets/navicon-round.png";
-                            sourceSize.width: 20;
-                            sourceSize.height: 20;
-                        }
-                    }
-                }
                 Button {
                     id: quitBtn;
                     anchors.verticalCenter: parent.verticalCenter;
@@ -209,6 +212,12 @@ ApplicationWindow {
                             sourceSize.width: 25;
                             sourceSize.height: 25;
                         }
+                    }
+                    onClicked: {
+                        if (bubbleMenu.visible)
+                            bubbleMenu.visible = false;
+                        else
+                            bubbleMenu.visible = true;
                     }
                 }
 
