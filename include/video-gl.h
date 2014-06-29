@@ -10,6 +10,7 @@
 #include <QOpenGLTexture>
 #include <QImage>
 #include <QByteArray>
+#include <QEvent>
 
 #include "qdebug.h"
 #include "core.h"
@@ -55,6 +56,7 @@ public:
 
 protected:
     void keyPressEvent(QKeyEvent *event);
+    void keyReleaseEvent(QKeyEvent *event);
 
 signals:
     void libcoreChanged( QString );
@@ -75,6 +77,7 @@ private:
     QOpenGLShaderProgram *m_program;
     QOpenGLTexture *m_texture;
     Core *core;
+    int frame_count;
     // [1]
 
     // Qml defined variables
@@ -90,6 +93,15 @@ private:
     Audio *audio;
     void updateAudioFormat();
     //[3]
+
+    // Input
+    // [4]
+    unsigned id;
+    unsigned device;
+    unsigned port;
+    bool is_pressed;
+    uint32_t index;
+    //[4]
 
     static inline QImage::Format retroToQImageFormat( enum retro_pixel_format fmt ) {
         static QImage::Format format_table[3] = {

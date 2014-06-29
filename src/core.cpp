@@ -85,12 +85,6 @@ void Core::doFrame() {
 
 // Getters
 
-QMap<unsigned, bool> Core::getKeyBoard() {
-
-    return mKeyboard;
-
-}
-
 // Video
 // [1]
 
@@ -186,6 +180,18 @@ int16_t Core::getRightChannel() {
 } // Core::getLeftChannel()
 
 // [2]
+
+// Input
+// [3]
+
+void Core::setInputStateCallBack(bool is_pressed, unsigned port, unsigned device, unsigned index, unsigned id) {
+
+    joypad[id] = is_pressed;
+    inputStateCallback(port, device, index, id);
+
+} // Core::setInputStateCallBack(unsigned port, unsigned device, unsigned index, unsigned id)
+
+// [3]
 
 LibretroSymbols* Core::getSymbols() {
 
@@ -539,18 +545,16 @@ void Core::inputPollCallback( void ) {
 
 int16_t Core::inputStateCallback( unsigned port, unsigned device, unsigned index, unsigned id ) {
 
-   // qDebug() << "input port: " << port;
-    //qDebug() << "input device: " << device;
-    //qDebug() << "input index: " << index;
-    //qDebug() << "input id: " << id;
-
-    // If device is already being read from, ignore
-    if (port != 0 || index != 0)
+    if(port != 0 || index != 0)
         return 0;
 
     switch(device) {
         case RETRO_DEVICE_JOYPAD:
-            return 0;
+            if (id >= 16)
+                return false;
+
+            return Core::core->joypad[id];
+
         case RETRO_DEVICE_KEYBOARD:
             // If key press id is a proper key, return true
             qDebug() << "keyboard is true";
