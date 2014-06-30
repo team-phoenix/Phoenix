@@ -27,8 +27,7 @@ signals:
 
 public slots:
     void stateChanged(QAudio::State s) {
-        qDebug() << "state:" << s << " " <<aout->error();
-        if(aout->error() == QAudio::UnderrunError) {
+        if(s == QAudio::IdleState && aout->error() == QAudio::UnderrunError) {
             aout->start(m_aio);
         }
     }

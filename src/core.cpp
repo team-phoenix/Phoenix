@@ -52,10 +52,10 @@ Core::Core() {
 
 Core::~Core() {
 
-        delete libretro_core;
-        delete system_av_info;
-        delete system_info;
-        delete symbols;
+    delete libretro_core;
+    delete system_av_info;
+    delete system_info;
+    delete symbols;
     Core::core = NULL;
 
 } // Core::~Core()
@@ -327,20 +327,19 @@ void Core::audioSampleCallback( int16_t left, int16_t right ) {
 
     Core::core->left_channel = left;
     Core::core->right_channel = right;
+    if(core->aio) {
+        uint32_t sample = (left << 16) | right;
+        core->aio->write((const char*)&sample, sizeof(int16_t) * 2);
+    }
 
-    qDebug() << "Core::audioSampleCallback";
-    return;
-    
 } // Core::an udioSampleCallback()
 
 size_t Core::audioSampleBatchCallback( const int16_t *data, size_t frames ) {
 
-//    core->audio_data = data;
-//    core->audio_frames = frames;
+    core->audio_data = data;
+    core->audio_frames = frames;
     if(core->aio)
         core->aio->write((const char *)data, frames * sizeof(int16_t) * 2);
-    //qDebug() << "frames: " << frames;
-    //qDebug() << "Core::audioSampleBatchCallback";
 
     return frames;
     

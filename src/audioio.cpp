@@ -6,7 +6,7 @@
 #include <QDebug>
 
 
-inline void AudioIO::cleanBuffer( QByteArray * ba, int size_read ) {
+inline void AudioIO::cleanBuffer( QByteArray *ba, int size_read ) {
     if(ba->size() == size_read) {
         ba->clear();
     } else {
@@ -24,10 +24,12 @@ qint64 AudioIO::readData( char *data, qint64 maxSize ) {
     if(outbuf->size() > 0) {
 //        qDebug() << QThread::currentThread() << "READ" << maxSize << outbuf->size();
         r = qMin<qint64>(outbuf->size(), leftToRead);
-        memcpy(data, outbuf->constData(), r);
-        data += r;
-        leftToRead -= r;
-        cleanBuffer(outbuf, r);
+        if(r) {
+            memcpy(data, outbuf->constData(), r);
+            data += r;
+            leftToRead -= r;
+            cleanBuffer(outbuf, r);
+        }
         /* If we gave as much data to consumer as possible, return */
         if(maxSize <= 0)
             return maxSize;
@@ -39,9 +41,11 @@ qint64 AudioIO::readData( char *data, qint64 maxSize ) {
     bufmutex.unlock();
 //    qDebug() << QThread::currentThread() << "READ2" << maxSize << outbuf->size();
     r = qMin<qint64>(outbuf->size(), leftToRead);
-    memcpy(data, outbuf->constData(), r);
-    leftToRead -= r;
-    cleanBuffer(outbuf, r);
+    if(r) {
+        memcpy(data, outbuf->constData(), r);
+        leftToRead -= r;
+        cleanBuffer(outbuf, r);
+    }
     return maxSize-leftToRead;
 }
 

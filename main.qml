@@ -75,8 +75,8 @@ ApplicationWindow {
         // frontend startup. Will hopefully reduce load time of game.
 
         Component.onCompleted: {
-            libcore = "C:/Users/robert/Desktop/leesstuff/snes9x_libretro.dll";
-            game =  "C:/Users/robert/Desktop/leesstuff/past.sfc";
+            libcore = "/usr/lib/libretro/bsnes_balanced_libretro.so";
+            game =  "Super Street Fighter II (USA).sfc";
         }
 
     }

@@ -17,7 +17,7 @@ Audio::Audio( QObject * parent /*= 0*/ )
 }
 
 void Audio::start( ) {
-    thread.start();
+    thread.start(QThread::HighestPriority);
 }
 
 /* This needs to be called on the audio thread*/
