@@ -66,6 +66,9 @@ void GLWindow::handleWindowChanged(QQuickWindow *win)
         // a Qt::DirectConnection
 
         connect(win, SIGNAL(beforeRendering()), this, SLOT(paint()), Qt::DirectConnection);
+        connect(win, SIGNAL(widthChanged(int)), this, SLOT(handleGeometryChanged(int)));
+        connect(win, SIGNAL(heightChanged(int)), this, SLOT(handleGeometryChanged(int)));
+        connect(win, SIGNAL(sceneGraphInitialized()), this, SLOT(handleSceneGraphInitialized()));
 
         // If we allow QML to do the clearing, they would clear what we paint
         // and nothing would show.
@@ -228,27 +231,39 @@ void GLWindow::keyPressEvent(QKeyEvent *event) {
 
 //int16_t Core::inputStateCallback( unsigned port, unsigned device, unsigned index, unsigned id ) {
 
+void GLWindow::refreshItemGeometry() {
+    qreal pixel_ratio = window()->devicePixelRatio();
+    item_w = int(pixel_ratio * width());
+    item_h = int(pixel_ratio * height());
+    item_aspect = (qreal)item_w / item_h;
+
+    viewportXY = mapToScene(QPointF(x(), height()+y())).toPoint();
+    viewportXY.setY(window()->height() - viewportXY.y());
+}
 
 void GLWindow::initGL() {
 
-    qreal pixel_ratio = window()->devicePixelRatio();
-    int w = int(pixel_ratio * window()->width());
-    int h = int(pixel_ratio * window()->height());
-
-    qreal window_aspect = (double)w / h;
     qreal desired_aspect = core->getAspectRatio();
-    ulong corew = h * desired_aspect;
-    ulong coreh = w / desired_aspect;
+    ulong core_w = item_h * desired_aspect;
+    ulong core_h = item_w / desired_aspect;
+    QRect viewportRect;
 
-    if(fabsf(window_aspect - desired_aspect) < 0.0001f) {
-        // no need
+    if(fabsf(item_aspect - desired_aspect) < 0.0001f) {
+        viewportRect.setRect(viewportXY.x(), viewportXY.y(), core_w, core_h);
     }
-    else if(window_aspect > desired_aspect) {
-        glViewport( (w - corew) / 2, 0, corew, h );
+    else if(item_aspect > desired_aspect) {
+        viewportRect.setRect(viewportXY.x() + ((item_w - core_w) / 2),
+                             viewportXY.y(),
+                             core_w, item_h);
     }
     else {
-        glViewport( 0, (h - coreh) / 2, w, coreh );
+        viewportRect.setRect(viewportXY.x(),
+                             viewportXY.y() + ((item_h - core_h) / 2),
+                             item_w, core_h );
     }
+
+    glViewport(viewportRect.x(), viewportRect.y(),
+               viewportRect.width(), viewportRect.height());
 
     glDisable(GL_DEPTH_TEST);
 

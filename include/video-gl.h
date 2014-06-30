@@ -55,8 +55,13 @@ public:
 
 
 protected:
-    void keyPressEvent(QKeyEvent *event);
-    void keyReleaseEvent(QKeyEvent *event);
+    void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
+    void keyReleaseEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
+    void geometryChanged(const QRectF &newGeom, const QRectF &oldGeom) Q_DECL_OVERRIDE {
+        Q_UNUSED(newGeom);
+        Q_UNUSED(oldGeom);
+        refreshItemGeometry();
+    };
 
 signals:
     void libcoreChanged( QString );
@@ -70,6 +75,13 @@ public slots:
 
 private slots:
     void handleWindowChanged( QQuickWindow *win );
+    void handleGeometryChanged(int unused) {
+        Q_UNUSED(unused);
+        refreshItemGeometry();
+    }
+    void handleSceneGraphInitialized() {
+        refreshItemGeometry();
+    }
 
 private:
     // Video
@@ -78,6 +90,10 @@ private:
     QOpenGLTexture *m_texture;
     Core *core;
     int frame_count;
+    int item_w;
+    int item_h;
+    qreal item_aspect; // item aspect ratio
+    QPoint viewportXY;
     // [1]
 
     // Qml defined variables
@@ -102,6 +118,8 @@ private:
     bool is_pressed;
     uint32_t index;
     //[4]
+
+    void refreshItemGeometry(); // called every time the item's with/height/x/y change
 
     static inline QImage::Format retroToQImageFormat( enum retro_pixel_format fmt ) {
         static QImage::Format format_table[3] = {
