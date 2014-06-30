@@ -60,6 +60,7 @@ protected:
     void geometryChanged(const QRectF &newGeom, const QRectF &oldGeom) Q_DECL_OVERRIDE {
         Q_UNUSED(newGeom);
         Q_UNUSED(oldGeom);
+        QQuickItem::geometryChanged(newGeom, oldGeom);
         refreshItemGeometry();
     };
 
