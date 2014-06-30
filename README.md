@@ -3,6 +3,9 @@ Phoenix
 
 A super-slick libretro client powered by Qt5
 
+[![Build Status](https://secure.travis-ci.org/team-phoenix/Phoenix.png)](http://travis-ci.org/team-phoenix/Phoenix)
+
+
 Environment
 -----------
 
