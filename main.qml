@@ -51,6 +51,7 @@ ApplicationWindow {
         id: glWindow;
         run: false; // default must be true
         focus: true;
+        anchors.fill: parent;
         onRunChanged: {
             if (run)
                 playBtn.iconImage = "assets/pause.png";
