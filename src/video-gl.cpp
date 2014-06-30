@@ -37,7 +37,6 @@ GLWindow::GLWindow() {
     is_pressed = true;
     index = 0;
 
-    frame_count = 0;
     audio = new Audio();
     Q_CHECK_PTR(audio);
     audio->start();
@@ -52,10 +51,8 @@ GLWindow::~GLWindow() {
     delete core;
     if (m_program)
         delete m_program;
-    if (m_texture) {
+    if (m_texture)
         delete m_texture;
-    }
-
 }
 
 void GLWindow::handleWindowChanged(QQuickWindow *win)
@@ -75,6 +72,14 @@ void GLWindow::handleWindowChanged(QQuickWindow *win)
         win->setClearBeforeRendering(false);
 
     }
+}
+
+void GLWindow::handleSceneGraphInitialized() {
+    refreshItemGeometry();
+    // initialize m_texture with an empty 1x1 black image
+    QImage emptyImage(1, 1, QImage::Format_RGB32);
+    emptyImage.fill(Qt::black);
+    m_texture = new QOpenGLTexture(emptyImage);
 }
 
 void GLWindow::setWindowVisibility(QString windowVisibility) {
@@ -310,11 +315,12 @@ void GLWindow::setTexture( QOpenGLTexture::Filter min_scale, QOpenGLTexture::Fil
 
     QImage::Format frame_format = retroToQImageFormat(core->getPixelFormat());
 
-    m_texture = new QOpenGLTexture( QImage( ( const uchar * )core->getImageData(),
-                                            core->getBaseWidth(),
-                                            core->getBaseHeight(),
-                                            core->getPitch(),
-                                            frame_format ).mirrored() );
+    m_texture->destroy();
+    m_texture->setData( QImage( ( const uchar * )core->getImageData(),
+                        core->getBaseWidth(),
+                        core->getBaseHeight(),
+                        core->getPitch(),
+                        frame_format ).mirrored() );
 
     m_texture->setMinMagFilters(min_scale, max_scale);
 
@@ -326,19 +332,7 @@ void GLWindow::paint() {
     // Produces 1 frame of data
 
     if (m_run) {
-
-        frame_count = 1;
         core->doFrame();
-
-    }
-
-    if (!m_texture) {
-
-        // Must render for 1 frame if m_run is defaulted to false
-        if (frame_count != 1) {
-            frame_count = 1;
-            core->doFrame();
-        }
         // Sets texture from core->getImageData();
         setTexture( QOpenGLTexture::Linear, QOpenGLTexture::Nearest );
     }
@@ -388,21 +382,10 @@ void GLWindow::paint() {
     // Draws processed triangle stip onto the screen.
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-    //int16_t audio_data[] = { core->getLeftChannel(), core->getRightChannel() };
-
-    //audio->play( QByteArray( (const char *)audio_data, sizeof(audio_data) ) );
-
-    //audio->play( core->getAudioData(), core->getAudioFrames() );
-
     m_program->disableAttributeArray(0);
     m_program->disableAttributeArray(1);
     m_program->release();
     m_texture->release();
-
-    if (m_run) {
-        delete m_texture;
-        m_texture = 0;
-    }
 
     // Loop forever;
     window()->update();

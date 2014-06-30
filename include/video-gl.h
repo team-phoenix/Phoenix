@@ -80,9 +80,7 @@ private slots:
         Q_UNUSED(unused);
         refreshItemGeometry();
     }
-    void handleSceneGraphInitialized() {
-        refreshItemGeometry();
-    }
+    void handleSceneGraphInitialized();
 
 private:
     // Video
@@ -90,7 +88,6 @@ private:
     QOpenGLShaderProgram *m_program;
     QOpenGLTexture *m_texture;
     Core *core;
-    int frame_count;
     int item_w;
     int item_h;
     qreal item_aspect; // item aspect ratio
