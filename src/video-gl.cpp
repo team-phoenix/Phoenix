@@ -331,6 +331,7 @@ void GLWindow::setTexture( QOpenGLTexture::Filter min_scale, QOpenGLTexture::Fil
 void GLWindow::paint() {
     // Produces 1 frame of data
 
+
     if (m_run) {
 
         core->doFrame();
