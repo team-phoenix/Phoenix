@@ -332,9 +332,11 @@ void GLWindow::paint() {
     // Produces 1 frame of data
 
     if (m_run) {
+
         core->doFrame();
+
         // Sets texture from core->getImageData();
-        setTexture( QOpenGLTexture::Linear, QOpenGLTexture::Nearest );
+        setTexture( QOpenGLTexture::Linear, QOpenGLTexture::LinearMipMapNearest );
     }
 
     // Sets viewport size, and enables / disables opengl functionality.
