@@ -1,7 +1,7 @@
 TEMPLATE = app
 TARGET = phoenix
 INCLUDEPATH += ./include ../RetroArch
-CONFIG += debug console
+CONFIG += debug console c++11
 
 QT += widgets core gui multimedia qml quick
 

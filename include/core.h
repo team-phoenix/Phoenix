@@ -18,7 +18,7 @@
 #include "audioio.h"
 
 // Helper for resolving libretro methods
-#define resolved_sym( name ) symbols->name = ( typeof( symbols->name ) )libretro_core->resolve( #name );
+#define resolved_sym( name ) symbols->name = ( decltype( symbols->name ) )libretro_core->resolve( #name );
 
 struct LibretroSymbols {
 
