@@ -1,33 +1,38 @@
 
+
 #include "audio.h"
 
 
-Audio::Audio( QObject * parent /*= 0*/ )
-                        : QObject(parent),
-                          isRunning(false),
-                          aout(0),
-                          m_aio(0) {
-
-        m_aio = new AudioIO();
-        Q_CHECK_PTR(m_aio);
+Audio::Audio(QObject * parent /*= 0*/)
+            : QObject(parent), isRunning(false),
+              aout(0), aio(0), timer(this) {
         this->moveToThread(&thread);
         connect(&thread, SIGNAL(started()), SLOT(threadStarted()));
+        thread.setObjectName("phoenix-audio");
+
+        m_abuf = new AudioBuffer();
+        Q_CHECK_PTR(m_abuf);
+        //connect(m_abuf, SIGNAL(hasPeriodSize()), this, SLOT(handleHasPeriodSize()));
+
+        timer.moveToThread(&thread);
+        connect(&timer, SIGNAL(timeout()), this, SLOT(handlePeriodTimer()));
+
         // we need send this signal to ourselves
         connect(this, SIGNAL(formatChanged()), this, SLOT(handleFormatChanged()));
 }
 
-void Audio::start( ) {
+void Audio::start() {
     thread.start(QThread::HighestPriority);
 }
 
 /* This needs to be called on the audio thread*/
-void Audio::setFormat( QAudioFormat _afmt ) {
+void Audio::setFormat(QAudioFormat _afmt) {
     // TODO: perform checking...
     afmt = _afmt;
     emit formatChanged();
 }
 
-void Audio::handleFormatChanged( ) {
+void Audio::handleFormatChanged() {
     if(aout) {
         aout->stop();
         delete aout;
@@ -36,13 +41,14 @@ void Audio::handleFormatChanged( ) {
 //    aout->moveToThread(&thread);
     Q_CHECK_PTR(aout);
     connect(aout, SIGNAL(stateChanged(QAudio::State)), SLOT(stateChanged(QAudio::State)));
-    aout->start(m_aio);
+    aio = aout->start();
+    timer.setInterval(afmt.durationForBytes(aout->periodSize() * 1.5) / 1000);
     if(!isRunning) {
         aout->suspend();
     }
 }
 
-void Audio::threadStarted( ) {
+void Audio::threadStarted() {
 //    qDebug() << QThread::currentThread() << &thread;
     if(!afmt.isValid()) {
         // we don't have a valid audio format yet...
@@ -51,10 +57,31 @@ void Audio::threadStarted( ) {
     aout = new QAudioOutput(afmt);
     Q_CHECK_PTR(aout);
     aout->moveToThread(&thread);
-    m_aio->moveToThread(&thread);
     connect(aout, SIGNAL(stateChanged(QAudio::State)), SLOT(stateChanged(QAudio::State)));
-    aout->start(m_aio);
+    aio = aout->start();
     aout->suspend(); // always start suspended
+    timer.setInterval(afmt.durationForBytes(aout->periodSize() * 1.5) / 1000);
+    aio->moveToThread(&thread);
+}
+
+void Audio::handlePeriodTimer() {
+    Q_ASSERT(QThread::currentThread() == &thread);
+    Q_ASSERT(aio);
+    int toWrite = aout->bytesFree();
+    if(!toWrite)
+        return;
+
+    char tmpbuf[toWrite] = {0};
+    int read = m_abuf->read(tmpbuf, toWrite);
+    int wrote = aio->write(tmpbuf, read);
+    Q_UNUSED(wrote);
+//    if(wrote != read) {
+//        qDebug() << "HU" << wrote << read;
+//        while(wrote < read) {
+//            wrote += aio->write(tmpbuf+wrote, read-wrote);
+//        }
+//        qDebug() << "OKAY";
+//    }
 }
 
 void Audio::runChanged( bool _isRunning ) {
@@ -62,17 +89,23 @@ void Audio::runChanged( bool _isRunning ) {
     if(!aout)
         return;
     if(!isRunning) {
-        if(aout->state() != QAudio::SuspendedState)
+        if(aout->state() != QAudio::SuspendedState) {
             aout->suspend();
+            timer.stop();
+        }
     } else {
-        if(aout->state() != QAudio::ActiveState)
+        if(aout->state() != QAudio::ActiveState) {
             aout->resume();
+            timer.start();
+        }
     }
 }
 
 Audio::~Audio() {
     if(aout)
         delete aout;
-    if(m_aio)
-        delete m_aio;
+    if(aio)
+        delete aio;
+    if(m_abuf)
+        delete m_abuf;
 }

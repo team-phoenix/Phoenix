@@ -40,7 +40,7 @@ GLWindow::GLWindow() {
     audio = new Audio();
     Q_CHECK_PTR(audio);
     audio->start();
-    core->aio = audio->aio();
+    core->audio_buf = audio->abuf();
 
     connect(this, SIGNAL(runChanged(bool)), audio, SLOT(runChanged(bool)));
     connect(this, SIGNAL(windowChanged(QQuickWindow*)), this, SLOT(handleWindowChanged(QQuickWindow*)));

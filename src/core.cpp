@@ -30,7 +30,7 @@ Core::Core() {
 
     libretro_core = NULL;
     video_data = NULL;
-    aio = NULL;
+    audio_buf = NULL;
     system_av_info = new retro_system_av_info();
     system_info = new retro_system_info();
     symbols = new LibretroSymbols;
@@ -345,9 +345,9 @@ void Core::audioSampleCallback( int16_t left, int16_t right ) {
 
     Core::core->left_channel = left;
     Core::core->right_channel = right;
-    if(core->aio) {
+    if(core->audio_buf) {
         uint32_t sample = (left << 16) | right;
-        core->aio->write((const char*)&sample, sizeof(int16_t) * 2);
+        core->audio_buf->write((const char*)&sample, sizeof(int16_t) * 2);
     }
 
 } // Core::an udioSampleCallback()
@@ -356,8 +356,8 @@ size_t Core::audioSampleBatchCallback( const int16_t *data, size_t frames ) {
 
     core->audio_data = data;
     core->audio_frames = frames;
-    if(core->aio)
-        core->aio->write((const char *)data, frames * sizeof(int16_t) * 2);
+    if(core->audio_buf)
+        core->audio_buf->write((const char *)data, frames * sizeof(int16_t) * 2);
 
     return frames;
     

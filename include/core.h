@@ -15,7 +15,7 @@
 #include <QLibrary>
 
 #include "libretro.h"
-#include "audioio.h"
+#include "audiobuffer.h"
 
 // Helper for resolving libretro methods
 #define resolved_sym( name ) symbols->name = ( decltype( symbols->name ) )libretro_core->resolve( #name );
@@ -75,7 +75,7 @@ public:
     void doFrame();
     LibretroSymbols *getSymbols();
     QString getLibraryName();
-    AudioIO *aio;
+    AudioBuffer *audio_buf;
     
     // Video
     retro_hw_render_callback getHWData();
