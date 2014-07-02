@@ -23,6 +23,8 @@ class GLWindow : public QQuickItem {
     Q_PROPERTY(QString game READ game WRITE setGame NOTIFY gameChanged)
     Q_PROPERTY(bool run READ run WRITE setRun NOTIFY runChanged)
     Q_PROPERTY(QString windowVisibility READ windowVisibility WRITE setWindowVisibility NOTIFY windowVisibilityChanged)
+    Q_PROPERTY(QString systemDirectory READ systemDirectory WRITE setSystemDirectory NOTIFY systemDirectoryChanged)
+
 
 public:
     GLWindow();
@@ -34,6 +36,7 @@ public:
     void setGame( QString game);
     void setRun( bool run );
     void setWindowVisibility( QString windowVisibility );
+    void setSystemDirectory( QString systemDirectory );
     void setTexture( QOpenGLTexture::Filter min_scale,
                      QOpenGLTexture::Filter max_scale);
 
@@ -53,6 +56,10 @@ public:
         return m_win_visibility;
     }
 
+    QString systemDirectory() const {
+        return m_system_directory;
+    }
+
 
 protected:
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
@@ -69,6 +76,7 @@ signals:
     void gameChanged( QString );
     void runChanged( bool );
     void windowVisibilityChanged( QString windowVisibility );
+    void systemDirectoryChanged();
 
 public slots:
     void paint();
@@ -96,6 +104,7 @@ private:
 
     // Qml defined variables
     // [2]
+    QString m_system_directory;
     QString m_libcore;
     QString m_game;
     QString m_win_visibility;

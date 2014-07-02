@@ -89,6 +89,12 @@ void GLWindow::setWindowVisibility(QString windowVisibility) {
 
 }
 
+void GLWindow::setSystemDirectory(QString systemDirectory) {
+
+    core->setSystemDirectory(systemDirectory);
+
+}
+
 void GLWindow::setCore( QString libcore ) {
     qDebug() << "Core: " << libcore;
     if ( !core->loadCore(libcore.toStdString().c_str() )) {
