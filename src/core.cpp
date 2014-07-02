@@ -31,8 +31,8 @@ Core::Core() {
     libretro_core = NULL;
     video_data = NULL;
     aio = NULL;
-    system_av_info = new retro_system_av_info;
-    system_info = new retro_system_info;
+    system_av_info = new retro_system_av_info();
+    system_info = new retro_system_info();
     symbols = new LibretroSymbols;
 
     video_height = 0;
@@ -123,9 +123,11 @@ unsigned Core::getMaxWidth() {
 
 float Core::getAspectRatio() {
 
-    return system_av_info->geometry.aspect_ratio;
+    if (system_av_info->geometry.aspect_ratio)
+        return system_av_info->geometry.aspect_ratio;
+    return (float )system_av_info->geometry.base_width / system_av_info->geometry.base_height;
 
-} // unsigned Core::getAspectRatio();
+} // float Core::getAspectRatio();
 
 double Core::getFps() {
 
@@ -323,8 +325,8 @@ bool Core::loadGame( const char *path ) {
         symbols->retro_get_system_av_info( system_av_info );
         game_geometry = system_av_info->geometry;
         system_timing = system_av_info->timing;
-        //video_width = game_geometry.max_width;
-        //video_height = game_geometry.max_height;
+        video_width = game_geometry.max_width;
+        video_height = game_geometry.max_height;
         return true;
         
     }
