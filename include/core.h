@@ -78,6 +78,7 @@ public:
     AudioIO *aio;
     
     // Video
+    retro_hw_render_callback getHWData();
     const void *getImageData();
     unsigned getBaseWidth();
     unsigned getBaseHeight();
@@ -94,7 +95,10 @@ public:
     int16_t getLeftChannel();
     int16_t getRightChannel();
 
-    // System Timing
+    // System
+    void setSystemDirectory(QString system_directory);
+
+    // Timing
     double getFps();
     double getSampleRate();
 
@@ -124,7 +128,9 @@ private:
     retro_input_descriptor input_descriptor;
     retro_game_geometry game_geometry;
     retro_system_timing system_timing;
+    retro_hw_render_callback hw_callback;
     bool full_path_needed;
+    QString system_directory;
     
     // Game
     QByteArray game_data;

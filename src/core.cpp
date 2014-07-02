@@ -84,6 +84,12 @@ void Core::doFrame() {
 // Video
 // [1]
 
+retro_hw_render_callback Core::getHWData() {
+
+    return hw_callback;
+
+} // retro_hw_render_callback Core::getHWData()
+
 const void *Core::getImageData() {
 
     return video_data;
@@ -188,6 +194,16 @@ void Core::setInputStateCallBack(bool is_pressed, unsigned port, unsigned device
 } // Core::setInputStateCallBack(unsigned port, unsigned device, unsigned index, unsigned id)
 
 // ~[3]
+
+// System
+// [4]
+void Core::setSystemDirectory(QString system_dir) {
+
+    system_directory = system_dir;
+
+} // Core::setSystemDirectory(QString system_dir)
+
+//~[4]
 
 LibretroSymbols* Core::getSymbols() {
 
@@ -381,7 +397,8 @@ bool Core::environmentCallback( unsigned cmd, void *data ) {
             
         case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY: // 9
             qDebug() << "\tRETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY (9)";
-            break;
+            (*(const char **)data) = Core::core->system_directory.toStdString().c_str();
+            return true;
             
         case RETRO_ENVIRONMENT_SET_PIXEL_FORMAT: { // 10
             qDebug() << "\tRETRO_ENVIRONMENT_SET_PIXEL_FORMAT (10) (handled)";
@@ -430,6 +447,26 @@ bool Core::environmentCallback( unsigned cmd, void *data ) {
             
         case RETRO_ENVIRONMENT_SET_HW_RENDER: // 14
             qDebug() << "\tRETRO_ENVIRONMENT_SET_HW_RENDER (14)";
+            Core::core->hw_callback = *( retro_hw_render_callback *)data;
+            switch (Core::core->hw_callback.context_type) {
+                case RETRO_HW_CONTEXT_NONE:
+                    qDebug() << "No hardware context was selected";
+                    break;
+                case RETRO_HW_CONTEXT_OPENGL:
+                    qDebug() << "OpenGL 2 context was selected";
+                    break;
+                case RETRO_HW_CONTEXT_OPENGLES2:
+                    qDebug() << "OpenGL ES 2 context was selected";
+                    Core::core->hw_callback.context_type = RETRO_HW_CONTEXT_OPENGLES2;\
+                    break;
+                 case RETRO_HW_CONTEXT_OPENGLES3:
+                    qDebug() << "OpenGL 3 context was selected";
+                    break;
+                default:
+                    qCritical() << "RETRO_HW_CONTEXT: " << Core::core->hw_callback.context_type << " was not handled";
+                    return false;
+            }
+
             break;
             
         case RETRO_ENVIRONMENT_GET_VARIABLE: // 15
