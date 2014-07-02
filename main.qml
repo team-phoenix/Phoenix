@@ -49,9 +49,10 @@ ApplicationWindow {
 
     GLWindow {
         id: glWindow;
-        run: false; // default must be true
+        run: true; // default must be true
         focus: true;
         anchors.fill: parent;
+        systemDirectory: "C:\\Users\\lee\\Desktop";
         onRunChanged: {
             if (run)
                 playBtn.iconImage = "assets/pause.png";
@@ -75,8 +76,8 @@ ApplicationWindow {
         // frontend startup. Will hopefully reduce load time of game.
 
         Component.onCompleted: {
-            libcore = "/usr/lib/libretro/bsnes_balanced_libretro.so";
-            game =  "Super Street Fighter II (USA).sfc";
+            libcore = "C:/Users/lee/Desktop/32_cores/nestopia_libretro.dll";
+            game =  "C:/Users/lee/Documents/Emulation/NES/Kung Fu (Japan, USA).nes";
         }
 
     }
