@@ -10,14 +10,12 @@ LIBS +=
 HEADERS += include/core.h       \
            include/video-gl.h   \
            include/audio.h      \
-           include/audioio.h    \
            include/audiobuffer.h
 
 SOURCES += src/main.cpp     \
            src/video-gl.cpp \
            src/core.cpp     \
            src/audio.cpp    \
-           src/audioio.cpp  \
            src/audiobuffer.cpp
 
 RESOURCES = qml.qrc
