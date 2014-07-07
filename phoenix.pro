@@ -8,12 +8,12 @@ QT += widgets core gui multimedia qml quick
 LIBS += 
 
 HEADERS += include/core.h       \
-           include/video-gl.h   \
+           include/videoitem.h   \
            include/audio.h      \
            include/audiobuffer.h
 
 SOURCES += src/main.cpp     \
-           src/video-gl.cpp \
+           src/videoitem.cpp \
            src/core.cpp     \
            src/audio.cpp    \
            src/audiobuffer.cpp

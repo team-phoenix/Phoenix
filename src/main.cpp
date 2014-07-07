@@ -9,7 +9,7 @@
 #include <signal.h>
 #endif
 
-#include "video-gl.h"
+#include "videoitem.h"
 #include "core.h"
 
 int main( int argc, char *argv[] ) {
@@ -23,7 +23,7 @@ int main( int argc, char *argv[] ) {
 #endif
     QGuiApplication a( argc, argv );
     
-    qmlRegisterType<GLWindow>("GLWindow", 1, 0, "GLWindow");
+    qmlRegisterType<VideoItem>("VideoItem", 1, 0, "VideoItem");
     
     
     QQmlApplicationEngine engine(QUrl("qrc:/main.qml"));
