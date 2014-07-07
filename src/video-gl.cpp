@@ -405,8 +405,10 @@ void GLWindow::cleanup()
     // resets shader program
     if (m_program) {
         delete m_program;
-        m_program = 0;
+        m_program = nullptr;
     }
-
-
+    if (m_texture) {
+        delete m_texture;
+        m_texture = nullptr;
+    }
 }
