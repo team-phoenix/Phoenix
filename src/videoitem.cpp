@@ -5,17 +5,6 @@
 
 VideoItem::VideoItem() {
 
-
-//#ifdef Q_OS_WIN32
-    //QString core_path = "../libretro-super/dist/win/bsnes_balanced_libretro.dll";
-    //QString game_path = "../test_roms/Chrono Trigger (U) [!].smc";
-//#endif
-
-//#ifdef Q_OS_LINUX
-    //QString core_path = "../libretro-super/dist/unix/bsnes_balanced_libretro.so";
-    //QString game_path = "../test_roms/Chrono Trigger (U) [!].smc";
-//#endif
-
     core = new Core();
     //if (!core->loadCore(core_path)) {
        // qDebug() << "Core was not loaded";
@@ -128,77 +117,31 @@ void VideoItem::updateAudioFormat() {
     format.setSampleType(QAudioFormat::SignedInt);
     format.setByteOrder(QAudioFormat::LittleEndian);
     format.setCodec("audio/pcm");
+    qDebug() << format << core->getFps();
     // TODO test format
     audio->setFormat(format);
 }
 
-void VideoItem::keyReleaseEvent(QKeyEvent *event) {
+void VideoItem::keyEvent(QKeyEvent *event) {
 
     id = 16;
     device = RETRO_DEVICE_JOYPAD;
     port = 0;
-    is_pressed = false;
-    index = 0;
-
-    switch(event->key()) {
-        case Qt::Key_Return:
-            id = RETRO_DEVICE_ID_JOYPAD_START;
-            break;
-        case Qt::Key_Space:
-            break;
-        case Qt::Key_Left:
-            id = RETRO_DEVICE_ID_JOYPAD_LEFT;
-            break;
-        case Qt::Key_Right:
-            id = RETRO_DEVICE_ID_JOYPAD_RIGHT;
-            break;
-        case Qt::Key_Down:
-            id = RETRO_DEVICE_ID_JOYPAD_DOWN;
-            break;
-        case Qt::Key_Up:
-            id = RETRO_DEVICE_ID_JOYPAD_UP ;
-            break;
-        case Qt::Key_A:
-            id = RETRO_DEVICE_ID_JOYPAD_A;
-            break;
-        case Qt::Key_S:
-            id = RETRO_DEVICE_ID_JOYPAD_B;
-            break;
-        case Qt::Key_W:
-            break;
-        case Qt::Key_D:
-            break;
-        case Qt::Key_X:
-            id = RETRO_DEVICE_ID_JOYPAD_X;
-            break;
-        case Qt::Key_Z:
-            id = RETRO_DEVICE_ID_JOYPAD_Y;
-            break;
-        default:
-            break;
-    }
-
-    core->setInputStateCallBack(is_pressed, port, device, index, id);
-
-}
-
-void VideoItem::keyPressEvent(QKeyEvent *event) {
-
-    id = 16;
-    device = RETRO_DEVICE_JOYPAD;
-    port = 0;
-    is_pressed = true;
+    is_pressed = (event->type() == QEvent::KeyPress) ? true : false;
     index = 0;
 
     switch(event->key()) {
         case Qt::Key_Escape:
-            emit windowVisibilityChanged("Windowed");
+            if(is_pressed)
+                emit windowVisibilityChanged("Windowed");
             break;
         case Qt::Key_Space:
-            if (m_run)
-                setRun(false);
-            else
-                setRun(true);
+            if(is_pressed) {
+                if (m_run)
+                    setRun(false);
+                else
+                    setRun(true);
+            }
             break;
         case Qt::Key_Return:
             id = RETRO_DEVICE_ID_JOYPAD_START;
@@ -232,15 +175,14 @@ void VideoItem::keyPressEvent(QKeyEvent *event) {
             id = RETRO_DEVICE_ID_JOYPAD_Y;
             break;
         default:
-            qDebug() << "Key not handled";
+            if(is_pressed)
+                qDebug() << "Key not handled";
             break;
     }
 
     core->setInputStateCallBack(is_pressed, port, device, index, id);
 
 }
-
-//int16_t Core::inputStateCallback( unsigned port, unsigned device, unsigned index, unsigned id ) {
 
 void VideoItem::refreshItemGeometry() {
     qreal pixel_ratio = window()->devicePixelRatio();

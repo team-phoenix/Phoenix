@@ -63,8 +63,13 @@ public:
 
 
 protected:
-    void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
-    void keyReleaseEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
+    void keyEvent(QKeyEvent *event);
+    void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE {
+        keyEvent(event);
+    };
+    void keyReleaseEvent(QKeyEvent *event) Q_DECL_OVERRIDE {
+        keyEvent(event);
+    };
     void geometryChanged(const QRectF &newGeom, const QRectF &oldGeom) Q_DECL_OVERRIDE {
         Q_UNUSED(newGeom);
         Q_UNUSED(oldGeom);
