@@ -346,7 +346,7 @@ void Core::audioSampleCallback( int16_t left, int16_t right ) {
     Core::core->left_channel = left;
     Core::core->right_channel = right;
     if(core->audio_buf) {
-        uint32_t sample = (left << 16) | right;
+        uint32_t sample = ((uint16_t) left << 16) | (uint16_t) right;
         core->audio_buf->write((const char*)&sample, sizeof(int16_t) * 2);
     }
 
