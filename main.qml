@@ -4,7 +4,7 @@ import QtQuick.Controls.Styles 1.1
 import QtQuick.Layouts 1.1
 import QtGraphicalEffects 1.0
 
-import GLWindow 1.0
+import VideoItem 1.0
 
 ApplicationWindow {
     id: root;
@@ -47,9 +47,8 @@ ApplicationWindow {
 
     }
 
-    GLWindow {
-        id: glWindow;
-        run: true; // default must be true
+    VideoItem {
+        id: videoItem;
         focus: true;
         anchors.fill: parent;
         systemDirectory: "C:\\Users\\lee\\Desktop";
@@ -64,7 +63,7 @@ ApplicationWindow {
 
         onWindowVisibilityChanged: visibility = windowVisibility;
 
-        // Eventually have GLWindow not load anything on creation
+        // Eventually have VideoItem not load anything on creation
         // Will run when core and game paths have been entered through
         // qml.
 
@@ -76,8 +75,15 @@ ApplicationWindow {
         // frontend startup. Will hopefully reduce load time of game.
 
         Component.onCompleted: {
-            libcore = "C:/Users/lee/Desktop/32_cores/nestopia_libretro.dll";
-            game =  "C:/Users/lee/Documents/Emulation/NES/Kung Fu (Japan, USA).nes";
+
+            // libcore must be defined before game is,
+            // also they both must reside in Component.onCompleted {}
+            libcore = "C:/Users/lee/Desktop/32_cores/bsnes_balanced_libretro.dll";
+            game = "C:/Users/lee/Documents/Emulation/SNES/Chrono Trigger (USA).sfc";
+
+            // run must be defined here
+            run = true;
+
         }
 
     }
@@ -163,11 +169,11 @@ ApplicationWindow {
                         }
                     }
                     onClicked:  {
-                        if (glWindow.run) {
-                            glWindow.run = false
+                        if (videoItem.run) {
+                            videoItem.run = false
                         }
                         else {
-                            glWindow.run = true;
+                            videoItem.run = true;
                         }
                     }
 
