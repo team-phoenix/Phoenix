@@ -71,9 +71,9 @@ void Audio::handlePeriodTimer() {
     if(!toWrite)
         return;
 
-    char tmpbuf[toWrite] = {0};
-    int read = m_abuf->read(tmpbuf, toWrite);
-    int wrote = aio->write(tmpbuf, read);
+    QVarLengthArray<char, 4096*4> tmpbuf(toWrite);
+    int read = m_abuf->read(tmpbuf.data(), toWrite);
+    int wrote = aio->write(tmpbuf.data(), read);
     Q_UNUSED(wrote);
 //    if(wrote != read) {
 //        qDebug() << "HU" << wrote << read;
