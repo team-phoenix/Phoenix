@@ -34,11 +34,12 @@ VideoItem::VideoItem() {
     audio->start();
     core->audio_buf = audio->abuf();
 
+    connect(&fps_timer, SIGNAL(timeout()), this, SLOT(updateFps()));
+
     connect(sdl_joystick, SIGNAL(dataChanged(unsigned, unsigned, unsigned, unsigned)), this, SLOT(processGamePad(unsigned, unsigned, unsigned, unsigned)));
     connect(sdl_joystick, SIGNAL(dataChanged(bool, unsigned, unsigned, unsigned, unsigned)), this, SLOT(processGamePad(bool, unsigned, unsigned, unsigned, unsigned)));
     connect(this, SIGNAL(runChanged(bool)), audio, SLOT(runChanged(bool)));
     connect(this, SIGNAL(windowChanged(QQuickWindow*)), this, SLOT(handleWindowChanged(QQuickWindow*)));
-
 }
 
 VideoItem::~VideoItem() {
@@ -129,6 +130,9 @@ void VideoItem::setGame( QString game ) {
 
 void VideoItem::setRun( bool run ) {
     m_run = run;
+    if (run) {
+        fps_timer.start(1000);
+    }
     emit runChanged(run);
 }
 
@@ -305,6 +309,7 @@ void VideoItem::paint() {
     if (m_run) {
 
         core->doFrame();
+        fps_count++;
 
         // Sets texture from core->getImageData();
         setTexture( QOpenGLTexture::Linear, QOpenGLTexture::LinearMipMapNearest );

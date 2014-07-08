@@ -98,6 +98,23 @@ ApplicationWindow {
 
         }
 
+        onFpsChanged: {
+            fps.text = "FPS: %1".arg(this.fps);
+        }
+
+        Text {
+            id: fps;
+            text: "";
+            color: "white";
+            font.pointSize: 16;
+            style: Text.Outline;
+            styleColor: "black";
+            anchors.right: parent.right;
+            anchors.top: parent.top;
+            anchors.rightMargin: 5;
+            anchors.topMargin: 5;
+        }
+
     }
 
     Rectangle {

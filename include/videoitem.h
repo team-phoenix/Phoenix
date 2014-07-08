@@ -26,6 +26,7 @@ class VideoItem : public QQuickItem {
     Q_PROPERTY(QString windowVisibility READ windowVisibility WRITE setWindowVisibility NOTIFY windowVisibilityChanged)
     Q_PROPERTY(QString systemDirectory READ systemDirectory WRITE setSystemDirectory NOTIFY systemDirectoryChanged)
     Q_PROPERTY(bool gamepadScan READ gamepadScan WRITE setGamePadScan NOTIFY gamepadScanChanged)
+    Q_PROPERTY(int fps READ fps NOTIFY fpsChanged)
 
 
 public:
@@ -68,6 +69,10 @@ public:
         return m_gamepad_scan;
     }
 
+    int fps() const {
+        return m_fps;
+    }
+
 
 protected:
     void keyEvent(QKeyEvent *event);
@@ -91,6 +96,7 @@ signals:
     void windowVisibilityChanged( QString windowVisibility );
     void systemDirectoryChanged();
     void gamepadScanChanged( bool );
+    void fpsChanged( int );
 
 public slots:
     void paint();
@@ -105,6 +111,11 @@ private slots:
         refreshItemGeometry();
     }
     void handleSceneGraphInitialized();
+    void updateFps() {
+        m_fps = fps_count * (1000 / fps_timer.interval());
+        fps_count = 0;
+        emit fpsChanged(m_fps);
+    }
 
 
 private:
@@ -117,6 +128,8 @@ private:
     int item_h;
     qreal item_aspect; // item aspect ratio
     QPoint viewportXY;
+    int fps_count;
+    QTimer fps_timer;
     // [1]
 
     // Qml defined variables
@@ -127,6 +140,7 @@ private:
     QString m_win_visibility;
     bool m_run;
     bool m_gamepad_scan;
+    int m_fps;
     //[2]
 
     // Audio
