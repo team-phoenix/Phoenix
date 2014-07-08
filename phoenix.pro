@@ -5,6 +5,8 @@ CONFIG += debug console c++11
 
 QT += widgets core gui multimedia qml quick
 
+LIBS += -lSDL2
+
 win32 {
     LIBS += -LC:/SDL2/lib
     LIBS += -lmingw32 -lSDL2main -lSDL2
