@@ -140,7 +140,6 @@ void VideoItem::updateAudioFormat() {
     format.setSampleType(QAudioFormat::SignedInt);
     format.setByteOrder(QAudioFormat::LittleEndian);
     format.setCodec("audio/pcm");
-    qDebug() << format << core->getFps();
     // TODO test format
     audio->setFormat(format);
 }
