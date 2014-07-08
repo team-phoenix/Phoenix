@@ -15,7 +15,7 @@
 #include "qdebug.h"
 #include "core.h"
 #include "audio.h"
-
+#include "sdljoystick.h"
 
 class VideoItem : public QQuickItem {
     Q_OBJECT
@@ -25,6 +25,7 @@ class VideoItem : public QQuickItem {
     Q_PROPERTY(bool run READ run WRITE setRun NOTIFY runChanged)
     Q_PROPERTY(QString windowVisibility READ windowVisibility WRITE setWindowVisibility NOTIFY windowVisibilityChanged)
     Q_PROPERTY(QString systemDirectory READ systemDirectory WRITE setSystemDirectory NOTIFY systemDirectoryChanged)
+    Q_PROPERTY(bool gamepadScan READ gamepadScan WRITE setGamePadScan NOTIFY gamepadScanChanged)
 
 
 public:
@@ -40,6 +41,8 @@ public:
     void setSystemDirectory( QString systemDirectory );
     void setTexture( QOpenGLTexture::Filter min_scale,
                      QOpenGLTexture::Filter max_scale);
+    void setGamePadScan( bool gamepadScan );
+
 
     QString libcore() const {
         return m_libcore;
@@ -59,6 +62,10 @@ public:
 
     QString systemDirectory() const {
         return m_system_directory;
+    }
+
+    bool gamepadScan() const {
+        return m_gamepad_scan;
     }
 
 
@@ -83,10 +90,13 @@ signals:
     void runChanged( bool );
     void windowVisibilityChanged( QString windowVisibility );
     void systemDirectoryChanged();
+    void gamepadScanChanged( bool );
 
 public slots:
     void paint();
     void cleanup();
+    void processGamePad(bool is_pressed, unsigned port, unsigned device, unsigned index, unsigned id);
+    void processGamePad(unsigned port, unsigned device, unsigned index, unsigned id);
 
 private slots:
     void handleWindowChanged( QQuickWindow *win );
@@ -95,6 +105,7 @@ private slots:
         refreshItemGeometry();
     }
     void handleSceneGraphInitialized();
+
 
 private:
     // Video
@@ -115,6 +126,7 @@ private:
     QString m_game;
     QString m_win_visibility;
     bool m_run;
+    bool m_gamepad_scan;
     //[2]
 
     // Audio
@@ -125,6 +137,7 @@ private:
 
     // Input
     // [4]
+    SDLJoystick *sdl_joystick;
     unsigned id;
     unsigned device;
     unsigned port;

@@ -28,6 +28,12 @@ ApplicationWindow {
 
             mouseTimer.restart();
         }
+        onDoubleClicked: {
+            if (visibility == 5)
+                visibility = "Windowed";
+            else
+                visibility = "FullScreen";
+        }
 
     }
 
@@ -59,7 +65,13 @@ ApplicationWindow {
                 playBtn.iconImage = "assets/play.png";
         }
 
-
+        onGamepadScanChanged: {
+            if (gamepadScan) {
+                //run = false;
+                scanGamePad();
+                //run = true;
+            }
+        }
 
         onWindowVisibilityChanged: visibility = windowVisibility;
 
@@ -79,7 +91,7 @@ ApplicationWindow {
             // libcore must be defined before game is,
             // also they both must reside in Component.onCompleted {}
             libcore = "C:/Users/lee/Desktop/32_cores/bsnes_balanced_libretro.dll";
-            game = "C:/Users/lee/Documents/Emulation/SNES/Chrono Trigger (USA).sfc";
+            game = "C:/Users/lee/Documents/Emulation/SNES/Super Mario All-Stars + Super Mario World (USA).sfc";
 
             // run must be defined here
             run = true;
@@ -102,6 +114,45 @@ ApplicationWindow {
             bottomMargin: 25;
         }
 
+        MouseArea {
+            anchors.fill: parent;
+            hoverEnabled: true;
+            onEntered: mouseTimer.stop();
+            onExited: mouseTimer.restart();
+        }
+
+        ListView {
+            anchors {
+                fill: parent;
+                topMargin: 20;
+            }
+
+            model: ListModel {
+                ListElement {title: "Scan";}
+                ListElement {title: "";}
+                ListElement {title: "";}
+                ListElement {title: "";}
+
+            }
+            spacing: 20;
+            delegate: Row {
+
+                Slider {
+                    anchors.verticalCenter: parent.verticalCenter;
+                }
+
+                Button {
+                    anchors.verticalCenter: parent.verticalCenter;
+                    text: title;
+                    width: 15;
+                    height: 15;
+                    onClicked: {
+                        videoItem.gamepadScan = true;
+                    }
+                }
+            }
+        }
+
     }
 
     Rectangle {
@@ -119,9 +170,11 @@ ApplicationWindow {
         radius: 4
 
         MouseArea {
+
             anchors.fill: parent;
             hoverEnabled: true
-            onEntered: toolBar.visible = true;
+            onEntered: mouseTimer.stop();
+            onExited: mouseTimer.restart();
         }
         //border.width: 1
         //border.color: "white"
@@ -169,12 +222,10 @@ ApplicationWindow {
                         }
                     }
                     onClicked:  {
-                        if (videoItem.run) {
+                        if (videoItem.run)
                             videoItem.run = false
-                        }
-                        else {
+                        else
                             videoItem.run = true;
-                        }
                     }
 
                 }
@@ -221,12 +272,6 @@ ApplicationWindow {
                             sourceSize.height: 25;
                         }
                     }
-                    onClicked: {
-                        if (bubbleMenu.visible)
-                            bubbleMenu.visible = false;
-                        else
-                            bubbleMenu.visible = true;
-                    }
                 }
 
                 Button {
@@ -236,6 +281,25 @@ ApplicationWindow {
                             source: "assets/star.png";
                             sourceSize.width: 25;
                             sourceSize.height: 25;
+                        }
+                    }
+                }
+
+                Button {
+                    id: gamepadBtn;
+                    style: ButtonStyle {
+                        background: Image {
+                            source: "assets/game-controller-b.png";
+                            sourceSize.width: 25;
+                            sourceSize.height: 25;
+                        }
+                    }
+                    onClicked: {
+                        bubbleMenu.anchors.rightMargin = 100;
+                        if (bubbleMenu.visible)
+                            bubbleMenu.visible = false;
+                        else {
+                            bubbleMenu.visible = true;
                         }
                     }
                 }

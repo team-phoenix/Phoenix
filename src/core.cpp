@@ -188,6 +188,12 @@ int16_t Core::getRightChannel() {
 // Input
 // [3]
 
+void Core::setInputStateCallBack(unsigned port, unsigned device, unsigned index, unsigned id) {
+
+    inputStateCallback(port, device, index, id);
+
+} // Core::setInputStateCallBack(unsigned port, unsigned device, unsigned index, unsigned id)
+
 void Core::setInputStateCallBack(bool is_pressed, unsigned port, unsigned device, unsigned index, unsigned id) {
 
     joypad[id] = is_pressed;

@@ -103,7 +103,8 @@ public:
     double getSampleRate();
 
     // Input
-    void setInputStateCallBack( bool is_pressed, unsigned port, unsigned device, unsigned index, unsigned id );
+    void setInputStateCallBack(bool is_pressed, unsigned port, unsigned device, unsigned index, unsigned id);
+    void setInputStateCallBack(unsigned port, unsigned device, unsigned index, unsigned id);
 
     // Initilization methods
     bool loadCore( const char * path );

@@ -1,8 +1,6 @@
 
 #include "videoitem.h"
 
-#include "audio.h"
-
 VideoItem::VideoItem() {
 
     core = new Core();
@@ -19,6 +17,11 @@ VideoItem::VideoItem() {
     m_texture = 0;
     m_libcore = "";
     m_game = "";
+    m_gamepad_scan = false;
+
+    sdl_joystick = new SDLJoystick(this);
+    sdl_joystick->onScan();
+    sdl_joystick->onStart(20);
 
     id = 0;
     device = RETRO_DEVICE_JOYPAD;
@@ -31,6 +34,8 @@ VideoItem::VideoItem() {
     audio->start();
     core->audio_buf = audio->abuf();
 
+    connect(sdl_joystick, SIGNAL(dataChanged(unsigned, unsigned, unsigned, unsigned)), this, SLOT(processGamePad(unsigned, unsigned, unsigned, unsigned)));
+    connect(sdl_joystick, SIGNAL(dataChanged(bool, unsigned, unsigned, unsigned, unsigned)), this, SLOT(processGamePad(bool, unsigned, unsigned, unsigned, unsigned)));
     connect(this, SIGNAL(runChanged(bool)), audio, SLOT(runChanged(bool)));
     connect(this, SIGNAL(windowChanged(QQuickWindow*)), this, SLOT(handleWindowChanged(QQuickWindow*)));
 
@@ -38,6 +43,7 @@ VideoItem::VideoItem() {
 
 VideoItem::~VideoItem() {
     delete core;
+    sdl_joystick->deleteLater();
     if (m_program)
         delete m_program;
     if (m_texture)
@@ -82,6 +88,23 @@ void VideoItem::setSystemDirectory(QString systemDirectory) {
 
     core->setSystemDirectory(systemDirectory);
 
+}
+
+void VideoItem::processGamePad(unsigned port, unsigned device, unsigned index, unsigned id) {
+
+    core->setInputStateCallBack(port, device, index, id);
+
+}
+
+void VideoItem::processGamePad(bool is_pressed, unsigned port, unsigned device, unsigned index, unsigned id) {
+
+    core->setInputStateCallBack(is_pressed, port, device, index, id);
+
+}
+
+void VideoItem::setGamePadScan(bool gamepadScan) {
+    m_gamepad_scan = gamepadScan;
+    emit gamepadScanChanged(gamepadScan);
 }
 
 void VideoItem::setCore( QString libcore ) {
