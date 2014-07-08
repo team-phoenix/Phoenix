@@ -11,6 +11,7 @@
 #include <QImage>
 #include <QByteArray>
 #include <QEvent>
+#include <QLinkedList>
 
 #include "qdebug.h"
 #include "core.h"
@@ -130,6 +131,8 @@ private:
     QPoint viewportXY;
     int fps_count;
     QTimer fps_timer;
+    QElapsedTimer frame_timer;
+    QLinkedList<qint64> frame_measures;
     // [1]
 
     // Qml defined variables
@@ -160,6 +163,8 @@ private:
     //[4]
 
     void refreshItemGeometry(); // called every time the item's with/height/x/y change
+
+    inline bool limitFps(); // return true if it's too soon to ask for another frame
 
     static inline QImage::Format retroToQImageFormat( enum retro_pixel_format fmt ) {
         static QImage::Format format_table[3] = {

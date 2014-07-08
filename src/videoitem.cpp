@@ -35,6 +35,7 @@ VideoItem::VideoItem() {
     core->audio_buf = audio->abuf();
 
     connect(&fps_timer, SIGNAL(timeout()), this, SLOT(updateFps()));
+    frame_timer.invalidate();
 
     connect(sdl_joystick, SIGNAL(dataChanged(unsigned, unsigned, unsigned, unsigned)), this, SLOT(processGamePad(unsigned, unsigned, unsigned, unsigned)));
     connect(sdl_joystick, SIGNAL(dataChanged(bool, unsigned, unsigned, unsigned, unsigned)), this, SLOT(processGamePad(bool, unsigned, unsigned, unsigned, unsigned)));
@@ -302,12 +303,37 @@ void VideoItem::setTexture( QOpenGLTexture::Filter min_scale, QOpenGLTexture::Fi
 
 }
 
+inline bool VideoItem::limitFps() {
+    qreal target_fps_interval = round(1000000.0 / core->getFps()); // µsec
+    if (!frame_timer.isValid()) {
+        frame_timer.start();
+        return false;
+    }
+
+    qint64 last_frame_time = frame_timer.nsecsElapsed() / (qint64)1000;
+    if (frame_measures.size() == 10)
+        frame_measures.removeFirst();
+    frame_measures.append(last_frame_time);
+
+    qint64 frames_time = 0;
+    foreach (qint64 fm, frame_measures) {
+       frames_time += fm;
+    }
+
+    if (target_fps_interval * 10 > frames_time * 1.05) {
+        return true;
+    }
+
+    frame_timer.start();
+
+    return false;
+}
+
 void VideoItem::paint() {
     // Produces 1 frame of data
 
 
-    if (m_run) {
-
+    if (m_run && !limitFps()) {
         core->doFrame();
         fps_count++;
 
