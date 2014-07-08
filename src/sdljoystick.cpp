@@ -154,7 +154,7 @@ void SDLJoystick::convertToRetroDevice(unsigned &id, int button) {
 
 void SDLJoystick::onProcessEvent() {
 
-    Joystick *joy;
+    Joystick *joy = nullptr;
     unsigned id = 16;
     unsigned device = RETRO_DEVICE_JOYPAD;
     unsigned port = 0;
@@ -251,6 +251,6 @@ void SDLJoystick::onProcessEvent() {
 
     }
 
-    if (joy->numButtons)
+    if (joy && joy->numButtons)
         emit dataChanged(is_pressed, port, device, index, id);
 }
