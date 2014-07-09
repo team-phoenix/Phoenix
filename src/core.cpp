@@ -221,62 +221,58 @@ LibretroSymbols* Core::getSymbols() {
 
 // Load a libretro core at the given path
 // Returns: true if successful, false otherwise
-bool Core::loadCore( const char *path ) {
+bool Core::loadCore(const char *path) {
 
-    qDebug() << "Core::loadCore(" << path << ")";
-    
-    libretro_core = new QLibrary( path );
+    libretro_core = new QLibrary(path);
     libretro_core->load();
 
-    if( libretro_core->isLoaded() ) {
+    if (libretro_core->isLoaded()) {
     
         // Resolve symbols
-        resolved_sym( retro_set_environment );
-        resolved_sym( retro_set_video_refresh );
-        resolved_sym( retro_set_audio_sample );
-        resolved_sym( retro_set_audio_sample_batch );
-        resolved_sym( retro_set_input_poll );
-        resolved_sym( retro_set_input_state );
-        resolved_sym( retro_init );
-        resolved_sym( retro_deinit );
-        resolved_sym( retro_api_version );
-        resolved_sym( retro_get_system_info );
-        resolved_sym( retro_get_system_av_info );
-        resolved_sym( retro_set_controller_port_device );
-        resolved_sym( retro_reset );
-        resolved_sym( retro_run );
-        resolved_sym( retro_serialize );
-        resolved_sym( retro_unserialize );
-        resolved_sym( retro_cheat_reset );
-        resolved_sym( retro_cheat_set );
-        resolved_sym( retro_load_game );
-        resolved_sym( retro_load_game_special );
-        resolved_sym( retro_unload_game );
-        resolved_sym( retro_get_region );
-        resolved_sym( retro_get_memory_data );
-        resolved_sym( retro_get_memory_size );
+        resolved_sym(retro_set_environment);
+        resolved_sym(retro_set_video_refresh);
+        resolved_sym(retro_set_audio_sample);
+        resolved_sym(retro_set_audio_sample_batch);
+        resolved_sym(retro_set_input_poll);
+        resolved_sym(retro_set_input_state);
+        resolved_sym(retro_init);
+        resolved_sym(retro_deinit);
+        resolved_sym(retro_api_version);
+        resolved_sym(retro_get_system_info);
+        resolved_sym(retro_get_system_av_info);
+        resolved_sym(retro_set_controller_port_device);
+        resolved_sym(retro_reset);
+        resolved_sym(retro_run);
+        resolved_sym(retro_serialize);
+        resolved_sym(retro_unserialize);
+        resolved_sym(retro_cheat_reset);
+        resolved_sym(retro_cheat_set);
+        resolved_sym(retro_load_game);
+        resolved_sym(retro_load_game_special);
+        resolved_sym(retro_unload_game);
+        resolved_sym(retro_get_region);
+        resolved_sym(retro_get_memory_data);
+        resolved_sym(retro_get_memory_size);
         
         // Set callbacks
-        symbols->retro_set_environment( environmentCallback );
-        symbols->retro_set_audio_sample( audioSampleCallback );
-        symbols->retro_set_audio_sample_batch( audioSampleBatchCallback );
-        symbols->retro_set_input_poll( inputPollCallback );
-        symbols->retro_set_input_state( inputStateCallback );
-        symbols->retro_set_video_refresh( videoRefreshCallback );
+        symbols->retro_set_environment(environmentCallback);
+        symbols->retro_set_audio_sample(audioSampleCallback);
+        symbols->retro_set_audio_sample_batch(audioSampleBatchCallback);
+        symbols->retro_set_input_poll(inputPollCallback);
+        symbols->retro_set_input_state(inputStateCallback);
+        symbols->retro_set_video_refresh(videoRefreshCallback);
         
         // Init the core
         symbols->retro_init();
         
         // Get some info about the game
-        symbols->retro_get_system_info( system_info );
-        full_path_needed = system_info -> need_fullpath;
+        symbols->retro_get_system_info(system_info);
+        full_path_needed = system_info->need_fullpath;
         
         return true;
         
     }
-    
     else {
-        qDebug() << "Core is not loaded!";
         return false;
     }
     
@@ -286,29 +282,25 @@ bool Core::loadCore( const char *path ) {
 
 // Load a game with the given path
 // Returns: true if the game was successfully loaded, false otherwise
-bool Core::loadGame( const char *path ) {
+bool Core::loadGame(const char *path) {
 
-    qDebug() << "Core::loadGame(" << path << ")";
-    
     // create a retro_game_info struct, load with data (created on stack)
     retro_game_info game_info;
     
     // full path needed, pass this file path to the core
 
-    if( full_path_needed ) {
+    if (full_path_needed) {
         game_info.path = path;
         game_info.data = NULL;
         game_info.size = 0;
         game_info.meta = "";
 
     }
-
-    // full path not needed, read the file to a buffer and pass that to the core
     else {
-        // attempt to open file
-        QFile game( path );
+        // full path not needed, read the file to a buffer and pass that to the core
+        QFile game(path);
         
-        if( !game.open( QIODevice::ReadOnly ) ) {
+        if (!game.open(QIODevice::ReadOnly)) {
             return false;
         }
 
@@ -322,19 +314,16 @@ bool Core::loadGame( const char *path ) {
         
     }
     
-    // attempt to load the game
-    bool ret = symbols->retro_load_game( &game_info );
+    bool ret = symbols->retro_load_game(&game_info);
     
     // Get some info about the game
-    if( ret ) {
-    
-        symbols->retro_get_system_av_info( system_av_info );
+    if (ret) {
+        symbols->retro_get_system_av_info(system_av_info);
         game_geometry = system_av_info->geometry;
         system_timing = system_av_info->timing;
         video_width = game_geometry.max_width;
         video_height = game_geometry.max_height;
         return true;
-        
     }
     else {
         return false;
@@ -347,31 +336,31 @@ bool Core::loadGame( const char *path ) {
 // |       Callbacks        |
 // |________________________|
 
-void Core::audioSampleCallback( int16_t left, int16_t right ) {
+void Core::audioSampleCallback(int16_t left, int16_t right) {
 
     Core::core->left_channel = left;
     Core::core->right_channel = right;
-    if(core->audio_buf) {
+    if (core->audio_buf) {
         uint32_t sample = ((uint16_t) left << 16) | (uint16_t) right;
         core->audio_buf->write((const char*)&sample, sizeof(int16_t) * 2);
     }
 
 } // Core::an udioSampleCallback()
 
-size_t Core::audioSampleBatchCallback( const int16_t *data, size_t frames ) {
+size_t Core::audioSampleBatchCallback(const int16_t *data, size_t frames) {
 
     core->audio_data = data;
     core->audio_frames = frames;
-    if(core->audio_buf)
+    if (core->audio_buf)
         core->audio_buf->write((const char *)data, frames * sizeof(int16_t) * 2);
 
     return frames;
     
 } // Core::audioSampleBatchCallback()
 
-bool Core::environmentCallback( unsigned cmd, void *data ) {
+bool Core::environmentCallback(unsigned cmd, void *data) {
 
-    switch( cmd ) {
+    switch(cmd) {
     
         case RETRO_ENVIRONMENT_SET_ROTATION: // 1
             qDebug() << "\tRETRO_ENVIRONMENT_SET_ROTATION (1)";
@@ -576,19 +565,19 @@ bool Core::environmentCallback( unsigned cmd, void *data ) {
     
 } // Core::environmentCallback()
 
-void Core::inputPollCallback( void ) {
+void Core::inputPollCallback(void) {
 
    // qDebug() << "Core::inputPollCallback";
     return;
     
 } // Core::inputPollCallback()
 
-int16_t Core::inputStateCallback( unsigned port, unsigned device, unsigned index, unsigned id ) {
+int16_t Core::inputStateCallback(unsigned port, unsigned device, unsigned index, unsigned id) {
 
-    if(port != 0 || index != 0)
+    if (port != 0 || index != 0)
         return 0;
 
-    switch(device) {
+    switch (device) {
         case RETRO_DEVICE_JOYPAD:
             if (id >= 16)
                 return false;
@@ -607,18 +596,47 @@ int16_t Core::inputStateCallback( unsigned port, unsigned device, unsigned index
     // qDebug() << "Core::inputStateCallback";
 } // Core::inputStateCallback()
 
-void Core::logCallback( enum retro_log_level level, const char *fmt, ... ) {
+void Core::logCallback(enum retro_log_level level, const char *fmt, ...) {
 
-    Q_UNUSED( level );
+    QVarLengthArray<char, 1024> outbuf(1024);
     va_list args;
-    va_start( args, fmt );
-    printf( "[CORE]: " );
-    vprintf( fmt, args );
-    va_end( args );
-    
+    va_start(args, fmt);
+    int ret = vsnprintf(outbuf.data(), outbuf.size(), fmt, args);
+    if(ret < 0) {
+        qCDebug(phxCore) << "logCallback: could not format string";
+        return;
+    }
+    else if(ret+1 > outbuf.size()) {
+        outbuf.resize(ret+1);
+        int ret = vsnprintf(outbuf.data(), outbuf.size(), fmt, args);
+        if(ret < 0) {
+            qCDebug(phxCore) << "logCallback: could not format string";
+            return;
+        }
+    }
+    va_end(args);
+
+    switch (level) {
+        case RETRO_LOG_DEBUG:
+            qCDebug(phxCore, outbuf.data());
+        break;
+        case RETRO_LOG_INFO:
+            qCDebug(phxCore, outbuf.data());
+        break;
+        case RETRO_LOG_WARN:
+            qCWarning(phxCore, outbuf.data());
+        break;
+        case RETRO_LOG_ERROR:
+            qCCritical(phxCore, outbuf.data());
+        break;
+        default:
+            qCWarning(phxCore, outbuf.data());
+        break;
+    }
+
 } // Core::retro_log()
 
-void Core::videoRefreshCallback( const void *data, unsigned width, unsigned height, size_t pitch ) {
+void Core::videoRefreshCallback(const void *data, unsigned width, unsigned height, size_t pitch) {
 
     core->video_data = data;
     core->video_width = width;

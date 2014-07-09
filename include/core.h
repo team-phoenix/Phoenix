@@ -16,6 +16,7 @@
 
 #include "libretro.h"
 #include "audiobuffer.h"
+#include "logging.h"
 
 // Helper for resolving libretro methods
 #define resolved_sym( name ) symbols->name = ( decltype( symbols->name ) )libretro_core->resolve( #name );

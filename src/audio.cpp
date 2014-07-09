@@ -27,7 +27,12 @@ void Audio::start() {
 
 /* This needs to be called on the audio thread*/
 void Audio::setFormat(QAudioFormat _afmt) {
-    // TODO: perform checking...
+    qCDebug(phxAudio, "setFormat(%iHz %ibits)", _afmt.sampleRate(), _afmt.sampleSize());
+/*    QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
+    if (!info.isFormatSupported(_afmt)) {
+        qCWarning(phxAudio) << "Audio format not supported by output device !";
+        return;
+    }*/
     afmt = _afmt;
     emit formatChanged();
 }
@@ -75,13 +80,6 @@ void Audio::handlePeriodTimer() {
     int read = m_abuf->read(tmpbuf.data(), toWrite);
     int wrote = aio->write(tmpbuf.data(), read);
     Q_UNUSED(wrote);
-//    if(wrote != read) {
-//        qDebug() << "HU" << wrote << read;
-//        while(wrote < read) {
-//            wrote += aio->write(tmpbuf+wrote, read-wrote);
-//        }
-//        qDebug() << "OKAY";
-//    }
 }
 
 void Audio::runChanged( bool _isRunning ) {
@@ -90,11 +88,13 @@ void Audio::runChanged( bool _isRunning ) {
         return;
     if(!isRunning) {
         if(aout->state() != QAudio::SuspendedState) {
+            qCDebug(phxAudio) << "Paused";
             aout->suspend();
             timer.stop();
         }
     } else {
         if(aout->state() != QAudio::ActiveState) {
+            qCDebug(phxAudio) << "Started";
             aout->resume();
             timer.start();
         }

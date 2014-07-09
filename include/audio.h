@@ -7,7 +7,9 @@
 #include <QTimer>
 #include <QAudioOutput>
 #include <QDebug>
+
 #include "audiobuffer.h"
+#include "logging.h"
 
 
 class Audio : public QObject {
@@ -31,8 +33,9 @@ public slots:
         if(s == QAudio::IdleState && aout->error() == QAudio::UnderrunError) {
             aio = aout->start();
         }
-        if(s != QAudio::IdleState && s != QAudio::ActiveState)
-            qDebug() << "state:" << s << aout->error();
+        if(s != QAudio::IdleState && s != QAudio::ActiveState) {
+            qCDebug(phxAudio) << "State changed:" << s;
+        }
     }
 
     void runChanged(bool isRunning);

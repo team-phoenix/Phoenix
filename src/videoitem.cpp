@@ -4,14 +4,6 @@
 VideoItem::VideoItem() {
 
     core = new Core();
-    //if (!core->loadCore(core_path)) {
-       // qDebug() << "Core was not loaded";
-        //exit(EXIT_FAILURE);
-    //}
-    //if (!core->loadGame(game_path)) {
-        //qDebug() << "Game was not loaded";
-        //exit(EXIT_FAILURE);
-    //}
 
     m_program = 0;
     m_texture = 0;
@@ -110,19 +102,19 @@ void VideoItem::setGamePadScan(bool gamepadScan) {
 }
 
 void VideoItem::setCore( QString libcore ) {
-    qDebug() << "Core: " << libcore;
-    if ( !core->loadCore(libcore.toStdString().c_str() )) {
-        qDebug() << "Core was not loaded";
-        exit(EXIT_FAILURE);
+    qCDebug(phxVideo) << "Loading core:" << libcore;
+    if (!core->loadCore(libcore.toStdString().c_str())) {
+        qCCritical(phxVideo, "Couldn't load core !");
+//        exit(EXIT_FAILURE);
     }
     emit libcoreChanged(libcore);
 }
 
 void VideoItem::setGame( QString game ) {
-    qDebug() << "Game: " << game;
-    if ( !core->loadGame(game.toStdString().c_str() )) {
-        qDebug() << "Core was not loaded";
-        exit(EXIT_FAILURE);
+    qCDebug(phxVideo) << "Loading game:" << game;
+    if (!core->loadGame(game.toStdString().c_str())) {
+        qCCritical(phxVideo, "Couldn't load game !");
+//        exit(EXIT_FAILURE);
     }
     updateAudioFormat();
     emit gameChanged(game);
@@ -132,7 +124,10 @@ void VideoItem::setGame( QString game ) {
 void VideoItem::setRun( bool run ) {
     m_run = run;
     if (run) {
+        qCDebug(phxVideo, "Started");
         fps_timer.start(1000);
+    } else {
+        qCDebug(phxVideo, "Paused");
     }
     emit runChanged(run);
 }
@@ -330,8 +325,6 @@ inline bool VideoItem::limitFps() {
 }
 
 void VideoItem::paint() {
-    // Produces 1 frame of data
-
 
     if (m_run && !limitFps()) {
         core->doFrame();

@@ -23,6 +23,7 @@ size_t AudioBuffer::write(const char *data, size_t size) {
             // It probably means the core produces frames too fast (not
             // clocked right) or audio backend stopped reading frames.
             // In the first case, it might cause audio to skip a bit.
+            qCDebug(phxAudio, "Buffer full, dropping samples");
             clear();
         }
         m_buffer[head] = data[wrote++];

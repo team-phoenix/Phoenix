@@ -5,6 +5,8 @@
 #include <atomic>
 #include <cstddef>
 
+#include "logging.h"
+
 
 // Circular buffer holding audio data.
 // Should only be accessed by one consumer and one producer thread.

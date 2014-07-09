@@ -22,6 +22,10 @@ int main(int argc, char *argv[]) {
     pthread_sigmask(SIG_BLOCK, &set, nullptr);
 #endif
 
+    qSetMessagePattern("[%{if-debug}D%{endif}%{if-warning}W%{endif}"
+                       "%{if-critical}C%{endif}%{if-fatal}F%{endif}]"
+                       "%{if-category} [%{category}]:%{endif} %{message}");
+
     QGuiApplication a(argc, argv);
     a.setApplicationName("Phoenix");
     a.setApplicationVersion(PHOENIX_VERSION);
@@ -30,7 +34,6 @@ int main(int argc, char *argv[]) {
 
     
     qmlRegisterType<VideoItem>("VideoItem", 1, 0, "VideoItem");
-    
     
     QQmlApplicationEngine engine(QUrl("qrc:/main.qml"));
     QObject *topLevel = engine.rootObjects().value(0);

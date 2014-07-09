@@ -17,6 +17,7 @@
 #include "core.h"
 #include "audio.h"
 #include "sdljoystick.h"
+#include "logging.h"
 
 class VideoItem : public QQuickItem {
     Q_OBJECT
