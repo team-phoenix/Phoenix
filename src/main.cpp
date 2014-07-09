@@ -12,7 +12,7 @@
 #include "videoitem.h"
 #include "core.h"
 
-int main( int argc, char *argv[] ) {
+int main(int argc, char *argv[]) {
 #ifdef Q_OS_LINUX
     // When using QAudioOutput on linux/ALSA, we need to
     // block SIGIO on all threads except the audio thread
@@ -21,7 +21,13 @@ int main( int argc, char *argv[] ) {
     sigaddset(&set, SIGIO);
     pthread_sigmask(SIG_BLOCK, &set, nullptr);
 #endif
-    QGuiApplication a( argc, argv );
+
+    QGuiApplication a(argc, argv);
+    a.setApplicationName("Phoenix");
+    a.setApplicationVersion(PHOENIX_VERSION);
+    a.setOrganizationName("Phoenix");
+//    a.setOrganizationDomain("phoenix-emu.org");
+
     
     qmlRegisterType<VideoItem>("VideoItem", 1, 0, "VideoItem");
     

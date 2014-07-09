@@ -1,9 +1,14 @@
+
 TEMPLATE = app
 TARGET = phoenix
-INCLUDEPATH += ./include ../RetroArch
+INCLUDEPATH += ./include
 CONFIG += debug console c++11
 
 QT += widgets core gui multimedia qml quick
+
+VERSION = 0.1
+
+DEFINES += '"PHOENIX_VERSION=\\"$$VERSION\\""'
 
 LIBS += -lSDL2
 
