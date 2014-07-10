@@ -79,30 +79,35 @@ public:
     AudioBuffer *audio_buf;
     
     // Video
-    retro_hw_render_callback getHWData();
-    const void *getImageData();
-    unsigned getBaseWidth();
-    unsigned getBaseHeight();
-    unsigned getMaxWidth();
-    unsigned getMaxHeight();
-    size_t getPitch();
-    retro_pixel_format getPixelFormat();
-    retro_system_info getSystemInfo();
-    float getAspectRatio();
+    retro_hw_render_callback getHWData() const { return hw_callback; };
+    const void *getImageData() const { return video_data; };
+    unsigned getBaseWidth() const { return video_width; };
+    unsigned getBaseHeight() const { return video_height; };
+    unsigned getMaxWidth() const { return system_av_info->geometry.max_width; };
+    unsigned getMaxHeight() const { return system_av_info->geometry.max_height; };
+    size_t getPitch() const { return video_pitch; };
+    retro_pixel_format getPixelFormat() const { return pixel_format; };
+    const retro_system_info *getSystemInfo() const { return system_info; };
+    float getAspectRatio() const
+    {
+        if (system_av_info->geometry.aspect_ratio)
+            return system_av_info->geometry.aspect_ratio;
+        return (float)system_av_info->geometry.base_width / system_av_info->geometry.base_height;
+    };
 
     // Audio
-    const int16_t *getAudioData();
-    size_t getAudioFrames();
-    int16_t getLeftChannel();
-    int16_t getRightChannel();
+    const int16_t *getAudioData() const { return audio_data; };
+    size_t getAudioFrames() const { return audio_frames; };
+    int16_t getLeftChannel() const { return left_channel; };
+    int16_t getRightChannel() const { return right_channel; };
 
     // System
     void setSystemDirectory(QString system_directory);
 
     // Timing
-    double getFps();
-    double getSampleRate();
-    bool isDupeFrame();
+    double getFps() const { return system_av_info->timing.fps; };
+    double getSampleRate() const { return system_av_info->timing.sample_rate; };
+    bool isDupeFrame() const { return is_dupe_frame; };
 
     // Input
     void setInputStateCallBack(bool is_pressed, unsigned port, unsigned device, unsigned index, unsigned id);
