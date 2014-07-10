@@ -6,10 +6,10 @@
 #include "core.h"
 
 LibretroSymbols::LibretroSymbols() {
-    retro_audio = NULL;
-    retro_audio_set_state = NULL;
-    retro_frame_time = NULL;
-    retro_keyboard_event = NULL;
+    retro_audio = nullptr;
+    retro_audio_set_state = nullptr;
+    retro_frame_time = nullptr;
+    retro_keyboard_event = nullptr;
 }
 
 //  ________________________
@@ -19,7 +19,7 @@ LibretroSymbols::LibretroSymbols() {
 
 
 // Must always point to the current Core
-Core* Core::core = NULL;
+Core* Core::core = nullptr;
 
 //  ________________________
 // |                        |
@@ -28,20 +28,20 @@ Core* Core::core = NULL;
 
 Core::Core() {
 
-    libretro_core = NULL;
-    video_data = NULL;
-    audio_buf = NULL;
+    libretro_core = nullptr;
+    video_data = nullptr;
+    audio_buf = nullptr;
     system_av_info = new retro_system_av_info();
     system_info = new retro_system_info();
     symbols = new LibretroSymbols;
 
     video_height = 0;
-    video_data = NULL;
+    video_data = nullptr;
     video_pitch = 0;
     video_width = 0;
     pixel_format = RETRO_PIXEL_FORMAT_UNKNOWN;
 
-    audio_data = NULL;
+    audio_data = nullptr;
     audio_frames = 0;
     left_channel = 0;
     right_channel = 0;
@@ -56,7 +56,7 @@ Core::~Core() {
     delete system_av_info;
     delete system_info;
     delete symbols;
-    Core::core = NULL;
+    Core::core = nullptr;
 
 } // Core::~Core()
 
@@ -291,7 +291,7 @@ bool Core::loadGame(const char *path) {
 
     if (full_path_needed) {
         game_info.path = path;
-        game_info.data = NULL;
+        game_info.data = nullptr;
         game_info.size = 0;
         game_info.meta = "";
 
@@ -307,7 +307,7 @@ bool Core::loadGame(const char *path) {
         // read into memory
         game_data = game.readAll();
         
-        game_info.path = NULL;
+        game_info.path = nullptr;
         game_info.data = game_data.data();
         game_info.size = game.size();
         game_info.meta = "";
