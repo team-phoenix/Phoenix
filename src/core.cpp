@@ -46,6 +46,8 @@ Core::Core() {
     left_channel = 0;
     right_channel = 0;
 
+    is_dupe_frame = false;
+
     Core::core = this;
 
 } // Core::Core()
@@ -182,6 +184,10 @@ int16_t Core::getRightChannel() {
     return right_channel;
 
 } // Core::getRightChannel()
+
+bool Core::isDupeFrame() {
+    return is_dupe_frame;
+}
 
 // ~[2]
 
@@ -373,8 +379,7 @@ bool Core::environmentCallback(unsigned cmd, void *data) {
             break;
             
         case RETRO_ENVIRONMENT_GET_CAN_DUPE: // 3
-            qDebug() << "\tRETRO_ENVIRONMENT_GET_CAN_DUPE (3) (handled)";
-            *( bool * )data = true;
+            *(bool *)data = true;
             return true;
             break;
             
@@ -638,7 +643,12 @@ void Core::logCallback(enum retro_log_level level, const char *fmt, ...) {
 
 void Core::videoRefreshCallback(const void *data, unsigned width, unsigned height, size_t pitch) {
 
-    core->video_data = data;
+    if (data) {
+        core->video_data = data;
+        core->is_dupe_frame = false;
+    } else {
+        core->is_dupe_frame = true;
+    }
     core->video_width = width;
     core->video_height = height;
     core->video_pitch = pitch;

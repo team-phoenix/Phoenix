@@ -102,6 +102,7 @@ public:
     // Timing
     double getFps();
     double getSampleRate();
+    bool isDupeFrame();
 
     // Input
     void setInputStateCallBack(bool is_pressed, unsigned port, unsigned device, unsigned index, unsigned id);
@@ -152,6 +153,9 @@ private:
 
     // Input
     QMap<unsigned, bool> joypad;
+
+    // Timing
+    bool is_dupe_frame;
 
     // Callbacks
     static void audioSampleCallback(int16_t left, int16_t right);
