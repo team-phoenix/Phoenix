@@ -114,7 +114,7 @@ private slots:
     }
     void handleSceneGraphInitialized();
     void updateFps() {
-        m_fps = fps_count * (1000 / fps_timer.interval());
+        m_fps = fps_count * (1000.0 / fps_timer.interval());
         fps_count = 0;
         emit fpsChanged(m_fps);
     }
@@ -133,7 +133,7 @@ private:
     int fps_count;
     QTimer fps_timer;
     QElapsedTimer frame_timer;
-    QLinkedList<qint64> frame_measures;
+    qint64 fps_deviation;
     // [1]
 
     // Qml defined variables
@@ -165,7 +165,7 @@ private:
 
     void refreshItemGeometry(); // called every time the item's with/height/x/y change
 
-    inline bool limitFps(); // return true if it's too soon to ask for another frame
+    bool limitFps(); // return true if it's too soon to ask for another frame
 
     static inline QImage::Format retroToQImageFormat( enum retro_pixel_format fmt ) {
         static QImage::Format format_table[3] = {

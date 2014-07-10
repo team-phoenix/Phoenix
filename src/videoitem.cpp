@@ -306,20 +306,20 @@ inline bool VideoItem::limitFps() {
     }
 
     qint64 last_frame_time = frame_timer.nsecsElapsed() / (qint64)1000;
-    if (frame_measures.size() == 10)
-        frame_measures.removeFirst();
-    frame_measures.append(last_frame_time);
-
-    qint64 frames_time = 0;
-    foreach (qint64 fm, frame_measures) {
-       frames_time += fm;
+    if (fps_deviation < (-target_fps_interval * 20) && last_frame_time > target_fps_interval) {
+        // reset fps_deviation if we are more than 20 frames late
+        fps_deviation = 0;
     }
-
-    if (target_fps_interval * 10 > frames_time * 1.05) {
-        return true;
-    }
+    fps_deviation += target_fps_interval - last_frame_time;
 
     frame_timer.start();
+
+    // if we deviated from the core's clock so much that we
+    // are one full frame ahead, skip a frame.
+    if(fps_deviation > target_fps_interval) {
+        fps_deviation -= target_fps_interval;
+        return true;
+    }
 
     return false;
 }
