@@ -101,7 +101,7 @@ void VideoItem::setGamePadScan(bool gamepadScan) {
     emit gamepadScanChanged(gamepadScan);
 }
 
-void VideoItem::setCore( QString libcore ) {
+void VideoItem::setCore(QString libcore) {
     qCDebug(phxVideo) << "Loading core:" << libcore;
     if (!core->loadCore(libcore.toStdString().c_str())) {
         qCCritical(phxVideo, "Couldn't load core !");
@@ -110,7 +110,7 @@ void VideoItem::setCore( QString libcore ) {
     emit libcoreChanged(libcore);
 }
 
-void VideoItem::setGame( QString game ) {
+void VideoItem::setGame(QString game) {
     qCDebug(phxVideo) << "Loading game:" << game;
     if (!core->loadGame(game.toStdString().c_str())) {
         qCCritical(phxVideo, "Couldn't load game !");
@@ -121,7 +121,7 @@ void VideoItem::setGame( QString game ) {
 }
 
 
-void VideoItem::setRun( bool run ) {
+void VideoItem::setRun(bool run) {
     m_run = run;
     if (run) {
         qCDebug(phxVideo, "Started");
@@ -280,17 +280,17 @@ void VideoItem::initShader() {
 
 }
 
-void VideoItem::setTexture( QOpenGLTexture::Filter min_scale, QOpenGLTexture::Filter max_scale ) {
+void VideoItem::setTexture(QOpenGLTexture::Filter min_scale, QOpenGLTexture::Filter max_scale) {
 
 
     QImage::Format frame_format = retroToQImageFormat(core->getPixelFormat());
 
     m_texture->destroy();
-    m_texture->setData( QImage( ( const uchar * )core->getImageData(),
-                        core->getBaseWidth(),
-                        core->getBaseHeight(),
-                        core->getPitch(),
-                        frame_format ).mirrored() );
+    m_texture->setData(QImage((const uchar *)core->getImageData(),
+                       core->getBaseWidth(),
+                       core->getBaseHeight(),
+                       core->getPitch(),
+                       frame_format).mirrored());
 
     m_texture->setMinMagFilters(min_scale, max_scale);
 

@@ -37,14 +37,14 @@ public:
 
     void initShader();
     void initGL();
-    void setCore( QString libcore );
-    void setGame( QString game);
-    void setRun( bool run );
-    void setWindowVisibility( QString windowVisibility );
-    void setSystemDirectory( QString systemDirectory );
-    void setTexture( QOpenGLTexture::Filter min_scale,
-                     QOpenGLTexture::Filter max_scale);
-    void setGamePadScan( bool gamepadScan );
+    void setCore(QString libcore);
+    void setGame(QString game);
+    void setRun(bool run );
+    void setWindowVisibility(QString windowVisibility);
+    void setSystemDirectory(QString systemDirectory);
+    void setTexture(QOpenGLTexture::Filter min_scale,
+                    QOpenGLTexture::Filter max_scale);
+    void setGamePadScan(bool gamepadScan);
 
 
     QString libcore() const {
@@ -92,13 +92,13 @@ protected:
     };
 
 signals:
-    void libcoreChanged( QString );
-    void gameChanged( QString );
-    void runChanged( bool );
-    void windowVisibilityChanged( QString windowVisibility );
+    void libcoreChanged(QString);
+    void gameChanged(QString);
+    void runChanged(bool);
+    void windowVisibilityChanged(QString windowVisibilit );
     void systemDirectoryChanged();
-    void gamepadScanChanged( bool );
-    void fpsChanged( int );
+    void gamepadScanChanged(bool);
+    void fpsChanged(int);
 
 public slots:
     void paint();
@@ -107,7 +107,7 @@ public slots:
     void processGamePad(unsigned port, unsigned device, unsigned index, unsigned id);
 
 private slots:
-    void handleWindowChanged( QQuickWindow *win );
+    void handleWindowChanged(QQuickWindow *win);
     void handleGeometryChanged(int unused) {
         Q_UNUSED(unused);
         refreshItemGeometry();
@@ -167,14 +167,14 @@ private:
 
     bool limitFps(); // return true if it's too soon to ask for another frame
 
-    static inline QImage::Format retroToQImageFormat( enum retro_pixel_format fmt ) {
+    static inline QImage::Format retroToQImageFormat(enum retro_pixel_format fmt) {
         static QImage::Format format_table[3] = {
             QImage::Format_RGB16,   // RETRO_PIXEL_FORMAT_0RGB1555
             QImage::Format_RGB32,   // RETRO_PIXEL_FORMAT_XRGB8888
             QImage::Format_RGB16    // RETRO_PIXEL_FORMAT_RGB565
         };
 
-        if(fmt >= 0 && fmt < (sizeof(format_table)/sizeof(QImage::Format))) {
+        if(fmt >= 0 && fmt < (sizeof(format_table) / sizeof(QImage::Format))) {
             return format_table[fmt];
         }
         return QImage::Format_Invalid;
