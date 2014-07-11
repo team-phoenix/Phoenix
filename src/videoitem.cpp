@@ -107,6 +107,8 @@ void VideoItem::setCore(QString libcore) {
         qCCritical(phxVideo, "Couldn't load core !");
 //        exit(EXIT_FAILURE);
     }
+    const retro_system_info *i = core->getSystemInfo();
+    qCDebug(phxVideo) << "Loaded core" << i->library_name << i->library_version;
     emit libcoreChanged(libcore);
 }
 
@@ -116,6 +118,8 @@ void VideoItem::setGame(QString game) {
         qCCritical(phxVideo, "Couldn't load game !");
 //        exit(EXIT_FAILURE);
     }
+    qCDebug(phxVideo, "Loaded game at %ix%i @ %.2ffps", core->getBaseWidth(),
+            core->getBaseHeight(), core->getFps());
     updateAudioFormat();
     emit gameChanged(game);
 }
@@ -124,10 +128,10 @@ void VideoItem::setGame(QString game) {
 void VideoItem::setRun(bool run) {
     m_run = run;
     if (run) {
-        qCDebug(phxVideo, "Started");
+        qCDebug(phxVideo, "Core started");
         fps_timer.start(1000);
     } else {
-        qCDebug(phxVideo, "Paused");
+        qCDebug(phxVideo, "Core paused");
     }
     emit runChanged(run);
 }
