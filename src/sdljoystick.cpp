@@ -7,12 +7,12 @@
 
 SDLJoystick::SDLJoystick(QObject *parent)
     : QObject(parent) {
-    qDebug() << this << "SDLJoystick";
+    qCDebug(phxInput) << this << "SDLJoystick";
     connect(&joystickTimer, SIGNAL(timeout()), this, SLOT(onProcessEvent()));
 }
 
 SDLJoystick::~SDLJoystick() {
-    qDebug() << this << "~SDLJoystick";
+    qCDebug(phxInput) << this << "~SDLJoystick";
     if (SDL_WasInit(SDL_INIT_JOYSTICK) != 0)
         SDL_Quit();
 }
@@ -30,14 +30,14 @@ void SDLJoystick::onScan() {
 
     qDeleteAll(joys.begin(), joys.end());
     joys.clear();
-    qDebug() << "scanning";
+    qCDebug(phxInput) << "scanning";
     if (SDL_WasInit(SDL_INIT_JOYSTICK) != 0) {
-        qDebug() << "SDL_Quit";
+        qCDebug(phxInput) << "SDL_Quit";
         SDL_Quit();
     }
 
     if (SDL_Init(SDL_INIT_JOYSTICK) != 0) {
-        qCritical() << "SDL_INIT_JOYSTICK is fail";
+        qCCritical(phxInput) << "SDL_INIT_JOYSTICK is fail";
         return;
     }
 
@@ -52,7 +52,7 @@ void SDLJoystick::onScan() {
 
         j->joy = SDL_JoystickOpen(i);
         if (!j->joy) {
-            qCritical() << "SDL_JoystickOpen is fail, index:" << i;
+            qCCritical(phxInput) << "SDL_JoystickOpen is fail, index:" << i;
             return;
         }
 
@@ -81,7 +81,7 @@ void SDLJoystick::onScan() {
     }
 
     QListIterator<Joystick *> i(joys);
-    qDebug() << "joy count: " << count;
+    qCDebug(phxInput) << "joy count: " << count;
     emit joysChanged(count, i);
 
 }
@@ -147,7 +147,7 @@ void SDLJoystick::convertToRetroDevice(unsigned &id, int button) {
             break;
 
         default:
-            qDebug() << "Input was not handled";
+            qCDebug(phxInput) << "Input was not handled";
             break;
     }
 }
@@ -214,7 +214,7 @@ void SDLJoystick::onProcessEvent() {
                     device = RETRO_DEVICE_JOYPAD;
                     break;
                 default:
-                    qDebug() << "not handled: " << i << "   ==>>  " << new_axis_motion;
+                    qCDebug(phxInput) << "not handled: " << i << "   ==>>  " << new_axis_motion;
                     break;
             }
         }
@@ -240,13 +240,13 @@ void SDLJoystick::onProcessEvent() {
             }
             joy->buttons[i] = new_button_press;
 
-            //qDebug() << joy->buttons[i];
+            //qCDebug(phxInput) << joy->buttons[i];
             //QProcess::execute("CLS");
         }
 
         for (i = 0; i < joy->numHats; ++i) {
             joy->hats[i] = SDL_JoystickGetHat(joy->joy, i);
-            qDebug() << joy->hats[i];
+            qCDebug(phxInput) << joy->hats[i];
         }
 
     }
