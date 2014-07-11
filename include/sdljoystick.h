@@ -6,6 +6,7 @@
 #include <QList>
 #include <QListIterator>
 #include "joystick.h"
+#include "logging.h"
 #include "libretro.h"
 
 class SDLJoystick : public QObject
