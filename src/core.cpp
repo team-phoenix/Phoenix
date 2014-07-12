@@ -259,44 +259,43 @@ size_t Core::audioSampleBatchCallback(const int16_t *data, size_t frames) {
 bool Core::environmentCallback(unsigned cmd, void *data) {
 
     switch(cmd) {
-    
         case RETRO_ENVIRONMENT_SET_ROTATION: // 1
             qDebug() << "\tRETRO_ENVIRONMENT_SET_ROTATION (1)";
             break;
-            
+
         case RETRO_ENVIRONMENT_GET_OVERSCAN: // 2
             qDebug() << "\tRETRO_ENVIRONMENT_GET_OVERSCAN (2) (handled)";
             // Crop away overscan
             return true;
             break;
-            
+
         case RETRO_ENVIRONMENT_GET_CAN_DUPE: // 3
             *(bool *)data = true;
             return true;
             break;
-            
+
         // 4 and 5 have been deprecated
         
         case RETRO_ENVIRONMENT_SET_MESSAGE: // 6
             qDebug() << "\tRETRO_ENVIRONMENT_SET_MESSAGE (6)";
             break;
-            
+
         case RETRO_ENVIRONMENT_SHUTDOWN: // 7
             qDebug() << "\tRETRO_ENVIRONMENT_SHUTDOWN (7)";
             break;
-            
+
         case RETRO_ENVIRONMENT_SET_PERFORMANCE_LEVEL: // 8
             qDebug() << "\tRETRO_ENVIRONMENT_SET_PERFORMANCE_LEVEL (8)";
             break;
-            
+
         case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY: // 9
             qDebug() << "\tRETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY (9)";
             (*(const char **)data) = Core::core->system_directory.toStdString().c_str();
             return true;
-            
+
         case RETRO_ENVIRONMENT_SET_PIXEL_FORMAT: { // 10
             qDebug() << "\tRETRO_ENVIRONMENT_SET_PIXEL_FORMAT (10) (handled)";
-            
+
             retro_pixel_format *pixelformat = ( enum retro_pixel_format * )data;
             Core::core->pixel_format = *pixelformat;
 
@@ -323,22 +322,22 @@ bool Core::environmentCallback(unsigned cmd, void *data) {
 
             break;
         }
-        
+
         case RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS: // 11
             qDebug() << "\tRETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS (11) (handled)";
             Core::core->input_descriptor = *( retro_input_descriptor * )data;
             return true;
             break;
-            
+
         case RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK: // 12
             qDebug() << "\tRETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK (12) (handled)";
             Core::core->symbols->retro_keyboard_event = ( decltype( symbols->retro_keyboard_event ) )data;
             break;
-            
+
         case RETRO_ENVIRONMENT_SET_DISK_CONTROL_INTERFACE: // 13
             qDebug() << "\tRETRO_ENVIRONMENT_SET_DISK_CONTROL_INTERFACE (13)";
             break;
-            
+
         case RETRO_ENVIRONMENT_SET_HW_RENDER: // 14
             qDebug() << "\tRETRO_ENVIRONMENT_SET_HW_RENDER (14)";
             Core::core->hw_callback = *( retro_hw_render_callback *)data;
@@ -360,101 +359,97 @@ bool Core::environmentCallback(unsigned cmd, void *data) {
                     qCritical() << "RETRO_HW_CONTEXT: " << Core::core->hw_callback.context_type << " was not handled";
                     return false;
             }
-
             break;
-            
+
         case RETRO_ENVIRONMENT_GET_VARIABLE: // 15
             qDebug() << "\tRETRO_ENVIRONMENT_GET_VARIABLE (15)";
             break;
-            
+
         case RETRO_ENVIRONMENT_SET_VARIABLES: // 16
             qDebug() << "\tRETRO_ENVIRONMENT_SET_VARIABLES (16)";
             break;
-            
+
         case RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE: // 17
 //            qDebug() << "\tRETRO_ENVIRONMENT_GET_VARIABLE_UPDATE (17)";
             break;
-            
+
         case RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME: // 18
             qDebug() << "\tRETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME (18)";
             break;
-            
+
         case RETRO_ENVIRONMENT_GET_LIBRETRO_PATH: // 19
             qDebug() << "\tRETRO_ENVIRONMENT_GET_LIBRETRO_PATH (19)";
             break;
-            
+
         // 20 has been deprecated
         
         case RETRO_ENVIRONMENT_SET_FRAME_TIME_CALLBACK: // 21
             qDebug() << "RETRO_ENVIRONMENT_SET_FRAME_TIME_CALLBACK (21)";
             Core::core->symbols->retro_frame_time = ( decltype( symbols->retro_frame_time ) )data;
             break;
-            
+
         case RETRO_ENVIRONMENT_SET_AUDIO_CALLBACK: // 22
             qDebug() << "\tRETRO_ENVIRONMENT_SET_AUDIO_CALLBACK (22)";
             break;
-            
+
         case RETRO_ENVIRONMENT_GET_RUMBLE_INTERFACE: // 23
             qDebug() << "\tRETRO_ENVIRONMENT_GET_RUMBLE_INTERFACE (23)";
             break;
-            
+
         case RETRO_ENVIRONMENT_GET_INPUT_DEVICE_CAPABILITIES: // 24
             qDebug() << "\tRETRO_ENVIRONMENT_GET_INPUT_DEVICE_CAPABILITIES (24)";
             break;
-            
+
         case RETRO_ENVIRONMENT_GET_SENSOR_INTERFACE: // 25
             qDebug() << "\tRETRO_ENVIRONMENT_GET_SENSOR_INTERFACE (25)";
             break;
-            
+
         case RETRO_ENVIRONMENT_GET_CAMERA_INTERFACE: // 26
             qDebug() << "\tRETRO_ENVIRONMENT_GET_CAMERA_INTERFACE (26)";
             break;
-            
+
         case RETRO_ENVIRONMENT_GET_LOG_INTERFACE: { // 27
-            qDebug() << "\tRETRO_ENVIRONMENT_GET_LOG_INTERFACE (27) (handled)";
-            struct retro_log_callback *logcb = ( struct retro_log_callback * )data;
+            struct retro_log_callback *logcb = (struct retro_log_callback *)data;
             logcb->log = logCallback;
             return true;
             break;
         }
-        
-        
+
         case RETRO_ENVIRONMENT_GET_PERF_INTERFACE: // 28
             qDebug() << "\tRETRO_ENVIRONMENT_GET_PERF_INTERFACE (28)";
             break;
-            
+
         case RETRO_ENVIRONMENT_GET_LOCATION_INTERFACE: // 29
             qDebug() << "\tRETRO_ENVIRONMENT_GET_LOCATION_INTERFACE (29)";
             break;
-            
+
         case RETRO_ENVIRONMENT_GET_CONTENT_DIRECTORY: // 30
             qDebug() << "\tRETRO_ENVIRONMENT_GET_CONTENT_DIRECTORY (30)";
             break;
-            
+
         case RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY: // 31
             qDebug() << "\tRETRO_ENVIRONMENT_GET_SAVE_DIRECTORY (31)";
             break;
-            
+
         case RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO: // 32
             qDebug() << "\tRETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO (32)";
             break;
-            
+
         case RETRO_ENVIRONMENT_SET_PROC_ADDRESS_CALLBACK: // 33
             qDebug() << "\tRETRO_ENVIRONMENT_SET_PROC_ADDRESS_CALLBACK (33)";
             break;
-            
+
         case RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO: // 34
             qDebug() << "\tRETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO (34)";
             break;
-            
+
         case RETRO_ENVIRONMENT_SET_CONTROLLER_INFO: // 35
             qDebug() << "\tRETRO_ENVIRONMENT_SET_CONTROLLER_INFO (35)";
             break;
-            
+
         default:
             qDebug() << "Error: Environment command " << cmd << " is not defined in the frontend's libretro.h!.";
             return false;
-            
     }
     
     // Command was not handled
