@@ -191,7 +191,7 @@ private:
     retro_system_timing system_timing;
     retro_hw_render_callback hw_callback;
     bool full_path_needed;
-    QString system_directory;
+    QByteArray system_directory;
     
     // Game
     QByteArray game_data;

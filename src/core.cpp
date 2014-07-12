@@ -105,7 +105,7 @@ void Core::setInputStateCallBack(bool is_pressed, unsigned port, unsigned device
 // [4]
 void Core::setSystemDirectory(QString system_dir) {
 
-    system_directory = system_dir;
+    system_directory = system_dir.toLocal8Bit();
 
 } // Core::setSystemDirectory(QString system_dir)
 
@@ -291,8 +291,7 @@ bool Core::environmentCallback(unsigned cmd, void *data) {
             break;
 
         case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY: // 9
-            qDebug() << "\tRETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY (9)";
-            (*(const char **)data) = Core::core->system_directory.toStdString().c_str();
+            *static_cast<const char **>(data) = core->system_directory.constData();
             return true;
 
         case RETRO_ENVIRONMENT_SET_PIXEL_FORMAT: { // 10
@@ -394,8 +393,7 @@ bool Core::environmentCallback(unsigned cmd, void *data) {
             break;
 
         case RETRO_ENVIRONMENT_GET_LIBRETRO_PATH: // 19
-            qDebug() << "\tRETRO_ENVIRONMENT_GET_LIBRETRO_PATH (19)";
-            *static_cast<char **>(data) = core->getLibraryName().data();
+            *static_cast<const char **>(data) = core->getLibraryName().constData();
             break;
 
         // 20 has been deprecated
