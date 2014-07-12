@@ -75,7 +75,7 @@ public:
     // Misc
     void doFrame();
     LibretroSymbols *getSymbols();
-    QString getLibraryName();
+    QByteArray getLibraryName() { return library_name; };
     AudioBuffer *audio_buf;
     
     // Video
@@ -175,6 +175,7 @@ private:
 
     // Handle to the libretro core
     QLibrary *libretro_core;
+    QByteArray library_name;
     
     // Struct containing libretro methods
     LibretroSymbols *symbols;

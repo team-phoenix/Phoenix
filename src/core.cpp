@@ -125,6 +125,8 @@ bool Core::loadCore(const char *path) {
     libretro_core->load();
 
     if (libretro_core->isLoaded()) {
+
+        library_name = libretro_core->fileName().toLocal8Bit();
     
         // Resolve symbols
         resolved_sym(retro_set_environment);
@@ -393,6 +395,7 @@ bool Core::environmentCallback(unsigned cmd, void *data) {
 
         case RETRO_ENVIRONMENT_GET_LIBRETRO_PATH: // 19
             qDebug() << "\tRETRO_ENVIRONMENT_GET_LIBRETRO_PATH (19)";
+            *static_cast<char **>(data) = core->getLibraryName().data();
             break;
 
         // 20 has been deprecated
