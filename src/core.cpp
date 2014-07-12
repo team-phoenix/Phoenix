@@ -327,13 +327,13 @@ bool Core::environmentCallback(unsigned cmd, void *data) {
 
         case RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS: // 11
             qDebug() << "\tRETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS (11) (handled)";
-            Core::core->input_descriptor = *( retro_input_descriptor * )data;
+            Core::core->input_descriptor = *(retro_input_descriptor *)data;
             return true;
             break;
 
         case RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK: // 12
             qDebug() << "\tRETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK (12) (handled)";
-            Core::core->symbols->retro_keyboard_event = ( decltype( symbols->retro_keyboard_event ) )data;
+            Core::core->symbols->retro_keyboard_event = (decltype(symbols->retro_keyboard_event))data;
             break;
 
         case RETRO_ENVIRONMENT_SET_DISK_CONTROL_INTERFACE: // 13
@@ -342,7 +342,7 @@ bool Core::environmentCallback(unsigned cmd, void *data) {
 
         case RETRO_ENVIRONMENT_SET_HW_RENDER: // 14
             qDebug() << "\tRETRO_ENVIRONMENT_SET_HW_RENDER (14)";
-            Core::core->hw_callback = *( retro_hw_render_callback *)data;
+            Core::core->hw_callback = *(retro_hw_render_callback *)data;
             switch (Core::core->hw_callback.context_type) {
                 case RETRO_HW_CONTEXT_NONE:
                     qDebug() << "No hardware context was selected";
@@ -402,7 +402,7 @@ bool Core::environmentCallback(unsigned cmd, void *data) {
         
         case RETRO_ENVIRONMENT_SET_FRAME_TIME_CALLBACK: // 21
             qDebug() << "RETRO_ENVIRONMENT_SET_FRAME_TIME_CALLBACK (21)";
-            Core::core->symbols->retro_frame_time = ( decltype( symbols->retro_frame_time ) )data;
+            Core::core->symbols->retro_frame_time = (decltype(symbols->retro_frame_time))data;
             break;
 
         case RETRO_ENVIRONMENT_SET_AUDIO_CALLBACK: // 22
@@ -565,15 +565,7 @@ QDebug operator<<(QDebug debug, const Core::Variable &var)
 {
     // join a QVector of std::strings. (Really, C++ ?)
     auto &choices = var.choices();
-    size_t strsz = std::accumulate(
-        choices.begin(), choices.end(), 0,
-        [](size_t sz, const std::string &str) -> size_t {
-            return sz + str.size();
-        }
-    );
-
     std::string joinedchoices;
-    joinedchoices.reserve(strsz + (choices.size() * 2) + 1);
     foreach (auto &choice, choices) {
         joinedchoices.append(choice);
         if (&choice != &choices.last())
