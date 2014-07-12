@@ -361,13 +361,27 @@ bool Core::environmentCallback(unsigned cmd, void *data) {
             }
             break;
 
-        case RETRO_ENVIRONMENT_GET_VARIABLE: // 15
-            qDebug() << "\tRETRO_ENVIRONMENT_GET_VARIABLE (15)";
+        case RETRO_ENVIRONMENT_GET_VARIABLE: { // 15
+            auto *rv = static_cast<struct retro_variable *>(data);
+            if (core->variables.contains(rv->key)) {
+                const auto &var = core->variables[rv->key];
+                if (var.isValid()) {
+                    rv->value = var.value().c_str();
+                }
+            }
             break;
+        }
 
-        case RETRO_ENVIRONMENT_SET_VARIABLES: // 16
-            qDebug() << "\tRETRO_ENVIRONMENT_SET_VARIABLES (16)";
+        case RETRO_ENVIRONMENT_SET_VARIABLES: { // 16
+            qCDebug(phxCore) << "SET_VARIABLES:";
+            auto *rv = static_cast<const struct retro_variable *>(data);
+            for (; rv->key != NULL; rv++) {
+                Core::Variable v(rv);
+                core->variables.insert(v.key(), v);
+                qCDebug(phxCore) << "\t" << v;
+            }
             break;
+        }
 
         case RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE: // 17
 //            qDebug() << "\tRETRO_ENVIRONMENT_GET_VARIABLE_UPDATE (17)";
@@ -543,3 +557,30 @@ void Core::videoRefreshCallback(const void *data, unsigned width, unsigned heigh
     return;
     
 } // Core::videoRefreshCallback()
+
+QDebug operator<<(QDebug debug, const Core::Variable &var)
+{
+    // join a QVector of std::strings. (Really, C++ ?)
+    auto &choices = var.choices();
+    size_t strsz = std::accumulate(
+        choices.begin(), choices.end(), 0,
+        [](size_t sz, const std::string &str) -> size_t {
+            return sz + str.size();
+        }
+    );
+
+    std::string joinedchoices;
+    joinedchoices.reserve(strsz + (choices.size() * 2) + 1);
+    foreach (auto &choice, choices) {
+        joinedchoices.append(choice);
+        if (&choice != &choices.last())
+            joinedchoices.append(", ");
+    }
+
+    auto QStr = QString::fromStdString; // shorter alias
+
+    debug << qPrintable(QString("Core::Variable(%1=%2, description=\"%3\", choices=[%4])").
+        arg(QStr(var.key())).arg(QStr(var.value("<not set>"))).
+        arg(QStr(var.description())).arg(QStr(joinedchoices)));
+    return debug;
+}

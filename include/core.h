@@ -119,7 +119,58 @@ public:
 
     // Unload
     void unload();
-    
+
+    class Variable
+    {
+    public:
+        Variable() {}; // default constructor
+
+        Variable(const retro_variable *var)
+        {
+            m_key = var->key;
+
+            // "Text before first ';' is description. This ';' must be followed by a space,
+            // and followed by a list of possible values split up with '|'."
+            QString valdesc(var->value);
+            int splitidx = valdesc.indexOf("; ");
+            if (splitidx != -1) {
+                m_description = valdesc.mid(0, splitidx).toStdString();
+                auto _choices = valdesc.mid(splitidx + 2).split('|');
+                foreach (auto &choice, _choices) {
+                    m_choices.append(choice.toStdString());
+                }
+            } else {
+                // unknown value
+            }
+        };
+        virtual ~Variable() {};
+
+        const std::string &key() const { return m_key; };
+
+        const std::string &value(const std::string &default_ = std::string("")) const
+        {
+            if (m_value.empty())
+                return default_;
+
+            return m_value;
+        };
+
+        const std::string &description() const { return m_description; };
+
+        const QVector<std::string> &choices() const { return m_choices; };
+
+        bool isValid() const { return !m_key.empty(); };
+
+    private:
+        // use std::strings instead of QStrings, since the later store data as 16bit chars
+        // while cores probably use ASCII/utf-8 internally..
+        std::string m_key;
+        std::string m_value; // XXX: value should not be modified from the UI while a retro_run() call happens
+        std::string m_description;
+        QVector<std::string> m_choices;
+
+    };
+
 private:
 
     // Handle to the libretro core
@@ -131,6 +182,7 @@ private:
     // Information about the core
     retro_system_av_info *system_av_info;
     retro_system_info *system_info;
+    QMap<std::string, Core::Variable> variables;
 
     // Do something with retro_variable
     retro_input_descriptor input_descriptor;
@@ -172,5 +224,8 @@ private:
     static void videoRefreshCallback(const void *data, unsigned width, unsigned height, size_t pitch);
     
 };
+
+
+QDebug operator<<(QDebug, const Core::Variable &);
 
 #endif
