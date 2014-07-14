@@ -28,6 +28,7 @@ VideoItem::VideoItem() {
 
     connect(&fps_timer, SIGNAL(timeout()), this, SLOT(updateFps()));
     frame_timer.invalidate();
+    fps_deviation = 0;
 
     connect(sdl_joystick, SIGNAL(dataChanged(unsigned, unsigned, unsigned, unsigned)), this, SLOT(processGamePad(unsigned, unsigned, unsigned, unsigned)));
     connect(sdl_joystick, SIGNAL(dataChanged(bool, unsigned, unsigned, unsigned, unsigned)), this, SLOT(processGamePad(bool, unsigned, unsigned, unsigned, unsigned)));
