@@ -1,13 +1,35 @@
 <RCC>
 <qresource prefix="/assets">
-    <file>gear-a.png</file>
-    <file>play.png</file>
-    <file>pause.png</file>
-    <file>navicon-round.png</file>
-    <file>arrow-expand.png</file>
-    <file>arrow-shrink.png</file>
-    <file>power.png</file>
-    <file>star.png</file>
-    <file>game-controller-b.png</file>
+    <file>GameView/gear-a.png</file>
+    <file>GameView/play.png</file>
+    <file>GameView/pause.png</file>
+    <file>GameView/navicon-round.png</file>
+    <file>GameView/arrow-expand.png</file>
+    <file>GameView/arrow-shrink.png</file>
+    <file>GameView/power.png</file>
+    <file>GameView/star.png</file>
+    <file>GameView/game-controller-b.png</file>
+    <!-- -->
+    <file>consoleicons/dinothawr.png</file>
+    <file>consoleicons/dosbox.png</file>
+    <file>consoleicons/ffmpeg.png</file>
+    <file>consoleicons/gba.png</file>
+    <file>consoleicons/gbcolor.png</file>
+    <file>consoleicons/mupen64plus.png</file>
+    <file>consoleicons/nds.png</file>
+    <file>consoleicons/nes.png</file>
+    <file>consoleicons/ps1.png</file>
+    <file>consoleicons/snes.png</file>
+    <!-- -->
+    <file>cog-6x.png</file>
+    <file>delete-4x.png</file>
+    <file>document.png</file>
+    <file>file-8x.png</file>
+    <file>folder-8x.png</file>
+    <file>fullscreen-enter-8x.png</file>
+    <file>grid-three-up-8x.png</file>
+    <file>list-8x.png</file>
+    <file>snes-big.png</file>
+    <file>triangle.png</file>
 </qresource>
 </RCC>

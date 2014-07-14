@@ -1,5 +1,12 @@
 <RCC>
 <qresource prefix="/qml">
+    <file>ConsoleBar.qml</file>
+    <file>GameGrid.qml</file>
+    <file>GameTable.qml</file>
+    <file>GameView.qml</file>
+    <file>HeaderBar.qml</file>
     <file>main.qml</file>
+    <file>SettingsButton.qml</file>
+    <file>SettingsWindow.qml</file>
 </qresource>
 </RCC>

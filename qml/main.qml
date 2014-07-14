@@ -1,340 +1,203 @@
-import QtQuick 2.2
+import QtQuick 2.3
 import QtQuick.Controls 1.1
 import QtQuick.Controls.Styles 1.1
 import QtQuick.Layouts 1.1
 import QtGraphicalEffects 1.0
+import QtQuick.Dialogs 1.1
+import QtQuick.Window 2.0
 
-import VideoItem 1.0
+/*import Library 1.0*/
 
 ApplicationWindow {
     id: root;
-    width: 800;
-    height: 600;
-    visible: true;
-    visibility: "Windowed";
+    width: 640
+    height: 480
     title: "Phoenix";
 
-    MouseArea {
-        id: rootMouse;
-        anchors.fill: parent;
-        hoverEnabled: true
-        onEntered: toolBar.visible = true;
-        onMouseXChanged: {
-            if (cursorShape !== Qt.ArrowCursor)
-                cursorShape = Qt.ArrowCursor;
-            if (!toolBar.visible)
-                toolBar.visible = true;
+    property bool clear: true;
+    property string accentColor:"#b85353";
 
-
-            mouseTimer.restart();
-        }
-        onDoubleClicked: {
-            if (visibility == 5)
-                visibility = "Windowed";
-            else
-                visibility = "FullScreen";
-        }
-
-    }
-
-    Timer {
-        id: mouseTimer;
-        interval: 2000;
-        running: true;
-
-        onTriggered: {
-            rootMouse.cursorShape = Qt.BlankCursor;
-            if (bubbleMenu.visible)
-                bubbleMenu.visible = false;
-
-
-            toolBar.visible = false;
-        }
-
-    }
-
-    VideoItem {
-        id: videoItem;
-        focus: true;
-        anchors.fill: parent;
-        systemDirectory: "C:\\Users\\lee\\Desktop";
-        onRunChanged: {
-            if (run)
-                playBtn.iconImage = "/assets/pause.png";
-            else
-                playBtn.iconImage = "/assets/play.png";
-        }
-
-        onSetWindowedChanged: {
-            if (visibility != 2)
-                visibility = "Windowed";
-        }
-
-        // Eventually have VideoItem not load anything on creation
-        // Will run when core and game paths have been entered through
-        // qml.
-
-        // Each core could be it's own qml class/type, would allow easy
-        // extending through qml and keep it so we wouldn't need to
-        // touch c++ side. Just an idea.
-
-        // Also keep last used core loaded on
-        // frontend startup. Will hopefully reduce load time of game.
-
+/*    Library {
+        id: library;
+        onCountChanged: console.log(count);
         Component.onCompleted: {
-
-            // libcore must be defined before game is,
-            // also they both must reside in Component.onCompleted {}
-            libcore = "C:/Users/lee/Desktop/32_cores/bsnes_balanced_libretro.dll";
-            game = "C:/Users/lee/Documents/Emulation/SNES/Super Mario All-Stars + Super Mario World (USA).sfc";
-
-            // run must be defined after libcore and game
-            run = true;
+            var obj = loadLibrary();
 
         }
+    }*/
 
-    }
-
-    Text {
-        id: fpsCounter;
-        text: "FPS: " + videoItem.fps;
-        color: "#f1f1f1";
-        font.pointSize: 16;
-        style: Text.Outline;
-        styleColor: "black";
-
-         anchors {
+    HeaderBar {
+        id: headerBar;
+        z: gameStack.z + 1;
+        anchors {
+            left: parent.left;
             right: parent.right;
             top: parent.top;
-            rightMargin: 5;
-            topMargin: 5;
         }
+        height: 50;
+        color: "#404040";
+        fontSize: 14;
 
     }
 
-    Rectangle {
-        id: bubbleMenu;
-        visible: false;
-        width: 100;
-        height: 300;
-        color: "#363535";
-        radius: 3;
+    ConsoleBar {
+        id: consoleBar;
+        //z: headerBar.z - 1;
+        z: gameStack.z + 1;
+        color: "#2b2b2b";
         anchors {
-            bottom: toolBar.top;
-            right: parent.right;
-            rightMargin: 175;
-            bottomMargin: 25;
-        }
-
-        MouseArea {
-            anchors.fill: parent;
-            hoverEnabled: true;
-            onEntered: mouseTimer.stop();
-            onExited: mouseTimer.restart();
-        }
-
-        ListView {
-            anchors {
-                fill: parent;
-                topMargin: 20;
-            }
-
-            model: ListModel {
-                ListElement {title: "Scan";}
-                ListElement {title: "";}
-                ListElement {title: "";}
-                ListElement {title: "";}
-
-            }
-            spacing: 20;
-            delegate: Row {
-
-                Slider {
-                    anchors.verticalCenter: parent.verticalCenter;
-                }
-
-                Button {
-                    anchors.verticalCenter: parent.verticalCenter;
-                    text: title;
-                    width: 15;
-                    height: 15;
-                }
-            }
-        }
-
-    }
-
-    Rectangle {
-        id: toolBar;
-        visible: false;
-        anchors {
-            left: parent.left
-            right: parent.right;
+            left: parent.left;
+            top: headerBar.bottom;
             bottom: parent.bottom;
-            margins: 20;
+        }
+        width: 275;
+    }
+
+    StackView {
+        id: gameStack;
+        initialItem: {
+            if (root.clear === true)
+                return emptyScreen;
+
+            return gameGrid;
         }
 
-        height: 35;
-        color: "#1e1e1e";
-        radius: 4
 
-        MouseArea {
-
-            anchors.fill: parent;
-            hoverEnabled: true
-            onEntered: mouseTimer.stop();
-            onExited: mouseTimer.restart();
-        }
-        //border.width: 1
-        //border.color: "white"
-
-        Item {
-            anchors {
-                left: parent.left;
-                right: parent.right;
-                top: parent.top;
-                bottom: parent.bottom;
-                leftMargin: 6;
-            }
-
-            Row {
-                anchors {
-                    left: parent.left;
-                    top: parent.top;
-                    bottom: parent.bottom;
-                }
-                width: 200;
-                spacing: 25;
-
-                Button {
-                    id: quitBtn;
-                    anchors.verticalCenter: parent.verticalCenter;
-                    style: ButtonStyle {
-                        background: Image {
-                            source: "/assets/power.png";
-                            sourceSize.width: 20;
-                            sourceSize.height: 20;
-                        }
-                    }
-                    onClicked: Qt.quit(0);
-                }
-
-                Button {
-                    id: playBtn;
-                    property string iconImage: "/assets/play.png";
-                    anchors.verticalCenter: parent.verticalCenter;
-                    style: ButtonStyle {
-                        background: Image {
-                            source: playBtn.iconImage;
-                            sourceSize.width: 20;
-                            sourceSize.height: 20;
-                        }
-                    }
-                    onClicked:  {
-                        if (videoItem.run)
-                            videoItem.run = false
-                        else
-                            videoItem.run = true;
-                    }
-
-                }
-
-
-            }
-
-            Row {
-                anchors {
-                    right: parent.right;
-                    rightMargin: 50;
-                    verticalCenter: parent.verticalCenter;
-                }
-                spacing: 45;
-
-                /*Button {
-                    id: audioBtn;
-                    anchors.verticalCenter: parent.verticalCenter;
-                    property string backgroundImage: "/assets/volume-mute.png"
-                    style: ButtonStyle {
-                        background: Image {
-                            id: volumeBackground;
-                            source: audioBtn.backgroundImage;
-                            sourceSize.width: 35;
-                            sourceSize.height: 35;
-                        }
-                    }
-                    onClicked: {
-                        if (backgroundImage === "/assets/volume-mute.png")
-                            backgroundImage = "/assets/ios7-volume-high.png";
-                        else
-                            backgroundImage = "/assets/volume-mute.png";
-                    }
-
-                }*/
-
-                Button {
-                    id: qualityBtn;
-                    anchors.verticalCenter: parent.verticalCenter;
-                    style: ButtonStyle {
-                        background: Image {
-                            source: "/assets/gear-a.png";
-                            sourceSize.width: 25;
-                            sourceSize.height: 25;
-                        }
-                    }
-                }
-
-                Button {
-                    id: favoriteBtn;
-                    style: ButtonStyle {
-                        background: Image {
-                            source: "/assets/star.png";
-                            sourceSize.width: 25;
-                            sourceSize.height: 25;
-                        }
-                    }
-                }
-
-                Button {
-                    id: gamepadBtn;
-                    style: ButtonStyle {
-                        background: Image {
-                            source: "/assets/game-controller-b.png";
-                            sourceSize.width: 25;
-                            sourceSize.height: 25;
-                        }
-                    }
-                    onClicked: {
-                        bubbleMenu.anchors.rightMargin = 100;
-                        if (bubbleMenu.visible)
-                            bubbleMenu.visible = false;
-                        else {
-                            bubbleMenu.visible = true;
-                        }
-                    }
-                }
-
-                Button {
-                    id: resizeBtn;
-                    onClicked: {
-                        if (root.visibility === 5)
-                            root.visibility = "Windowed";
-                        else
-                            root.visibility = "FullScreen";
-                    }
-
-                    anchors.verticalCenter: parent.verticalCenter;
-                    style: ButtonStyle {
-                        background: Image {
-                            source: "/assets/arrow-expand.png";
-                            sourceSize.width: 25;
-                            sourceSize.height: 25;
-                        }
-                    }
-
-                }
-            }
-
+        anchors {
+            left: consoleBar.right;
+            right: parent.right;
+            top: headerBar.bottom;
+            bottom: parent.bottom;
         }
 
+    }
+
+    InnerShadow {
+        source: gameStack;
+        anchors.fill: source;
+        radius: 8.0;
+        samples: 16;
+        horizontalOffset: 3;
+        verticalOffset: 1;
+        color: Qt.rgba(0, 0, 0, 0.3);
+    }
+
+    Component {
+        id: gameGrid;
+        GameGrid {
+            property string itemName: "grid";
+            color: "#1d1e1e";
+            sliderValue: headerBar.sliderValue;
+            sliderPressed: headerBar.sliderPressed;
+
+        }
+    }
+
+    Component {
+        id: gameTable;
+        GameTable {
+            itemName: "table";
+            highlightColor: "#494545";
+            textColor: "#f1f1f1";
+            headerColor: "#2c2c2c";
+        }
+    }
+
+    Component {
+        id: emptyScreen;
+
+        Rectangle {
+            property string itemName: "empty";
+            color: "#1d1e1e";
+
+
+
+            Column {
+                anchors.centerIn: parent;
+                spacing: 80;
+
+                FileDialog {
+                    id: pathDialog;
+                    selectFolder: true;
+                    title: "Add Game Folder";
+                    onAccepted: {
+                        library.scanFolder(fileUrl.toString().replace("file:///", ""));
+                    }
+                }
+
+                Button {
+                    onClicked: pathDialog.open();
+
+                    style: ButtonStyle {
+                        background: Rectangle {
+                            opacity: 0.3;
+                            color: control.pressed ? "#111111" : "#000000FF";
+                        }
+
+                        label: Row {
+                            spacing: 25;
+                            Image {
+                                source: "/assets/folder-8x.png"
+                                sourceSize {
+                                    width: 50;
+                                    height: 50;
+                                }
+                            }
+                            Label {
+                                anchors.verticalCenter: parent.verticalCenter;
+                                text: "Add Games";
+                                color: "#f1f1f1";
+                                font {
+                                    family: "Sans";
+                                    pixelSize: 16;
+                                    bold: true;
+                                }
+                            }
+
+                        }
+
+                    }
+                }
+
+                Button {
+                    onClicked: {
+                        pathDialog.selectFolder = false;
+                        pathDialog.title = "Import Library File";
+                        pathDialog.nameFilters = ["Library file (*.json)", "All files (*)"];
+                        pathDialog.open();
+                    }
+
+                    style: ButtonStyle {
+                        background: Rectangle {
+                            opacity: 0.3;
+                            color: control.pressed ? "#111111" : "#000000FF";
+                        }
+                        label: Row {
+                            spacing: 25;
+                            Image {
+                                source: "/assets/file-8x.png"
+                                sourceSize {
+                                    width: 50;
+                                    height: 50;
+                                }
+                            }
+                            Label {
+                                anchors.verticalCenter: parent.verticalCenter;
+                                text: "Import Library";
+                                color: "#f1f1f1";
+                                font {
+                                    family: "Sans";
+                                    pixelSize: 16;
+                                    bold: true;
+                                }
+                            }
+
+                        }
+
+                    }
+                }
+
+            }
+        }
     }
 }
