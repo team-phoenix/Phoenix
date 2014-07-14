@@ -1,0 +1,13 @@
+<RCC>
+<qresource prefix="/assets">
+    <file>gear-a.png</file>
+    <file>play.png</file>
+    <file>pause.png</file>
+    <file>navicon-round.png</file>
+    <file>arrow-expand.png</file>
+    <file>arrow-shrink.png</file>
+    <file>power.png</file>
+    <file>star.png</file>
+    <file>game-controller-b.png</file>
+</qresource>
+</RCC>

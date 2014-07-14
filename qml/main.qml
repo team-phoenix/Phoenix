@@ -60,9 +60,9 @@ ApplicationWindow {
         systemDirectory: "C:\\Users\\lee\\Desktop";
         onRunChanged: {
             if (run)
-                playBtn.iconImage = "assets/pause.png";
+                playBtn.iconImage = "/assets/pause.png";
             else
-                playBtn.iconImage = "assets/play.png";
+                playBtn.iconImage = "/assets/play.png";
         }
 
         onSetWindowedChanged: {
@@ -211,7 +211,7 @@ ApplicationWindow {
                     anchors.verticalCenter: parent.verticalCenter;
                     style: ButtonStyle {
                         background: Image {
-                            source: "assets/power.png";
+                            source: "/assets/power.png";
                             sourceSize.width: 20;
                             sourceSize.height: 20;
                         }
@@ -221,7 +221,7 @@ ApplicationWindow {
 
                 Button {
                     id: playBtn;
-                    property string iconImage: "assets/play.png";
+                    property string iconImage: "/assets/play.png";
                     anchors.verticalCenter: parent.verticalCenter;
                     style: ButtonStyle {
                         background: Image {
@@ -253,7 +253,7 @@ ApplicationWindow {
                 /*Button {
                     id: audioBtn;
                     anchors.verticalCenter: parent.verticalCenter;
-                    property string backgroundImage: "assets/volume-mute.png"
+                    property string backgroundImage: "/assets/volume-mute.png"
                     style: ButtonStyle {
                         background: Image {
                             id: volumeBackground;
@@ -263,10 +263,10 @@ ApplicationWindow {
                         }
                     }
                     onClicked: {
-                        if (backgroundImage === "assets/volume-mute.png")
-                            backgroundImage = "assets/ios7-volume-high.png";
+                        if (backgroundImage === "/assets/volume-mute.png")
+                            backgroundImage = "/assets/ios7-volume-high.png";
                         else
-                            backgroundImage = "assets/volume-mute.png";
+                            backgroundImage = "/assets/volume-mute.png";
                     }
 
                 }*/
@@ -276,7 +276,7 @@ ApplicationWindow {
                     anchors.verticalCenter: parent.verticalCenter;
                     style: ButtonStyle {
                         background: Image {
-                            source: "assets/gear-a.png";
+                            source: "/assets/gear-a.png";
                             sourceSize.width: 25;
                             sourceSize.height: 25;
                         }
@@ -287,7 +287,7 @@ ApplicationWindow {
                     id: favoriteBtn;
                     style: ButtonStyle {
                         background: Image {
-                            source: "assets/star.png";
+                            source: "/assets/star.png";
                             sourceSize.width: 25;
                             sourceSize.height: 25;
                         }
@@ -298,7 +298,7 @@ ApplicationWindow {
                     id: gamepadBtn;
                     style: ButtonStyle {
                         background: Image {
-                            source: "assets/game-controller-b.png";
+                            source: "/assets/game-controller-b.png";
                             sourceSize.width: 25;
                             sourceSize.height: 25;
                         }
@@ -325,7 +325,7 @@ ApplicationWindow {
                     anchors.verticalCenter: parent.verticalCenter;
                     style: ButtonStyle {
                         background: Image {
-                            source: "assets/arrow-expand.png";
+                            source: "/assets/arrow-expand.png";
                             sourceSize.width: 25;
                             sourceSize.height: 25;
                         }

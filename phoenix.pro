@@ -43,4 +43,4 @@ SOURCES += src/main.cpp          \
            src/inputdevice.cpp   \
            src/keyboard.cpp
 
-RESOURCES = qml.qrc
+RESOURCES = qml/qml.qrc assets/assets.qrc

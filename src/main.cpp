@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
     
     qmlRegisterType<VideoItem>("VideoItem", 1, 0, "VideoItem");
     
-    QQmlApplicationEngine engine(QUrl("qrc:/main.qml"));
+    QQmlApplicationEngine engine(QUrl("qrc:/qml/main.qml"));
     QObject *topLevel = engine.rootObjects().value(0);
     QQuickWindow *window = qobject_cast<QQuickWindow *>(topLevel);
 
