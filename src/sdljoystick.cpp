@@ -7,8 +7,9 @@
 
 SDLJoystick::SDLJoystick(QObject *parent)
     : QObject(parent) {
+
     qCDebug(phxInput) << this << "SDLJoystick";
-    connect(&joystickTimer, SIGNAL(timeout()), this, SLOT(onProcessEvent()));
+
 }
 
 SDLJoystick::~SDLJoystick() {
@@ -26,7 +27,7 @@ void SDLJoystick::setDeadZone(Uint16 &axis_value) {
 
 }
 
-void SDLJoystick::onScan() {
+QList<InputDevice *> SDLJoystick::onScan() {
 
     qDeleteAll(joys.begin(), joys.end());
     joys.clear();
@@ -37,68 +38,55 @@ void SDLJoystick::onScan() {
     }
 
     if (SDL_Init(SDL_INIT_JOYSTICK) != 0) {
-        qCCritical(phxInput) << "SDL_INIT_JOYSTICK is fail";
-        return;
+        qCCritical(phxInput) << "SDL_INIT_JOYSTICK failed";
+        //return;
     }
+
 
     int count = SDL_NumJoysticks();
-    Joystick *j;
+    Joystick *input_device;
     for (int i = 0; i < count; ++i) {
-        j = new Joystick();
+        input_device = new Joystick();
 
-        j->index = i;
+        input_device->index = i;
 
-        j->name = SDL_JoystickNameForIndex(i);
+        input_device->name = SDL_JoystickNameForIndex(i);
 
-        j->joy = SDL_JoystickOpen(i);
-        if (!j->joy) {
-            qCCritical(phxInput) << "SDL_JoystickOpen is fail, index:" << i;
-            return;
+        input_device->joystick = SDL_JoystickOpen(i);
+        if (!input_device->joystick) {
+            qCCritical(phxInput) << "SDL_JoystickOpen failed, index:" << i;
+            joys.append(input_device);
+            return joys;
         }
 
-        quint8 k;
+        //quint8 k;
+        if (input_device->type == RETRO_DEVICE_ANALOG)
+            input_device->count = SDL_JoystickNumAxes(input_device->joystick);
+        else if (input_device->type == RETRO_DEVICE_JOYPAD)
+            input_device->count = SDL_JoystickNumButtons(input_device->joystick);
 
-        j->numAxes = SDL_JoystickNumAxes(j->joy);
-        for (k = 0; k < j->numAxes; ++k)
-            j->axes[k] = 0;
 
-        j->numButtons = SDL_JoystickNumButtons(j->joy);
-        for (k = 0; k < j->numButtons; ++k)
-            j->buttons[k] = 0;
+        //int button_count = j->SDL_JoystickNumButtons(j->joystick);
+        //for (k = 0; k < button_count; ++k)
+        //    j->buttons[k] = 0;
 
-        j->numHats = SDL_JoystickNumHats(j->joy);
-        for (k = 0; k < j->numHats; ++k)
-            j->hats[k] = 0;
+        //int hat_count = j->SDL_JoystickNumHats(j->joystick);
+        //for (k = 0; k < hat_count; ++k)
+        //    j->hats[k] = 0;
 
-        joys.append(j);
+        joys.append(input_device);
 
-        qDebug("idx: %d, name: %s (axes: %d, buttons: %d, hats: %d)",
-               j->index,
-               j->name.toUtf8().data(),
-               j->numAxes,
-               j->numButtons,
-               j->numHats);
+        qDebug("idx: %d, name: %s (buttons: %d)",
+               input_device->index,
+               input_device->name.toUtf8().data(),
+               input_device->count);
     }
 
-    QListIterator<Joystick *> i(joys);
-    qCDebug(phxInput) << "joy count: " << count;
-    emit joysChanged(count, i);
+    return joys;
 
 }
 
-void SDLJoystick::onStart(int eventTimeout) {
-
-    joystickTimer.start(eventTimeout);
-
-}
-
-void SDLJoystick::onStop() {
-
-    joystickTimer.stop();
-
-}
-
-void SDLJoystick::convertToRetroDevice(unsigned &id, int button) {
+void SDLJoystick::convertToRetroID(unsigned &id, int button) {
     switch (button) {
         case 0:
             id = RETRO_DEVICE_ID_JOYPAD_UP;
@@ -146,33 +134,31 @@ void SDLJoystick::convertToRetroDevice(unsigned &id, int button) {
             // id = it's the home button on xbox controller
             break;
 
+        case 15:
+            break;
         default:
             qCDebug(phxInput) << "Input was not handled";
             break;
     }
 }
 
-void SDLJoystick::onProcessEvent() {
+void SDLJoystick::onProcessEvent(QList<InputDevice *> &devices) {
 
-    Joystick *joy = nullptr;
+    Joystick *input_device = nullptr;
     unsigned id = 16;
-    unsigned device = RETRO_DEVICE_JOYPAD;
-    unsigned port = 0;
-    bool is_pressed = false;
-    unsigned index = 0;
-    int count = joys.size();
-
-
-    for (int j = 0; j < count; ++j) {
+    //unsigned device = RETRO_DEVICE_JOYPAD;
+    for (int j = 0; j < devices.size(); ++j) {
 
         int i;
-        joy = joys.at(j);
+        input_device = static_cast<Joystick *>(devices.at(j));
 
         SDL_JoystickUpdate();
 
-        for (i = 0; i < joy->numAxes; ++i) {
+        // Currently left commented because no currently working core uses analog controls.
 
-            Uint16 new_axis_motion = SDL_JoystickGetAxis(joy->joy, i);
+        /*for (i = 0; i < joy->numAxes; ++i) {
+
+            Sint16 new_axis_motion = SDL_JoystickGetAxis(joy->joy, i);
             joy->axes[i] = new_axis_motion;
             device = RETRO_DEVICE_ANALOG;
 
@@ -217,40 +203,23 @@ void SDLJoystick::onProcessEvent() {
                     qCDebug(phxInput) << "not handled: " << i << "   ==>>  " << new_axis_motion;
                     break;
             }
+        }*/
+
+
+        for (i = 0; i < input_device->count; ++i) {
+            Sint16 new_button_press = static_cast<Sint16>(SDL_JoystickGetButton(input_device->joystick, i));
+            convertToRetroID(id, i);
+            input_device->button_states[id] = new_button_press;
+            //qCDebug(phxInput) << i << "  ==> " << new_button_press;
         }
 
-        if (joy->numAxes)
-            emit dataChanged(port, device, index, id);
+        // Currently left commented because my controllers don't use hats.
 
-        for (i = 0; i < joy->numButtons; ++i) {
-            Uint8 new_button_press = SDL_JoystickGetButton(joy->joy, i);
-            if (!(joy->buttons[i] == new_button_press)) {
-                switch(joy->buttons[i]) {
-                    case 1:
-                        convertToRetroDevice(id, i);
-                        is_pressed = false;
-                        break;
-                    case 0:
-                        convertToRetroDevice(id, i);
-                        is_pressed = true;
-                        break;
-                    default:
-                        break;
-                }
-            }
-            joy->buttons[i] = new_button_press;
-
-            //qCDebug(phxInput) << joy->buttons[i];
-            //QProcess::execute("CLS");
-        }
-
-        for (i = 0; i < joy->numHats; ++i) {
-            joy->hats[i] = SDL_JoystickGetHat(joy->joy, i);
-            qCDebug(phxInput) << joy->hats[i];
-        }
+        //for (i = 0; i < joy->numHats; ++i) {
+            //joy->hats[i] = SDL_JoystickGetHat(joy->joy, i);
+            //qCDebug(phxInput) << joy->hats[i];
+        //}
 
     }
 
-    if (joy && joy->numButtons)
-        emit dataChanged(is_pressed, port, device, index, id);
 }
