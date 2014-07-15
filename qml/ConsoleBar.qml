@@ -1,6 +1,7 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.1
 import QtQuick.Controls.Styles 1.1
+import QtGraphicalEffects 1.0
 
 Rectangle {
     id: consoleBar;
@@ -29,7 +30,7 @@ Rectangle {
             text: "Consoles";
             font {
                 bold: true;
-                pixelSize: 16;
+                pixelSize: 18;
                 family: "Sans";
             }
 
@@ -43,8 +44,75 @@ Rectangle {
         height: parent.height / 2;
         snapMode: ListView.SnapToItem;
         orientation: ListView.Vertical;
-        interactive: false;
+        interactive: true;
+        spacing: 5;
         highlightFollowsCurrentItem: false;
+        highlight: Item {
+            id: highlightItem;
+            height: listView.currentItem.height;
+            width: listView.width;
+            anchors.verticalCenter: listView.currentItem.verticalCenter;
+            y: listView.currentItem.y;
+            Item {
+                id: innerItem;
+                height: parent.height;
+                width: parent.width;
+                Rectangle {
+                    id: accentRectangle;
+                    color: root.accentColor;
+                    width: 15;
+                    anchors {
+                        left: parent.left;
+                        top: parent.top;
+                        bottom: parent.bottom;
+                    }
+                }
+
+
+                Rectangle {
+                    id: mainColor;
+                    anchors {
+                        left: accentRectangle.right;
+                        right: parent.right;
+                        top: parent.top;
+                        bottom: parent.bottom;
+                    }
+                    color: listView.currentItem ? "#666666" : "#000000FF";
+                }
+
+
+                Image {
+                    id: image;
+                    anchors {
+                        left: mainColor.right;
+                    }
+                    source: "/assets/triangle.png";
+                    sourceSize {
+                        height: 20;
+                        width: 30;
+                    }
+                    height: highlightItem.height;
+                    width: 30;
+                }
+
+            }
+
+            DropShadow {
+                width: innerItem.width + 30;
+                height: innerItem.height + 5;
+
+                horizontalOffset: 1;
+                verticalOffset: 1;
+                radius: 8.0
+                samples: 16
+                transparentBorder: true;
+                color: "#80000000"
+                opacity: 0.8;
+                source: innerItem;
+            }
+        }
+
+
 
         anchors {
             right: parent.right;
@@ -72,91 +140,41 @@ Rectangle {
             id: consoleGroup
         }
 
-        delegate: Button {
-            id: consoleButton;
-            checkable: true;
-            checked: false;
-            exclusiveGroup: consoleGroup;
-            height: 35;
-            anchors {
-                left: parent.left;
+        delegate: Item {
+            height: 33;
+            width: consoleBar.width;
+            Row {
+                anchors.fill: parent;
+                anchors.leftMargin: 50;
+                spacing: 10;
+
+                Image {
+                    anchors.verticalCenter: parent.verticalCenter;
+                    source: icon;
+                    sourceSize {
+                        height: 20;
+                        width: 20;
+                    }
+                    height: 20;
+                    width: 20;
+                }
+
+                Label {
+                    id: consoleItem;
+                    anchors.verticalCenter: parent.verticalCenter;
+                    text: title;
+                    color: "#f1f1f1";
+                    font {
+                        family: "Sans";
+                        bold: true;
+                        pixelSize: 14;
+                    }
+                }
             }
 
-            width: consoleBar.width;
-
-            style: ButtonStyle {
-                background: Rectangle {
-                    visible: consoleButton.checked;
-                    color: "#525252";
-
-                    Rectangle {
-                        visible: parent.visible;
-                        color: "#b85353";
-                        anchors {
-                            left: parent.left;
-                            top: parent.top;
-                            bottom: parent.bottom;
-                        }
-                        width: 15;
-
-                    }
-
-                    Image {
-                        anchors.verticalCenter: parent.verticalCenter;
-                        visible: parent.visible;
-                        source: "/assets/triangle.png";
-                        x: consoleButton.width;   // This makes it extend past the bar.
-                        height: 35;
-                        width: 35;
-
-                        sourceSize {
-                            height: 32
-                            width: 43;
-                        }
-                    }
-
-                }
-                label: Row {
-                    spacing: 10;
-                    anchors {
-                        left: parent.left;
-                        leftMargin: 50;
-                    }
-                    Image {
-                        anchors.verticalCenter: parent.verticalCenter;
-                        source: icon;
-                        sourceSize {
-                            height: 20;
-                            width: 20;
-                        }
-                    }
-
-                    Label {
-                        anchors.verticalCenter: parent.verticalCenter;
-                        text: title;
-                        color: "#f1f1f1";
-
-                        font {
-                            bold: true;
-                            pixelSize: 14;
-                            family: "Sans";
-                        }
-
-                    }
-                }
-                    /*Image {
-                        id: triangleImg;
-                        visible: control.pressed;
-                        anchors {
-                            right: parent.right;
-                            verticalCenter: parent.verticalCenter;
-                        }
-                        source: "/assets/arrow-down-dark.png";
-                        sourceSize {
-                            width: 30;
-                            height: 30;
-                        }
-                    }*/
+            MouseArea {
+                anchors.fill: parent;
+                onClicked: listView.currentIndex = index;
             }
         }
     }
@@ -167,7 +185,7 @@ Rectangle {
 
         font {
             bold: true;
-            pixelSize: 16;
+            pixelSize: 18;
             family: "Sans";
         }
 
@@ -178,6 +196,18 @@ Rectangle {
             top: listView.bottom;
             topMargin: 40;
         }
+    }
+
+    DropShadow {
+        anchors.fill: source;
+        horizontalOffset: 0;
+        verticalOffset: -3;
+        radius: 8.0
+        samples: 16
+        transparentBorder: true;
+        color: "#80000000"
+        //opacity: 0.8;
+        source: progressBar;
     }
 
     Rectangle {
@@ -191,7 +221,7 @@ Rectangle {
         }
 
         height: 75;
-        color: "#0f0f0f";
+        color: "#242323";
 
         property string showText: "Importing Games";
         onShowTextChanged: {
@@ -220,13 +250,13 @@ Rectangle {
                 value: 50;
                 style: ProgressBarStyle {
                     background: Rectangle {
-                        color: "#878787";
+                        color: "#666666";
                         opacity: 0.8;
                         implicitWidth: 200;
                         implicitHeight: 8;
                     }
                     progress: Rectangle {
-                        color: "#b85353";
+                        color: root.accentColor;
                     }
                 }
             }

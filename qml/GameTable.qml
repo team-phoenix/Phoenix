@@ -13,7 +13,7 @@ TableView {
     model: gamelibrary;
 
     TableViewColumn{ role: "title"  ; title: "Name" ; width: 200 }
-    TableViewColumn{ role: "console"  ; title: "Console" ; width: 100 }
+    TableViewColumn{ role: "console"  ; title: "Console" ; width: 140 }
     TableViewColumn{ role: "timePlayed"  ; title: "Time Played" ; width: 60; }
 
     ExclusiveGroup {
@@ -22,7 +22,7 @@ TableView {
 
     headerDelegate: Rectangle {
         color: table.headerColor;
-        height: 25;
+        height: 35;
         width: parent.width;
 
         Label {
@@ -36,7 +36,7 @@ TableView {
 
             font {
                 bold: true;
-                pixelSize: 12;
+                pixelSize: 16;
                 family: "Sans";
             }
 
@@ -56,7 +56,7 @@ TableView {
             id: row;
             color: styleData.alternate ? "#171717" : "#0f0f0f";
             width: parent.width;
-            height: 30;
+            height: 32;
 
             property ExclusiveGroup exclusiveGroup: rowGroup;
             property bool checked: false
@@ -96,7 +96,7 @@ TableView {
 
                 font {
                     bold: true;
-                    pixelSize: 11;
+                    pixelSize: 14;
                     family: "Sans";
                 }
 

@@ -12,6 +12,7 @@ ApplicationWindow {
     id: root;
     width: 640
     height: 480
+
     title: "Phoenix";
 
     property bool clear: true;
@@ -35,7 +36,7 @@ ApplicationWindow {
             top: parent.top;
         }
         height: 50;
-        color: "#404040";
+        color: "#666666";
         fontSize: 14;
 
     }
@@ -44,7 +45,7 @@ ApplicationWindow {
         id: consoleBar;
         //z: headerBar.z - 1;
         z: gameStack.z + 1;
-        color: "#2b2b2b";
+        color: "#333333";
         anchors {
             left: parent.left;
             top: headerBar.bottom;
@@ -77,7 +78,7 @@ ApplicationWindow {
         anchors.fill: source;
         radius: 8.0;
         samples: 16;
-        horizontalOffset: 3;
+        horizontalOffset: 6;
         verticalOffset: 1;
         color: Qt.rgba(0, 0, 0, 0.3);
     }
@@ -86,7 +87,7 @@ ApplicationWindow {
         id: gameGrid;
         GameGrid {
             property string itemName: "grid";
-            color: "#1d1e1e";
+            color: "#191a1a";
             sliderValue: headerBar.sliderValue;
             sliderPressed: headerBar.sliderPressed;
 

@@ -32,6 +32,8 @@ Rectangle {
 
         Button {
             id: settingsBtn;
+            height: 30;
+            width: 30;
             property string backgroundColor: "#ba6459";
             style: ButtonStyle {
                 background: Rectangle {
@@ -62,6 +64,8 @@ Rectangle {
         Button {
             id: folderBtn;
             property string backgroundColor: "#000000FF";
+            height: 30;
+            width: 30;
             style: ButtonStyle {
                 background: Rectangle {
                     color: folderBtn.backgroundColor;
@@ -88,6 +92,8 @@ Rectangle {
 
         Button {
             id: viewBtn;
+            height: 30;
+            width: 30;
             property string backgroundColor: "#000000FF";
             property string imageSource: "/assets/grid-three-up-8x.png";
             style: ButtonStyle {
@@ -155,7 +161,7 @@ Rectangle {
                     implicitWidth: 200;
                     radius: 2;
                     opacity: 0.8;
-                    color: "#616161";
+                    color: "#333333";
                 }
 
 
@@ -176,9 +182,13 @@ Rectangle {
 
     TextField {
         id: searchBar;
-        width: 275;
+        width: 175;
         placeholderText: "Search";
-        font.bold: true;
+        font {
+            bold: true;
+            pointSize: 7;
+        }
+
         textColor: "#f1f1f1";
         height: 25;
 
@@ -197,27 +207,27 @@ Rectangle {
             background: Rectangle {
                 radius: 2;
                 opacity: 0.8;
-                color: "#616161";
+                color: "#333333";
 
+            }
 
+        }
 
-                /*Image {
-                    anchors {
-                        verticalCenter: parent.verticalCenter;
-                        right: parent.right;
-                        margins: 5;
-                    }
-
-                    source: searchBar.imageIcon;
-                    sourceSize.height: 15;
-                    sourceSize.width: 15;
-                    MouseArea {
-                        anchors.fill: parent;
-                        onClicked: console.log("lald")
-                    }
-
-                }*/
-
+        Image {
+            id: image;
+            focus: true;
+            anchors {
+                verticalCenter: parent.verticalCenter;
+                right: parent.right;
+                margins: 5;
+            }
+            visible: (searchBar.displayText == "") ? false : true;
+            source: "/assets/delete-4x.png"
+            sourceSize.height: 15;
+            sourceSize.width: 15;
+            MouseArea {
+                anchors.fill: parent;
+                onClicked: searchBar.text = "";
             }
 
         }
