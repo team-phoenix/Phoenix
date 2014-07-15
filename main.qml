@@ -65,15 +65,10 @@ ApplicationWindow {
                 playBtn.iconImage = "assets/play.png";
         }
 
-        onGamepadScanChanged: {
-            if (gamepadScan) {
-                //run = false;
-                scanGamePad();
-                //run = true;
-            }
+        onSetWindowedChanged: {
+            if (visibility != 2)
+                visibility = "Windowed";
         }
-
-        onWindowVisibilityChanged: visibility = windowVisibility;
 
         // Eventually have VideoItem not load anything on creation
         // Will run when core and game paths have been entered through
@@ -93,7 +88,7 @@ ApplicationWindow {
             libcore = "C:/Users/lee/Desktop/32_cores/bsnes_balanced_libretro.dll";
             game = "C:/Users/lee/Documents/Emulation/SNES/Super Mario All-Stars + Super Mario World (USA).sfc";
 
-            // run must be defined here
+            // run must be defined after libcore and game
             run = true;
 
         }
@@ -163,9 +158,6 @@ ApplicationWindow {
                     text: title;
                     width: 15;
                     height: 15;
-                    onClicked: {
-                        videoItem.gamepadScan = true;
-                    }
                 }
             }
         }
