@@ -8,37 +8,26 @@ VideoItem::VideoItem() {
     m_program = 0;
     m_texture = 0;
     m_libcore = "";
-    m_game = "";
-    m_gamepad_scan = false;
-
-    sdl_joystick = new SDLJoystick(this);
-    sdl_joystick->onScan();
-    sdl_joystick->onStart(20);
-
-    id = 0;
-    device = RETRO_DEVICE_JOYPAD;
-    port = 0;
-    is_pressed = true;
-    index = 0;
 
     audio = new Audio();
     Q_CHECK_PTR(audio);
     audio->start();
     core->audio_buf = audio->abuf();
 
+    keyboard = new Keyboard();
+    core->getInputManager()->append(keyboard);
+
     connect(&fps_timer, SIGNAL(timeout()), this, SLOT(updateFps()));
     frame_timer.invalidate();
     fps_deviation = 0;
 
-    connect(sdl_joystick, SIGNAL(dataChanged(unsigned, unsigned, unsigned, unsigned)), this, SLOT(processGamePad(unsigned, unsigned, unsigned, unsigned)));
-    connect(sdl_joystick, SIGNAL(dataChanged(bool, unsigned, unsigned, unsigned, unsigned)), this, SLOT(processGamePad(bool, unsigned, unsigned, unsigned, unsigned)));
     connect(this, SIGNAL(runChanged(bool)), audio, SLOT(runChanged(bool)));
     connect(this, SIGNAL(windowChanged(QQuickWindow*)), this, SLOT(handleWindowChanged(QQuickWindow*)));
 }
 
 VideoItem::~VideoItem() {
+    delete keyboard;
     delete core;
-    sdl_joystick->deleteLater();
     if (m_program)
         delete m_program;
     if (m_texture)
@@ -72,10 +61,10 @@ void VideoItem::handleSceneGraphInitialized() {
     m_texture = new QOpenGLTexture(emptyImage);
 }
 
-void VideoItem::setWindowVisibility(QString windowVisibility) {
+void VideoItem::setWindowed(bool windowVisibility) {
 
-    m_win_visibility = windowVisibility;
-    emit windowVisibilityChanged( windowVisibility );
+    m_set_windowed = windowVisibility;
+    emit setWindowedChanged( windowVisibility );
 
 }
 
@@ -83,23 +72,6 @@ void VideoItem::setSystemDirectory(QString systemDirectory) {
 
     core->setSystemDirectory(systemDirectory);
 
-}
-
-void VideoItem::processGamePad(unsigned port, unsigned device, unsigned index, unsigned id) {
-
-    core->setInputStateCallBack(port, device, index, id);
-
-}
-
-void VideoItem::processGamePad(bool is_pressed, unsigned port, unsigned device, unsigned index, unsigned id) {
-
-    core->setInputStateCallBack(is_pressed, port, device, index, id);
-
-}
-
-void VideoItem::setGamePadScan(bool gamepadScan) {
-    m_gamepad_scan = gamepadScan;
-    emit gamepadScanChanged(gamepadScan);
 }
 
 void VideoItem::setCore(QString libcore) {
@@ -151,16 +123,13 @@ void VideoItem::updateAudioFormat() {
 
 void VideoItem::keyEvent(QKeyEvent *event) {
 
-    id = 16;
-    device = RETRO_DEVICE_JOYPAD;
-    port = 0;
-    is_pressed = (event->type() == QEvent::KeyPress) ? true : false;
-    index = 0;
+    unsigned id = 16;
+    bool is_pressed = (event->type() == QEvent::KeyPress) ? true : false;
 
     switch(event->key()) {
         case Qt::Key_Escape:
             if(is_pressed)
-                emit windowVisibilityChanged("Windowed");
+                emit setWindowedChanged(true);
             break;
         case Qt::Key_Space:
             if(is_pressed) {
@@ -170,8 +139,11 @@ void VideoItem::keyEvent(QKeyEvent *event) {
                     setRun(true);
             }
             break;
-        case Qt::Key_Return:
-            id = RETRO_DEVICE_ID_JOYPAD_START;
+        case Qt::Key_Up:
+            id = RETRO_DEVICE_ID_JOYPAD_UP;
+            break;
+        case Qt::Key_Down:
+            id = RETRO_DEVICE_ID_JOYPAD_DOWN;
             break;
         case Qt::Key_Left:
             id = RETRO_DEVICE_ID_JOYPAD_LEFT;
@@ -179,26 +151,28 @@ void VideoItem::keyEvent(QKeyEvent *event) {
         case Qt::Key_Right:
             id = RETRO_DEVICE_ID_JOYPAD_RIGHT;
             break;
-        case Qt::Key_Down:
-            id = RETRO_DEVICE_ID_JOYPAD_DOWN;
+        case Qt::Key_Return:
+            id = RETRO_DEVICE_ID_JOYPAD_START;
             break;
-        case Qt::Key_Up:
-            id = RETRO_DEVICE_ID_JOYPAD_UP ;
+        case Qt::Key_Backspace:
+            id = RETRO_DEVICE_ID_JOYPAD_SELECT;
+            break;
+        case Qt::Key_Shift:
+            id = RETRO_DEVICE_ID_JOYPAD_L;
+            break;
+        case Qt::Key_Control:
+            id = RETRO_DEVICE_ID_JOYPAD_R;
             break;
         case Qt::Key_A:
-            id = RETRO_DEVICE_ID_JOYPAD_A;
-            break;
-        case Qt::Key_S:
-            id = RETRO_DEVICE_ID_JOYPAD_B;
-            break;
-        case Qt::Key_W:
-            break;
-        case Qt::Key_D:
-            break;
-        case Qt::Key_X:
             id = RETRO_DEVICE_ID_JOYPAD_X;
             break;
         case Qt::Key_Z:
+            id = RETRO_DEVICE_ID_JOYPAD_A;
+            break;
+        case Qt::Key_X:
+            id = RETRO_DEVICE_ID_JOYPAD_B;
+            break;
+        case Qt::Key_S:
             id = RETRO_DEVICE_ID_JOYPAD_Y;
             break;
         default:
@@ -207,7 +181,16 @@ void VideoItem::keyEvent(QKeyEvent *event) {
             break;
     }
 
-    core->setInputStateCallBack(is_pressed, port, device, index, id);
+    if (id < 16) {
+
+        QList<InputDevice *> devices = core->getInputManager()->getDevices();
+        for (int i=0; i < devices.size(); ++i) {
+             if (devices.at(i)->name == "Keyboard") {
+                devices.at(i)->button_states[id] = is_pressed;
+                break;
+             }
+        }
+    }
 
 }
 

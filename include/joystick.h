@@ -1,25 +1,25 @@
 #ifndef JOYINFO_H
 #define JOYINFO_H
 
-#include <QObject>
-#include <QMap>
-#include <SDL2/SDL.h>
+#include "inputdevice.h"
 
-class Joystick
-{
+class Joystick : public InputDevice {
+
 public:
-    int index;
-    QString name;
-    int numAxes;
-    int numButtons;
-    int numHats;
-    SDL_Joystick *joy;
-    QMap<quint8, Sint16> axes;
-    QMap<quint8, Uint8> buttons;
-    QMap<quint8, Uint8> hats;
 
     Joystick();
     ~Joystick();
+
+    //int axis_count;
+    //int button_count;
+    //int hat_count;
+    SDL_Joystick *joystick;
+    //QMap<quint8, Sint16> axes;
+    //QMap<unsigned, Uint8> button_states;
+    //QMap<quint8, Uint8> hats;
+
+
+
 };
 
 #endif // JOYINFO_H

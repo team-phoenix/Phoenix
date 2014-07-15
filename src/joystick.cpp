@@ -1,19 +1,15 @@
 #include <QDebug>
 #include "joystick.h"
 
-Joystick::Joystick()
-{
+Joystick::Joystick() {
     qDebug() << "new Joystick" << this;
 
-    index = -1;
-    name = "";
-    numAxes = 0;
-    numButtons = 0;
-    numHats = 0;
-    joy = NULL;
-    axes.clear();
-    buttons.clear();
-    hats.clear();
+    setType(RETRO_DEVICE_JOYPAD);
+    setName("Joystick");
+    //axis_count = 0;
+    //button_count = 0;
+    //hat_count = 0;
+    joystick = nullptr;
 }
 
 Joystick::~Joystick()

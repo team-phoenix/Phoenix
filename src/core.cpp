@@ -1,6 +1,6 @@
 // Phoenix
 // Core - A libretro core encapsulated in a C++ object
-// Author: athairus
+// Author: team-phoenix
 // Created: May 31, 2014
 
 #include "core.h"
@@ -48,11 +48,26 @@ Core::Core() {
 
     is_dupe_frame = false;
 
+    input_manager = new InputManager();
+    input_manager->moveToThread(&input_thread);
+    input_thread.start(QThread::HighestPriority);
+    qCDebug(phxInput) << "Input Thread running";
+    input_manager->scanDevices();
+    input_manager->startTimer(20);
+
+    QObject::connect(&input_thread, SIGNAL(finished()), &input_thread, SLOT(deleteLater()));
+
+
     Core::core = this;
 
 } // Core::Core()
 
 Core::~Core() {
+    //while (input_manager->stopTimer())
+        //qCDebug(phxCore) << "Closing timer";
+    delete input_manager;
+    input_thread.quit();
+    input_thread.wait();
 
     delete libretro_core;
     delete system_av_info;
@@ -86,18 +101,11 @@ void Core::doFrame() {
 // Input
 // [3]
 
-void Core::setInputStateCallBack(unsigned port, unsigned device, unsigned index, unsigned id) {
+InputManager *Core::getInputManager() {
 
-    inputStateCallback(port, device, index, id);
+    return input_manager;
 
-} // Core::setInputStateCallBack(unsigned port, unsigned device, unsigned index, unsigned id)
-
-void Core::setInputStateCallBack(bool is_pressed, unsigned port, unsigned device, unsigned index, unsigned id) {
-
-    joypad[id] = is_pressed;
-    inputStateCallback(port, device, index, id);
-
-} // Core::setInputStateCallBack(unsigned port, unsigned device, unsigned index, unsigned id)
+} // Core::getInputManager()
 
 // ~[3]
 
@@ -481,15 +489,18 @@ void Core::inputPollCallback(void) {
 
 int16_t Core::inputStateCallback(unsigned port, unsigned device, unsigned index, unsigned id) {
 
-    if (port != 0 || index != 0)
+    Q_UNUSED(index)
+
+    if (static_cast<int>(port) > Core::core->input_manager->getDevices().size())
         return 0;
+
 
     switch (device) {
         case RETRO_DEVICE_JOYPAD:
-            if (id >= 16)
-                return false;
+           // qCDebug(phxInput) << "id: " << id
+                              //<< " === " << Core::core->input_manager->getDevice(port)->buttons[id];
 
-            return Core::core->joypad[id];
+            return Core::core->input_manager->getDevice(port)->button_states[id];
 
         case RETRO_DEVICE_KEYBOARD:
             // If key press id is a proper key, return true

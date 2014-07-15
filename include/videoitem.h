@@ -9,6 +9,7 @@
 #include <QtGui/QOpenGLContext>
 #include <QOpenGLTexture>
 #include <QImage>
+#include <QWindow>
 #include <QByteArray>
 #include <QEvent>
 #include <QLinkedList>
@@ -16,7 +17,7 @@
 #include "qdebug.h"
 #include "core.h"
 #include "audio.h"
-#include "sdljoystick.h"
+#include "keyboard.h"
 #include "logging.h"
 
 class VideoItem : public QQuickItem {
@@ -25,9 +26,8 @@ class VideoItem : public QQuickItem {
     Q_PROPERTY(QString libcore READ libcore WRITE setCore NOTIFY libcoreChanged)
     Q_PROPERTY(QString game READ game WRITE setGame NOTIFY gameChanged)
     Q_PROPERTY(bool run READ run WRITE setRun NOTIFY runChanged)
-    Q_PROPERTY(QString windowVisibility READ windowVisibility WRITE setWindowVisibility NOTIFY windowVisibilityChanged)
+    Q_PROPERTY(bool setWindowed READ setWindowed WRITE setWindowed NOTIFY setWindowedChanged)
     Q_PROPERTY(QString systemDirectory READ systemDirectory WRITE setSystemDirectory NOTIFY systemDirectoryChanged)
-    Q_PROPERTY(bool gamepadScan READ gamepadScan WRITE setGamePadScan NOTIFY gamepadScanChanged)
     Q_PROPERTY(int fps READ fps NOTIFY fpsChanged)
 
 
@@ -40,11 +40,10 @@ public:
     void setCore(QString libcore);
     void setGame(QString game);
     void setRun(bool run );
-    void setWindowVisibility(QString windowVisibility);
+    void setWindowed(bool setWindowed);
     void setSystemDirectory(QString systemDirectory);
     void setTexture(QOpenGLTexture::Filter min_scale,
                     QOpenGLTexture::Filter max_scale);
-    void setGamePadScan(bool gamepadScan);
 
 
     QString libcore() const {
@@ -59,16 +58,12 @@ public:
         return m_run;
     }
 
-    QString windowVisibility() const {
-        return m_win_visibility;
+    bool setWindowed() const {
+        return m_set_windowed;
     }
 
     QString systemDirectory() const {
         return m_system_directory;
-    }
-
-    bool gamepadScan() const {
-        return m_gamepad_scan;
     }
 
     int fps() const {
@@ -95,16 +90,13 @@ signals:
     void libcoreChanged(QString);
     void gameChanged(QString);
     void runChanged(bool);
-    void windowVisibilityChanged(QString windowVisibilit );
+    void setWindowedChanged(bool);
     void systemDirectoryChanged();
-    void gamepadScanChanged(bool);
     void fpsChanged(int);
 
 public slots:
     void paint();
     void cleanup();
-    void processGamePad(bool is_pressed, unsigned port, unsigned device, unsigned index, unsigned id);
-    void processGamePad(unsigned port, unsigned device, unsigned index, unsigned id);
 
 private slots:
     void handleWindowChanged(QQuickWindow *win);
@@ -141,9 +133,8 @@ private:
     QString m_system_directory;
     QString m_libcore;
     QString m_game;
-    QString m_win_visibility;
+    bool m_set_windowed;
     bool m_run;
-    bool m_gamepad_scan;
     int m_fps;
     //[2]
 
@@ -155,12 +146,7 @@ private:
 
     // Input
     // [4]
-    SDLJoystick *sdl_joystick;
-    unsigned id;
-    unsigned device;
-    unsigned port;
-    bool is_pressed;
-    uint32_t index;
+    Keyboard *keyboard;
     //[4]
 
     void refreshItemGeometry(); // called every time the item's with/height/x/y change

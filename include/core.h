@@ -13,10 +13,13 @@
 #include <QImage>
 #include <QMap>
 #include <QLibrary>
+#include <QObject>
 
 #include "libretro.h"
 #include "audiobuffer.h"
 #include "logging.h"
+#include "inputmanager.h"
+#include "keyboard.h"
 
 // Helper for resolving libretro methods
 #define resolved_sym( name ) symbols->name = ( decltype( symbols->name ) )libretro_core->resolve( #name );
@@ -110,9 +113,7 @@ public:
     bool isDupeFrame() const { return is_dupe_frame; };
 
     // Input
-    void setInputStateCallBack(bool is_pressed, unsigned port, unsigned device, unsigned index, unsigned id);
-    void setInputStateCallBack(unsigned port, unsigned device, unsigned index, unsigned id);
-
+    InputManager *getInputManager();
     // Initilization methods
     bool loadCore(const char * path);
     bool loadGame(const char * path);
@@ -210,7 +211,8 @@ private:
     int16_t right_channel;
 
     // Input
-    QMap<unsigned, bool> joypad;
+    InputManager *input_manager;
+    QThread input_thread;
 
     // Timing
     bool is_dupe_frame;
