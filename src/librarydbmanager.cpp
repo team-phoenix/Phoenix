@@ -68,7 +68,7 @@ bool LibraryDbManager::loadFixtures()
     QSqlQuery q(db);
     for (int i = 0; i < 10000; i++) {
         q.exec(QString("INSERT INTO " table_games " (title, console, time_played, artwork)"
-                       " VALUES (\"somegame %1\", \"test\", \"0h 0m 0s\", \"\")").arg(i));
+                       " VALUES (\"somegame %1\", \"test\", \"0h 0m 0s\", \"qrc:/assets/missing_artwork.png\")").arg(i));
     }
     db.commit();
     return true;
