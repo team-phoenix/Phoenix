@@ -34,14 +34,23 @@ Rectangle {
             id: settingsBtn;
             height: 30;
             width: 30;
-            property string backgroundColor: "#ba6459";
+            property string backgroundColor: "#000000FF";
+            onHoveredChanged: {
+                if (hovered) {
+                    backgroundColor = "#525252";
+                }
+                else
+                    backgroundColor = "#000000FF"
+            }
+
+
             style: ButtonStyle {
                 background: Rectangle {
-                    color: control.pressed ? settingsBtn.backgroundColor : "#000000FF";
+                    color: settingsBtn.backgroundColor;
                 }
 
                 label: Image{
-                    source: "/assets/cog-6x.png";
+                    source: "../assets/cog-6x.png";
                     sourceSize.height: 23;
                     sourceSize.width: 23;
                 }
@@ -66,13 +75,20 @@ Rectangle {
             property string backgroundColor: "#000000FF";
             height: 30;
             width: 30;
+            onHoveredChanged: {
+                if (hovered) {
+                    backgroundColor = "#525252";
+                }
+                else
+                    backgroundColor = "#000000FF"
+            }
             style: ButtonStyle {
                 background: Rectangle {
                     color: folderBtn.backgroundColor;
                 }
 
                 label: Image{
-                    source: "/assets/folder-8x.png";
+                    source: "../assets/folder-8x.png";
                     //opacity: 0.85;
                     sourceSize.height: 25;
                     sourceSize.width: 25;
@@ -81,11 +97,8 @@ Rectangle {
             }
             onPressedChanged: {
                 if (pressed) {
-                    backgroundColor = "#ba6459";
                     folderDialog.visible = true;
                 }
-                else
-                    backgroundColor = "#000000FF";
             }
 
         }
@@ -95,7 +108,14 @@ Rectangle {
             height: 30;
             width: 30;
             property string backgroundColor: "#000000FF";
-            property string imageSource: "/assets/grid-three-up-8x.png";
+            property string imageSource: "../assets/grid-three-up-8x.png";
+            onHoveredChanged: {
+                if (hovered) {
+                    backgroundColor = "#525252";
+                }
+                else
+                    backgroundColor = "#000000FF"
+            }
             style: ButtonStyle {
                 background: Rectangle {
                     color: viewBtn.backgroundColor;
@@ -111,14 +131,13 @@ Rectangle {
             }
             onPressedChanged: {
                 if (pressed) {
-                    backgroundColor = "#ba6459";
                     if (gameStack.get(0, false).itemName === "grid") {
-                        imageSource = "/assets/list-8x.png";
+                        imageSource = "../assets/list-8x.png";
                         gameStack.clear();
                         gameStack.push(gameTable);
                     }
                     else {
-                        imageSource = "/assets/grid-three-up-8x.png";
+                        imageSource = "../assets/grid-three-up-8x.png";
                         gameStack.clear();
                         gameStack.push(gameGrid);
                     }
@@ -186,7 +205,7 @@ Rectangle {
         placeholderText: "Search";
         font {
             bold: true;
-            pointSize: 7;
+            pixelSize: 14;
         }
 
         textColor: "#f1f1f1";
@@ -197,9 +216,6 @@ Rectangle {
             rightMargin: 20;
             verticalCenter: parent.verticalCenter;
         }
-
-        //property string imageIcon: "/assets/close-circled.png";
-
 
         style: TextFieldStyle {
             placeholderTextColor: "#f1f1f1";
@@ -222,7 +238,7 @@ Rectangle {
                 margins: 5;
             }
             visible: (searchBar.displayText == "") ? false : true;
-            source: "/assets/delete-4x.png"
+            source: "../assets/delete-4x.png"
             sourceSize.height: 15;
             sourceSize.width: 15;
             MouseArea {

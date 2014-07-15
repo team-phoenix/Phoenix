@@ -6,8 +6,6 @@ import QtGraphicalEffects 1.0
 import QtQuick.Dialogs 1.1
 import QtQuick.Window 2.0
 
-/*import Library 1.0*/
-
 ApplicationWindow {
     id: root;
     width: 640
@@ -17,15 +15,6 @@ ApplicationWindow {
 
     property bool clear: true;
     property string accentColor:"#b85353";
-
-/*    Library {
-        id: library;
-        onCountChanged: console.log(count);
-        Component.onCompleted: {
-            var obj = loadLibrary();
-
-        }
-    }*/
 
     HeaderBar {
         id: headerBar;
@@ -115,43 +104,92 @@ ApplicationWindow {
 
             Column {
                 anchors.centerIn: parent;
-                spacing: 80;
+                spacing: 30;
+
+                Column {
+                    //anchors.horizontalCenter: parent.horizontalCenter;
+                    spacing: 2;
+                    Label {
+                        anchors.horizontalCenter: parent.horizontalCenter;
+                        text: "Get Some Games"
+                        color: "#f1f1f1";
+                        font {
+                            family: "Sans";
+                            pixelSize: 26;
+                        }
+                        horizontalAlignment: Text.AlignHCenter;
+                    }
+
+                    Label {
+
+                        text: "Phoenix can't seem to find your games."
+                        color: "gray";
+                        font {
+                            family: "Sans";
+                            pixelSize: 16;
+                        }
+                        horizontalAlignment: Text.AlignHCenter;
+                    }
+
+                }
+
 
                 FileDialog {
                     id: pathDialog;
                     selectFolder: true;
                     title: "Add Game Folder";
-                    onAccepted: {
-                        library.scanFolder(fileUrl.toString().replace("file:///", ""));
-                    }
+
                 }
 
                 Button {
+                    id: importGamesBtn;
                     onClicked: pathDialog.open();
+                    property string backgroundColor: "#000000FF";
+                    onHoveredChanged: {
+                        if (hovered) {
+                            backgroundColor = "#525252";
+                        }
+                        else
+                            backgroundColor = "#000000FF";
+                    }
 
                     style: ButtonStyle {
                         background: Rectangle {
-                            opacity: 0.3;
-                            color: control.pressed ? "#111111" : "#000000FF";
+                            color: importGamesBtn.backgroundColor;
                         }
 
                         label: Row {
                             spacing: 25;
                             Image {
-                                source: "/assets/folder-8x.png"
+                                source: "../assets/folder-8x.png"
+                                height: 40;
+                                width: 40;
                                 sourceSize {
-                                    width: 50;
-                                    height: 50;
+                                    width: 40;
+                                    height: 40;
                                 }
                             }
-                            Label {
+
+                            Column {
                                 anchors.verticalCenter: parent.verticalCenter;
-                                text: "Add Games";
-                                color: "#f1f1f1";
-                                font {
-                                    family: "Sans";
-                                    pixelSize: 16;
-                                    bold: true;
+                                spacing: 2;
+                                Label {
+                                    text: "Add Games";
+                                    color: "#f1f1f1";
+                                    font {
+                                        family: "Sans";
+                                        pixelSize: 18;
+                                        bold: true;
+                                    }
+                                }
+
+                                Label {
+                                    text: "Choose your games folder.";
+                                    color: "gray";
+                                    font {
+                                        family: "Sans";
+                                        pixelSize: 16;
+                                    }
                                 }
                             }
 
@@ -161,36 +199,59 @@ ApplicationWindow {
                 }
 
                 Button {
+                    id: importLibrarBtn;
+                    property string backgroundColor: "#000000FF";
                     onClicked: {
                         pathDialog.selectFolder = false;
                         pathDialog.title = "Import Library File";
                         pathDialog.nameFilters = ["Library file (*.json)", "All files (*)"];
                         pathDialog.open();
                     }
+                    onHoveredChanged: {
+                        if (hovered) {
+                            backgroundColor = "#525252";
+                        }
+                        else
+                            backgroundColor = "#000000FF";
+                    }
 
                     style: ButtonStyle {
                         background: Rectangle {
-                            opacity: 0.3;
-                            color: control.pressed ? "#111111" : "#000000FF";
+                            //opacity: 0.3;
+                            color: importLibrarBtn.backgroundColor;
                         }
                         label: Row {
                             spacing: 25;
                             Image {
-                                source: "/assets/file-8x.png"
+                                source: "../assets/file-8x.png";
+                                height: 40;
+                                width: 40;
                                 sourceSize {
-                                    width: 50;
-                                    height: 50;
+                                    width: 40;
+                                    height: 40;
                                 }
                             }
-                            Label {
+
+                            Column {
                                 anchors.verticalCenter: parent.verticalCenter;
-                                text: "Import Library";
-                                color: "#f1f1f1";
-                                font {
-                                    family: "Sans";
-                                    pixelSize: 16;
-                                    bold: true;
+                                spacing: 2;
+                                Label {
+                                    text: "Import Library";
+                                    color: "#f1f1f1";
+                                    font {
+                                        family: "Sans";
+                                        pixelSize: 18;
+                                    }
                                 }
+                                Label {
+                                    text: "Add from a Hard Drive.";
+                                    color: "gray";
+                                    font {
+                                        family: "Sans";
+                                        pixelSize: 16;
+                                    }
+                                }
+
                             }
 
                         }
