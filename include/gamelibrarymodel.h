@@ -21,8 +21,8 @@ public:
         ArtworkRole,
     }; 
 
-    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-    virtual QHash<int, QByteArray> roleNames() const override;
+    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
+    virtual QHash<int, QByteArray> roleNames() const Q_DECL_OVERRIDE;
 
 private:
     LibraryDbManager dbm;
