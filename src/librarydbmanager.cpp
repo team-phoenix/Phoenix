@@ -56,7 +56,7 @@ bool LibraryDbManager::createSchema()
     QSqlQuery q(db);
     q.exec("CREATE TABLE " table_version " (version INTEGER NOT NULL)");
     q.exec("INSERT INTO " table_version " (version) VALUES (0)");
-    q.exec("CREATE TABLE " table_games " (title TEXT, console TEXT, timePlayed TEXT)");
+    q.exec("CREATE TABLE " table_games " (title TEXT, console TEXT, time_played TEXT, artwork TEXT)");
     db.commit();
     return true;
 }
@@ -67,8 +67,8 @@ bool LibraryDbManager::loadFixtures()
     db.transaction();
     QSqlQuery q(db);
     for (int i = 0; i < 10000; i++) {
-        q.exec(QString("INSERT INTO " table_games " (title, console, timePlayed)"
-                       " VALUES (\"somegame %1\", \"test\", \"0h 0m 0s\")").arg(i));
+        q.exec(QString("INSERT INTO " table_games " (title, console, time_played, artwork)"
+                       " VALUES (\"somegame %1\", \"test\", \"0h 0m 0s\", \"\")").arg(i));
     }
     db.commit();
     return true;

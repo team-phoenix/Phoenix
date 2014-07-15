@@ -14,7 +14,7 @@ TableView {
 
     TableViewColumn{ role: "title"  ; title: "Name" ; width: 200 }
     TableViewColumn{ role: "console"  ; title: "Console" ; width: 100 }
-    TableViewColumn{ role: "playTime"  ; title: "Play Time" ; width: 60; }
+    TableViewColumn{ role: "timePlayed"  ; title: "Time Played" ; width: 60; }
 
     ExclusiveGroup {
         id: rowGroup;
