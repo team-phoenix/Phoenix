@@ -8,8 +8,8 @@ class GameLibraryModel: public QAbstractTableModel
 {
     Q_OBJECT
 public:
-    GameLibraryModel(QObject *parent = 0) : QAbstractTableModel(parent) {};
-    virtual ~GameLibraryModel() {};
+    GameLibraryModel(QObject *parent = 0) : QAbstractTableModel(parent) {}
+    virtual ~GameLibraryModel() {}
 
     enum GameRoles {
         TitleRole = Qt::UserRole + 1,

@@ -13,6 +13,8 @@
 #include "videoitem.h"
 #include "core.h"
 #include "gamelibrarymodel.h"
+#include "librarydbmanager.h"
+
 
 int main(int argc, char *argv[]) {
 #ifdef Q_OS_LINUX
@@ -41,6 +43,8 @@ int main(int argc, char *argv[]) {
     QObject *topLevel = engine.rootObjects().value(0);
     QQuickWindow *window = qobject_cast<QQuickWindow *>(topLevel);
 
+    LibraryDbManager dbm;
+    dbm.handle();
     QQmlContext *rctx = engine.rootContext();
     GameLibraryModel gamelibr;
     rctx->setContextProperty("gamelibrary", &gamelibr);

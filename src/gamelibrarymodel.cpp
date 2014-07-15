@@ -6,10 +6,9 @@
 int GameLibraryModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return 100000;
+    return 10000;
 }
 
-#include <QDebug>
 int GameLibraryModel::columnCount(const QModelIndex &parent) const
 {
     // "columnCount() should return 0 when the parent is valid."
