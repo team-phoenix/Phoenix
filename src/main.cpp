@@ -3,6 +3,7 @@
 #include <QQmlApplicationEngine>
 #include <QQuickWindow>
 #include <QtQuick/QQuickView>
+#include <QQmlContext>
 
 #ifdef Q_OS_LINUX
 #include <pthread.h>
@@ -11,6 +12,7 @@
 
 #include "videoitem.h"
 #include "core.h"
+#include "gamelibrarymodel.h"
 
 int main(int argc, char *argv[]) {
 #ifdef Q_OS_LINUX
@@ -38,6 +40,10 @@ int main(int argc, char *argv[]) {
     QQmlApplicationEngine engine(QUrl("qrc:/qml/main.qml"));
     QObject *topLevel = engine.rootObjects().value(0);
     QQuickWindow *window = qobject_cast<QQuickWindow *>(topLevel);
+
+    QQmlContext *rctx = engine.rootContext();
+    GameLibraryModel gamelibr;
+    rctx->setContextProperty("gamelibrary", &gamelibr);
 
     window->show();
 

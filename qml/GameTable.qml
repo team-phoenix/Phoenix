@@ -10,20 +10,7 @@ TableView {
     property string textColor: "#f1f1f1";
     property string headerColor: "#4f474e";
 
-    model: ListModel {
-        ListElement {title: "Super Mario 64 (USA)"; console: "Nintendo 64"; playTime: "16.6 hrs"}
-        ListElement {title: "Super Mario 64 (USA)"; console: "Nintendo 64"; playTime: "16.6 hrs"}
-        ListElement {title: "Super Mario 64 (USA)"; console: "Nintendo 64"; playTime: "16.6 hrs"}
-        ListElement {title: "Super Mario 64 (USA)"; console: "Nintendo 64"; playTime: "16.6 hrs"}
-        ListElement {title: "Super Mario 64 (USA)"; console: "Nintendo 64"; playTime: "16.6 hrs"}
-        ListElement {title: "Super Mario 64 (USA)"; console: "Nintendo 64"; playTime: "16.6 hrs"}
-        ListElement {title: "Super Mario 64 (USA)"; console: "Nintendo 64"; playTime: "16.6 hrs"}
-        ListElement {title: "Super Mario 64 (USA)"; console: "Nintendo 64"; playTime: "16.6 hrs"}
-        ListElement {title: "Super Mario 64 (USA)"; console: "Nintendo 64"; playTime: "16.6 hrs"}
-        ListElement {title: "Super Mario 64 (USA)"; console: "Nintendo 64"; playTime: "16.6 hrs"}
-        ListElement {title: "Super Mario 64 (USA)"; console: "Nintendo 64"; playTime: "16.6 hrs"}
-
-    }
+    model: gamelibrary;
 
     TableViewColumn{ role: "title"  ; title: "Name" ; width: 200 }
     TableViewColumn{ role: "console"  ; title: "Console" ; width: 100 }

@@ -29,7 +29,8 @@ HEADERS += include/core.h        \
            include/logging.h     \
            include/inputmanager.h\
            include/inputdevice.h \
-           include/keyboard.h
+           include/keyboard.h    \
+           include/gamelibrarymodel.h
 
 SOURCES += src/main.cpp          \
            src/videoitem.cpp     \
@@ -41,6 +42,7 @@ SOURCES += src/main.cpp          \
            src/logging.cpp       \
            src/inputmanager.cpp  \
            src/inputdevice.cpp   \
-           src/keyboard.cpp
+           src/keyboard.cpp      \
+           src/gamelibrarymodel.cpp
 
 RESOURCES = qml/qml.qrc assets/assets.qrc

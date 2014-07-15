@@ -30,23 +30,7 @@ Rectangle {
         cellWidth: 450;
         cellHeight: 450;
 
-        model: ListModel {
-            //ListElement {title: "Zelda"; artwork: "file:///C:/Users/robert/Desktop/zelda.png";}
-            ListElement {title: "Zelda"; artwork: "file:///C:/Users/lee/Desktop/intro-list.png";}
-
-            ListElement {title: "Zelda"; artwork: "file:///C:/Users/lee/Desktop/intro-list.png";}
-            ListElement {title: "Zelda"; artwork: "file:///C:/Users/lee/Desktop/intro-list.png";}
-            ListElement {title: "Zelda"; artwork: "file:///C:/Users/lee/Desktop/intro-list.png";}
-            ListElement {title: "Zelda"; artwork: "file:///C:/Users/lee/Desktop/intro-list.png";}
-            ListElement {title: "Zelda"; artwork: "file:///C:/Users/lee/Desktop/intro-list.png";}
-            ListElement {title: "Zelda"; artwork: "file:///C:/Users/lee/Desktop/intro-list.png";}
-            ListElement {title: "Zelda"; artwork: "file:///C:/Users/lee/Desktop/intro-list.png";}
-            ListElement {title: "Zelda"; artwork: "file:///C:/Users/lee/Desktop/intro-list.png";}
-            ListElement {title: "Zelda"; artwork: "file:///C:/Users/lee/Desktop/intro-list.png";}
-            ListElement {title: "Zelda"; artwork: "file:///C:/Users/lee/Desktop/intro-list.png";}
-            //ListElement {title: "Zeldaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"; artwork: "file:///C:/Users/robert/Desktop/boxart.png";}
-        }
-
+        model: gamelibrary;
         ExclusiveGroup {
             id: gridGroup;
         }
