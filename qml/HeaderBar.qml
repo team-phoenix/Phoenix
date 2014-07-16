@@ -217,7 +217,7 @@ Rectangle {
             verticalCenter: parent.verticalCenter;
         }
 
-        Keys.onPressed: {
+        onTextChanged: {
             gamelibrary.setFilter(text);
         }
 
