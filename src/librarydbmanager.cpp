@@ -56,7 +56,22 @@ bool LibraryDbManager::createSchema()
     QSqlQuery q(db);
     q.exec("CREATE TABLE " table_version " (version INTEGER NOT NULL)");
     q.exec("INSERT INTO " table_version " (version) VALUES (0)");
-    q.exec("CREATE TABLE " table_games " (title TEXT, console TEXT, time_played TEXT, artwork TEXT)");
+    q.exec("CREATE TABLE " table_games " (\n"
+    "   id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
+    "   /* game info */"
+    "   title TEXT NOT NULL,\n"
+    "   is_favorite BOOLEAN,\n"
+    "   console TEXT NOT NULL,\n"
+    "   region TEXT,\n"
+    "   goodtools_code TEXT,\n"
+    "   time_played DATETIME,\n"
+    "   artwork TEXT,\n"
+    "   /* file info */"
+    "   directory TEXT,\n"
+    "   filename TEXT\n"
+    ")");
+    q.exec("CREATE INDEX title_index ON " tables_games " (title)")
+    q.exec("CREATE INDEX favorite_index ON " tables_games " (is_favorite)")
     db.commit();
     return true;
 }
