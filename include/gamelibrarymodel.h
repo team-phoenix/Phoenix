@@ -24,8 +24,13 @@ public:
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
     virtual QHash<int, QByteArray> roleNames() const Q_DECL_OVERRIDE;
 
+public slots:
+    void setFilter(QString search_terms_);
+
 private:
     LibraryDbManager dbm;
+    QString base_query;
+    QString search_terms;
 };
 
 #endif

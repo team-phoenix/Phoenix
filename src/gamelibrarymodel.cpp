@@ -1,12 +1,16 @@
 
 
-#include <gamelibrarymodel.h>
+#include <QSqlQuery>
+
+#include "gamelibrarymodel.h"
+#include "logging.h"
 
 
 GameLibraryModel::GameLibraryModel(QObject *parent)
     : QSqlQueryModel(parent)
 {
-    setQuery("SELECT title, console, time_played, artwork FROM games", dbm.handle());
+    base_query = "SELECT title, console, time_played, artwork FROM games";
+    setQuery(base_query, dbm.handle());
 }
 
 QVariant GameLibraryModel::data(const QModelIndex &index, int role) const
@@ -28,4 +32,21 @@ QHash<int, QByteArray> GameLibraryModel::roleNames() const
     roles.insert(TimePlayedRole, "timePlayed");
     roles.insert(ArtworkRole, "artwork");
     return roles;
+}
+
+void GameLibraryModel::setFilter(QString new_terms)
+{
+    if (search_terms == new_terms)
+        return;
+
+    if (!new_terms.isEmpty()) {
+        QSqlQuery q(base_query + " WHERE title LIKE ?", dbm.handle());
+        q.bindValue(0, "%" + new_terms + "%");
+        q.exec();
+        setQuery(q);
+    } else if(new_terms.isEmpty()) {
+        setQuery(base_query, dbm.handle());
+    }
+
+    search_terms = new_terms;
 }

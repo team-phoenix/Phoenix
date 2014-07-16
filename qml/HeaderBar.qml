@@ -217,6 +217,10 @@ Rectangle {
             verticalCenter: parent.verticalCenter;
         }
 
+        Keys.onPressed: {
+            gamelibrary.setFilter(text);
+        }
+
         style: TextFieldStyle {
             placeholderTextColor: "#f1f1f1";
 
