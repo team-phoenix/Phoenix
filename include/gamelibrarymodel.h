@@ -26,11 +26,17 @@ public:
 
 public slots:
     void setFilter(QString search_terms_);
+    virtual void sort(int column, Qt::SortOrder order) Q_DECL_OVERRIDE;
 
 private:
     LibraryDbManager dbm;
     QString base_query;
     QString search_terms;
+    int sort_column;
+    Qt::SortOrder sort_order;
+    QHash<int, QByteArray> role_names;
+
+    void updateQuery();
 };
 
 #endif

@@ -12,9 +12,12 @@ TableView {
 
     model: gamelibrary;
 
-    TableViewColumn{ role: "title"  ; title: "Name" ; width: 200 }
-    TableViewColumn{ role: "console"  ; title: "Console" ; width: 140 }
-    TableViewColumn{ role: "timePlayed"  ; title: "Time Played" ; width: 60; }
+    TableViewColumn { role: "title"  ; title: "Name" ; width: 200 }
+    TableViewColumn { role: "console"  ; title: "Console" ; width: 140 }
+    TableViewColumn { role: "timePlayed"  ; title: "Time Played" ; width: 60; }
+
+    onSortIndicatorColumnChanged: model.sort(sortIndicatorColumn, sortIndicatorOrder)
+    onSortIndicatorOrderChanged: model.sort(sortIndicatorColumn, sortIndicatorOrder)
 
     ExclusiveGroup {
         id: rowGroup;

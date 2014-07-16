@@ -9,8 +9,16 @@
 GameLibraryModel::GameLibraryModel(QObject *parent)
     : QSqlQueryModel(parent)
 {
+    role_names = QSqlQueryModel::roleNames();
+    role_names.insert(TitleRole, "title");
+    role_names.insert(ConsoleRole, "console");
+    role_names.insert(TimePlayedRole, "timePlayed");
+    role_names.insert(ArtworkRole, "artwork");
+
     base_query = "SELECT title, console, time_played, artwork FROM games";
-    setQuery(base_query, dbm.handle());
+    sort_column = 0;
+    sort_order = static_cast<Qt::SortOrder>(-1); // default = no sort
+    updateQuery();
 }
 
 QVariant GameLibraryModel::data(const QModelIndex &index, int role) const
@@ -26,12 +34,38 @@ QVariant GameLibraryModel::data(const QModelIndex &index, int role) const
 
 QHash<int, QByteArray> GameLibraryModel::roleNames() const
 {
-    auto roles = QSqlQueryModel::roleNames();
-    roles.insert(TitleRole, "title");
-    roles.insert(ConsoleRole, "console");
-    roles.insert(TimePlayedRole, "timePlayed");
-    roles.insert(ArtworkRole, "artwork");
-    return roles;
+    return role_names;
+}
+
+void GameLibraryModel::updateQuery() {
+    QString q_str(base_query);
+    QSqlQuery q(dbm.handle());;
+    if (!search_terms.isEmpty())
+        q_str.append(" WHERE title LIKE ?");
+
+    if (sort_order != -1) {
+        q_str.append(" ORDER BY ");
+        q_str.append(role_names[Qt::UserRole + sort_column + 1]);
+        q_str.append(sort_order == 0 ? " ASC" : " DESC");
+    }
+
+    qCDebug(phxLibrary) << q_str;
+    q.prepare(q_str);
+    if (!search_terms.isEmpty())
+        q.bindValue(0, "%" + search_terms + "%");
+
+    q.exec();
+    setQuery(q);
+}
+
+void GameLibraryModel::sort(int column, Qt::SortOrder order)
+{
+    if (sort_column == column && sort_order == order)
+        return;
+
+    sort_column = column;
+    sort_order = order;
+    updateQuery();
 }
 
 void GameLibraryModel::setFilter(QString new_terms)
@@ -39,14 +73,6 @@ void GameLibraryModel::setFilter(QString new_terms)
     if (search_terms == new_terms)
         return;
 
-    if (!new_terms.isEmpty()) {
-        QSqlQuery q(base_query + " WHERE title LIKE ?", dbm.handle());
-        q.bindValue(0, "%" + new_terms + "%");
-        q.exec();
-        setQuery(q);
-    } else if(new_terms.isEmpty()) {
-        setQuery(base_query, dbm.handle());
-    }
-
     search_terms = new_terms;
+    updateQuery();
 }
