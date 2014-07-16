@@ -70,8 +70,8 @@ bool LibraryDbManager::createSchema()
     "   directory TEXT,\n"
     "   filename TEXT\n"
     ")");
-    q.exec("CREATE INDEX title_index ON " tables_games " (title)")
-    q.exec("CREATE INDEX favorite_index ON " tables_games " (is_favorite)")
+    q.exec("CREATE INDEX title_index ON " table_games " (title)");
+    q.exec("CREATE INDEX favorite_index ON " table_games " (is_favorite)");
     db.commit();
     return true;
 }
