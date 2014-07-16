@@ -32,5 +32,6 @@
     <file>snes-big.png</file>
     <file>triangle.png</file>
     <file>missing_artwork.png</file>
+    <file>more.png</file>
 </qresource>
 </RCC>

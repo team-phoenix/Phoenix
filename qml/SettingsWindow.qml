@@ -9,12 +9,18 @@ ApplicationWindow {
     width: 500;
     height: 500;
 
+    minimumWidth: 500;
+    minimumHeight: 500;
+    maximumHeight: 500;
+    maximumWidth: 500;
+
     Item {
         anchors.fill: parent;
 
         Rectangle {
             id: menuBar;
-            color: "#f36363";
+            z: stackView.z + 1;
+            color: "#333333";
             anchors {
                 top: parent.top;
                 bottom: parent.bottom;
@@ -28,138 +34,170 @@ ApplicationWindow {
                 property string buttonBackgroundColor: "#000000FF";
             }
 
-            ColumnLayout {
-                id: column;
+
+
+            ListView {
+                id: listView;
                 anchors {
-                    fill: parent;
-                    topMargin: 50;
-                    bottomMargin: 50;
+                    top: parent.top;
+                    bottom: advancedRectangle.top;
+                    left: parent.left;
+                    right: parent.right;
+                    topMargin: 20;
+                    //bottomMargin: 50;
+                }
+                highlightFollowsCurrentItem: false;
+                spacing: 15;
+                highlight: Item {
+                    id: highlightItem;
+                    height: listView.currentItem.height;
+                    width: listView.width;
+                    anchors.verticalCenter: listView.currentItem.verticalCenter;
+                    y: listView.currentItem.y;
+                    Item {
+                        id: innerItem;
+                        height: parent.height;
+                        width: parent.width;
+                        Rectangle {
+                            id: accentRectangle;
+                            color: root.accentColor;
+                            width: 15;
+                            anchors {
+                                left: parent.left;
+                                top: parent.top;
+                                bottom: parent.bottom;
+                            }
+                        }
+
+
+                        Rectangle {
+                            id: mainColor;
+                            anchors {
+                                left: accentRectangle.right;
+                                right: parent.right;
+                                top: parent.top;
+                                bottom: parent.bottom;
+                            }
+                            color: listView.currentItem ? "#666666" : "#000000FF";
+                        }
+
+
+                        Image {
+                            id: image;
+                            anchors {
+                                left: mainColor.right;
+                            }
+                            source: "../assets/triangle.png";
+                            sourceSize {
+                                height: 20;
+                                width: 30;
+                            }
+                            height: highlightItem.height;
+                            width: 30;
+                        }
+
+                    }
+
+                    DropShadow {
+                        width: innerItem.width + 30;
+                        height: innerItem.height + 5;
+
+                        horizontalOffset: 1;
+                        verticalOffset: 1;
+                        radius: 8.0
+                        samples: 16
+                        transparentBorder: true;
+                        color: "#80000000"
+                        opacity: 0.8;
+                        source: innerItem;
+                    }
                 }
 
-                spacing: 75;
-                property var stacks: {"Input": inputSettings,
-                                       "Audio": audioSettings,
-                                       "Video": videoSettings,
-                                       "Frontend": frontendSettings,
+                property var stacks: { "Input": inputSettings,
+                                       "Cores": coreSettings,
+                                       "Info": infoSettings,
+                                       "Library": frontendSettings,
                                        "Save": saveSettings};
-                SettingsButton {
-                    exclusiveGroup: menuGroup;
-                    checked: false;
-                    checkable: true;
+                model: ListModel {
+                    ListElement {title: "Input";}
+                    //ListElement {title: "System";}
+                    ListElement {title: "Library";}
+                    ListElement {title: "Save";}
+                    ListElement {title: "Cores";}
+                    ListElement {title: "Advanced";}
+                    //ListElement {title: "Developer";}
+                    ListElement {title: "Themes";}
+
+
+                }
+
+                delegate: Label {
+                    height: 35;
                     anchors {
                         left: parent.left;
                         right: parent.right;
                         //top: parent.top;
                         //topMargin: 25;
                     }
+                    font {
+                        family: "Sans";
+                        bold: true;
+                        pixelSize: 16;
+                    }
 
-                    implicitHeight: 50;
+                    color: "#f1f1f1";
+                    text: title;
+                    horizontalAlignment: Text.AlignHCenter;
+                    verticalAlignment: Text.AlignVCenter;
 
-                    backgroundColor: "#d75858";
-                    text: "Input";
-
-                    onCheckedChanged: {
-                        if (!checked) {
-                            backgroundColor = "#000000FF";
+                    MouseArea {
+                        anchors.fill: parent;
+                        onClicked: {
                             //downArrow.source = "";
-                        }
-                        else {
-                            backgroundColor = "#bf4c4c";
+                            listView.currentIndex = index;
                             //downArrow.source = "assets/arrow-down.png";
                             stackView.clear();
-                            stackView.push(column.stacks[text]);
+                            stackView.push(listView.stacks[text]);
                         }
                     }
                 }
+            }
 
-                SettingsButton {
-                    exclusiveGroup: menuGroup;
-                    checked: false;
-                    checkable: true;
-                    anchors {
-                        horizontalCenter: parent.horizontalCenter;
-                        //top: parent.top;
-                        //topMargin: 25;
-                    }
-
-                    height: 50;
-                    width: parent.width;
-                    backgroundColor: "#000000FF";
-                    text: "Video";
-
-                    onCheckedChanged: {
-                        if (!checked) {
-                            backgroundColor = "#000000FF";
-                            //downArrow.source = "";
-                        }
-                        else {
-                            backgroundColor = "#bf4c4c";
-                            //downArrow.source = "assets/arrow-down.png";
-                            stackView.clear();
-                            stackView.push(column.stacks[text]);
-                        }
-                    }
+            Rectangle {
+                id: advancedRectangle;
+                z: listView.z + 1;
+                height: 75;
+                anchors {
+                    left: parent.left;
+                    right: parent.right;
+                    bottom: parent.bottom;
                 }
 
+                color: "#242323";
 
-                SettingsButton {
-                    exclusiveGroup: menuGroup;
-                    checked: false;
-                    checkable: true;
-                    anchors {
-                        horizontalCenter: parent.horizontalCenter;
-                        //top: parent.top;
-                        //topMargin: 25;
+
+                Image {
+                    anchors.centerIn: parent;
+                    source: "../assets/more.png";
+                    sourceSize {
+                        width: 40;
+                        height: 40;
                     }
-
-                    height: 50;
-                    width: parent.width;
-                    backgroundColor: "#000000FF";
-                    text: "Frontend";
-
-                    onCheckedChanged: {
-                        if (!checked) {
-                            backgroundColor = "#000000FF";
-                            //downArrow.source = "";
-                        }
-                        else {
-                            backgroundColor = "#bf4c4c";
-                            //downArrow.source = "assets/arrow-down.png";
-                            stackView.clear();
-                            stackView.push(column.stacks[text]);
-                        }
-                    }
+                    height: 40;
+                    width: 40;
                 }
+            }
 
-                SettingsButton {
-                    exclusiveGroup: menuGroup;
-                    checked: false;
-                    checkable: true;
-                    anchors {
-                        horizontalCenter: parent.horizontalCenter;
-                        //top: parent.top;
-                        //topMargin: 25;
-                    }
-
-                    height: 50;
-                    width: parent.width;
-                    backgroundColor: "#000000FF";
-                    text: "Save";
-
-                    onCheckedChanged: {
-                        if (!checked) {
-                            backgroundColor = "#000000FF";
-                            //downArrow.source = "";
-                        }
-                        else {
-                            backgroundColor = "#bf4c4c";
-                            //downArrow.source = "assets/arrow-down.png";
-                            stackView.clear();
-                            stackView.push(column.stacks[text]);
-                        }
-                    }
-                }
-
+            DropShadow {
+                source: advancedRectangle;
+                anchors.fill: source;
+                horizontalOffset: 0;
+                verticalOffset: -3;
+                radius: 8.0
+                samples: 16
+                transparentBorder: true;
+                color: "#80000000"
+                //opacity: 0.8;
             }
         }
 
@@ -173,7 +211,7 @@ ApplicationWindow {
                 top: parent.top;
             }
 
-            initialItem: videoSettings;
+            initialItem: infoSettings;
         }
 
         InnerShadow {
@@ -187,9 +225,9 @@ ApplicationWindow {
         }
 
         Component {
-            id: videoSettings;
+            id: infoSettings;
             Rectangle {
-                color: "#363434";
+                color: "#555555";
 
                 Item {
                     anchors {
@@ -270,7 +308,7 @@ ApplicationWindow {
 
                 Image {
                     id: inputArt;
-                    source: "assets/snes-big.png";
+                    source: "../assets/snes-big.png";
                     anchors {
                         bottom: parent.bottom;
                         bottomMargin: 50;
@@ -284,28 +322,122 @@ ApplicationWindow {
         }
 
         Component {
-            id: audioSettings;
+            id: coreSettings;
             Rectangle {
-                color: "#363434";
+                color: "#404040";
 
-                Switch {
-                    anchors.centerIn: parent;
-                    checked: false;
-                    style: SwitchStyle {
-                        groove: Rectangle {
-                            color: control.checked ? "#4cc965" : "#c94c4c";
-                            implicitHeight: 20;
-                            implicitWidth: 50;
+                Row {
+                    id: btnRow;
+                    spacing: 2;
+                    anchors {
+                        horizontalCenter: parent.horizontalCenter;
+                        top: parent.top;
+                        topMargin: 25;
+                    }
+
+                    ExclusiveGroup {
+                        id: coreBtnGroup;
+                    }
+
+                    Button {
+                        id: configBtn;
+                        width: 100;
+                        height: 35;
+                        checkable: true;
+                        checked: false;
+                        exclusiveGroup: coreBtnGroup;
+
+                        property string backgroundColor: checked ? "#383838" : "#4a4a4a";
+
+                        onClicked: {
+                            coreStackView.clear();
+                            coreStackView.push(coreOptions);
                         }
 
-                        handle: Rectangle {
-                            implicitHeight: 20;
-                            implicitWidth: 20;
-                            color: "#e0d9d9";
-                            radius: 2;
-                            border.width: 2;
-                            border.color: "#d4cecd";
+                        style: ButtonStyle {
+                            background: Rectangle {
+                                color: configBtn.backgroundColor;
+                            }
+                            label: Label {
+                                text: "Configure";
+                                color: "#f1f1f1";
+                                font {
+                                    family: "Sans";
+                                    pixelSize: 18;
+                                    bold: true;
+                                }
+                                verticalAlignment: Text.AlignVCenter;
+
+                                horizontalAlignment: Text.AlignHCenter
+                            }
                         }
+                    }
+
+                    Button {
+                        id: infoBtn;
+                        width: 100;
+                        height: 35;
+                        checkable: true;
+                        checked: true;
+                        exclusiveGroup: coreBtnGroup;
+                        property string backgroundColor: checked ? "#383838" : "#4a4a4a";
+
+                        onClicked: {
+                            coreStackView.clear();
+                            coreStackView.push(coreTable);
+                        }
+
+                        style: ButtonStyle {
+                            background: Rectangle {
+                                color: infoBtn.backgroundColor;
+                            }
+                            label: Label {
+                                text: "Info";
+                                color: "#f1f1f1";
+                                font {
+                                    family: "Sans";
+                                    pixelSize: 18;
+                                    bold: true;
+                                }
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter;
+                            }
+                        }
+                    }
+                }
+
+                StackView {
+                    id: coreStackView;
+                    anchors {
+                        top: btnRow.bottom;
+                        left: parent.left;
+                        right: parent.right;
+                        bottom: parent.bottom;
+                        margins: 25;
+                    }
+                    initialItem: coreTable;
+
+                }
+
+                Component {
+                    id: coreTable;
+                    TableView {
+                        TableViewColumn{ role: "title"  ; title: "Title" ; width: 100 }
+                        TableViewColumn{ role: "author" ; title: "Author" ; width: 200 }
+                            model: ListModel {
+                                ListElement{title: "A Masterpiece"; author: "Gabriel";}
+                                ListElement{title: "Brilliance"; author: "Jens";}
+                                ListElement{title: "Outstanding"; author: "Frederik";}
+                       }
+                    }
+
+                }
+
+                Component {
+                    id: coreOptions;
+                    Rectangle {
+                        color: "blue";
+
                     }
                 }
             }
