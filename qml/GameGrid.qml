@@ -27,8 +27,8 @@ Rectangle {
             topMargin: 125;
             bottomMargin: 75;
         }
-        cellWidth: 450;
-        cellHeight: 450;
+        cellWidth: 400 + sliderValue;
+        cellHeight: 400 + sliderValue;
 
         model: gamelibrary;
         ExclusiveGroup {
@@ -37,8 +37,8 @@ Rectangle {
 
 
         delegate: Item {
-            height: 300 + sliderValue;
-            width: 300 + sliderValue;
+            height: 325 + sliderValue;
+            width: 325 + sliderValue;
 
             Item {
                 anchors.fill: parent;
@@ -80,7 +80,7 @@ Rectangle {
                                 else
                                     imageHighlight.checked = true;
                                 gameView.run = true;
-                                windowStack.push(gameView);
+                                windowStack.push({item: gameView, replace: true });
 
                             }
                         }

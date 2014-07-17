@@ -158,6 +158,8 @@ Rectangle {
             }
             stepSize: 2;
             maximumValue: 100;
+            minimumValue: -100;
+            value: 0;
 
             onPressedChanged: {
                 if (pressed)
