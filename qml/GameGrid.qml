@@ -37,8 +37,8 @@ Rectangle {
 
 
         delegate: Item {
-            height: 325 + sliderValue;
-            width: 325 + sliderValue;
+            height: gridView.cellHeight;
+            width: gridView.cellWidth;
 
             Item {
                 anchors.fill: parent;
