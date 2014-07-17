@@ -49,7 +49,6 @@ void GameLibraryModel::updateQuery() {
         q_str.append(sort_order == 0 ? " ASC" : " DESC");
     }
 
-    qCDebug(phxLibrary) << q_str;
     q.prepare(q_str);
     if (!search_terms.isEmpty())
         q.bindValue(0, "%" + search_terms + "%");
