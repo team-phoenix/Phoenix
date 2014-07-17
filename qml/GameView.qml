@@ -6,13 +6,14 @@ import QtGraphicalEffects 1.0
 
 import VideoItem 1.0
 
-ApplicationWindow {
+Item {
     id: root;
     width: 800;
     height: 600;
     visible: true;
-    visibility: "Windowed";
-    title: "Phoenix";
+    property bool run: false;
+    //visibility: "Windowed";
+    //title: "Phoenix";
 
     MouseArea {
         id: rootMouse;
@@ -58,6 +59,7 @@ ApplicationWindow {
         focus: true;
         anchors.fill: parent;
         systemDirectory: "C:\\Users\\lee\\Desktop";
+        run: root.run;
         onRunChanged: {
             if (run)
                 playBtn.iconImage = "/assets/GameView/pause.png";
@@ -73,7 +75,7 @@ ApplicationWindow {
 
         // Eventually have VideoItem not load anything on creation
         // Will run when core and game paths have been entered through
-        // qml.
+        // qml.actual
 
         // Each core could be it's own qml class/type, would allow easy
         // extending through qml and keep it so we wouldn't need to
@@ -90,7 +92,6 @@ ApplicationWindow {
             game = "C:/Users/lee/Documents/Emulation/SNES/Super Mario All-Stars + Super Mario World (USA).sfc";
 
             // run must be defined after libcore and game
-            run = true;
 
         }
 
@@ -206,6 +207,12 @@ ApplicationWindow {
                 }
                 width: 200;
                 spacing: 25;
+
+                Button {
+                    anchors.verticalCenter: parent.verticalCenter;
+                    text: "Back";
+                    onClicked: windowStack.push(homeScreen);
+                }
 
                 Button {
                     id: quitBtn;

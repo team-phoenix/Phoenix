@@ -79,6 +79,9 @@ Rectangle {
                                     imageHighlight.checked = false;
                                 else
                                     imageHighlight.checked = true;
+                                gameView.run = true;
+                                windowStack.push(gameView);
+
                             }
                         }
                     }
