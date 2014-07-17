@@ -92,7 +92,6 @@ Rectangle {
                     width: height;
                     color: mainColor.color;
                     smooth: true;
-                    Component.onCompleted: console.log(height, anchors.leftMargin)
                 }
 
             }

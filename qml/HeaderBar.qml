@@ -156,10 +156,10 @@ Rectangle {
             anchors {
                 verticalCenter: parent.verticalCenter;
             }
-            stepSize: 2;
-            maximumValue: 100;
-            minimumValue: -100;
-            value: 0;
+            stepSize: 1;
+            minimumValue: 1;
+            maximumValue: 10;
+            value: 5;
 
             onPressedChanged: {
                 if (pressed)

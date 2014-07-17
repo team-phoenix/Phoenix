@@ -10,8 +10,8 @@ Rectangle {
     width: 500;
 
     property string itemBackgroundColor: "#b85353";
-    property real sliderValue: 0;
-    property bool sliderPressed: false;
+    property real zoomFactor: 1;
+    property bool zoomSliderPressed: false;
 
     GridView {
         id: gridView;
@@ -23,12 +23,13 @@ Rectangle {
 
         anchors {
             fill: parent;
-            leftMargin: 175;
-            topMargin: 125;
-            bottomMargin: 75;
+            leftMargin: (parent.width >= cellWidth) ? ((parent.width % cellWidth) / 2) : 0;
+            rightMargin: leftMargin;
+            topMargin: 20;
+            bottomMargin: 20;
         }
-        cellWidth: 400 + sliderValue;
-        cellHeight: 400 + sliderValue;
+        cellWidth: 100 * zoomFactor;
+        cellHeight: 100 * zoomFactor;
 
         model: gamelibrary;
         ExclusiveGroup {
@@ -89,7 +90,7 @@ Rectangle {
 
                 DropShadow {
                     source: imageHighlight;
-                    visible: !gameGrid.sliderPressed;
+                    visible: !gameGrid.zoomSliderPressed;
                     anchors.fill: source;
                     fast: false;
                     horizontalOffset: 3;
@@ -121,103 +122,6 @@ Rectangle {
                     horizontalAlignment: Text.AlignHCenter;
                 }
             }
-
-
-            /*ColumnLayout {
-            anchors.centerIn: parent;
-            height: parent.height + sliderValue;
-            width: parent.width + sliderValue;
-
-            Rectangle {
-                id: background;
-                anchors.centerIn: parent;
-
-                color: "red";
-                height: 200 + sliderValue;
-                width: 200 + sliderValue;
-
-                property ExclusiveGroup exclusiveGroup: gridGroup;
-                property bool checked: false
-
-                onExclusiveGroupChanged: {
-                    if (exclusiveGroup) {
-                        exclusiveGroup.bindCheckable(background);
-                    }
-                }
-
-                onCheckedChanged: {
-                    if (checked)
-                        color = gameGrid.itemBackgroundColor;
-                    else
-                        color = "#000000FF";
-                }
-
-                Rectangle {
-                    color: "yellow";
-                    anchors.fill: parent;
-                    anchors.margins: 20;
-                }
-
-
-                Image {
-                    source: artwork;
-                    fillMode: Image.PreserveAspectFit;
-                    anchors {
-                        fill: parent;
-                        rightMargin: 10;
-                        leftMargin: 10;
-                        topMargin: 2;
-                        bottomMargin: 2;
-                    }
-
-                    onStatusChanged: {
-                        if (status === Image.Ready) {
-                            background.height = paintedHeight;
-                            background.width = paintedWidth;
-                        }
-
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent;
-                        onPressed: background.checked = true;
-                    }
-                }
-            }
-
-            DropShadow {
-                source: background;
-                visible: !gameGrid.sliderPressed;
-                anchors.fill: source;
-                fast: false;
-                horizontalOffset: 3;
-                verticalOffset: 6;
-                radius: 8.0;
-                samples: 16;
-                color: "#80000000";
-                transparentBorder: true;
-            }
-
-            Item {
-                anchors {
-                    top: background.bottom;
-                    topMargin: 20;
-                }
-
-                Label {
-                    width: background.width;
-                    font.bold: true;
-                    font.pixelSize: 12;
-                    color: "#f1f1f1";
-                    text: title;
-                    elide: Qt.ElideRight;
-                    horizontalAlignment: Text.AlignHCenter;
-                }
-            }
-
-        }*/
         }
-
-
     }
 }

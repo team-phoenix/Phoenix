@@ -92,8 +92,8 @@ ApplicationWindow {
                 GameGrid {
                     property string itemName: "grid";
                     color: "#191a1a";
-                    sliderValue: headerBar.sliderValue;
-                    sliderPressed: headerBar.sliderPressed;
+                    zoomFactor: headerBar.sliderValue;
+                    zoomSliderPressed: headerBar.sliderPressed;
 
                 }
             }
