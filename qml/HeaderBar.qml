@@ -219,8 +219,16 @@ Rectangle {
             verticalCenter: parent.verticalCenter;
         }
 
+        Timer {
+            id: searchTimer;
+            interval: 300;
+            running: false;
+            repeat: false;
+            onTriggered: gamelibrary.setFilter(searchBar.text);
+        }
+
         onTextChanged: {
-            gamelibrary.setFilter(text);
+            searchTimer.restart();
         }
 
         style: TextFieldStyle {
