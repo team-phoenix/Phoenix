@@ -520,19 +520,26 @@ void Core::logCallback(enum retro_log_level level, const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
     int ret = vsnprintf(outbuf.data(), outbuf.size(), fmt, args);
-    if(ret < 0) {
+    if (ret < 0) {
         qCDebug(phxCore) << "logCallback: could not format string";
         return;
     }
-    else if(ret+1 > outbuf.size()) {
-        outbuf.resize(ret+1);
-        int ret = vsnprintf(outbuf.data(), outbuf.size(), fmt, args);
+    else if ((ret + 1) > outbuf.size()) {
+        outbuf.resize(ret + 1);
+        ret = vsnprintf(outbuf.data(), outbuf.size(), fmt, args);
         if(ret < 0) {
             qCDebug(phxCore) << "logCallback: could not format string";
             return;
         }
     }
     va_end(args);
+
+    // remove trailing newline, which are already added by qCDebug
+    if (outbuf.value(ret - 1) == '\n') {
+        outbuf[ret - 1] = '\0';
+        if (outbuf.value(ret - 2) == '\r')
+            outbuf[ret - 2] = '\0';
+    }
 
     switch (level) {
         case RETRO_LOG_DEBUG:
