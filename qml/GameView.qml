@@ -23,8 +23,9 @@ Item {
         onMouseXChanged: {
             if (cursorShape !== Qt.ArrowCursor)
                 cursorShape = Qt.ArrowCursor;
-            if (!toolBar.visible)
+            if (!toolBar.visible) {
                 toolBar.visible = true;
+            }
 
 
             mouseTimer.restart();
@@ -113,6 +114,31 @@ Item {
         }
 
     }
+
+
+    Button {
+        id: backButton;
+        visible: toolBar.visible;
+        anchors {
+            left: parent.left;
+            top: parent.top;
+            leftMargin: 15;
+            topMargin: 15;
+        }
+
+        style: ButtonStyle {
+            background: Image {
+                source: "../assets/arrow-left-a.png";
+                sourceSize.width: 35;
+                sourceSize.height: 35;
+            }
+        }
+        onClicked:  {
+            root.run = false;
+            windowStack.push({item: homeScreen, replace: true });
+        }
+    }
+
 
     Rectangle {
         id: bubbleMenu;
@@ -207,34 +233,6 @@ Item {
                 }
                 width: 200;
                 spacing: 25;
-
-                Button {
-                    anchors.verticalCenter: parent.verticalCenter;
-                    style: ButtonStyle {
-                        background: Image {
-                            source: "../assets/arrow-left-a.png";
-                            sourceSize.width: 25;
-                            sourceSize.height: 25;
-                        }
-                    }
-                    onClicked:  {
-                        root.run = false;
-                        windowStack.push(homeScreen);
-                    }
-                }
-
-                Button {
-                    id: quitBtn;
-                    anchors.verticalCenter: parent.verticalCenter;
-                    style: ButtonStyle {
-                        background: Image {
-                            source: "/assets/GameView/power.png";
-                            sourceSize.width: 20;
-                            sourceSize.height: 20;
-                        }
-                    }
-                    onClicked: Qt.quit(0);
-                }
 
                 Button {
                     id: playBtn;
