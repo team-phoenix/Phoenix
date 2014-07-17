@@ -80,19 +80,19 @@ Rectangle {
                     color: listView.currentItem ? "#666666" : "#000000FF";
                 }
 
-
-                Image {
-                    id: image;
+                Rectangle {
+                    id: triangle;
                     anchors {
                         left: mainColor.right;
+                        leftMargin: -(height / 2);
+                        verticalCenter: mainColor.verticalCenter;
                     }
-                    source: "/assets/triangle.png";
-                    sourceSize {
-                        height: 20;
-                        width: 30;
-                    }
-                    height: highlightItem.height;
-                    width: 30;
+                    rotation: 45;
+                    height: highlightItem.height / Math.SQRT2;
+                    width: height;
+                    color: mainColor.color;
+                    smooth: true;
+                    Component.onCompleted: console.log(height, anchors.leftMargin)
                 }
 
             }
