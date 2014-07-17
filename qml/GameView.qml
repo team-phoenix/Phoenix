@@ -210,8 +210,17 @@ Item {
 
                 Button {
                     anchors.verticalCenter: parent.verticalCenter;
-                    text: "Back";
-                    onClicked: windowStack.push(homeScreen);
+                    style: ButtonStyle {
+                        background: Image {
+                            source: "../assets/arrow-left-a.png";
+                            sourceSize.width: 25;
+                            sourceSize.height: 25;
+                        }
+                    }
+                    onClicked:  {
+                        root.run = false;
+                        windowStack.push(homeScreen);
+                    }
                 }
 
                 Button {
