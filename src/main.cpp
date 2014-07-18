@@ -14,6 +14,7 @@
 #include "core.h"
 #include "gamelibrarymodel.h"
 #include "librarydbmanager.h"
+#include "qmlsettings.h"
 
 
 int main(int argc, char *argv[]) {
@@ -39,13 +40,20 @@ int main(int argc, char *argv[]) {
     
     qmlRegisterType<VideoItem>("VideoItem", 1, 0, "VideoItem");
     
-    QQmlApplicationEngine engine(QUrl("qrc:/qml/GameView.qml"));
-    QObject *topLevel = engine.rootObjects().value(0);
-    QQuickWindow *window = qobject_cast<QQuickWindow *>(topLevel);
+    QQmlApplicationEngine engine;
 
+    /* first, set the context properties */
     QQmlContext *rctx = engine.rootContext();
     GameLibraryModel gamelibr;
     rctx->setContextProperty("gamelibrary", &gamelibr);
+
+    QMLSettings settings;
+    rctx->setContextProperty("settings", &settings);
+
+    /* then, load qml and display the window */
+    engine.load(QUrl("qrc:/qml/main.qml"));
+    QObject *topLevel = engine.rootObjects().value(0);
+    QQuickWindow *window = qobject_cast<QQuickWindow *>(topLevel);
 
     window->show();
 

@@ -156,10 +156,14 @@ Rectangle {
             anchors {
                 verticalCenter: parent.verticalCenter;
             }
-            stepSize: 1;
-            minimumValue: 1;
             maximumValue: 10;
-            value: 5;
+            value: settings.getValue("ui/zoomFactor", 5);
+            Component.onCompleted: {
+                // this prevent the onValueChanged event to be triggered
+                // before the actual value has been evaluated/set.
+                minimumValue = 1;
+                stepSize = 1;
+            }
 
             onPressedChanged: {
                 if (pressed)
@@ -168,7 +172,11 @@ Rectangle {
                     headerBar.sliderPressed = false;
             }
 
-            onValueChanged: headerBar.sliderValue = value;
+            onValueChanged: {
+                headerBar.sliderValue = value;
+                settings.setValue("ui/zoomFactor", value);
+            }
+
             style: SliderStyle {
                 handle: Rectangle {
                     height: 18;

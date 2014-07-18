@@ -114,7 +114,7 @@ Rectangle {
 
                     font {
                         bold: true;
-                        pixelSize: 14;
+                        pixelSize: 6 + zoomFactor*4;
                         family: "Sans";
                     }
 

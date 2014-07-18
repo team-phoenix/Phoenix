@@ -27,6 +27,7 @@ HEADERS += include/core.h              \
            include/joystick.h          \
            include/sdljoystick.h       \
            include/logging.h           \
+           include/qmlsettings.h       \
            include/inputmanager.h      \
            include/inputdevice.h       \
            include/keyboard.h          \
