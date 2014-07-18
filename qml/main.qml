@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.1
 import QtGraphicalEffects 1.0
 import QtQuick.Dialogs 1.1
 import QtQuick.Window 2.0
+import Qt.labs.settings 1.0
 
 ApplicationWindow {
     id: root;
@@ -15,6 +16,14 @@ ApplicationWindow {
 
     property bool clear: true;
     property string accentColor:"#b85353";
+
+    Settings {
+        category: "UI";
+        property alias windowX: root.x;
+        property alias windowY: root.y;
+        property alias windowWidth: root.width;
+        property alias windowHeight: root.height;
+    }
 
     StackView {
         id: windowStack;

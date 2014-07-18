@@ -14,7 +14,6 @@
 #include "core.h"
 #include "gamelibrarymodel.h"
 #include "librarydbmanager.h"
-#include "qmlsettings.h"
 
 
 int main(int argc, char *argv[]) {
@@ -46,9 +45,6 @@ int main(int argc, char *argv[]) {
     QQmlContext *rctx = engine.rootContext();
     GameLibraryModel gamelibr;
     rctx->setContextProperty("gamelibrary", &gamelibr);
-
-    QMLSettings settings;
-    rctx->setContextProperty("settings", &settings);
 
     /* then, load qml and display the window */
     engine.load(QUrl("qrc:/qml/main.qml"));

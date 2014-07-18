@@ -2,6 +2,7 @@ import QtQuick 2.2
 import QtQuick.Controls 1.1
 import QtQuick.Controls.Styles 1.1
 import QtQuick.Dialogs 1.1
+import Qt.labs.settings 1.0
 
 Rectangle {
     id: headerBar;
@@ -151,18 +152,20 @@ Rectangle {
         }
 
         Slider {
+            id: zoomSlider;
             width: 150;
             height: 5;
             anchors {
                 verticalCenter: parent.verticalCenter;
             }
+            stepSize: 1;
+            minimumValue: 1;
             maximumValue: 10;
-            value: settings.getValue("ui/zoomFactor", 5);
-            Component.onCompleted: {
-                // this prevent the onValueChanged event to be triggered
-                // before the actual value has been evaluated/set.
-                minimumValue = 1;
-                stepSize = 1;
+            value: 5;
+
+            Settings {
+                category: "UI";
+                property alias zoomFactor: zoomSlider.value;
             }
 
             onPressedChanged: {
@@ -172,10 +175,7 @@ Rectangle {
                     headerBar.sliderPressed = false;
             }
 
-            onValueChanged: {
-                headerBar.sliderValue = value;
-                settings.setValue("ui/zoomFactor", value);
-            }
+            onValueChanged: headerBar.sliderValue = value;
 
             style: SliderStyle {
                 handle: Rectangle {
