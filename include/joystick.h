@@ -28,18 +28,33 @@ private:
     // shared instance between all the class Joystick instances
     static std::weak_ptr<SDLEvents> events_global;
 
-    void handleSDLEvent(const SDL_Event *event);
+    bool handleSDLEvent(const SDL_Event *event);
     SDLEvents::EventCallback callback;
-    bool device_attached;
-
-    void deviceAdded(const SDL_Event *event);
-    void deviceRemoved(const SDL_Event *event);
-
-    void controllerButtonChanged(const SDL_Event *event);
-    void joyButtonChanged(const SDL_Event *event);
 
     SDL_Joystick *joystick;
     SDL_GameController *controller;
+    bool device_attached;
+
+    bool deviceAdded(const SDL_Event *event);
+    bool deviceRemoved(const SDL_Event *event);
+
+    bool controllerButtonChanged(const SDL_Event *event);
+    bool joyButtonChanged(const SDL_Event *event);
+
+    // convenience functions to check that an event matches the current joystick/controller
+    bool ControllerMatchEvent(const SDL_Event *event);
+    bool JoystickMatchEvent(const SDL_Event *event);
 };
+
+inline bool Joystick::ControllerMatchEvent(const SDL_Event *event)
+{
+    auto joyid = SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(controller));
+    return controller != nullptr && event->cdevice.which == joyid;
+}
+
+inline bool Joystick::JoystickMatchEvent(const SDL_Event *event)
+{
+    return joystick != nullptr && event->jdevice.which == SDL_JoystickInstanceID(joystick);
+}
 
 #endif // JOYSTICK_H

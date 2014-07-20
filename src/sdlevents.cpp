@@ -75,7 +75,10 @@ void SDLEvents::pollSDL()
     SDL_Event *event = event_list;
     for (int i = 0; i < ret; i++) {
         foreach (auto cb, event_callbacks) {
-            (*cb)(event);
+            if ((*cb)(event)) {
+                 // callback handled the event, stop the loop
+                break;
+            }
         }
         event++;
     }

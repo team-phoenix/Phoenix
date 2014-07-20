@@ -20,7 +20,7 @@ public:
     SDLEvents();
     virtual ~SDLEvents();
 
-    typedef std::function<void(const SDL_Event *)> EventCallback;
+    typedef std::function<bool(const SDL_Event *)> EventCallback;
 
     void registerCallback(EventCallback *cb) {
         event_callbacks.append(cb);

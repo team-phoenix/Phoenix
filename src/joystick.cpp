@@ -42,7 +42,7 @@ Joystick::~Joystick()
     controller = nullptr;
 }
 
-void Joystick::deviceAdded(const SDL_Event *event)
+bool Joystick::deviceAdded(const SDL_Event *event)
 {
     // TODO: check that device matches the requested one
     //if(SDL_JoystickGetDeviceGUID() == ...
@@ -53,31 +53,34 @@ void Joystick::deviceAdded(const SDL_Event *event)
         if (SDL_IsGameController(event->jdevice.which)) {
             // joystick is a supported game controller
             // let's wait for the CONTROLLERADDED event to add it
-            return;
+            return false;
         }
         joystick = SDL_JoystickOpen(event->jdevice.which);
         setDeviceName(SDL_JoystickName(joystick));
     }
     device_attached = true;
+    return true;
 }
 
-void Joystick::deviceRemoved(const SDL_Event *event)
+bool Joystick::deviceRemoved(const SDL_Event *event)
 {
-    if (event->type == SDL_CONTROLLERDEVICEREMOVED) {
-        if (controller != nullptr) {
-            SDL_GameControllerClose(controller);
-            controller = nullptr;
-        }
-    } else {
-        if (joystick != nullptr) {
-            SDL_JoystickClose(joystick);
-            joystick = nullptr;
-        }
+    if (event->type == SDL_CONTROLLERDEVICEREMOVED && ControllerMatchEvent(event)) {
+        SDL_GameControllerClose(controller);
+        controller = nullptr;
+        device_attached = false;
+        qCDebug(phxInput) << "Controller removed";
+        return true;
+    } else if(JoystickMatchEvent(event)) {
+        SDL_JoystickClose(joystick);
+        joystick = nullptr;
+        device_attached = false;
+        qCDebug(phxInput) << "Joystick removed";
+        return true;
     }
-    device_attached = false;
+    return false;
 }
 
-void Joystick::controllerButtonChanged(const SDL_Event *event) {
+bool Joystick::controllerButtonChanged(const SDL_Event *event) {
     static const QHash<SDL_GameControllerButton, unsigned> mapping {
         { SDL_CONTROLLER_BUTTON_A, RETRO_DEVICE_ID_JOYPAD_A },
         { SDL_CONTROLLER_BUTTON_B, RETRO_DEVICE_ID_JOYPAD_B },
@@ -92,30 +95,35 @@ void Joystick::controllerButtonChanged(const SDL_Event *event) {
         { SDL_CONTROLLER_BUTTON_DPAD_LEFT, RETRO_DEVICE_ID_JOYPAD_LEFT },
         { SDL_CONTROLLER_BUTTON_DPAD_RIGHT, RETRO_DEVICE_ID_JOYPAD_RIGHT }
     };
+    if (!ControllerMatchEvent(event))
+        return false;
+
     const SDL_ControllerButtonEvent *cbutton = &event->cbutton;
     bool is_pressed = (cbutton->type == SDL_CONTROLLERBUTTONDOWN) ? true : false;
     auto retro_id = mapping.value(static_cast<SDL_GameControllerButton>(cbutton->button), (unsigned)~0);
     if (retro_id != (unsigned)~0)
         setState(retro_id, is_pressed);
+
+    return true;
 }
 
 /*void Joystick::axisChanged(const SDL_Event *event) {
 
 }*/
 
-void Joystick::handleSDLEvent(const SDL_Event *event)
+bool Joystick::handleSDLEvent(const SDL_Event *event)
 {
     switch (event->type) {
         case SDL_CONTROLLERDEVICEADDED:
         case SDL_JOYDEVICEADDED:
             if (!device_attached)
-                deviceAdded(event);
+                return deviceAdded(event);
             break;
 
         case SDL_CONTROLLERDEVICEREMOVED:
         case SDL_JOYDEVICEREMOVED:
             if (device_attached)
-                deviceRemoved(event);
+                return deviceRemoved(event);
             break;
 
         case SDL_CONTROLLERBUTTONDOWN:
@@ -134,4 +142,5 @@ void Joystick::handleSDLEvent(const SDL_Event *event)
 //            OnControllerAxis(event);
             break;
     }
+    return false;
 }
