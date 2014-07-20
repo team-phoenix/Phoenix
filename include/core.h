@@ -212,7 +212,6 @@ private:
 
     // Input
     InputManager *input_manager;
-    QThread input_thread;
 
     // Timing
     bool is_dupe_frame;

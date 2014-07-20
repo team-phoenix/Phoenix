@@ -19,6 +19,24 @@ SDLEvents::SDLEvents()
     f.open(QIODevice::ReadOnly);
     SDL_SetHint(SDL_HINT_GAMECONTROLLERCONFIG, f.readAll().constData());
 
+    event_list = new SDL_Event[10]();
+
+    this->moveToThread(&thread);
+    connect(&thread, SIGNAL(started()), SLOT(threadStarted()));
+    thread.setObjectName("phoenix-SDLEvents");
+
+    thread.start(QThread::HighPriority);
+}
+
+SDLEvents::~SDLEvents()
+{
+    thread.quit();
+    thread.wait();
+    delete[] event_list;
+}
+
+void SDLEvents::threadStarted()
+{
 #ifdef Q_OS_LINUX
     struct sigaction action;
     sigaction(SIGINT, NULL, &action);
@@ -36,17 +54,15 @@ SDLEvents::SDLEvents()
 #endif
 
     connect(&polltimer, SIGNAL(timeout()), this, SLOT(pollSDL()));
-    event_list = new SDL_Event[10]();
-    polltimer.start(10);
+    polltimer.start(10); // TODO: use retro_input_poll_t for polling instead of a timer ??
 }
 
-SDLEvents::~SDLEvents()
+void SDLEvents::threadFinished()
 {
     if (SDL_WasInit(SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER) != 0)
         SDL_Quit();
-
-    delete[] event_list;
 }
+
 
 void SDLEvents::pollSDL()
 {

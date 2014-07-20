@@ -49,13 +49,7 @@ Core::Core() {
     is_dupe_frame = false;
 
     input_manager = new InputManager();
-    input_manager->moveToThread(&input_thread);
-    input_thread.start(QThread::HighPriority);
-    qCDebug(phxInput) << "Input Thread running";
     input_manager->scanDevices();
-
-    QObject::connect(&input_thread, SIGNAL(finished()), &input_thread, SLOT(deleteLater()));
-
 
     Core::core = this;
 
@@ -65,8 +59,6 @@ Core::~Core() {
     //while (input_manager->stopTimer())
         //qCDebug(phxCore) << "Closing timer";
     delete input_manager;
-    input_thread.quit();
-    input_thread.wait();
 
     delete libretro_core;
     delete system_av_info;

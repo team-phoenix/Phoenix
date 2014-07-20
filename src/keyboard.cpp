@@ -6,7 +6,7 @@
 Keyboard::Keyboard()
 {
     setType(RETRO_DEVICE_JOYPAD);
-    setName("Keyboard (Qt KeyEvent)");
+    setDeviceName("Keyboard (Qt KeyEvent)");
 }
 
 Keyboard::~Keyboard()
@@ -60,5 +60,5 @@ void Keyboard::processKeyEvent(QKeyEvent *event)
     }
 
     bool is_pressed = (event->type() == QEvent::KeyPress) ? true : false;
-    ids_state[id] = is_pressed;
+    setState(id, is_pressed);
 }

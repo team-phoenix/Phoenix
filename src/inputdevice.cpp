@@ -12,9 +12,9 @@ InputDevice::~InputDevice()
 
 }
 
-void InputDevice::setName(const char *new_name)
+void InputDevice::setDeviceName(const char *new_name)
 {
-    m_name = QString(new_name);
+    device_name = QString(new_name);
 }
 
 void InputDevice::setType(retro_device_type new_type)
