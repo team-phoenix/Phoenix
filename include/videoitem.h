@@ -12,7 +12,6 @@
 #include <QWindow>
 #include <QByteArray>
 #include <QEvent>
-#include <QLinkedList>
 
 #include "qdebug.h"
 #include "core.h"

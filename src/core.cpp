@@ -50,10 +50,9 @@ Core::Core() {
 
     input_manager = new InputManager();
     input_manager->moveToThread(&input_thread);
-    input_thread.start(QThread::HighestPriority);
+    input_thread.start(QThread::HighPriority);
     qCDebug(phxInput) << "Input Thread running";
     input_manager->scanDevices();
-    input_manager->startTimer(20);
 
     QObject::connect(&input_thread, SIGNAL(finished()), &input_thread, SLOT(deleteLater()));
 
@@ -494,24 +493,16 @@ int16_t Core::inputStateCallback(unsigned port, unsigned device, unsigned index,
     if (static_cast<int>(port) > Core::core->input_manager->getDevices().size())
         return 0;
 
+    InputDevice *deviceobj = core->input_manager->getDevice(port);
 
-    switch (device) {
-        case RETRO_DEVICE_JOYPAD:
-           // qCDebug(phxInput) << "id: " << id
-                              //<< " === " << Core::core->input_manager->getDevice(port)->buttons[id];
+    // make sure the InputDevice was configured
+    // to map to the requested RETRO_DEVICE.
+    if(deviceobj->type() != device)
+        return 0;
 
-            return Core::core->input_manager->getDevice(port)->button_states[id];
+    // we don't handle index for now...
+    return deviceobj->state(id);
 
-        case RETRO_DEVICE_KEYBOARD:
-            // If key press id is a proper key, return true
-            qDebug() << "keyboard is true";
-            return true;
-        default:
-            break;
-    }
-    return 0;
-
-    // qDebug() << "Core::inputStateCallback";
 } // Core::inputStateCallback()
 
 void Core::logCallback(enum retro_log_level level, const char *fmt, ...) {

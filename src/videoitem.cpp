@@ -123,7 +123,6 @@ void VideoItem::updateAudioFormat() {
 
 void VideoItem::keyEvent(QKeyEvent *event) {
 
-    unsigned id = 16;
     bool is_pressed = (event->type() == QEvent::KeyPress) ? true : false;
 
     switch(event->key()) {
@@ -139,59 +138,16 @@ void VideoItem::keyEvent(QKeyEvent *event) {
                     setRun(true);
             }
             break;
-        case Qt::Key_Up:
-            id = RETRO_DEVICE_ID_JOYPAD_UP;
-            break;
-        case Qt::Key_Down:
-            id = RETRO_DEVICE_ID_JOYPAD_DOWN;
-            break;
-        case Qt::Key_Left:
-            id = RETRO_DEVICE_ID_JOYPAD_LEFT;
-            break;
-        case Qt::Key_Right:
-            id = RETRO_DEVICE_ID_JOYPAD_RIGHT;
-            break;
-        case Qt::Key_Return:
-            id = RETRO_DEVICE_ID_JOYPAD_START;
-            break;
-        case Qt::Key_Backspace:
-            id = RETRO_DEVICE_ID_JOYPAD_SELECT;
-            break;
-        case Qt::Key_Shift:
-            id = RETRO_DEVICE_ID_JOYPAD_L;
-            break;
-        case Qt::Key_Control:
-            id = RETRO_DEVICE_ID_JOYPAD_R;
-            break;
-        case Qt::Key_A:
-            id = RETRO_DEVICE_ID_JOYPAD_X;
-            break;
-        case Qt::Key_Z:
-            id = RETRO_DEVICE_ID_JOYPAD_A;
-            break;
-        case Qt::Key_X:
-            id = RETRO_DEVICE_ID_JOYPAD_B;
-            break;
-        case Qt::Key_S:
-            id = RETRO_DEVICE_ID_JOYPAD_Y;
-            break;
-        default:
-            if(is_pressed)
-                qDebug() << "Key not handled";
-            break;
     }
 
-    if (id < 16) {
-
-        QList<InputDevice *> devices = core->getInputManager()->getDevices();
-        for (int i=0; i < devices.size(); ++i) {
-             if (devices.at(i)->name == "Keyboard") {
-                devices.at(i)->button_states[id] = is_pressed;
-                break;
-             }
-        }
+    // we also pass every KeyEvent to each connected InputDevice which is a Keyboard.
+    // a bit ugly, but this avoid overhead of signal/slots and event filters
+    QList<InputDevice *> devices = core->getInputManager()->getDevices();
+    for (int i=0; i < devices.size(); ++i) {
+        auto keyboardinput = dynamic_cast<Keyboard *>(devices.at(i));
+        if (keyboardinput != nullptr)
+            keyboardinput->processKeyEvent(event);;
     }
-
 }
 
 void VideoItem::refreshItemGeometry() {

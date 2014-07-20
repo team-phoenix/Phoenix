@@ -4,9 +4,10 @@
 #include <QObject>
 
 #include "joystick.h"
-#include "sdljoystick.h"
 
-class InputManager : public QObject {
+
+class InputManager : public QObject
+{
     Q_OBJECT
 
 public:
@@ -15,24 +16,11 @@ public:
 
     void scanDevices();
 
-    void startTimer(int mili_secs=20);
-    void stopTimer();
-
     void append(InputDevice *device);
 
-    QList<InputDevice *> getDevices();
-    InputDevice * getDevice(unsigned port);
-
-public slots:
-    void getDeviceEvents();
-
-signals:
+    QList<InputDevice *> getDevices() const;
+    InputDevice * getDevice(unsigned port) const;
 
 private:
     QList<InputDevice *> devices;
-    SDLJoystick sdl_joystick;
-    QTimer timer;
-
-    unsigned current_port;
-
 };

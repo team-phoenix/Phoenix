@@ -24,8 +24,8 @@ HEADERS += include/core.h              \
            include/videoitem.h         \
            include/audio.h             \
            include/audiobuffer.h       \
+           include/sdlevents.h         \
            include/joystick.h          \
-           include/sdljoystick.h       \
            include/logging.h           \
            include/qmlsettings.h       \
            include/inputmanager.h      \
@@ -39,7 +39,7 @@ SOURCES += src/main.cpp                \
            src/core.cpp                \
            src/audio.cpp               \
            src/audiobuffer.cpp         \
-           src/sdljoystick.cpp         \
+           src/sdlevents.cpp           \
            src/joystick.cpp            \
            src/logging.cpp             \
            src/inputmanager.cpp        \

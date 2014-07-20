@@ -34,5 +34,7 @@
     <file>triangle.png</file>
     <file>missing_artwork.png</file>
     <file>more.png</file>
+    <!-- -->
+    <file>gamecontrollerdb.txt</file>
 </qresource>
 </RCC>

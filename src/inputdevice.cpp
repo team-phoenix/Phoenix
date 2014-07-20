@@ -1,29 +1,23 @@
+
 #include "inputdevice.h"
 
-InputDevice::InputDevice() {
-    type = 0;
-    button_states.clear();
-    count = 0;
-    name = "";    
+
+InputDevice::InputDevice() : ids_state()
+{
+    setType(RETRO_DEVICE_NONE);
+}
+
+InputDevice::~InputDevice()
+{
 
 }
 
-InputDevice::~InputDevice() {
-
+void InputDevice::setName(const char *new_name)
+{
+    m_name = QString(new_name);
 }
 
-void InputDevice::setCount(int new_count) {
-    count = new_count;
-}
-
-void InputDevice::setIndex(int new_index) {
-    index = new_index;
-}
-
-void InputDevice::setName(const char *new_name) {
-    name = QString(new_name);
-}
-
-void InputDevice::setType(unsigned new_type) {
-    type = new_type;
+void InputDevice::setType(retro_device_type new_type)
+{
+    m_type = new_type;
 }
