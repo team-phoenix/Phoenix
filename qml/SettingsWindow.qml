@@ -9,10 +9,10 @@ ApplicationWindow {
     width: 500;
     height: 500;
 
-    minimumWidth: 500;
-    minimumHeight: 500;
-    maximumHeight: 500;
-    maximumWidth: 500;
+    minimumWidth: 640;
+    minimumHeight: 480;
+    maximumHeight: minimumHeight;
+    maximumWidth: minimumWidth;
 
     Item {
         anchors.fill: parent;
@@ -116,8 +116,9 @@ ApplicationWindow {
                 property var stacks: { "Input": inputSettings,
                                        "Cores": coreSettings,
                                        "Info": infoSettings,
-                                       "Library": frontendSettings,
-                                       "Save": saveSettings};
+                                       "Library": librarySettings,
+                                       "Save": saveSettings,
+                                       "Advanced": advancedSettings};
                 model: ListModel {
                     ListElement {title: "Input";}
                     //ListElement {title: "System";}
@@ -308,7 +309,7 @@ ApplicationWindow {
 
                 Image {
                     id: inputArt;
-                    source: "../assets/snes-big.png";
+                    source: "../assets/retropad.png";
                     anchors {
                         bottom: parent.bottom;
                         bottomMargin: 50;
@@ -318,116 +319,99 @@ ApplicationWindow {
                     width: parent.width;
                     height: parent.height / 2.5;
                 }
+
+                Button {
+                    id: btn;
+                    anchors.top: inputArt.top;
+                    anchors.right: inputArt.right;
+                    anchors.rightMargin: 181;
+                    anchors.topMargin: 101;
+                    height: 23;
+                    width: 23;
+
+                    property string imageSource: btn.pressed ? "red.png" : "";
+
+                    style: ButtonStyle {
+                        background: Rectangle {
+                            color: "#000000FF";
+                        }
+
+                        label: Item {
+                            Image {
+                                id: image;
+                                source: btn.imageSource;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        Component {
+            id: advancedSettings;
+            Rectangle {
+                color: "lightgray";
+
+                Column {
+                    anchors {
+                        fill: parent;
+                        topMargin: 25;
+                    }
+                    spacing: 15;
+
+                    CheckBox {
+                        id: debugCheckBox;
+                        anchors.horizontalCenter: parent.horizontalCenter;
+                        text: "Debug Mode";
+                        checked: false;
+                    }
+
+                    GroupBox {
+                        id: groupBox;
+                        enabled: debugCheckBox.checked;
+                        anchors.horizontalCenter: parent.horizontalCenter;
+                        height: 400;
+                        width: parent.width * 0.85;
+                        Rectangle {
+                            anchors.fill: parent;
+                            color: debugCheckBox.checked ? "darkgray" : "gray" ;
+
+                            Column {
+                                anchors.fill: parent;
+                                Button {
+                                    text: "Button";
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
         Component {
             id: coreSettings;
-            Rectangle {
-                color: "#404040";
-
-                Row {
-                    id: btnRow;
-                    spacing: 2;
-                    anchors {
-                        horizontalCenter: parent.horizontalCenter;
-                        top: parent.top;
-                        topMargin: 25;
-                    }
-
-                    ExclusiveGroup {
-                        id: coreBtnGroup;
-                    }
-
-                    Button {
-                        id: configBtn;
-                        width: 100;
-                        height: 35;
-                        checkable: true;
-                        checked: false;
-                        exclusiveGroup: coreBtnGroup;
-
-                        property string backgroundColor: checked ? "#383838" : "#4a4a4a";
-
-                        onClicked: {
-                            coreStackView.clear();
-                            coreStackView.push(coreOptions);
-                        }
-
-                        style: ButtonStyle {
-                            background: Rectangle {
-                                color: configBtn.backgroundColor;
-                            }
-                            label: Label {
-                                text: "Configure";
-                                color: "#f1f1f1";
-                                font {
-                                    family: "Sans";
-                                    pixelSize: 18;
-                                    bold: true;
-                                }
-                                verticalAlignment: Text.AlignVCenter;
-
-                                horizontalAlignment: Text.AlignHCenter
-                            }
-                        }
-                    }
-
-                    Button {
-                        id: infoBtn;
-                        width: 100;
-                        height: 35;
-                        checkable: true;
-                        checked: true;
-                        exclusiveGroup: coreBtnGroup;
-                        property string backgroundColor: checked ? "#383838" : "#4a4a4a";
-
-                        onClicked: {
-                            coreStackView.clear();
-                            coreStackView.push(coreTable);
-                        }
-
-                        style: ButtonStyle {
-                            background: Rectangle {
-                                color: infoBtn.backgroundColor;
-                            }
-                            label: Label {
-                                text: "Info";
-                                color: "#f1f1f1";
-                                font {
-                                    family: "Sans";
-                                    pixelSize: 18;
-                                    bold: true;
-                                }
-                                horizontalAlignment: Text.AlignHCenter
-                                verticalAlignment: Text.AlignVCenter;
-                            }
-                        }
-                    }
-                }
-
-                StackView {
-                    id: coreStackView;
-                    anchors {
-                        top: btnRow.bottom;
-                        left: parent.left;
-                        right: parent.right;
-                        bottom: parent.bottom;
-                        margins: 25;
-                    }
-                    initialItem: coreTable;
-
-                }
+            StackView {
+                id: coreStack;
+                initialItem: coreOptions;
 
                 Component {
                     id: coreTable;
                     TableView {
-                        TableViewColumn{ role: "title"  ; title: "Title" ; width: 100 }
-                        TableViewColumn{ role: "author" ; title: "Author" ; width: 200 }
+                        TableViewColumn{role: "title"; title: "Title"; width: 150;}
+                        TableViewColumn{role: "console"; title: "Console"; width: 200;}
+                        TableViewColumn{role: "author"; title: "Author"; width: 200;}
+
                             model: ListModel {
-                                ListElement{title: "A Masterpiece"; author: "Gabriel";}
-                                ListElement{title: "Brilliance"; author: "Jens";}
-                                ListElement{title: "Outstanding"; author: "Frederik";}
+                                ListElement{title: "Snes9x"; author: "phx"; console: "Super Nintendo";}
+                                ListElement{title: "bSNES (Accuracy)"; author: "Byuu"; console: "Super Nintendo";}
+                                ListElement{title: "bSNES (Balanced)"; author: "Byuu"; console: "Super Nintendo";}
+                                ListElement{title: "bSNES (Performance)"; author: "Byuu"; console: "Super Nintendo";}
+                                ListElement{title: "Mupen64Plus"; author: "Unknown"; console: "Nintendo 64";}
+                                ListElement{title: "PCSX Reloaded"; author: "Unknown"; console: "Sony PlayStation";}
+                                ListElement{title: "Nestopia"; author: "Unknown"; console: "Nintendo";}
+                                ListElement{title: "QuickNES"; author: "Unknown"; console: "Nintendo";}
+                                ListElement{title: "Fceumm"; author: "Unknown"; console: "Nintendo";}
+
                        }
                     }
 
@@ -436,8 +420,75 @@ ApplicationWindow {
                 Component {
                     id: coreOptions;
                     Rectangle {
-                        color: "blue";
+                        color: "lightgray";
 
+                        Button {
+                            id: infoButton;
+                            text: ">>";
+                            height: 20;
+                            width: 20;
+                            anchors {
+                                top: parent.top;
+                                right: parent.right;
+                                topMargin: 10;
+                                rightMargin: 10;
+                            }
+
+                            onClicked: {
+                                coreStack.push({item: coreTable,replace: true});
+                            }
+                        }
+
+                        ListView {
+                            anchors {
+                                fill: parent;
+                                topMargin: 25;
+                            }
+
+                            model: ListModel {
+                                ListElement {title: "Nintendo Entertainment System";}
+                                ListElement {title: "Super Nintendo";}
+                                ListElement {title: "Nintendo 64";}
+                                ListElement {title: "Sony PlayStation";}
+                                ListElement {title: "Game Boy Advance";}
+
+                            }
+
+                            delegate: Item {
+                                id: coreDelegate;
+                                height: 175;
+                                anchors {
+                                    left: parent.left;
+                                    right: parent.right;
+
+                                }
+
+                                Column {
+                                    anchors.fill: parent;
+                                    spacing: 15;
+
+                                    Label {
+                                        anchors.horizontalCenter: parent.horizontalCenter;
+                                        text: title;
+                                        font {
+                                            family: "Sans";
+                                            bold: true;
+                                            pixelSize: 16;
+                                        }
+
+                                    }
+
+                                    Rectangle {
+                                        color: "darkgray";
+                                        height: 125;
+                                        width: parent.width * 0.85;
+                                        anchors.horizontalCenter: parent.horizontalCenter;
+
+                                    }
+
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -451,9 +502,218 @@ ApplicationWindow {
         }
 
         Component {
-            id: saveSettings;
+            id: librarySettings;
             Rectangle {
-                color: "#f1f1f1";
+                color: "lightgray";
+                Column {
+                    anchors {
+                        fill: parent;
+                        topMargin: 15;
+                    }
+                    spacing: 15;
+
+                    Label {
+                        text: "Library Locations";
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        font {
+                            family: "Sans";
+                            bold: true;
+                            pixelSize: 16;
+                        }
+                    }
+
+                    ComboBox {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        model: ["/home/lee/Desktop", "/user/path"];
+                    }
+
+                    Rectangle {
+                        anchors.horizontalCenter: parent.horizontalCenter;
+                        height: 150;
+                        width: parent.width * 0.85;
+                        color: "darkgray";
+                        Column {
+                            anchors.fill: parent;
+                            spacing: 15;
+                            Button {
+                                anchors.horizontalCenter: parent.horizontalCenter;
+                                text: "Import";
+                            }
+
+                            Button {
+                                anchors.horizontalCenter: parent.horizontalCenter;
+                                text: "Backup";
+                            }
+                            Button {
+                                anchors.horizontalCenter: parent.horizontalCenter;
+                                text: "Delete";
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        Component {
+            id: saveSettings;
+
+            Rectangle {
+                color: "lightgray";
+
+                Column {
+                    anchors {
+                        topMargin: 15;
+                        fill: parent;
+                    }
+                    spacing: 20;
+                    Label {
+                        text: "Dropbox";
+                        anchors {
+                            horizontalCenter: parent.horizontalCenter;
+                        }
+                        font {
+                            family: "Sans";
+                            pixelSize: 16;
+                            bold: true;
+                        }
+                    }
+
+                    Rectangle {
+                        color: "darkgray";
+                        height: 125;
+                        width: parent.width * 0.85;
+                        anchors.horizontalCenter: parent.horizontalCenter;
+
+                        Column {
+                            anchors.fill: parent;
+                            anchors.topMargin: 10;
+                            anchors.leftMargin: 25;
+                            spacing: 5;
+                            Row {
+                                spacing: 57;
+                                anchors {
+                                    left: parent.left;
+                                    right: parent.right;
+                                }
+                                height: 50;
+
+                                Label {
+                                    text: "Login: ";
+                                    anchors.verticalCenter: parent.verticalCenter;
+                                    font {
+                                        family: "Sans";
+                                        pixelSize: 14;
+                                        bold: true;
+                                    }
+                                }
+
+                                TextField {
+                                    anchors.verticalCenter: parent.verticalCenter;
+                                    width: parent.width * 0.5;
+                                    height: 25;
+                                }
+                            }
+
+                            Row {
+                                spacing: 25;
+                                anchors {
+                                    left: parent.left;
+                                    right: parent.right;
+                                }
+                                height: 50;
+
+                                Label {
+                                    text: "Password: ";
+                                    anchors.verticalCenter: parent.verticalCenter;
+                                    font {
+                                        family: "Sans";
+                                        pixelSize: 14;
+                                        bold: true;
+                                    }
+                                }
+
+                                TextField {
+                                    width: parent.width * 0.5;
+                                    anchors.verticalCenter: parent.verticalCenter;
+                                    height: 25;
+                                }
+                            }
+                        }
+                    }
+
+                    Label {
+                        text: "Save Location";
+                        anchors.horizontalCenter: parent.horizontalCenter;
+                        font {
+                            family: "Sans";
+                            pixelSize: 16;
+                            bold: true;
+                        }
+                    }
+
+                    Rectangle {
+                        width: parent.width * 0.85;
+                        anchors.horizontalCenter: parent.horizontalCenter;
+
+                        color: "darkgray";
+                        height: 75;
+
+                        TextField {
+                            anchors {
+                                fill: parent;
+                                leftMargin: 25;
+                                rightMargin: 25;
+                                topMargin: 24;
+                                bottomMargin: 24;
+                            }
+                        }
+                    }
+
+                    Label {
+                        text: "Save States";
+                        anchors.horizontalCenter: parent.horizontalCenter;
+                        font {
+                            family: "Sans";
+                            bold: true;
+                            pixelSize: 16;
+                        }
+                    }
+
+                    Rectangle {
+                        height: 125;
+                        width: parent.width * 0.85;
+                        anchors.horizontalCenter: parent.horizontalCenter;
+                        color: "darkgray";
+
+                        Column {
+                            anchors.fill: parent;
+
+                            Row {
+                                height: 50;
+                                anchors {
+                                    left: parent.left;
+                                    right: parent.right;
+                                }
+
+                                Label {
+                                    text: "Location: ";
+                                    font {
+                                        family: "Sans";
+                                        bold: true;
+                                        pixelSize: 14;
+                                    }
+                                }
+                                TextField {
+                                    width: parent.width * 0.5;
+                                }
+                            }
+                        }
+                    }
+
+
+
+                }
+
             }
         }
     }
