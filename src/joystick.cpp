@@ -1,6 +1,7 @@
 
 #include <functional>
-#include <QHash>
+#include <QMap>
+#include <QPair>
 #include "libretro.h"
 
 #include "joystick.h"
@@ -82,7 +83,7 @@ bool Joystick::deviceRemoved(const SDL_Event *event)
 }
 
 bool Joystick::controllerButtonChanged(const SDL_Event *event) {
-    static const QHash<SDL_GameControllerButton, unsigned> mapping {
+    static const QMap<SDL_GameControllerButton, unsigned> mapping {
         { SDL_CONTROLLER_BUTTON_A, RETRO_DEVICE_ID_JOYPAD_A },
         { SDL_CONTROLLER_BUTTON_B, RETRO_DEVICE_ID_JOYPAD_B },
         { SDL_CONTROLLER_BUTTON_X, RETRO_DEVICE_ID_JOYPAD_X },
@@ -108,9 +109,28 @@ bool Joystick::controllerButtonChanged(const SDL_Event *event) {
     return true;
 }
 
-/*void Joystick::axisChanged(const SDL_Event *event) {
+bool Joystick::controllerAxisChanged(const SDL_Event *event) {
+    if (!ControllerMatchEvent(event->caxis))
+        return false;
 
-}*/
+    const SDL_ControllerAxisEvent *caxis = &event->caxis;
+    if (type() == RETRO_DEVICE_JOYPAD) { // make analog stick emulate dpad
+        static int16_t threshold = 25000; // arbitrary. TODO: make it configurable
+        static const QMap<SDL_GameControllerAxis, QPair<unsigned, unsigned>> mapping {
+            { SDL_CONTROLLER_AXIS_LEFTX, { RETRO_DEVICE_ID_JOYPAD_LEFT,
+                                           RETRO_DEVICE_ID_JOYPAD_RIGHT } },
+            { SDL_CONTROLLER_AXIS_LEFTY, { RETRO_DEVICE_ID_JOYPAD_UP,
+                                           RETRO_DEVICE_ID_JOYPAD_DOWN } }
+        };
+        auto axis = static_cast<SDL_GameControllerAxis>(caxis->axis);
+        if (mapping.contains(axis)) {
+            auto buttons_id = mapping.value(axis);
+            setState(buttons_id.first, (caxis->value < -threshold) ? true : false);
+            setState(buttons_id.second, (caxis->value > threshold) ? true : false);
+        }
+    }
+    return true;
+}
 
 bool Joystick::handleSDLEvent(const SDL_Event *event)
 {
@@ -138,9 +158,11 @@ bool Joystick::handleSDLEvent(const SDL_Event *event)
             break;
 
         case SDL_CONTROLLERAXISMOTION:
+            controllerAxisChanged(event);
+            break;
+
         case SDL_JOYAXISMOTION:
         case SDL_JOYHATMOTION:
-//            OnControllerAxis(event);
             break;
     }
     return false;

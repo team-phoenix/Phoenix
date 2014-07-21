@@ -39,6 +39,8 @@ private:
     bool deviceRemoved(const SDL_Event *event);
 
     bool controllerButtonChanged(const SDL_Event *event);
+    bool controllerAxisChanged(const SDL_Event *event);
+
     bool joyButtonChanged(const SDL_Event *event);
 
     // convenience functions to check that an event matches the current joystick/controller
