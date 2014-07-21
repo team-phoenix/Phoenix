@@ -23,10 +23,12 @@ public:
     typedef std::function<bool(const SDL_Event *)> EventCallback;
 
     void registerCallback(EventCallback *cb) {
+        QMutexLocker lock(&event_callbacks_mutex);
         event_callbacks.append(cb);
     }
 
     void removeCallback(EventCallback *cb) {
+        QMutexLocker lock(&event_callbacks_mutex);
         event_callbacks.removeOne(cb);
     }
 
@@ -43,6 +45,7 @@ private:
     SDL_Event *event_list;
 
     QList<EventCallback*> event_callbacks;
+    QMutex event_callbacks_mutex;
 };
 
 #endif

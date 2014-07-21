@@ -75,15 +75,20 @@ void SDLEvents::pollSDL()
     if (ret < 0)
         qCCritical(phxInput, "SDLEvents: unable to retrieve events: %s", SDL_GetError());
     
+    if (ret == 0)
+        return;
+
+    event_callbacks_mutex.lock();
     SDL_Event *event = event_list;
     for (int i = 0; i < ret; i++) {
         foreach (auto cb, event_callbacks) {
             if ((*cb)(event)) {
-                 // callback handled the event, stop the loop
+                // callback handled the event, stop the loop
                 break;
             }
         }
         event++;
     }
+    event_callbacks_mutex.unlock();
 }
 
