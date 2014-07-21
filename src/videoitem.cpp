@@ -1,6 +1,8 @@
 
 #include "videoitem.h"
 
+
+
 VideoItem::VideoItem() {
 
     core = new Core();
