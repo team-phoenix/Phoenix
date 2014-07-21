@@ -5,8 +5,8 @@ VideoItem::VideoItem() {
 
     core = new Core();
 
-    m_program = 0;
-    m_texture = 0;
+    m_program = nullptr;
+    texture_node = nullptr;
     m_libcore = "";
 
     audio = new Audio();
@@ -30,8 +30,8 @@ VideoItem::~VideoItem() {
     delete core;
     if (m_program)
         delete m_program;
-    if (m_texture)
-        delete m_texture;
+    if (texture_node)
+        delete texture_node;
 }
 
 void VideoItem::handleWindowChanged(QQuickWindow *win)
@@ -55,10 +55,10 @@ void VideoItem::handleWindowChanged(QQuickWindow *win)
 
 void VideoItem::handleSceneGraphInitialized() {
     refreshItemGeometry();
-    // initialize m_texture with an empty 1x1 black image
+    // initialize texture_node with an empty 1x1 black image
     QImage emptyImage(1, 1, QImage::Format_RGB32);
     emptyImage.fill(Qt::black);
-    m_texture = new QOpenGLTexture(emptyImage);
+    texture_node = window()->createTextureFromImage(emptyImage);
 }
 
 void VideoItem::setWindowed(bool windowVisibility) {
@@ -224,21 +224,23 @@ void VideoItem::initShader() {
 
 }
 
-void VideoItem::setTexture(QOpenGLTexture::Filter min_scale, QOpenGLTexture::Filter max_scale) {
+void VideoItem::setTexture(QSGTexture::Filtering filter) {
 
 
     QImage::Format frame_format = retroToQImageFormat(core->getPixelFormat());
 
-    m_texture->destroy();
-    m_texture->setData(QImage((const uchar *)core->getImageData(),
-                       core->getBaseWidth(),
-                       core->getBaseHeight(),
-                       core->getPitch(),
-                       frame_format).mirrored());
+    delete texture_node;
+    texture_node = window()->createTextureFromImage(QImage((const uchar *)core->getImageData(),
+                                                        core->getBaseWidth(),
+                                                        core->getBaseHeight(),
+                                                        core->getPitch(),
+                                                        frame_format).mirrored()
+                                                    , QQuickWindow::TextureOwnsGLTexture);
 
-    m_texture->setMinMagFilters(min_scale, max_scale);
+    texture_node->setFiltering(filter);
 
-    m_texture->setWrapMode(QOpenGLTexture::ClampToEdge);
+    texture_node->setHorizontalWrapMode(QSGTexture::ClampToEdge);
+    texture_node->setVerticalWrapMode(QSGTexture::ClampToEdge);
 
 }
 
@@ -275,14 +277,14 @@ void VideoItem::paint() {
         fps_count++;
 
         // Sets texture from core->getImageData();
-        setTexture( QOpenGLTexture::Linear, QOpenGLTexture::LinearMipMapNearest );
+        setTexture(QSGTexture::Linear);
     }
 
     // Sets viewport size, and enables / disables opengl functionality.
     initGL();
 
     // Binds texture to opengl context
-    m_texture->bind();
+    texture_node->bind();
 
     if (!m_program) {
         // constructs vertex & frag shaders and links them.
@@ -326,7 +328,6 @@ void VideoItem::paint() {
     m_program->disableAttributeArray(0);
     m_program->disableAttributeArray(1);
     m_program->release();
-    m_texture->release();
 
     // Loop forever;
     window()->update();
@@ -339,8 +340,8 @@ void VideoItem::cleanup()
         delete m_program;
         m_program = nullptr;
     }
-    if (m_texture) {
-        delete m_texture;
-        m_texture = nullptr;
+    if (texture_node) {
+        delete texture_node;
+        texture_node = nullptr;
     }
 }
