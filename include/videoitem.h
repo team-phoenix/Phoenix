@@ -11,12 +11,14 @@
 #include <QImage>
 #include <QWindow>
 #include <QByteArray>
+#include <QSGTexture>
 #include <QEvent>
 
 #include "qdebug.h"
 #include "core.h"
 #include "audio.h"
 #include "keyboard.h"
+#include "texturenode.h"
 #include "logging.h"
 
 class VideoItem : public QQuickItem {
@@ -41,8 +43,7 @@ public:
     void setRun(bool run );
     void setWindowed(bool setWindowed);
     void setSystemDirectory(QString systemDirectory);
-    void setTexture(QOpenGLTexture::Filter min_scale,
-                    QOpenGLTexture::Filter max_scale);
+    void setTexture(QSGTexture::Filtering filter);
 
 
     QString libcore() const {
@@ -115,7 +116,7 @@ private:
     // Video
     // [1]
     QOpenGLShaderProgram *m_program;
-    QOpenGLTexture *m_texture;
+    QSGTexture *texture_node;
     Core *core;
     int item_w;
     int item_h;
