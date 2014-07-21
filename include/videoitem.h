@@ -18,8 +18,8 @@
 #include "core.h"
 #include "audio.h"
 #include "keyboard.h"
-#include "texturenode.h"
 #include "logging.h"
+
 
 class VideoItem : public QQuickItem {
     Q_OBJECT
