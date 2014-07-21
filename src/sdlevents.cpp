@@ -22,6 +22,7 @@ SDLEvents::SDLEvents()
     event_list = new SDL_Event[10]();
 
     this->moveToThread(&thread);
+    polltimer.moveToThread(&thread);
     connect(&thread, SIGNAL(started()), SLOT(threadStarted()));
     thread.setObjectName("phoenix-SDLEvents");
 
@@ -43,6 +44,7 @@ void SDLEvents::threadStarted()
 #endif
 
     // this will also implicitly initialize the event loop
+
     if (SDL_Init(SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER) < 0) {
         qFatal("Fatal: Unable to initialize SDL2: %s", SDL_GetError());
     }
@@ -54,6 +56,7 @@ void SDLEvents::threadStarted()
 #endif
 
     connect(&polltimer, SIGNAL(timeout()), this, SLOT(pollSDL()));
+
     polltimer.start(10); // TODO: use retro_input_poll_t for polling instead of a timer ??
 }
 
