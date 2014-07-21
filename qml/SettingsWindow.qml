@@ -289,6 +289,21 @@ ApplicationWindow {
             Rectangle {
                 color: "#363434";
 
+                Label {
+                    text: "RetroPad";
+                    color: "#f1f1f1";
+                    anchors {
+                        top: parent.top;
+                        topMargin: 25;
+                        horizontalCenter: parent.horizontalCenter;
+                    }
+                    font {
+                        family: "Sans";
+                        pixelSize: 21;
+                    }
+                }
+
+
                 /*Rectangle{
                     anchors {
                         top: parent.top;
@@ -309,16 +324,246 @@ ApplicationWindow {
 
                 Image {
                     id: inputArt;
-                    source: "../assets/retropad.png";
+                    source: "../assets/blank_retropad.png";
+                    sourceSize {
+                        height: 500;
+                        width: 500;
+                    }
+
                     anchors {
                         bottom: parent.bottom;
-                        bottomMargin: 50;
                     }
                     fillMode: Image.PreserveAspectFit;
-
                     width: parent.width;
-                    height: parent.height / 2.5;
+                    height: parent.height * 0.8;
                 }
+
+                Image {
+                    id: button1;
+                    source: clicked ? "../assets/purple_button.png" : "";
+                    sourceSize {
+                        height: height;
+                        width: width;
+                    }
+                    height: 32;
+                    width: 32;
+
+                    anchors {
+                        centerIn: parent;
+                        verticalCenterOffset: 6;
+                        horizontalCenterOffset: 70;
+
+                    }
+
+                    property bool clicked: false;
+
+                    MouseArea {
+                        id: mouse1;
+                        anchors.fill: parent;
+                        onClicked: {
+                            if (button1.clicked)
+                                button1.clicked = false;
+                            else
+                                button1.clicked = true;
+                        }
+                    }
+
+                    Label {
+                        visible: button1.clicked;
+                        anchors.centerIn: parent;
+                        color: "#f1f1f1";
+                        text: "Y";
+                        font {
+                            family: "Sans";
+                            pixelSize: 16;
+                        }
+                    }
+                }
+
+                DropShadow {
+                    source: button1;
+                    anchors.fill: source;
+                    visible: !(button1.source == "");
+                    horizontalOffset: 2;
+                    verticalOffset: 2;
+                    radius: 8.0
+                    samples: 16
+                    transparentBorder: true;
+                    color: "#b0000000"
+                    //opacity: 0.8;
+                }
+
+                Image {
+                    id: button2;
+                    source: "";
+                    sourceSize {
+                        height: height;
+                        width: width;
+                    }
+                    height: 33;
+                    width: 33;
+
+                    anchors {
+                        centerIn: parent;
+                        verticalCenterOffset: -23;
+                        horizontalCenterOffset: 105;
+
+                    }
+
+                    property bool clicked: false;
+                    MouseArea {
+                        id: mouse2;
+                        anchors.fill: parent;
+                        onClicked: {
+                            if (button2.clicked) {
+                                button2.source = "";
+                                button2.clicked = false;
+                            }
+                            else {
+                                button2.clicked = true;
+                                button2.source = "../assets/blue_button.png";
+                            }
+                        }
+                    }
+
+                    Label {
+                        visible: button2.clicked;
+                        anchors.centerIn: parent;
+                        color: "#f1f1f1";
+                        text: "X";
+                        font {
+                            family: "Sans";
+                            pixelSize: 16;
+                        }
+                    }
+                }
+
+                DropShadow {
+                    source: button2;
+                    anchors.fill: source;
+                    horizontalOffset: 2;
+                    visible: !(button2.source = "");
+                    verticalOffset: 2;
+                    radius: 8.0
+                    samples: 16
+                    transparentBorder: true;
+                    color: "#b0000000"
+                    //opacity: 0.8;
+                }
+
+                Image {
+                    id: button3;
+                    source: clicked ? "../assets/orange_button.png" : "";
+                    sourceSize {
+                        height: height;
+                        width: width;
+                    }
+                    height: 32;
+                    width: 32;
+
+                    anchors {
+                        centerIn: parent;
+                        verticalCenterOffset: 37;
+                        horizontalCenterOffset: 105;
+
+                    }
+
+                    property bool clicked: false;
+                    MouseArea {
+                        id: mouse3;
+                        anchors.fill: parent;
+                        onClicked: {
+                            if (button3.clicked)
+                                button3.clicked = false;
+                            else
+                                button3.clicked = true;
+                        }
+                    }
+
+                    Label {
+                        visible: button3.clicked;
+                        anchors.centerIn: parent;
+                        color: "#f1f1f1";
+                        text: "B";
+                        font {
+                            family: "Sans";
+                            pixelSize: 16;
+                        }
+                    }
+                }
+
+                DropShadow {
+                    source: button3;
+                    anchors.fill: source;
+                    horizontalOffset: 2;
+                    visible: !(button3.source == "");
+                    verticalOffset: 2;
+                    radius: 8.0
+                    samples: 16
+                    transparentBorder: true;
+                    color: "#b0000000"
+                    //opacity: 0.8;
+                }
+
+                Image {
+                    id: button4;
+                    source: "";
+                    sourceSize {
+                        height: height;
+                        width: width;
+                    }
+                    height: 33;
+                    width: 33;
+
+                    anchors {
+                        centerIn: parent;
+                        verticalCenterOffset: 7;
+                        horizontalCenterOffset: 141;
+
+                    }
+
+                    property bool clicked: false;
+                    MouseArea {
+                        id: mouse4;
+                        anchors.fill: parent;
+                        onClicked: {
+                            if (button4.clicked) {
+                                button4.clicked = false;
+                                button4.source = "";
+                            }
+                            else {
+                                button4.clicked = true;
+                                button4.source = "../assets/red_button.png";
+
+                            }
+                        }
+                    }
+
+                    Label {
+                        visible: button4.clicked;
+                        anchors.centerIn: parent;
+                        color: "#f1f1f1";
+                        text: "A";
+                        font {
+                            family: "Sans";
+                            pixelSize: 16;
+                        }
+                    }
+                }
+
+                DropShadow {
+                    source: button4;
+                    anchors.fill: source;
+                    horizontalOffset: 2;
+                    visible: !(button4.source = "");
+                    verticalOffset: 2;
+                    radius: 8.0
+                    samples: 16
+                    transparentBorder: true;
+                    color: "#b0000000"
+                    //opacity: 0.8;
+                }
+
 
                 Button {
                     id: btn;
