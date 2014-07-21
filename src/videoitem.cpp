@@ -280,6 +280,7 @@ void VideoItem::paint() {
         setTexture(QSGTexture::Linear);
     }
 
+
     // Sets viewport size, and enables / disables opengl functionality.
     initGL();
 
