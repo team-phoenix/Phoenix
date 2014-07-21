@@ -64,13 +64,14 @@ bool Joystick::deviceAdded(const SDL_Event *event)
 
 bool Joystick::deviceRemoved(const SDL_Event *event)
 {
-    if (event->type == SDL_CONTROLLERDEVICEREMOVED && ControllerMatchEvent(event)) {
+    if (event->type == SDL_CONTROLLERDEVICEREMOVED
+            && ControllerMatchEvent(event->cdevice)) {
         SDL_GameControllerClose(controller);
         controller = nullptr;
         device_attached = false;
         qCDebug(phxInput) << "Controller removed";
         return true;
-    } else if(JoystickMatchEvent(event)) {
+    } else if(JoystickMatchEvent(event->jdevice)) {
         SDL_JoystickClose(joystick);
         joystick = nullptr;
         device_attached = false;
@@ -95,7 +96,7 @@ bool Joystick::controllerButtonChanged(const SDL_Event *event) {
         { SDL_CONTROLLER_BUTTON_DPAD_LEFT, RETRO_DEVICE_ID_JOYPAD_LEFT },
         { SDL_CONTROLLER_BUTTON_DPAD_RIGHT, RETRO_DEVICE_ID_JOYPAD_RIGHT }
     };
-    if (!ControllerMatchEvent(event))
+    if (!ControllerMatchEvent(event->cbutton))
         return false;
 
     const SDL_ControllerButtonEvent *cbutton = &event->cbutton;

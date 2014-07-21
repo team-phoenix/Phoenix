@@ -42,19 +42,21 @@ private:
     bool joyButtonChanged(const SDL_Event *event);
 
     // convenience functions to check that an event matches the current joystick/controller
-    bool ControllerMatchEvent(const SDL_Event *event);
-    bool JoystickMatchEvent(const SDL_Event *event);
+    template <typename SDLEventType> bool ControllerMatchEvent(const SDLEventType &event);
+    template <typename SDLEventType> bool JoystickMatchEvent(const SDLEventType &event);
 };
 
-inline bool Joystick::ControllerMatchEvent(const SDL_Event *event)
+template <typename SDLEventType>
+inline bool Joystick::ControllerMatchEvent(const SDLEventType &event)
 {
     auto joyid = SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(controller));
-    return controller != nullptr && event->cdevice.which == joyid;
+    return controller != nullptr && event.which == joyid;
 }
 
-inline bool Joystick::JoystickMatchEvent(const SDL_Event *event)
+template <typename SDLEventType>
+inline bool Joystick::JoystickMatchEvent(const SDLEventType &event)
 {
-    return joystick != nullptr && event->jdevice.which == SDL_JoystickInstanceID(joystick);
+    return joystick != nullptr && event.which == SDL_JoystickInstanceID(joystick);
 }
 
 #endif // JOYSTICK_H
