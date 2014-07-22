@@ -37,10 +37,9 @@ Rectangle {
         }
 
 
-        delegate: Rectangle {
+        delegate: Item {
             height: gridView.cellHeight;
             width: gridView.cellWidth;
-            color: "red";
 
             Item {
                 anchors.fill: parent;
