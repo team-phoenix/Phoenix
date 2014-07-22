@@ -21,6 +21,9 @@ Rectangle {
         visible: false;
         width: 500;
         height: 500;
+        stackBackgroundColor: "#383838";
+        textColor: "#f1f1f1";
+        groupingColor: "#535353";
     }
 
     Row {

@@ -14,6 +14,10 @@ ApplicationWindow {
     maximumHeight: minimumHeight;
     maximumWidth: minimumWidth;
 
+    property string groupingColor: "gray";
+    property string stackBackgroundColor: "darkgray";
+    property string textColor: "#f1f1f1";
+
     Item {
         anchors.fill: parent;
 
@@ -146,7 +150,7 @@ ApplicationWindow {
                         pixelSize: 16;
                     }
 
-                    color: "#f1f1f1";
+                    color: settingsWindow.textColor;
                     text: title;
                     horizontalAlignment: Text.AlignHCenter;
                     verticalAlignment: Text.AlignVCenter;
@@ -176,17 +180,6 @@ ApplicationWindow {
 
                 color: "#242323";
 
-
-                Image {
-                    anchors.centerIn: parent;
-                    source: "../assets/more.png";
-                    sourceSize {
-                        width: 40;
-                        height: 40;
-                    }
-                    height: 40;
-                    width: 40;
-                }
             }
 
             DropShadow {
@@ -228,7 +221,7 @@ ApplicationWindow {
         Component {
             id: infoSettings;
             Rectangle {
-                color: "#555555";
+                color: settingsWindow.stackBackgroundColor;
 
                 Item {
                     anchors {
@@ -242,7 +235,7 @@ ApplicationWindow {
                         id: column;
                         anchors.fill: parent;
                         spacing: 20;
-                        property string textFieldColor: "#1f1f1f";
+                        property string textFieldColor: settingsWindow.textColor;
                         Column {
                             anchors {
                                 left: parent.left;
@@ -253,7 +246,7 @@ ApplicationWindow {
                             spacing: 5;
                             Label {
                                 text: "Library Path"
-                                color: "#f1f1f1";
+                                color: settingsWindow.textColor;
                                 font.bold: true;
                             }
 
@@ -268,7 +261,7 @@ ApplicationWindow {
                                 placeholderText: "C:/Users/lee/file.end";
                                 width: 400;
                                 style: TextFieldStyle {
-                                    textColor: "#f1f1f1";
+                                    textColor: settingsWindow.textColor;
                                     placeholderTextColor: textColor;
                                     background: Rectangle {
                                         color: column.textFieldColor;
@@ -291,7 +284,7 @@ ApplicationWindow {
 
                 Label {
                     text: "RetroPad";
-                    color: "#f1f1f1";
+                    color: settingsWindow.textColor;
                     anchors {
                         top: parent.top;
                         topMargin: 25;
@@ -371,7 +364,7 @@ ApplicationWindow {
                     Label {
                         visible: button1.clicked;
                         anchors.centerIn: parent;
-                        color: "#f1f1f1";
+                        color: settingsWindow.textColor;
                         text: "Y";
                         font {
                             family: "Sans";
@@ -429,7 +422,7 @@ ApplicationWindow {
                     Label {
                         visible: button2.clicked;
                         anchors.centerIn: parent;
-                        color: "#f1f1f1";
+                        color: settingsWindow.textColor;
                         text: "X";
                         font {
                             family: "Sans";
@@ -483,7 +476,7 @@ ApplicationWindow {
                     Label {
                         visible: button3.clicked;
                         anchors.centerIn: parent;
-                        color: "#f1f1f1";
+                        color: settingsWindow.textColor;
                         text: "B";
                         font {
                             family: "Sans";
@@ -542,7 +535,7 @@ ApplicationWindow {
                     Label {
                         visible: button4.clicked;
                         anchors.centerIn: parent;
-                        color: "#f1f1f1";
+                        color: settingsWindow.textColor;
                         text: "A";
                         font {
                             family: "Sans";
@@ -595,7 +588,7 @@ ApplicationWindow {
         Component {
             id: advancedSettings;
             Rectangle {
-                color: "lightgray";
+                color: settingsWindow.stackBackgroundColor;
 
                 Column {
                     anchors {
@@ -665,7 +658,7 @@ ApplicationWindow {
                 Component {
                     id: coreOptions;
                     Rectangle {
-                        color: "lightgray";
+                        color: settingsWindow.stackBackgroundColor;
 
                         Button {
                             id: infoButton;
@@ -715,6 +708,7 @@ ApplicationWindow {
                                     Label {
                                         anchors.horizontalCenter: parent.horizontalCenter;
                                         text: title;
+                                        color: settingsWindow.textColor;
                                         font {
                                             family: "Sans";
                                             bold: true;
@@ -724,7 +718,7 @@ ApplicationWindow {
                                     }
 
                                     Rectangle {
-                                        color: "darkgray";
+                                        color: settingsWindow.stackBackgroundColor;
                                         height: 125;
                                         width: parent.width * 0.85;
                                         anchors.horizontalCenter: parent.horizontalCenter;
@@ -742,14 +736,14 @@ ApplicationWindow {
         Component {
             id: frontendSettings;
             Rectangle {
-                color: "green";
+                color: settingsWindow.stackBackgroundColor;
             }
         }
 
         Component {
             id: librarySettings;
             Rectangle {
-                color: "lightgray";
+                color: settingsWindow.stackBackgroundColor;
                 Column {
                     anchors {
                         fill: parent;
@@ -760,6 +754,7 @@ ApplicationWindow {
                     Label {
                         text: "Library Locations";
                         anchors.horizontalCenter: parent.horizontalCenter
+                        color: settingsWindow.textColor;
                         font {
                             family: "Sans";
                             bold: true;
@@ -776,7 +771,7 @@ ApplicationWindow {
                         anchors.horizontalCenter: parent.horizontalCenter;
                         height: 150;
                         width: parent.width * 0.85;
-                        color: "darkgray";
+                        color: settingsWindow.groupingColor;
                         Column {
                             anchors.fill: parent;
                             spacing: 15;
@@ -803,7 +798,7 @@ ApplicationWindow {
             id: saveSettings;
 
             Rectangle {
-                color: "lightgray";
+                color: settingsWindow.stackBackgroundColor;
 
                 Column {
                     anchors {
@@ -813,6 +808,7 @@ ApplicationWindow {
                     spacing: 20;
                     Label {
                         text: "Dropbox";
+                        color: settingsWindow.textColor;
                         anchors {
                             horizontalCenter: parent.horizontalCenter;
                         }
@@ -824,7 +820,7 @@ ApplicationWindow {
                     }
 
                     Rectangle {
-                        color: "darkgray";
+                        color: settingsWindow.groupingColor;
                         height: 125;
                         width: parent.width * 0.85;
                         anchors.horizontalCenter: parent.horizontalCenter;
@@ -845,6 +841,7 @@ ApplicationWindow {
                                 Label {
                                     text: "Login: ";
                                     anchors.verticalCenter: parent.verticalCenter;
+                                    color: settingsWindow.textColor;
                                     font {
                                         family: "Sans";
                                         pixelSize: 14;
@@ -870,6 +867,7 @@ ApplicationWindow {
                                 Label {
                                     text: "Password: ";
                                     anchors.verticalCenter: parent.verticalCenter;
+                                    color: settingsWindow.textColor;
                                     font {
                                         family: "Sans";
                                         pixelSize: 14;
@@ -881,6 +879,7 @@ ApplicationWindow {
                                     width: parent.width * 0.5;
                                     anchors.verticalCenter: parent.verticalCenter;
                                     height: 25;
+                                    textColor: settingsWindow.textColor;
                                 }
                             }
                         }
@@ -888,6 +887,7 @@ ApplicationWindow {
 
                     Label {
                         text: "Save Location";
+                        color: settingsWindow.textColor;
                         anchors.horizontalCenter: parent.horizontalCenter;
                         font {
                             family: "Sans";
@@ -900,10 +900,12 @@ ApplicationWindow {
                         width: parent.width * 0.85;
                         anchors.horizontalCenter: parent.horizontalCenter;
 
-                        color: "darkgray";
+                        color: settingsWindow.groupingColor;
                         height: 75;
 
                         TextField {
+                            id: savePathField;
+                            text: "";
                             anchors {
                                 fill: parent;
                                 leftMargin: 25;
@@ -916,6 +918,7 @@ ApplicationWindow {
 
                     Label {
                         text: "Save States";
+                        color: settingsWindow.textColor;
                         anchors.horizontalCenter: parent.horizontalCenter;
                         font {
                             family: "Sans";
@@ -928,7 +931,7 @@ ApplicationWindow {
                         height: 125;
                         width: parent.width * 0.85;
                         anchors.horizontalCenter: parent.horizontalCenter;
-                        color: "darkgray";
+                        color: settingsWindow.groupingColor;
 
                         Column {
                             anchors.fill: parent;
@@ -942,6 +945,7 @@ ApplicationWindow {
 
                                 Label {
                                     text: "Location: ";
+                                    color: settingsWindow.textColor;
                                     font {
                                         family: "Sans";
                                         bold: true;
@@ -950,6 +954,7 @@ ApplicationWindow {
                                 }
                                 TextField {
                                     width: parent.width * 0.5;
+                                    textColor: settingsWindow.textColor;
                                 }
                             }
                         }
@@ -962,8 +967,6 @@ ApplicationWindow {
             }
         }
     }
-
-
 
 
 }
