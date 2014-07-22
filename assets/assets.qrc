@@ -30,6 +30,11 @@
     <file>fullscreen-enter-8x.png</file>
     <file>grid-three-up-8x.png</file>
     <file>list-8x.png</file>
+    <file>volume-mute.png</file>
+    <file>volume-off-8x.png</file>
+    <file>volume-low-8x.png</file>
+    <file>volume-high-8x.png</file>
+    
     <file>retropad.png</file>
     <file>blank_retropad.png</file>
     <file>blue_button.png</file>
@@ -41,6 +46,7 @@
     <file>right.png</file>
     <file>left.png</file>
     <file>purple_button.png</file>
+    
     <file>triangle.png</file>
     <file>missing_artwork.png</file>
     <file>more.png</file>

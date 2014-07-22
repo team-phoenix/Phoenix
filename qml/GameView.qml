@@ -17,6 +17,7 @@ Item {
     property string systemDirectory: "";
     property string saveDirectory: "";
     property bool loadSaveState: false
+    property int volumeLevel: 100;
 
     onLoadSaveStateChanged: {
         if (loadSaveState)
@@ -59,7 +60,10 @@ Item {
             rootMouse.cursorShape = Qt.BlankCursor;
             if (bubbleMenu.visible)
                 bubbleMenu.visible = false;
-
+            if (volumeDropDown.visible) {
+                volumeDropDown.visible = false;
+                volumeBtn.checked = false;
+            }
 
             toolBar.visible = false;
         }
@@ -190,6 +194,46 @@ Item {
     }
 
     Rectangle {
+        id: volumeDropDown;
+        color: "#363535";
+        height: 200;
+        width: 50;
+        anchors {
+            right: parent.right;
+            bottom: toolBar.top;
+            bottomMargin: 25;
+        }
+        visible: false;
+
+        MouseArea {
+            anchors.fill: parent;
+            hoverEnabled: true;
+            onEntered: mouseTimer.stop();
+            onExited: mouseTimer.restart();
+        }
+
+        Slider {
+            anchors.centerIn: parent;
+            orientation: Qt.Vertical;
+            height: parent.height * 0.8;
+            width: 5;
+            minimumValue: 0;
+            maximumValue: 100;
+            value: root.volumeLevel;
+            onValueChanged: {
+                root.volumeLevel = value;
+                if (value > 80)
+                    volumeBtn.backgroundImage = "../assets/volume-high-8x.png";
+                else if (80 > value && value > 0)
+                    volumeBtn.backgroundImage = "../assets/volume-low-8x.png";
+                else if (value == 0)
+                    volumeBtn.backgroundImage = "../assets/volume-off-8x.png";
+
+            }
+        }
+    }
+
+    Rectangle {
         id: toolBar;
         visible: false;
         anchors {
@@ -299,6 +343,8 @@ Item {
                     id: saveBtn;
                     anchors.verticalCenter: parent.verticalCenter;
                     text: "Save";
+                    height: 15;
+                    width: 15;
                     onClicked: videoItem.saveGameState();
                 }
 
@@ -306,7 +352,39 @@ Item {
                     id: loadBtn;
                     anchors.verticalCenter: parent.verticalCenter;
                     text: "Load";
+                    height: 20;
+                    width: 20;
                     onClicked: videoItem.loadGameState();
+                }
+
+
+                Button {
+                    id: volumeBtn;
+                    anchors.verticalCenter: parent.verticalCenter;
+                    height: 20;
+                    width: 20;
+                    checkable: true;
+                    checked: false;
+
+                    property string backgroundImage: "../assets/volume-high-8x.png";
+                    onCheckedChanged: {
+                        if (checked) {
+                            volumeDropDown.visible = true;
+                            volumeDropDown.anchors.rightMargin = 268;
+                        }
+                        else {
+                            volumeDropDown.visible = false;
+                        }
+                    }
+
+                    style: ButtonStyle {
+                        background: Image {
+                            source: volumeBtn.backgroundImage;
+                            sourceSize.width: 25;
+                            sourceSize.height: 25;
+                        }
+                    }
+
                 }
 
                 Button {
