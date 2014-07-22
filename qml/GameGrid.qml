@@ -37,9 +37,10 @@ Rectangle {
         }
 
 
-        delegate: Item {
+        delegate: Rectangle {
             height: gridView.cellHeight;
             width: gridView.cellWidth;
+            color: "red";
 
             Item {
                 anchors.fill: parent;
@@ -80,7 +81,12 @@ Rectangle {
                                     imageHighlight.checked = false;
                                 else
                                     imageHighlight.checked = true;
+                                if (gameView.coreName == "")
+                                    gameView.coreName = "C:/Users/lee/Desktop/32_cores/snes9x_libretro.dll"
+                                if (gameView.gameName == "")
+                                    gameView.gameName = "C:/Users/lee/Documents/Emulation/SNES/Super Mario All-Stars + Super Mario World (USA).sfc";
                                 gameView.run = true;
+                                gameView.loadSaveState = true;
                                 windowStack.push({item: gameView, replace: true });
 
                             }

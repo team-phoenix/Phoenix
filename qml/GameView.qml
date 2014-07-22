@@ -16,6 +16,12 @@ Item {
     property string coreName: "";
     property string systemDirectory: "";
     property string saveDirectory: "";
+    property bool loadSaveState: false
+
+    onLoadSaveStateChanged: {
+        if (loadSaveState)
+            videoItem.loadGameState();
+    }
 
     //visibility: "Windowed";
     //title: "Phoenix";
@@ -46,7 +52,7 @@ Item {
 
     Timer {
         id: mouseTimer;
-        interval: 2000;
+        interval: 4000;
         running: true;
 
         onTriggered: {
@@ -82,25 +88,10 @@ Item {
                 visibility = "Windowed";
         }
 
-        // Eventually have VideoItem not load anything on creation
-        // Will run when core and game paths have been entered through
-        // qml.actual
 
-        // Each core could be it's own qml class/type, would allow easy
-        // extending through qml and keep it so we wouldn't need to
-        // touch c++ side. Just an idea.
-
-        // Also keep last used core loaded on
-        // frontend startup. Will hopefully reduce load time of game.
-
-       // Component.onCompleted: {
-
-            // libcore must be defined before game is,
-            // also they both must reside in Component.onCompleted {}
-
-
-
-       // }
+        Component.onDestruction: {
+            saveGameState();
+        }
 
     }
 
