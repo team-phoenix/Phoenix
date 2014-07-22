@@ -111,8 +111,6 @@ bool Core::loadGameState(QString path, QString name) {
     QFile file(path + "/" + name + "_STATE" + ".sav");
     file.open(QIODevice::ReadOnly);
 
-    qCDebug(phxCore) << "Attempting to load " << file.fileName();
-
     bool loaded = false;
     if (file.isOpen()) {
         QByteArray state = file.readAll();
@@ -125,7 +123,6 @@ bool Core::loadGameState(QString path, QString name) {
             loaded = true;
         }
     }
-    qCDebug(phxCore) << file.fileName() << " could not be loaded";
     return loaded;
 
 } // Core::loadGameState(QString path)
