@@ -18,8 +18,7 @@ Rectangle {
 
         property bool checked: false;
 
-        snapMode: GridView.SnapToRow;
-
+        snapMode: GridView.NoSnap;
 
         anchors {
             fill: parent;
@@ -28,6 +27,7 @@ Rectangle {
             topMargin: 20;
             bottomMargin: 20;
         }
+
         cellWidth: 100 * zoomFactor;
         cellHeight: 100 * zoomFactor;
 
@@ -93,7 +93,7 @@ Rectangle {
                     }
                 }
 
-                DropShadow {
+                /*DropShadow {
                     source: imageHighlight;
                     visible: !gameGrid.zoomSliderPressed;
                     anchors.fill: source;
@@ -104,7 +104,7 @@ Rectangle {
                     samples: 16;
                     color: "#80000000";
                     transparentBorder: true;
-                }
+                }*/
 
                 Label {
                     anchors {
