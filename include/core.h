@@ -222,8 +222,6 @@ private:
 
     // Misc
 
-   int state_count;
-
     // Callbacks
     static void audioSampleCallback(int16_t left, int16_t right);
     static size_t audioSampleBatchCallback(const int16_t *data, size_t frames);

@@ -47,7 +47,6 @@ Core::Core() {
     right_channel = 0;
 
     is_dupe_frame = false;
-    state_count = 0;
 
     input_manager = new InputManager();
     input_manager->scanDevices();
@@ -86,11 +85,6 @@ bool Core::saveGameState(QString path, QString name) {
     if (symbols->retro_serialize(data, size)) {
         QFile *file = new QFile(path + "/" + name + "_STATE.sav");
         qCDebug(phxCore) << file->fileName();
-        if (file->exists()) {
-            state_count++;
-            delete file;
-            file = new QFile(path + "/" + name + "_STATE" + QString::number(state_count) + ".sav");
-        }
 
         file->open(QIODevice::WriteOnly);
         if (file->isOpen()) {
