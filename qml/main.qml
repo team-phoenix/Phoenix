@@ -23,6 +23,7 @@ ApplicationWindow {
         property alias windowY: root.y;
         property alias windowWidth: root.width;
         property alias windowHeight: root.height;
+        property alias volumeLevel: gameView.volumeLevel;
     }
 
     StackView {
