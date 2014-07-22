@@ -17,7 +17,8 @@ class AudioBuffer {
     std::atomic<size_t> m_tail; // oldest item in queue
     const size_t m_size;
 
-    inline size_t next(size_t current) {
+    inline size_t next(size_t current)
+    {
         return (current + 1) % m_size;
     }
 
