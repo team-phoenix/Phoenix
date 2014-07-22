@@ -9,44 +9,39 @@ Rectangle {
     height: 500;
     width: 250;
 
-    Rectangle {
-        id: consoleLabel;
-        z: progressBar.z - 1;
-        anchors {
-            left: parent.left;
-            top: parent.top;
-            leftMargin: 25;
-            topMargin: 25;
-        }
-        height: 20;
-        width: 70;
-        opacity: 0.8;
-        //color: "#2e2e2e";
-        color: "#000000FF";
-
-        Label {
-
-            anchors.centerIn: parent;
-            text: "Consoles";
-            font {
-                bold: true;
-                pixelSize: 18;
-                family: "Sans";
-            }
-
-            color: "#f1f1f1";
-        }
-    }
-
     ListView {
         id: listView;
-        z: progressBar.z - 1;
+        anchors {
+            top: parent.top;
+            topMargin: 25;
+        }
+
         height: parent.height / 2;
         snapMode: ListView.SnapToItem;
         orientation: ListView.Vertical;
         interactive: true;
         spacing: 5;
         highlightFollowsCurrentItem: false;
+
+        header: Item {
+            height: 25;
+            width: parent.width;
+            Label {
+                anchors {
+                    left: parent.left;
+                    leftMargin: 25;
+                    horizontalCenter: parent.horizontalCenter;
+                }
+
+                text: "Consoles";
+                color: "#f1f1f1";
+                font {
+                    family: "Sans";
+                    bold: true;
+                }
+            }
+        }
+
         highlight: Item {
             id: highlightItem;
             height: listView.currentItem.height;
@@ -110,8 +105,6 @@ Rectangle {
                 source: innerItem;
             }
         }
-
-
 
         anchors {
             right: parent.right;
@@ -180,6 +173,7 @@ Rectangle {
 
     Label {
         id: favorites;
+        z: listView.z + 1;
         text: "Favorites";
 
         font {

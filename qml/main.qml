@@ -45,7 +45,6 @@ ApplicationWindow {
         Item {
             HeaderBar {
                 id: headerBar;
-                z: gameStack.z + 1;
                 anchors {
                     left: parent.left;
                     right: parent.right;
@@ -60,7 +59,7 @@ ApplicationWindow {
             ConsoleBar {
                 id: consoleBar;
                 //z: headerBar.z - 1;
-                z: gameStack.z + 1;
+                z: headerBar.z - 1;
                 color: "#333333";
                 anchors {
                     left: parent.left;
