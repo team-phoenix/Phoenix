@@ -1,4 +1,4 @@
-import QtQuick 2.2
+import QtQuick 2.3
 import QtQuick.Controls 1.1
 import QtGraphicalEffects 1.0
 import QtQuick.Layouts 1.1
@@ -12,6 +12,17 @@ Rectangle {
     property string itemBackgroundColor: "#b85353";
     property real zoomFactor: 1;
     property bool zoomSliderPressed: false;
+
+    onZoomFactorChanged: PropertyAnimation {
+        id: resizeAnimation;
+        target: gridView;
+        properties: "cellWidth, cellHeight";
+        easing {
+            type: Easing.OutCubic;
+        }
+        to: 100 * zoomFactor;
+        duration: 0;
+    }
 
     GridView {
         id: gridView;
@@ -28,18 +39,22 @@ Rectangle {
             bottomMargin: 20;
         }
 
-        cellWidth: 100 * zoomFactor;
-        cellHeight: 100 * zoomFactor;
+        cellWidth: 100;
+        cellHeight: 100;
 
         model: gamelibrary;
+
+
         ExclusiveGroup {
             id: gridGroup;
         }
 
 
         delegate: Item {
+            id: gridItem;
             height: gridView.cellHeight;
             width: gridView.cellWidth;
+
 
             Item {
                 anchors.fill: parent;
@@ -107,11 +122,12 @@ Rectangle {
                 }*/
 
                 Label {
+                    id: titleLabel;
                     anchors {
                         left: parent.left;
                         right: parent.right;
                         bottom: parent.bottom;
-                        bottomMargin: 15;
+                        bottomMargin: titleLabel.font.pixelSize / 2;
                     }
 
                     text: title;
@@ -119,7 +135,7 @@ Rectangle {
 
                     font {
                         bold: true;
-                        pixelSize: 6 + zoomFactor*4;
+                        pixelSize: 6 + gridView.cellWidth / 20;
                         family: "Sans";
                     }
 
