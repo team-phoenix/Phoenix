@@ -18,6 +18,7 @@ ApplicationWindow {
     property string accentColor:"#b85353";
 
     Settings {
+        id: settings;
         category: "UI";
         property alias windowX: root.x;
         property alias windowY: root.y;
@@ -42,14 +43,14 @@ ApplicationWindow {
                     property: "x";
                     from: -enterItem.width;
                     to: 0;
-                    duration: 450;
+                    duration: 600;
                 }
                 PropertyAnimation {
                     target: exitItem;
                     property: "x";
                     from: 0;
                     to: -exitItem.width;
-                    duration: 450;
+                    duration: 600;
                 }
             }
        }
@@ -67,6 +68,7 @@ ApplicationWindow {
 
         Item {
             HeaderBar {
+
                 id: headerBar;
                 anchors {
                     left: parent.left;
