@@ -12,6 +12,11 @@ Item {
     height: 600;
     visible: true;
     property bool run: false;
+    property string gameName: "";
+    property string coreName: "";
+    property string systemDirectory: "";
+    property string saveDirectory: "";
+
     //visibility: "Windowed";
     //title: "Phoenix";
 
@@ -59,7 +64,10 @@ Item {
         id: videoItem;
         focus: true;
         anchors.fill: parent;
-        systemDirectory: "C:\\Users\\lee\\Desktop";
+        systemDirectory: root.systemDirectory;
+        saveDirectory: root.saveDirectory;
+        game: root.gameName;
+        libcore: root.coreName;
         run: root.run;
         onRunChanged: {
             if (run)
@@ -85,16 +93,14 @@ Item {
         // Also keep last used core loaded on
         // frontend startup. Will hopefully reduce load time of game.
 
-        Component.onCompleted: {
+       // Component.onCompleted: {
 
             // libcore must be defined before game is,
             // also they both must reside in Component.onCompleted {}
-            libcore = "C:/Users/lee/Desktop/32_cores/bsnes_balanced_libretro.dll";
-            game = "C:/Users/lee/Documents/Emulation/SNES/Super Mario All-Stars + Super Mario World (USA).sfc";
 
-            // run must be defined after libcore and game
 
-        }
+
+       // }
 
     }
 
@@ -296,6 +302,20 @@ Item {
                             sourceSize.height: 25;
                         }
                     }
+                }
+
+                Button {
+                    id: saveBtn;
+                    anchors.verticalCenter: parent.verticalCenter;
+                    text: "Save";
+                    onClicked: videoItem.saveGameState();
+                }
+
+                Button {
+                    id: loadBtn;
+                    anchors.verticalCenter: parent.verticalCenter;
+                    text: "Load";
+                    onClicked: videoItem.loadGameState();
                 }
 
                 Button {

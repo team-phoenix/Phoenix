@@ -29,6 +29,7 @@ class VideoItem : public QQuickItem {
     Q_PROPERTY(bool run READ run WRITE setRun NOTIFY runChanged)
     Q_PROPERTY(bool setWindowed READ setWindowed WRITE setWindowed NOTIFY setWindowedChanged)
     Q_PROPERTY(QString systemDirectory READ systemDirectory WRITE setSystemDirectory NOTIFY systemDirectoryChanged)
+    Q_PROPERTY(QString saveDirectory READ saveDirectory  WRITE setSaveDirectory NOTIFY systemDirectoryChanged)
     Q_PROPERTY(int fps READ fps NOTIFY fpsChanged)
 
 
@@ -43,6 +44,7 @@ public:
     void setRun(bool run );
     void setWindowed(bool setWindowed);
     void setSystemDirectory(QString systemDirectory);
+    void setSaveDirectory(QString saveDirectory);
     void setTexture(QSGTexture::Filtering filter);
 
 
@@ -64,6 +66,10 @@ public:
 
     QString systemDirectory() const {
         return m_system_directory;
+    }
+
+    QString saveDirectory() const {
+        return m_save_directory;
     }
 
     int fps() const {
@@ -92,11 +98,14 @@ signals:
     void runChanged(bool);
     void setWindowedChanged(bool);
     void systemDirectoryChanged();
+    void saveDirectoryChanged();
     void fpsChanged(int);
 
 public slots:
     void paint();
     void cleanup();
+    void saveGameState();
+    void loadGameState();
 
 private slots:
     void handleWindowChanged(QQuickWindow *win);
@@ -131,6 +140,7 @@ private:
     // Qml defined variables
     // [2]
     QString m_system_directory;
+    QString m_save_directory;
     QString m_libcore;
     QString m_game;
     bool m_set_windowed;
@@ -148,6 +158,7 @@ private:
     // [4]
     Keyboard *keyboard;
     //[4]
+
 
     void refreshItemGeometry(); // called every time the item's with/height/x/y change
 

@@ -80,6 +80,8 @@ public:
     LibretroSymbols *getSymbols();
     QByteArray getLibraryName() { return library_name; };
     AudioBuffer *audio_buf;
+    bool saveGameState(QString save_path, QString game_name);
+    bool loadGameState(QString save_path, QString game_name);
     
     // Video
     retro_hw_render_callback getHWData() const { return hw_callback; };
@@ -106,6 +108,7 @@ public:
 
     // System
     void setSystemDirectory(QString system_directory);
+    void setSaveDirectory(QString save_directory);
 
     // Timing
     double getFps() const { return system_av_info->timing.fps; };
@@ -193,6 +196,7 @@ private:
     retro_hw_render_callback hw_callback;
     bool full_path_needed;
     QByteArray system_directory;
+    QByteArray save_directory;
     
     // Game
     QByteArray game_data;
@@ -215,6 +219,10 @@ private:
 
     // Timing
     bool is_dupe_frame;
+
+    // Misc
+
+   int state_count;
 
     // Callbacks
     static void audioSampleCallback(int16_t left, int16_t right);

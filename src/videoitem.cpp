@@ -72,22 +72,49 @@ void VideoItem::setWindowed(bool windowVisibility) {
 
 void VideoItem::setSystemDirectory(QString systemDirectory) {
 
+    m_system_directory = systemDirectory;
     core->setSystemDirectory(systemDirectory);
 
 }
 
+void VideoItem::setSaveDirectory(QString saveDirectory) {
+
+    m_save_directory = saveDirectory;
+    core->setSaveDirectory(saveDirectory);
+
+}
+
+void VideoItem::saveGameState() {
+    QFileInfo info(m_game);
+    core->saveGameState(m_save_directory, info.baseName());
+
+}
+
+void VideoItem::loadGameState() {
+    QFileInfo info(m_game);
+    if (core->loadGameState(m_save_directory, info.baseName())) {
+        qDebug() << "Save State loaded";
+    }
+}
+
 void VideoItem::setCore(QString libcore) {
+    if (libcore == "")
+        return;
     qCDebug(phxVideo) << "Loading core:" << libcore;
     if (!core->loadCore(libcore.toStdString().c_str())) {
         qCCritical(phxVideo, "Couldn't load core !");
 //        exit(EXIT_FAILURE);
     }
+
     const retro_system_info *i = core->getSystemInfo();
     qCDebug(phxVideo) << "Loaded core" << i->library_name << i->library_version;
     emit libcoreChanged(libcore);
 }
 
 void VideoItem::setGame(QString game) {
+    if (game == "")
+        return;
+    m_game = game;
     qCDebug(phxVideo) << "Loading game:" << game;
     if (!core->loadGame(game.toStdString().c_str())) {
         qCCritical(phxVideo, "Couldn't load game !");
@@ -231,7 +258,7 @@ void VideoItem::setTexture(QSGTexture::Filtering filter) {
 
     QImage::Format frame_format = retroToQImageFormat(core->getPixelFormat());
 
-    delete texture_node;
+    texture_node->deleteLater();
     texture_node = window()->createTextureFromImage(QImage((const uchar *)core->getImageData(),
                                                         core->getBaseWidth(),
                                                         core->getBaseHeight(),

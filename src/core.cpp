@@ -47,6 +47,7 @@ Core::Core() {
     right_channel = 0;
 
     is_dupe_frame = false;
+    state_count = 0;
 
     input_manager = new InputManager();
     input_manager->scanDevices();
@@ -72,6 +73,57 @@ Core::~Core() {
 // |                        |
 // |     Public methods     |
 // |________________________|
+
+bool Core::saveGameState(QString path, QString name) {
+
+    size_t size =  core->getSymbols()->retro_get_memory_size(RETRO_MEMORY_SAVE_RAM);
+    void *data = core->getSymbols()->retro_get_memory_data(RETRO_MEMORY_SAVE_RAM);
+    bool loaded = false;
+
+    if (symbols->retro_serialize(data, size)) {
+        QFile *file = new QFile(path + "/" + name + "_STATE.sav");
+        if (file->exists()) {
+            state_count++;
+            delete file;
+            file = new QFile(path + "/" + name + "_STATE" + QString::number(state_count) + ".sav");
+        }
+
+        file->open(QIODevice::WriteOnly);
+        if (file->isOpen()) {
+            file->write(QByteArray(static_cast<char *>(data), size));
+            qCDebug(phxCore) << "Save State wrote to "<< file->fileName();
+            file->close();
+            delete file;
+            loaded = true;
+        }
+    }
+    return loaded;
+
+} // Core::saveGameState(QString path, char *data, int size)
+
+bool Core::loadGameState(QString path, QString name) {
+
+    QFile file(path + "/" + name + "_STATE" + ".sav");
+    file.open(QIODevice::ReadOnly);
+
+    qCDebug(phxCore) << "Attempting to load " << file.fileName();
+
+    bool loaded = false;
+    if (file.isOpen()) {
+        QByteArray state = file.readAll();
+        void *data = state.data();
+        size_t size = static_cast<int>(state.size());
+
+        file.close();
+        if (symbols->retro_unserialize(data, size)) {
+            qCDebug(phxCore) << "Save State loaded";
+            loaded = true;
+        }
+    }
+    qCDebug(phxCore) << file.fileName() << " could not be loaded";
+    return loaded;
+
+} // Core::loadGameState(QString path)
 
 // Run core for one frame
 void Core::doFrame() {
@@ -107,6 +159,12 @@ void Core::setSystemDirectory(QString system_dir) {
     system_directory = system_dir.toLocal8Bit();
 
 } // Core::setSystemDirectory(QString system_dir)
+
+void Core::setSaveDirectory(QString save_dir) {
+
+    save_directory = save_dir.toLocal8Bit();
+
+} // Core::setSaveDirectory()
 
 //~[4]
 
@@ -244,7 +302,7 @@ void Core::audioSampleCallback(int16_t left, int16_t right) {
         core->audio_buf->write((const char*)&sample, sizeof(int16_t) * 2);
     }
 
-} // Core::an udioSampleCallback()
+} // Core::audioSampleCallback()
 
 size_t Core::audioSampleBatchCallback(const int16_t *data, size_t frames) {
 
@@ -290,6 +348,7 @@ bool Core::environmentCallback(unsigned cmd, void *data) {
             break;
 
         case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY: // 9
+            qCDebug(phxCore) << "\tRETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY (9)";
             *static_cast<const char **>(data) = core->system_directory.constData();
             return true;
 
@@ -303,17 +362,14 @@ bool Core::environmentCallback(unsigned cmd, void *data) {
                 case RETRO_PIXEL_FORMAT_0RGB1555:
                     qDebug() << "\tPixel format: 0RGB1555\n";
                     return true;
-                    break;
                     
                 case RETRO_PIXEL_FORMAT_RGB565:
                     qDebug() << "\tPixel format: RGB565\n";
                     return true;
-                    break;
                     
                 case RETRO_PIXEL_FORMAT_XRGB8888:
                     qDebug() << "\tPixel format: XRGB8888\n";
                     return true;
-                    break;
                     
                 default:
                     qDebug() << "\tError: Pixel format is not supported. (" << pixelformat << ")";
@@ -442,7 +498,9 @@ bool Core::environmentCallback(unsigned cmd, void *data) {
             break;
 
         case RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY: // 31
-            qDebug() << "\tRETRO_ENVIRONMENT_GET_SAVE_DIRECTORY (31)";
+            qCDebug(phxCore) << "\tRETRO_ENVIRONMENT_GET_SAVE_DIRECTORY (31)";
+            *static_cast<const char **>(data) = core->save_directory.constData();
+            qCDebug(phxCore) << "Save Directory: " << core->save_directory;
             break;
 
         case RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO: // 32

@@ -34,6 +34,8 @@ ApplicationWindow {
     GameView {
         id: gameView;
         visible: false;
+        systemDirectory: "C:/Users/lee/Desktop";
+        saveDirectory:  systemDirectory;
     }
 
     Component {
