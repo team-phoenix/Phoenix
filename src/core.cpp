@@ -76,12 +76,16 @@ Core::~Core() {
 
 bool Core::saveGameState(QString path, QString name) {
 
-    size_t size =  core->getSymbols()->retro_get_memory_size(RETRO_MEMORY_SAVE_RAM);
-    void *data = core->getSymbols()->retro_get_memory_data(RETRO_MEMORY_SAVE_RAM);
+    size_t size = core->getSymbols()->retro_serialize_size();
+    if (!size)
+        return false;
+
+    char *data = new char[size];
     bool loaded = false;
 
     if (symbols->retro_serialize(data, size)) {
         QFile *file = new QFile(path + "/" + name + "_STATE.sav");
+        qCDebug(phxCore) << file->fileName();
         if (file->exists()) {
             state_count++;
             delete file;
@@ -97,6 +101,7 @@ bool Core::saveGameState(QString path, QString name) {
             loaded = true;
         }
     }
+    delete[] data;
     return loaded;
 
 } // Core::saveGameState(QString path, char *data, int size)
@@ -201,6 +206,7 @@ bool Core::loadCore(const char *path) {
         resolved_sym(retro_reset);
         resolved_sym(retro_run);
         resolved_sym(retro_serialize);
+        resolved_sym(retro_serialize_size);
         resolved_sym(retro_unserialize);
         resolved_sym(retro_cheat_reset);
         resolved_sym(retro_cheat_set);
