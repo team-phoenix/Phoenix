@@ -5,7 +5,8 @@
 
 #include "core.h"
 
-LibretroSymbols::LibretroSymbols() {
+LibretroSymbols::LibretroSymbols()
+{
     retro_audio = nullptr;
     retro_audio_set_state = nullptr;
     retro_frame_time = nullptr;
@@ -26,8 +27,8 @@ Core* Core::core = nullptr;
 // |      Constructors      |
 // |________________________|
 
-Core::Core() {
-
+Core::Core()
+{
     libretro_core = nullptr;
     video_data = nullptr;
     audio_buf = nullptr;
@@ -55,7 +56,8 @@ Core::Core() {
 
 } // Core::Core()
 
-Core::~Core() {
+Core::~Core()
+{
     //while (input_manager->stopTimer())
         //qCDebug(phxCore) << "Closing timer";
     delete input_manager;
@@ -73,8 +75,8 @@ Core::~Core() {
 // |     Public methods     |
 // |________________________|
 
-bool Core::saveGameState(QString path, QString name) {
-
+bool Core::saveGameState(QString path, QString name)
+{
     size_t size = core->getSymbols()->retro_serialize_size();
     if (!size)
         return false;
@@ -100,8 +102,8 @@ bool Core::saveGameState(QString path, QString name) {
 
 } // Core::saveGameState(QString path, char *data, int size)
 
-bool Core::loadGameState(QString path, QString name) {
-
+bool Core::loadGameState(QString path, QString name)
+{
     QFile file(path + "/" + name + "_STATE" + ".sav");
     file.open(QIODevice::ReadOnly);
 
@@ -122,8 +124,8 @@ bool Core::loadGameState(QString path, QString name) {
 } // Core::loadGameState(QString path)
 
 // Run core for one frame
-void Core::doFrame() {
-
+void Core::doFrame()
+{
 	// Update the static pointer
 	core = this;
 
@@ -140,8 +142,8 @@ void Core::doFrame() {
 // Input
 // [3]
 
-InputManager *Core::getInputManager() {
-
+InputManager *Core::getInputManager()
+{
     return input_manager;
 
 } // Core::getInputManager()
@@ -150,30 +152,30 @@ InputManager *Core::getInputManager() {
 
 // System
 // [4]
-void Core::setSystemDirectory(QString system_dir) {
-
+void Core::setSystemDirectory(QString system_dir)
+{
     system_directory = system_dir.toLocal8Bit();
 
 } // Core::setSystemDirectory(QString system_dir)
 
-void Core::setSaveDirectory(QString save_dir) {
-
+void Core::setSaveDirectory(QString save_dir)
+{
     save_directory = save_dir.toLocal8Bit();
 
 } // Core::setSaveDirectory()
 
 //~[4]
 
-LibretroSymbols* Core::getSymbols() {
-
+LibretroSymbols* Core::getSymbols()
+{
     return symbols;
 
 } // LibretroSymbols *RasterWindow::getSymbols()
 
 // Load a libretro core at the given path
 // Returns: true if successful, false otherwise
-bool Core::loadCore(const char *path) {
-
+bool Core::loadCore(const char *path)
+{
     libretro_core = new QLibrary(path);
     libretro_core->load();
 
@@ -236,8 +238,8 @@ bool Core::loadCore(const char *path) {
 
 // Load a game with the given path
 // Returns: true if the game was successfully loaded, false otherwise
-bool Core::loadGame(const char *path) {
-
+bool Core::loadGame(const char *path)
+{
     // create a retro_game_info struct, load with data (created on stack)
     retro_game_info game_info;
     
@@ -290,8 +292,8 @@ bool Core::loadGame(const char *path) {
 // |       Callbacks        |
 // |________________________|
 
-void Core::audioSampleCallback(int16_t left, int16_t right) {
-
+void Core::audioSampleCallback(int16_t left, int16_t right)
+{
     Core::core->left_channel = left;
     Core::core->right_channel = right;
     if (core->audio_buf) {
@@ -301,7 +303,8 @@ void Core::audioSampleCallback(int16_t left, int16_t right) {
 
 } // Core::audioSampleCallback()
 
-size_t Core::audioSampleBatchCallback(const int16_t *data, size_t frames) {
+size_t Core::audioSampleBatchCallback(const int16_t *data, size_t frames)
+{
 
     core->audio_data = data;
     core->audio_frames = frames;
@@ -312,8 +315,8 @@ size_t Core::audioSampleBatchCallback(const int16_t *data, size_t frames) {
     
 } // Core::audioSampleBatchCallback()
 
-bool Core::environmentCallback(unsigned cmd, void *data) {
-
+bool Core::environmentCallback(unsigned cmd, void *data)
+{
     switch(cmd) {
         case RETRO_ENVIRONMENT_SET_ROTATION: // 1
             qDebug() << "\tRETRO_ENVIRONMENT_SET_ROTATION (1)";
@@ -526,15 +529,15 @@ bool Core::environmentCallback(unsigned cmd, void *data) {
     
 } // Core::environmentCallback()
 
-void Core::inputPollCallback(void) {
-
+void Core::inputPollCallback(void)
+{
    // qDebug() << "Core::inputPollCallback";
     return;
     
 } // Core::inputPollCallback()
 
-int16_t Core::inputStateCallback(unsigned port, unsigned device, unsigned index, unsigned id) {
-
+int16_t Core::inputStateCallback(unsigned port, unsigned device, unsigned index, unsigned id)
+{
     Q_UNUSED(index)
 
     if (static_cast<int>(port) > Core::core->input_manager->getDevices().size())
@@ -552,8 +555,8 @@ int16_t Core::inputStateCallback(unsigned port, unsigned device, unsigned index,
 
 } // Core::inputStateCallback()
 
-void Core::logCallback(enum retro_log_level level, const char *fmt, ...) {
-
+void Core::logCallback(enum retro_log_level level, const char *fmt, ...)
+{
     QVarLengthArray<char, 1024> outbuf(1024);
     va_list args;
     va_start(args, fmt);
@@ -599,8 +602,8 @@ void Core::logCallback(enum retro_log_level level, const char *fmt, ...) {
 
 } // Core::retro_log()
 
-void Core::videoRefreshCallback(const void *data, unsigned width, unsigned height, size_t pitch) {
-
+void Core::videoRefreshCallback(const void *data, unsigned width, unsigned height, size_t pitch)
+{
     if (data) {
         core->video_data = data;
         core->is_dupe_frame = false;

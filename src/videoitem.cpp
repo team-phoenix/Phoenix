@@ -3,8 +3,8 @@
 
 
 
-VideoItem::VideoItem() {
-
+VideoItem::VideoItem()
+{
     core = new Core();
 
     m_program = nullptr;
@@ -29,7 +29,8 @@ VideoItem::VideoItem() {
     connect(this, SIGNAL(windowChanged(QQuickWindow*)), this, SLOT(handleWindowChanged(QQuickWindow*)));
 }
 
-VideoItem::~VideoItem() {
+VideoItem::~VideoItem()
+{
     delete keyboard;
     delete core;
     if (m_program)
@@ -57,7 +58,8 @@ void VideoItem::handleWindowChanged(QQuickWindow *win)
     }
 }
 
-void VideoItem::handleSceneGraphInitialized() {
+void VideoItem::handleSceneGraphInitialized()
+{
     refreshItemGeometry();
     // initialize texture_node with an empty 1x1 black image
     QImage emptyImage(1, 1, QImage::Format_RGB32);
@@ -65,48 +67,52 @@ void VideoItem::handleSceneGraphInitialized() {
     texture_node = window()->createTextureFromImage(emptyImage);
 }
 
-void VideoItem::setWindowed(bool windowVisibility) {
+void VideoItem::setWindowed(bool windowVisibility)
+{
 
     m_set_windowed = windowVisibility;
     emit setWindowedChanged( windowVisibility );
 
 }
 
-void VideoItem::setVolume(qreal volume) {
-
+void VideoItem::setVolume(qreal volume)
+{
     m_volume = volume;
     emit volumeChanged(volume);
 
 }
 
-void VideoItem::setSystemDirectory(QString systemDirectory) {
-
+void VideoItem::setSystemDirectory(QString systemDirectory)
+{
     m_system_directory = systemDirectory;
     core->setSystemDirectory(systemDirectory);
 
 }
 
-void VideoItem::setSaveDirectory(QString saveDirectory) {
-
+void VideoItem::setSaveDirectory(QString saveDirectory)
+{
     m_save_directory = saveDirectory;
     core->setSaveDirectory(saveDirectory);
 
 }
 
-void VideoItem::saveGameState() {
+void VideoItem::saveGameState()
+{
     QFileInfo info(m_game);
     core->saveGameState(m_save_directory, info.baseName());
 
 }
 
-void VideoItem::loadGameState() {
+void VideoItem::loadGameState()
+{
     QFileInfo info(m_game);
     if (core->loadGameState(m_save_directory, info.baseName())) {
         qDebug() << "Save State loaded";
     }
 }
 
-void VideoItem::setCore(QString libcore) {
+void VideoItem::setCore(QString libcore)
+{
     if (libcore == "")
         return;
     qCDebug(phxVideo) << "Loading core:" << libcore;
@@ -120,7 +126,8 @@ void VideoItem::setCore(QString libcore) {
     emit libcoreChanged(libcore);
 }
 
-void VideoItem::setGame(QString game) {
+void VideoItem::setGame(QString game)
+{
     if (game == "")
         return;
     m_game = game;
@@ -136,7 +143,8 @@ void VideoItem::setGame(QString game) {
 }
 
 
-void VideoItem::setRun(bool run) {
+void VideoItem::setRun(bool run)
+{
     m_run = run;
     if (run) {
         qCDebug(phxVideo, "Core started");
@@ -147,7 +155,8 @@ void VideoItem::setRun(bool run) {
     emit runChanged(run);
 }
 
-void VideoItem::updateAudioFormat() {
+void VideoItem::updateAudioFormat()
+{
     QAudioFormat format;
     format.setSampleSize(16);
     format.setSampleRate(core->getSampleRate());
@@ -159,8 +168,8 @@ void VideoItem::updateAudioFormat() {
     audio->setFormat(format);
 }
 
-void VideoItem::keyEvent(QKeyEvent *event) {
-
+void VideoItem::keyEvent(QKeyEvent *event)
+{
     bool is_pressed = (event->type() == QEvent::KeyPress) ? true : false;
 
     switch(event->key()) {
@@ -188,7 +197,8 @@ void VideoItem::keyEvent(QKeyEvent *event) {
     }
 }
 
-void VideoItem::refreshItemGeometry() {
+void VideoItem::refreshItemGeometry()
+{
     qreal pixel_ratio = window()->devicePixelRatio();
     item_w = int(pixel_ratio * width());
     item_h = int(pixel_ratio * height());
@@ -198,8 +208,8 @@ void VideoItem::refreshItemGeometry() {
     viewportXY.setY(window()->height() - viewportXY.y());
 }
 
-void VideoItem::initGL() {
-
+void VideoItem::initGL()
+{
     qreal desired_aspect = core->getAspectRatio();
     ulong core_w = item_h * desired_aspect;
     ulong core_h = item_w / desired_aspect;
@@ -232,7 +242,8 @@ void VideoItem::initGL() {
 
 }
 
-void VideoItem::initShader() {
+void VideoItem::initShader()
+{
     m_program = new QOpenGLShaderProgram();
     m_program->addShaderFromSourceCode(QOpenGLShader::Vertex,
                                        "attribute highp vec4 vertices;"
@@ -262,9 +273,8 @@ void VideoItem::initShader() {
 
 }
 
-void VideoItem::setTexture(QSGTexture::Filtering filter) {
-
-
+void VideoItem::setTexture(QSGTexture::Filtering filter)
+{
     QImage::Format frame_format = retroToQImageFormat(core->getPixelFormat());
 
     texture_node->deleteLater();
@@ -282,7 +292,8 @@ void VideoItem::setTexture(QSGTexture::Filtering filter) {
 
 }
 
-inline bool VideoItem::limitFps() {
+inline bool VideoItem::limitFps()
+{
     qreal target_fps_interval = round(1000000.0 / core->getFps()); // µsec
     if (!frame_timer.isValid()) {
         frame_timer.start();
@@ -308,8 +319,8 @@ inline bool VideoItem::limitFps() {
     return false;
 }
 
-void VideoItem::paint() {
-
+void VideoItem::paint()
+{
     if (m_run && !limitFps()) {
         core->doFrame();
         fps_count++;

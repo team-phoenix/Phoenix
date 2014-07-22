@@ -4,8 +4,12 @@
 
 
 Audio::Audio(QObject * parent /*= 0*/)
-            : QObject(parent), isRunning(false),
-              aout(0), aio(0), timer(this) {
+            : QObject(parent),
+              isRunning(false),
+              aout(0),
+              aio(0),
+              timer(this)
+{
         this->moveToThread(&thread);
         connect(&thread, SIGNAL(started()), SLOT(threadStarted()));
         thread.setObjectName("phoenix-audio");
@@ -21,12 +25,14 @@ Audio::Audio(QObject * parent /*= 0*/)
         connect(this, SIGNAL(formatChanged()), this, SLOT(handleFormatChanged()));
 }
 
-void Audio::start() {
+void Audio::start()
+{
     thread.start(QThread::HighestPriority);
 }
 
 /* This needs to be called on the audio thread*/
-void Audio::setFormat(QAudioFormat _afmt) {
+void Audio::setFormat(QAudioFormat _afmt)
+{
     qCDebug(phxAudio, "setFormat(%iHz %ibits)", _afmt.sampleRate(), _afmt.sampleSize());
 /*    QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
     if (!info.isFormatSupported(_afmt)) {
@@ -37,7 +43,8 @@ void Audio::setFormat(QAudioFormat _afmt) {
     emit formatChanged();
 }
 
-void Audio::handleFormatChanged() {
+void Audio::handleFormatChanged()
+{
     if(aout) {
         aout->stop();
         delete aout;
@@ -53,7 +60,8 @@ void Audio::handleFormatChanged() {
     }
 }
 
-void Audio::threadStarted() {
+void Audio::threadStarted()
+{
 //    qDebug() << QThread::currentThread() << &thread;
     if(!afmt.isValid()) {
         // we don't have a valid audio format yet...
@@ -69,7 +77,8 @@ void Audio::threadStarted() {
     aio->moveToThread(&thread);
 }
 
-void Audio::handlePeriodTimer() {
+void Audio::handlePeriodTimer()
+{
     Q_ASSERT(QThread::currentThread() == &thread);
     Q_ASSERT(aio);
     int toWrite = aout->bytesFree();
@@ -82,7 +91,8 @@ void Audio::handlePeriodTimer() {
     Q_UNUSED(wrote);
 }
 
-void Audio::runChanged( bool _isRunning ) {
+void Audio::runChanged( bool _isRunning )
+{
     isRunning = _isRunning;
     if(!aout)
         return;
@@ -101,12 +111,14 @@ void Audio::runChanged( bool _isRunning ) {
     }
 }
 
-void Audio::setVolume(qreal level) {
+void Audio::setVolume(qreal level)
+{
     if (aout)
         aout->setVolume(level);
 }
 
-Audio::~Audio() {
+Audio::~Audio()
+{
     if(aout)
         delete aout;
     if(aio)

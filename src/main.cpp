@@ -16,7 +16,8 @@
 #include "librarydbmanager.h"
 
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
 #ifdef Q_OS_LINUX
     // When using QAudioOutput on linux/ALSA, we need to
     // block SIGIO on all threads except the audio thread
