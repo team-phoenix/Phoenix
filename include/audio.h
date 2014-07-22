@@ -39,6 +39,7 @@ public slots:
     }
 
     void runChanged(bool isRunning);
+    void setVolume(qreal level);
 
 private slots:
     void threadStarted();

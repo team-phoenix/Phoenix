@@ -15,6 +15,7 @@ VideoItem::VideoItem() {
     Q_CHECK_PTR(audio);
     audio->start();
     core->audio_buf = audio->abuf();
+    m_volume = 0.0;
 
     keyboard = new Keyboard();
     core->getInputManager()->append(keyboard);
@@ -24,6 +25,7 @@ VideoItem::VideoItem() {
     fps_deviation = 0;
 
     connect(this, SIGNAL(runChanged(bool)), audio, SLOT(runChanged(bool)));
+    connect(this, SIGNAL(volumeChanged(qreal)), audio, SLOT(setVolume(qreal)));
     connect(this, SIGNAL(windowChanged(QQuickWindow*)), this, SLOT(handleWindowChanged(QQuickWindow*)));
 }
 
@@ -67,6 +69,13 @@ void VideoItem::setWindowed(bool windowVisibility) {
 
     m_set_windowed = windowVisibility;
     emit setWindowedChanged( windowVisibility );
+
+}
+
+void VideoItem::setVolume(qreal volume) {
+
+    m_volume = volume;
+    emit volumeChanged(volume);
 
 }
 

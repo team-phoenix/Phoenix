@@ -101,6 +101,11 @@ void Audio::runChanged( bool _isRunning ) {
     }
 }
 
+void Audio::setVolume(qreal level) {
+    if (aout)
+        aout->setVolume(level);
+}
+
 Audio::~Audio() {
     if(aout)
         delete aout;

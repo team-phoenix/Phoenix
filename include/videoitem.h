@@ -31,6 +31,7 @@ class VideoItem : public QQuickItem {
     Q_PROPERTY(QString systemDirectory READ systemDirectory WRITE setSystemDirectory NOTIFY systemDirectoryChanged)
     Q_PROPERTY(QString saveDirectory READ saveDirectory  WRITE setSaveDirectory NOTIFY systemDirectoryChanged)
     Q_PROPERTY(int fps READ fps NOTIFY fpsChanged)
+    Q_PROPERTY(qreal volume READ volume WRITE setVolume NOTIFY volumeChanged)
 
 
 public:
@@ -46,6 +47,7 @@ public:
     void setSystemDirectory(QString systemDirectory);
     void setSaveDirectory(QString saveDirectory);
     void setTexture(QSGTexture::Filtering filter);
+    void setVolume(qreal volume);
 
 
     QString libcore() const {
@@ -76,6 +78,10 @@ public:
         return m_fps;
     }
 
+    qreal volume() const {
+        return m_volume;
+    }
+
 
 protected:
     void keyEvent(QKeyEvent *event);
@@ -100,6 +106,7 @@ signals:
     void systemDirectoryChanged();
     void saveDirectoryChanged();
     void fpsChanged(int);
+    void volumeChanged(qreal);
 
 public slots:
     void paint();
@@ -146,6 +153,7 @@ private:
     bool m_set_windowed;
     bool m_run;
     int m_fps;
+    qreal m_volume;
     //[2]
 
     // Audio

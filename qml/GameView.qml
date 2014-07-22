@@ -17,7 +17,7 @@ Item {
     property string systemDirectory: "";
     property string saveDirectory: "";
     property bool loadSaveState: false
-    property int volumeLevel: 100;
+    property real volumeLevel: 1.0;
 
     onLoadSaveStateChanged: {
         if (loadSaveState)
@@ -79,6 +79,7 @@ Item {
         game: root.gameName;
         libcore: root.coreName;
         run: root.run;
+        volume: root.volumeLevel;
         onRunChanged: {
             if (run)
                 playBtn.iconImage = "/assets/GameView/pause.png";
@@ -217,16 +218,17 @@ Item {
             orientation: Qt.Vertical;
             height: parent.height * 0.8;
             width: 5;
-            minimumValue: 0;
-            maximumValue: 100;
+            stepSize: 0.05;
+            minimumValue: 0.0;
+            maximumValue: 1.0;
             value: root.volumeLevel;
             onValueChanged: {
                 root.volumeLevel = value;
-                if (value > 80)
+                if (value > 0.8)
                     volumeBtn.backgroundImage = "../assets/volume-high-8x.png";
-                else if (80 > value && value > 0)
+                else if (0.8 > value && value > 0.0)
                     volumeBtn.backgroundImage = "../assets/volume-low-8x.png";
-                else if (value == 0)
+                else if (value == 0.0)
                     volumeBtn.backgroundImage = "../assets/volume-off-8x.png";
 
             }
