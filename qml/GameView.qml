@@ -7,7 +7,7 @@ import QtGraphicalEffects 1.0
 import VideoItem 1.0
 
 Item {
-    id: root;
+    id: gameView;
     width: 800;
     height: 600;
     visible: true;
@@ -74,12 +74,12 @@ Item {
         id: videoItem;
         focus: true;
         anchors.fill: parent;
-        systemDirectory: root.systemDirectory;
-        saveDirectory: root.saveDirectory;
-        game: root.gameName;
-        libcore: root.coreName;
-        run: root.run;
-        volume: root.volumeLevel;
+        systemDirectory: gameView.systemDirectory;
+        saveDirectory: gameView.saveDirectory;
+        game: gameView.gameName;
+        libcore: gameView.coreName;
+        run: gameView.run;
+        volume: gameView.volumeLevel;
         onRunChanged: {
             if (run)
                 playBtn.iconImage = "/assets/GameView/pause.png";
@@ -136,7 +136,7 @@ Item {
             }
         }
         onClicked:  {
-            root.run = false;
+            gameView.run = false;
             windowStack.push({item: homeScreen, replace: true });
         }
     }
@@ -221,9 +221,9 @@ Item {
             stepSize: 0.05;
             minimumValue: 0.0;
             maximumValue: 1.0;
-            value: root.volumeLevel;
+            value: gameView.volumeLevel;
             onValueChanged: {
-                root.volumeLevel = value;
+                gameView.volumeLevel = value;
                 if (value > 0.8)
                     volumeBtn.backgroundImage = "../assets/volume-high-8x.png";
                 else if (0.8 > value && value > 0.0)
