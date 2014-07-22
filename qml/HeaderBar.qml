@@ -1,4 +1,4 @@
-import QtQuick 2.2
+import QtQuick 2.3
 import QtQuick.Controls 1.1
 import QtQuick.Controls.Styles 1.1
 import QtQuick.Dialogs 1.1
@@ -163,6 +163,7 @@ Rectangle {
             maximumValue: 10;
             value: 5;
 
+
             Settings {
                 category: "UI";
                 property alias zoomFactor: zoomSlider.value;
@@ -175,7 +176,11 @@ Rectangle {
                     headerBar.sliderPressed = false;
             }
 
-            onValueChanged: headerBar.sliderValue = value;
+            onValueChanged: {
+                var prev = headerBar.sliderValue;
+                headerBar.sliderValue = value;
+
+            }
 
             style: SliderStyle {
                 handle: Rectangle {
