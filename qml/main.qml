@@ -30,6 +30,29 @@ ApplicationWindow {
         id: windowStack;
         anchors.fill: parent;
         initialItem: homeScreen;
+
+        delegate: StackViewDelegate {
+            function transitionFinished(properties)
+            {
+                properties.exitItem.x = 0;
+            }
+            pushTransition: StackViewTransition {
+                PropertyAnimation {
+                    target: enterItem;
+                    property: "x";
+                    from: -enterItem.width;
+                    to: 0;
+                    duration: 450;
+                }
+                PropertyAnimation {
+                    target: exitItem;
+                    property: "x";
+                    from: 0;
+                    to: -exitItem.width;
+                    duration: 450;
+                }
+            }
+       }
     }
 
     GameView {
