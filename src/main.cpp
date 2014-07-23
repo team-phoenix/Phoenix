@@ -36,6 +36,7 @@ int main(int argc, char *argv[])
     a.setApplicationVersion(PHOENIX_VERSION);
     a.setOrganizationName("Phoenix");
 //    a.setOrganizationDomain("phoenix-emu.org");
+    QSettings settings;
 
     
     qmlRegisterType<VideoItem>("VideoItem", 1, 0, "VideoItem");
@@ -52,10 +53,14 @@ int main(int argc, char *argv[])
     QObject *topLevel = engine.rootObjects().value(0);
     QQuickWindow *window = qobject_cast<QQuickWindow *>(topLevel);
 
-    QSurfaceFormat format;
-    format.setSwapBehavior(QSurfaceFormat::TripleBuffer);
-    format.setSwapInterval(0);
+    QSurfaceFormat format = window->requestedFormat();
 
+    if (settings.value("video/triple_buffering", false).toBool())
+        format.setSwapBehavior(QSurfaceFormat::TripleBuffer);
+    if (!settings.value("video/vsync", true).toBool())
+        format.setSwapInterval(0);
+
+    // format cant be changed once the window has been shown
     window->setFormat(format);
 
     window->show();
