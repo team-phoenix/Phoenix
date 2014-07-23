@@ -52,6 +52,12 @@ int main(int argc, char *argv[])
     QObject *topLevel = engine.rootObjects().value(0);
     QQuickWindow *window = qobject_cast<QQuickWindow *>(topLevel);
 
+    QSurfaceFormat format;
+    format.setSwapBehavior(QSurfaceFormat::TripleBuffer);
+    format.setSwapInterval(0);
+
+    window->setFormat(format);
+
     window->show();
 
     return a.exec();
