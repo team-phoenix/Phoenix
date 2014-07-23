@@ -96,6 +96,7 @@ ApplicationWindow {
 
             StackView {
                 id: gameStack;
+                z: headerBar.z - 1;
                 initialItem: {
                     if (root.clear === true)
                         return emptyScreen;
