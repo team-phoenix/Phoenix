@@ -30,6 +30,7 @@ HEADERS += include/core.h              \
            include/qmlsettings.h       \
            include/inputmanager.h      \
            include/inputdevice.h       \
+           include/inputdevicemapping.h\
            include/keyboard.h          \
            include/librarydbmanager.h  \
            include/gamelibrarymodel.h
@@ -44,6 +45,7 @@ SOURCES += src/main.cpp                \
            src/logging.cpp             \
            src/inputmanager.cpp        \
            src/inputdevice.cpp         \
+           src/inputdevicemapping.cpp  \
            src/keyboard.cpp            \
            src/librarydbmanager.cpp    \
            src/gamelibrarymodel.cpp

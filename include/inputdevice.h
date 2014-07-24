@@ -12,6 +12,8 @@
 
 typedef unsigned retro_device_type;
 
+typedef unsigned retro_device_id;
+
 
 class InputDevice
 {
@@ -23,7 +25,7 @@ public:
     QString deviceName() const { return device_name; }
     retro_device_type type() const { return m_type; }
 
-    int16_t state(unsigned id) const {
+    int16_t state(retro_device_id id) const {
         QMutexLocker lock(&ids_state_mutex);
         return ids_state.value(id, 0);
     }
@@ -31,7 +33,7 @@ public:
 protected:
     void setDeviceName(const char *new_name);
     void setType(retro_device_type new_type);
-    void setState(unsigned id, int16_t state) {
+    void setState(retro_device_id id, int16_t state) {
         QMutexLocker lock(&ids_state_mutex);
         ids_state[id] = state;
     }
@@ -39,7 +41,7 @@ protected:
     // maps ids to state
     // ids can refer to a button, an axis, etc...
     // depending to the retro_device_type
-    QMap<unsigned, int16_t> ids_state;
+    QMap<retro_device_id, int16_t> ids_state;
     mutable QMutex ids_state_mutex;
 
 private:

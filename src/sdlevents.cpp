@@ -31,6 +31,7 @@ SDLEvents::SDLEvents()
 
 SDLEvents::~SDLEvents()
 {
+    polltimer.stop();
     thread.quit();
     thread.wait();
     delete[] event_list;
@@ -57,7 +58,8 @@ void SDLEvents::threadStarted()
 
     connect(&polltimer, SIGNAL(timeout()), this, SLOT(pollSDL()));
 
-    polltimer.start(10); // TODO: use retro_input_poll_t for polling instead of a timer ??
+    // TODO: use retro_input_poll_t for polling instead of a timer ??
+    polltimer.start(10);
 }
 
 void SDLEvents::threadFinished()
