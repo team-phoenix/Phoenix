@@ -99,7 +99,8 @@ void VideoItem::setSaveDirectory(QString saveDirectory)
 void VideoItem::saveGameState()
 {
     QFileInfo info(m_game);
-    core->saveGameState(m_save_directory, info.baseName());
+    if (m_game != "" && m_libcore != "")
+        core->saveGameState(m_save_directory, info.baseName());
 
 }
 
