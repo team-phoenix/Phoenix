@@ -23,7 +23,6 @@ Joystick::Joystick()
     sdl_events.registerCallback(&callback);
 
     // TODO: temporary
-    qDebug() << "NUM" << SDL_NumJoysticks();
     for (int i = 0; i < SDL_NumJoysticks(); i++) {
         if (SDL_IsGameController(i)) {
             controller = SDL_GameControllerOpen(i);

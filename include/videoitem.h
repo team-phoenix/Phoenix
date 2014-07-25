@@ -162,12 +162,6 @@ private:
     void updateAudioFormat();
     //[3]
 
-    // Input
-    // [4]
-    Keyboard *keyboard;
-    //[4]
-
-
     void refreshItemGeometry(); // called every time the item's with/height/x/y change
 
     bool limitFps(); // return true if it's too soon to ask for another frame

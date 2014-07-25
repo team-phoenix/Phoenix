@@ -29,7 +29,6 @@ VideoItem::VideoItem()
 
 VideoItem::~VideoItem()
 {
-    delete keyboard;
     delete core;
     if (m_program)
         delete m_program;
