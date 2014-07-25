@@ -5,6 +5,9 @@
 
 #include "core.h"
 
+
+extern InputManager input_manager;
+
 LibretroSymbols::LibretroSymbols()
 {
     retro_audio = nullptr;
@@ -49,8 +52,7 @@ Core::Core()
 
     is_dupe_frame = false;
 
-    input_manager = new InputManager();
-    input_manager->scanDevices();
+    input_manager.scanDevices();
 
     Core::core = this;
 
@@ -58,10 +60,6 @@ Core::Core()
 
 Core::~Core()
 {
-    //while (input_manager->stopTimer())
-        //qCDebug(phxCore) << "Closing timer";
-    delete input_manager;
-
     delete libretro_core;
     delete system_av_info;
     delete system_info;
@@ -138,17 +136,6 @@ void Core::doFrame()
 } // void doFrame()
 
 // Getters
-
-// Input
-// [3]
-
-InputManager *Core::getInputManager()
-{
-    return input_manager;
-
-} // Core::getInputManager()
-
-// ~[3]
 
 // System
 // [4]
@@ -540,10 +527,10 @@ int16_t Core::inputStateCallback(unsigned port, unsigned device, unsigned index,
 {
     Q_UNUSED(index)
 
-    if (static_cast<int>(port) > Core::core->input_manager->getDevices().size())
+    if (static_cast<int>(port) > input_manager.getDevices().size())
         return 0;
 
-    InputDevice *deviceobj = core->input_manager->getDevice(port);
+    InputDevice *deviceobj = input_manager.getDevice(port);
 
     // make sure the InputDevice was configured
     // to map to the requested RETRO_DEVICE.

@@ -115,8 +115,6 @@ public:
     double getSampleRate() const { return system_av_info->timing.sample_rate; };
     bool isDupeFrame() const { return is_dupe_frame; };
 
-    // Input
-    InputManager *getInputManager();
     // Initilization methods
     bool loadCore(const char * path);
     bool loadGame(const char * path);
@@ -213,9 +211,6 @@ private:
     const int16_t *audio_data;
     int16_t left_channel;
     int16_t right_channel;
-
-    // Input
-    InputManager *input_manager;
 
     // Timing
     bool is_dupe_frame;

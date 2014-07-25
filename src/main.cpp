@@ -16,6 +16,8 @@
 #include "librarydbmanager.h"
 
 
+InputManager input_manager; // global
+
 int main(int argc, char *argv[])
 {
 #ifdef Q_OS_LINUX
@@ -38,17 +40,19 @@ int main(int argc, char *argv[])
 //    a.setOrganizationDomain("phoenix-emu.org");
     QSettings settings;
 
-    
+
     qmlRegisterType<VideoItem>("VideoItem", 1, 0, "VideoItem");
     
     QQmlApplicationEngine engine;
 
-    /* first, set the context properties */
+    // first, set the context properties
     QQmlContext *rctx = engine.rootContext();
     GameLibraryModel gamelibr;
     rctx->setContextProperty("gamelibrary", &gamelibr);
 
-    /* then, load qml and display the window */
+    rctx->setContextProperty("inputmanager", &input_manager);
+
+    // then, load qml and display the window
     engine.load(QUrl("qrc:/qml/main.qml"));
     QObject *topLevel = engine.rootObjects().value(0);
     QQuickWindow *window = qobject_cast<QQuickWindow *>(topLevel);
@@ -60,7 +64,7 @@ int main(int argc, char *argv[])
     if (!settings.value("video/vsync", true).toBool())
         format.setSwapInterval(0);
 
-    // format cant be changed once the window has been shown
+    // format can't be changed once the window has been shown
     window->setFormat(format);
 
     window->show();

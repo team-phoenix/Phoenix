@@ -15,6 +15,7 @@ SDLEvents::SDLEvents()
     // from https://github.com/gabomdq/SDL_GameControllerDB
     // TODO: Instead of storing the file as a ressource, have it in some
     // directory so the user can modify it if needed..
+    Q_INIT_RESOURCE(assets); // needed to access resources before app.exec()
     QFile f(":/assets/gamecontrollerdb.txt");
     f.open(QIODevice::ReadOnly);
     SDL_SetHint(SDL_HINT_GAMECONTROLLERCONFIG, f.readAll().constData());

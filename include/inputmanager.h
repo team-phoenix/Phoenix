@@ -14,7 +14,7 @@ class InputManager : public QObject
 
 public:
     InputManager();
-    ~InputManager();
+    virtual ~InputManager();
 
     void scanDevices();
 

@@ -2,6 +2,7 @@
 #include "videoitem.h"
 
 
+extern InputManager input_manager;
 
 VideoItem::VideoItem()
 {
@@ -16,9 +17,6 @@ VideoItem::VideoItem()
     audio->start();
     core->audio_buf = audio->abuf();
     m_volume = 0.0;
-
-    keyboard = new Keyboard();
-    core->getInputManager()->append(keyboard);
 
     connect(&fps_timer, SIGNAL(timeout()), this, SLOT(updateFps()));
     frame_timer.invalidate();
@@ -190,7 +188,7 @@ void VideoItem::keyEvent(QKeyEvent *event)
 
     // we also pass every KeyEvent to each connected InputDevice which is a Keyboard.
     // a bit ugly, but this avoid overhead of signal/slots and event filters
-    QList<InputDevice *> devices = core->getInputManager()->getDevices();
+    QList<InputDevice *> devices = input_manager.getDevices();
     for (int i=0; i < devices.size(); ++i) {
         auto keyboardinput = dynamic_cast<Keyboard *>(devices.at(i));
         if (keyboardinput != nullptr)
