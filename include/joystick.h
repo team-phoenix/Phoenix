@@ -16,17 +16,11 @@ public:
     Joystick();
     virtual ~Joystick();
 
-    //int axis_count;
-    //int button_count;
-    //int hat_count;
-    //QMap<quint8, Sint16> axes;
-    //QMap<unsigned, Uint8> button_states;
-    //QMap<quint8, Uint8> hats;
+    // enumerate plugged-in devices
+    static QVariantList enumerateDevices();
 
 private:
     std::shared_ptr<SDLEvents> events;
-    // shared instance between all the class Joystick instances
-    static std::weak_ptr<SDLEvents> events_global;
 
     bool handleSDLEvent(const SDL_Event *event);
     SDLEvents::EventCallback callback;

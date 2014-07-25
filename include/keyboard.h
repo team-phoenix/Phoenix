@@ -12,6 +12,8 @@ public:
     Keyboard();
     virtual ~Keyboard();
 
+    static QVariantList enumerateDevices();
+
     // process QKeyEvent sent from some widget/window
     // as a button press in this virtual Input Device
     void processKeyEvent(QKeyEvent *event);

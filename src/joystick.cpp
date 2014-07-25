@@ -8,23 +8,15 @@
 #include "logging.h"
 
 
-std::weak_ptr<SDLEvents> Joystick::events_global;
+static SDLEvents sdl_events;
+
 
 Joystick::Joystick()
 {
     setType(RETRO_DEVICE_JOYPAD);
 
-    // Create a shared SDLEvents instance on-demand when a Joystick instance is
-    // created. That way, when no joystick are used, SDL won't be initialized.
-    if (events_global.expired()) {
-        events = std::make_shared<SDLEvents>();
-        events_global = events;
-    } else {
-        events = events_global.lock();
-    }
-
     callback = std::bind(&Joystick::handleSDLEvent, this, std::placeholders::_1);
-    events->registerCallback(&callback);
+    sdl_events.registerCallback(&callback);
 
     device_attached = false;
     joystick = nullptr;
@@ -33,7 +25,7 @@ Joystick::Joystick()
 
 Joystick::~Joystick()
 {
-    events->removeCallback(&callback);
+    sdl_events.removeCallback(&callback);
     if (controller) {
         SDL_GameControllerClose(controller);
     } else if (joystick) {
@@ -41,6 +33,32 @@ Joystick::~Joystick()
     }
     joystick = nullptr;
     controller = nullptr;
+}
+
+// static
+QVariantList Joystick::enumerateDevices()
+{
+    QVariantList list;
+    char guidbuf[128];
+    int nconnected = SDL_NumJoysticks();
+
+    if (!nconnected) {
+        qCCritical(phxInput, "Unable to enumerate joysticks: %s", SDL_GetError());
+    }
+
+    for (int i = 0; i < nconnected; i++) {
+        const char* jsname = SDL_JoystickNameForIndex(i);
+        if (!jsname)
+            continue;
+        SDL_JoystickGetGUIDString(SDL_JoystickGetDeviceGUID(i), guidbuf, 128);
+        list.append(QVariantMap {
+            { "name", QString(jsname) },
+            { "class", "Joystick" },
+            { "type", QString(SDL_IsGameController(i) ? "gamecontroller" : "joystick") },
+            { "guid", QString(guidbuf) }
+        });
+    }
+    return list;
 }
 
 bool Joystick::deviceAdded(const SDL_Event *event)

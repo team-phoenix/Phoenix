@@ -14,6 +14,16 @@ Keyboard::~Keyboard()
 
 }
 
+QVariantList Keyboard::enumerateDevices()
+{
+    return {
+        QVariantMap {
+            {"name", "Keyboard"},
+            {"class", "Keyboard"}
+        }
+    };
+}
+
 void Keyboard::processKeyEvent(QKeyEvent *event)
 {
     int id;

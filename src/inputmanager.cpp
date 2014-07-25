@@ -1,5 +1,7 @@
 
 #include "inputmanager.h"
+#include "joystick.h"
+#include "keyboard.h"
 
 
 InputManager::InputManager()
@@ -9,6 +11,14 @@ InputManager::InputManager()
 InputManager::~InputManager()
 {
     devices.clear(); // XXX: MEMORY LEAK ??
+}
+
+QVariantList InputManager::enumerateDevices()
+{
+    QVariantList devices;
+    devices += Keyboard::enumerateDevices();
+    devices += Joystick::enumerateDevices();
+    return devices;
 }
 
 void InputManager::append(InputDevice *device)

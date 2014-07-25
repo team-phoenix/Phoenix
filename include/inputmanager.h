@@ -1,9 +1,11 @@
 
-#include <QVector>
-#include <QTimer>
+#ifndef INPUTMANAGER_H
+#define INPUTMANAGER_H
+
+#include <QList>
 #include <QObject>
 
-#include "joystick.h"
+#include "inputdevice.h"
 
 
 class InputManager : public QObject
@@ -19,8 +21,13 @@ public:
     void append(InputDevice *device);
 
     QList<InputDevice *> getDevices() const;
-    InputDevice * getDevice(unsigned port) const;
+    InputDevice *getDevice(unsigned port) const;
+
+public slots:
+    QVariantList enumerateDevices();
 
 private:
     QList<InputDevice *> devices;
 };
+
+#endif
