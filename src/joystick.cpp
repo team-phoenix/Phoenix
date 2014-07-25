@@ -15,12 +15,23 @@ Joystick::Joystick()
 {
     setType(RETRO_DEVICE_JOYPAD);
 
-    callback = std::bind(&Joystick::handleSDLEvent, this, std::placeholders::_1);
-    sdl_events.registerCallback(&callback);
-
     device_attached = false;
     joystick = nullptr;
     controller = nullptr;
+
+    callback = std::bind(&Joystick::handleSDLEvent, this, std::placeholders::_1);
+    sdl_events.registerCallback(&callback);
+
+    // TODO: temporary
+    qDebug() << "NUM" << SDL_NumJoysticks();
+    for (int i = 0; i < SDL_NumJoysticks(); i++) {
+        if (SDL_IsGameController(i)) {
+            controller = SDL_GameControllerOpen(i);
+            setDeviceName(SDL_GameControllerName(controller));
+            device_attached = true;
+            break;
+        }
+    }
 }
 
 Joystick::~Joystick()
