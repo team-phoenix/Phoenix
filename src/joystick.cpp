@@ -63,6 +63,7 @@ QVariantList Joystick::enumerateDevices()
             continue;
         SDL_JoystickGetGUIDString(SDL_JoystickGetDeviceGUID(i), guidbuf, 128);
         list.append(QVariantMap {
+            { "text", QString(jsname) }, // for QML model
             { "name", QString(jsname) },
             { "class", "Joystick" },
             { "type", QString(SDL_IsGameController(i) ? "gamecontroller" : "joystick") },

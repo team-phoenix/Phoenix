@@ -18,6 +18,7 @@ QVariantList Keyboard::enumerateDevices()
 {
     return {
         QVariantMap {
+            {"text", "Keyboard"}, // for QML model
             {"name", "Keyboard"},
             {"class", "Keyboard"}
         }

@@ -296,6 +296,10 @@ ApplicationWindow {
                     }
                 }
 
+                ComboBox {
+                    width: 200;
+                    model: inputmanager.enumerateDevices();
+                }
 
                 /*Rectangle{
                     anchors {
