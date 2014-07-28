@@ -23,4 +23,6 @@ qmake
 make
 ```
 
+Screen Shots
+------------
 ![ScreenShot](https://raw.github.com/team-phoenix/Phoenix/master/assets/mockup.png)
