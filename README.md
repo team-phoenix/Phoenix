@@ -22,3 +22,5 @@ Building
 qmake
 make
 ```
+
+![ScreenShot](https://raw.github.com/team-phoenix/Phoenix/master/assets/mockup.png)
