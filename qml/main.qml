@@ -14,8 +14,29 @@ ApplicationWindow {
 
     title: "Phoenix";
 
-    property bool clear: true;
+    property bool clear: false;
     property string accentColor:"#b85353";
+
+    Component {
+        id: gameGrid;
+        GameGrid {
+            property string itemName: "grid";
+            color: "#1a1a1a";
+            zoomFactor: headerBar.sliderValue;
+            zoomSliderPressed: headerBar.sliderPressed;
+
+        }
+    }
+
+    Component {
+        id: gameTable;
+        GameTable {
+            itemName: "table";
+            highlightColor: "#494545";
+            textColor: "#f1f1f1";
+            headerColor: "#252525";
+        }
+    }
 
     Settings {
         id: settings;
@@ -27,10 +48,97 @@ ApplicationWindow {
         property alias volumeLevel: gameView.volumeLevel;
     }
 
+   HeaderBar {
+        id: headerBar;
+        anchors {
+            left: parent.left;
+            right: parent.right;
+            top: parent.top;
+        }
+        height: 50;
+        color: "#3b3b3b";
+        fontSize: 14;
+    }
+
+    DropShadow {
+        visible: headerBar.visible;
+        source: headerBar;
+        anchors.fill: headerBar;
+        horizontalOffset: 1;
+        verticalOffset: 4;
+        radius: 8;
+        samples: 16;
+        color: "#b0000000"
+        transparentBorder: true;
+    }
+
+    Item {
+        id: settingsBubble;
+        z: headerBar.z + 1;
+        visible: false;
+        focus: false;
+        anchors {
+            left: parent.left;
+            top: parent.top;
+            bottom: parent.bottom;
+            bottomMargin: 30;
+            topMargin: 30;
+            leftMargin: 20;
+        }
+        width: parent.width * 0.75;
+
+        SettingsWindow {
+            anchors.fill: parent;
+            visible: parent.visible;
+            stackBackgroundColor: "#4f4f4f";
+        }
+
+    }
+
+    DropShadow {
+        source: settingsBubble;
+        anchors.fill: source;
+        horizontalOffset: 4;
+        verticalOffset: 8;
+        radius: 8.0;
+        samples: 16;
+        color: "#80000000";
+        transparentBorder: true;
+    }
+
+   // Second pass needed for left side
+   DropShadow {
+        source: settingsBubble;
+        anchors.fill: source;
+
+        horizontalOffset: -4;
+        verticalOffset: 8;
+        radius: 8.0;
+        samples: 16;
+        color: "#80000000"
+        transparentBorder: true;
+    }
+
     StackView {
         id: windowStack;
-        anchors.fill: parent;
+        z: headerBar.z - 1;
+        anchors {
+            top: headerBar.bottom;
+            left: parent.left;
+            right: parent.right;
+            bottom: parent.bottom;
+        }
+
         initialItem: homeScreen;
+
+        property string gameStackItemName:  {
+            if (currentItem != null) {
+                return currentItem.stackName;
+            }
+            else {
+                return "";
+            }
+        }
 
         delegate: StackViewDelegate {
             function transitionFinished(properties)
@@ -67,36 +175,29 @@ ApplicationWindow {
         id: homeScreen;
 
         Item {
-            HeaderBar {
-
-                id: headerBar;
-                anchors {
-                    left: parent.left;
-                    right: parent.right;
-                    top: parent.top;
-                }
-                height: 50;
-                color: "#666666";
-                fontSize: 14;
-
-            }
-
+            property string stackName: "";
+            property StackView stackId: gameStack;
             ConsoleBar {
                 id: consoleBar;
-                //z: headerBar.z - 1;
                 z: headerBar.z - 1;
-                color: "#333333";
+                color: "#303030";
                 anchors {
                     left: parent.left;
-                    top: headerBar.bottom;
+                    top: parent.top;
                     bottom: parent.bottom;
                 }
-                width: 275;
+                width: 225;
             }
 
             StackView {
                 id: gameStack;
-                z: headerBar.z - 1;
+                z: windowStack.z;
+
+                onCurrentItemChanged: {
+                    if (currentItem)
+                    parent.stackName = currentItem.itemName;
+                }
+
                 initialItem: {
                     if (root.clear === true)
                         return emptyScreen;
@@ -104,44 +205,11 @@ ApplicationWindow {
                     return gameGrid;
                 }
 
-
                 anchors {
                     left: consoleBar.right;
                     right: parent.right;
-                    top: headerBar.bottom;
+                    top: parent.top;
                     bottom: parent.bottom;
-                }
-
-            }
-
-            InnerShadow {
-                source: gameStack;
-                anchors.fill: source;
-                radius: 8.0;
-                samples: 16;
-                horizontalOffset: 6;
-                verticalOffset: 1;
-                color: Qt.rgba(0, 0, 0, 0.3);
-            }
-
-            Component {
-                id: gameGrid;
-                GameGrid {
-                    property string itemName: "grid";
-                    color: "#191a1a";
-                    zoomFactor: headerBar.sliderValue;
-                    zoomSliderPressed: headerBar.sliderPressed;
-
-                }
-            }
-
-            Component {
-                id: gameTable;
-                GameTable {
-                    itemName: "table";
-                    highlightColor: "#494545";
-                    textColor: "#f1f1f1";
-                    headerColor: "#2c2c2c";
                 }
             }
 
@@ -151,8 +219,6 @@ ApplicationWindow {
                 Rectangle {
                     property string itemName: "empty";
                     color: "#1d1e1e";
-
-
 
                     Column {
                         anchors.centerIn: parent;

@@ -9,6 +9,7 @@
     <file>GameView/power.png</file>
     <file>GameView/star.png</file>
     <file>GameView/game-controller-b.png</file>
+    <file>GameView/home.png</file>
     <!-- -->
     <file>consoleicons/dinothawr.png</file>
     <file>consoleicons/dosbox.png</file>
@@ -47,7 +48,6 @@
     <file>left.png</file>
     <file>purple_button.png</file>
     
-    <file>triangle.png</file>
     <file>missing_artwork.png</file>
     <file>more.png</file>
     <!-- -->

@@ -38,6 +38,7 @@ Rectangle {
                 font {
                     family: "Sans";
                     bold: true;
+                    pixelSize: 15;
                 }
             }
         }
@@ -55,7 +56,7 @@ Rectangle {
                 Rectangle {
                     id: accentRectangle;
                     color: root.accentColor;
-                    width: 15;
+                    width: 4;
                     anchors {
                         left: parent.left;
                         top: parent.top;
@@ -72,37 +73,8 @@ Rectangle {
                         top: parent.top;
                         bottom: parent.bottom;
                     }
-                    color: listView.currentItem ? "#666666" : "#000000FF";
+                    color: listView.currentItem ? "#1a1a1a" : "#000000FF";
                 }
-
-                Rectangle {
-                    id: triangle;
-                    anchors {
-                        left: mainColor.right;
-                        leftMargin: -(height / 2);
-                        verticalCenter: mainColor.verticalCenter;
-                    }
-                    rotation: 45;
-                    height: highlightItem.height / Math.SQRT2;
-                    width: height;
-                    color: mainColor.color;
-                    smooth: true;
-                }
-
-            }
-
-            DropShadow {
-                width: innerItem.width + 30;
-                height: innerItem.height + 5;
-
-                horizontalOffset: 1;
-                verticalOffset: 1;
-                radius: 8.0
-                samples: 16
-                transparentBorder: true;
-                color: "#80000000"
-                opacity: 0.8;
-                source: innerItem;
             }
         }
 
@@ -111,7 +83,6 @@ Rectangle {
             left: parent.left;
             top: consoleLabel.bottom;
             topMargin: 10;
-
         }
 
         model: ListModel {
@@ -136,6 +107,7 @@ Rectangle {
             height: 33;
             width: consoleBar.width;
             Row {
+                id: row;
                 anchors.fill: parent;
                 anchors.leftMargin: 50;
                 spacing: 10;
@@ -159,14 +131,16 @@ Rectangle {
                     font {
                         family: "Sans";
                         bold: true;
-                        pixelSize: 14;
+                        pixelSize: 13;
                     }
                 }
             }
 
             MouseArea {
                 anchors.fill: parent;
-                onClicked: listView.currentIndex = index;
+                onClicked: {
+                    listView.currentIndex = index;
+                }
             }
         }
     }
@@ -178,7 +152,7 @@ Rectangle {
 
         font {
             bold: true;
-            pixelSize: 18;
+            pixelSize: 15;
             family: "Sans";
         }
 
@@ -203,6 +177,7 @@ Rectangle {
         source: progressBar;
     }
 
+
     Rectangle {
         id: progressBar;
         z: 1;
@@ -225,14 +200,22 @@ Rectangle {
         Column {
             spacing: 4;
             anchors {
-                horizontalCenter: parent.horizontalCenter;
-                top: parent.top;
-                topMargin: 15;
+                verticalCenterOffset: -5;
+                centerIn: parent;
             }
+            //anchors {
+               // horizontalCenter: parent.horizontalCenter;
+                //top: parent.top;
+                //topMargin: 15;
+            //}
             Label {
                 anchors.horizontalCenter: parent.horizontalCenter;
                 text: progressBar.showText;
-                font.bold: true;
+                font {
+                    bold: true;
+                    pixelSize: 14;
+                }
+
                 color: "#f1f1f1";
             }
 
@@ -243,10 +226,10 @@ Rectangle {
                 value: 50;
                 style: ProgressBarStyle {
                     background: Rectangle {
-                        color: "#666666";
+                        color: "#1a1a1a";
                         opacity: 0.8;
-                        implicitWidth: 200;
-                        implicitHeight: 8;
+                        implicitWidth: 175;
+                        implicitHeight: 4;
                     }
                     progress: Rectangle {
                         color: root.accentColor;
