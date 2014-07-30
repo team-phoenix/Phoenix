@@ -527,7 +527,7 @@ int16_t Core::inputStateCallback(unsigned port, unsigned device, unsigned index,
 {
     Q_UNUSED(index)
 
-    if (static_cast<int>(port) > input_manager.getDevices().size())
+    if (static_cast<int>(port) >= input_manager.getDevices().size())
         return 0;
 
     InputDevice *deviceobj = input_manager.getDevice(port);
