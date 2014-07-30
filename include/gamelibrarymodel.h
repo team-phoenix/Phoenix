@@ -25,13 +25,14 @@ public:
     virtual QHash<int, QByteArray> roleNames() const Q_DECL_OVERRIDE;
 
 public slots:
-    void setFilter(QString search_terms_);
+    void setFilter(QString search_terms_, QString new_category);
     virtual void sort(int column, Qt::SortOrder order) Q_DECL_OVERRIDE;
 
 private:
     LibraryDbManager dbm;
     QString base_query;
     QString search_terms;
+    QString category;
     int sort_column;
     Qt::SortOrder sort_order;
     QHash<int, QByteArray> role_names;

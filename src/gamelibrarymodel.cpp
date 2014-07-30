@@ -41,7 +41,7 @@ void GameLibraryModel::updateQuery() {
     QString q_str(base_query);
     QSqlQuery q(dbm.handle());;
     if (!search_terms.isEmpty())
-        q_str.append(" WHERE title LIKE ?");
+        q_str.append(" WHERE " + category + " LIKE ?");
 
     if (sort_order != -1) {
         q_str.append(" ORDER BY ");
@@ -67,11 +67,11 @@ void GameLibraryModel::sort(int column, Qt::SortOrder order)
     updateQuery();
 }
 
-void GameLibraryModel::setFilter(QString new_terms)
+void GameLibraryModel::setFilter(QString new_terms, QString new_category)
 {
     if (search_terms == new_terms)
         return;
-
+    category = new_category;
     search_terms = new_terms;
     updateQuery();
 }

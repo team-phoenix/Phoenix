@@ -435,7 +435,7 @@ Rectangle {
             interval: 300;
             running: false;
             repeat: false;
-            onTriggered: gamelibrary.setFilter(searchBar.text);
+            onTriggered: gamelibrary.setFilter(searchBar.text, "title");
         }
 
         onTextChanged: {
