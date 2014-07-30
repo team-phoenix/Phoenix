@@ -122,7 +122,7 @@ ApplicationWindow {
     StackView {
         id: windowStack;
         z: headerBar.z - 1;
-        height: headerBar.visible ? (parent.height - 50) : (parent.height);
+        height: headerBar.visible ? (parent.height - headerBar.height) : (parent.height);
         anchors {
             left: parent.left;
             right: parent.right;
