@@ -17,13 +17,6 @@ ApplicationWindow {
     property bool clear: false;
     property string accentColor:"#b85353";
 
-    //GaussianBlur {
-           // anchors.fill: windowStack
-           // source: windowStack
-           // radius: 8
-           // samples: 16
-        //}
-
     Component {
         id: gameGrid;
         GameGrid {
@@ -55,7 +48,7 @@ ApplicationWindow {
         property alias volumeLevel: gameView.volumeLevel;
     }
 
-   HeaderBar {
+    HeaderBar {
         id: headerBar;
         anchors {
             left: parent.left;
@@ -129,8 +122,8 @@ ApplicationWindow {
     StackView {
         id: windowStack;
         z: headerBar.z - 1;
+        height: headerBar.visible ? (parent.height - 50) : (parent.height);
         anchors {
-            top: headerBar.bottom;
             left: parent.left;
             right: parent.right;
             bottom: parent.bottom;
