@@ -12,17 +12,13 @@ Rectangle {
     property string itemBackgroundColor: "#b85353";
     property real zoomFactor: 1;
     property bool zoomSliderPressed: false;
+    property bool resizeGrid: false;
 
-    onZoomFactorChanged: PropertyAnimation {
-        id: resizeAnimation;
-        target: gridView;
-        properties: "cellWidth, cellHeight";
-        easing {
-            type: Easing.OutCubic;
-        }
-        to: 100 * zoomFactor;
-        duration: 0;
+    onZoomFactorChanged: {
+        if (gridView.cellHeight * zoomFactor !== gridView.cellHeight)
+            resizeGrid = true;
     }
+
 
     GridView {
         id: gridView;
@@ -30,6 +26,33 @@ Rectangle {
         property bool checked: false;
 
         snapMode: GridView.NoSnap;
+
+        states: [
+            State {
+                name: "resizing";
+                when: gameGrid.resizeGrid;
+                PropertyChanges {
+                    target: gridView;
+                    cellHeight: 100 * gameGrid.zoomFactor;
+                    cellWidth: 100 * gameGrid.zoomFactor;
+                }
+            }
+
+        ]
+
+
+        Behavior on cellHeight {
+            PropertyAnimation {
+                //id: resizeAnimation;
+               // target: gridView;
+                //properties: "cellWidth, cellHeight";
+                easing {
+                    type: Easing.OutCubic;
+                }
+                //to: 100 * zoomFactor;
+                duration: 250;
+            }
+        }
 
         anchors {
             fill: parent;
