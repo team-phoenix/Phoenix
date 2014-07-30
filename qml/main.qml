@@ -17,6 +17,13 @@ ApplicationWindow {
     property bool clear: false;
     property string accentColor:"#b85353";
 
+    //GaussianBlur {
+           // anchors.fill: windowStack
+           // source: windowStack
+           // radius: 8
+           // samples: 16
+        //}
+
     Component {
         id: gameGrid;
         GameGrid {
@@ -82,7 +89,7 @@ ApplicationWindow {
             top: parent.top;
             bottom: parent.bottom;
             bottomMargin: 30;
-            topMargin: 30;
+            topMargin: 80;
             leftMargin: 20;
         }
         width: parent.width * 0.75;
@@ -133,7 +140,10 @@ ApplicationWindow {
 
         property string gameStackItemName:  {
             if (currentItem != null) {
-                return currentItem.stackName;
+                if (typeof currentItem.stackName !== "undefined") {
+                    console.log(currentItem.stackName)
+                    return currentItem.stackName;
+                }
             }
             else {
                 return "";
