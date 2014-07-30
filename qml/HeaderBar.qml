@@ -34,10 +34,12 @@ Rectangle {
     }
 
     onHeightChanged: {
-        if (height == 0)
+        if (height == 0) {
             visible = false;
-        else
+        }
+        else {
             visible = true;
+        }
     }
 
     width: 300;
@@ -275,7 +277,7 @@ Rectangle {
             id: zoomSlider;
             visible: headerBar.sliderVisible;
             width: 150;
-            height: 5;
+            height: 25;
             anchors {
                 verticalCenter: parent.verticalCenter;
             }
@@ -328,8 +330,8 @@ Rectangle {
                 }
 
                 groove: Rectangle {
-                    implicitHeight: 5;
-                    implicitWidth: 200;
+                    height: 5;
+                    width: zoomSlider.width;
                     radius: 2;
                     opacity: 0.8;
                     color: "#1a1a1a";
