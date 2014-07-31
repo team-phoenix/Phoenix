@@ -17,6 +17,10 @@ ApplicationWindow {
     property bool clear: false;
     property string accentColor:"#b85353";
 
+    onWidthChanged: {
+        settingsDropDown.visible = false;
+    }
+
     Component {
         id: gameGrid;
         GameGrid {
