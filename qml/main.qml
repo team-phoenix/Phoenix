@@ -11,6 +11,8 @@ ApplicationWindow {
     id: root;
     width: 640
     height: 480
+    minimumHeight: 480;
+    minimumWidth: 640;
 
     title: "Phoenix";
 
@@ -18,7 +20,12 @@ ApplicationWindow {
     property string accentColor:"#b85353";
 
     onWidthChanged: {
-        settingsDropDown.visible = false;
+        settingsDropDown.state = "retracted";
+    }
+
+    MouseArea {
+        anchors.fill: parent;
+        enabled: settingsBubble.visible;
     }
 
     Component {
@@ -96,9 +103,7 @@ ApplicationWindow {
                 when: settingsBubble.expand;
                 PropertyChanges {
                     target: settingsDropDown;
-                    //width: parent.width * 0.70;
-                    width: parent.width * 0.5;
-                    anchors.rightMargin: 300;
+                    anchors.rightMargin: (root.width > root.minimumWidth) ? root.width / 2 : 50;
                 }
             },
             State {
@@ -122,6 +127,31 @@ ApplicationWindow {
             }
         }
 
+        Rectangle {
+            visible: parent.visible;
+            opacity: parent.visible ? 1.0 : 0.0;
+            height: 35;
+            width: 35;
+            rotation: 45;
+            color: settingsBubble.stackBackgroundColor;
+
+            Behavior on opacity {
+                NumberAnimation {
+                    easing {
+                        type: Easing.OutQuad;
+                    }
+                    duration: 200;
+                }
+            }
+
+            anchors {
+                left: parent.left;
+                leftMargin: 18;
+                verticalCenter: settingsBubble.top;
+            }
+
+        }
+
         SettingsWindow {
             id: settingsBubble;
             opacity: parent.visible ? 1.0 : 0.0;
@@ -137,7 +167,7 @@ ApplicationWindow {
 
             anchors {
                 fill: parent;
-                leftMargin: 20;
+                leftMargin: 10;
             }
 
             visible: parent.visible;
@@ -175,6 +205,7 @@ ApplicationWindow {
     StackView {
         id: windowStack;
         z: headerBar.z - 1;
+
         height: headerBar.visible ? (parent.height - headerBar.height) : (parent.height);
         anchors {
             left: parent.left;
@@ -233,6 +264,15 @@ ApplicationWindow {
         Item {
             property string stackName: "";
             property StackView stackId: gameStack;
+            property bool blur: settingsBubble.visible;
+
+            FastBlur {
+                anchors.fill: source;
+                source: parent;
+                radius: 1;
+                visible: blur;
+            }
+
             ConsoleBar {
                 id: consoleBar;
                 z: headerBar.z - 1;
