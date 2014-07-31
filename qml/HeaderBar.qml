@@ -98,6 +98,7 @@ Rectangle {
 
         Button {
             id: settingsBtn;
+            visible: !gameView.visible;
             height: 30;
             width: 30;
             property string backgroundColor: "#000000FF";
