@@ -9,7 +9,11 @@ Item {
     anchors.fill: parent;
     property string groupingColor: "gray";
     property string stackBackgroundColor: "darkgray";
+    property string contentColor: "#d7d7d7";
     property string textColor: "#f1f1f1";
+    property bool expand: false;
+
+    property bool contentVisible: false;
     width: 500;
 
     Rectangle {
@@ -68,7 +72,7 @@ Item {
                             top: parent.top;
                             bottom: parent.bottom;
                         }
-                        color: listView.currentItem ? "#666666" : "#000000FF";
+                        color: listView.currentItem ? settingsBubble.contentColor : "#000000FF";
                     }
 
                 }
@@ -80,6 +84,7 @@ Item {
                                    "Library": librarySettings,
                                    "Save": saveSettings,
                                    "Advanced": advancedSettings};
+            property string currentName: "";
             model: ListModel {
                 ListElement {title: "Input";}
                 //ListElement {title: "System";}
@@ -115,18 +120,17 @@ Item {
                 MouseArea {
                     anchors.fill: parent;
                     onClicked: {
-                        //downArrow.source = "";
-                        listView.currentIndex = index;
-                        //settingsBubble.height = root.height * 0.85;
-                        console.log(settingsBubble.width)
-                        settingsBubble.width = root.width * 0.70;
-                        console.log(root.width * 0.70)
+                        if (title === listView.currentName) {
+                            settingsBubble.expand = false;
+                            listView.currentName = "";
+                        }
+                        else {
+                            listView.currentIndex = index;
+                            settingsBubble.expand = true;
 
-                        //downArrow.source = "assets/arrow-down.png";
-                        stackView.visible = true;
-                        stackView.push({item: listView.stacks[text], replace: true});
-
-
+                            stackView.push({item: listView.stacks[title], replace: true, immediate: true});
+                            listView.currentName = title;
+                        }
                     }
                 }
             }
@@ -163,14 +167,12 @@ Item {
 
     StackView {
         id: stackView;
-        visible: true;
         anchors {
             left: menuBar.right;
             right: parent.right;
             bottom: parent.bottom;
             top: parent.top;
         }
-
         initialItem: inputSettings;
     }
 
@@ -236,10 +238,10 @@ Item {
     Component {
         id: inputSettings;
         Rectangle {
-            color: "#363434";
-
+            color: settingsBubble.contentColor;
             Row {
                 id: portRow;
+                visible: stackView.width > width;
                 anchors {
                     top: parent.top;
                     topMargin: 25;
@@ -341,6 +343,7 @@ Item {
             }
 
             Image {
+                visible: stackView.width > width;
                 anchors {
                     top: portRow.bottom;
                     right: inputMapper.left;
@@ -360,6 +363,7 @@ Item {
 
             ScrollView {
                 id: inputMapper;
+                visible: stackView.width > width;
                 anchors {
                     top: portRow.bottom;
                     right: parent.right;
@@ -418,6 +422,12 @@ Item {
                             anchors.right: parent.right;
                             anchors.rightMargin: 50;
                             horizontalAlignment: Text.AlignHCenter;
+                            MouseArea {
+                                anchors.fill: parent;
+                                onClicked: {
+                                    //inputmanager.iterateDevices();
+                                }
+                            }
                         }
                     }
                 }
@@ -427,15 +437,22 @@ Item {
                 //width: 200;
                // model: inputmanager.enumerateDevices();
             //}
+
+            Component.onCompleted: {
+                //inputmanager.enumerateDevices();
+            }
         }
+
+
     }
 
     Component {
         id: advancedSettings;
         Rectangle {
-            color: settingsBubble.stackBackgroundColor;
+            color: settingsBubble.contentColor;
 
             Column {
+                visible: stackView.width > width;
                 anchors {
                     fill: parent;
                     topMargin: 25;
@@ -474,9 +491,10 @@ Item {
     Component {
         id: coreSettings;
         Rectangle {
-            color: settingsBubble.stackBackgroundColor;
+            color: settingsBubble.contentColor;
 
             Row {
+                visible: stackView.width > width;
                 spacing: 20;
                 anchors {
                     top: parent.top;
@@ -524,17 +542,18 @@ Item {
     Component {
         id: frontendSettings;
         Rectangle {
-            color: settingsBubble.stackBackgroundColor;
+            color: settingsBubble.contentColor;
         }
     }
 
     Component {
         id: librarySettings;
         Rectangle {
-            color: settingsBubble.stackBackgroundColor;
+            color: settingsBubble.contentColor;
 
             Row {
                 spacing: 2;
+                visible: stackView.width > width;
                 anchors {
                     top: parent.top;
                     topMargin: 30;
@@ -598,9 +617,10 @@ Item {
         id: saveSettings;
 
         Rectangle {
-            color: settingsBubble.stackBackgroundColor;
+            color: settingsBubble.contentColor;
 
             Column {
+                //visible: stackView.width > width;
                 anchors {
                     topMargin: 15;
                     fill: parent;

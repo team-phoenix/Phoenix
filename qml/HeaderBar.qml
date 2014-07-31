@@ -122,10 +122,10 @@ Rectangle {
             }
 
             onClicked:  {
-                if (settingsBubble.visible)
-                    settingsBubble.visible = false;
+                if (settingsDropDown.visible)
+                    settingsDropDown.visible = false;
                 else {
-                    settingsBubble.visible = true;
+                    settingsDropDown.visible = true;
                 }
             }
         }
@@ -315,7 +315,6 @@ Rectangle {
                         radius: 10;
                         anchors.fill: parent;
                     }
-
 
                     DropShadow {
                         source: zoomHandle;

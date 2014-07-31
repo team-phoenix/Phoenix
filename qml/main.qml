@@ -73,30 +73,68 @@ ApplicationWindow {
     }
 
     Item {
-        id: settingsBubble;
+        id: settingsDropDown;
         z: headerBar.z + 1;
         visible: false;
-        focus: false;
         anchors {
             left: parent.left;
+            right: parent.right;
             top: parent.top;
-            bottom: parent.bottom;
-            bottomMargin: 30;
             topMargin: 80;
-            leftMargin: 20;
+            rightMargin: 0;
         }
-        width: parent.width * 0.75;
+        width: 125;
+        height: 275;
+
+        states: [
+            State {
+                name: "expanded";
+                when: settingsBubble.expand;
+                PropertyChanges {
+                    target: settingsDropDown;
+                    //width: parent.width * 0.70;
+                    width: parent.width * 0.5;
+                    anchors.rightMargin: 300;
+                }
+            },
+            State {
+                name: "retracted";
+                when: !settingsBubble.expand;
+
+                PropertyChanges {
+                    target: settingsDropDown;
+                    anchors.rightMargin: -1 * (125- root.width);
+                    //width: 125;
+                }
+            }
+        ]
+
+        Behavior on anchors.rightMargin {
+            NumberAnimation {
+                easing {
+                    type: Easing.OutQuad;
+                }
+                duration: 300;
+            }
+        }
 
         SettingsWindow {
-            anchors.fill: parent;
+            id: settingsBubble;
+            anchors {
+                fill: parent;
+                leftMargin: 20;
+            }
+
             visible: parent.visible;
-            stackBackgroundColor: "#4f4f4f";
+            stackBackgroundColor: "#1e1e1e";
+            contentColor: "#3a3a3a";
+            textColor: "#f1f1f1";
         }
 
     }
 
     DropShadow {
-        source: settingsBubble;
+        source: settingsDropDown;
         anchors.fill: source;
         horizontalOffset: 4;
         verticalOffset: 8;
@@ -108,7 +146,7 @@ ApplicationWindow {
 
    // Second pass needed for left side
    DropShadow {
-        source: settingsBubble;
+        source: settingsDropDown;
         anchors.fill: source;
 
         horizontalOffset: -4;
