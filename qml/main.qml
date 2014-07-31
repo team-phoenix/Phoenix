@@ -124,6 +124,17 @@ ApplicationWindow {
 
         SettingsWindow {
             id: settingsBubble;
+            opacity: parent.visible ? 1.0 : 0.0;
+
+            Behavior on opacity {
+                NumberAnimation {
+                    easing {
+                        type: Easing.OutQuad;
+                    }
+                    duration: 200;
+                }
+            }
+
             anchors {
                 fill: parent;
                 leftMargin: 20;
