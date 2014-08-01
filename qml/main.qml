@@ -266,12 +266,22 @@ ApplicationWindow {
             property StackView stackId: gameStack;
             property bool blur: settingsBubble.visible;
 
-            FastBlur {
+            GaussianBlur {
+                id: gaussianBlur;
                 anchors.fill: source;
                 source: parent;
-                radius: 1;
+                radius: visible ? 1 : 0;
+                samples: radius * 2;
                 visible: blur;
+
+                Behavior on radius {
+                    NumberAnimation {
+                        duration: 200;
+                    }
+                }
             }
+
+
 
             ConsoleBar {
                 id: consoleBar;
