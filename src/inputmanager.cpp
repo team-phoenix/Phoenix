@@ -21,6 +21,21 @@ QVariantList InputManager::enumerateDevices()
     return devices;
 }
 
+InputDeviceMapping *InputManager::mappingForDevice(QVariantMap device)
+{
+    Q_ASSERT(device.contains("class"));
+    auto className = device.value("class").toString();
+    if (className == "Joystick") {
+        return new Joystick::Mapping();
+    } else if (className == "Keyboard") {
+        return new Keyboard::Mapping();
+    } else {
+        return nullptr;
+    }
+
+//    return InputDeviceMapping();
+}
+
 void InputManager::append(InputDevice *device)
 {
     devices.push_back(device);

@@ -6,6 +6,7 @@
 #include <QObject>
 
 #include "inputdevice.h"
+#include "inputdevicemapping.h"
 
 
 class InputManager : public QObject
@@ -25,6 +26,7 @@ public:
 
 public slots:
     QVariantList enumerateDevices();
+    InputDeviceMapping *mappingForDevice(QVariantMap device);
 
 private:
     QList<InputDevice *> devices;

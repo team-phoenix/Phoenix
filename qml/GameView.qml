@@ -13,8 +13,8 @@ Item {
     height: 600;
     visible: true;
     property bool run: false;
-    property string gameName: "";
-    property string coreName: "";
+    property string gameName: "./roms/Tetris DX (JU) [C][!].gbc";
+    property string coreName: "/usr/lib/libretro/gambatte_libretro.so";
     property string systemDirectory: "";
     property string saveDirectory: "";
     property bool loadSaveState: false
@@ -85,8 +85,8 @@ Item {
         anchors.fill: parent;
         systemDirectory: gameView.systemDirectory;
         saveDirectory: gameView.saveDirectory;
-        game: gameView.gameName;
         libcore: gameView.coreName;
+        game: gameView.gameName;
         run: gameView.run;
         volume: gameView.volumeLevel;
         onRunChanged: {

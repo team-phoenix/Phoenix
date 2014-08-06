@@ -196,3 +196,7 @@ bool Joystick::handleSDLEvent(const SDL_Event *event)
     }
     return false;
 }
+
+void Joystick::Mapping::setMappingOnInput(retro_device_id id)
+{
+}

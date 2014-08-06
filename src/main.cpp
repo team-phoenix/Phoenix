@@ -44,6 +44,7 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<PhoenixWindow>("phoenix.window", 1, 0, "PhoenixWindow");
     qmlRegisterType<VideoItem>("VideoItem", 1, 0, "VideoItem");
+    qmlRegisterType<InputDeviceMapping>();
     
     QQmlApplicationEngine engine;
 

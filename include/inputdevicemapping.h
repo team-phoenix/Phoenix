@@ -26,6 +26,9 @@ public:
     void setMapping(int32_t inputev, retro_device_id id);
 
 public slots:
+    // wait for any input on the underlying device and maps
+    // the input id to the given retro_device_id
+    virtual void setMappingOnInput(retro_device_id id) = 0;
 
 protected:
     // Type of retro device mapped:

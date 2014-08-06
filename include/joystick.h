@@ -6,6 +6,7 @@
 #include <SDL2/SDL.h>
 
 #include "inputdevice.h"
+#include "inputdevicemapping.h"
 #include "sdlevents.h"
 
 
@@ -18,6 +19,14 @@ public:
 
     // enumerate plugged-in devices
     static QVariantList enumerateDevices();
+
+    class Mapping : public InputDeviceMapping
+    {
+    public slots:
+        virtual void setMappingOnInput(retro_device_id id) Q_DECL_OVERRIDE;
+
+    private:
+    };
 
 private:
     std::shared_ptr<SDLEvents> events;
