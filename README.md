@@ -1,7 +1,7 @@
 Phoenix
 =======
 
-A super-slick libretro client powered by Qt5
+A super-slick libretro client powered by Qt5. Currently under early development.
 
 [![Build Status](https://secure.travis-ci.org/team-phoenix/Phoenix.png)](http://travis-ci.org/team-phoenix/Phoenix)
 
@@ -9,20 +9,14 @@ A super-slick libretro client powered by Qt5
 Environment
 -----------
 
-Currently set up to build on Linux against Qt 5.3. Check the paths I've set in main.cpp to find out what files need to be present. You can get the libretro-super project by reading these directions:
+Dependencies: SDL2
 
-http://www.libretro.com/index.php/wiki/compilation/linux/
-
-and checking out the section "Building libretro cores". It might take a while to build all those cores, so maybe you should just pass the name of whatever core I'm using to the libretro-build.sh script.
 
 Building
 --------
 
-```
-qmake
-make
-```
+Load the .pro file into Qt Creator. Edit the paths in GameGrid.qml. Compile and run!
 
-Screen Shots
+Screenshots
 ------------
 ![ScreenShot](https://raw.github.com/team-phoenix/Phoenix/master/assets/mockup.png)
