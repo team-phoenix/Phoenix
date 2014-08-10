@@ -14,6 +14,7 @@
 #include "core.h"
 #include "gamelibrarymodel.h"
 #include "librarydbmanager.h"
+#include <phoenixwindow.h>
 
 
 InputManager input_manager; // global
@@ -41,6 +42,7 @@ int main(int argc, char *argv[])
     QSettings settings;
 
 
+    qmlRegisterType<PhoenixWindow>("phoenix.window", 1, 0, "PhoenixWindow");
     qmlRegisterType<VideoItem>("VideoItem", 1, 0, "VideoItem");
     
     QQmlApplicationEngine engine;

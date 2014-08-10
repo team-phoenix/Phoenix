@@ -6,8 +6,9 @@ import QtGraphicalEffects 1.0
 import QtQuick.Dialogs 1.1
 import QtQuick.Window 2.0
 import Qt.labs.settings 1.0
+import phoenix.window 1.0
 
-ApplicationWindow {
+PhoenixWindow {
     id: root;
     width: 640
     height: 480

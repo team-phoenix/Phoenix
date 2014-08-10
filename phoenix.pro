@@ -33,7 +33,8 @@ HEADERS += include/core.h              \
            include/inputdevicemapping.h\
            include/keyboard.h          \
            include/librarydbmanager.h  \
-           include/gamelibrarymodel.h
+           include/gamelibrarymodel.h  \
+           include/phoenixwindow.h
 
 SOURCES += src/main.cpp                \
            src/videoitem.cpp           \
@@ -48,6 +49,7 @@ SOURCES += src/main.cpp                \
            src/inputdevicemapping.cpp  \
            src/keyboard.cpp            \
            src/librarydbmanager.cpp    \
-           src/gamelibrarymodel.cpp
+           src/gamelibrarymodel.cpp    \
+           src/phoenixwindow.cpp
 
 RESOURCES = qml/qml.qrc assets/assets.qrc
