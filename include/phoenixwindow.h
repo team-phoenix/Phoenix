@@ -21,8 +21,14 @@ private:
     QSurfaceFormat m_surface_format;
 
 public slots:
+
+    // After window->show(), these functions do not change any behavior.
+    // These functions need to be set before the program starts and the program
+    // needs to be reset completely for the changes to take effect.
+    // [1]
     void setWinSwapInterval(int interval);
     void setWinSwapBehavior(QSurfaceFormat::SwapBehavior behavior);
+    // ~[1]
 
 private slots:
 
