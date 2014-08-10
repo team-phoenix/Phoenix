@@ -13,8 +13,8 @@ Item {
     height: 600;
     visible: true;
     property bool run: false;
-    property string gameName: "./roms/Tetris DX (JU) [C][!].gbc";
-    property string coreName: "/usr/lib/libretro/gambatte_libretro.so";
+    property string gameName: "";
+    property string coreName: "";
     property string systemDirectory: "";
     property string saveDirectory: "";
     property bool loadSaveState: false
