@@ -7,18 +7,17 @@
 #include <QString>
 #include "libretro.h"
 
+#include "libretro_types.h"
 #include "logging.h"
 
 
-typedef unsigned retro_device_type;
-
-typedef unsigned retro_device_id;
+class InputDeviceMapping;
 
 
 class InputDevice
 {
 public:
-    InputDevice();
+    InputDevice(InputDeviceMapping *mapping);
 
     virtual ~InputDevice();
 
@@ -38,6 +37,9 @@ protected:
         ids_state[id] = state;
     }
 
+    // mapping
+    InputDeviceMapping *mapping;
+
     // maps ids to state
     // ids can refer to a button, an axis, etc...
     // depending to the retro_device_type
@@ -48,9 +50,7 @@ private:
     // input device name, e.g "Xbox 360 Controller"
     QString device_name;
 
-    // NONE/JOYPAD/MOUSE/KEYBOARD/LIGHTGUN/ANALOG/POINTER or subclass
     retro_device_type m_type;
-
 };
 
 #endif // INPUTDEVICE_H

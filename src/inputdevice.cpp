@@ -2,7 +2,9 @@
 #include "inputdevice.h"
 
 
-InputDevice::InputDevice() : ids_state()
+InputDevice::InputDevice(InputDeviceMapping *mapping)
+        : mapping(mapping),
+          ids_state()
 {
     setType(RETRO_DEVICE_NONE);
 }
