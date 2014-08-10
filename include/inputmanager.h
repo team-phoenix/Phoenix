@@ -26,7 +26,11 @@ public:
 
 public slots:
     QVariantList enumerateDevices();
+    // return empty mapping for device
     InputDeviceMapping *mappingForDevice(QVariantMap device);
+
+    // load existing mapping for designated port from settings
+    InputDeviceMapping *mappingForPort(unsigned port);
 
 private:
     QList<InputDevice *> devices;

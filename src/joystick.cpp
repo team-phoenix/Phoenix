@@ -11,7 +11,7 @@
 static SDLEvents sdl_events;
 
 
-Joystick::Joystick()
+Joystick::Joystick(InputDeviceMapping *mapping) : InputDevice(mapping)
 {
     setType(RETRO_DEVICE_JOYPAD);
 
@@ -112,26 +112,12 @@ bool Joystick::deviceRemoved(const SDL_Event *event)
 }
 
 bool Joystick::controllerButtonChanged(const SDL_Event *event) {
-    static const QMap<SDL_GameControllerButton, unsigned> mapping {
-        { SDL_CONTROLLER_BUTTON_A, RETRO_DEVICE_ID_JOYPAD_A },
-        { SDL_CONTROLLER_BUTTON_B, RETRO_DEVICE_ID_JOYPAD_B },
-        { SDL_CONTROLLER_BUTTON_X, RETRO_DEVICE_ID_JOYPAD_X },
-        { SDL_CONTROLLER_BUTTON_Y, RETRO_DEVICE_ID_JOYPAD_Y },
-        { SDL_CONTROLLER_BUTTON_BACK, RETRO_DEVICE_ID_JOYPAD_SELECT },
-        { SDL_CONTROLLER_BUTTON_START, RETRO_DEVICE_ID_JOYPAD_START },
-        { SDL_CONTROLLER_BUTTON_LEFTSHOULDER, RETRO_DEVICE_ID_JOYPAD_L },
-        { SDL_CONTROLLER_BUTTON_RIGHTSHOULDER, RETRO_DEVICE_ID_JOYPAD_R },
-        { SDL_CONTROLLER_BUTTON_DPAD_UP, RETRO_DEVICE_ID_JOYPAD_UP },
-        { SDL_CONTROLLER_BUTTON_DPAD_DOWN, RETRO_DEVICE_ID_JOYPAD_DOWN },
-        { SDL_CONTROLLER_BUTTON_DPAD_LEFT, RETRO_DEVICE_ID_JOYPAD_LEFT },
-        { SDL_CONTROLLER_BUTTON_DPAD_RIGHT, RETRO_DEVICE_ID_JOYPAD_RIGHT }
-    };
     if (!ControllerMatchEvent(event->cbutton))
         return false;
 
     const SDL_ControllerButtonEvent *cbutton = &event->cbutton;
     bool is_pressed = (cbutton->type == SDL_CONTROLLERBUTTONDOWN) ? true : false;
-    auto retro_id = mapping.value(static_cast<SDL_GameControllerButton>(cbutton->button), (unsigned)~0);
+    auto retro_id = mapping->getMapping(cbutton->button);
     if (retro_id != (unsigned)~0)
         setState(retro_id, is_pressed);
 
@@ -199,4 +185,19 @@ bool Joystick::handleSDLEvent(const SDL_Event *event)
 
 void Joystick::Mapping::setMappingOnInput(retro_device_id id)
 {
+}
+
+int32_t Joystick::Mapping::eventFromString(QString evname)
+{
+    QByteArray _evname = evname.toLatin1();
+
+    auto btn = SDL_GameControllerGetButtonFromString(_evname.constData());
+    if (btn != SDL_CONTROLLER_BUTTON_INVALID)
+        return static_cast<int32_t>(btn);
+
+    auto axis = SDL_GameControllerGetAxisFromString(_evname.constData());
+    if (axis != SDL_CONTROLLER_AXIS_INVALID)
+        return static_cast<int32_t>(axis);
+
+    return -1;
 }

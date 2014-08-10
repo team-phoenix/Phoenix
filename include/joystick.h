@@ -12,9 +12,8 @@
 
 class Joystick : public InputDevice
 {
-
 public:
-    Joystick();
+    Joystick(InputDeviceMapping *mapping);
     virtual ~Joystick();
 
     // enumerate plugged-in devices
@@ -22,6 +21,11 @@ public:
 
     class Mapping : public InputDeviceMapping
     {
+    public:
+        Mapping() {};
+
+        virtual int32_t eventFromString(QString) Q_DECL_OVERRIDE;
+
     public slots:
         virtual void setMappingOnInput(retro_device_id id) Q_DECL_OVERRIDE;
 

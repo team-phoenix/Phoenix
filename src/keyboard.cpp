@@ -3,7 +3,7 @@
 #include "logging.h"
 
 
-Keyboard::Keyboard()
+Keyboard::Keyboard(InputDeviceMapping *mapping) : InputDevice(mapping)
 {
     setType(RETRO_DEVICE_JOYPAD);
     setDeviceName("Keyboard (Qt KeyEvent)");
@@ -72,4 +72,10 @@ void Keyboard::processKeyEvent(QKeyEvent *event)
 
     bool is_pressed = (event->type() == QEvent::KeyPress) ? true : false;
     setState(id, is_pressed);
+}
+
+int32_t Keyboard::Mapping::eventFromString(QString evname)
+{
+    // TODO implement this using maybe QKeySequence
+    return -1;
 }

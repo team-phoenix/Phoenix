@@ -10,7 +10,7 @@
 class Keyboard : public InputDevice
 {
 public:
-    Keyboard();
+    Keyboard(InputDeviceMapping *mapping);
     virtual ~Keyboard();
 
     static QVariantList enumerateDevices();
@@ -21,6 +21,11 @@ public:
 
     class Mapping : public InputDeviceMapping
     {
+    public:
+        Mapping() {};
+
+        virtual int32_t eventFromString(QString) Q_DECL_OVERRIDE;
+
     public slots:
         virtual void setMappingOnInput(retro_device_id id) Q_DECL_OVERRIDE {};
 
