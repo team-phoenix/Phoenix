@@ -29,9 +29,9 @@ InputDeviceMapping *InputManager::mappingForDevice(QVariantMap device)
     Q_ASSERT(device.contains("class"));
     auto className = device.value("class").toString();
     if (className == "Joystick") {
-        return new Joystick::Mapping(device);
+//        return new Joystick::Mapping(device);
     } else if (className == "Keyboard") {
-        return new Keyboard::Mapping(device);
+//        return new Keyboard::Mapping(device);
     }
     return nullptr;
 }
