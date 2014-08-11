@@ -4,8 +4,13 @@
 #include <QQuickWindow>
 #include <QSurfaceFormat>
 
+#include "logging.h"
+
 class PhoenixWindow : public QQuickWindow {
     Q_OBJECT
+    Q_PROPERTY(int swapInterval READ swapInterval WRITE setWinSwapInterval NOTIFY swapIntervalChanged)
+    Q_PROPERTY(int swapBehavior READ swapBehavior WRITE setWinSwapBehavior NOTIFY swapBehaviorChanged)
+
 public:
     PhoenixWindow();
     ~PhoenixWindow();
@@ -15,10 +20,22 @@ public:
         return screen();
     }
 
+    int swapInterval() const
+    {
+        return m_swap_interval;
+    }
+
+    int swapBehavior() const
+    {
+        return m_swap_behavior;
+    }
+
     void setWinFormat();
 
 private:
     QSurfaceFormat m_surface_format;
+    int m_swap_interval;
+    int m_swap_behavior;
 
 public slots:
 
@@ -27,12 +44,14 @@ public slots:
     // needs to be reset completely for the changes to take effect.
     // [1]
     void setWinSwapInterval(int interval);
-    void setWinSwapBehavior(QSurfaceFormat::SwapBehavior behavior);
+    void setWinSwapBehavior(int behavior);
     // ~[1]
 
 private slots:
 
 signals:
+    void swapIntervalChanged(int);
+    void swapBehaviorChanged(int);
 
 };
 

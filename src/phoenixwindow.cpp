@@ -1,5 +1,4 @@
 #include <phoenixwindow.h>
-#include <QDebug>
 
 PhoenixWindow::PhoenixWindow()
 {
@@ -16,13 +15,23 @@ void PhoenixWindow::setWindowScreen(QScreen *screen)
     setScreen(screen);
 }
 
-void PhoenixWindow::setWinSwapBehavior(QSurfaceFormat::SwapBehavior behavior) {
-    m_surface_format.setSwapBehavior(behavior);
+void PhoenixWindow::setWinSwapBehavior(int behavior) {
+    m_swap_behavior = behavior;
+    QSurfaceFormat::SwapBehavior _behavior = static_cast<QSurfaceFormat::SwapBehavior>(behavior);
+    m_surface_format.setSwapBehavior(_behavior);
+
+    setWinFormat();
+    emit swapBehaviorChanged(behavior);
 }
 
 void PhoenixWindow::setWinSwapInterval(int interval)
 {
+    m_swap_interval = interval;
     m_surface_format.setSwapInterval(interval);
+
+    setWinFormat();
+    emit swapIntervalChanged(interval);
+
 }
 
 void PhoenixWindow::setWinFormat()
