@@ -60,16 +60,6 @@ int main(int argc, char *argv[])
     QObject *topLevel = engine.rootObjects().value(0);
     QQuickWindow *window = qobject_cast<QQuickWindow *>(topLevel);
 
-    QSurfaceFormat format = window->requestedFormat();
-
-    if (settings.value("video/triple_buffering", false).toBool())
-        format.setSwapBehavior(QSurfaceFormat::TripleBuffer);
-    if (!settings.value("video/vsync", true).toBool())
-        format.setSwapInterval(0);
-
-    // format can't be changed once the window has been shown
-    window->setFormat(format);
-
     window->show();
 
     return a.exec();
