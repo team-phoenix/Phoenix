@@ -534,7 +534,7 @@ int16_t Core::inputStateCallback(unsigned port, unsigned device, unsigned index,
 
     // make sure the InputDevice was configured
     // to map to the requested RETRO_DEVICE.
-    if(deviceobj->type() != device)
+    if(deviceobj->mapping()->deviceType() != device)
         return 0;
 
     // we don't handle index for now...

@@ -22,7 +22,8 @@ public:
     virtual ~InputDevice();
 
     QString deviceName() const { return device_name; }
-    retro_device_type type() const { return m_type; }
+
+    const InputDeviceMapping *mapping() const { return m_mapping; };
 
     int16_t state(retro_device_id id) const {
         QMutexLocker lock(&ids_state_mutex);
@@ -31,14 +32,13 @@ public:
 
 protected:
     void setDeviceName(const char *new_name);
-    void setType(retro_device_type new_type);
     void setState(retro_device_id id, int16_t state) {
         QMutexLocker lock(&ids_state_mutex);
         ids_state[id] = state;
     }
 
     // mapping
-    InputDeviceMapping *mapping;
+    InputDeviceMapping *m_mapping;
 
     // maps ids to state
     // ids can refer to a button, an axis, etc...

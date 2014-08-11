@@ -35,6 +35,8 @@ public:
 private:
     std::shared_ptr<SDLEvents> events;
 
+    Mapping *m_mapping;
+
     bool handleSDLEvent(const SDL_Event *event);
     SDLEvents::EventCallback callback;
 

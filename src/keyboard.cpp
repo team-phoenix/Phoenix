@@ -5,7 +5,6 @@
 
 Keyboard::Keyboard(InputDeviceMapping *mapping) : InputDevice(mapping)
 {
-    setType(RETRO_DEVICE_JOYPAD);
     setDeviceName("Keyboard (Qt KeyEvent)");
 }
 

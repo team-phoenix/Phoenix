@@ -2,6 +2,7 @@
 #ifndef INPUTDEVICEMAPPING_H
 #define INPUTDEVICEMAPPING_H
 
+#include <QSettings>
 #include <QMap>
 
 #include "libretro_types.h"
@@ -19,6 +20,10 @@ public:
     virtual ~InputDeviceMapping() { };
 
     virtual bool isValid();
+
+    // takes a QSetting whose current group has been pre-set
+    // by the caller to input/portX
+    virtual bool populateFromSettings(QSettings &settings);
 
     virtual int32_t eventFromString(QString) = 0;
 

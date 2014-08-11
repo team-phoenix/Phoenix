@@ -13,11 +13,11 @@ static SDLEvents sdl_events;
 
 Joystick::Joystick(InputDeviceMapping *mapping) : InputDevice(mapping)
 {
-    setType(RETRO_DEVICE_JOYPAD);
-
     device_attached = false;
     joystick = nullptr;
     controller = nullptr;
+    m_mapping = reinterpret_cast<Mapping *>(InputDevice::m_mapping);
+    Q_ASSERT(m_mapping != nullptr);
 
     callback = std::bind(&Joystick::handleSDLEvent, this, std::placeholders::_1);
     sdl_events.registerCallback(&callback);
@@ -117,7 +117,7 @@ bool Joystick::controllerButtonChanged(const SDL_Event *event) {
 
     const SDL_ControllerButtonEvent *cbutton = &event->cbutton;
     bool is_pressed = (cbutton->type == SDL_CONTROLLERBUTTONDOWN) ? true : false;
-    auto retro_id = mapping->getMapping(cbutton->button);
+    auto retro_id = m_mapping->getMapping(cbutton->button);
     if (retro_id != (unsigned)~0)
         setState(retro_id, is_pressed);
 
@@ -129,7 +129,7 @@ bool Joystick::controllerAxisChanged(const SDL_Event *event) {
         return false;
 
     const SDL_ControllerAxisEvent *caxis = &event->caxis;
-    if (type() == RETRO_DEVICE_JOYPAD) { // make analog stick emulate dpad
+    if (m_mapping->deviceType() == RETRO_DEVICE_JOYPAD) { // make analog stick emulate dpad
         static int16_t threshold = 25000; // arbitrary. TODO: make it configurable
         static const QMap<SDL_GameControllerAxis, QPair<unsigned, unsigned>> mapping {
             { SDL_CONTROLLER_AXIS_LEFTX, { RETRO_DEVICE_ID_JOYPAD_LEFT,
