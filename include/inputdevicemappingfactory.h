@@ -2,6 +2,10 @@
 #ifndef INPUTDEVICEMAPPING_FACTORY_H
 #define INPUTDEVICEMAPPING_FACTORY_H
 
+#include "joystick.h"
+#include "keyboard.h"
+
+
 class InputDeviceMappingFactory
 {
 public:

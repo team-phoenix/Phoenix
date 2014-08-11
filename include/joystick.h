@@ -22,14 +22,21 @@ public:
     class Mapping : public InputDeviceMapping
     {
     public:
-        Mapping() {};
+        Mapping() : joystick_guid() {};
 
         virtual int32_t eventFromString(QString) Q_DECL_OVERRIDE;
+
+        virtual bool populateFromSettings(QSettings &settings) Q_DECL_OVERRIDE;
+
+        // return true if joystick with the given guid
+        // is handled by this mapping
+        bool matchJoystick(const SDL_JoystickGUID &guid) const;
 
     public slots:
         virtual void setMappingOnInput(retro_device_id id) Q_DECL_OVERRIDE;
 
     private:
+        SDL_JoystickGUID joystick_guid;
     };
 
 private:
@@ -46,6 +53,9 @@ private:
 
     bool deviceAdded(const SDL_Event *event);
     bool deviceRemoved(const SDL_Event *event);
+
+    bool attachJoystick(int which);
+    bool attachGameController(int which);
 
     bool controllerButtonChanged(const SDL_Event *event);
     bool controllerAxisChanged(const SDL_Event *event);

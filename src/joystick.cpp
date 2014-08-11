@@ -22,12 +22,15 @@ Joystick::Joystick(InputDeviceMapping *mapping) : InputDevice(mapping)
     callback = std::bind(&Joystick::handleSDLEvent, this, std::placeholders::_1);
     sdl_events.registerCallback(&callback);
 
-    // TODO: temporary
     for (int i = 0; i < SDL_NumJoysticks(); i++) {
+        if (!m_mapping->matchJoystick(SDL_JoystickGetDeviceGUID(i)))
+            continue;
+
         if (SDL_IsGameController(i)) {
-            controller = SDL_GameControllerOpen(i);
-            setDeviceName(SDL_GameControllerName(controller));
-            device_attached = true;
+            attachGameController(i);
+            break;
+        } else {
+            attachJoystick(i);
             break;
         }
     }
@@ -72,23 +75,51 @@ QVariantList Joystick::enumerateDevices()
     return list;
 }
 
+bool Joystick::attachJoystick(int which)
+{
+    Q_ASSERT(device_attached != true);
+    joystick = SDL_JoystickOpen(which);
+    if (controller == nullptr) {
+        qCWarning(phxInput, "Joystick: Unable to open sdl joystick: %s",
+                            SDL_GetError());
+        return false;
+    }
+    setDeviceName(SDL_JoystickName(joystick));
+    device_attached = true;
+    return true;
+}
+
+bool Joystick::attachGameController(int which)
+{
+    Q_ASSERT(device_attached != true);
+    controller = SDL_GameControllerOpen(which);
+    if (controller == nullptr) {
+        qCWarning(phxInput, "Joystick: Unable to open sdl game controller: %s",
+                            SDL_GetError());
+        return false;
+    }
+    setDeviceName(SDL_GameControllerName(controller));
+    device_attached = true;
+    return true;
+}
+
 bool Joystick::deviceAdded(const SDL_Event *event)
 {
-    // TODO: check that device matches the requested one
-    //if(SDL_JoystickGetDeviceGUID() == ...
+    int which = event->type == SDL_CONTROLLERDEVICEADDED ? event->cdevice.which
+                                                         : event->jdevice.which;
+    if (!m_mapping->matchJoystick(SDL_JoystickGetDeviceGUID(which)))
+        return false;
+
     if (event->type == SDL_CONTROLLERDEVICEADDED) {
-        controller = SDL_GameControllerOpen(event->cdevice.which);
-        setDeviceName(SDL_GameControllerName(controller));
+        attachGameController(which);
     } else {
-        if (SDL_IsGameController(event->jdevice.which)) {
+        if (SDL_IsGameController(which)) {
             // joystick is a supported game controller
             // let's wait for the CONTROLLERADDED event to add it
             return false;
         }
-        joystick = SDL_JoystickOpen(event->jdevice.which);
-        setDeviceName(SDL_JoystickName(joystick));
+        attachJoystick(which);
     }
-    device_attached = true;
     return true;
 }
 
@@ -187,6 +218,20 @@ void Joystick::Mapping::setMappingOnInput(retro_device_id id)
 {
 }
 
+bool Joystick::Mapping::populateFromSettings(QSettings &settings)
+{
+    bool ret = InputDeviceMapping::populateFromSettings(settings);
+    if (!ret)
+        return ret;
+
+    QVariant guid_ = settings.value("sdl_joystick_guid");
+    if (guid_.isValid()) {
+        QByteArray guid = guid_.toString().toLatin1();
+        joystick_guid = SDL_JoystickGetGUIDFromString(guid.constData());
+    }
+    return ret;
+}
+
 int32_t Joystick::Mapping::eventFromString(QString evname)
 {
     QByteArray _evname = evname.toLatin1();
@@ -200,4 +245,14 @@ int32_t Joystick::Mapping::eventFromString(QString evname)
         return static_cast<int32_t>(axis);
 
     return -1;
+}
+
+bool Joystick::Mapping::matchJoystick(const SDL_JoystickGUID &guid) const
+{
+    // XXX: for now, if our guid wasn't defined, just accept every joystick
+    char zeroes[sizeof(joystick_guid.data)] = {0};
+    if (!memcmp(joystick_guid.data, zeroes, sizeof(joystick_guid.data)))
+        return true;
+
+    return !memcmp(joystick_guid.data, guid.data, sizeof(joystick_guid.data));
 }
