@@ -14,7 +14,7 @@
 #include "core.h"
 #include "gamelibrarymodel.h"
 #include "librarydbmanager.h"
-#include <phoenixwindow.h>
+#include "phoenixwindow.h"
 
 
 InputManager input_manager; // global
@@ -52,7 +52,6 @@ int main(int argc, char *argv[])
     QQmlContext *rctx = engine.rootContext();
     GameLibraryModel gamelibr;
     rctx->setContextProperty("gamelibrary", &gamelibr);
-
     rctx->setContextProperty("inputmanager", &input_manager);
 
     // then, load qml and display the window
