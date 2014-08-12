@@ -117,14 +117,22 @@ void GameLibraryModel::scanFolder(QString path)
 
     m_file_count = files.size();
     qDebug() << m_file_count;
+    dbm.handle().transaction();
+
+    QSqlQuery q(dbm.handle());
 
     for (int i=0; i < m_file_count; ++i) {
         qreal progress = i / m_file_count;
         emit progressChanged(progress);
 
         QFileInfo file_info = files.at(i);
-        qDebug(phxLibrary) << file_info.baseName();
+        //qDebug(phxLibrary) << file_info.baseName();
+
+        q.exec(QString("INSERT INTO games (title, console, time_played, artwork)"
+                       " VALUES (\"%1\", \"test\", \"0h 0m 0s\", \"qrc:/assets/missing_artwork.png\")").arg(file_info.baseName()));
     }
+    if (dbm.handle().commit())
+        submit();
 
 }
 
