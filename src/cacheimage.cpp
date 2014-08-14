@@ -6,7 +6,46 @@ CImage::CImage(QObject *parent)
     // signal/slot when manager object emits finished signal execute downloadFinished method
     connect(&manager, SIGNAL(finished(QNetworkReply*)), SLOT(downloadFinished(QNetworkReply*)));
 }
-void CImage::cacheAndReturn()
+
+
+void CImage::returnCached(QUrl imgUrl)
+{
+    QQmlApplicationEngine eng;
+    //Store the qml app offline storage location
+    //In android it's application path/files/QML/OfflineStorage/
+    m_localPath = QDir::fromNativeSeparators(eng.offlineStoragePath() + "\\");
+
+    if(m_folder != "")
+        m_localPath += m_folder + "/";
+
+    QDir dir(m_localPath);
+    if(!dir.exists()) {
+        if(!dir.mkpath(m_localPath)) {
+            qDebug() << "Couldn't create subdirectory";
+            return;
+        }
+    }
+
+    qDebug() << "filename: " << m_filename;
+
+
+    if(!QFile::exists(m_localPath + m_filename)) { // This check seems to be taking a long time to do for each file
+        //Create the request to be sent with Network Access Maanager
+        //qDebug() << "Downloading" << filename;
+        QNetworkRequest req(imgUrl);
+        // Reply will contain header and data and emits signal finished()
+        // that will be listened by constructor connector
+        manager.get(req);
+    }
+    else {
+        //qDebug() << "exists: " << m_localPath + m_filename;
+        //The file is already downloaded, let's just emit the local path
+        m_localUrl = "file:///" + m_localPath + m_filename;
+        emit localsrcChanged();
+    }
+}
+
+void CImage::cacheImage()
 {
     if(m_src.isEmpty()) {
         m_localUrl = "";
@@ -17,37 +56,7 @@ void CImage::cacheAndReturn()
     QUrl imgUrl(m_src);
     //Do following when url
     if(imgUrl.url().startsWith("http://") || imgUrl.url().startsWith("https://")) {
-        QQmlApplicationEngine eng;
-        //Store the qml app offline storage location
-        //In android it's application path/files/QML/OfflineStorage/
-        m_localPath = QDir::fromNativeSeparators(eng.offlineStoragePath() + "\\");
-
-        if(m_folder != "")
-            m_localPath += m_folder + "/";
-
-        QDir dir(m_localPath);
-        if(!dir.exists()) {
-            if(!dir.mkpath(m_localPath)) {
-                qDebug() << "Couldn't create subdirectory";
-                return;
-            }
-        }
-
-        QString filename = imgUrl.fileName();
-        qDebug() << "filename: " << filename;
-        if(!QFile::exists(m_localPath + filename)) {
-            //Create the request to be sent with Network Access Maanager
-            //qDebug() << "Downloading" << filename;
-            QNetworkRequest req(imgUrl);
-            // Reply will contain header and data and emits signal finished()
-            // that will be listened by constructor connector
-            manager.get(req);
-        }
-        else {
-            //The file is already downloaded, let's just emit the local path
-            m_localUrl = "file:///" + m_localPath + filename;
-            emit localsrcChanged();
-        }
+        returnCached(imgUrl);
     }
 
     else {
@@ -59,7 +68,6 @@ void CImage::cacheAndReturn()
 void CImage::downloadFinished(QNetworkReply *reply)
 {
     QStringList filename;
-    QUrl url = reply->url();
     if (reply->error()) {
         qDebug() << "Something went worng on download";
         m_localUrl = "";
@@ -67,7 +75,7 @@ void CImage::downloadFinished(QNetworkReply *reply)
         }
     else {
         //Create a filename off the url
-        filename = saveFileName(url);
+        filename = saveFileName();
         if(filename[0] == "true") {
             //Saves the file to disk
             if (saveToDisk(filename[1], reply)) {
@@ -96,9 +104,9 @@ bool CImage::saveToDisk(const QString &filename, QIODevice *data)
     return true;
 }
 
-QStringList CImage::saveFileName(const QUrl &url)
+QStringList CImage::saveFileName()
 {
-    QString basename = m_localPath + url.fileName();
+    QString basename = m_localPath + m_filename;
     QStringList result;
     /*
     * the result stringlist contains of 2 elements that need to be returned
@@ -106,7 +114,6 @@ QStringList CImage::saveFileName(const QUrl &url)
     * 1: local full image path
     */
     result << "true" << basename;
-    //qDebug() << basename;
     if (basename.isEmpty()) {
         qDebug() << "File name is missing, abort!";
         exit(0);
@@ -115,6 +122,17 @@ QStringList CImage::saveFileName(const QUrl &url)
         result[0] = "false";
     }
     return result;
+}
+
+QString CImage::fileName()
+{
+    return m_filename;
+}
+
+void CImage::setFileName(const QString &fileName)
+{
+    m_filename = fileName + ".jpg";
+    emit fileNameChanged();
 }
 
 QString CImage::imgsrc()
@@ -150,5 +168,5 @@ QString CImage::localsrc()
 
 void CImage::start()
 {
-    cacheAndReturn();
+    cacheImage();
 }

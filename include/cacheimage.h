@@ -22,18 +22,26 @@ class CImage : public QObject {
     Q_PROPERTY(QString localsrc READ localsrc NOTIFY localsrcChanged)
     //Subfolder where the image is stored in
     Q_PROPERTY(QString folder READ folder WRITE setFolder NOTIFY folderChanged)
+
+    Q_PROPERTY(QString fileName READ fileName WRITE setFileName NOTIFY fileNameChanged)
+
     QNetworkAccessManager manager;
 
 public:
     explicit CImage(QObject *parent = 0);
     void doDownload(const QUrl &url);
-    QStringList saveFileName(const QUrl &url);
+    QStringList saveFileName();
     bool saveToDisk(const QString &filename, QIODevice *data);
     void setImgsrc(const QString &imgsrc);
+
     QString imgsrc();
     QString localsrc();
     QString folder();
+    QString fileName();
+
+    void setFileName(const QString &fileName);
     void setFolder(const QString &folder);
+
     Q_INVOKABLE void start();
 
 private:
@@ -41,13 +49,17 @@ private:
     QString m_localUrl;
     QString m_src;
     QString m_folder;
+    QString m_filename;
 
 public slots:
     void downloadFinished(QNetworkReply *reply);
-    void cacheAndReturn();
+    void cacheImage();
+    void returnCached(QUrl imgUrl);
+
 signals:
     void imgsrcChanged();
     void localsrcChanged();
     void folderChanged();
+    void fileNameChanged();
 };
 #endif // CACHEIMAGE_H
