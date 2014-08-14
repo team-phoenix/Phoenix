@@ -5,6 +5,8 @@
 #include <QSqlTableModel>
 #include <QDirIterator>
 #include <QStringList>
+
+#include "thegamesdb.h"
 #include "librarydbmanager.h"
 
 
@@ -42,6 +44,7 @@ signals:
     void progressChanged(qreal);
 
 private:
+    TheGamesDB scraper;
     LibraryDbManager dbm;
     QString base_query;
     QString search_terms;
@@ -54,8 +57,8 @@ private:
     qreal m_progress;
 
     void addFilters(QStringList &filter_list);
-
     void updateQuery();
+    QString getSystem(QString suffix);
 };
 
 #endif

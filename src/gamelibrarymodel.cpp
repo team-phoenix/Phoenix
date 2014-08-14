@@ -93,6 +93,26 @@ void GameLibraryModel::addFilters(QStringList &filter_list)
                 << "smc";
 }
 
+QString GameLibraryModel::getSystem(QString suffix)
+{
+    QString system;
+    if (suffix == "nes")
+        system = "Nintendo Entertainment System";
+    else if (suffix == "sfc" || suffix == "smc")
+        system = "Super Nintendo";
+    else if (suffix == "n64" || suffix == "z64")
+        system = "Nintendo 64";
+    else if (suffix == "gb" || suffix == "gbc")
+        system = "Game Boy";
+    else if (suffix == "gba")
+        system = "Game Boy Advance";
+    else {
+        system = "Unknown";
+        qCDebug(phxLibrary) << suffix << " was not handled";
+    }
+    return system;
+}
+
 void GameLibraryModel::scanFolder(QString path)
 {
     QDirIterator dir_iter(path, QDirIterator::Subdirectories);
@@ -132,13 +152,28 @@ void GameLibraryModel::scanFolder(QString path)
         QFileInfo file_info = files.at(i);
         qCDebug(phxLibrary) << file_info.absoluteFilePath();
 
+
         query.prepare("INSERT INTO games (title, console, time_played, artwork)"
                   " VALUES (?, ?, ?, ?)");
 
-        query.bindValue(0, file_info.baseName());
-        query.bindValue(1, "test");
-        query.bindValue(2, "0h 0m 0s");
-        query.bindValue(3, "qrc:/assets/missing_artwork.png");
+        QString system = getSystem(file_info.suffix());
+
+        if (system != "") {
+            GameData data = scraper.getAllData(file_info.baseName(), system);
+            qCDebug(phxLibrary) << "gamedata: " << data.back_boxart << " " << data.front_boxart;
+            if (data.title != "")
+                query.bindValue(0, data.title);
+            else
+                query.bindValue(0, file_info.baseName());
+            if (data.front_boxart != "")
+                query.bindValue(3, data.front_boxart);
+            else
+                query.bindValue(3, "qrc:/assets/missing_artwork.png");
+
+            query.bindValue(1, system);
+            query.bindValue(2, "0h 0m 0s");
+
+        }
 
         if (query.exec())
             data_changed = true;
