@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!-- Dat by Patrick (nointro@free.fr) aka [-F1-] on IRC, Dat and Images Hosted on http://nointro.free.fr -->
+<!-- Please visit official no-intro website on http://www.gbadat.altervista.org> -->
+<!-- Download OfflineList on http://offlinelist.free.fr> -->
+
+<!-- Datter : BigFred -->
+<!-- Pictures by : Zepman -->
+<!-- OL Datter : Zepman -->
+
+<dat xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="datas.xsd">
+	<configuration>
+		<datName>Official No-Intro Nintendo Virtualboy</datName>
+		<datVersion>1046003321</datVersion>
+		<system>Nintendo - Virtual Boy</system>
+		<screenshotsWidth>256</screenshotsWidth>
+		<screenshotsHeight>192</screenshotsHeight>
+		<infos>
+			<title visible="false" inNamingOption="true" default="false"></title>
+			<location visible="true" inNamingOption="true" default="true"></location>
+			<publisher visible="false" inNamingOption="false" default="false"></publisher>
+			<sourceRom visible="false" inNamingOption="false" default="false"></sourceRom>
+			<saveType visible="false" inNamingOption="false" default="false"></saveType>
+			<romSize visible="true" inNamingOption="true" default="true"></romSize>
+			<releaseNumber visible="true" inNamingOption="true" default="false"></releaseNumber>
+			<languageNumber visible="true" inNamingOption="true" default="false"></languageNumber>
+			<comment visible="true" inNamingOption="true" default="true"></comment>
+			<romCRC visible="true" inNamingOption="true" default="true"></romCRC>
+			<im1CRC visible="true" inNamingOption="true" default="false"></im1CRC>
+			<im2CRC visible="true" inNamingOption="true" default="false"></im2CRC>
+			<languages visible="true" inNamingOption="true" default="true"></languages>
+		</infos>
+		<canOpen>
+			<extension>.vb</extension>
+		</canOpen>
+		<newDat>
+			<datVersionURL>http://nointro.free.fr/version/Official%20No-Intro%20Nintendo%20Virtualboy_version</datVersionURL>
+			<datURL fileName="Official No-Intro Nintendo Virtualboy.zip">http://nointro.free.fr/datas/Official%20No-Intro%20Nintendo%20Virtualboy.zip</datURL>
+			<imURL>http://nointro.free.fr/imgs/Official%20No-Intro%20Nintendo%20Virtualboy/</imURL>
+		</newDat>
+		<search>
+			<to value="location" default="true" auto="true"></to>
+			<to value="romSize" default="true" auto="false">
+				<find operation="=" value="524288">= 4 MBits</find>
+				<find operation="=" value="1048576">= 8 MBits</find>
+				<find operation="=" value="2097152">= 16 MBits</find>
+			</to>
+			<to value="languages" default="true" auto="true"></to>
+		</search>
+		<romTitle>%n %o %m %e</romTitle>
+	</configuration>
+	<games>
+
+		<game>
+			<imageNumber>17</imageNumber>
+			<releaseNumber>0</releaseNumber>
+			<title>3-D Tetris</title>
+			<saveType></saveType>
+			<romSize>1048576</romSize>
+			<publisher></publisher>
+			<location>1</location>
+			<sourceRom></sourceRom>
+			<language>2</language>
+			<files>
+				<romCRC extension=".vb">BB71B522</romCRC>
+			</files>
+			<im1CRC>9C07A90E</im1CRC>
+			<im2CRC>9C07A90E</im2CRC>
+			<comment></comment>
+			<duplicateID>0</duplicateID>
+		</game>
+
+		<game>
+			<imageNumber>12</imageNumber>
+			<releaseNumber>0</releaseNumber>
+			<title>Galactic Pinball</title>
+			<saveType></saveType>
+			<romSize>1048576</romSize>
+			<publisher></publisher>
+			<location>18</location>
+			<sourceRom></sourceRom>
+			<language>2</language>
+			<files>
+				<romCRC extension=".vb">C9710A36</romCRC>
+			</files>
+			<im1CRC>C10AC6A4</im1CRC>
+			<im2CRC>D909E565</im2CRC>
+			<comment></comment>
+			<duplicateID>0</duplicateID>
+		</game>
+
+		<game>
+			<imageNumber>18</imageNumber>
+			<releaseNumber>0</releaseNumber>
+			<title>Golf</title>
+			<saveType></saveType>
+			<romSize>2097152</romSize>
+			<publisher></publisher>
+			<location>1</location>
+			<sourceRom></sourceRom>
+			<language>2</language>
+			<files>
+				<romCRC extension=".vb">2199AF41</romCRC>
+			</files>
+			<im1CRC>9C07A90E</im1CRC>
+			<im2CRC>9C07A90E</im2CRC>
+			<comment></comment>
+			<duplicateID>0</duplicateID>
+		</game>
+
+		<game>
+			<imageNumber>1</imageNumber>
+			<releaseNumber>0</releaseNumber>
+			<title>Innsmouth no Yakata</title>
+			<saveType></saveType>
+			<romSize>1048576</romSize>
+			<publisher></publisher>
+			<location>7</location>
+			<sourceRom></sourceRom>
+			<language>256</language>
+			<files>
+				<romCRC extension=".vb">EFD0AC36</romCRC>
+			</files>
+			<im1CRC>40549554</im1CRC>
+			<im2CRC>0696350C</im2CRC>
+			<comment></comment>
+			<duplicateID>0</duplicateID>
+		</game>
+
+		<game>
+			<imageNumber>0</imageNumber>
+			<releaseNumber>0</releaseNumber>
+			<title>Jack Bros.</title>
+			<saveType></saveType>
+			<romSize>1048576</romSize>
+			<publisher></publisher>
+			<location>1</location>
+			<sourceRom></sourceRom>
+			<language>2</language>
+			<files>
+				<romCRC extension=".vb">A44DE03C</romCRC>
+			</files>
+			<im1CRC>78175125</im1CRC>
+			<im2CRC>78175125</im2CRC>
+			<comment></comment>
+			<duplicateID>0</duplicateID>
+		</game>
+
+		<game>
+			<imageNumber>2</imageNumber>
+			<releaseNumber>0</releaseNumber>
+			<title>Jack Bros. no Meiro de Hiihoo!</title>
+			<saveType></saveType>
+			<romSize>1048576</romSize>
+			<publisher></publisher>
+			<location>7</location>
+			<sourceRom></sourceRom>
+			<language>256</language>
+			<files>
+				<romCRC extension=".vb">CAB61E8B</romCRC>
+			</files>
+			<im1CRC>9C07A90E</im1CRC>
+			<im2CRC>9C07A90E</im2CRC>
+			<comment></comment>
+			<duplicateID>0</duplicateID>
+		</game>
+
+		<game>
+			<imageNumber>13</imageNumber>
+			<releaseNumber>0</releaseNumber>
+			<title>Mario Clash</title>
+			<saveType></saveType>
+			<romSize>1048576</romSize>
+			<publisher></publisher>
+			<location>18</location>
+			<sourceRom></sourceRom>
+			<language>2</language>
+			<files>
+				<romCRC extension=".vb">A47DE78C</romCRC>
+			</files>
+			<im1CRC>6B469F35</im1CRC>
+			<im2CRC>BB04FDBB</im2CRC>
+			<comment></comment>
+			<duplicateID>0</duplicateID>
+		</game>
+
+		<game>
+			<imageNumber>0</imageNumber>
+			<releaseNumber>0</releaseNumber>
+			<title>Mario's Tennis</title>
+			<saveType></saveType>
+			<romSize>524288</romSize>
+			<publisher></publisher>
+			<location>18</location>
+			<sourceRom></sourceRom>
+			<language>258</language>
+			<files>
+				<romCRC extension=".vb">7CE7460D</romCRC>
+			</files>
+			<im1CRC>78175125</im1CRC>
+			<im2CRC>78175125</im2CRC>
+			<comment></comment>
+			<duplicateID>0</duplicateID>
+		</game>
+
+		<game>
+			<imageNumber>0</imageNumber>
+			<releaseNumber>0</releaseNumber>
+			<title>Nester's Funky Bowling</title>
+			<saveType></saveType>
+			<romSize>2097152</romSize>
+			<publisher></publisher>
+			<location>1</location>
+			<sourceRom></sourceRom>
+			<language>2</language>
+			<files>
+				<romCRC extension=".vb">DF4D56B4</romCRC>
+			</files>
+			<im1CRC>78175125</im1CRC>
+			<im2CRC>78175125</im2CRC>
+			<comment></comment>
+			<duplicateID>0</duplicateID>
+		</game>
+
+		<game>
+			<imageNumber>21</imageNumber>
+			<releaseNumber>0</releaseNumber>
+			<title>Panic Bomber</title>
+			<saveType></saveType>
+			<romSize>524288</romSize>
+			<publisher></publisher>
+			<location>1</location>
+			<sourceRom></sourceRom>
+			<language>2</language>
+			<files>
+				<romCRC extension=".vb">19BB2DFB</romCRC>
+			</files>
+			<im1CRC>9C07A90E</im1CRC>
+			<im2CRC>9C07A90E</im2CRC>
+			<comment></comment>
+			<duplicateID>0</duplicateID>
+		</game>
+
+		<game>
+			<imageNumber>4</imageNumber>
+			<releaseNumber>0</releaseNumber>
+			<title>Red Alarm</title>
+			<saveType></saveType>
+			<romSize>1048576</romSize>
+			<publisher></publisher>
+			<location>7</location>
+			<sourceRom></sourceRom>
+			<language>256</language>
+			<files>
+				<romCRC extension=".vb">7E85C45D</romCRC>
+			</files>
+			<im1CRC>9C07A90E</im1CRC>
+			<im2CRC>9C07A90E</im2CRC>
+			<comment></comment>
+			<duplicateID>1</duplicateID>
+		</game>
+
+		<game>
+			<imageNumber>22</imageNumber>
+			<releaseNumber>0</releaseNumber>
+			<title>Red Alarm</title>
+			<saveType></saveType>
+			<romSize>1048576</romSize>
+			<publisher></publisher>
+			<location>1</location>
+			<sourceRom></sourceRom>
+			<language>2</language>
+			<files>
+				<romCRC extension=".vb">AA10A7B4</romCRC>
+			</files>
+			<im1CRC>9C07A90E</im1CRC>
+			<im2CRC>9C07A90E</im2CRC>
+			<comment></comment>
+			<duplicateID>1</duplicateID>
+		</game>
+
+		<game>
+			<imageNumber>0</imageNumber>
+			<releaseNumber>0</releaseNumber>
+			<title>Space Squash</title>
+			<saveType></saveType>
+			<romSize>524288</romSize>
+			<publisher></publisher>
+			<location>7</location>
+			<sourceRom></sourceRom>
+			<language>256</language>
+			<files>
+				<romCRC extension=".vb">60895693</romCRC>
+			</files>
+			<im1CRC>78175125</im1CRC>
+			<im2CRC>78175125</im2CRC>
+			<comment></comment>
+			<duplicateID>0</duplicateID>
+		</game>
+
+		<game>
+			<imageNumber>6</imageNumber>
+			<releaseNumber>0</releaseNumber>
+			<title>T&amp;E Virtual Golf</title>
+			<saveType></saveType>
+			<romSize>2097152</romSize>
+			<publisher></publisher>
+			<location>7</location>
+			<sourceRom></sourceRom>
+			<language>256</language>
+			<files>
+				<romCRC extension=".vb">6BA07915</romCRC>
+			</files>
+			<im1CRC>9C07A90E</im1CRC>
+			<im2CRC>9C07A90E</im2CRC>
+			<comment></comment>
+			<duplicateID>0</duplicateID>
+		</game>
+
+		<game>
+			<imageNumber>15</imageNumber>
+			<releaseNumber>0</releaseNumber>
+			<title>Teleroboxer</title>
+			<saveType></saveType>
+			<romSize>1048576</romSize>
+			<publisher></publisher>
+			<location>18</location>
+			<sourceRom></sourceRom>
+			<language>2</language>
+			<files>
+				<romCRC extension=".vb">36103000</romCRC>
+			</files>
+			<im1CRC>15720177</im1CRC>
+			<im2CRC>C5629511</im2CRC>
+			<comment></comment>
+			<duplicateID>0</duplicateID>
+		</game>
+
+		<game>
+			<imageNumber>3</imageNumber>
+			<releaseNumber>0</releaseNumber>
+			<title>Tobidase! Panibon</title>
+			<saveType></saveType>
+			<romSize>524288</romSize>
+			<publisher></publisher>
+			<location>7</location>
+			<sourceRom></sourceRom>
+			<language>256</language>
+			<files>
+				<romCRC extension=".vb">40498F5E</romCRC>
+			</files>
+			<im1CRC>36FD3D7C</im1CRC>
+			<im2CRC>412E3806</im2CRC>
+			<comment></comment>
+			<duplicateID>0</duplicateID>
+		</game>
+
+		<game>
+			<imageNumber>7</imageNumber>
+			<releaseNumber>0</releaseNumber>
+			<title>V-Tetris</title>
+			<saveType></saveType>
+			<romSize>524288</romSize>
+			<publisher></publisher>
+			<location>7</location>
+			<sourceRom></sourceRom>
+			<language>256</language>
+			<files>
+				<romCRC extension=".vb">3CCB67AE</romCRC>
+			</files>
+			<im1CRC>2DA42A62</im1CRC>
+			<im2CRC>9C07A90E</im2CRC>
+			<comment></comment>
+			<duplicateID>0</duplicateID>
+		</game>
+
+		<game>
+			<imageNumber>0</imageNumber>
+			<releaseNumber>0</releaseNumber>
+			<title>Vertical Force</title>
+			<saveType></saveType>
+			<romSize>1048576</romSize>
+			<publisher></publisher>
+			<location>7</location>
+			<sourceRom></sourceRom>
+			<language>256</language>
+			<files>
+				<romCRC extension=".vb">9E9B8B92</romCRC>
+			</files>
+			<im1CRC>78175125</im1CRC>
+			<im2CRC>78175125</im2CRC>
+			<comment></comment>
+			<duplicateID>2</duplicateID>
+		</game>
+
+		<game>
+			<imageNumber>23</imageNumber>
+			<releaseNumber>0</releaseNumber>
+			<title>Vertical Force</title>
+			<saveType></saveType>
+			<romSize>1048576</romSize>
+			<publisher></publisher>
+			<location>1</location>
+			<sourceRom></sourceRom>
+			<language>2</language>
+			<files>
+				<romCRC extension=".vb">4C32BA5E</romCRC>
+			</files>
+			<im1CRC>9C07A90E</im1CRC>
+			<im2CRC>9C07A90E</im2CRC>
+			<comment></comment>
+			<duplicateID>2</duplicateID>
+		</game>
+
+		<game>
+			<imageNumber>16</imageNumber>
+			<releaseNumber>0</releaseNumber>
+			<title>Virtual Boy Wario Land</title>
+			<saveType></saveType>
+			<romSize>2097152</romSize>
+			<publisher></publisher>
+			<location>18</location>
+			<sourceRom></sourceRom>
+			<language>2</language>
+			<files>
+				<romCRC extension=".vb">133E9372</romCRC>
+			</files>
+			<im1CRC>9C07A90E</im1CRC>
+			<im2CRC>9C07A90E</im2CRC>
+			<comment></comment>
+			<duplicateID>0</duplicateID>
+		</game>
+
+		<game>
+			<imageNumber>0</imageNumber>
+			<releaseNumber>0</releaseNumber>
+			<title>Virtual Fishing</title>
+			<saveType></saveType>
+			<romSize>1048576</romSize>
+			<publisher></publisher>
+			<location>7</location>
+			<sourceRom></sourceRom>
+			<language>256</language>
+			<files>
+				<romCRC extension=".vb">526CC969</romCRC>
+			</files>
+			<im1CRC>78175125</im1CRC>
+			<im2CRC>78175125</im2CRC>
+			<comment></comment>
+			<duplicateID>0</duplicateID>
+		</game>
+
+		<game>
+			<imageNumber>0</imageNumber>
+			<releaseNumber>0</releaseNumber>
+			<title>Virtual League Baseball</title>
+			<saveType></saveType>
+			<romSize>1048576</romSize>
+			<publisher></publisher>
+			<location>1</location>
+			<sourceRom></sourceRom>
+			<language>2</language>
+			<files>
+				<romCRC extension=".vb">736B40D6</romCRC>
+			</files>
+			<im1CRC>78175125</im1CRC>
+			<im2CRC>78175125</im2CRC>
+			<comment></comment>
+			<duplicateID>0</duplicateID>
+		</game>
+
+		<game>
+			<imageNumber>11</imageNumber>
+			<releaseNumber>0</releaseNumber>
+			<title>Virtual Pro Yakyuu '95</title>
+			<saveType></saveType>
+			<romSize>1048576</romSize>
+			<publisher></publisher>
+			<location>7</location>
+			<sourceRom></sourceRom>
+			<language>256</language>
+			<files>
+				<romCRC extension=".vb">9BA8BB5E</romCRC>
+			</files>
+			<im1CRC>9C07A90E</im1CRC>
+			<im2CRC>9C07A90E</im2CRC>
+			<comment></comment>
+			<duplicateID>0</duplicateID>
+		</game>
+
+		<game>
+			<imageNumber>25</imageNumber>
+			<releaseNumber>0</releaseNumber>
+			<title>Waterworld</title>
+			<saveType></saveType>
+			<romSize>2097152</romSize>
+			<publisher></publisher>
+			<location>1</location>
+			<sourceRom></sourceRom>
+			<language>2</language>
+			<files>
+				<romCRC extension=".vb">82A95E51</romCRC>
+			</files>
+			<im1CRC>DD9012C0</im1CRC>
+			<im2CRC>021EC0CD</im2CRC>
+			<comment></comment>
+			<duplicateID>0</duplicateID>
+		</game>
+	</games>
+</dat>
+
