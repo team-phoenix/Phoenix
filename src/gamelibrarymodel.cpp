@@ -90,7 +90,7 @@ void GameLibraryModel::addFilters(QStringList &filter_list)
                 << "gbc"
                 << "cue"
                 << "sfc"
-                << "srm";
+                << "smc";
 }
 
 void GameLibraryModel::scanFolder(QString path)
@@ -101,6 +101,9 @@ void GameLibraryModel::scanFolder(QString path)
 
     QStringList filter;
     addFilters(filter);
+
+    // FileInfo is added to a vector so the user can see how far along on the import progress
+    // the library is.
 
     while (dir_iter.hasNext()) {
         dir_iter.next();
@@ -116,23 +119,36 @@ void GameLibraryModel::scanFolder(QString path)
     }
 
     m_file_count = files.size();
-    qDebug() << m_file_count;
     dbm.handle().transaction();
 
-    QSqlQuery q(dbm.handle());
+    QSqlQuery query(dbm.handle());
+
+    bool data_changed = false;
 
     for (int i=0; i < m_file_count; ++i) {
         qreal progress = i / m_file_count;
         emit progressChanged(progress);
 
         QFileInfo file_info = files.at(i);
-        //qDebug(phxLibrary) << file_info.baseName();
+        qCDebug(phxLibrary) << file_info.absoluteFilePath();
 
-        q.exec(QString("INSERT INTO games (title, console, time_played, artwork)"
-                       " VALUES (\"%1\", \"test\", \"0h 0m 0s\", \"qrc:/assets/missing_artwork.png\")").arg(file_info.baseName()));
+        query.prepare("INSERT INTO games (title, console, time_played, artwork)"
+                  " VALUES (?, ?, ?, ?)");
+
+        query.bindValue(0, file_info.baseName());
+        query.bindValue(1, "test");
+        query.bindValue(2, "0h 0m 0s");
+        query.bindValue(3, "qrc:/assets/missing_artwork.png");
+
+        if (query.exec())
+            data_changed = true;
+
     }
-    if (dbm.handle().commit())
+
+    if (data_changed) {
+        dbm.handle().commit();
         submit();
+    }
 
 }
 
