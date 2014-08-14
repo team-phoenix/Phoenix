@@ -3,6 +3,9 @@ import QtQuick.Controls 1.1
 import QtGraphicalEffects 1.0
 import QtQuick.Layouts 1.1
 
+import phoenix.image 1.0
+
+
 Rectangle {
     id: gameGrid;
     color: "#1d1e1e";
@@ -111,9 +114,22 @@ Rectangle {
                             width: 200;
                         }
                         fillMode: Image.PreserveAspectFit;
+
+                        CacheImage {
+                            id: cachedImage;
+                            imgsrc: image.source;
+                            folder: "Artwork";
+                            onLocalsrcChanged: {
+                                //console.log(localsrc);
+                                image.source = localsrc;
+                            }
+                        }
+
+                        Component.onCompleted: cachedImage.start();
                         MouseArea {
                             anchors.fill: parent;
-                            onPressed: {
+                            onClicked: imagesaver.save(image, "C:/Users/lee/Desktop/test.jpg");
+                            /*onPressed: {
                                 if (imageHighlight.checked)
                                     imageHighlight.checked = false;
                                 else
@@ -126,7 +142,7 @@ Rectangle {
                                 gameView.loadSaveState = true;
                                 windowStack.push({item: gameView, replace: true });
 
-                            }
+                            }*/
                         }
                     }
                 }
