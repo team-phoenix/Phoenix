@@ -119,6 +119,7 @@ Rectangle {
                             id: cachedImage;
                             imgsrc: image.source;
                             folder: "Artwork";
+                            fileName: title;
                             onLocalsrcChanged: {
                                 //console.log(localsrc);
                                 image.source = localsrc;
