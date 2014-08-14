@@ -45,7 +45,7 @@ void LibraryDbManager::open()
     if (!db.tables().contains(table_version)) {
         // must initialize db
         createSchema();
-        loadFixtures();
+        //loadFixtures();
     }
 }
 
