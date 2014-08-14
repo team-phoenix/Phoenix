@@ -173,6 +173,8 @@ void GameLibraryModel::scanFolder(QString path)
             query.bindValue(1, system);
             query.bindValue(2, "0h 0m 0s");
 
+            updateQuery();
+
         }
 
         if (query.exec())
