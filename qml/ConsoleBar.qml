@@ -9,6 +9,9 @@ Rectangle {
     height: 500;
     width: 250;
 
+    property real progressValue: gamelibrary.progress;
+    property string progressText: gamelibrary.label;
+
     ListView {
         id: listView;
         anchors {
@@ -165,23 +168,10 @@ Rectangle {
         }
     }
 
-    DropShadow {
-        anchors.fill: source;
-        horizontalOffset: 0;
-        verticalOffset: -3;
-        radius: 8.0
-        samples: 16
-        transparentBorder: true;
-        color: "#80000000"
-        //opacity: 0.8;
-        source: progressBar;
-    }
-
-
     Rectangle {
-        id: progressBar;
+        id: progressArea;
         z: 1;
-        visible: true;
+        visible: consoleBar.progressText !== "";
         anchors {
             bottom: parent.bottom;
             left: parent.left;
@@ -190,12 +180,6 @@ Rectangle {
 
         height: 75;
         color: "#242323";
-
-        property string showText: "Importing Games";
-        onShowTextChanged: {
-            if (showText !== "")
-                visible = true;
-        }
 
         Column {
             spacing: 4;
@@ -210,7 +194,7 @@ Rectangle {
             //}
             Label {
                 anchors.horizontalCenter: parent.horizontalCenter;
-                text: progressBar.showText;
+                text: consoleBar.progressText;
                 font {
                     bold: true;
                     pixelSize: 14;
@@ -220,14 +204,20 @@ Rectangle {
             }
 
             ProgressBar {
+                id: progressBar;
                 anchors.horizontalCenter: parent.horizontalCenter;
                 maximumValue: 100;
                 minimumValue: 0;
-                value: 50;
+                value: consoleBar.progressValue;
+                onValueChanged: {
+                    if (value === 100)
+                        consoleBar.progressText = "";
+                }
+
                 style: ProgressBarStyle {
                     background: Rectangle {
                         color: "#1a1a1a";
-                        opacity: 0.8;
+                        //opacity: 0.8;
                         implicitWidth: 175;
                         implicitHeight: 4;
                     }

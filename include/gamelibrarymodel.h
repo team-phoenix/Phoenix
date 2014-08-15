@@ -14,11 +14,13 @@ class GameLibraryModel: public QSqlTableModel
 {
     Q_OBJECT
 
-    Q_PROPERTY(qreal progress READ progress NOTIFY progressChanged)
+    Q_PROPERTY(qreal progress READ progress WRITE setProgress NOTIFY progressChanged)
+    Q_PROPERTY(QString label READ label WRITE setLabel NOTIFY labelChanged)
+
 
 public:
     GameLibraryModel(QObject *parent = 0);
-    virtual ~GameLibraryModel() {}
+    virtual ~GameLibraryModel();
 
     enum GameRoles {
         TitleRole = Qt::UserRole + 1,
@@ -30,7 +32,16 @@ public:
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
     virtual QHash<int, QByteArray> roleNames() const Q_DECL_OVERRIDE;
 
-    qreal progress() const {
+    void setProgress(qreal progress);
+    void setLabel(QString label);
+
+    QString label() const
+    {
+        return m_label;
+    }
+
+    qreal progress() const
+    {
         return m_progress;
     }
 
@@ -42,13 +53,15 @@ public slots:
 
 signals:
     void progressChanged(qreal);
+    void labelChanged(QString);
 
 private:
-    TheGamesDB scraper;
+    TheGamesDB *scraper;
     LibraryDbManager dbm;
     QString base_query;
     QString search_terms;
     QString category;
+    QString m_label;
     int sort_column;
     Qt::SortOrder sort_order;
     QHash<int, QByteArray> role_names;

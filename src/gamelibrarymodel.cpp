@@ -23,6 +23,13 @@ GameLibraryModel::GameLibraryModel(QObject *parent)
     m_file_count = 0;
     m_progress = 0;
 
+    scraper = new TheGamesDB(this);
+
+}
+
+GameLibraryModel::~GameLibraryModel()
+{
+    scraper->deleteLater();
 }
 
 QVariant GameLibraryModel::data(const QModelIndex &index, int role) const
@@ -113,6 +120,18 @@ QString GameLibraryModel::getSystem(QString suffix)
     return system;
 }
 
+void GameLibraryModel::setLabel(QString label)
+{
+    m_label = label;
+    emit labelChanged(label);
+}
+
+void GameLibraryModel::setProgress(qreal progress)
+{
+    m_progress = progress;
+    emit progressChanged(progress);
+}
+
 void GameLibraryModel::scanFolder(QString path)
 {
     QDirIterator dir_iter(path, QDirIterator::Subdirectories);
@@ -125,6 +144,7 @@ void GameLibraryModel::scanFolder(QString path)
     // FileInfo is added to a vector so the user can see how far along on the import progress
     // the library is.
 
+    setLabel("Import Games");
     while (dir_iter.hasNext()) {
         dir_iter.next();
         QFileInfo info(dir_iter.fileInfo());
@@ -138,29 +158,31 @@ void GameLibraryModel::scanFolder(QString path)
         }
     }
 
-    m_file_count = files.size();
     dbm.handle().transaction();
 
     QSqlQuery query(dbm.handle());
 
     bool data_changed = false;
 
-    for (int i=0; i < m_file_count; ++i) {
-        qreal progress = i / m_file_count;
-        emit progressChanged(progress);
+    m_file_count = files.size();
+    qreal count = static_cast<qreal>(m_file_count);
+
+    setLabel("Finding Artwork");
+
+    for (qreal i=0; i < count; ++i) {
 
         QFileInfo file_info = files.at(i);
-        qCDebug(phxLibrary) << file_info.absoluteFilePath();
+        //qCDebug(phxLibrary) << file_info.absoluteFilePath();
 
 
         query.prepare("INSERT INTO games (title, console, time_played, artwork)"
-                  " VALUES (?, ?, ?, ?)");
+                      " VALUES (?, ?, ?, ?)");
 
         QString system = getSystem(file_info.suffix());
 
         if (system != "") {
-            GameData data = scraper.getAllData(file_info.baseName(), system);
-            qCDebug(phxLibrary) << "gamedata: " << data.back_boxart << " " << data.front_boxart;
+            GameData data = scraper->getAllData(file_info.baseName(), system);
+            //qCDebug(phxLibrary) << "gamedata: " << data.back_boxart << " " << data.front_boxart;
             if (data.title != "")
                 query.bindValue(0, data.title);
             else
@@ -174,6 +196,9 @@ void GameLibraryModel::scanFolder(QString path)
             query.bindValue(2, "0h 0m 0s");
 
             updateQuery();
+
+
+            setProgress((((i+1) / m_file_count) * 100.0));
 
         }
 
