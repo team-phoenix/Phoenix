@@ -1,6 +1,6 @@
 #include "cacheimage.h"
 
-CImage::CImage(QObject *parent)
+CachedImage::CachedImage(QObject *parent)
     : QObject(parent)
 {
     // signal/slot when manager object emits finished signal execute downloadFinished method
@@ -8,7 +8,7 @@ CImage::CImage(QObject *parent)
 }
 
 
-void CImage::returnCached(QUrl imgUrl)
+void CachedImage::returnCached(QUrl imgUrl)
 {
     QQmlApplicationEngine eng;
     //Store the qml app offline storage location
@@ -43,7 +43,7 @@ void CImage::returnCached(QUrl imgUrl)
     }
 }
 
-void CImage::cacheImage()
+void CachedImage::cacheImage()
 {
     if(m_src.isEmpty()) {
         m_localUrl = "";
@@ -63,7 +63,7 @@ void CImage::cacheImage()
         emit localsrcChanged();
     }
 }
-void CImage::downloadFinished(QNetworkReply *reply)
+void CachedImage::downloadFinished(QNetworkReply *reply)
 {
     QStringList filename;
     if (reply->error()) {
@@ -88,7 +88,7 @@ void CImage::downloadFinished(QNetworkReply *reply)
     }
 }
 
-bool CImage::saveToDisk(const QString &filename, QIODevice *data)
+bool CachedImage::saveToDisk(const QString &filename, QIODevice *data)
 {
     QFile file(filename);
     if (!file.open(QIODevice::WriteOnly)) {
@@ -102,7 +102,7 @@ bool CImage::saveToDisk(const QString &filename, QIODevice *data)
     return true;
 }
 
-QStringList CImage::saveFileName()
+QStringList CachedImage::saveFileName()
 {
     QString basename = m_localPath + m_filename;
     QStringList result;
@@ -122,23 +122,23 @@ QStringList CImage::saveFileName()
     return result;
 }
 
-QString CImage::fileName()
+QString CachedImage::fileName()
 {
     return m_filename;
 }
 
-void CImage::setFileName(const QString &fileName)
+void CachedImage::setFileName(const QString &fileName)
 {
     m_filename = fileName + ".jpg";
     emit fileNameChanged();
 }
 
-QString CImage::imgsrc()
+QString CachedImage::imgsrc()
 {
     return m_src;
 }
 
-void CImage::setFolder(const QString &folder)
+void CachedImage::setFolder(const QString &folder)
 {
     if(m_folder != folder && folder != "") {
         m_folder = folder;
@@ -146,12 +146,12 @@ void CImage::setFolder(const QString &folder)
     }
 }
 
-QString CImage::folder()
+QString CachedImage::folder()
 {
     return m_folder;
 }
 
-void CImage::setImgsrc(const QString &imgsrc)
+void CachedImage::setImgsrc(const QString &imgsrc)
 {
     if(m_src != imgsrc && imgsrc != "") {
         m_src = imgsrc;
@@ -159,12 +159,12 @@ void CImage::setImgsrc(const QString &imgsrc)
     }
 }
 
-QString CImage::localsrc()
+QString CachedImage::localsrc()
 {
     return m_localUrl;
 }
 
-void CImage::start()
+void CachedImage::start()
 {
     cacheImage();
 }

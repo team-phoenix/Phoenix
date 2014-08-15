@@ -113,9 +113,10 @@ Rectangle {
                             height: 200;
                             width: 200;
                         }
+
                         fillMode: Image.PreserveAspectFit;
 
-                        CacheImage {
+                        CachedImage {
                             id: cachedImage;
                             imgsrc: image.source;
                             folder: "Artwork";
@@ -124,12 +125,13 @@ Rectangle {
                                 //console.log(localsrc);
                                 image.source = localsrc;
                             }
+
                         }
 
                         Component.onCompleted: cachedImage.start();
+
                         MouseArea {
                             anchors.fill: parent;
-                            onClicked: imagesaver.save(image, "C:/Users/lee/Desktop/test.jpg");
                             /*onPressed: {
                                 if (imageHighlight.checked)
                                     imageHighlight.checked = false;

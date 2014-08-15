@@ -14,7 +14,7 @@
 #include <QImage>
 #include <QDir>
 
-class CImage : public QObject {
+class CachedImage : public QObject {
     Q_OBJECT
     //Remote url
     Q_PROPERTY(QString imgsrc READ imgsrc WRITE setImgsrc NOTIFY imgsrcChanged)
@@ -28,7 +28,7 @@ class CImage : public QObject {
     QNetworkAccessManager manager;
 
 public:
-    explicit CImage(QObject *parent = 0);
+    explicit CachedImage(QObject *parent = 0);
     void doDownload(const QUrl &url);
     QStringList saveFileName();
     bool saveToDisk(const QString &filename, QIODevice *data);
@@ -61,5 +61,6 @@ signals:
     void localsrcChanged();
     void folderChanged();
     void fileNameChanged();
+    void cacheLoaded(bool);
 };
 #endif // CACHEIMAGE_H

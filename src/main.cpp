@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 
 
     qmlRegisterType<PhoenixWindow>("phoenix.window", 1, 0, "PhoenixWindow");
-    qmlRegisterType<CImage>("phoenix.image", 1, 0, "CacheImage");
+    qmlRegisterType<CachedImage>("phoenix.image", 1, 0, "CachedImage");
     qmlRegisterType<VideoItem>("VideoItem", 1, 0, "VideoItem");
     qmlRegisterType<InputDeviceMapping>();
     
