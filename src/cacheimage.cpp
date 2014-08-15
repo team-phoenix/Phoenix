@@ -26,12 +26,9 @@ void CImage::returnCached(QUrl imgUrl)
         }
     }
 
-    qDebug() << "filename: " << m_filename;
-
-
     if(!QFile::exists(m_localPath + m_filename)) { // This check seems to be taking a long time to do for each file
         //Create the request to be sent with Network Access Maanager
-        //qDebug() << "Downloading" << filename;
+        emit cacheLoaded(false);
         QNetworkRequest req(imgUrl);
         // Reply will contain header and data and emits signal finished()
         // that will be listened by constructor connector
@@ -41,6 +38,7 @@ void CImage::returnCached(QUrl imgUrl)
         //qDebug() << "exists: " << m_localPath + m_filename;
         //The file is already downloaded, let's just emit the local path
         m_localUrl = "file:///" + m_localPath + m_filename;
+        emit cacheLoaded(true);
         emit localsrcChanged();
     }
 }
