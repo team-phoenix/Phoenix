@@ -15,16 +15,29 @@ const QStringList EXPRESSIONS = (QStringList() << " "
                                                << ":");
 
 
-TheGamesDB::TheGamesDB ()
+TheGamesDB::TheGamesDB (QObject *parent)
+    : QObject(parent)
 {
     reply = nullptr;
     manager = nullptr;
+
+    connect(this, SIGNAL(finished()), this, SLOT(resetNetwork()));
 }
 
 TheGamesDB::~TheGamesDB()
 {
     reply->deleteLater();
     manager->deleteLater();
+}
+
+void TheGamesDB::resetNetwork()
+{
+    if (reply)
+        reply->deleteLater();
+    if (manager)
+        manager->deleteLater();
+   // reply = new QNetworkReply;
+    //manager = new QNetworkAccessManager;
 }
 
 void TheGamesDB::getNetworkReply(QString url)
@@ -300,6 +313,7 @@ QList< GameData > TheGamesDB::getPlatformsList() {
         platform_list = getXMLPlatformList();
     }
 
+    emit finished();
     return platform_list;
 }
 
@@ -312,6 +326,7 @@ GameData TheGamesDB::getGame(QString game_id) {
         game = findXMLGame();
     }
 
+    emit finished();
     return game;
 }
 
@@ -325,6 +340,7 @@ GameData TheGamesDB::getGameId(QString game_name, QString platform) {
         game_id = parseXMLforId(game_name);
     }
 
+    emit finished();
     return game_id;
 }
 
@@ -337,6 +353,8 @@ GameData TheGamesDB::getArt(QString game_id)
     if (noErrors()) {
         art = findXMLArt();
     }
+
+    emit finished();
     return art;
 }
 
@@ -349,6 +367,8 @@ QList< GameData > TheGamesDB::getPlatformGames(QString platform_id)
     if (noErrors()) {
         platform_games_list = getXMLPlatformGames();
     }
+
+    emit finished();
     return platform_games_list;
 }
 
@@ -362,6 +382,7 @@ QList< GameData > TheGamesDB::getGamesList(QString game_name)
         games_list = getXMLGamesList();
     }
 
+    emit finished();
     return games_list;
 }
 

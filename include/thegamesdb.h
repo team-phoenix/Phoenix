@@ -67,7 +67,7 @@ public:
 class TheGamesDB : public QObject {
     Q_OBJECT
 public:
-    TheGamesDB();
+    explicit TheGamesDB(QObject *parent=0);
     ~TheGamesDB();
 
     GameData getArt(QString game_id);
@@ -82,6 +82,12 @@ public:
     void printPlatformsList();
     void printGame(QString game_name, QString platform);
     void printGamesList(QString game_name);
+
+signals:
+    void finished();
+
+public slots:
+    void resetNetwork();
 
 private:
     QNetworkReply *reply;
