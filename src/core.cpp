@@ -571,19 +571,19 @@ void Core::logCallback(enum retro_log_level level, const char *fmt, ...)
 
     switch (level) {
         case RETRO_LOG_DEBUG:
-            qCDebug(phxCore, outbuf.data());
+            qCDebug(phxCore) << outbuf.data();
         break;
         case RETRO_LOG_INFO:
-            qCDebug(phxCore, outbuf.data());
+            qCDebug(phxCore) << outbuf.data();
         break;
         case RETRO_LOG_WARN:
-            qCWarning(phxCore, outbuf.data());
+            qCWarning(phxCore) << outbuf.data();
         break;
         case RETRO_LOG_ERROR:
-            qCCritical(phxCore, outbuf.data());
+            qCCritical(phxCore) << outbuf.data();
         break;
         default:
-            qCWarning(phxCore, outbuf.data());
+            qCWarning(phxCore) << outbuf.data();
         break;
     }
 
