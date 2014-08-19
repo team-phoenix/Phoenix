@@ -309,6 +309,8 @@ Rectangle {
             }
 
             style: SliderStyle {
+                id: sliderStyle;
+
                 handle: Item {
                     height: 18;
                     width: 18;
@@ -324,11 +326,10 @@ Rectangle {
                         source: zoomHandle;
                         anchors.fill: source;
                         horizontalOffset: 1;
-                        verticalOffset: 3;
+                        verticalOffset: 2;
                         radius: 2;
-                        samples: 4;
+                        samples: radius * 2;
                         color: "#80000000"
-                        //transparentBorder: true;
                     }
                 }
 
@@ -338,6 +339,19 @@ Rectangle {
                     radius: 2;
                     opacity: 0.8;
                     color: "#1a1a1a";
+
+                    Rectangle {
+                        color: "#f1f1f1";
+                        anchors {
+                            left: parent.left;
+                            top: parent.top;
+                            bottom: parent.bottom;
+                        }
+                        width: 14 * headerBar.sliderValue;
+                        // 14 seems to be the magic number.
+                        // It's a quick and dirty way to make
+                        // the effect work.
+                    }
                 }
             }
         }
