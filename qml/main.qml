@@ -77,10 +77,10 @@ PhoenixWindow {
         source: headerBar;
         anchors.fill: headerBar;
         horizontalOffset: 1;
-        verticalOffset: 4;
-        radius: 8;
-        samples: 16;
-        color: "#b0000000"
+        verticalOffset: 2;
+        radius: 2;
+        samples: radius * 2;
+        color: "#80000000"
         transparentBorder: true;
     }
 
