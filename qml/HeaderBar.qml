@@ -358,6 +358,29 @@ Rectangle {
     }
 
     Row {
+        id: userArea;
+        anchors.centerIn: parent;
+        spacing: 10;
+        Rectangle {
+            color: "black";
+            height: 25;
+            width: 25;
+
+        }
+
+        Label {
+            text: "Phoenix";
+            anchors.verticalCenter: parent.verticalCenter;
+            font {
+                family: "Sans";
+                pixelSize: 16;
+                bold: true;
+            }
+            color: "#f1f1f1";
+        }
+    }
+
+    Row {
         spacing: 10;
         anchors {
             right: parent.right;
