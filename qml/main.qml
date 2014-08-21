@@ -24,6 +24,8 @@ PhoenixWindow {
         settingsDropDown.state = "retracted";
     }
 
+
+
     MouseArea {
         anchors.fill: parent;
         enabled: settingsBubble.visible;
@@ -72,18 +74,6 @@ PhoenixWindow {
         fontSize: 14;
     }
 
-    DropShadow {
-        visible: headerBar.visible;
-        source: headerBar;
-        anchors.fill: headerBar;
-        horizontalOffset: 1;
-        verticalOffset: 2;
-        radius: 2;
-        samples: radius * 2;
-        color: "#80000000"
-        transparentBorder: true;
-    }
-
     Item {
         id: settingsDropDown;
         z: headerBar.z + 1;
@@ -92,41 +82,12 @@ PhoenixWindow {
             left: parent.left;
             right: parent.right;
             top: parent.top;
-            topMargin: 80;
-            rightMargin: 0;
+            topMargin: 68;
+            rightMargin: 50;
+            bottom: parent.bottom;
+            bottomMargin: 50;
         }
-        width: 125;
-        height: 275;
-
-        states: [
-            State {
-                name: "expanded";
-                when: settingsBubble.expand;
-                PropertyChanges {
-                    target: settingsDropDown;
-                    anchors.rightMargin: (root.width > root.minimumWidth) ? root.width / 2 : 50;
-                }
-            },
-            State {
-                name: "retracted";
-                when: !settingsBubble.expand;
-
-                PropertyChanges {
-                    target: settingsDropDown;
-                    anchors.rightMargin: -1 * (125- root.width);
-                    //width: 125;
-                }
-            }
-        ]
-
-        Behavior on anchors.rightMargin {
-            NumberAnimation {
-                easing {
-                    type: Easing.OutQuad;
-                }
-                duration: 300;
-            }
-        }
+        width: 50;
 
         Rectangle {
             visible: parent.visible;
@@ -172,9 +133,9 @@ PhoenixWindow {
             }
 
             visible: parent.visible;
-            stackBackgroundColor: "#1e1e1e";
-            contentColor: "#3a3a3a";
-            textColor: "#f1f1f1";
+            stackBackgroundColor: "#f4f4f4";
+            contentColor: "#f4f4f4";
+            textColor: "#515151";
         }
 
     }
@@ -182,10 +143,10 @@ PhoenixWindow {
     DropShadow {
         source: settingsDropDown;
         anchors.fill: source;
-        horizontalOffset: 4;
-        verticalOffset: 8;
-        radius: 8.0;
-        samples: 16;
+        horizontalOffset: 2;
+        verticalOffset: 4;
+        radius: 4;
+        samples: radius * 2;
         color: "#80000000";
         transparentBorder: true;
     }
@@ -195,10 +156,10 @@ PhoenixWindow {
         source: settingsDropDown;
         anchors.fill: source;
 
-        horizontalOffset: -4;
-        verticalOffset: 8;
-        radius: 8.0;
-        samples: 16;
+        horizontalOffset: -2;
+        verticalOffset: 4;
+        radius: 4;
+        samples: radius * 2;
         color: "#80000000"
         transparentBorder: true;
     }
@@ -266,22 +227,6 @@ PhoenixWindow {
             property string stackName: "";
             property StackView stackId: gameStack;
             property bool blur: settingsBubble.visible;
-
-            GaussianBlur {
-                id: gaussianBlur;
-                anchors.fill: source;
-                source: parent;
-                radius: visible ? 1 : 0;
-                samples: radius * 2;
-                visible: blur;
-
-                Behavior on radius {
-                    NumberAnimation {
-                        duration: 200;
-                    }
-                }
-            }
-
 
 
             ConsoleBar {
