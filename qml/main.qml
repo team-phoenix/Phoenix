@@ -69,6 +69,13 @@ PhoenixWindow {
             right: parent.right;
             top: parent.top;
         }
+
+        Behavior on height {
+            NumberAnimation {
+                duration: 150;
+            }
+        }
+
         height: 50;
         color: "#3b3b3b";
         fontSize: 14;
