@@ -47,6 +47,17 @@ Rectangle {
     color: headerColor;
 
     Rectangle {
+        id: bottomBorder;
+        anchors {
+            left: parent.left;
+            right: parent.right;
+            bottom: parent.bottom;
+        }
+        height: 1;
+        color: "#242424";
+    }
+
+    Rectangle {
         id: volumeDropDown;
         color: "#363535";
         height: 200;
@@ -320,16 +331,7 @@ Rectangle {
                         color: "#f1f1f1";
                         radius: 10;
                         anchors.fill: parent;
-                    }
-
-                    DropShadow {
-                        source: zoomHandle;
-                        anchors.fill: source;
-                        horizontalOffset: 1;
-                        verticalOffset: 2;
-                        radius: 2;
-                        samples: radius * 2;
-                        color: "#80000000"
+                        smooth: true;
                     }
                 }
 
