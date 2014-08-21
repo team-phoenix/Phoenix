@@ -99,8 +99,8 @@ PhoenixWindow {
         Rectangle {
             visible: parent.visible;
             opacity: parent.visible ? 1.0 : 0.0;
-            height: 35;
-            width: 35;
+            height: 22;
+            width: 22;
             rotation: 45;
             color: settingsBubble.stackBackgroundColor;
 
@@ -115,7 +115,7 @@ PhoenixWindow {
 
             anchors {
                 left: parent.left;
-                leftMargin: 18;
+                leftMargin: 23;
                 verticalCenter: settingsBubble.top;
             }
 
