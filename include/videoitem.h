@@ -50,35 +50,43 @@ public:
     void setVolume(qreal volume);
 
 
-    QString libcore() const {
+    QString libcore() const
+    {
         return m_libcore;
     }
 
-    QString game() const {
+    QString game() const
+    {
         return m_game;
     }
 
-    bool run() const {
+    bool run() const
+    {
         return m_run;
     }
 
-    bool setWindowed() const {
+    bool setWindowed() const
+    {
         return m_set_windowed;
     }
 
-    QString systemDirectory() const {
+    QString systemDirectory() const
+    {
         return m_system_directory;
     }
 
-    QString saveDirectory() const {
+    QString saveDirectory() const
+    {
         return m_save_directory;
     }
 
-    int fps() const {
+    int fps() const
+    {
         return m_fps;
     }
 
-    qreal volume() const {
+    qreal volume() const
+    {
         return m_volume;
     }
 
