@@ -12,6 +12,7 @@ Item {
     width: 800;
     height: 600;
     visible: true;
+
     property bool run: false;
     property string gameName: "";
     property string coreName: "";
@@ -24,6 +25,7 @@ Item {
     property bool ranOnce: false;
     property bool screenTimer: false;
     property alias gameMouse: gameMouse;
+
 
     function timerEffects() {
         if (gameMouse.cursorShape !== Qt.ArrowCursor)
@@ -72,10 +74,10 @@ Item {
         onMouseXChanged: timerEffects();
         onMouseYChanged: timerEffects();
         onDoubleClicked: {
-            if (visibility == 5)
-                visibility = "Windowed";
+            if (root.visibility == 5)
+                root.visibility = "Windowed";
             else
-                visibility = "FullScreen";
+                root.visibility = "FullScreen";
         }
     }
 
@@ -96,9 +98,10 @@ Item {
                 headerBar.playIcon = "/assets/GameView/play.png";
         }
 
+
         onSetWindowedChanged: {
-            if (visibility != 2)
-                visibility = "Windowed";
+            if (root.visibility != 2)
+                root.visibility = "Windowed";
         }
 
         Component.onDestruction: {
@@ -113,6 +116,7 @@ Item {
         font.pointSize: 16;
         style: Text.Outline;
         styleColor: "black";
+        renderType: Text.QtRendering;
 
          anchors {
             right: parent.right;
