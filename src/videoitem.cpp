@@ -172,15 +172,15 @@ void VideoItem::keyEvent(QKeyEvent *event)
 
     switch(event->key()) {
         case Qt::Key_Escape:
-            if(is_pressed)
+            if(is_pressed) {
                 emit setWindowedChanged(true);
+                event->accept();
+            }
             break;
         case Qt::Key_Space:
             if(is_pressed) {
-                if (m_run)
-                    setRun(false);
-                else
-                    setRun(true);
+                setRun(m_run ? false : true);
+                event->accept();
             }
             break;
     }
@@ -188,7 +188,7 @@ void VideoItem::keyEvent(QKeyEvent *event)
     // we also pass every KeyEvent to each connected InputDevice which is a Keyboard.
     // a bit ugly, but this avoid overhead of signal/slots and event filters
     QList<InputDevice *> devices = input_manager.getDevices();
-    for (int i=0; i < devices.size(); ++i) {
+    for (int i = 0; i < devices.size(); ++i) {
         auto keyboardinput = dynamic_cast<Keyboard *>(devices.at(i));
         if (keyboardinput != nullptr)
             keyboardinput->processKeyEvent(event);;

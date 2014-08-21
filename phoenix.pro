@@ -36,6 +36,7 @@ HEADERS += include/core.h                      \
            include/gamelibrarymodel.h          \
            include/phoenixwindow.h             \
            include/inputdevicemappingfactory.h \
+           include/inputdevicefactory.h        \
            include/thegamesdb.h                \
            include/cacheimage.h
 

@@ -41,7 +41,6 @@ static const QMap<QString, const device_settings_mapping *> settings_mappings {
 
 bool InputDeviceMapping::populateFromSettings(QSettings &s)
 {
-
     // retro device type
     QString device_type = s.value("device_type").toString();
     if (device_type != "joypad") {

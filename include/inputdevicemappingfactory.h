@@ -18,7 +18,6 @@ public:
         else
             return nullptr;
     }
-
 };
 
 #endif

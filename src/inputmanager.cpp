@@ -4,6 +4,7 @@
 #include "inputmanager.h"
 #include "joystick.h"
 #include "keyboard.h"
+#include "inputdevicefactory.h"
 #include "inputdevicemappingfactory.h"
 
 
@@ -54,7 +55,7 @@ QList<InputDevice *> InputManager::getDevices() const
 void InputManager::scanDevices()
 {
     auto mapping = mappingForPort(0);
-    devices.insert(0, new Joystick(mapping));
+    devices.insert(0, InputDeviceFactory::createFromMapping(mapping));
 }
 
 // load Mapping for a given port from the settings
