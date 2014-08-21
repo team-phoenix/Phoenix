@@ -54,7 +54,28 @@ QList<InputDevice *> InputManager::getDevices() const
 
 void InputManager::scanDevices()
 {
-    auto mapping = mappingForPort(0);
+    auto *mapping = mappingForPort(0);
+    if (mapping == nullptr) {
+        // define default input mapping
+        // TODO: move this to a separate func
+        QSettings s;
+        s.beginGroup("input");
+        s.beginGroup("port0");
+        s.setValue("input_driver", "qt_keyboard");
+        s.setValue("device_type", "joypad");
+        s.setValue("joypad_a", "e");
+        s.setValue("joypad_b", "r");
+        s.setValue("joypad_x", "d");
+        s.setValue("joypad_y", "f");
+        s.setValue("joypad_up", "Up");
+        s.setValue("joypad_down", "Down");
+        s.setValue("joypad_left", "Left");
+        s.setValue("joypad_right", "Right");
+        s.setValue("joypad_l", "t");
+        s.setValue("joypad_r", "g");
+        mapping = mappingForPort(0);
+
+    }
     devices.insert(0, InputDeviceFactory::createFromMapping(mapping));
 }
 
