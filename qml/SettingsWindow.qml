@@ -31,6 +31,18 @@ Item {
             property string buttonBackgroundColor: "#000000FF";
         }
 
+        Rectangle {
+            anchors {
+                right: parent.right;
+                top: parent.top;
+                bottom: parent.bottom;
+                topMargin: 20;
+                bottomMargin: 20;
+            }
+            width: 1;
+            color: "#e4e4e4";
+        }
+
         ListView {
             id: listView;
             anchors {
@@ -38,11 +50,32 @@ Item {
                 bottom: parent.bottom;
                 left: parent.left;
                 right: parent.right;
-                topMargin: 20;
+                topMargin: 15;
                 //bottomMargin: 50;
             }
             highlightFollowsCurrentItem: false;
-            spacing: 2;
+            header: Item {
+                anchors {
+                    left: parent.left;
+                    right: parent.right;
+                    leftMargin: 30;
+                }
+                height: 20;
+                Label {
+                    //anchors.centerIn: parent;
+                    renderType: Text.QtRendering;
+                    color: "#f1f1f1";
+                    text: "General";
+                    font {
+                        family: "Sans"
+                        pixelSize: 14;
+                        bold: true;
+                    }
+                    horizontalAlignment: Text.AlignHCenter;
+                    //verticalAlignment: Text.AlignVCenter;
+                }
+            }
+
             highlight: Item {
                 id: highlightItem;
                 height: listView.currentItem.height;
@@ -53,26 +86,39 @@ Item {
                     id: innerItem;
                     height: parent.height;
                     width: parent.width;
+
                     Rectangle {
-                        id: accentRectangle;
-                        color: root.accentColor;
-                        width: 4;
+                        id: topBorder;
+                        z: mainColor.z + 1;
                         anchors {
-                            left: parent.left;
                             top: parent.top;
-                            bottom: parent.bottom;
+                            left: parent.left;
+                            right: parent.right;
                         }
+                        height: 1;
+                        color: "#ababab";
                     }
 
                     Rectangle {
                         id: mainColor;
                         anchors {
-                            left: accentRectangle.right;
+                            left: parent.left;
                             right: parent.right;
                             top: parent.top;
                             bottom: parent.bottom;
                         }
-                        color: listView.currentItem ? settingsBubble.contentColor : "#000000FF";
+                        color: listView.currentItem ? "#e4e4e4" : "#000000FF";
+                    }
+
+                    Rectangle {
+                        z: topBorder.z;
+                        anchors {
+                            bottom: parent.bottom;
+                            left: parent.left;
+                            right: parent.right;
+                        }
+                        height: 1;
+                        color: "#d0d0d0";
                     }
 
                 }
@@ -87,34 +133,30 @@ Item {
             property string currentName: "";
             model: ListModel {
                 ListElement {title: "Input";}
-                //ListElement {title: "System";}
                 ListElement {title: "Library";}
                 ListElement {title: "Save";}
                 ListElement {title: "Cores";}
                 ListElement {title: "Advanced";}
-                //ListElement {title: "Developer";}
-                ListElement {title: "Themes";}
 
 
             }
 
             delegate: Label {
-                height: 35;
+                height: 25;
                 anchors {
                     left: parent.left;
                     right: parent.right;
-                    //top: parent.top;
-                    //topMargin: 25;
+                    leftMargin: 45;
                 }
                 font {
                     family: "Sans";
                     bold: true;
-                    pixelSize: 16;
+                    pixelSize: 13;
                 }
 
                 color: settingsBubble.textColor;
                 text: title;
-                horizontalAlignment: Text.AlignHCenter;
+                horizontalAlignment: Text.AlignLeft;
                 verticalAlignment: Text.AlignVCenter;
 
                 MouseArea {
@@ -491,50 +533,250 @@ Item {
     Component {
         id: coreSettings;
         Rectangle {
+
+            Component.onCompleted: {
+                settingsDropDown.width = 500;
+            }
+
             color: settingsBubble.contentColor;
 
-            Row {
-                visible: stackView.width > width;
-                spacing: 20;
+            Column {
+                id: coreHeaderColumn;
+                spacing: 5;
                 anchors {
+                    left: parent.left;
                     top: parent.top;
                     topMargin: 25;
-                    horizontalCenter: parent.horizontalCenter;
+                    leftMargin: 25;
                 }
 
-                Label {
-                    text: "Nintendo:";
-                    color: "#f1f1f1";
+                Text {
+                    id: coreTopLabel;
+                    text: "Core Selection";
+                    color: settingsBubble.textColor;
+                    renderType: Text.QtRendering;
                     font {
                         pixelSize: 18;
                     }
                 }
 
-                Grid {
-                    columns: 2;
-                    rows: 2;
-                    spacing: 15;
-                    Rectangle {
-                        color: "darkgray";
-                        height: 30;
-                        width: 100;
-                    }
-                    Rectangle {
-                        color: "darkgray";
-                        height: 30;
-                        width: 100;
-                    }
-                    Rectangle {
-                        color: "darkgray";
-                        height: 30;
-                        width: 100;
-                    }
-                    Rectangle {
-                        color: "darkgray";
-                        height: 30;
-                        width: 100;
+                Text {
+
+                    text: "Tweak the emulation cores";
+                    color: "#898989";
+                    renderType: Text.QtRendering;
+                    font {
+                        pixelSize: 14;
                     }
                 }
+
+            }
+
+
+
+            TableView {
+                anchors {
+                    top: coreHeaderColumn.bottom;
+                    bottom: bottomBar.top;
+                    left: parent.left;
+                    right: parent.right;
+                    bottomMargin: 15;
+                    topMargin: 15;
+                    leftMargin: 25;
+                    rightMargin: 25;
+                }
+
+                model: ListModel {
+                    ListElement {consoles: "Game Boy";}
+                    ListElement {consoles: "Game Boy Advance";}
+                    ListElement {consoles: "Game Boy Color";}
+                    ListElement {consoles: "Nintendo";}
+                    ListElement {consoles: "Super Nintendo";}
+                    ListElement {consoles: "Sega Genesis";}
+                    ListElement {consoles: "Nintendo 64";}
+                    ListElement {consoles: "Sony PlayStation";}
+
+                }
+
+                style: TableViewStyle {
+                    id: tableStyle;
+                    backgroundColor: settingsBubble.contentColor;
+
+                    rowDelegate: Rectangle {
+                        color: tableStyle.backgroundColor;
+                        height: 35;
+                    }
+
+                    frame: Item {
+
+                    }
+
+
+                    headerDelegate: Item {
+                        height: 25;
+                        Text {
+                            anchors {
+                                left: parent.left;
+                            }
+
+                            renderType: Text.QtRendering;
+                            color: settingsBubble.textColor;
+                            text: styleData.value;
+                            font {
+                                pixelSize: 16;
+                                family: "Sans";
+                            }
+                        }
+                    }
+                }
+
+                TableViewColumn {
+                    role: "Console";
+                    title: "Console";
+                    width: 200;
+                    delegate: Item {
+                        anchors.fill: parent;
+                        CheckBox {
+                            anchors {
+                                verticalCenter: parent.verticalCenter;
+                                left: parent.left;
+                                right: parent.right;
+                                rightMargin: 100;
+                            }
+
+                            text: styleData.value;
+                            style: CheckBoxStyle {
+                                label: Text {
+                                    text: control.text;
+                                    renderType: Text.QtRendering;
+                                    color: settingsBubble.textColor;
+                                    font {
+                                        family: "Sans";
+                                        pixelSize: 14;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                TableViewColumn {
+                    role: "Core";
+                    title: "Core";
+                    width: 125;
+                    delegate: Item {
+                        anchors.fill: parent;
+                        ComboBox {
+                            height: 25;
+                            anchors {
+                                verticalCenter: parent.verticalCenter;
+                                left: parent.left;
+                                right: parent.right;
+                                rightMargin: 15;
+                            }
+
+                            model: ["Apple", "Orange"];
+                        }
+                    }
+                }
+                TableViewColumn {
+                    role: "performance";
+                    title: "Performance";
+                    width: 125;
+                    delegate: Item {
+                        anchors.fill: parent;
+                        ComboBox {
+                            height: 25;
+                            anchors {
+                                verticalCenter: parent.verticalCenter;
+                                left: parent.left;
+                                right: parent.right;
+                                rightMargin: 15;
+                            }
+
+                            model: ["Apple", "Orange"];
+                        }
+                    }
+                }
+
+                TableViewColumn {
+                    role: "version";
+                    title: "Version";
+                    width: 100;
+                    delegate: Item {
+                        anchors.fill: parent;
+                        Text {
+                            renderType: Text.QtRendering;
+                            anchors {
+                                verticalCenter: parent.verticalCenter;
+                                left: parent.left;
+                                right: parent.right;
+                                rightMargin: 25;
+                            }
+                            text: "1.0.0";
+                            color: settingsBubble.textColor;
+                            font {
+                                family: "Sans";
+                                pixelSize: 12;
+                            }
+                        }
+                    }
+                }
+
+                TableViewColumn {
+                    role: "author";
+                    title: "Author";
+                    width: 50;
+                    delegate: Item {
+                        anchors.fill: parent;
+                        Text {
+                            renderType: Text.QtRendering;
+                            anchors {
+                                verticalCenter: parent.verticalCenter;
+                                left: parent.left;
+                            }
+                            text: "Unknown";
+                            color: settingsBubble.textColor;
+                            font {
+                                family: "Sans";
+                                pixelSize: 12;
+                            }
+                        }
+                    }
+                }
+            }
+
+            Rectangle {
+                id: bottomBar;
+                color: settingsBubble.contentColor;
+                height: 25;
+                anchors {
+                    bottom: parent.bottom;
+                    left: parent.left;
+                    right: parent.right;
+                    bottomMargin: 25;
+                }
+
+                Button {
+                    id: saveButton;
+                    text: "Save";
+                    anchors {
+                        left: parent.left;
+                        bottom: parent.bottom;
+                        leftMargin: 25;
+                    }
+                }
+
+                Button {
+                   anchors {
+                       right: parent.right;
+                       bottom: parent.bottom;
+                       rightMargin: 25;
+                   }
+
+                   id: defaultButton;
+                   text: "Default";
+                }
+
             }
         }
     }
@@ -570,6 +812,7 @@ Item {
                         label: Label {
                             text: "Import";
                             color: "#f1f1f1";
+                            renderType: Text.QtRendering;
                             horizontalAlignment: Text.AlignHCenter;
                             verticalAlignment: Text.AlignVCenter;
                         }
@@ -586,6 +829,7 @@ Item {
                         }
                         label: Label {
                             text: "Import";
+                            renderType: Text.QtRendering;
                             color: "#f1f1f1";
                             horizontalAlignment: Text.AlignHCenter;
                             verticalAlignment: Text.AlignVCenter;
@@ -604,6 +848,7 @@ Item {
                         label: Label {
                             text: "Delete";
                             color: "#f1f1f1";
+                            renderType: Text.QtRendering;
                             horizontalAlignment: Text.AlignHCenter;
                             verticalAlignment: Text.AlignVCenter;
                         }
@@ -620,7 +865,6 @@ Item {
             color: settingsBubble.contentColor;
 
             Column {
-                //visible: stackView.width > width;
                 anchors {
                     topMargin: 15;
                     fill: parent;
