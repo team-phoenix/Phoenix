@@ -16,7 +16,7 @@ Rectangle {
         id: listView;
         anchors {
             top: parent.top;
-            topMargin: 25;
+            topMargin: 15;
         }
 
         height: parent.height / 2;
@@ -35,13 +35,13 @@ Rectangle {
                     leftMargin: 25;
                     horizontalCenter: parent.horizontalCenter;
                 }
-
+                renderType: Text.QtRendering;
                 text: "Consoles";
                 color: "#f1f1f1";
                 font {
-                    family: "Sans";
                     bold: true;
-                    pixelSize: 15;
+                    family: "Sans";
+                    pixelSize: 13;
                 }
             }
         }
@@ -56,27 +56,39 @@ Rectangle {
                 id: innerItem;
                 height: parent.height;
                 width: parent.width;
+
                 Rectangle {
-                    id: accentRectangle;
-                    color: root.accentColor;
-                    width: 4;
+                    id: topBorder;
+                    color: "#111111";
                     anchors {
                         left: parent.left;
+                        right: parent.right;
                         top: parent.top;
-                        bottom: parent.bottom;
                     }
+                    height: 1;
                 }
 
 
                 Rectangle {
                     id: mainColor;
                     anchors {
-                        left: accentRectangle.right;
+                        left: parent.left;
                         right: parent.right;
                         top: parent.top;
                         bottom: parent.bottom;
                     }
-                    color: listView.currentItem ? "#1a1a1a" : "#000000FF";
+                    color: listView.currentItem ? "#171717" : "#000000FF";
+                }
+
+                Rectangle {
+                    id: buttomBorder;
+                    color: "#2b2b2b";
+                    anchors {
+                        left: parent.left;
+                        right: parent.right;
+                        bottom: parent.bottom;
+                    }
+                    height: 1;
                 }
             }
         }
@@ -131,9 +143,9 @@ Rectangle {
                     anchors.verticalCenter: parent.verticalCenter;
                     text: title;
                     color: "#f1f1f1";
+                    renderType: Text.QtRendering;
                     font {
                         family: "Sans";
-                        bold: true;
                         pixelSize: 13;
                     }
                 }
