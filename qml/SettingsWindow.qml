@@ -131,6 +131,7 @@ Item {
                                    "Library": librarySettings,
                                    "Save": saveSettings,
                                    "Video": videoSettings,
+                                   "Audio": audioSettings,
                                    "Advanced": advancedSettings};
             property string currentName: "";
             model: ListModel {
@@ -140,8 +141,7 @@ Item {
                 ListElement {title: "Cores";}
                 ListElement {title: "Advanced";}
                 ListElement {title: "Video";}
-
-
+                ListElement {title: "Audio";}
 
             }
 
@@ -220,6 +220,83 @@ Item {
             top: parent.top;
         }
         initialItem: inputSettings;
+    }
+
+    Component {
+        id: audioSettings;
+        Rectangle {
+            color: settingsBubble.stackBackgroundColor;
+
+            Column {
+                anchors {
+                    fill: parent;
+                    topMargin: 25;
+                }
+                spacing: 25;
+
+                Column {
+                    id: videoHeader;
+                    anchors {
+                        left: parent.left;
+                        //top: parent.top;
+                        //topMargin: 25;
+                        leftMargin: 25;
+                    }
+                    spacing: 5;
+
+                    Text {
+                        text: "Audio Settings"
+                        renderType: Text.QtRendering;
+                        color: settingsBubble.textColor;
+                        font {
+                            family: "Sans";
+                            pixelSize: 18;
+                        }
+                    }
+
+                    Text {
+                        text: "Edit the audio feed"
+                        renderType: Text.QtRendering;
+                        color: settingsBubble.alternateTextColor;
+                        font {
+                            family: "Sans";
+                            pixelSize: 14;
+                        }
+                    }
+                }
+
+                Column {
+                    spacing: 25;
+                    width: 200;
+                    anchors {
+                        left: parent.left;
+                        leftMargin: 25;
+                    }
+
+                    RowLayout {
+                        anchors {
+                            left: parent.left;
+                            right: parent.right;
+                        }
+
+                        spacing: 25;
+                        Text {
+                            text: "Mute"
+                            renderType: Text.QtRendering;
+                            color: settingsBubble.textColor;
+                            font {
+                                family: "Sans";
+                                pixelSize: 14;
+                            }
+                        }
+
+                        Switch {
+                            anchors.right: parent.right;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     Component {
