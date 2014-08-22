@@ -184,12 +184,10 @@ PhoenixWindow {
 
         initialItem: homeScreen;
 
-        property string gameStackItemName:  {
-            if (currentItem != null) {
-                if (typeof currentItem.stackName !== "undefined") {
-                    console.log(currentItem.stackName)
-                    return currentItem.stackName;
-                }
+        property string gameStackItemName: {
+            if (currentItem != null && typeof currentItem.stackName !== "undefined") {
+                console.log(currentItem.stackName);
+                return currentItem.stackName;
             }
             else {
                 return "";
