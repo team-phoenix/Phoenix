@@ -110,8 +110,9 @@ Rectangle {
         Button {
             id: settingsBtn;
             visible: !gameView.visible;
-            height: 30;
-            width: 30;
+            height: 27;
+            width: 27;
+            anchors.verticalCenter: parent.verticalCenter;
             property string backgroundColor: "#000000FF";
             onHoveredChanged: {
                 if (hovered) {
@@ -127,8 +128,8 @@ Rectangle {
 
                 label: Image{
                     source: "../assets/cog-6x.png";
-                    sourceSize.height: 23;
-                    sourceSize.width: 23;
+                    sourceSize.height: settingsBtn.height;
+                    sourceSize.width: settingsBtn.width;
                 }
 
             }
@@ -155,8 +156,10 @@ Rectangle {
 
         Button {
             id: viewBtn;
-            height: 30;
-            width: 30;
+            height: 27;
+            width: 27;
+            anchors.verticalCenter: parent.verticalCenter;
+
             property string backgroundColor: "#000000FF";
             property string imageSource: headerBar.viewIcon;
             onHoveredChanged: {
@@ -174,8 +177,8 @@ Rectangle {
                 label: Image{
                     source: viewBtn.imageSource;
                     //opacity: 0.85;
-                    sourceSize.height: 25;
-                    sourceSize.width: 25;
+                    sourceSize.height: viewBtn.height;
+                    sourceSize.width: viewBtn.width;
                 }
 
             }
@@ -224,8 +227,8 @@ Rectangle {
             id: folderBtn;
             property string backgroundColor: "#000000FF";
             visible: !gameView.visible;
-            height: 30;
-            width: 30;
+            height: 31;
+            width: 31;
             onHoveredChanged: {
                 if (hovered) {
                     opacity = 0.7;
@@ -240,9 +243,10 @@ Rectangle {
 
                 label: Image{
                     source: headerBar.folderIcon;
-                    //opacity: 0.85;
-                    sourceSize.height: 25;
-                    sourceSize.width: 25;
+                    sourceSize {
+                        width: 22;
+                        height: 22;
+                    }
                 }
 
             }
@@ -363,16 +367,22 @@ Rectangle {
         id: userArea;
         anchors.centerIn: parent;
         spacing: 10;
-        Rectangle {
-            color: "black";
-            height: 25;
-            width: 25;
+        Image {
+            id: userImage;
+            height: 22;
+            width: 22;
+            source: "../assets/Account-32.png"
+            sourceSize {
+                height: userImage.height;
+                width: userImage.width;
+            }
 
         }
 
-        Label {
+        Text {
             text: "Phoenix";
             anchors.verticalCenter: parent.verticalCenter;
+            renderType: Text.QtRendering;
             font {
                 family: "Sans";
                 pixelSize: 16;
@@ -447,14 +457,6 @@ Rectangle {
         }
     }
 
-    /*Label {
-        anchors.centerIn: parent;
-        text: "Phoenix";
-        color: "#f1f1f1";
-        font.bold: true;
-        font.pixelSize: headerBar.fontSize;
-    }*/
-
     TextField {
         id: searchBar;
         width: 175;
@@ -464,6 +466,7 @@ Rectangle {
             bold: true;
             pixelSize: 14;
         }
+
 
         textColor: "#f1f1f1";
         height: 25;
