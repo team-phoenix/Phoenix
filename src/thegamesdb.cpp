@@ -26,8 +26,10 @@ TheGamesDB::TheGamesDB (QObject *parent)
 
 TheGamesDB::~TheGamesDB()
 {
-    reply->deleteLater();
-    manager->deleteLater();
+    if (reply)
+        reply->deleteLater();
+    if (manager)
+        manager->deleteLater();
 }
 
 void TheGamesDB::resetNetwork()
