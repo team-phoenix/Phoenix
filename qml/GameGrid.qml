@@ -125,14 +125,13 @@ Rectangle {
                                 //console.log(localsrc);
                                 image.source = localsrc;
                             }
-
                         }
 
                         Component.onCompleted: cachedImage.start();
 
                         MouseArea {
                             anchors.fill: parent;
-                            /*onPressed: {
+                            onPressed: {
                                 if (imageHighlight.checked)
                                     imageHighlight.checked = false;
                                 else
@@ -145,7 +144,7 @@ Rectangle {
                                 gameView.loadSaveState = true;
                                 windowStack.push({item: gameView, replace: true });
 
-                            }*/
+                            }
                         }
                     }
                 }
@@ -163,8 +162,9 @@ Rectangle {
                     transparentBorder: true;
                 }*/
 
-                Label {
+                Text {
                     id: titleLabel;
+                    renderType: Text.QtRendering;
                     anchors {
                         left: parent.left;
                         right: parent.right;
