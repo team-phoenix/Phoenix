@@ -135,47 +135,63 @@ Item {
                                    "Advanced": advancedSettings};
             property string currentName: "";
             model: ListModel {
-                ListElement {title: "Input";}
-                ListElement {title: "Library";}
-                ListElement {title: "Save";}
-                ListElement {title: "Cores";}
-                ListElement {title: "Advanced";}
-                ListElement {title: "Video";}
-                ListElement {title: "Audio";}
+                ListElement {title: "Input"; iconSource: "../assets/Controls-64.png";}
+                ListElement {title: "Library"; iconSource: "";}
+                ListElement {title: "Save"; iconSource: "";}
+                ListElement {title: "Cores"; iconSource: "../assets/Core-32.png";}
+                ListElement {title: "Advanced"; iconSource: "";}
+                ListElement {title: "Video"; iconSource: "";}
+                ListElement {title: "Audio"; iconSource: "";}
 
             }
 
-            delegate: Label {
+            delegate: Item {
                 height: 25;
-                anchors {
-                    left: parent.left;
-                    right: parent.right;
-                    leftMargin: 45;
-                }
-                font {
-                    family: "Sans";
-                    bold: true;
-                    pixelSize: 13;
-                }
+                Row  {
+                    spacing: 5;
+                    anchors {
+                        left: parent.left;
+                        leftMargin: 45;
+                    }
 
-                color: settingsBubble.textColor;
-                text: title;
-                horizontalAlignment: Text.AlignLeft;
-                verticalAlignment: Text.AlignVCenter;
-
-                MouseArea {
-                    anchors.fill: parent;
-                    onClicked: {
-                        if (title === listView.currentName) {
-                            settingsBubble.expand = false;
-                            listView.currentName = "";
+                    Image {
+                        anchors.verticalCenter: parent.verticalCenter;
+                        source: iconSource;
+                        sourceSize {
+                            height: 16;
+                            width: 16;
                         }
-                        else {
-                            listView.currentIndex = index;
-                            settingsBubble.expand = true;
+                    }
 
-                            stackView.push({item: listView.stacks[title], replace: true, immediate: true});
-                            listView.currentName = title;
+                    Label {
+                        height: 25;
+
+                        font {
+                            family: "Sans";
+                            bold: true;
+                            pixelSize: 13;
+                        }
+
+                        color: settingsBubble.textColor;
+                        text: title;
+                        horizontalAlignment: Text.AlignLeft;
+                        verticalAlignment: Text.AlignVCenter;
+
+                        MouseArea {
+                            anchors.fill: parent;
+                            onClicked: {
+                                if (title === listView.currentName) {
+                                    settingsBubble.expand = false;
+                                    listView.currentName = "";
+                                }
+                                else {
+                                    listView.currentIndex = index;
+                                    settingsBubble.expand = true;
+
+                                    stackView.push({item: listView.stacks[title], replace: true, immediate: true});
+                                    listView.currentName = title;
+                                }
+                            }
                         }
                     }
                 }
