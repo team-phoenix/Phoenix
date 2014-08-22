@@ -11,6 +11,7 @@ Item {
     property string stackBackgroundColor: "darkgray";
     property string contentColor: "#d7d7d7";
     property string textColor: "#f1f1f1";
+    property string alternateTextColor: "#898989";
     property bool expand: false;
 
     property bool contentVisible: false;
@@ -129,6 +130,7 @@ Item {
                                    "Info": infoSettings,
                                    "Library": librarySettings,
                                    "Save": saveSettings,
+                                   "Video": videoSettings,
                                    "Advanced": advancedSettings};
             property string currentName: "";
             model: ListModel {
@@ -137,6 +139,8 @@ Item {
                 ListElement {title: "Save";}
                 ListElement {title: "Cores";}
                 ListElement {title: "Advanced";}
+                ListElement {title: "Video";}
+
 
 
             }
@@ -216,6 +220,228 @@ Item {
             top: parent.top;
         }
         initialItem: inputSettings;
+    }
+
+    Component {
+        id: videoSettings;
+        Rectangle {
+            color: settingsBubble.stackBackgroundColor;
+
+            Column {
+                anchors {
+                    fill: parent;
+                    topMargin: 25;
+                }
+                spacing: 25;
+
+                Column {
+                    id: videoHeader;
+                    anchors {
+                        left: parent.left;
+                        //top: parent.top;
+                        //topMargin: 25;
+                        leftMargin: 25;
+                    }
+                    spacing: 5;
+
+                    Text {
+                        text: "Video Settings"
+                        renderType: Text.QtRendering;
+                        color: settingsBubble.textColor;
+                        font {
+                            family: "Sans";
+                            pixelSize: 18;
+                        }
+                    }
+
+                    Text {
+                        text: "Edit the video output"
+                        renderType: Text.QtRendering;
+                        color: settingsBubble.alternateTextColor;
+                        font {
+                            family: "Sans";
+                            pixelSize: 14;
+                        }
+                    }
+                }
+
+                Column {
+                    spacing: 25;
+                    width: 200;
+                    anchors {
+                        left: parent.left;
+                        leftMargin: 25;
+                    }
+
+                    RowLayout {
+                        anchors {
+                            left: parent.left;
+                            right: parent.right;
+                        }
+
+                        spacing: 25;
+                        Text {
+                            text: "VSync"
+                            renderType: Text.QtRendering;
+                            color: settingsBubble.textColor;
+                            font {
+                                family: "Sans";
+                                pixelSize: 14;
+                            }
+                        }
+
+                        Switch {
+                            anchors.right: parent.right;
+                        }
+                    }
+
+                    RowLayout {
+                        anchors {
+                            left: parent.left;
+                            right: parent.right;
+                        }
+                        spacing: 25;
+
+                        Text {
+                            text: "Auto Fullscreen"
+                            renderType: Text.QtRendering;
+                            color: settingsBubble.textColor;
+                            font {
+                                family: "Sans";
+                                pixelSize: 14;
+                            }
+                        }
+
+                        Switch {
+                            anchors.right: parent.right;
+
+                        }
+                    }
+                }
+
+                Column {
+                    id: filterHeader;
+                    anchors {
+                        left: parent.left;
+                        leftMargin: 25;
+                    }
+                    spacing: 5;
+
+                    Text {
+                        text: "Filtering";
+                        renderType: Text.QtRendering;
+                        color: settingsBubble.textColor;
+                        font {
+                            family: "Sans";
+                            pixelSize: 18;
+                        }
+                    }
+
+                    Text {
+                        text: "Enhance the output"
+                        renderType: Text.QtRendering;
+                        color: settingsBubble.alternateTextColor;
+                        font {
+                            family: "Sans";
+                            pixelSize: 14;
+                        }
+                    }
+                }
+
+                Column {
+                    spacing: 25;
+                    width: 200;
+                    anchors {
+                        left: parent.left;
+                        leftMargin: 25;
+                    }
+
+                    RowLayout {
+                        anchors {
+                            left: parent.left;
+                            right: parent.right;
+                        }
+
+                        spacing: 25;
+                        Text {
+                            text: "Smooth"
+                            renderType: Text.QtRendering;
+                            color: settingsBubble.textColor;
+                            font {
+                                family: "Sans";
+                                pixelSize: 14;
+                            }
+                        }
+
+                        Switch {
+                            anchors.right: parent.right;
+                        }
+                    }
+                }
+
+                Column {
+                    id: aspectRatioHeader;
+                    anchors {
+                        left: parent.left;
+                        leftMargin: 25;
+                    }
+                    spacing: 5;
+
+                    Text {
+                        text: "Aspect Settings";
+                        renderType: Text.QtRendering;
+                        color: settingsBubble.textColor;
+                        font {
+                            family: "Sans";
+                            pixelSize: 18;
+                        }
+                    }
+
+                    Text {
+                        text: "Adjust the output"
+                        renderType: Text.QtRendering;
+                        color: settingsBubble.alternateTextColor;
+                        font {
+                            family: "Sans";
+                            pixelSize: 14;
+                        }
+                    }
+                }
+
+                Column {
+                    spacing: 25;
+                    width: 200;
+                    anchors {
+                        left: parent.left;
+                        leftMargin: 25;
+                    }
+
+                    RowLayout {
+                        anchors {
+                            left: parent.left;
+                            right: parent.right;
+                        }
+
+                        spacing: 25;
+                        Text {
+                            text: "Stretch Ratio"
+                            renderType: Text.QtRendering;
+                            color: settingsBubble.textColor;
+                            font {
+                                family: "Sans";
+                                pixelSize: 14;
+                            }
+                        }
+
+                        Switch {
+                            anchors.right: parent.right;
+                        }
+                    }
+                }
+
+            }
+
+        }
     }
 
     Component {
@@ -563,7 +789,7 @@ Item {
                 Text {
 
                     text: "Tweak the emulation cores";
-                    color: "#898989";
+                    color: settingsBubble.alternateTextColor;
                     renderType: Text.QtRendering;
                     font {
                         pixelSize: 14;
