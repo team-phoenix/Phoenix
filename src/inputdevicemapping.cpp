@@ -61,3 +61,9 @@ bool InputDeviceMapping::populateFromSettings(QSettings &s)
 
     return true;
 }
+
+bool InputDeviceMapping::populateFromDict(QVariantMap deviceinfo)
+{
+    setDeviceType(RETRO_DEVICE_JOYPAD); // TODO
+    return true;
+}

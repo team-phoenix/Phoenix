@@ -4,6 +4,7 @@
 
 #include <QSettings>
 #include <QMap>
+#include <QJSValue>
 
 #include "libretro_types.h"
 #include "inputdevice.h"
@@ -24,6 +25,10 @@ public:
     // takes a QSetting whose current group has been pre-set
     // by the caller to input/portX
     virtual bool populateFromSettings(QSettings &settings);
+
+    // populate a Mapping from a QVariantMap as returned
+    // by InputDevice::enumerateDevices
+    virtual bool populateFromDict(QVariantMap deviceinfo);
 
     virtual int32_t eventFromString(QString) = 0;
 

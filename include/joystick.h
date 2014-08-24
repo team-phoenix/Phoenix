@@ -27,6 +27,7 @@ public:
         virtual int32_t eventFromString(QString) Q_DECL_OVERRIDE;
 
         virtual bool populateFromSettings(QSettings &settings) Q_DECL_OVERRIDE;
+        virtual bool populateFromDict(QVariantMap deviceinfo) Q_DECL_OVERRIDE;
 
         // return true if joystick with the given guid
         // is handled by this mapping

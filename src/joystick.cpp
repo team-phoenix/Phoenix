@@ -68,8 +68,8 @@ QVariantList Joystick::enumerateDevices()
         list.append(QVariantMap {
             { "text", QString(jsname) }, // for QML model
             { "name", QString(jsname) },
-            { "class", "Joystick" },
-            { "type", QString(SDL_IsGameController(i) ? "gamecontroller" : "joystick") },
+            { "driver", QString(SDL_IsGameController(i) ? "sdl_gamecontroller"
+                                                        : "sdl_joystick") },
             { "guid", QString(guidbuf) }
         });
     }
@@ -149,6 +149,8 @@ bool Joystick::controllerButtonChanged(const SDL_Event *event) {
 
     const SDL_ControllerButtonEvent *cbutton = &event->cbutton;
     bool is_pressed = (cbutton->type == SDL_CONTROLLERBUTTONDOWN) ? true : false;
+
+    emit inputEventReceived(cbutton->button, is_pressed);
     auto retro_id = m_mapping->getMapping(cbutton->button);
     if (retro_id != (unsigned)~0)
         setState(retro_id, is_pressed);
@@ -161,7 +163,10 @@ bool Joystick::controllerAxisChanged(const SDL_Event *event) {
         return false;
 
     const SDL_ControllerAxisEvent *caxis = &event->caxis;
-    if (m_mapping->deviceType() == RETRO_DEVICE_JOYPAD) { // make analog stick emulate dpad
+    emit inputEventReceived(caxis->axis, caxis->value);
+
+    // make analog stick emulate dpad
+    if (m_mapping->deviceType() == RETRO_DEVICE_JOYPAD) {
         static int16_t threshold = 25000; // arbitrary. TODO: make it configurable
         static const QMap<SDL_GameControllerAxis, QPair<unsigned, unsigned>> mapping {
             { SDL_CONTROLLER_AXIS_LEFTX, { RETRO_DEVICE_ID_JOYPAD_LEFT,
@@ -230,6 +235,17 @@ bool Joystick::Mapping::populateFromSettings(QSettings &settings)
         QByteArray guid = guid_.toString().toLatin1();
         joystick_guid = SDL_JoystickGetGUIDFromString(guid.constData());
     }
+    return ret;
+}
+
+bool Joystick::Mapping::populateFromDict(QVariantMap deviceinfo)
+{
+    bool ret = InputDeviceMapping::populateFromDict(deviceinfo);
+    if (!ret)
+        return ret;
+
+    QByteArray guid = deviceinfo["guid"].toString().toLatin1();
+    joystick_guid = SDL_JoystickGetGUIDFromString(guid.constData());
     return ret;
 }
 

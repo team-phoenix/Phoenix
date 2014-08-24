@@ -14,8 +14,10 @@
 class InputDeviceMapping;
 
 
-class InputDevice
+class InputDevice : public QObject
 {
+    Q_OBJECT
+
 public:
     InputDevice(InputDeviceMapping *mapping);
 
@@ -29,6 +31,9 @@ public:
         QMutexLocker lock(&ids_state_mutex);
         return ids_state.value(id, 0);
     }
+
+signals:
+    void inputEventReceived(int32_t event, int16_t value);
 
 protected:
     void setDeviceName(const char *new_name);
