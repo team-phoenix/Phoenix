@@ -1,4 +1,6 @@
 
+#include <QGuiApplication>
+#include <QWindow>
 #include <QKeySequence>
 #include "keyboard.h"
 #include "logging.h"
@@ -7,11 +9,13 @@
 Keyboard::Keyboard(InputDeviceMapping *mapping) : InputDevice(mapping)
 {
     setDeviceName("Keyboard (Qt KeyEvent)");
+    topLevelWindow = QGuiApplication::topLevelWindows()[0];
+    topLevelWindow->installEventFilter(this);
 }
 
 Keyboard::~Keyboard()
 {
-
+    topLevelWindow->removeEventFilter(this);
 }
 
 QVariantList Keyboard::enumerateDevices()
@@ -25,7 +29,19 @@ QVariantList Keyboard::enumerateDevices()
     };
 }
 
-void Keyboard::processKeyEvent(QKeyEvent *event)
+bool Keyboard::eventFilter(QObject *obj, QEvent *event)
+{
+    Q_UNUSED(obj);
+    auto type = event->type();
+    if (type == QEvent::KeyPress || type == QEvent::KeyRelease) {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+        processKeyEvent(keyEvent);
+        return true;
+    }
+    return false;
+}
+
+inline void Keyboard::processKeyEvent(QKeyEvent *event)
 {
     bool is_pressed = (event->type() == QEvent::KeyPress) ? true : false;
     emit inputEventReceived(event->key(), is_pressed);

@@ -184,15 +184,6 @@ void VideoItem::keyEvent(QKeyEvent *event)
             }
             break;
     }
-
-    // we also pass every KeyEvent to each connected InputDevice which is a Keyboard.
-    // a bit ugly, but this avoid overhead of signal/slots and event filters
-    QList<InputDevice *> devices = input_manager.getDevices();
-    for (int i = 0; i < devices.size(); ++i) {
-        auto keyboardinput = dynamic_cast<Keyboard *>(devices.at(i));
-        if (keyboardinput != nullptr)
-            keyboardinput->processKeyEvent(event);;
-    }
 }
 
 void VideoItem::refreshItemGeometry()

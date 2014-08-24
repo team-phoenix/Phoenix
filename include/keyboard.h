@@ -15,9 +15,7 @@ public:
 
     static QVariantList enumerateDevices();
 
-    // process QKeyEvent sent from some widget/window
-    // as a button press in this virtual Input Device
-    void processKeyEvent(QKeyEvent *event);
+    virtual bool eventFilter(QObject *obj, QEvent *event) Q_DECL_OVERRIDE;
 
     class Mapping : public InputDeviceMapping
     {
@@ -32,6 +30,12 @@ public:
     private:
     };
 
+private:
+    QWindow *topLevelWindow;
+
+    // process QKeyEvent sent from some widget/window
+    // as a button press in this virtual Input Device
+    void processKeyEvent(QKeyEvent *event);
 };
 
 
