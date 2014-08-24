@@ -44,7 +44,8 @@ public:
 public slots:
     // wait for any input on the underlying device and maps
     // the input id to the given retro_device_id
-    virtual void setMappingOnInput(retro_device_id id) = 0;
+    virtual QVariant setMappingOnInput(retro_device_id id, QJSValue cb) = 0;
+    virtual void cancelMappingOnInput(QVariant cancelInfo) = 0;
 
 protected:
     // Type of retro device mapped:
@@ -54,6 +55,9 @@ protected:
 
     QMap<int32_t, retro_device_id> mapping;
 };
+
+// to be able to use Connection objects in QVariants
+Q_DECLARE_METATYPE(QMetaObject::Connection);
 
 
 #endif

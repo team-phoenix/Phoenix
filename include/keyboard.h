@@ -1,6 +1,8 @@
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 
+#include <memory>
+
 #include <QKeyEvent>
 
 #include "inputdevice.h"
@@ -25,9 +27,12 @@ public:
         virtual int32_t eventFromString(QString) Q_DECL_OVERRIDE;
 
     public slots:
-        virtual void setMappingOnInput(retro_device_id id) Q_DECL_OVERRIDE {};
+        virtual QVariant setMappingOnInput(retro_device_id id, QJSValue cb) Q_DECL_OVERRIDE;
+        virtual void cancelMappingOnInput(QVariant cancelInfo) Q_DECL_OVERRIDE;
 
     private:
+        // only used by setMappingOnInput helper function
+        std::unique_ptr<Keyboard> keyboard;
     };
 
 private:

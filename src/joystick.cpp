@@ -220,8 +220,37 @@ bool Joystick::handleSDLEvent(const SDL_Event *event)
     return false;
 }
 
-void Joystick::Mapping::setMappingOnInput(retro_device_id id)
+QVariant Joystick::Mapping::setMappingOnInput(retro_device_id id, QJSValue cb)
 {
+    // use a smart pointer so we can capture Connection in the lambda and not
+    // have to handle deletion ourselves.
+    // Ideally, we would use a unique_ptr but it'll only be possible in C++14
+    // which introduces lambda captures expressions.
+    auto conn = std::make_shared<QMetaObject::Connection>();
+
+    auto handleInput = [this, id, cb, conn] (int32_t ev, int16_t val) mutable {
+        if (val == 0)
+            return;
+
+        this->setMapping(ev, id);
+        if (cb.isCallable())
+            cb.call({ id, ev });
+        QObject::disconnect(*conn);
+    };
+
+    if (!joystick) {
+        // no std::make_unique in c++11
+        joystick = std::unique_ptr<Joystick>(new Joystick(this));
+    }
+    *conn = connect(joystick.get(), &InputDevice::inputEventReceived, handleInput);
+    qCDebug(phxInput) << "waiting joystick for input";
+    return QVariant::fromValue(*conn);
+}
+
+void Joystick::Mapping::cancelMappingOnInput(QVariant cancelInfo)
+{
+    if (cancelInfo.canConvert<QMetaObject::Connection>())
+        QObject::disconnect(cancelInfo.value<QMetaObject::Connection>());
 }
 
 bool Joystick::Mapping::populateFromSettings(QSettings &settings)

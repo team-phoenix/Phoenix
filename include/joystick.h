@@ -34,10 +34,14 @@ public:
         bool matchJoystick(const SDL_JoystickGUID &guid) const;
 
     public slots:
-        virtual void setMappingOnInput(retro_device_id id) Q_DECL_OVERRIDE;
+        virtual QVariant setMappingOnInput(retro_device_id id, QJSValue cb) Q_DECL_OVERRIDE;
+        virtual void cancelMappingOnInput(QVariant cancelInfo) Q_DECL_OVERRIDE;
 
     private:
         SDL_JoystickGUID joystick_guid;
+
+        // only used by setMappingOnInput helper function
+        std::unique_ptr<Joystick> joystick;
     };
 
 private:

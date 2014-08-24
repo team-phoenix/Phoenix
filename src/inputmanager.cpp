@@ -27,13 +27,10 @@ QVariantList InputManager::enumerateDevices()
 
 InputDeviceMapping *InputManager::mappingForDevice(QVariantMap device)
 {
-    Q_ASSERT(device.contains("class"));
-    auto className = device.value("class").toString();
-    if (className == "Joystick") {
-//        return new Joystick::Mapping(device);
-    } else if (className == "Keyboard") {
-//        return new Keyboard::Mapping(device);
-    }
+    Q_ASSERT(device.contains("driver"));
+    QString driverName = device.value("driver").toString();
+    return InputDeviceMappingFactory::createMapping(driverName);
+
     return nullptr;
 }
 
@@ -63,6 +60,8 @@ void InputManager::scanDevices()
         s.beginGroup("port0");
         s.setValue("input_driver", "qt_keyboard");
         s.setValue("device_type", "joypad");
+        s.setValue("joypad_select", "Backspace");
+        s.setValue("joypad_start", "Return");
         s.setValue("joypad_a", "e");
         s.setValue("joypad_b", "r");
         s.setValue("joypad_x", "d");

@@ -51,6 +51,35 @@ inline void Keyboard::processKeyEvent(QKeyEvent *event)
         setState(retro_id, is_pressed);
 }
 
+QVariant Keyboard::Mapping::setMappingOnInput(retro_device_id id, QJSValue cb)
+{
+    auto conn = std::make_shared<QMetaObject::Connection>();
+
+    auto handleInput = [this, id, cb, conn] (int32_t ev, int16_t val) mutable {
+        if (val == 0)
+            return;
+
+        this->setMapping(ev, id);
+        if (cb.isCallable())
+            cb.call({ id, ev });
+        QObject::disconnect(*conn);
+    };
+
+    if (!keyboard) {
+        // no std::make_unique in c++11
+        keyboard = std::unique_ptr<Keyboard>(new Keyboard(this));
+    }
+    *conn = connect(keyboard.get(), &InputDevice::inputEventReceived, handleInput);
+    qCDebug(phxInput) << "waiting keyboard for input";
+    return QVariant::fromValue(*conn);
+}
+
+void Keyboard::Mapping::cancelMappingOnInput(QVariant cancelInfo)
+{
+    if (cancelInfo.canConvert<QMetaObject::Connection>())
+        QObject::disconnect(cancelInfo.value<QMetaObject::Connection>());
+}
+
 int32_t Keyboard::Mapping::eventFromString(QString evname)
 {
     auto kseq = QKeySequence::fromString(evname);
