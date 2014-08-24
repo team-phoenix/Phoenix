@@ -38,6 +38,7 @@ Joystick::Joystick(InputDeviceMapping *mapping) : InputDevice(mapping)
 
 Joystick::~Joystick()
 {
+    auto l = sdl_events.lockSDL();
     sdl_events.removeCallback(&callback);
     if (controller) {
         SDL_GameControllerClose(controller);
@@ -79,7 +80,7 @@ bool Joystick::attachJoystick(int which)
 {
     Q_ASSERT(device_attached != true);
     joystick = SDL_JoystickOpen(which);
-    if (controller == nullptr) {
+    if (joystick == nullptr) {
         qCWarning(phxInput, "Joystick: Unable to open sdl joystick: %s",
                             SDL_GetError());
         return false;

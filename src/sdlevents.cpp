@@ -25,6 +25,7 @@ SDLEvents::SDLEvents()
     this->moveToThread(&thread);
     polltimer.moveToThread(&thread);
     connect(&thread, SIGNAL(started()), SLOT(threadStarted()));
+    connect(&thread, SIGNAL(finished()), SLOT(threadFinished()));
     thread.setObjectName("phoenix-SDLEvents");
 
     thread.start(QThread::HighPriority);
@@ -72,6 +73,7 @@ void SDLEvents::threadFinished()
 
 void SDLEvents::pollSDL()
 {
+    QMutexLocker l(&sdl_mutex);
     // consume moar events
     SDL_PumpEvents();
     int ret = SDL_PeepEvents(event_list, 10, SDL_GETEVENT, SDL_FIRSTEVENT, SDL_LASTEVENT);

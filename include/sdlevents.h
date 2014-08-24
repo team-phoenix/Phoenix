@@ -3,6 +3,7 @@
 #define SDLEVENTS_H
 
 #include <functional>
+#include <mutex>
 #include <QObject>
 #include <QTimer>
 #include <QThread>
@@ -34,6 +35,13 @@ public:
         event_callbacks.removeOne(cb);
     }
 
+    // locks the SDL event loop.
+    // for when functions outside of the SDL thread want to call SDL functions
+    std::unique_lock<QMutex> lockSDL()
+    {
+        return std::unique_lock<QMutex>(sdl_mutex);
+    }
+
 protected slots:
     void pollSDL();
     void threadStarted();
@@ -48,6 +56,7 @@ private:
 
     QList<EventCallback*> event_callbacks;
     QMutex event_callbacks_mutex;
+    QMutex sdl_mutex;
 };
 
 #endif
