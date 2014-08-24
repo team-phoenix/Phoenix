@@ -149,13 +149,19 @@ public:
 
         const std::string &key() const { return m_key; };
 
-        const std::string &value(const std::string &default_ = std::string("")) const
+        const std::string &value(const std::string &default_) const
         {
             if (m_value.empty())
                 return default_;
 
             return m_value;
         };
+
+        const std::string &value() const
+        {
+            static std::string default_("");
+            return value(default_);
+        }
 
         const std::string &description() const { return m_description; };
 

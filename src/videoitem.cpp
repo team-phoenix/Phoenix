@@ -232,7 +232,7 @@ void VideoItem::initGL()
     ulong core_h = item_w / desired_aspect;
     QRect viewportRect;
 
-    if(fabsf(item_aspect - desired_aspect) < 0.0001f) {
+    if(std::abs(item_aspect - desired_aspect) < 0.0001f) {
         viewportRect.setRect(viewportXY.x(), viewportXY.y(), core_w, core_h);
     }
     else if(item_aspect > desired_aspect) {
