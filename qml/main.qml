@@ -7,6 +7,7 @@ import QtQuick.Dialogs 1.1
 import QtQuick.Window 2.0
 import Qt.labs.settings 1.0
 import phoenix.window 1.0
+import phoenix.library 1.0
 
 PhoenixWindow {
     id: root;
@@ -59,6 +60,9 @@ PhoenixWindow {
         settingsDropDown.state = "retracted";
     }
 
+    PhoenixLibrary {
+        id: phoenixLibrary;
+    }
 
     MouseArea {
         anchors.fill: parent;

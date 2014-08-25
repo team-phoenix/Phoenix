@@ -10,7 +10,7 @@ TableView {
     property string textColor: "#f1f1f1";
     property string headerColor: "#4f474e";
 
-    model: gamelibrary;
+    model: phoenixLibrary.model();
 
     TableViewColumn {role: "title" ; title: "Name"; width: 350;}
     TableViewColumn {role: "console"; title: "Console"; width: 200; }

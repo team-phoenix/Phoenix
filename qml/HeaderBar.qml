@@ -404,8 +404,8 @@ Rectangle {
             title: "Add Folder to Library";
             visible: false;
             onAccepted: {
-                gamelibrary.url = fileUrl;
-                gamelibrary.startScan();
+                phoenixLibrary.folderPath = fileUrl;
+                phoenixLibrary.startImport(true);
             }
         }
 

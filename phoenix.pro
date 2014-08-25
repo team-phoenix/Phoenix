@@ -48,6 +48,7 @@ HEADERS += include/core.h                      \
            include/keyboardevents.h            \
            include/librarydbmanager.h          \
            include/gamelibrarymodel.h          \
+           include/phoenixlibrary.h            \
            include/phoenixwindow.h             \
            include/inputdevicemappingfactory.h \
            include/inputdevicefactory.h        \
@@ -68,6 +69,7 @@ SOURCES += src/main.cpp                        \
            src/keyboard.cpp                    \
            src/librarydbmanager.cpp            \
            src/gamelibrarymodel.cpp            \
+           src/phoenixlibrary.cpp              \
            src/phoenixwindow.cpp               \
            src/thegamesdb.cpp                  \
            src/cacheimage.cpp

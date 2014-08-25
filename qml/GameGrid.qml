@@ -111,7 +111,7 @@ Rectangle {
         cellWidth: 300;
         cellHeight: 300;
 
-        model: gamelibrary;
+        model: phoenixLibrary.model();
 
 
         ExclusiveGroup {

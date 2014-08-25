@@ -15,6 +15,7 @@
 #include "gamelibrarymodel.h"
 #include "librarydbmanager.h"
 #include "phoenixwindow.h"
+#include "phoenixlibrary.h"
 #include "cacheimage.h"
 
 InputManager input_manager; // global
@@ -45,17 +46,15 @@ int main(int argc, char *argv[])
     qmlRegisterType<PhoenixWindow>("phoenix.window", 1, 0, "PhoenixWindow");
     qmlRegisterType<CachedImage>("phoenix.image", 1, 0, "CachedImage");
     qmlRegisterType<VideoItem>("phoenix.video", 1, 0, "VideoItem");
+    qmlRegisterType<GameLibraryModel>("phoenix.library", 1, 0, "GameLibraryModel");
+    qmlRegisterType<PhoenixLibrary>("phoenix.library", 1, 0, "PhoenixLibrary");
     qmlRegisterType<InputDeviceMapping>();
     qRegisterMetaType<retro_device_id>("retro_device_id");
-    
+
     QQmlApplicationEngine engine;
 
     // first, set the context properties
     QQmlContext *rctx = engine.rootContext();
-    GameLibraryModel gamelibr;
-    //ImageSaver imgsav;
-    //rctx->setContextProperty("imagesaver", &imgsav);
-    rctx->setContextProperty("gamelibrary", &gamelibr);
     rctx->setContextProperty("inputmanager", &input_manager);
 
     // then, load qml and display the window
