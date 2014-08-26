@@ -3,11 +3,11 @@
 #include "audio.h"
 
 
-Audio::Audio(QObject * parent /*= 0*/)
+Audio::Audio(QObject *parent)
             : QObject(parent),
               isRunning(false),
-              aout(0),
-              aio(0),
+              aout(nullptr),
+              aio(nullptr),
               timer(this)
 {
         this->moveToThread(&thread);
