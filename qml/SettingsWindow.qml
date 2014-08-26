@@ -59,21 +59,21 @@ Item {
                 anchors {
                     left: parent.left;
                     right: parent.right;
-                    leftMargin: 30;
                 }
                 height: 20;
-                Label {
-                    //anchors.centerIn: parent;
+                Text {
                     renderType: Text.QtRendering;
-                    color: "#f1f1f1";
-                    text: "General";
+                    color: settingsBubble.textColor;
+                    text: "Customize";
                     font {
                         family: "Sans"
                         pixelSize: 14;
                         bold: true;
                     }
-                    horizontalAlignment: Text.AlignHCenter;
-                    //verticalAlignment: Text.AlignVCenter;
+                    anchors {
+                        left: parent.left;
+                        leftMargin: 20;
+                    }
                 }
             }
 
@@ -151,7 +151,7 @@ Item {
                     spacing: 5;
                     anchors {
                         left: parent.left;
-                        leftMargin: 45;
+                        leftMargin: 35;
                     }
 
                     Image {
@@ -353,6 +353,9 @@ Item {
                             anchors.right: parent.right;
                             implicitWidth: 100;
                             model: gameView.video.getAudioDevices();
+                            onCurrentIndexChanged: {
+                                gameView.video.audioDevice = currentIndex;
+                            }
                         }
                     }
                 }
@@ -672,211 +675,171 @@ Item {
         id: inputSettings;
         Rectangle {
             color: settingsBubble.contentColor;
-            Row {
-                id: portRow;
-                visible: stackView.width > width;
+            Column {
                 anchors {
-                    top: parent.top;
-                    topMargin: 25;
-                    horizontalCenter: parent.horizontalCenter;
-                }
-                spacing: 2;
-
-                Button {
-                    width: 100;
-                    height: 35;
-                    style: ButtonStyle {
-
-                        background: Rectangle {
-                            width: 100;
-                            height: 35;
-                            color: "darkgray";
-                        }
-
-                       label: Label {
-                           text: "Player 1";
-                           color: "#f1f1f1";
-                           font {
-                               pixelSize: 16;
-                           }
-                           horizontalAlignment: Text.AlignHCenter;
-                           verticalAlignment: Text.AlignVCenter;
-                       }
-                    }
-                }
-
-                Button {
-                    width: 100;
-                    height: 35;
-                    style: ButtonStyle {
-
-                        background: Rectangle {
-                            width: 100;
-                            height: 35;
-                            color: "darkgray";
-                        }
-
-                       label: Label {
-                           text: "Player 2";
-                           color: "#f1f1f1";
-                           font {
-                               pixelSize: 16;
-                           }
-                           horizontalAlignment: Text.AlignHCenter;
-                           verticalAlignment: Text.AlignVCenter;
-                       }
-                    }
-                }
-
-                Button {
-                    width: 100;
-                    height: 35;
-                    style: ButtonStyle {
-
-                        background: Rectangle {
-                            width: 100;
-                            height: 35;
-                            color: "darkgray";
-                        }
-
-                       label: Label {
-                           text: "Player 3";
-                           color: "#f1f1f1";
-                           font {
-                               pixelSize: 16;
-                           }
-                           horizontalAlignment: Text.AlignHCenter;
-                           verticalAlignment: Text.AlignVCenter;
-                       }
-                    }
-                }
-
-                Button {
-                    width: 100;
-                    height: 35;
-                    style: ButtonStyle {
-
-                        background: Rectangle {
-                            width: 100;
-                            height: 35;
-                            color: "darkgray";
-                        }
-
-                       label: Label {
-                           text: "Player 4";
-                           color: "#f1f1f1";
-                           font {
-                               pixelSize: 16;
-                           }
-                           horizontalAlignment: Text.AlignHCenter;
-                           verticalAlignment: Text.AlignVCenter;
-                       }
-                    }
-                }
-            }
-
-            Image {
-                visible: stackView.width > width;
-                anchors {
-                    top: portRow.bottom;
-                    right: inputMapper.left;
-                    bottom: parent.bottom;
-                    left: parent.left;
-                    margins: 50;
-                }
-                fillMode: Image.PreserveAspectFit;
-                sourceSize {
-                    height: 500;
-                    width: 500;
-                }
-                source: "../assets/retropad.png";
-            }
-
-
-
-            ScrollView {
-                id: inputMapper;
-                visible: stackView.width > width;
-                anchors {
-                    top: portRow.bottom;
-                    right: parent.right;
-                    bottom: parent.bottom;
-                    bottomMargin: 25;
-                    rightMargin: 25;
+                    fill: parent;
                     topMargin: 25;
                 }
-                width: 225;
-                ListView {
-                    anchors.fill: parent;
-                    height: 500;
+                spacing: 25;
+
+                Column {
+                    id: inputHeader;
+                    anchors {
+                        left: parent.left;
+                        //top: parent.top;
+                        //topMargin: 25;
+                        leftMargin: 25;
+                    }
                     spacing: 5;
-                    model: ListModel {
-                        ListElement {controllerButton: "Up"; retroId: "0";}
-                        ListElement {controllerButton: "Down"; retroId: "1";}
-                        ListElement {controllerButton: "Left"; retroId: "2";}
-                        ListElement {controllerButton: "Right"; retroId: "3";}
-                        ListElement {controllerButton: "Select"; retroId: "4";}
-                        ListElement {controllerButton: "Start"; retroId: "5";}
-                        ListElement {controllerButton: "A"; retroId: "6";}
-                        ListElement {controllerButton: "B"; retroId: "7";}
-                        ListElement {controllerButton: "X"; retroId: "8";}
-                        ListElement {controllerButton: "Y"; retroId: "9";}
-                        ListElement {controllerButton: "R"; retroId: "10";}
-                        ListElement {controllerButton: "L"; retroId: "11";}
-                        ListElement {controllerButton: "RB"; retroId: "A1";}
-                        ListElement {controllerButton: "LB"; retroId: "A2";}
-                        ListElement {controllerButton: "R3"; retroId: "12";}
-                        ListElement {controllerButton: "L3"; retroId: "13";}
 
+                    Text {
+                        text: "Input Settings"
+                        renderType: Text.QtRendering;
+                        color: settingsBubble.textColor;
+                        font {
+                            family: "Sans";
+                            pixelSize: 18;
+                        }
                     }
 
-                    delegate: Item {
-                        height: 35;
-                        width: 225;
-                        Label {
-                            text: controllerButton;
-                            anchors {
-                                right: buttonField.left;
-                                rightMargin: 15;
-                            }
+                    Text {
+                        text: "Adjust your input devices"
+                        renderType: Text.QtRendering;
+                        color: settingsBubble.alternateTextColor;
+                        font {
+                            family: "Sans";
+                            pixelSize: 14;
+                        }
+                    }
+                }
 
-                            color: "#f1f1f1";
-                            font {
-                                pixelSize: 16;
+            Row {
+                anchors {
+                    left: parent.left;
+                    leftMargin: 25;
+                    right: parent.right;
+                }
+                height: 500;
+                spacing: 15;
+
+                Image {
+                    visible: stackView.width > width;
+
+                    fillMode: Image.PreserveAspectFit;
+                    height: 250;
+                    width: 250;
+                    sourceSize {
+                        height: 500;
+                        width: 500;
+                    }
+                    source: "../assets/retropad.png";
+                    anchors.verticalCenter: parent.verticalCenter;
+                    anchors.verticalCenterOffset: -110;
+
+                }
+
+
+
+                ScrollView {
+                    id: inputMapper;
+                    visible: stackView.width > width;
+                    height: 400;
+                    width: 400;
+                    GridView {
+                        //anchors.fill: parent;
+                        height: parent.height;
+                        width: parent.width;
+                        cellHeight: 30;
+                        cellWidth: 150;
+                        header: Item {
+                            height: 45;
+                            width: 125;
+
+                            Row {
+                                anchors {
+                                    fill: parent;
+                                    leftMargin: 60;
+                                }
+                                spacing: 15;
+
+                                ComboBox {
+                                    property int num: devicesBox.count;
+                                    width: 125;
+                                    model:  {
+                                        var mod = [];
+                                        for (var i=0; i < num; ++i) {
+                                            mod.push("Player " + (i + 1));
+                                        }
+                                        return mod;
+                                    }
+                                }
+                                ComboBox {
+                                    id: devicesBox;
+                                    width: 125;
+                                    model: inputmanager.enumerateDevices();
+                                }
                             }
                         }
 
-                        TextField {
-                            id: buttonField;
-                            readOnly: true;
-                            width: 100;
-                            height: 25;
-                            text: retroId;
-                            anchors.right: parent.right;
-                            anchors.rightMargin: 50;
-                            horizontalAlignment: Text.AlignHCenter;
-                            MouseArea {
-                                anchors.fill: parent;
-                                onClicked: {
-                                    //inputmanager.iterateDevices();
+                        model: ListModel {
+                            ListElement {controllerButton: "Up"; retroId: "0";}
+                            ListElement {controllerButton: "Down"; retroId: "1";}
+                            ListElement {controllerButton: "Left"; retroId: "2";}
+                            ListElement {controllerButton: "Right"; retroId: "3";}
+                            ListElement {controllerButton: "Select"; retroId: "4";}
+                            ListElement {controllerButton: "Start"; retroId: "5";}
+                            ListElement {controllerButton: "A"; retroId: "6";}
+                            ListElement {controllerButton: "B"; retroId: "7";}
+                            ListElement {controllerButton: "X"; retroId: "8";}
+                            ListElement {controllerButton: "Y"; retroId: "9";}
+                            ListElement {controllerButton: "R"; retroId: "10";}
+                            ListElement {controllerButton: "L"; retroId: "11";}
+                            ListElement {controllerButton: "RB"; retroId: "A1";}
+                            ListElement {controllerButton: "LB"; retroId: "A2";}
+                            ListElement {controllerButton: "R3"; retroId: "12";}
+                            ListElement {controllerButton: "L3"; retroId: "13";}
+
+                        }
+
+                        delegate: Item {
+                            height: 30;
+                            width: 225;
+                            Text {
+                                renderType: Text.QtRendering;
+                                text: controllerButton;
+                                anchors {
+                                    right: buttonField.left;
+                                    rightMargin: 15;
+                                }
+
+                                color: settingsBubble.textColor;
+                                font {
+                                    pixelSize: 12;
+                                }
+                            }
+
+                            TextField {
+                                id: buttonField;
+                                readOnly: true;
+                                width: 100;
+                                height: 20;
+                                text: retroId;
+                                anchors.right: parent.right;
+                                anchors.rightMargin: 50;
+                                horizontalAlignment: Text.AlignHCenter;
+                                MouseArea {
+                                    anchors.fill: parent;
+                                    onClicked: {
+                                        //inputmanager.iterateDevices();
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
-
-            //ComboBox {
-                //width: 200;
-               // model: inputmanager.enumerateDevices();
-            //}
-
-            Component.onCompleted: {
-                //inputmanager.enumerateDevices();
-            }
         }
-
-
+        }
     }
 
     Component {
