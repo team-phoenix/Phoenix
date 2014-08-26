@@ -32,6 +32,8 @@ class VideoItem : public QQuickItem {
     Q_PROPERTY(QString saveDirectory READ saveDirectory  WRITE setSaveDirectory NOTIFY systemDirectoryChanged)
     Q_PROPERTY(int fps READ fps NOTIFY fpsChanged)
     Q_PROPERTY(qreal volume READ volume WRITE setVolume NOTIFY volumeChanged)
+    Q_PROPERTY(int filtering READ filtering WRITE setFiltering NOTIFY filteringChanged)
+    Q_PROPERTY(bool stretchVideo READ stretchVideo WRITE setStretchVideo NOTIFY stretchVideoChanged)
 
 
 public:
@@ -46,8 +48,10 @@ public:
     void setWindowed(bool setWindowed);
     void setSystemDirectory(QString systemDirectory);
     void setSaveDirectory(QString saveDirectory);
-    void setTexture(QSGTexture::Filtering filter);
+    void setTexture();
     void setVolume(qreal volume);
+    void setFiltering(int filtering);
+    void setStretchVideo(bool stretchVideo);
 
 
     QString libcore() const
@@ -90,6 +94,18 @@ public:
         return m_volume;
     }
 
+    int filtering() const
+    {
+        return m_filtering;
+    }
+
+    bool stretchVideo() const
+    {
+        return m_stretch_video;
+    }
+
+
+
 
 protected:
     void keyEvent(QKeyEvent *event);
@@ -115,12 +131,15 @@ signals:
     void saveDirectoryChanged();
     void fpsChanged(int);
     void volumeChanged(qreal);
+    void filteringChanged();
+    void stretchVideoChanged();
 
 public slots:
     void paint();
     void cleanup();
     void saveGameState();
     void loadGameState();
+    QStringList getAudioDevices();
 
 private slots:
     void handleWindowChanged(QQuickWindow *win);
@@ -150,6 +169,8 @@ private:
     QTimer fps_timer;
     QElapsedTimer frame_timer;
     qint64 fps_deviation;
+    int m_filtering;
+    bool m_stretch_video;
     // [1]
 
     // Qml defined variables

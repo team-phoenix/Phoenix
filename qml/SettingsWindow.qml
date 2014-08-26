@@ -283,7 +283,7 @@ Item {
 
                 Column {
                     spacing: 25;
-                    width: 200;
+                    width: 250;
                     anchors {
                         left: parent.left;
                         leftMargin: 25;
@@ -308,6 +308,51 @@ Item {
 
                         Switch {
                             anchors.right: parent.right;
+                            checked: (headerBar.volumeLevel=== 0.0);
+                            property real previousLevel: headerBar.volumeLevel;
+                            onCheckedChanged: {
+
+                                if (checked) {
+                                    if (headerBar.volumeLevel !== 0.0) {
+                                        previousLevel = headerBar.volumeLevel;
+                                        headerBar.volumeLevel = 0.0;
+                                    }
+                                    else {
+                                        previousLevel = 1.0;
+                                    }
+
+                                }
+                                else {
+                                    headerBar.volumeLevel = previousLevel;
+                                }
+
+                                console.log(headerBar.volumeLevel);
+
+                            }
+                        }
+                    }
+
+                    RowLayout {
+                        anchors {
+                            left: parent.left;
+                            right: parent.right;
+                        }
+
+                        spacing: 25;
+                        Text {
+                            text: "Available Devices"
+                            renderType: Text.QtRendering;
+                            color: settingsBubble.textColor;
+                            font {
+                                family: "Sans";
+                                pixelSize: 14;
+                            }
+                        }
+
+                        ComboBox {
+                            anchors.right: parent.right;
+                            implicitWidth: 100;
+                            model: gameView.video.getAudioDevices();
                         }
                     }
                 }
@@ -318,6 +363,7 @@ Item {
     Component {
         id: videoSettings;
         Rectangle {
+            id: video;
             color: settingsBubble.stackBackgroundColor;
 
             Column {
@@ -384,7 +430,15 @@ Item {
                         }
 
                         Switch {
+                            id: vsyncSwitch;
                             anchors.right: parent.right;
+                            onCheckedChanged: {
+                                if (checked)
+                                    root.swapInterval = 1;
+                                else
+                                    root.swapInterval = 0;
+                                console.log("You need to reset Phoenix for the change to take effect");
+                            }
                         }
                     }
 
@@ -406,8 +460,8 @@ Item {
                         }
 
                         Switch {
+                            id: autoFullscreenSwitch;
                             anchors.right: parent.right;
-
                         }
                     }
                 }
@@ -467,7 +521,15 @@ Item {
                         }
 
                         Switch {
+                            id: filteringSwitch;
                             anchors.right: parent.right;
+                            checked: (gameView.filtering === 2);
+                            onCheckedChanged: {
+                                if (checked)
+                                    gameView.filtering = 2;
+                                else
+                                    gameView.filtering = 1;
+                            }
                         }
                     }
                 }
@@ -517,7 +579,7 @@ Item {
 
                         spacing: 25;
                         Text {
-                            text: "Stretch Ratio"
+                            text: "Stretch Video"
                             renderType: Text.QtRendering;
                             color: settingsBubble.textColor;
                             font {
@@ -527,7 +589,17 @@ Item {
                         }
 
                         Switch {
+                            id: ratioSwitch;
                             anchors.right: parent.right;
+                            checked: gameView.stretchVideo;
+                            onCheckedChanged: {
+                                if (checked)
+                                    gameView.stretchVideo = true;
+                                else
+                                    gameView.stretchVideo = false;
+
+                            }
+
                         }
                     }
                 }

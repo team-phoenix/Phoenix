@@ -11,12 +11,14 @@ VideoItem::VideoItem()
     m_program = nullptr;
     texture_node = nullptr;
     m_libcore = "";
+    m_stretch_video = false;
+    m_filtering = 2;
 
     audio = new Audio();
     Q_CHECK_PTR(audio);
     audio->start();
     core->audio_buf = audio->abuf();
-    m_volume = 0.0;
+    m_volume = 1.0;
 
     connect(&fps_timer, SIGNAL(timeout()), this, SLOT(updateFps()));
     frame_timer.invalidate();
@@ -83,7 +85,6 @@ void VideoItem::setSystemDirectory(QString systemDirectory)
 {
     m_system_directory = systemDirectory;
     core->setSystemDirectory(systemDirectory);
-
 }
 
 void VideoItem::setSaveDirectory(QString saveDirectory)
@@ -153,6 +154,27 @@ void VideoItem::setRun(bool run)
     emit runChanged(run);
 }
 
+void VideoItem::setFiltering(int filtering)
+{
+    m_filtering = filtering;
+    emit filteringChanged();
+}
+
+void VideoItem::setStretchVideo(bool stretchVideo)
+{
+    m_stretch_video = stretchVideo;
+    qCDebug(phxLibrary) << "SET ASPECT: " << m_stretch_video;
+    emit stretchVideoChanged();
+}
+
+QStringList VideoItem::getAudioDevices()
+{
+    QStringList list;
+    foreach (const QAudioDeviceInfo &device_info, QAudioDeviceInfo::availableDevices(QAudio::AudioOutput))
+        list.append(device_info.deviceName());
+    return list;
+}
+
 void VideoItem::updateAudioFormat()
 {
     QAudioFormat format;
@@ -199,7 +221,13 @@ void VideoItem::refreshItemGeometry()
 
 void VideoItem::initGL()
 {
-    qreal desired_aspect = core->getAspectRatio();
+    qreal desired_aspect;
+
+    if (m_stretch_video)
+        desired_aspect = static_cast<qreal>(window()->width()) / static_cast<qreal>(window()->height());\
+    else
+        desired_aspect = core->getAspectRatio();
+
     ulong core_w = item_h * desired_aspect;
     ulong core_h = item_w / desired_aspect;
     QRect viewportRect;
@@ -262,7 +290,7 @@ void VideoItem::initShader()
 
 }
 
-void VideoItem::setTexture(QSGTexture::Filtering filter)
+void VideoItem::setTexture()
 {
     QImage::Format frame_format = retroToQImageFormat(core->getPixelFormat());
 
@@ -274,8 +302,7 @@ void VideoItem::setTexture(QSGTexture::Filtering filter)
                                                         frame_format).mirrored()
                                                     , QQuickWindow::TextureOwnsGLTexture);
 
-    texture_node->setFiltering(filter);
-
+    texture_node->setFiltering(static_cast<QSGTexture::Filtering>(m_filtering));
     texture_node->setHorizontalWrapMode(QSGTexture::ClampToEdge);
     texture_node->setVerticalWrapMode(QSGTexture::ClampToEdge);
 
@@ -315,7 +342,7 @@ void VideoItem::paint()
         fps_count++;
 
         // Sets texture from core->getImageData();
-        setTexture(QSGTexture::Linear);
+        setTexture();
     }
 
 

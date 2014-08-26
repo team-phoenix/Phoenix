@@ -3,8 +3,8 @@ import QtQuick.Controls 1.1
 import QtQuick.Controls.Styles 1.1
 import QtQuick.Layouts 1.1
 import QtGraphicalEffects 1.0
-
-import VideoItem 1.0
+import Qt.labs.settings 1.0
+import phoenix.video 1.0
 
 
 Item {
@@ -12,6 +12,8 @@ Item {
     width: 800;
     height: 600;
     visible: true;
+
+    property string stackName: "gameview";
 
     property bool run: false;
     property string gameName: "";
@@ -25,6 +27,24 @@ Item {
     property bool ranOnce: false;
     property bool screenTimer: false;
     property alias gameMouse: gameMouse;
+    property int filtering: 2;
+    property bool stretchVideo: false;
+
+    onVolumeLevelChanged: {
+        console.log("volume level: " + volumeLevel);
+    }
+
+    property alias video: videoItem;
+
+    Settings {
+
+        category: "Video";
+        //property alias vsync: gameView.checked;
+        property alias smooth: gameView.filtering;
+        property alias stretchVideo: gameView.stretchVideo;
+        property alias volumeLevel: gameView.volumeLevel;
+        //property alias autoFullscreen: autoFullscreenSwitch.checked;
+    }
 
 
     function timerEffects() {
@@ -91,6 +111,9 @@ Item {
         game: gameView.gameName;
         run: gameView.run;
         volume: gameView.volumeLevel;
+        filtering: gameView.filtering;
+        stretchVideo: gameView.stretchVideo;
+
         onRunChanged: {
             if (run)
                 headerBar.playIcon = "/assets/GameView/pause.png";
