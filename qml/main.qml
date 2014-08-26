@@ -150,6 +150,7 @@ PhoenixWindow {
     DropShadow {
         source: settingsDropDown;
         anchors.fill: source;
+        visible: source.visible;
         horizontalOffset: 2;
         verticalOffset: 4;
         radius: 4;
@@ -162,7 +163,7 @@ PhoenixWindow {
    DropShadow {
         source: settingsDropDown;
         anchors.fill: source;
-
+        visible: source.visible;
         horizontalOffset: -2;
         verticalOffset: 4;
         radius: 4;
