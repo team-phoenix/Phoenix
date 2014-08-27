@@ -12,6 +12,17 @@ DEFINES += '"PHOENIX_VERSION=\\"$$VERSION\\""'
 
 LIBS += -lSDL2
 
+linux-g++ {
+    QMAKE_CXXFLAGS_RELEASE = -D_FORTIFY_SOURCE=2
+
+    # GCC >= 4.9
+    system(g++ --version | grep -E -q -e '"4\.(9|[0-9]{2})"') {
+        QMAKE_CXXFLAGS += -fstack-protector-strong
+        QMAKE_CXXFLAGS_DEBUG += -fsanitize=undefined -fsanitize=address -fno-omit-frame-pointer
+        QMAKE_LFLAGS_DEBUG += -fsanitize=undefined -fsanitize=address
+    }
+}
+
 win32 {
     LIBS += -LC:/SDL2/lib
     LIBS += -lmingw32 -lSDL2main -lSDL2
