@@ -183,7 +183,7 @@ void GameLibraryModel::initQuery(GameData *data)
     else
         query.bindValue(3, "qrc:/assets/No-Art.png");
 
-    query.bindValue(1, system);
+    query.bindValue(1, data->platform);
     query.bindValue(2, "0h 0m 0s");
 
     updateQuery();
