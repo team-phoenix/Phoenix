@@ -1,5 +1,6 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.1
+import QtQuick.Controls.Styles 1.1
 import QtGraphicalEffects 1.0
 import QtQuick.Layouts 1.1
 
@@ -17,11 +18,45 @@ Rectangle {
     property bool zoomSliderPressed: false;
     property bool resizeGrid: false;
 
+    border {
+        width: 1;
+        color: "#1a1a1a";
+    }
+
+    Rectangle {
+        // bottomBorder;
+        anchors {
+            bottom: parent.bottom;
+            left: parent.left;
+            right: parent.right;
+        }
+        height: 2;
+        color: "#0b0b0b";
+    }
+
     onZoomFactorChanged: {
         if (gridView.cellHeight * zoomFactor !== gridView.cellHeight)
             resizeGrid = true;
     }
 
+    ScrollView {
+        anchors.fill: parent;
+        style: ScrollViewStyle {
+            frame: Rectangle {
+                color: "#202020";
+                width: 0;
+            }
+            transientScrollBars: true;
+            handleOverlap: 5;
+            scrollToClickedPosition: true;
+
+            scrollBarBackground: Rectangle {
+                color: "#1f1f1f";
+                height: control.height;
+                width: styleData.hovered ? 17 : 15;
+            }
+
+        }
 
     GridView {
         id: gridView;
@@ -61,12 +96,12 @@ Rectangle {
             fill: parent;
             leftMargin: (parent.width >= cellWidth) ? ((parent.width % cellWidth) / 2) : 0;
             rightMargin: leftMargin;
-            topMargin: 20;
-            bottomMargin: 20;
+            topMargin: 40;
+            bottomMargin: 40;
         }
 
-        cellWidth: 100;
-        cellHeight: 100;
+        cellWidth: 300;
+        cellHeight: 300;
 
         model: gamelibrary;
 
@@ -78,8 +113,8 @@ Rectangle {
 
         delegate: Item {
             id: gridItem;
-            height: gridView.cellHeight;
-            width: gridView.cellWidth;
+            height: gridView.cellHeight - (50 / gameGrid.zoomFactor);
+            width: gridView.cellWidth - (50 / gameGrid.zoomFactor);
 
 
             Item {
@@ -131,7 +166,7 @@ Rectangle {
 
                         MouseArea {
                             anchors.fill: parent;
-                            onPressed: {
+                            onDoubleClicked: {
                                 if (imageHighlight.checked)
                                     imageHighlight.checked = false;
                                 else
@@ -140,6 +175,7 @@ Rectangle {
                                     gameView.coreName = "C:/Users/lee/Desktop/32_cores/snes9x_libretro.dll"
                                 if (gameView.gameName == "")
                                     gameView.gameName = "C:/Users/lee/Documents/Emulation/SNES/Super Mario All-Stars + Super Mario World (USA).sfc";
+                                headerBar.userText = title;
                                 gameView.run = true;
                                 gameView.loadSaveState = true;
                                 windowStack.push({item: gameView, replace: true });
@@ -177,7 +213,7 @@ Rectangle {
 
                     font {
                         bold: true;
-                        pixelSize: 6 + gridView.cellWidth / 20;
+                        pixelSize: 3 + gridView.cellWidth / 20;
                         family: "Sans";
                     }
 
@@ -186,5 +222,6 @@ Rectangle {
                 }
             }
         }
+    }
     }
 }

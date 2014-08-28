@@ -6,7 +6,14 @@
     <file>GameView.qml</file>
     <file>HeaderBar.qml</file>
     <file>main.qml</file>
-    <file>SettingsButton.qml</file>
     <file>SettingsWindow.qml</file>
+    <file>VideoSettings.qml</file>
+    <file>AudioSettings.qml</file>
+    <file>InputSettings.qml</file>
+    <file>CoreSettings.qml</file>
+    <file>LibrarySettings.qml</file>
+    <file>SaveSettings.qml</file>
+    <file>AdvancedSettings.qml</file>
+    <file>SettingsDropDown.qml</file>
 </qresource>
 </RCC>

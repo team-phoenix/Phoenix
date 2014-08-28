@@ -6,15 +6,15 @@ TableView {
     id: table;
 
     property string itemName: "table";
-    property string highlightColor: "#c3c3c3";
+    property string highlightColor: "#4a4a4a";
     property string textColor: "#f1f1f1";
     property string headerColor: "#4f474e";
 
     model: gamelibrary;
 
-    TableViewColumn { role: "title"  ; title: "Name" ; width: 200 }
-    TableViewColumn { role: "console"  ; title: "Console" ; width: 140 }
-    TableViewColumn { role: "timePlayed"  ; title: "Time Played" ; width: 60; }
+    TableViewColumn {role: "title" ; title: "Name"; width: 350;}
+    TableViewColumn {role: "console"; title: "Console"; width: 200; }
+    TableViewColumn {role: "timePlayed"; title: "Time Played"; width: 200; }
 
     onSortIndicatorColumnChanged: model.sort(sortIndicatorColumn, sortIndicatorOrder)
     onSortIndicatorOrderChanged: model.sort(sortIndicatorColumn, sortIndicatorOrder)
@@ -28,8 +28,57 @@ TableView {
         height: 35;
         width: parent.width;
 
-        Label {
+        Rectangle {
+            anchors {
+                top: parent.top;
+                left: parent.left;
+                right: parent.right;
+            }
+            height: 1;
+
+            color: "#303030";
+        }
+
+        Row {
+            id: rightRowBorder;
+            anchors {
+                right: parent.right;
+                top: parent.top;
+                bottom: parent.bottom;
+            }
+
+            Rectangle {
+                color: "#1a1a1a";
+                anchors {
+                    top: parent.top;
+                    bottom: parent.bottom;
+                }
+                width: 1;
+            }
+        }
+
+        Column {
+            anchors {
+                right: rightRowBorder.left;
+                left: parent.left;
+                bottom: parent.bottom;
+            }
+
+            Rectangle {
+                anchors {
+                    right: parent.right;
+                    left: parent.left;
+                }
+                color: "#1a1a1a";
+                height: 1;
+            }
+        }
+
+
+
+        Text {
             text: styleData.value;
+            renderType: Text.QtRendering;
             anchors {
                 left: parent.left;
                 leftMargin: 15;
@@ -39,7 +88,7 @@ TableView {
 
             font {
                 bold: true;
-                pixelSize: 16;
+                pixelSize: 12;
                 family: "Sans";
             }
 
@@ -54,10 +103,19 @@ TableView {
             color: "#202020";
             width: 0;
         }
+        transientScrollBars: true;
+        handleOverlap: 5;
+        scrollToClickedPosition: true;
+
+        scrollBarBackground: Rectangle {
+            color: "#1f1f1f";
+            height: control.height;
+            width: styleData.hovered ? 17 : 15;
+        }
 
         rowDelegate: Rectangle {
             id: row;
-            color: styleData.alternate ? "#171717" : "#0f0f0f";
+            color: styleData.alternate ? "#262626" : "#2e2e2e";
             width: parent.width;
             height: 32;
 
@@ -75,7 +133,7 @@ TableView {
                     color = table.highlightColor;
                 }
                 else {
-                    color = styleData.alternate ? "#171717" : "#0f0f0f";
+                    color = styleData.alternate ? "#262626" : "#2e2e2e";
                 }
             }
 
@@ -87,19 +145,19 @@ TableView {
         }
 
         itemDelegate: Item {
-            Label {
+            Text {
                 anchors {
                     left: parent.left;
                     leftMargin: 15;
                     verticalCenter: parent.verticalCenter;
                 }
-                width: 175;
+                renderType: Text.QtRendering;
+                width: control.width;
                 color: "#f1f1f1";
                 text: styleData.value;
 
                 font {
-                    bold: true;
-                    pixelSize: 14;
+                    pixelSize: 11;
                     family: "Sans";
                 }
 

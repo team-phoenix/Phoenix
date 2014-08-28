@@ -12,6 +12,55 @@ Rectangle {
     property real progressValue: gamelibrary.progress;
     property string progressText: gamelibrary.label;
 
+    Rectangle {
+        id: topBord;
+        anchors {
+            top: parent.top;
+            left: parent.left;
+            right: parent.right;
+        }
+        height: 1;
+        color: "#1a1a1a";
+    }
+
+    Rectangle {
+        id: rightBord;
+        anchors {
+            top: parent.top;
+            bottom: parent.bottom;
+            right: parent.right;
+        }
+        width: 1;
+        color: "#1a1a1a";
+    }
+
+    Row {
+        id: leftBord;
+        anchors {
+            left: parent.left;
+            top: parent.top;
+            bottom: parent.bottom;
+        }
+
+        Rectangle {
+            anchors {
+                top: parent.top;
+                bottom: parent.bottom;
+            }
+            width: 2;
+            color: root.borderColor;
+        }
+
+        Rectangle {
+            anchors {
+                top: parent.top;
+                bottom: parent.bottom;
+            }
+            width: 1;
+            color: "#191919";
+        }
+    }
+
     ListView {
         id: listView;
         anchors {
@@ -41,7 +90,7 @@ Rectangle {
                 font {
                     bold: true;
                     family: "Sans";
-                    pixelSize: 13;
+                    pixelSize: 12;
                 }
             }
         }
@@ -57,16 +106,7 @@ Rectangle {
                 height: parent.height;
                 width: parent.width;
 
-                Rectangle {
-                    id: topBorder;
-                    color: "#111111";
-                    anchors {
-                        left: parent.left;
-                        right: parent.right;
-                        top: parent.top;
-                    }
-                    height: 1;
-                }
+
 
 
                 Rectangle {
@@ -78,18 +118,77 @@ Rectangle {
                         bottom: parent.bottom;
                     }
                     color: listView.currentItem ? "#171717" : "#000000FF";
+                    Rectangle {
+                        id: topBorder;
+                        color: "#f27b77";
+                        anchors {
+                            left: parent.left;
+                            leftMargin: leftBord.width;
+                            top: parent.top;
+                        }
+                        height: 2;
+                        width: 4;
+                    }
+
+                    Row {
+                        // leftAccent;
+                        anchors {
+                            left: parent.left;
+                            leftMargin: leftBord.width;
+                            bottom: bottomB.top;
+                            top: topBorder.bottom;
+                        }
+
+                        Rectangle {
+                            anchors {
+                                top: parent.top;
+                                bottom: parent.bottom;
+                            }
+                            width: 1;
+                            color: "#db5753";
+                        }
+
+                        Rectangle {
+                            anchors {
+                                top: parent.top;
+                                bottom: parent.bottom;
+                            }
+                            width: 3;
+                            color: "#e8433f";
+                        }
+
+                    }
+
+                    Column {
+                        id: bottomB;
+                        anchors {
+                            right: parent.right;
+                            rightMargin: rightBord.width;
+                            left: parent.left;
+                            leftMargin: leftBord.width;
+                            bottom: parent.bottom;
+                        }
+
+                        Rectangle {
+                            color: "#a22f2c";
+                            anchors {
+                                left: parent.left;
+                            }
+                            width: 4;
+                            height: 2;
+                        }
+                        Rectangle {
+                            color: "#474747";
+                            anchors {
+                                left: parent.left;
+                                right: parent.right;
+                            }
+                            height: 1;
+                        }
+                    }
                 }
 
-                Rectangle {
-                    id: buttomBorder;
-                    color: "#2b2b2b";
-                    anchors {
-                        left: parent.left;
-                        right: parent.right;
-                        bottom: parent.bottom;
-                    }
-                    height: 1;
-                }
+
             }
         }
 
@@ -124,7 +223,7 @@ Rectangle {
             Row {
                 id: row;
                 anchors.fill: parent;
-                anchors.leftMargin: 50;
+                anchors.leftMargin: 45;
                 spacing: 10;
 
                 Image {
@@ -138,7 +237,7 @@ Rectangle {
                     width: 20;
                 }
 
-                Label {
+                Text {
                     id: consoleItem;
                     anchors.verticalCenter: parent.verticalCenter;
                     text: title;
@@ -146,7 +245,7 @@ Rectangle {
                     renderType: Text.QtRendering;
                     font {
                         family: "Sans";
-                        pixelSize: 13;
+                        pixelSize: 11;
                     }
                 }
             }
@@ -160,14 +259,15 @@ Rectangle {
         }
     }
 
-    Label {
+    Text {
         id: favorites;
         z: listView.z + 1;
-        text: "Favorites";
+        //text: "Favorites";
+        renderType: Text.QtRendering;
 
         font {
             bold: true;
-            pixelSize: 15;
+            pixelSize: 12;
             family: "Sans";
         }
 
@@ -183,20 +283,108 @@ Rectangle {
     Rectangle {
         id: progressArea;
         z: 1;
-        visible: consoleBar.progressText !== "";
+        visible: true;//consoleBar.progressText !== "";
         anchors {
             bottom: parent.bottom;
             left: parent.left;
+            leftMargin: leftBord.width;
             right: parent.right;
+            rightMargin: rightBord.width;
         }
 
         height: 75;
-        color: "#242323";
+        color: "#2e2e2e";
+
+        Column {
+            id: _topBord;
+            anchors {
+                left: parent.left;
+                right: parent.right;
+                top: parent.top;
+            }
+
+            Rectangle {
+                anchors {
+                    left: parent.left;
+                    right: parent.right;
+                }
+                height: 1;
+                color: root.borderColor;
+            }
+
+            Rectangle {
+                anchors {
+                    left: parent.left;
+                    right: parent.right;
+                }
+                height: 1;
+                color: "#474747";
+            }
+        }
+
+        Rectangle {
+            color: "#383838";
+            anchors {
+                right: parent.right;
+                top: _topBord.bottom;
+                bottom: parent.bottom;
+            }
+            width: 1;
+        }
+
+        Rectangle {
+            color: "#383838";
+            anchors {
+                left: parent.left;
+                top: _topBord.bottom;
+                bottom: parent.bottom;
+            }
+            width: 1;
+        }
+
+        Column {
+            id: bottomBord;
+            anchors {
+                left: parent.left;
+                right: parent.right;
+                bottom: parent.bottom;
+            }
+
+            Rectangle {
+                id: bottomBorder1;
+                anchors {
+                    left: parent.left;
+                    right: parent.right;
+                }
+                height: 1;
+                color: "#404040";
+            }
+
+            Rectangle {
+                id: bottomBorder2;
+                anchors {
+                    left: parent.left;
+                    right: parent.right;
+                }
+                height: 1;
+                color: "#1a1a1a";
+            }
+
+            Rectangle {
+                id: bottomBorder3;
+                anchors {
+                    left: parent.left;
+                    right: parent.right;
+                }
+                height: 1;
+                color: root.borderColor;
+            }
+        }
 
         Column {
             spacing: 4;
             anchors {
-                verticalCenterOffset: -5;
+                verticalCenterOffset: 0;
                 centerIn: parent;
             }
             //anchors {
@@ -228,8 +416,7 @@ Rectangle {
 
                 style: ProgressBarStyle {
                     background: Rectangle {
-                        color: "#1a1a1a";
-                        //opacity: 0.8;
+                        color: "#0b0b0b";
                         implicitWidth: 175;
                         implicitHeight: 4;
                     }

@@ -15,15 +15,49 @@ PhoenixWindow {
     minimumHeight: 480;
     minimumWidth: 640;
 
+    property string borderColor: "#0b0b0b";
+
+    Rectangle {
+        id: leftBorder;
+        anchors {
+            top: parent.top;
+            left: parent.left;
+            bottom: parent.bottom;
+        }
+        width: 2;
+        color: borderColor;
+    }
+
+    Rectangle {
+        id: rightBorder;
+        anchors {
+            top: parent.top;
+            right: parent.right;
+            bottom: parent.bottom;
+        }
+        width: 2;
+        color: borderColor;
+    }
+
+    Rectangle {
+        id: bottomBorder;
+        anchors {
+            bottom: bottom.top;
+            left: parent.left;
+            right: parent.right;
+        }
+        height: 2;
+        color: borderColor;
+    }
+
     title: "Phoenix";
 
     property bool clear: false;
-    property string accentColor:"#b85353";
+    property string accentColor:"#e8433f";
 
     onWidthChanged: {
         settingsDropDown.state = "retracted";
     }
-
 
 
     MouseArea {
@@ -35,7 +69,7 @@ PhoenixWindow {
         id: gameGrid;
         GameGrid {
             property string itemName: "grid";
-            color: "#1a1a1a";
+            color: "#262626";
             zoomFactor: headerBar.sliderValue;
             zoomSliderPressed: headerBar.sliderPressed;
 
@@ -46,9 +80,9 @@ PhoenixWindow {
         id: gameTable;
         GameTable {
             itemName: "table";
-            highlightColor: "#494545";
+            highlightColor: "#4a4a4a";
             textColor: "#f1f1f1";
-            headerColor: "#252525";
+            headerColor: "#262626";
         }
     }
 
@@ -76,8 +110,8 @@ PhoenixWindow {
             }
         }
 
-        height: 50;
-        color: "#3b3b3b";
+        height: 55;
+        //color: "#3b3b3b";
         fontSize: 14;
     }
 
@@ -89,12 +123,11 @@ PhoenixWindow {
             left: parent.left;
             right: parent.right;
             top: parent.top;
-            topMargin: 68;
+            topMargin: 60;
             rightMargin: 50;
-            bottom: parent.bottom;
-            bottomMargin: 50;
         }
         width: 50;
+        height: 225;
 
         Rectangle {
             visible: parent.visible;
@@ -102,7 +135,28 @@ PhoenixWindow {
             height: 22;
             width: 22;
             rotation: 45;
-            color: settingsBubble.stackBackgroundColor;
+            color: "#2f2f2f";
+            z: settingsBubble.z + 1;
+
+            Rectangle {
+                anchors {
+                    top: parent.top;
+                    left: parent.left;
+                    right: parent.right;
+                }
+                height: 1;
+                color: "#0b0b0b";
+            }
+
+            Rectangle {
+                anchors {
+                    top: parent.top;
+                    left: parent.left;
+                    bottom: parent.bottom;
+                }
+                width: 1;
+                color: "#0b0b0b";
+            }
 
             Behavior on opacity {
                 NumberAnimation {
@@ -121,7 +175,7 @@ PhoenixWindow {
 
         }
 
-        SettingsWindow {
+        SettingsDropDown {
             id: settingsBubble;
             opacity: parent.visible ? 1.0 : 0.0;
 
@@ -142,7 +196,7 @@ PhoenixWindow {
             visible: parent.visible;
             stackBackgroundColor: "#f4f4f4";
             contentColor: "#f4f4f4";
-            textColor: "#515151";
+            textColor: "#f1f1f1";
         }
 
     }
@@ -150,25 +204,12 @@ PhoenixWindow {
     DropShadow {
         source: settingsDropDown;
         anchors.fill: source;
+        horizontalOffset: 1;
+        verticalOffset: 2;
         visible: source.visible;
-        horizontalOffset: 2;
-        verticalOffset: 4;
         radius: 4;
         samples: radius * 2;
         color: "#80000000";
-        transparentBorder: true;
-    }
-
-   // Second pass needed for left side
-   DropShadow {
-        source: settingsDropDown;
-        anchors.fill: source;
-        visible: source.visible;
-        horizontalOffset: -2;
-        verticalOffset: 4;
-        radius: 4;
-        samples: radius * 2;
-        color: "#80000000"
         transparentBorder: true;
     }
 
@@ -230,7 +271,7 @@ PhoenixWindow {
         id: homeScreen;
 
         Item {
-            property string stackName: "";
+            property string stackName: "homescreen";
             property StackView stackId: gameStack;
             property bool blur: settingsBubble.visible;
 
@@ -238,7 +279,7 @@ PhoenixWindow {
             ConsoleBar {
                 id: consoleBar;
                 z: headerBar.z - 1;
-                color: "#303030";
+                color: "#262626";
                 anchors {
                     left: parent.left;
                     top: parent.top;
