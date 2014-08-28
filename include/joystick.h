@@ -24,7 +24,7 @@ public:
     public:
         Mapping() : joystick_guid() {};
 
-        virtual int32_t eventFromString(QString) Q_DECL_OVERRIDE;
+        virtual InputDeviceEvent *eventFromString(QString) Q_DECL_OVERRIDE;
 
         virtual bool populateFromSettings(QSettings &settings) Q_DECL_OVERRIDE;
         virtual bool populateFromDict(QVariantMap deviceinfo) Q_DECL_OVERRIDE;

@@ -8,6 +8,7 @@
 #include "libretro.h"
 
 #include "libretro_types.h"
+#include "inputdeviceevent.h"
 #include "logging.h"
 
 
@@ -33,7 +34,7 @@ public:
     }
 
 signals:
-    void inputEventReceived(int32_t event, int16_t value);
+    void inputEventReceived(InputDeviceEvent *ev, int16_t value);
 
 protected:
     void setDeviceName(const char *new_name);

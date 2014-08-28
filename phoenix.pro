@@ -37,12 +37,15 @@ HEADERS += include/core.h                      \
            include/audiobuffer.h               \
            include/sdlevents.h                 \
            include/joystick.h                  \
+           include/joystickevents.h            \
            include/logging.h                   \
            include/qmlsettings.h               \
            include/inputmanager.h              \
            include/inputdevice.h               \
            include/inputdevicemapping.h        \
+           include/inputdeviceevent.h          \
            include/keyboard.h                  \
+           include/keyboardevents.h            \
            include/librarydbmanager.h          \
            include/gamelibrarymodel.h          \
            include/phoenixwindow.h             \

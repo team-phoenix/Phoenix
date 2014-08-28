@@ -24,7 +24,7 @@ public:
     public:
         Mapping() {};
 
-        virtual int32_t eventFromString(QString) Q_DECL_OVERRIDE;
+        virtual InputDeviceEvent *eventFromString(QString) Q_DECL_OVERRIDE;
 
     public slots:
         virtual QVariant setMappingOnInput(retro_device_id id, QJSValue cb) Q_DECL_OVERRIDE;

@@ -56,7 +56,9 @@ bool InputDeviceMapping::populateFromSettings(QSettings &s)
             continue;
         QString eventstr = val.toString();
 
-        setMapping(eventFromString(eventstr), i.value());
+        InputDeviceEvent *ev = eventFromString(eventstr);
+        if (ev != nullptr)
+            setMapping(ev, i.value());
     }
 
     return true;

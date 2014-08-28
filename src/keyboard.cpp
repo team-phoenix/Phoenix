@@ -1,9 +1,10 @@
 
 #include <QGuiApplication>
 #include <QWindow>
-#include <QKeySequence>
+
 #include "keyboard.h"
 #include "logging.h"
+#include "keyboardevents.h"
 
 
 Keyboard::Keyboard(InputDeviceMapping *mapping) : InputDevice(mapping)
@@ -44,9 +45,10 @@ bool Keyboard::eventFilter(QObject *obj, QEvent *event)
 inline void Keyboard::processKeyEvent(QKeyEvent *event)
 {
     bool is_pressed = (event->type() == QEvent::KeyPress) ? true : false;
-    emit inputEventReceived(event->key(), is_pressed);
+    auto ev = KeyboardKeyEvent::fromKeyEvent(event);
+    emit inputEventReceived(&ev, is_pressed);
 
-    auto retro_id = m_mapping->getMapping(event->key());
+    auto retro_id = m_mapping->getMapping(&ev);
     if (retro_id != (unsigned)~0)
         setState(retro_id, is_pressed);
 }
@@ -55,13 +57,13 @@ QVariant Keyboard::Mapping::setMappingOnInput(retro_device_id id, QJSValue cb)
 {
     auto conn = std::make_shared<QMetaObject::Connection>();
 
-    auto handleInput = [this, id, cb, conn] (int32_t ev, int16_t val) mutable {
+    auto handleInput = [this, id, cb, conn] (InputDeviceEvent *ev, int16_t val) mutable {
         if (val == 0)
             return;
 
         this->setMapping(ev, id);
-        if (cb.isCallable())
-            cb.call({ id, ev });
+//        if (cb.isCallable())
+//            cb.call({ id, ev });
         QObject::disconnect(*conn);
     };
 
@@ -70,7 +72,7 @@ QVariant Keyboard::Mapping::setMappingOnInput(retro_device_id id, QJSValue cb)
         keyboard = std::unique_ptr<Keyboard>(new Keyboard(this));
     }
     *conn = connect(keyboard.get(), &InputDevice::inputEventReceived, handleInput);
-    qCDebug(phxInput) << "waiting keyboard for input";
+    qCDebug(phxInput) << "waiting for keyboard input";
     return QVariant::fromValue(*conn);
 }
 
@@ -80,10 +82,11 @@ void Keyboard::Mapping::cancelMappingOnInput(QVariant cancelInfo)
         QObject::disconnect(cancelInfo.value<QMetaObject::Connection>());
 }
 
-int32_t Keyboard::Mapping::eventFromString(QString evname)
+InputDeviceEvent *Keyboard::Mapping::eventFromString(QString evname)
 {
-    auto kseq = QKeySequence::fromString(evname);
-    if (kseq.isEmpty() || kseq.count() != 1)
-        return -1;
-    return kseq[0];
+    auto ev = KeyboardKeyEvent::fromString(evname);
+    if (ev.isValid())
+        return ev.clone();
+
+    return nullptr;
 }

@@ -5,6 +5,7 @@
 #include "libretro.h"
 
 #include "joystick.h"
+#include "joystickevents.h"
 #include "logging.h"
 
 
@@ -148,10 +149,11 @@ bool Joystick::controllerButtonChanged(const SDL_Event *event) {
         return false;
 
     const SDL_ControllerButtonEvent *cbutton = &event->cbutton;
+    auto ev = ControllerButtonEvent::fromSDLEvent(*cbutton);
     bool is_pressed = (cbutton->type == SDL_CONTROLLERBUTTONDOWN) ? true : false;
 
-    emit inputEventReceived(cbutton->button, is_pressed);
-    auto retro_id = m_mapping->getMapping(cbutton->button);
+    emit inputEventReceived(&ev, is_pressed);
+    auto retro_id = m_mapping->getMapping(&ev);
     if (retro_id != (unsigned)~0)
         setState(retro_id, is_pressed);
 
@@ -163,7 +165,8 @@ bool Joystick::controllerAxisChanged(const SDL_Event *event) {
         return false;
 
     const SDL_ControllerAxisEvent *caxis = &event->caxis;
-    emit inputEventReceived(caxis->axis, caxis->value);
+    auto ev = ControllerAxisEvent::fromSDLEvent(*caxis);
+    emit inputEventReceived(&ev, caxis->value);
 
     // make analog stick emulate dpad
     if (m_mapping->deviceType() == RETRO_DEVICE_JOYPAD) {
@@ -228,13 +231,13 @@ QVariant Joystick::Mapping::setMappingOnInput(retro_device_id id, QJSValue cb)
     // which introduces lambda captures expressions.
     auto conn = std::make_shared<QMetaObject::Connection>();
 
-    auto handleInput = [this, id, cb, conn] (int32_t ev, int16_t val) mutable {
+    auto handleInput = [this, id, cb, conn] (InputDeviceEvent *ev, int16_t val) mutable {
         if (val == 0)
             return;
 
-        this->setMapping(ev, id);
-        if (cb.isCallable())
-            cb.call({ id, ev });
+        this->setMapping(ev->clone(), id);
+//        if (cb.isCallable())
+//            cb.call({ id, ev });
         QObject::disconnect(*conn);
     };
 
@@ -278,19 +281,18 @@ bool Joystick::Mapping::populateFromDict(QVariantMap deviceinfo)
     return ret;
 }
 
-int32_t Joystick::Mapping::eventFromString(QString evname)
+#define CONVERT_STRING_TO_EVENT(eventType)            \
+    do {                                              \
+        eventType ev = eventType::fromString(evname); \
+        if (ev.isValid())                             \
+            return ev.clone();                        \
+    } while(false)
+
+InputDeviceEvent *Joystick::Mapping::eventFromString(QString evname)
 {
-    QByteArray _evname = evname.toLatin1();
-
-    auto btn = SDL_GameControllerGetButtonFromString(_evname.constData());
-    if (btn != SDL_CONTROLLER_BUTTON_INVALID)
-        return static_cast<int32_t>(btn);
-
-    auto axis = SDL_GameControllerGetAxisFromString(_evname.constData());
-    if (axis != SDL_CONTROLLER_AXIS_INVALID)
-        return static_cast<int32_t>(axis);
-
-    return -1;
+    CONVERT_STRING_TO_EVENT(ControllerButtonEvent);
+    CONVERT_STRING_TO_EVENT(ControllerAxisEvent);
+    return nullptr;
 }
 
 bool Joystick::Mapping::matchJoystick(const SDL_JoystickGUID &guid) const
