@@ -190,7 +190,7 @@ void GameLibraryModel::scanFolder(QString path)
             if (data.front_boxart != "")
                 query.bindValue(3, data.front_boxart);
             else
-                query.bindValue(3, "qrc:/assets/missing_artwork.png");
+                query.bindValue(3, "qrc:/assets/No-Art.png");
 
             query.bindValue(1, system);
             query.bindValue(2, "0h 0m 0s");
