@@ -50,7 +50,7 @@ public:
 public slots:
     void setFilter(QString search_terms_, QString new_category);
     virtual void sort(int column, Qt::SortOrder order) Q_DECL_OVERRIDE;
-    void scanFolder(QString path);
+    void scanFolder(QUrl path);
     void getArtwork();
     void initQuery(GameData *data);
 
