@@ -15,31 +15,11 @@
 #include <QXmlStreamReader>
 #include <QXmlStreamAttributes>
 
+#include "logging.h"
+
 class GameData {
 public:
     GameData() {
-    }
-
-    void printAll() {
-        qDebug() << alias;
-        qDebug() << name;
-        qDebug() << id;
-        qDebug() << title;
-        qDebug() << developer;
-        qDebug() << platform_id;
-        qDebug() << platform;
-        qDebug() << release_date;
-        qDebug() << overview;
-        qDebug() << esrb;
-        qDebug() << genre;
-        qDebug() << players;
-        qDebug() << co_op;
-        qDebug() << youtube;
-        qDebug() << publisher;
-        qDebug() << rating;
-        qDebug() << back_boxart;
-        qDebug() << front_boxart;
-        qDebug() << clear_logo;
     }
 
     QString alias;
@@ -61,47 +41,53 @@ public:
     QString back_boxart;
     QString front_boxart;
     QString clear_logo;
+    QString play_time;
 
 };
 
 class TheGamesDB : public QObject {
     Q_OBJECT
 public:
-    explicit TheGamesDB(QObject *parent=0);
+    TheGamesDB();
+    explicit TheGamesDB(QObject *parent);
+
     ~TheGamesDB();
 
-    GameData getArt(QString game_id);
-    GameData getGame(QString game_id);
-    GameData getGameId(QString game_name, QString platform);
-    QList< GameData > getGamesList(QString game_name);
-    GameData getAllData(QString game_name, QString platform);
-    QList< GameData > getPlatformsList();
-    QList< GameData > getPlatformGames(QString platform_id);
-
-    void printPlatformGames(QString platform_id);
-    void printPlatformsList();
-    void printGame(QString game_name, QString platform);
-    void printGamesList(QString game_name);
+    void setGameName(QString name);
+    void setGamePlatform(QString platform);
+    void setData(GameData *data);
 
 signals:
+    void finished(GameData *);
     void finished();
+    void started();
+    void completedRequest();
+    void outputData(GameData *);
 
 public slots:
-    void resetNetwork();
+    void processRequest(QNetworkReply *m_reply);
+    void processErrors(QNetworkReply::NetworkError);
+    void populateData();
+    void start();
+
 
 private:
-    QNetworkReply *reply;
     QNetworkAccessManager *manager;
-    void getNetworkReply(QString url);
-    bool noErrors();
+    QNetworkReply *reply;
+
+    GameData *game_data;
+    QString m_game_name;
+    QString m_game_platform;
+    QUrl m_url;
 
     QString cleanString(QString string);
-    GameData findXMLArt();
-    GameData findXMLGame();
-    QList< GameData > getXMLGamesList();
-    QList< GameData > getXMLPlatformList();
-    QList< GameData > getXMLPlatformGames();
-    GameData parseXMLforId(QString game_name);
+    void getGame(QString game_id);
+    void findXMLGame();
+    void parseXMLforId(QString game_name);
+    void getGameId();
+    void getNetworkReply();
+    void setUrl(QUrl url);
+
 };
 
 #endif // THEGAMESDB_H

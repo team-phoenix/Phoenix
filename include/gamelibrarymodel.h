@@ -5,6 +5,7 @@
 #include <QSqlTableModel>
 #include <QDirIterator>
 #include <QStringList>
+#include <QThread>
 
 #include "thegamesdb.h"
 #include "librarydbmanager.h"
@@ -50,12 +51,18 @@ public slots:
     void setFilter(QString search_terms_, QString new_category);
     virtual void sort(int column, Qt::SortOrder order) Q_DECL_OVERRIDE;
     void scanFolder(QString path);
+    void getArtwork();
+    void initQuery(GameData *data);
 
 signals:
     void progressChanged(qreal);
     void labelChanged(QString);
+    void fetchArtwork(GameData);
+    void modelUpdated();
+    void scannedFiles();
 
 private:
+    QVector<QFileInfo> files;
     TheGamesDB *scraper;
     LibraryDbManager dbm;
     QString base_query;
@@ -67,6 +74,7 @@ private:
     QHash<int, QByteArray> role_names;
 
     int m_file_count;
+    int m_current_index;
     qreal m_progress;
 
     void addFilters(QStringList &filter_list);

@@ -20,10 +20,15 @@ GameLibraryModel::GameLibraryModel(QObject *parent)
     sort_order = static_cast<Qt::SortOrder>(-1); // default = no sort
     updateQuery();
 
+    scraper = new TheGamesDB(this);
+
     m_file_count = 0;
+    m_current_index = 0;
     m_progress = 0;
 
-    scraper = new TheGamesDB(this);
+    connect(this, SIGNAL(scannedFiles()), this, SLOT(getArtwork()));
+
+    //scraper = new TheGamesDB(this);
 
 }
 
@@ -132,11 +137,73 @@ void GameLibraryModel::setProgress(qreal progress)
     emit progressChanged(progress);
 }
 
+void GameLibraryModel::getArtwork()
+{
+    if (m_current_index == m_file_count) {
+        qCDebug(phxLibrary) << "Ending loop";
+        dbm.handle().commit();
+        submit();
+        files.clear();
+        return;
+    }
+
+    else {
+
+    QFileInfo info = files.at(m_current_index);
+    GameData data;
+    QString system = getSystem(info.suffix());
+
+    data.title = info.baseName();
+    data.platform = system;
+
+    scraper->setData(&data);
+    scraper->setGameName(data.title);
+    scraper->setGamePlatform(data.platform);
+
+    connect(scraper, SIGNAL(outputData(GameData *)), this, SLOT(initQuery(GameData *)));
+
+    scraper->start();
+    }
+
+}
+
+void GameLibraryModel::initQuery(GameData *data)
+{
+
+    qCDebug(phxLibrary) << " init query";
+    dbm.handle().transaction();
+
+    QSqlQuery query(dbm.handle());
+    query.prepare("INSERT INTO games (title, console, time_played, artwork)"
+                  " VALUES (?, ?, ?, ?)");
+
+    query.bindValue(0, data->title);
+    if (data->front_boxart != "")
+        query.bindValue(3, data->front_boxart);
+    else
+        query.bindValue(3, "qrc:/assets/No-Art.png");
+
+    query.bindValue(1, system);
+    query.bindValue(2, "0h 0m 0s");
+
+    updateQuery();
+
+    if (m_current_index && m_file_count)
+    setProgress((((m_current_index+1) / m_file_count) * 100.0));
+
+    query.exec();
+
+    m_current_index += 1;
+
+    qCDebug(phxLibrary) << progress();
+
+    if (m_current_index != m_file_count)
+        emit scannedFiles();
+}
+
 void GameLibraryModel::scanFolder(QString path)
 {
     QDirIterator dir_iter(path, QDirIterator::Subdirectories);
-
-    QVector<QFileInfo> files;
 
     QStringList filter;
     addFilters(filter);
@@ -158,59 +225,18 @@ void GameLibraryModel::scanFolder(QString path)
         }
     }
 
-    dbm.handle().transaction();
-
-    QSqlQuery query(dbm.handle());
-
-    bool data_changed = false;
 
     m_file_count = files.size();
-    qreal count = static_cast<qreal>(m_file_count);
+
+    if (m_file_count == 0) {
+        setLabel("0 Games Found");
+        setProgress(100.0);
+        return;
+    }
 
     setLabel("Finding Artwork");
 
-    for (qreal i=0; i < count; ++i) {
-
-        QFileInfo file_info = files.at(i);
-        //qCDebug(phxLibrary) << file_info.absoluteFilePath();
-
-
-        query.prepare("INSERT INTO games (title, console, time_played, artwork)"
-                      " VALUES (?, ?, ?, ?)");
-
-        QString system = getSystem(file_info.suffix());
-
-        if (system != "") {
-            GameData data = scraper->getAllData(file_info.baseName(), system);
-            //qCDebug(phxLibrary) << "gamedata: " << data.back_boxart << " " << data.front_boxart;
-            if (data.title != "")
-                query.bindValue(0, data.title);
-            else
-                query.bindValue(0, file_info.baseName());
-            if (data.front_boxart != "")
-                query.bindValue(3, data.front_boxart);
-            else
-                query.bindValue(3, "qrc:/assets/No-Art.png");
-
-            query.bindValue(1, system);
-            query.bindValue(2, "0h 0m 0s");
-
-            updateQuery();
-
-
-            setProgress((((i+1) / m_file_count) * 100.0));
-
-        }
-
-        if (query.exec())
-            data_changed = true;
-
-    }
-
-    if (data_changed) {
-        dbm.handle().commit();
-        submit();
-    }
+    emit scannedFiles();
 
 }
 
