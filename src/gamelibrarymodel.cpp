@@ -201,9 +201,9 @@ void GameLibraryModel::initQuery(GameData *data)
         emit scannedFiles();
 }
 
-void GameLibraryModel::scanFolder(QString path)
+void GameLibraryModel::scanFolder(QUrl path)
 {
-    QDirIterator dir_iter(path, QDirIterator::Subdirectories);
+    QDirIterator dir_iter(path.toLocalFile(), QDirIterator::Subdirectories);
 
     QStringList filter;
     addFilters(filter);

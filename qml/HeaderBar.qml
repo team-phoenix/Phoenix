@@ -404,8 +404,7 @@ Rectangle {
             title: "Add Folder to Library";
             visible: false;
             onAccepted: {
-                var url = fileUrl.toString().replace("file:///", "");
-                gamelibrary.scanFolder(url);
+                gamelibrary.scanFolder(fileUrl);
             }
         }
 
