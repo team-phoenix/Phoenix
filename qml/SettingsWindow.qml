@@ -6,8 +6,7 @@ ApplicationWindow {
     height: 800;
     width: 600;
     title: "Settings";
-
-
+    flags: "FramelessWindowHint";
     property alias video: videoSettings;
     property alias audio: audioSettings;
     property alias input: inputSettings;
@@ -16,7 +15,6 @@ ApplicationWindow {
     property alias core: coreSettings;
     property alias library: librarySettings;
     property alias stack: stackView;
-    flags: "Dialog";
 
     onVisibleChanged: {
         if (visible) {
@@ -34,66 +32,135 @@ ApplicationWindow {
     }
 
 
-
-    StackView {
-        id: stackView;
+    Rectangle {
+        id: settingsRect;
         anchors.fill: parent;
-        initialItem: videoSettings;
-    }
 
-    Component {
-        id: audioSettings;
-        AudioSettings {
-            property string name: "audio";
+        gradient: Gradient {
+            GradientStop {position: 0.0; color: "#323232";}
+            GradientStop {position: 1.0; color: "#272727";}
 
         }
-    }
 
-    Component {
-        id: videoSettings;
-        VideoSettings {
-            property string name: "video";
+        border {
+            width: 1;
+            color: "#0b0b0b";
         }
-    }
 
-    Component {
-        id: inputSettings;
-        InputSettings {
-            property string name: "input";
+        Rectangle {
+            anchors {
+                top: parent.top;
+                topMargin: settingsRect.border.width;
+                left: parent.left;
+                leftMargin: settingsRect.border.width;
+                right: parent.right;
+                rightMargin: settingsRect.border.width;
 
+            }
+            height: 1;
+            color: "#4d4d4d";
         }
-    }
 
-    Component {
-        id: advancedSettings;
-        AdvancedSettings {
-            property string name: "advanced";
-
+        Rectangle {
+            anchors {
+                left: parent.left;
+                leftMargin: settingsRect.border.width;
+                top: parent.top;
+                topMargin: settingsRect.border.width + 1;
+                bottom: parent.bottom;
+                bottomMargin: settingsRect.border.width + 1;
+            }
+            color: "#383838";
+            width: 1
         }
-    }
 
-    Component {
-        id: coreSettings;
-        CoreSettings {
-            property string name: "core";
-
+        Rectangle {
+            anchors {
+                right: parent.right;
+                rightMargin: settingsRect.border.width;
+                top: parent.top;
+                topMargin: settingsRect.border.width + 1;
+                bottom: parent.bottom;
+                bottomMargin: settingsRect.border.width + 1;
+            }
+            color: "#383838";
+            width: 1
         }
-    }
 
+        Rectangle {
+            anchors {
+                bottom: parent.bottom;
+                bottomMargin: settingsRect.border.width;
+                left: parent.left;
+                right: parent.right;
+                rightMargin: settingsRect.border.width;
+                leftMargin: settingsRect.border.width;
 
-    Component {
-        id: librarySettings;
-        LibrarySettings {
-            property string name: "library";
-
+            }
+            height: 1;
+            color: "#2b2b2b";
         }
-    }
 
-    Component {
-        id: saveSettings;
-        SaveSettings {
-            property string name: "save";
+        StackView {
+            id: stackView;
+            anchors.fill: parent;
+            initialItem: videoSettings;
+        }
 
+        Component {
+            id: audioSettings;
+            AudioSettings {
+                property string name: "audio";
+
+            }
+        }
+
+        Component {
+            id: videoSettings;
+            VideoSettings {
+                property string name: "video";
+            }
+        }
+
+        Component {
+            id: inputSettings;
+            InputSettings {
+                property string name: "input";
+
+            }
+        }
+
+        Component {
+            id: advancedSettings;
+            AdvancedSettings {
+                property string name: "advanced";
+
+            }
+        }
+
+        Component {
+            id: coreSettings;
+            CoreSettings {
+                property string name: "core";
+
+            }
+        }
+
+
+        Component {
+            id: librarySettings;
+            LibrarySettings {
+                property string name: "library";
+
+            }
+        }
+
+        Component {
+            id: saveSettings;
+            SaveSettings {
+                property string name: "save";
+
+            }
         }
     }
 }

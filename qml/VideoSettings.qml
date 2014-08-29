@@ -3,62 +3,8 @@ import QtQuick.Controls 1.1
 import QtQuick.Controls.Styles 1.1
 import QtQuick.Layouts 1.1
 
-Rectangle {
+Item {
     id: video;
-    gradient: Gradient {
-        GradientStop {position: 0.0; color: "#323232";}
-        GradientStop {position: 1.0; color: "#272727";}
-
-    }
-
-    border {
-        width: 1;
-        color: "#0b0b0b";
-    }
-
-    Rectangle {
-        anchors {
-            top: parent.top;
-            topMargin: video.border.width;
-            left: parent.left;
-            right: parent.right;
-        }
-        height: 1;
-        color: "#4d4d4d";
-    }
-
-    Rectangle {
-        anchors {
-            left: parent.left;
-            leftMargin: video.border.width;
-            top: parent.top;
-            bottom: parent.bottom;
-        }
-        color: "#383838";
-        width: 1
-    }
-
-    Rectangle {
-        anchors {
-            right: parent.right;
-            rightMargin: video.border.width;
-            top: parent.top;
-            bottom: parent.bottom;
-        }
-        color: "#383838";
-        width: 1
-    }
-
-    Rectangle {
-        anchors {
-            bottom: parent.bottom;
-            bottomMargin: video.border.width;
-            left: parent.left;
-            right: parent.right;
-        }
-        height: 1;
-        color: "#2b2b2b";
-    }
 
     Column {
         anchors {
