@@ -109,13 +109,13 @@ public:
 
 protected:
     void keyEvent(QKeyEvent *event);
-    void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE {
+    void keyPressEvent(QKeyEvent *event) override {
         keyEvent(event);
     };
-    void keyReleaseEvent(QKeyEvent *event) Q_DECL_OVERRIDE {
+    void keyReleaseEvent(QKeyEvent *event) override {
         keyEvent(event);
     };
-    void geometryChanged(const QRectF &newGeom, const QRectF &oldGeom) Q_DECL_OVERRIDE {
+    void geometryChanged(const QRectF &newGeom, const QRectF &oldGeom) override {
         Q_UNUSED(newGeom);
         Q_UNUSED(oldGeom);
         QQuickItem::geometryChanged(newGeom, oldGeom);

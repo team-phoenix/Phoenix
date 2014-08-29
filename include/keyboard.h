@@ -17,18 +17,18 @@ public:
 
     static QVariantList enumerateDevices();
 
-    virtual bool eventFilter(QObject *obj, QEvent *event) Q_DECL_OVERRIDE;
+    virtual bool eventFilter(QObject *obj, QEvent *event) override;
 
     class Mapping : public InputDeviceMapping
     {
     public:
         Mapping() {};
 
-        virtual InputDeviceEvent *eventFromString(QString) Q_DECL_OVERRIDE;
+        virtual InputDeviceEvent *eventFromString(QString) override;
 
     public slots:
-        virtual QVariant setMappingOnInput(retro_device_id id, QJSValue cb) Q_DECL_OVERRIDE;
-        virtual void cancelMappingOnInput(QVariant cancelInfo) Q_DECL_OVERRIDE;
+        virtual QVariant setMappingOnInput(retro_device_id id, QJSValue cb) override;
+        virtual void cancelMappingOnInput(QVariant cancelInfo) override;
 
     private:
         // only used by setMappingOnInput helper function

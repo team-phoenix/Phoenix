@@ -24,18 +24,18 @@ public:
     public:
         Mapping() : joystick_guid() {};
 
-        virtual InputDeviceEvent *eventFromString(QString) Q_DECL_OVERRIDE;
+        virtual InputDeviceEvent *eventFromString(QString) override;
 
-        virtual bool populateFromSettings(QSettings &settings) Q_DECL_OVERRIDE;
-        virtual bool populateFromDict(QVariantMap deviceinfo) Q_DECL_OVERRIDE;
+        virtual bool populateFromSettings(QSettings &settings) override;
+        virtual bool populateFromDict(QVariantMap deviceinfo) override;
 
         // return true if joystick with the given guid
         // is handled by this mapping
         bool matchJoystick(const SDL_JoystickGUID &guid) const;
 
     public slots:
-        virtual QVariant setMappingOnInput(retro_device_id id, QJSValue cb) Q_DECL_OVERRIDE;
-        virtual void cancelMappingOnInput(QVariant cancelInfo) Q_DECL_OVERRIDE;
+        virtual QVariant setMappingOnInput(retro_device_id id, QJSValue cb) override;
+        virtual void cancelMappingOnInput(QVariant cancelInfo) override;
 
     private:
         SDL_JoystickGUID joystick_guid;
