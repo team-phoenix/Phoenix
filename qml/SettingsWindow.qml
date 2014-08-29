@@ -6,7 +6,9 @@ ApplicationWindow {
     height: 800;
     width: 600;
     title: "Settings";
-    flags: "FramelessWindowHint";
+
+    //flags: "FramelessWindowHint";
+
     property alias video: videoSettings;
     property alias audio: audioSettings;
     property alias input: inputSettings;
