@@ -82,11 +82,12 @@ Item {
                 right: parent.right;
             }
 
-            TextField {
+            PhoenixTextField {
                 anchors {
                     right: parent.right;
                     left: parent.left;
                 }
+                placeholderText: "/path/to/gamelibrary.sql";
             }
 
             RowLayout {

@@ -404,7 +404,8 @@ Rectangle {
             title: "Add Folder to Library";
             visible: false;
             onAccepted: {
-                gamelibrary.scanFolder(fileUrl);
+                gamelibrary.url = fileUrl;
+                gamelibrary.startScan();
             }
         }
 
@@ -770,7 +771,7 @@ Rectangle {
         }
     }
 
-    TextField {
+    PhoenixTextField {
         id: searchBar;
         width: 175;
         placeholderText: "Search";
@@ -795,67 +796,6 @@ Rectangle {
 
         onTextChanged: {
             searchTimer.restart();
-        }
-
-        style: TextFieldStyle {
-            placeholderTextColor: "#f1f1f1";
-            renderType: Text.QtRendering;
-
-            background: Rectangle {
-                radius: 3;
-                color: "#1a1a1a";
-                height: 25;
-                width: 175;
-
-                Rectangle {
-                    // topBorder;
-                    anchors {
-                        top: parent.top;
-                        left: parent.left;
-                        right: parent.right;
-                    }
-                    radius: 3;
-                    height: 1;
-                    color: "#1f1f1f";
-                }
-
-                Rectangle {
-                    // leftBorder;
-                    anchors {
-                        top: parent.top;
-                        bottom: parent.bottom;
-                        left: parent.left;
-                    }
-                    radius: 3;
-                    width: 1;
-                    color: "#141414";
-                }
-
-                Rectangle {
-                    // rightBorder;
-                    anchors {
-                        top: parent.top;
-                        bottom: parent.bottom;
-                        right: parent.right;
-                    }
-                    radius: 3;
-                    width: 1;
-                    color: "#141414";
-                }
-
-                Rectangle {
-                    // bottomBorder;
-                    radius: 3;
-
-                    anchors {
-                        bottom: parent.bottom;
-                        left: parent.left;
-                        right: parent.right;
-                    }
-                    height: 1;
-                    color: "#3b3b3b";
-                }
-            }
         }
 
         Image {
