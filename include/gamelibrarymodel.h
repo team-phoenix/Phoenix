@@ -30,8 +30,8 @@ public:
         ArtworkRole,
     };
 
-    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
-    virtual QHash<int, QByteArray> roleNames() const Q_DECL_OVERRIDE;
+    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    virtual QHash<int, QByteArray> roleNames() const override;
 
     void setProgress(qreal progress);
     void setLabel(QString label);
@@ -49,7 +49,7 @@ public:
 
 public slots:
     void setFilter(QString search_terms_, QString new_category);
-    virtual void sort(int column, Qt::SortOrder order) Q_DECL_OVERRIDE;
+    virtual void sort(int column, Qt::SortOrder order) override;
     void scanFolder(QUrl path);
     void getArtwork();
     void initQuery(GameData *data);
