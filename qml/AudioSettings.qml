@@ -2,48 +2,82 @@ import QtQuick 2.3
 import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.1
 
+
 Item {
+    id: audio;
 
     Column {
         anchors {
             fill: parent;
-            topMargin: 25;
+            topMargin: 15;
         }
-        spacing: 25;
+        spacing: 10;
 
-        Column {
+        Item {
+            height: 75;
             anchors {
                 left: parent.left;
-                //top: parent.top;
-                //topMargin: 25;
-                leftMargin: 25;
+                right: parent.right;
             }
-            spacing: 5;
 
-            Text {
-                text: "Audio Settings"
-                renderType: Text.QtRendering;
-                color: settingsBubble.textColor;
-                font {
-                    family: "Sans";
-                    pixelSize: 18;
+            Row {
+                anchors {
+                    horizontalCenter: parent.horizontalCenter;
+                }
+                spacing: 10;
+
+                Image {
+                    id: audioImage;
+                    source: "../assets/volume-high-8x.png";
+                    height: 48;
+                    width: 48;
+                }
+
+                Column {
+                    id: videoHeader;
+                    anchors.verticalCenter: audioImage.verticalCenter;
+                    spacing: 2;
+
+                    Text {
+                        text: "Audio Settings"
+                        renderType: Text.QtRendering;
+                        color: settingsBubble.textColor;
+                        font {
+                            family: "Sans";
+                            pixelSize: 18;
+                        }
+                    }
+
+                    Text {
+                        text: "Edit the audio output"
+                        renderType: Text.QtRendering;
+                        color: settingsBubble.alternateTextColor;
+                        font {
+                            family: "Sans";
+                            pixelSize: 13;
+                        }
+                    }
                 }
             }
 
-            Text {
-                text: "Edit the audio feed"
-                renderType: Text.QtRendering;
-                color: settingsBubble.alternateTextColor;
-                font {
-                    family: "Sans";
-                    pixelSize: 13;
+            Rectangle {
+                color: "#141414";
+                anchors {
+                    left: parent.left;
+                    right: parent.right;
+                    leftMargin: 25;
+                    rightMargin: 25;
+                    bottom: parent.bottom;
+                    bottomMargin: 17;
                 }
+                height: 1;
             }
         }
+
 
         Column {
             spacing: 25;
-            width: 250;
+            width: 200;
             anchors {
                 left: parent.left;
                 leftMargin: 25;
@@ -59,14 +93,14 @@ Item {
                 Text {
                     text: "Mute"
                     renderType: Text.QtRendering;
-                    color: settingsBubble.textColor;
+                    color: settingsBubble.alternateTextColor;
                     font {
                         family: "Sans";
                         pixelSize: 13;
                     }
                 }
 
-                Switch {
+                PhoenixSwitch {
                     anchors.right: parent.right;
                     checked: (headerBar.volumeLevel=== 0.0);
                     property real previousLevel: headerBar.volumeLevel;
@@ -97,12 +131,12 @@ Item {
                     left: parent.left;
                     right: parent.right;
                 }
-
                 spacing: 25;
+
                 Text {
                     text: "Available Devices"
                     renderType: Text.QtRendering;
-                    color: settingsBubble.textColor;
+                    color: settingsBubble.alternateTextColor;
                     font {
                         family: "Sans";
                         pixelSize: 13;
