@@ -15,5 +15,6 @@
     <file>SaveSettings.qml</file>
     <file>AdvancedSettings.qml</file>
     <file>SettingsDropDown.qml</file>
+    <file>PhoenixSwitch.qml</file>
 </qresource>
 </RCC>

@@ -1,48 +1,133 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.1
+import QtQuick.Controls.Styles 1.1
 import QtQuick.Layouts 1.1
 
 Rectangle {
     id: video;
-    color: settingsBubble.stackBackgroundColor;
+    gradient: Gradient {
+        GradientStop {position: 0.0; color: "#323232";}
+        GradientStop {position: 1.0; color: "#272727";}
+
+    }
+
+    border {
+        width: 1;
+        color: "#0b0b0b";
+    }
+
+    Rectangle {
+        anchors {
+            top: parent.top;
+            topMargin: video.border.width;
+            left: parent.left;
+            right: parent.right;
+        }
+        height: 1;
+        color: "#4d4d4d";
+    }
+
+    Rectangle {
+        anchors {
+            left: parent.left;
+            leftMargin: video.border.width;
+            top: parent.top;
+            bottom: parent.bottom;
+        }
+        color: "#383838";
+        width: 1
+    }
+
+    Rectangle {
+        anchors {
+            right: parent.right;
+            rightMargin: video.border.width;
+            top: parent.top;
+            bottom: parent.bottom;
+        }
+        color: "#383838";
+        width: 1
+    }
+
+    Rectangle {
+        anchors {
+            bottom: parent.bottom;
+            bottomMargin: video.border.width;
+            left: parent.left;
+            right: parent.right;
+        }
+        height: 1;
+        color: "#2b2b2b";
+    }
 
     Column {
         anchors {
             fill: parent;
-            topMargin: 25;
+            topMargin: 15;
         }
-        spacing: 25;
+        spacing: 10;
 
-        Column {
-            id: videoHeader;
+        Item {
+            height: 75;
             anchors {
                 left: parent.left;
-                //top: parent.top;
-                //topMargin: 25;
-                leftMargin: 25;
+                right: parent.right;
             }
-            spacing: 5;
 
-            Text {
-                text: "Video Settings"
-                renderType: Text.QtRendering;
-                color: settingsBubble.textColor;
-                font {
-                    family: "Sans";
-                    pixelSize: 18;
+            Row {
+                anchors {
+                    horizontalCenter: parent.horizontalCenter;
+                }
+                spacing: 10;
+
+                Image {
+                    id: videoImage;
+                    source: "../assets/Video-32.png";
+                    height: 48;
+                    width: 48;
+                }
+
+                Column {
+                    id: videoHeader;
+                    anchors.verticalCenter: videoImage.verticalCenter;
+                    spacing: 2;
+
+                    Text {
+                        text: "Video Settings"
+                        renderType: Text.QtRendering;
+                        color: settingsBubble.textColor;
+                        font {
+                            family: "Sans";
+                            pixelSize: 18;
+                        }
+                    }
+
+                    Text {
+                        text: "Edit the video output"
+                        renderType: Text.QtRendering;
+                        color: settingsBubble.alternateTextColor;
+                        font {
+                            family: "Sans";
+                            pixelSize: 13;
+                        }
+                    }
                 }
             }
 
-            Text {
-                text: "Edit the video output"
-                renderType: Text.QtRendering;
-                color: settingsBubble.alternateTextColor;
-                font {
-                    family: "Sans";
-                    pixelSize: 13;
+            Rectangle {
+                color: "#141414";
+                anchors {
+                    left: parent.left;
+                    right: parent.right;
+                    leftMargin: 25;
+                    rightMargin: 25;
+                    bottom: parent.bottom;
+                    bottomMargin: 17;
                 }
+                height: 1;
             }
         }
+
 
         Column {
             spacing: 25;
@@ -69,16 +154,8 @@ Rectangle {
                     }
                 }
 
-                Switch {
-                    id: vsyncSwitch;
+                PhoenixSwitch{
                     anchors.right: parent.right;
-                    onCheckedChanged: {
-                        if (checked)
-                            root.swapInterval = 1;
-                        else
-                            root.swapInterval = 0;
-                        console.log("You need to reset Phoenix for the change to take effect");
-                    }
                 }
             }
 
@@ -99,38 +176,9 @@ Rectangle {
                     }
                 }
 
-                Switch {
+               PhoenixSwitch {
                     id: autoFullscreenSwitch;
                     anchors.right: parent.right;
-                }
-            }
-        }
-
-        Column {
-            id: filterHeader;
-            anchors {
-                left: parent.left;
-                leftMargin: 25;
-            }
-            spacing: 5;
-
-            Text {
-                text: "Filtering";
-                renderType: Text.QtRendering;
-                color: settingsBubble.textColor;
-                font {
-                    family: "Sans";
-                    pixelSize: 16;
-                }
-            }
-
-            Text {
-                text: "Enhance the output"
-                renderType: Text.QtRendering;
-                color: settingsBubble.alternateTextColor;
-                font {
-                    family: "Sans";
-                    pixelSize: 14;
                 }
             }
         }
@@ -160,7 +208,7 @@ Rectangle {
                     }
                 }
 
-                Switch {
+                PhoenixSwitch {
                     id: filteringSwitch;
                     anchors.right: parent.right;
                     checked: (gameView.filtering === 2);
@@ -170,35 +218,6 @@ Rectangle {
                         else
                             gameView.filtering = 1;
                     }
-                }
-            }
-        }
-
-        Column {
-            id: aspectRatioHeader;
-            anchors {
-                left: parent.left;
-                leftMargin: 25;
-            }
-            spacing: 5;
-
-            Text {
-                text: "Aspect Settings";
-                renderType: Text.QtRendering;
-                color: settingsBubble.textColor;
-                font {
-                    family: "Sans";
-                    pixelSize: 16;
-                }
-            }
-
-            Text {
-                text: "Adjust the video aspect ratio"
-                renderType: Text.QtRendering;
-                color: settingsBubble.alternateTextColor;
-                font {
-                    family: "Sans";
-                    pixelSize: 13;
                 }
             }
         }
@@ -228,7 +247,7 @@ Rectangle {
                     }
                 }
 
-                Switch {
+                PhoenixSwitch {
                     id: ratioSwitch;
                     anchors.right: parent.right;
                     checked: gameView.stretchVideo;
