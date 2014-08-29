@@ -2,13 +2,12 @@ import QtQuick 2.3
 import QtQuick.Controls 1.1
 import QtQuick.Controls.Styles 1.1
 
-Rectangle {
+Item {
 
     Component.onCompleted: {
         settingsDropDown.width = 500;
     }
 
-    color: settingsBubble.contentColor;
 
     Column {
         id: coreHeaderColumn;

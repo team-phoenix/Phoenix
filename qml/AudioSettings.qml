@@ -2,8 +2,7 @@ import QtQuick 2.3
 import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.1
 
-Rectangle {
-    color: settingsBubble.stackBackgroundColor;
+Item {
 
     Column {
         anchors {
