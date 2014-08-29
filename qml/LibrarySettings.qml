@@ -1,5 +1,6 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.1
+import QtQuick.Controls.Styles 1.1
 import QtQuick.Layouts 1.1
 
 
@@ -107,7 +108,7 @@ Item {
                     }
                 }
 
-                ComboBox {
+                PhoenixComboBox {
                     anchors.right: parent.right;
                     implicitWidth: 100;
                     model: gameView.video.getAudioDevices();

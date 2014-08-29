@@ -16,5 +16,7 @@
     <file>AdvancedSettings.qml</file>
     <file>SettingsDropDown.qml</file>
     <file>PhoenixSwitch.qml</file>
+    <file>PhoenixTextField.qml</file>
+    <file>PhoenixComboBox.qml</file>
 </qresource>
 </RCC>
