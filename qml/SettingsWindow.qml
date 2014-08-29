@@ -5,6 +5,8 @@ ApplicationWindow {
     id: settingsWindow;
     height: 800;
     width: 600;
+    title: "Settings";
+
 
     property alias video: videoSettings;
     property alias audio: audioSettings;
@@ -19,6 +21,7 @@ ApplicationWindow {
     onVisibleChanged: {
         if (visible) {
             var name = stackView.currentItem.name;
+            settingsDropDown.visible = false;
             if (name === "video") {
                 settingsWindow.height = 400;
                 settingsWindow.width = 250;
