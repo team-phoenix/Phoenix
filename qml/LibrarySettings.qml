@@ -1,68 +1,118 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.1
-import QtQuick.Controls.Styles 1.1
+import QtQuick.Layouts 1.1
 
-Rectangle {
-    color: settingsBubble.contentColor;
 
-    Row {
-        spacing: 2;
-        visible: stackView.width > width;
+Item {
+    id: audio;
+
+    Column {
         anchors {
-            top: parent.top;
-            topMargin: 30;
-            horizontalCenter: parent.horizontalCenter;
+            fill: parent;
+            topMargin: 15;
+            rightMargin: 15;
+            leftMargin: 15;
         }
-        Button {
-            text: "Import";
-            width: 100;
-            height: 30;
-            style: ButtonStyle {
-                background: Rectangle {
-                    color: "lightgray";
+        spacing: 10;
+
+        Item {
+            height: 75;
+            anchors {
+                left: parent.left;
+                right: parent.right;
+            }
+
+            Row {
+                anchors {
+                    horizontalCenter: parent.horizontalCenter;
                 }
-                label: Label {
-                    text: "Import";
-                    color: "#f1f1f1";
-                    renderType: Text.QtRendering;
-                    horizontalAlignment: Text.AlignHCenter;
-                    verticalAlignment: Text.AlignVCenter;
+                spacing: 10;
+
+                Image {
+                    id: audioImage;
+                    source: "../assets/volume-high-8x.png";
+                    height: 48;
+                    width: 48;
                 }
+
+                Column {
+                    id: videoHeader;
+                    anchors.verticalCenter: audioImage.verticalCenter;
+                    spacing: 2;
+
+                    Text {
+                        text: "Library Settings"
+                        renderType: Text.QtRendering;
+                        color: settingsBubble.textColor;
+                        font {
+                            family: "Sans";
+                            pixelSize: 18;
+                        }
+                    }
+
+                    Text {
+                        text: "Modify the game library"
+                        renderType: Text.QtRendering;
+                        color: settingsBubble.alternateTextColor;
+                        font {
+                            family: "Sans";
+                            pixelSize: 13;
+                        }
+                    }
+                }
+            }
+
+            Rectangle {
+                color: "#141414";
+                anchors {
+                    left: parent.left;
+                    right: parent.right;
+                    bottom: parent.bottom;
+                    bottomMargin: 17;
+                }
+                height: 1;
             }
         }
 
-        Button {
-            text: "Backup";
-            width: 100;
-            height: 30;
-            style: ButtonStyle {
-                background: Rectangle {
-                    color: "lightgray";
-                }
-                label: Label {
-                    text: "Import";
-                    renderType: Text.QtRendering;
-                    color: "#f1f1f1";
-                    horizontalAlignment: Text.AlignHCenter;
-                    verticalAlignment: Text.AlignVCenter;
+
+        Column {
+            spacing: 25;
+            anchors {
+                left: parent.left;
+                right: parent.right;
+            }
+
+            TextField {
+                anchors {
+                    right: parent.right;
+                    left: parent.left;
                 }
             }
-        }
 
-        Button {
-            text: "Delete";
-            width: 100;
-            height: 30;
-            style: ButtonStyle {
-                background: Rectangle {
-                    color: root.accentColor;
+            RowLayout {
+                anchors {
+                    left: parent.left;
+                    right: parent.right;
                 }
-                label: Label {
-                    text: "Delete";
-                    color: "#f1f1f1";
+                spacing: 25;
+
+                Text {
+                    text: "Available Devices"
                     renderType: Text.QtRendering;
-                    horizontalAlignment: Text.AlignHCenter;
-                    verticalAlignment: Text.AlignVCenter;
+                    color: settingsBubble.alternateTextColor;
+                    font {
+                        family: "Sans";
+                        pixelSize: 13;
+                    }
+                }
+
+                ComboBox {
+                    anchors.right: parent.right;
+                    implicitWidth: 100;
+                    model: gameView.video.getAudioDevices();
+                    onCurrentIndexChanged: {
+                        gameView.video.audioDevice = currentIndex;
+                    }
                 }
             }
         }

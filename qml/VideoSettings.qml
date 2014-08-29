@@ -10,6 +10,8 @@ Item {
         anchors {
             fill: parent;
             topMargin: 15;
+            rightMargin: 15;
+            leftMargin: 15;
         }
         spacing: 10;
 
@@ -65,8 +67,6 @@ Item {
                 anchors {
                     left: parent.left;
                     right: parent.right;
-                    leftMargin: 25;
-                    rightMargin: 25;
                     bottom: parent.bottom;
                     bottomMargin: 17;
                 }
@@ -77,10 +77,9 @@ Item {
 
         Column {
             spacing: 25;
-            width: 200;
             anchors {
                 left: parent.left;
-                leftMargin: 25;
+                right: parent.right;
             }
 
             RowLayout {
