@@ -6,13 +6,6 @@ import QtQuick.Controls.Styles 1.1
 Switch {
     id: vsyncSwitch;
     anchors.right: parent.right;
-    onCheckedChanged: {
-        if (checked)
-            root.swapInterval = 1;
-        else
-            root.swapInterval = 0;
-        console.log("You need to reset Phoenix for the change to take effect");
-    }
     style: SwitchStyle {
         groove: Rectangle {
             color: "#1c1c1c";
