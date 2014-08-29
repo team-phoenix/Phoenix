@@ -127,15 +127,6 @@ Item {
                     anchors.right: parent.right;
                 }
             }
-        }
-
-        Column {
-            spacing: 25;
-            width: 200;
-            anchors {
-                left: parent.left;
-                leftMargin: 25;
-            }
 
             RowLayout {
                 anchors {
@@ -165,15 +156,6 @@ Item {
                             gameView.filtering = 1;
                     }
                 }
-            }
-        }
-
-        Column {
-            spacing: 25;
-            width: 200;
-            anchors {
-                left: parent.left;
-                leftMargin: 25;
             }
 
             RowLayout {
