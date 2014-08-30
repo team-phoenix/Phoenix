@@ -9,11 +9,11 @@ import phoenix.image 1.0
 
 Rectangle {
     id: gameGrid;
-    color: "#1d1e1e";
+    color: "#262626";
     height: 500;
     width: 500;
 
-    property string itemBackgroundColor: "#b85353";
+    property string itemBackgroundColor: "red";
     property real zoomFactor: 1;
     property bool zoomSliderPressed: false;
     property bool resizeGrid: false;
@@ -43,8 +43,17 @@ Rectangle {
         anchors.fill: parent;
         style: ScrollViewStyle {
             frame: Rectangle {
-                color: "#202020";
-                width: 0;
+                color: gameGrid.color;
+                //width: 0;
+                Rectangle {
+                    anchors {
+                        top: parent.top;
+                        left: parent.left;
+                        right: parent.right;
+                    }
+                    height: 1;
+                    color: "#1a1a1a";
+                }
             }
             transientScrollBars: true;
             handleOverlap: 5;
@@ -59,6 +68,7 @@ Rectangle {
         }
 
     GridView {
+        anchors.fill: parent;
         id: gridView;
 
         property bool checked: false;
@@ -77,7 +87,6 @@ Rectangle {
             }
 
         ]
-
 
         Behavior on cellHeight {
             PropertyAnimation {
@@ -116,7 +125,6 @@ Rectangle {
             height: gridView.cellHeight - (50 / gameGrid.zoomFactor);
             width: gridView.cellWidth - (50 / gameGrid.zoomFactor);
 
-
             Item {
                 anchors.fill: parent;
                 Rectangle {
@@ -145,8 +153,8 @@ Rectangle {
                         anchors.margins: 10;
                         source: artwork;
                         sourceSize {
-                            height: 200;
-                            width: 200;
+                            height: 300;
+                            width: 500;
                         }
 
                         fillMode: Image.PreserveAspectFit;
@@ -164,39 +172,129 @@ Rectangle {
 
                         Component.onCompleted: cachedImage.start();
 
-                        MouseArea {
-                            anchors.fill: parent;
-                            onDoubleClicked: {
-                                if (imageHighlight.checked)
-                                    imageHighlight.checked = false;
-                                else
-                                    imageHighlight.checked = true;
-                                if (gameView.coreName == "")
-                                    gameView.coreName = "C:/Users/lee/Desktop/32_cores/snes9x_libretro.dll"
-                                if (gameView.gameName == "")
-                                    gameView.gameName = "C:/Users/lee/Documents/Emulation/SNES/Super Mario All-Stars + Super Mario World (USA).sfc";
-                                headerBar.userText = title;
-                                gameView.run = true;
-                                gameView.loadSaveState = true;
-                                windowStack.push({item: gameView, replace: true });
+
+                        Button {
+                            id: infoButton;
+                            height: 48 - (30 / gameGrid.zoomFactor);
+                            width: 48 - (30 / gameGrid.zoomFactor);
+                            visible: false;
+                            anchors {
+                                right: parent.right;
+                                top: parent.top;
+                                rightMargin: 24;
+                                topMargin: 24;
+                            }
+
+                            style: ButtonStyle {
+                                label: Item {
+                                    //height: 32;
+                                    //width: 32;
+                                    Image {
+                                        id: infoIcon;
+                                        source: "../assets/Info-32.png";
+                                        anchors {
+                                            fill: parent;
+                                        }
+                                    }
+                                }
+
+                                background: Rectangle {
+                                    height: 32;
+                                    width: 32;
+                                    radius: 16;
+                                    border {
+                                        width: 1;
+                                        color: "#262626";
+                                    }
+
+                                    gradient: Gradient {
+                                        GradientStop {position: 0.0; color: "#2f2f2f";}
+                                        GradientStop {position: 0.0; color: "#1d1d1e";}
+
+                                    }
+                                }
 
                             }
                         }
+/*
+                        Rectangle {
+                            id: infoDropDown;
+                            z: gridView.z + 1;
+                            visible: true;
+                            color: "red";
+                            anchors {
+                                left: infoButton.right;
+                                leftMargin: 25;
+                                verticalCenter: infoButton.verticalCenter;
+                                verticalCenterOffset: 125;
+                            }
+
+                            height: 300;
+                            width: 200;
+                            Rectangle {
+                                z: parent.z + 1;
+                                rotation: 45;
+                                height: 25;
+                                width: 25;
+                                color: "red";
+                                anchors {
+                                    right: parent.left;
+                                    rightMargin: -15;
+                                    top: parent.top;
+                                    topMargin: 25;
+                                }
+                            }
+                        }
+*/
+                        Image {
+                            source: "../assets/GameView/play.png"
+                            visible: infoButton.visible;
+                            sourceSize {
+                                height: 64;
+                                width: 64;
+                            }
+                            onHeightChanged: console.log(height)
+                            height: 40;
+                            width: 40;
+                            anchors {
+                                fill: (height < 40) ? parent : undefined;
+                                topMargin: 60;
+                                leftMargin: 60;
+                                rightMargin: 60;
+                                bottomMargin: 5;
+                                bottom: parent.bottom;
+
+                            }
+                            MouseArea {
+                                anchors.fill: parent;
+                                onClicked: {
+                                    console.log('clicked: ' + title)
+                                    /*if (imageHighlight.checked)
+                                        imageHighlight.checked = false;
+                                    else
+                                        imageHighlight.checked = true;
+                                    if (gameView.coreName == "")
+                                        gameView.coreName = "C:/Users/lee/Desktop/32_cores/snes9x_libretro.dll"
+                                    if (gameView.gameName == "")
+                                        gameView.gameName = "C:/Users/lee/Documents/Emulation/SNES/Super Mario All-Stars + Super Mario World (USA).sfc";
+                                    headerBar.userText = title;
+                                    gameView.run = true;
+                                    gameView.loadSaveState = true;
+                                    windowStack.push({item: gameView, replace: true });*/
+                                }
+                            }
+                        }
+
+                        MouseArea {
+                            id: mouseArea;
+                            propagateComposedEvents: true;
+                            anchors.fill: parent;
+                            hoverEnabled: true;
+                            onEntered: infoButton.visible = true;
+                            onExited: infoButton.visible = false;
+                        }
                     }
                 }
-
-                /*DropShadow {
-                    source: imageHighlight;
-                    visible: !gameGrid.zoomSliderPressed;
-                    anchors.fill: source;
-                    fast: false;
-                    horizontalOffset: 3;
-                    verticalOffset: 6;
-                    radius: 8.0;
-                    samples: 16;
-                    color: "#80000000";
-                    transparentBorder: true;
-                }*/
 
                 Text {
                     id: titleLabel;

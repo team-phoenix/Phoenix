@@ -101,15 +101,14 @@ TableView {
 
         frame: Rectangle {
             color: "#202020";
-            width: 0;
+            width: 1;
         }
         transientScrollBars: true;
-        handleOverlap: 5;
         scrollToClickedPosition: true;
 
         scrollBarBackground: Rectangle {
             color: "#1f1f1f";
-            height: control.height;
+            //height: control.height;
             width: styleData.hovered ? 17 : 15;
         }
 
