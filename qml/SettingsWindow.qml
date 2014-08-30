@@ -7,8 +7,6 @@ ApplicationWindow {
     width: 600;
     title: "Settings";
 
-    //flags: "FramelessWindowHint";
-
     property alias video: videoSettings;
     property alias audio: audioSettings;
     property alias input: inputSettings;
@@ -21,15 +19,23 @@ ApplicationWindow {
     onVisibleChanged: {
         if (visible) {
             var name = stackView.currentItem.name;
-            settingsDropDown.visible = false;
+            //settingsDropDown.visible = false;
             if (name === "video") {
                 settingsWindow.height = 400;
                 settingsWindow.width = 250;
             }
-            else {
-                settingsWindow.height = 600;
-                settingsWindow.width = 400;
+            else if (name === "audio") {
+                settingsWindow.height = 400;
+                settingsWindow.width = 250;
             }
+
+            else {
+                settingsWindow.height = 400;
+                settingsWindow.width = 250;
+            }
+        }
+        else {
+            settingsDropDown.visible = false;
         }
     }
 
@@ -107,6 +113,7 @@ ApplicationWindow {
             id: stackView;
             anchors.fill: parent;
             initialItem: videoSettings;
+            property string libraryLocation: "";
         }
 
         Component {
@@ -153,6 +160,7 @@ ApplicationWindow {
             id: librarySettings;
             LibrarySettings {
                 property string name: "library";
+                libraryLocation: stackView.libraryLocation;
 
             }
         }
