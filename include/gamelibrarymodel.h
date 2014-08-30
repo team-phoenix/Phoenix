@@ -4,15 +4,15 @@
 
 #include <QSqlTableModel>
 
-#include "thegamesdb.h"
 #include "librarydbmanager.h"
+
 
 class GameLibraryModel: public QSqlTableModel
 {
     Q_OBJECT
 
 public:
-    GameLibraryModel(QObject *parent = 0);
+    GameLibraryModel(LibraryDbManager *dbm, QObject *parent = 0);
     virtual ~GameLibraryModel();
 
     enum GameRoles {
@@ -29,15 +29,8 @@ public slots:
     void setFilter(QString search_terms_, QString new_category);
     virtual void sort(int column, Qt::SortOrder order) override;
 
-signals:
-    void progressChanged(qreal);
-    void labelChanged(QString);
-    void fetchArtwork(GameData);
-    void modelUpdated();
-    void scannedFiles();
-
 private:
-    LibraryDbManager dbm;
+    LibraryDbManager *dbm;
     QString base_query;
     QString search_terms;
     QString category;

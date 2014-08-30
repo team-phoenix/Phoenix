@@ -9,8 +9,8 @@ Rectangle {
     height: 500;
     width: 250;
 
-    property real progressValue: gamelibrary.progress;
-    property string progressText: gamelibrary.label;
+    property real progressValue: phoenixLibrary.progress;
+    property string progressText: phoenixLibrary.label;
 
     Rectangle {
         id: topBord;

@@ -8,9 +8,6 @@
 #include "librarydbmanager.h"
 #include "logging.h"
 
-#define table_version "schema_version"
-#define table_games "games"
-
 
 QSqlDatabase &LibraryDbManager::handle()
 {

@@ -6,8 +6,9 @@
 #include "logging.h"
 
 
-GameLibraryModel::GameLibraryModel(QObject *parent)
-    : QSqlTableModel(parent)
+GameLibraryModel::GameLibraryModel(LibraryDbManager *dbm, QObject *parent)
+    : QSqlTableModel(parent),
+      dbm(dbm)
 {
     role_names = QSqlTableModel::roleNames();
     role_names.insert(TitleRole, "title");
@@ -43,7 +44,7 @@ QHash<int, QByteArray> GameLibraryModel::roleNames() const
 
 void GameLibraryModel::updateQuery() {
     QString q_str(base_query);
-    QSqlQuery q(dbm.handle());;
+    QSqlQuery q(dbm->handle());;
     if (!search_terms.isEmpty())
         q_str.append(" WHERE " + category + " LIKE ?");
 

@@ -4,6 +4,8 @@
 
 #include <QSqlDatabase>
 
+#define table_version "schema_version"
+#define table_games "games"
 
 class LibraryDbManager
 {

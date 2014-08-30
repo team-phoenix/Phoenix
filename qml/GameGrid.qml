@@ -150,7 +150,7 @@ Rectangle {
                         id: image;
                         anchors.fill: parent;
                         anchors.margins: 10;
-                        source: artwork;
+                        source: !artwork ? "qrc:/assets/No-Art.png" : artwork;
                         sourceSize {
                             height: 300;
                             width: 500;
