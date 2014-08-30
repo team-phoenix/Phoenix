@@ -65,14 +65,13 @@ Rectangle {
         id: listView;
         anchors {
             top: parent.top;
+            bottom: parent.bottom;
             topMargin: 15;
         }
 
-        height: parent.height / 2;
         snapMode: ListView.SnapToItem;
         orientation: ListView.Vertical;
         interactive: true;
-        spacing: 5;
         highlightFollowsCurrentItem: false;
 
         header: Item {
@@ -218,7 +217,7 @@ Rectangle {
         }
 
         delegate: Item {
-            height: 33;
+            height: 28;
             width: consoleBar.width;
             Row {
                 id: row;
@@ -283,7 +282,7 @@ Rectangle {
     Rectangle {
         id: progressArea;
         z: 1;
-        visible: true;//consoleBar.progressText !== "";
+        visible: false;//consoleBar.progressText !== "";
         anchors {
             bottom: parent.bottom;
             left: parent.left;
