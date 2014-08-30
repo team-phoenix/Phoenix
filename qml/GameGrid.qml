@@ -68,7 +68,6 @@ Rectangle {
         }
 
     GridView {
-        anchors.fill: parent;
         id: gridView;
 
         property bool checked: false;
@@ -172,7 +171,7 @@ Rectangle {
 
                         Component.onCompleted: cachedImage.start();
 
-
+/*
                         Button {
                             id: infoButton;
                             height: 48 - (30 / gameGrid.zoomFactor);
@@ -216,7 +215,8 @@ Rectangle {
 
                             }
                         }
-/*
+
+
                         Rectangle {
                             id: infoDropDown;
                             z: gridView.z + 1;
@@ -248,16 +248,15 @@ Rectangle {
 */
                         Image {
                             source: "../assets/GameView/play.png"
-                            visible: infoButton.visible;
+                            visible: true;
                             sourceSize {
                                 height: 64;
                                 width: 64;
                             }
-                            onHeightChanged: console.log(height)
                             height: 40;
                             width: 40;
                             anchors {
-                                fill: (height < 40) ? parent : undefined;
+                                fill: parent;
                                 topMargin: 60;
                                 leftMargin: 60;
                                 rightMargin: 60;
@@ -269,7 +268,7 @@ Rectangle {
                                 anchors.fill: parent;
                                 onClicked: {
                                     console.log('clicked: ' + title)
-                                    /*if (imageHighlight.checked)
+                                    if (imageHighlight.checked)
                                         imageHighlight.checked = false;
                                     else
                                         imageHighlight.checked = true;
@@ -280,7 +279,7 @@ Rectangle {
                                     headerBar.userText = title;
                                     gameView.run = true;
                                     gameView.loadSaveState = true;
-                                    windowStack.push({item: gameView, replace: true });*/
+                                    windowStack.push({item: gameView, replace: true });
                                 }
                             }
                         }
@@ -290,8 +289,8 @@ Rectangle {
                             propagateComposedEvents: true;
                             anchors.fill: parent;
                             hoverEnabled: true;
-                            onEntered: infoButton.visible = true;
-                            onExited: infoButton.visible = false;
+                            //onEntered: infoButton.visible = true;
+                            //onExited: infoButton.visible = false;
                         }
                     }
                 }
