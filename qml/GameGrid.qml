@@ -39,33 +39,8 @@ Rectangle {
             resizeGrid = true;
     }
 
-    ScrollView {
+    PhoenixScrollView {
         anchors.fill: parent;
-        style: ScrollViewStyle {
-            frame: Rectangle {
-                color: gameGrid.color;
-                //width: 0;
-                Rectangle {
-                    anchors {
-                        top: parent.top;
-                        left: parent.left;
-                        right: parent.right;
-                    }
-                    height: 1;
-                    color: "#1a1a1a";
-                }
-            }
-            transientScrollBars: true;
-            handleOverlap: 5;
-            scrollToClickedPosition: true;
-
-            scrollBarBackground: Rectangle {
-                color: "#1f1f1f";
-                height: control.height;
-                width: styleData.hovered ? 17 : 15;
-            }
-
-        }
 
     GridView {
         id: gridView;
@@ -267,12 +242,13 @@ Rectangle {
                             MouseArea {
                                 anchors.fill: parent;
                                 onClicked: {
-                                    console.log('clicked: ' + title)
+                                    //console.log('clicked: ' + );
                                     if (imageHighlight.checked)
                                         imageHighlight.checked = false;
                                     else
                                         imageHighlight.checked = true;
-                                    headerBar.userText = title;
+                                    if (gameView.run)
+                                        headerBar.userText = title;
                                 }
                             }
                         }

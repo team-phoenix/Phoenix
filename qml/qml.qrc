@@ -18,5 +18,6 @@
     <file>PhoenixSwitch.qml</file>
     <file>PhoenixTextField.qml</file>
     <file>PhoenixComboBox.qml</file>
+    <file>PhoenixScrollView.qml</file>
 </qresource>
 </RCC>
