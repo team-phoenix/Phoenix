@@ -3,6 +3,7 @@
 
 #include "phoenixlibrary.h"
 #include "librarydbmanager.h"
+#include "libretro_cores_info.h"
 #include "logging.h"
 
 

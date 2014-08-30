@@ -18,6 +18,7 @@
 #include "phoenixlibrary.h"
 #include "cacheimage.h"
 
+
 InputManager input_manager; // global
 
 int main(int argc, char *argv[])
