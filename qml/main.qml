@@ -66,7 +66,8 @@ PhoenixWindow {
 
     MouseArea {
         anchors.fill: parent;
-        enabled: settingsBubble.visible;
+        enabled: settingsDropDown.visible;
+        onClicked: settingsDropDown.visible = false;
     }
 
     Component {
