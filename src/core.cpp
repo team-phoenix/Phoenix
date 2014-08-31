@@ -215,10 +215,7 @@ bool Core::loadCore(const char *path)
         return true;
         
     }
-    else {
-        return false;
-    }
-    
+
     return false;
     
 } // Core::loadCore()
@@ -237,15 +234,14 @@ bool Core::loadGame(const char *path)
         game_info.data = nullptr;
         game_info.size = 0;
         game_info.meta = "";
-
     }
+
     else {
         // full path not needed, read the file to a buffer and pass that to the core
         QFile game(path);
         
-        if (!game.open(QIODevice::ReadOnly)) {
+        if (!game.open(QIODevice::ReadOnly))
             return false;
-        }
 
         // read into memory
         game_data = game.readAll();
@@ -260,17 +256,15 @@ bool Core::loadGame(const char *path)
     bool ret = symbols->retro_load_game(&game_info);
     
     // Get some info about the game
-    if (ret) {
-        symbols->retro_get_system_av_info(system_av_info);
-        game_geometry = system_av_info->geometry;
-        system_timing = system_av_info->timing;
-        video_width = game_geometry.max_width;
-        video_height = game_geometry.max_height;
-        return true;
-    }
-    else {
+    if (!ret)
         return false;
-    }
+
+    symbols->retro_get_system_av_info(system_av_info);
+    game_geometry = system_av_info->geometry;
+    system_timing = system_av_info->timing;
+    video_width = game_geometry.max_width;
+    video_height = game_geometry.max_height;
+    return true;
     
 } // Core::load_game()
 
@@ -313,12 +307,10 @@ bool Core::environmentCallback(unsigned cmd, void *data)
             qDebug() << "\tRETRO_ENVIRONMENT_GET_OVERSCAN (2) (handled)";
             // Crop away overscan
             return true;
-            break;
 
         case RETRO_ENVIRONMENT_GET_CAN_DUPE: // 3
             *(bool *)data = true;
             return true;
-            break;
 
         // 4 and 5 have been deprecated
         
@@ -360,17 +352,16 @@ bool Core::environmentCallback(unsigned cmd, void *data)
                     
                 default:
                     qDebug() << "\tError: Pixel format is not supported. (" << pixelformat << ")";
-                    return false;
+                    break;
             }
 
-            break;
+            return false;
         }
 
         case RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS: // 11
             qDebug() << "\tRETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS (11) (handled)";
             Core::core->input_descriptor = *(retro_input_descriptor *)data;
             return true;
-            break;
 
         case RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK: // 12
             qDebug() << "\tRETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK (12) (handled)";
@@ -400,9 +391,9 @@ bool Core::environmentCallback(unsigned cmd, void *data)
                     break;
                 default:
                     qCritical() << "RETRO_HW_CONTEXT: " << Core::core->hw_callback.context_type << " was not handled";
-                    return false;
+                    break;
             }
-            break;
+            return false;
 
         case RETRO_ENVIRONMENT_GET_VARIABLE: { // 15
             auto *rv = static_cast<struct retro_variable *>(data);
@@ -465,11 +456,10 @@ bool Core::environmentCallback(unsigned cmd, void *data)
             qDebug() << "\tRETRO_ENVIRONMENT_GET_CAMERA_INTERFACE (26)";
             break;
 
-        case RETRO_ENVIRONMENT_GET_LOG_INTERFACE: { // 27
+        case RETRO_ENVIRONMENT_GET_LOG_INTERFACE: {// 27
             struct retro_log_callback *logcb = (struct retro_log_callback *)data;
             logcb->log = logCallback;
             return true;
-            break;
         }
 
         case RETRO_ENVIRONMENT_GET_PERF_INTERFACE: // 28
@@ -572,19 +562,19 @@ void Core::logCallback(enum retro_log_level level, const char *fmt, ...)
     switch (level) {
         case RETRO_LOG_DEBUG:
             qCDebug(phxCore) << outbuf.data();
-        break;
+            break;
         case RETRO_LOG_INFO:
             qCDebug(phxCore) << outbuf.data();
-        break;
+            break;
         case RETRO_LOG_WARN:
             qCWarning(phxCore) << outbuf.data();
-        break;
+            break;
         case RETRO_LOG_ERROR:
             qCCritical(phxCore) << outbuf.data();
-        break;
+            break;
         default:
             qCWarning(phxCore) << outbuf.data();
-        break;
+            break;
     }
 
 } // Core::retro_log()
