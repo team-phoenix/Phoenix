@@ -202,14 +202,14 @@ Rectangle {
             ListElement {title: "All"; icon: "";}
             ListElement {title: "Nintendo"; icon: "/assets/consoleicons/nes.png";}
             ListElement {title: "Super Nintendo"; icon: "/assets/consoleicons/snes.png";}
-            ListElement {title: "Nintendo 64"; icon: "/assets/consoleicons/mupen64plus.png";}
+            //ListElement {title: "Nintendo 64"; icon: "/assets/consoleicons/n64.png";}
             ListElement {title: "FFmpeg"; icon: "/assets/consoleicons/ffmpeg.png";}
             ListElement {title: "Sony PlayStation"; icon: "/assets/consoleicons/ps1.png";}
             ListElement {title: "Game Boy Advance"; icon: "/assets/consoleicons/gba.png";}
-            ListElement {title: "Game Boy Color"; icon: "/assets/consoleicons/gbcolor.png";}
+            ListElement {title: "Game Boy Color"; icon: "/assets/consoleicons/gbc.png";}
             ListElement {title: "Nintendo DS"; icon: "/assets/consoleicons/nds.png";}
             ListElement {title: "DOSBox"; icon: "/assets/consoleicons/dosbox.png";}
-            ListElement {title: "Dinothawr"; icon: "/assets/consoleicons/dinothawr.png";}
+            //ListElement {title: "Dinothawr"; icon: "/assets/consoleicons/dinothawr.png";}
         }
 
         ExclusiveGroup {
