@@ -15,12 +15,31 @@
     <file>consoleicons/dosbox.png</file>
     <file>consoleicons/ffmpeg.png</file>
     <file>consoleicons/gba.png</file>
-    <file>consoleicons/gbcolor.png</file>
-    <file>consoleicons/mupen64plus.png</file>
+    <file>consoleicons/gb.png</file>
+    <file>consoleicons/n64.png</file>
     <file>consoleicons/nds.png</file>
     <file>consoleicons/nes.png</file>
     <file>consoleicons/ps1.png</file>
     <file>consoleicons/snes.png</file>
+    <file>consoleicons/vb.png</file>
+    <file>consoleicons/vectrex.png</file>
+    <file>consoleicons/wsc.png</file>
+    <file>consoleicons/sega32x.png</file>
+    <file>consoleicons/sega8.png</file>
+    <file>consoleicons/saturn.png</file>
+    <file>consoleicons/psp.png</file>
+    <file>consoleicons/pcfx.png</file>
+    <file>consoleicons/supergrafix.png</file>
+    <file>consoleicons/pce.png</file>
+    <file>consoleicons/ngp.png</file>
+    <file>consoleicons/ng.png</file>
+    <file>consoleicons/keyboard.png</file>
+    <file>consoleicons/jaguar.png</file>
+    <file>consoleicons/gamegear.png</file>
+    <file>consoleicons/lynx.png</file>
+    <file>consoleicons/7800.png</file>
+    <file>consoleicons/3do.png</file>
+    <file>consoleicons/arcade.png</file>
     <!-- -->
     <file>cog-6x.png</file>
     <file>arrow-left-a.png</file>
@@ -54,7 +73,6 @@
     <file>No-Art.png</file>
 
     <file>retropad.png</file>
-    <file>blank_retropad.png</file>
     <file>more.png</file>
     <!-- -->
     <file>gamecontrollerdb.txt</file>
