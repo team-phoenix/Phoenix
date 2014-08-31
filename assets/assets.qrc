@@ -13,9 +13,8 @@
     <!-- -->
     <file>consoleicons/dinothawr.png</file>
     <file>consoleicons/dosbox.png</file>
-    <file>consoleicons/ffmpeg.png</file>
     <file>consoleicons/gba.png</file>
-    <file>consoleicons/gb.png</file>
+    <file>consoleicons/gbc.png</file>
     <file>consoleicons/n64.png</file>
     <file>consoleicons/nds.png</file>
     <file>consoleicons/nes.png</file>

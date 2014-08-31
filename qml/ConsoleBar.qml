@@ -199,17 +199,15 @@ Rectangle {
         }
 
         model: ListModel {
-            ListElement {title: "All"; icon: "";}
+            ListElement {title: "All"; icon: "qrc:/assets/more.png";}
+            ListElement {title: "Atari Lynx"; icon: "qrc:/assets/consoleicons/lynx.png";}
             ListElement {title: "Nintendo"; icon: "/assets/consoleicons/nes.png";}
             ListElement {title: "Super Nintendo"; icon: "/assets/consoleicons/snes.png";}
-            //ListElement {title: "Nintendo 64"; icon: "/assets/consoleicons/n64.png";}
-            ListElement {title: "FFmpeg"; icon: "/assets/consoleicons/ffmpeg.png";}
             ListElement {title: "Sony PlayStation"; icon: "/assets/consoleicons/ps1.png";}
             ListElement {title: "Game Boy Advance"; icon: "/assets/consoleicons/gba.png";}
             ListElement {title: "Game Boy Color"; icon: "/assets/consoleicons/gbc.png";}
             ListElement {title: "Nintendo DS"; icon: "/assets/consoleicons/nds.png";}
             ListElement {title: "DOSBox"; icon: "/assets/consoleicons/dosbox.png";}
-            //ListElement {title: "Dinothawr"; icon: "/assets/consoleicons/dinothawr.png";}
         }
 
         ExclusiveGroup {
@@ -228,9 +226,10 @@ Rectangle {
                 Image {
                     anchors.verticalCenter: parent.verticalCenter;
                     source: icon;
+                    fillMode: Image.PreserveAspectFit;
                     sourceSize {
-                        height: 20;
-                        width: 20;
+                        height: 24;
+                        width: 24;
                     }
                     height: 20;
                     width: 20;
