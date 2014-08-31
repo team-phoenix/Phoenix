@@ -31,7 +31,7 @@ Item {
 
                 Image {
                     id: audioImage;
-                    source: "../assets/volume-high-8x.png";
+                    source: "../assets/Library-64.png";
                     height: 48;
                     width: 48;
                 }
@@ -91,32 +91,24 @@ Item {
                 placeholderText: "/path/to/gamelibrary.sql";
             }
 
-            RowLayout {
-                anchors {
-                    left: parent.left;
-                    right: parent.right;
-                }
-                spacing: 25;
-
-                Text {
-                    text: "Available Devices"
-                    renderType: Text.QtRendering;
-                    color: settingsBubble.alternateTextColor;
-                    font {
-                        family: "Sans";
-                        pixelSize: 13;
-                    }
-                }
-
-                PhoenixComboBox {
-                    anchors.right: parent.right;
-                    implicitWidth: 100;
-                    model: gameView.video.getAudioDevices();
-                    onCurrentIndexChanged: {
-                        gameView.video.audioDevice = currentIndex;
-                    }
-                }
-            }
         }
+    }
+
+    Row {
+        anchors {
+            horizontalCenter: parent.horizontalCenter;
+            bottom: parent.bottom;
+            bottomMargin: 12;
+        }
+        spacing: 10;
+
+       PhoenixNormalButton {
+           text: "Backup";
+
+       }
+
+       PhoenixWarningButton {
+           text: "Delete";
+       }
     }
 }
