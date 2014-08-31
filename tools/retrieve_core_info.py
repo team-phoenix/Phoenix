@@ -107,7 +107,6 @@ for k, v in output['cores'].iteritems():
     ))
 
 print("""
-
 #include <QVariant>
 #include <QMap>
 

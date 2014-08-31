@@ -3,7 +3,7 @@
 #include <QMap>
 
 // this file is machine generated, DO NOT EDIT
-// last generated at 2014-08-30 06:28:54 UTC
+// last generated at 2014-08-31 14:48:53 UTC
 
 const QMap<QString, QVariantMap> libretro_cores_info {
     { "2048_libretro", {
@@ -63,7 +63,8 @@ const QMap<QString, QVariantMap> libretro_cores_info {
         { "display_version", "svn" },
         { "need_fullpath", true },
         { "block_extract", false },
-        { "supports_no_game", false }
+        { "supports_no_game", false },
+        { "notes", "- BIOS files go into the System\\Machines folder" }
     } },
     { "bnes_libretro", {
         { "display_name", "NES / Famicom (bNES)" },
@@ -1301,7 +1302,7 @@ const QMap<QString, QVariantMap> libretro_cores_info {
         { "systemname", "Game Boy/Game Boy Color" },
         { "license", "GPLv2" },
         { "permissions", "" },
-        { "display_version", "" },
+        { "display_version", "v0.8.3" },
         { "need_fullpath", false },
         { "block_extract", false },
         { "supports_no_game", false }
