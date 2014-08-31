@@ -55,16 +55,6 @@
 
     <file>retropad.png</file>
     <file>blank_retropad.png</file>
-    <file>blue_button.png</file>
-    <file>red_button.png</file>
-    <file>orange_button.png</file>
-    <file>analog.png</file>
-    <file>up.png</file>
-    <file>down.png</file>
-    <file>right.png</file>
-    <file>left.png</file>
-    <file>purple_button.png</file>
-    
     <file>more.png</file>
     <!-- -->
     <file>gamecontrollerdb.txt</file>
