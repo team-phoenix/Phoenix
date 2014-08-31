@@ -19,5 +19,6 @@
     <file>PhoenixTextField.qml</file>
     <file>PhoenixComboBox.qml</file>
     <file>PhoenixScrollView.qml</file>
+    <file>CustomBorder.qml</file>
 </qresource>
 </RCC>
