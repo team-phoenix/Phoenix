@@ -20,5 +20,7 @@
     <file>PhoenixComboBox.qml</file>
     <file>PhoenixScrollView.qml</file>
     <file>CustomBorder.qml</file>
+    <file>PhoenixNormalButton.qml</file>
+    <file>PhoenixWarningButton.qml</file>
 </qresource>
 </RCC>
