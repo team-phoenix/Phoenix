@@ -1,8 +1,8 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.1
 
-Rectangle {
-    color: settingsBubble.contentColor;
+Item {
+
     Column {
         anchors {
             fill: parent;

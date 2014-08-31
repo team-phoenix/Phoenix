@@ -71,14 +71,12 @@ Item {
         if (visible) {
             ranOnce = true;
             timerEffects();
-            headerBar.opacity = 0.75;
             headerBar.sliderVisible = false;
             headerBar.searchBarVisible = false;
             prevView = headerBar.viewIcon;
             headerBar.viewIcon = "../assets/GameView/home.png";
         }
         else {
-            headerBar.opacity = 1.0;
             headerBar.sliderVisible = true;
             headerBar.searchBarVisible = true;
             headerBar.timer.stop();

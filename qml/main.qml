@@ -15,6 +15,7 @@ PhoenixWindow {
     height: 480
     minimumHeight: 480;
     minimumWidth: 640;
+    swapInterval: 0;
 
     property string borderColor: "#0b0b0b";
 

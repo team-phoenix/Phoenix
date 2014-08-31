@@ -404,8 +404,7 @@ Rectangle {
             title: "Add Folder to Library";
             visible: false;
             onAccepted: {
-                phoenixLibrary.folderPath = fileUrl;
-                phoenixLibrary.startImport(true);
+                phoenixLibrary.scanFolder(fileUrl);
             }
         }
 

@@ -24,14 +24,14 @@ PhoenixLibrary::PhoenixLibrary()
 
 PhoenixLibrary::~PhoenixLibrary()
 {
-    if (scraper) {
-        scraper->deleteLater();
-    }
+    //if (scraper) {
+     //   scraper->deleteLater();
+    //}
     if (m_model)
         m_model->deleteLater();
 
-    if (import_thread)
-        import_thread->deleteLater();
+    //if (import_thread)
+       // import_thread->deleteLater();
 
 }
 

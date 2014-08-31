@@ -160,7 +160,7 @@ ApplicationWindow {
             id: librarySettings;
             LibrarySettings {
                 property string name: "library";
-                libraryLocation: stackView.libraryLocation;
+                //libraryLocation: stackView.libraryLocation;
 
             }
         }
