@@ -22,11 +22,11 @@ PhoenixLibrary::PhoenixLibrary()
         { Nintendo_Game_Boy,  libretro_cores_info["gambatte_libretro"] },
         { Nintendo_GBA,       libretro_cores_info["vbam_libretro"] },
         { Nintendo_DS,        libretro_cores_info["desmume_libretro"] },
-        { Sega_Master_System, libretro_cores_info["pcsx_rearmed_libretro"] },
-        { Sega_Mega_Drive,    libretro_cores_info["pcsx_rearmed_libretro"] },
-        { Sega_Game_Gear,     libretro_cores_info["pcsx_rearmed_libretro"] },
-        { Sega_CD,            libretro_cores_info["pcsx_rearmed_libretro"] },
-        { Sega_32X,           libretro_cores_info["pcsx_rearmed_libretro"] },
+        { Sega_Master_System, libretro_cores_info["picodrive_libretro"] },
+        { Sega_Mega_Drive,    libretro_cores_info["picodrive_libretro"] },
+        { Sega_Game_Gear,     libretro_cores_info["picodrive_libretro"] },
+        { Sega_CD,            libretro_cores_info["picodrive_libretro"] },
+        { Sega_32X,           libretro_cores_info["picodrive_libretro"] },
         { Sony_PlayStation,   libretro_cores_info["pcsx_rearmed_libretro"] },
     }
 {
