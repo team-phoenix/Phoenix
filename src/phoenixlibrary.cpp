@@ -1,5 +1,11 @@
 
 #include <QRegularExpression>
+#include <QDirIterator>
+#include <QCryptographicHash>
+#include <QSqlQuery>
+#include <QResource>
+#include <QXmlStreamReader>
+#include <QFile>
 
 #include "phoenixlibrary.h"
 #include "librarydbmanager.h"
@@ -8,6 +14,21 @@
 
 
 PhoenixLibrary::PhoenixLibrary()
+    : core_for_console {
+        { Atari_Lynx,         libretro_cores_info["handy_libretro"] },
+        { IBM_PC,             libretro_cores_info["dosbox_libretro"] },
+        { Nintendo_NES,       libretro_cores_info["nestopia_libretro"] },
+        { Nintendo_SNES,      libretro_cores_info["snes9x_libretro"] },
+        { Nintendo_Game_Boy,  libretro_cores_info["gambatte_libretro"] },
+        { Nintendo_GBA,       libretro_cores_info["vbam_libretro"] },
+        { Nintendo_DS,        libretro_cores_info["desmume_libretro"] },
+        { Sega_Master_System, libretro_cores_info["pcsx_rearmed_libretro"] },
+        { Sega_Mega_Drive,    libretro_cores_info["pcsx_rearmed_libretro"] },
+        { Sega_Game_Gear,     libretro_cores_info["pcsx_rearmed_libretro"] },
+        { Sega_CD,            libretro_cores_info["pcsx_rearmed_libretro"] },
+        { Sega_32X,           libretro_cores_info["pcsx_rearmed_libretro"] },
+        { Sony_PlayStation,   libretro_cores_info["pcsx_rearmed_libretro"] },
+    }
 {
     /*import_thread = new QThread();
     import_thread->setObjectName("phoenix-scraper");
@@ -16,6 +37,31 @@ PhoenixLibrary::PhoenixLibrary()
     m_model = new GameLibraryModel(&dbm);
     /*scraper = new TheGamesDB();
     scraper->moveToThread(import_thread);*/
+
+    for (auto &core: libretro_cores_info) {
+        QString exts = core["supported_extensions"].toString();
+        if (exts.isEmpty())
+            continue;
+
+        if (core_for_console.key(core) == InvalidConsole)
+            continue; // core not in core_for_console map
+
+        for (QString &ext : exts.split("|")) {
+            if (ext.isEmpty())
+                continue;
+
+            if (core_for_extension.contains(ext)) {
+                QDebug dbg = qWarning(phxLibrary);
+                dbg << "Multiple cores for extension" << ext << ":";
+                for (auto &c : core_for_extension.values(ext))
+                    dbg << c["display_name"].toString();
+
+                dbg << "and" << core["display_name"].toString();
+            }
+
+            core_for_extension.insertMulti(ext, core);
+        }
+    }
 
     /*connect(import_thread, SIGNAL(started()), this, SLOT(scanFolder()));
     connect(this, SIGNAL(destroyed()), import_thread, SLOT(deleteLater()));
@@ -33,39 +79,6 @@ PhoenixLibrary::~PhoenixLibrary()
     //if (import_thread)
        // import_thread->deleteLater();
 
-}
-
-void PhoenixLibrary::addFilters(QStringList &filter_list)
-{
-    filter_list << "n64"
-                << "z64"
-                << "nes"
-                << "gba"
-                << "gb"
-                << "gbc"
-                << "cue"
-                << "sfc"
-                << "smc";
-}
-
-QString PhoenixLibrary::getSystem(QString suffix)
-{
-    QString system;
-    if (suffix == "nes")
-        system = "Nintendo (NES)";
-    else if (suffix == "sfc" || suffix == "smc")
-        system = "Super Nintendo (SNES)";
-    else if (suffix == "n64" || suffix == "z64")
-        system = "Nintendo 64";
-    else if (suffix == "gb" || suffix == "gbc")
-        system = "Game Boy";
-    else if (suffix == "gba")
-        system = "Game Boy Advance";
-    else {
-        system = "Unknown";
-        qCDebug(phxLibrary) << suffix << " was not handled";
-    }
-    return system;
 }
 
 void PhoenixLibrary::setLabel(QString label)
@@ -143,9 +156,6 @@ void PhoenixLibrary::scanFolder(QUrl folder_path)
 
     QVector<QFileInfo> files;
 
-    QStringList filter;
-    addFilters(filter);
-
     QSqlDatabase database = dbm.handle();
     database.transaction();
 
@@ -161,7 +171,7 @@ void PhoenixLibrary::scanFolder(QUrl folder_path)
         if (!info.isFile())
             continue;
 
-        if (!filter.contains(info.suffix(), Qt::CaseInsensitive))
+        if (!core_for_extension.contains(info.suffix()))
             continue; // not a known rom extension
 
         QRegularExpressionMatch m = parseFilename(info.completeBaseName());
