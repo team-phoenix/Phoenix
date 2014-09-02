@@ -1,3 +1,4 @@
+
 #ifndef CACHEIMAGE_H
 #define CACHEIMAGE_H
 
@@ -13,6 +14,7 @@
 #include <QQuickItem>
 #include <QImage>
 #include <QDir>
+
 
 class CachedImage : public QObject {
     Q_OBJECT
@@ -63,4 +65,5 @@ signals:
     void fileNameChanged();
     void cacheLoaded(bool);
 };
+
 #endif // CACHEIMAGE_H

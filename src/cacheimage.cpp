@@ -1,4 +1,6 @@
+
 #include "cacheimage.h"
+
 
 CachedImage::CachedImage(QObject *parent)
     : QObject(parent)
@@ -6,7 +8,6 @@ CachedImage::CachedImage(QObject *parent)
     // signal/slot when manager object emits finished signal execute downloadFinished method
     connect(&manager, SIGNAL(finished(QNetworkReply*)), SLOT(downloadFinished(QNetworkReply*)));
 }
-
 
 void CachedImage::returnCached(QUrl imgUrl)
 {
@@ -19,8 +20,8 @@ void CachedImage::returnCached(QUrl imgUrl)
         m_localPath += m_folder + "/";
 
     QDir dir(m_localPath);
-    if(!dir.exists()) {
-        if(!dir.mkpath(m_localPath)) {
+    if (!dir.exists()) {
+        if (!dir.mkpath(m_localPath)) {
             qDebug() << "Couldn't create subdirectory";
             return;
         }
@@ -33,8 +34,7 @@ void CachedImage::returnCached(QUrl imgUrl)
         // Reply will contain header and data and emits signal finished()
         // that will be listened by constructor connector
         manager.get(req);
-    }
-    else {
+    } else {
         //qDebug() << "exists: " << m_localPath + m_filename;
         //The file is already downloaded, let's just emit the local path
         m_localUrl = "file:///" + m_localPath + m_filename;
@@ -45,7 +45,7 @@ void CachedImage::returnCached(QUrl imgUrl)
 
 void CachedImage::cacheImage()
 {
-    if(m_src.isEmpty()) {
+    if (m_src.isEmpty()) {
         m_localUrl = "";
         emit localsrcChanged();
         return;
@@ -53,16 +53,15 @@ void CachedImage::cacheImage()
 
     QUrl imgUrl(m_src);
     //Do following when url
-    if(imgUrl.url().startsWith("http://") || imgUrl.url().startsWith("https://")) {
+    if (imgUrl.url().startsWith("http://") || imgUrl.url().startsWith("https://")) {
         returnCached(imgUrl);
-    }
-
-    else {
+    } else {
         //The file url is local already.
         m_localUrl = m_src;
         emit localsrcChanged();
     }
 }
+
 void CachedImage::downloadFinished(QNetworkReply *reply)
 {
     QStringList filename;
@@ -70,18 +69,16 @@ void CachedImage::downloadFinished(QNetworkReply *reply)
         qDebug() << "Something went worng on download";
         m_localUrl = "";
         emit localsrcChanged();
-        }
-    else {
+    } else {
         //Create a filename off the url
         filename = saveFileName();
-        if(filename[0] == "true") {
+        if (filename[0] == "true") {
             //Saves the file to disk
             if (saveToDisk(filename[1], reply)) {
                 m_localUrl = "file:///" + filename[1];
                 emit localsrcChanged();
             }
-        }
-        else {
+        } else {
             m_localUrl = "file:///" + filename[1];
             emit localsrcChanged();
         }
@@ -93,11 +90,11 @@ bool CachedImage::saveToDisk(const QString &filename, QIODevice *data)
     QFile file(filename);
     if (!file.open(QIODevice::WriteOnly)) {
         qDebug() << "Could not open %s for writing: " << filename << file.errorString();
-    return false;
+        return false;
     }
     file.write(data->readAll());
     file.close();
-    if(!file.exists())
+    if (!file.exists())
         qDebug() << "For some reason saving the image wasn't successful." << filename;
     return true;
 }
@@ -140,7 +137,7 @@ QString CachedImage::imgsrc()
 
 void CachedImage::setFolder(const QString &folder)
 {
-    if(m_folder != folder && folder != "") {
+    if (m_folder != folder && folder != "") {
         m_folder = folder;
         emit folderChanged();
     }
@@ -153,7 +150,7 @@ QString CachedImage::folder()
 
 void CachedImage::setImgsrc(const QString &imgsrc)
 {
-    if(m_src != imgsrc && imgsrc != "") {
+    if (m_src != imgsrc && imgsrc != "") {
         m_src = imgsrc;
         emit imgsrcChanged();
     }
