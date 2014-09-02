@@ -584,7 +584,8 @@ void Core::videoRefreshCallback(const void *data, unsigned width, unsigned heigh
     if (data) {
         core->video_data = data;
         core->is_dupe_frame = false;
-    } else {
+    }
+    else {
         core->is_dupe_frame = true;
     }
     core->video_width = width;
