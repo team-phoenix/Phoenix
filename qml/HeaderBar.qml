@@ -790,7 +790,7 @@ Rectangle {
             interval: 300;
             running: false;
             repeat: false;
-            onTriggered: gamelibrary.setFilter(searchBar.text, "title");
+            onTriggered: phoenixLibrary.model().setFilter("title LIKE ?", ['%'+searchBar.text+'%']);
         }
 
         onTextChanged: {

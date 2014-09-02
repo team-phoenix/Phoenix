@@ -1,25 +1,25 @@
 
 
 #include <QSqlQuery>
+#include <QSqlError>
+#include <QSqlRecord>
 
 #include "gamelibrarymodel.h"
 #include "logging.h"
 
 
 GameLibraryModel::GameLibraryModel(LibraryDbManager *dbm, QObject *parent)
-    : QSqlTableModel(parent),
+    : QSqlTableModel(parent, dbm->handle()),
       dbm(dbm)
 {
     role_names = QSqlTableModel::roleNames();
     role_names.insert(TitleRole, "title");
     role_names.insert(ConsoleRole, "console");
-    role_names.insert(TimePlayedRole, "timePlayed");
+    role_names.insert(TimePlayedRole, "time_played");
     role_names.insert(ArtworkRole, "artwork");
 
-    base_query = "SELECT title, console, time_played, artwork FROM games";
-    sort_column = 0;
-    sort_order = static_cast<Qt::SortOrder>(-1); // default = no sort
-    updateQuery();
+    setTable("games");
+    select();
 }
 
 GameLibraryModel::~GameLibraryModel()
@@ -32,7 +32,11 @@ QVariant GameLibraryModel::data(const QModelIndex &index, int role) const
     if (role < Qt::UserRole) {
         return value;
     } else {
-        int columnIdx = (role - Qt::UserRole - 1);
+        if (!role_names.contains(role))
+            return value;
+
+        // role name need to be the same as column name.
+        int columnIdx = record().indexOf(role_names.value(role));
         return QSqlTableModel::data(this->index(index.row(), columnIdx), Qt::DisplayRole);
     }
 }
@@ -42,41 +46,36 @@ QHash<int, QByteArray> GameLibraryModel::roleNames() const
     return role_names;
 }
 
-void GameLibraryModel::updateQuery() {
-    QString q_str(base_query);
-    QSqlQuery q(dbm->handle());;
-    if (!search_terms.isEmpty())
-        q_str.append(" WHERE " + category + " LIKE ?");
+bool GameLibraryModel::select()
+{
+    const QString query = selectStatement();
+    if (query.isEmpty())
+        return false;
 
-    if (sort_order != -1) {
-        q_str.append(" ORDER BY ");
-        q_str.append(role_names[Qt::UserRole + sort_column + 1]);
-        q_str.append(sort_order == 0 ? " ASC" : " DESC");
+    beginResetModel();
+
+//    d->clearCache();
+
+    QSqlQuery qu(database());
+    qu.prepare(query);
+    for (auto &val : params) {
+        qCDebug(phxLibrary) << val;
+        qu.addBindValue(val);
     }
+    qu.exec();
+    setQuery(qu);
 
-    q.prepare(q_str);
-    if (!search_terms.isEmpty())
-        q.bindValue(0, "%" + search_terms + "%");
-
-    q.exec();
-    setQuery(q);
+    if (!qu.isActive() || lastError().isValid()) {
+        setTable(tableName()); // resets the record & index
+        endResetModel();
+        return false;
+    }
+    endResetModel();
+    return true;
 }
 
-void GameLibraryModel::sort(int column, Qt::SortOrder order)
+void GameLibraryModel::setFilter(const QString &filter, QVariantList _params)
 {
-    if (sort_column == column && sort_order == order)
-        return;
-
-    sort_column = column;
-    sort_order = order;
-    updateQuery();
-}
-
-void GameLibraryModel::setFilter(QString new_terms, QString new_category)
-{
-    if (search_terms == new_terms)
-        return;
-    category = new_category;
-    search_terms = new_terms;
-    updateQuery();
+    this->params = _params;
+    QSqlTableModel::setFilter(filter);
 }
