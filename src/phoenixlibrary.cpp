@@ -34,7 +34,7 @@ PhoenixLibrary::PhoenixLibrary()
     import_thread->setObjectName("phoenix-scraper");
     import_thread->setPriority(QThread::NormalPriority);*/
 
-    m_model = new GameLibraryModel(&dbm);
+    m_model = new GameLibraryModel(&dbm, this);
     /*scraper = new TheGamesDB();
     scraper->moveToThread(import_thread);*/
 
@@ -187,6 +187,8 @@ void PhoenixLibrary::scanFolder(QUrl folder_path)
 
     database.commit();
     setLabel("");
+
+    m_model->select();
 }
 
 void PhoenixLibrary::scrapeInfo()

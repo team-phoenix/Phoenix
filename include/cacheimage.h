@@ -16,7 +16,8 @@
 #include <QDir>
 
 
-class CachedImage : public QObject {
+class CachedImage : public QObject
+{
     Q_OBJECT
     //Remote url
     Q_PROPERTY(QString imgsrc READ imgsrc WRITE setImgsrc NOTIFY imgsrcChanged)
