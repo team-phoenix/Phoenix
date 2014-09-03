@@ -1,0 +1,3 @@
+[submodule "Phoenix.wiki"]
+	path = Phoenix.wiki
+	url = git://github.com/team-phoenix/Phoenix.wiki
