@@ -8,6 +8,7 @@ import QtQuick.Window 2.0
 import Qt.labs.settings 1.0
 import phoenix.window 1.0
 import phoenix.library 1.0
+import QtQuick.Window 2.0
 
 PhoenixWindow {
     id: root;
@@ -16,17 +17,16 @@ PhoenixWindow {
     minimumHeight: 480;
     minimumWidth: 640;
     swapInterval: 0;
-    property var lastWindowStyle: "";
+    property int lastWindowStyle: Window.Windowed;
 
     property string borderColor: "#0b0b0b";
 
     function swapScreenSize(){
-        if (root.visibility == 5)
+        if (root.visibility == Window.FullScreen)
             root.visibility = lastWindowStyle;
-        else
-        {
+        else {
             lastWindowStyle = root.visibility;
-            root.visibility = "FullScreen";
+            root.visibility = Window.FullScreen;
         }
     }
 

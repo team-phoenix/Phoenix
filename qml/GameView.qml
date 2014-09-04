@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.1
 import QtGraphicalEffects 1.0
 import Qt.labs.settings 1.0
 import phoenix.video 1.0
+import QtQuick.Window 2.0
 
 
 Item {
@@ -118,7 +119,7 @@ Item {
 
 
         onSetWindowedChanged: {
-            if (root.visibility == 5)
+            if (root.visibility == Window.FullScreen)
                 root.swapScreenSize();
         }
 
