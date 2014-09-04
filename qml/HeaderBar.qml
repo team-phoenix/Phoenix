@@ -53,7 +53,7 @@ Rectangle {
                 left: parent.left;
                 right: parent.right;
             }
-            height: 2;
+            height: 1;
             color: root.borderColor;
         }
 
@@ -81,7 +81,7 @@ Rectangle {
                 top: parent.top;
                 bottom: parent.bottom;
             }
-            width: 2;
+            width: 1
             color: root.borderColor;
         }
 
@@ -90,7 +90,7 @@ Rectangle {
                 top: parent.top;
                 bottom: parent.bottom;
             }
-            width: 2;
+            width: 1;
             color: "#292929";
         }
     }
@@ -108,7 +108,7 @@ Rectangle {
                 top: parent.top;
                 bottom: parent.bottom;
             }
-            width: 2;
+            width: 1;
             color: "#292929";
         }
 
@@ -117,7 +117,7 @@ Rectangle {
                 top: parent.top;
                 bottom: parent.bottom;
             }
-            width: 2;
+            width: 1;
             color: root.borderColor;
         }
     }

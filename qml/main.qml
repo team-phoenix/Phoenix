@@ -26,7 +26,7 @@ PhoenixWindow {
             left: parent.left;
             bottom: parent.bottom;
         }
-        width: 2;
+        width: 1;
         color: borderColor;
     }
 
@@ -37,7 +37,7 @@ PhoenixWindow {
             right: parent.right;
             bottom: parent.bottom;
         }
-        width: 2;
+        width: 1;
         color: borderColor;
     }
 
@@ -48,7 +48,7 @@ PhoenixWindow {
             left: parent.left;
             right: parent.right;
         }
-        height: 2;
+        height: 1;
         color: borderColor;
     }
 
@@ -280,7 +280,7 @@ PhoenixWindow {
                     top: parent.top;
                     bottom: parent.bottom;
                 }
-                width: 225;
+                width: 200;
             }
 
             StackView {

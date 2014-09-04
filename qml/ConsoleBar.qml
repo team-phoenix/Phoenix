@@ -13,17 +13,6 @@ Rectangle {
     property string progressText: phoenixLibrary.label;
 
     Rectangle {
-        id: topBord;
-        anchors {
-            top: parent.top;
-            left: parent.left;
-            right: parent.right;
-        }
-        height: 1;
-        color: "#1a1a1a";
-    }
-
-    Rectangle {
         id: rightBord;
         anchors {
             top: parent.top;
@@ -47,18 +36,18 @@ Rectangle {
                 top: parent.top;
                 bottom: parent.bottom;
             }
-            width: 2;
+            width: 1;
             color: root.borderColor;
         }
 
-        Rectangle {
-            anchors {
-                top: parent.top;
-                bottom: parent.bottom;
-            }
-            width: 1;
-            color: "#191919";
-        }
+        //Rectangle {
+        //    anchors {
+         //       top: parent.top;
+        //        bottom: parent.bottom;
+         //   }
+        //    width: 1;
+         //   color: "#191919";
+        //}
     }
 
     ListView {
@@ -66,7 +55,7 @@ Rectangle {
         anchors {
             top: parent.top;
             bottom: parent.bottom;
-            topMargin: 15;
+            topMargin: 12;
         }
 
         snapMode: ListView.SnapToItem;
@@ -77,10 +66,10 @@ Rectangle {
         header: Item {
             height: 25;
             width: parent.width;
-            Label {
+            Text {
                 anchors {
                     left: parent.left;
-                    leftMargin: 25;
+                    leftMargin: 12;
                     horizontalCenter: parent.horizontalCenter;
                 }
                 renderType: Text.QtRendering;
@@ -215,13 +204,15 @@ Rectangle {
         }
 
         delegate: Item {
-            height: 28;
+            height: 25;
             width: consoleBar.width;
             Row {
                 id: row;
-                anchors.fill: parent;
-                anchors.leftMargin: 45;
-                spacing: 10;
+                anchors {
+                    fill: parent;
+                    leftMargin: 25;
+                }
+                spacing: 7;
 
                 Image {
                     anchors.verticalCenter: parent.verticalCenter;
@@ -238,9 +229,11 @@ Rectangle {
                 Text {
                     id: consoleItem;
                     anchors.verticalCenter: parent.verticalCenter;
+                    width: 140;
                     text: title;
                     color: "#f1f1f1";
                     renderType: Text.QtRendering;
+                    elide: Text.ElideRight;
                     font {
                         family: "Sans";
                         pixelSize: 11;

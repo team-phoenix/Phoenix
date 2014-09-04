@@ -18,19 +18,15 @@ Rectangle {
     property bool zoomSliderPressed: false;
     property bool resizeGrid: false;
 
-    border {
-        width: 1;
-        color: "#1a1a1a";
-    }
-
     Rectangle {
         // bottomBorder;
+        z: gridView.z + 1;
         anchors {
             bottom: parent.bottom;
             left: parent.left;
             right: parent.right;
         }
-        height: 2;
+        height: 1;
         color: "#0b0b0b";
     }
 
