@@ -121,33 +121,47 @@ PhoenixWindow {
         fontSize: 14;
     }
 
-    Item {
+    SettingsDropDown {
         id: settingsDropDown;
         z: headerBar.z + 1;
         visible: false;
-        anchors {
-            left: parent.left;
-            right: parent.right;
-            top: parent.top;
-            topMargin: 60;
-            rightMargin: 50;
+        opacity: visible ? 1.0 : 0.0;
+
+        Behavior on opacity {
+            NumberAnimation {
+                easing {
+                    type: Easing.OutQuad;
+                }
+                duration: 200;
+            }
         }
-        width: 50;
-        height: 225;
+
+        anchors {
+            top: headerBar.bottom;
+            topMargin: 5;
+            left: parent.left;
+            leftMargin: 10;
+        }
+        height: 200;
+
+        stackBackgroundColor: "#f4f4f4";
+        contentColor: "#f4f4f4";
+        textColor: "#f1f1f1";
 
         Rectangle {
             visible: parent.visible;
             opacity: parent.visible ? 1.0 : 0.0;
-            height: 22;
-            width: 22;
+            height: 20;
+            width: 20;
             rotation: 45;
             color: "#2f2f2f";
-            z: settingsBubble.z + 1;
+            z: settingsDropDown.z + 1;
 
             Rectangle {
                 anchors {
                     top: parent.top;
                     left: parent.left;
+                    leftMargin: 1;
                     right: parent.right;
                 }
                 height: 1;
@@ -175,34 +189,10 @@ PhoenixWindow {
 
             anchors {
                 left: parent.left;
-                leftMargin: 23;
-                verticalCenter: settingsBubble.top;
+                leftMargin: 14;
+                verticalCenter: settingsDropDown.top;
             }
 
-        }
-
-        SettingsDropDown {
-            id: settingsBubble;
-            opacity: parent.visible ? 1.0 : 0.0;
-
-            Behavior on opacity {
-                NumberAnimation {
-                    easing {
-                        type: Easing.OutQuad;
-                    }
-                    duration: 200;
-                }
-            }
-
-            anchors {
-                fill: parent;
-                leftMargin: 10;
-            }
-
-            visible: parent.visible;
-            stackBackgroundColor: "#f4f4f4";
-            contentColor: "#f4f4f4";
-            textColor: "#f1f1f1";
         }
 
     }
@@ -279,7 +269,6 @@ PhoenixWindow {
         Item {
             property string stackName: "homescreen";
             property StackView stackId: gameStack;
-            property bool blur: settingsBubble.visible;
 
 
             ConsoleBar {
