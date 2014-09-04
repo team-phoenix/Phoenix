@@ -3,6 +3,8 @@
 PhoenixWindow::PhoenixWindow()
 {
     m_surface_format = requestedFormat();
+    // Fix a bug that appears when you leave the software with alt + f4 when it is in fullscreen. This blocks the software fullscreen
+    this->show();
 }
 
 PhoenixWindow::~PhoenixWindow()
