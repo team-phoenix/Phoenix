@@ -16,8 +16,19 @@ PhoenixWindow {
     minimumHeight: 480;
     minimumWidth: 640;
     swapInterval: 0;
+    property var lastWindowStyle: "";
 
     property string borderColor: "#0b0b0b";
+
+    function swapScreenSize(){
+        if (root.visibility == 5)
+            root.visibility = lastWindowStyle;
+        else
+        {
+            lastWindowStyle = root.visibility;
+            root.visibility = "FullScreen";
+        }
+    }
 
     Rectangle {
         id: leftBorder;
