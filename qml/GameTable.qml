@@ -25,7 +25,7 @@ TableView {
 
     headerDelegate: Rectangle {
         color: table.headerColor;
-        height: 35;
+        height: 25;
         width: parent.width;
 
         Rectangle {
@@ -203,7 +203,7 @@ TableView {
             id: row;
             color: styleData.alternate ? "#262626" : "#2e2e2e";
             width: parent.width;
-            height: 32;
+            height: 25;
 
             property ExclusiveGroup exclusiveGroup: rowGroup;
             property bool checked: false
