@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.1
 import QtGraphicalEffects 1.0
 import Qt.labs.settings 1.0
 import phoenix.video 1.0
+import QtQuick.Window 2.0
 
 
 Item {
@@ -92,10 +93,7 @@ Item {
         onMouseXChanged: timerEffects();
         onMouseYChanged: timerEffects();
         onDoubleClicked: {
-            if (root.visibility == 5)
-                root.visibility = "Windowed";
-            else
-                root.visibility = "FullScreen";
+            root.swapScreenSize();
         }
     }
 
@@ -121,8 +119,8 @@ Item {
 
 
         onSetWindowedChanged: {
-            if (root.visibility != 2)
-                root.visibility = "Windowed";
+            if (root.visibility == Window.FullScreen)
+                root.swapScreenSize();
         }
 
         Component.onDestruction: {

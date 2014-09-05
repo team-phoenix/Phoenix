@@ -755,10 +755,7 @@ Rectangle {
             width: 26;
             anchors.verticalCenter: parent.verticalCenter;
             onClicked: {
-                if (root.visibility === 5)
-                    root.visibility = "Windowed";
-                else
-                    root.visibility = "FullScreen";
+                root.swapScreenSize();
             }
             style: ButtonStyle {
                 background: Image {
