@@ -4,7 +4,6 @@ import QtQuick.Controls.Styles 1.1
 
 Item {
     id: settingsBubble;
-    anchors.fill: parent;
     property string groupingColor: "gray";
     property string stackBackgroundColor: "darkgray";
     property string contentColor: "#d7d7d7";
