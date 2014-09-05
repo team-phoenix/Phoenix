@@ -243,12 +243,12 @@ Rectangle {
                                         imageHighlight.checked = false;
                                     else
                                         imageHighlight.checked = true;
-                                    gameView.coreName = "C:/Users/lee/Desktop/32_Cores/snes9x_libretro.dll";
-                                    gameView.gameName = "C:/Users/lee/Documents/Emulation/SNES/Super Mario All-Stars + Super Mario World (USA).sfc";
-                                    gameView.run = true
-                                    windowStack.push(gameView);
-                                    if (gameView.run)
-                                        headerBar.userText = title;
+                                    //gameView.coreName = "C:/Users/lee/Desktop/32_Cores/snes9x_libretro.dll";
+                                    //gameView.gameName = "C:/Users/lee/Documents/Emulation/SNES/Super Mario All-Stars + Super Mario World (USA).sfc";
+                                    //gameView.run = true
+                                    //windowStack.push(gameView);
+                                    //if (gameView.run)
+                                        //headerBar.userText = title;
                                 }
                             }
                         }
