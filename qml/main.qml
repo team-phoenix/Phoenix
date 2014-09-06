@@ -17,9 +17,16 @@ PhoenixWindow {
     minimumHeight: 480;
     minimumWidth: 640;
     swapInterval: 0;
-    property int lastWindowStyle: Window.Windowed;
+    flags: flagValue;
+    frameless: (flagValue === "FramelessWindowHint");
+    title: "Phoenix";
 
+    property bool clear: false;
+    property string accentColor:"#e8433f";
+    property int lastWindowStyle: Window.Windowed;
     property string borderColor: "#0b0b0b";
+    property string flagValue: "";
+
 
     function swapScreenSize(){
         if (root.visibility == Window.FullScreen)
@@ -63,11 +70,6 @@ PhoenixWindow {
         color: borderColor;
     }
 
-    title: "Phoenix";
-
-    property bool clear: false;
-    property string accentColor:"#e8433f";
-
     onWidthChanged: {
         settingsDropDown.state = "retracted";
     }
@@ -106,10 +108,10 @@ PhoenixWindow {
     Settings {
         id: settings;
         category: "UI";
-        property alias windowX: root.x;
-        property alias windowY: root.y;
-        property alias windowWidth: root.width;
-        property alias windowHeight: root.height;
+        //property alias windowX: root.x;
+       // property alias windowY: root.y;
+        //property alias windowWidth: root.width;
+        //property alias windowHeight: root.height;
         property alias volumeLevel: gameView.volumeLevel;
     }
 
