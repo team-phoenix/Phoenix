@@ -12,8 +12,8 @@ import QtQuick.Window 2.0
 
 PhoenixWindow {
     id: root;
-    width: 640
-    height: 480
+    width: Screen.width / 2;
+    height: Screen.height / 2;
     minimumHeight: 480;
     minimumWidth: 640;
     swapInterval: 0;
