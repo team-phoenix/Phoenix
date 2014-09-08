@@ -52,7 +52,8 @@ void PhoenixWindow::setWinFormat()
 void PhoenixWindow::setFrameless(bool frameless)
 {
     m_frameless = frameless;
-    qDebug() << "Frameless : " << frameless;
+    if (frameless)
+        setFlags(Qt::FramelessWindowHint);
     emit framelessChanged();
 }
 
