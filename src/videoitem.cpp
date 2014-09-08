@@ -270,7 +270,7 @@ inline bool VideoItem::limitFps()
 void VideoItem::cleanup()
 {
     if (texture) {
-        delete texture;
+        texture->deleteLater();
         texture = nullptr;
     }
 }
@@ -295,9 +295,7 @@ QSGNode *VideoItem::updatePaintNode(QSGNode *old_node, UpdatePaintNodeData *pain
         tex_node = static_cast<QSGSimpleTextureNode *>(old_node);
     }
     else {
-        delete old_node;
         tex_node = new QSGSimpleTextureNode();
-
     }
 
     tex_node->setTexture(texture);
