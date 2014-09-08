@@ -17,15 +17,39 @@ PhoenixWindow {
     minimumHeight: 480;
     minimumWidth: 640;
     swapInterval: 0;
-    flags: flagValue;
-    frameless: (flagValue === "FramelessWindowHint");
+    frameless: false;
     title: "Phoenix";
+    color: "black";
 
     property bool clear: false;
     property string accentColor:"#e8433f";
     property int lastWindowStyle: Window.Windowed;
     property string borderColor: "#0b0b0b";
     property string flagValue: "";
+    property bool gameShowing: false;
+    property string systemDirectory: "";
+    property string saveDirectory: "";
+    property real volumeLevel: 1.0;
+    property string prevView: "";
+    property bool ranOnce: false;
+    property bool screenTimer: false;
+    property int filtering: 2;
+    property bool stretchVideo: false;
+    property string itemInView: "grid";
+
+    onGameShowingChanged: {
+        if (gameShowing) {
+            headerBar.previousViewIcon = headerBar.viewIcon;
+            headerBar.viewIcon = "../assets/GameView/home.png";
+        }
+        else {
+            headerBar.viewIcon = headerBar.previousViewIcon;
+        }
+    }
+
+    onWidthChanged: {
+        settingsDropDown.state = "retracted";
+    }
 
 
     function swapScreenSize(){
@@ -70,10 +94,6 @@ PhoenixWindow {
         color: borderColor;
     }
 
-    onWidthChanged: {
-        settingsDropDown.state = "retracted";
-    }
-
     PhoenixLibrary {
         id: phoenixLibrary;
     }
@@ -109,10 +129,12 @@ PhoenixWindow {
         id: settings;
         category: "UI";
         //property alias windowX: root.x;
-       // property alias windowY: root.y;
+        //property alias windowY: root.y;
         //property alias windowWidth: root.width;
         //property alias windowHeight: root.height;
-        property alias volumeLevel: gameView.volumeLevel;
+        property alias volumeLevel: root.volumeLevel;
+        property alias smooth: root.filtering;
+        property alias stretchVideo: root.stretchVideo;
     }
 
     HeaderBar {
@@ -228,6 +250,7 @@ PhoenixWindow {
 
         height: headerBar.visible ? (parent.height - headerBar.height) : (parent.height);
         anchors {
+            top: (currentItem !== null && currentItem.stackName == "gameview") ? headerBar.top : headerBar.bottom;
             left: parent.left;
             right: parent.right;
             bottom: parent.bottom;
@@ -237,7 +260,6 @@ PhoenixWindow {
 
         property string gameStackItemName: {
             if (currentItem != null && typeof currentItem.stackName !== "undefined") {
-                console.log(currentItem.stackName);
                 return currentItem.stackName;
             }
             else {
@@ -269,11 +291,9 @@ PhoenixWindow {
        }
     }
 
-    GameView {
+    Component {
         id: gameView;
-        visible: false;
-        systemDirectory: "C:/Users/lee/Desktop";
-        saveDirectory:  systemDirectory;
+        GameView {}
     }
 
     Component {

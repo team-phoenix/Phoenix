@@ -147,12 +147,12 @@ Item {
                 PhoenixSwitch {
                     id: filteringSwitch;
                     anchors.right: parent.right;
-                    checked: (gameView.filtering === 2);
+                    checked: (root.filtering === 2);
                     onCheckedChanged: {
                         if (checked)
-                            gameView.filtering = 2;
+                            root.filtering = 2;
                         else
-                            gameView.filtering = 1;
+                            root.filtering = 1;
                     }
                 }
             }
@@ -177,15 +177,13 @@ Item {
                 PhoenixSwitch {
                     id: ratioSwitch;
                     anchors.right: parent.right;
-                    checked: gameView.stretchVideo;
+                    checked: root.stretchVideo;
                     onCheckedChanged: {
                         if (checked)
-                            gameView.stretchVideo = true;
+                            root.stretchVideo = true;
                         else
-                            gameView.stretchVideo = false;
-
+                            root.stretchVideo = false;
                     }
-
                 }
             }
         }

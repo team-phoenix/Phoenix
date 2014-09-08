@@ -20,13 +20,14 @@ Rectangle {
     property bool searchBarVisible: true;
     property real volumeLevel: volumeSlider.value;
     property string userText: "Phoenix";
+    property string previousViewIcon: "";
 
     property Timer timer: Timer {
         interval: 4000;
         running: false;
 
         onTriggered: {
-            gameView.gameMouse.cursorShape = Qt.BlankCursor;
+            windowStack.currentItem.gameMouse.cursorShape = Qt.BlankCursor;
             headerBar.height = 0;
             if (volumeDropDown.visible) {
                 volumeDropDown.visible = false;
@@ -172,7 +173,7 @@ Rectangle {
                 headerBar.timer.stop();
             else {
                 if (windowStack.currentItem !== null) {
-                    if (windowStack.currentItem.stackName === "gameview")
+                    if (root.gameShowing)
                         headerBar.timer.start();
                 }
             }
@@ -247,9 +248,9 @@ Rectangle {
             stepSize: 0.05;
             minimumValue: 0.0;
             maximumValue: 1.0;
-            value: gameView.volumeLevel;
+            value: root.volumeLevel;
             onValueChanged: {
-                gameView.volumeLevel = value;
+                root.volumeLevel = value;
                 if (value > 0.8)
                     volumeBtn.backgroundImage = "../assets/volume-high-8x.png";
                 else if (0.8 > value && value > 0.0)
@@ -364,7 +365,7 @@ Rectangle {
 
         Button {
             id: settingsBtn;
-            visible: !gameView.visible;
+            visible: !root.gameShowing;
             height: 27;
             width: 27;
             anchors.verticalCenter: parent.verticalCenter;
@@ -438,18 +439,18 @@ Rectangle {
             }
             onPressedChanged: {
                 if (pressed) {
-                    if (headerBar.viewIcon === "../assets/GameView/home.png") {
-                        gameView.run = false;
+                    if (root.itemInView === "game") {
+                        windowStack.currentItem.run = false;
                         volumeDropDown.visible = false;
                         windowStack.push({item: homeScreen, replace: true})
                         headerBar.userText = "Phoenix";
                     }
-                    else if (windowStack.gameStackItemName === "grid") {
-                        imageSource = "../assets/list-8x.png";
+                    else if (root.itemInView === "grid") {
+                        headerBar.viewIcon = "../assets/list-8x.png";
                         windowStack.currentItem.stackId.push({item: gameTable, replace: true, immediate: true});
                     }
                     else {
-                        imageSource = "../assets/grid-three-up-8x.png";
+                        headerBar.viewIcon = "../assets/grid-three-up-8x.png";
                         windowStack.currentItem.stackId.push({item: gameGrid, replace: true, immediate: true});
                     }
                 }
@@ -461,7 +462,7 @@ Rectangle {
 
         Button {
             id: playBtn;
-            visible: gameView.visible;
+            visible: root.gameShowing;
             anchors.verticalCenter: parent.verticalCenter;
 
             style: ButtonStyle {
@@ -472,17 +473,17 @@ Rectangle {
                 }
             }
             onClicked:  {
-                if (gameView.run)
-                    gameView.run = false;
+                if (windowStack.currentItem.run)
+                    windowStack.currentItem.run = false;
                 else
-                    gameView.run = true;
+                    windowStack.currentItem.run = true;
             }
         }
 
         Button {
             id: folderBtn;
             property string backgroundColor: "#000000FF";
-            visible: !gameView.visible;
+            visible: !root.gameShowing;
             height: 31;
             width: 31;
             onHoveredChanged: {
@@ -515,7 +516,7 @@ Rectangle {
 
         Button {
             id: volumeBtn;
-            visible: gameView.visible;
+            visible: root.gameShowing;
             anchors.verticalCenter: parent.verticalCenter;
             height: 20;
             width: 20;
@@ -550,7 +551,7 @@ Rectangle {
 
         Slider {
             id: zoomSlider;
-            visible: headerBar.sliderVisible;
+            visible: !root.gameShowing;
             width: 150;
             height: 25;
             anchors {
@@ -715,7 +716,7 @@ Rectangle {
 
         Button {
             id: saveBtn;
-            visible: gameView.visible;
+            visible: root.gameShowing;
             anchors.verticalCenter: parent.verticalCenter;
             text: "Save";
             height: 15;
@@ -725,17 +726,17 @@ Rectangle {
 
         Button {
             id: loadBtn;
-            visible: gameView.visible;
+            visible: root.gameShowing;
             anchors.verticalCenter: parent.verticalCenter;
             text: "Load";
             height: 20;
             width: 20;
-            onClicked: gameView.loadSaveState = true;
+            onClicked: windowStack.currentItem.loadSaveState = true;
         }
 
         Button {
             id: favoriteBtn;
-            visible: gameView.visible;
+            visible: root.gameShowing;
             height: 28;
             width: 28;
             anchors.verticalCenter: parent.verticalCenter;
@@ -750,7 +751,7 @@ Rectangle {
 
         Button {
             id: resizeBtn;
-            visible: gameView.visible;
+            visible: root.gameShowing;
             height: 26;
             width: 26;
             anchors.verticalCenter: parent.verticalCenter;
@@ -771,7 +772,7 @@ Rectangle {
         id: searchBar;
         width: 175;
         placeholderText: "Search";
-        visible: headerBar.searchBarVisible;
+        visible: !root.gameShowing;
         font {
             pixelSize: 12;
         }
