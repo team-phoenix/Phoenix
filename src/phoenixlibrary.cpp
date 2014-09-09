@@ -161,8 +161,6 @@ void PhoenixLibrary::scanFolder(QUrl folder_path)
 {
     QDirIterator dir_iter(folder_path.toLocalFile(), QDirIterator::Subdirectories);
 
-    QVector<QFileInfo> files;
-
     QSqlDatabase database = dbm.handle();
     database.transaction();
 
