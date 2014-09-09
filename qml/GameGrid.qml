@@ -97,6 +97,7 @@ Rectangle {
 
             Item {
                 anchors.fill: parent;
+
                 Rectangle {
                     id: imageHighlight;
 
@@ -108,8 +109,8 @@ Rectangle {
                     }
 
                     width: parent.width;
-                    height: parent.height * 0.7;
-                    color: checked ? gameGrid.itemBackgroundColor : "#000000FF";
+                    height: parent.height;
+                    color: "#000000FF";
 
                     onExclusiveGroupChanged: {
                         if (exclusiveGroup) {
@@ -117,16 +118,22 @@ Rectangle {
                         }
                     }
 
+                    RectangularGlow {
+                        id: rectangularGlow;
+                        visible: true;
+                        height: image.paintedHeight;
+                        width: image.paintedWidth;
+                        anchors.centerIn: parent;
+                        glowRadius: 10//mouseArea.containsMouse ? 5 : 10;
+                        spread: 0.1//mouseArea.containsMouse ? 0.8 : 0.1;
+                        color: mouseArea.containsMouse ? "#db5753" : "black";
+                    }
+
                     Image {
                         id: image;
                         anchors.fill: parent;
                         anchors.margins: 10;
                         source: !artwork ? "qrc:/assets/No-Art.png" : artwork;
-                        sourceSize {
-                            height: 300;
-                            width: 500;
-                        }
-
                         fillMode: Image.PreserveAspectFit;
 
                         CachedImage {
@@ -142,120 +149,24 @@ Rectangle {
 
                         Component.onCompleted: cachedImage.start();
 
-/*
-                        Button {
-                            id: infoButton;
-                            height: 48 - (30 / gameGrid.zoomFactor);
-                            width: 48 - (30 / gameGrid.zoomFactor);
-                            visible: false;
-                            anchors {
-                                right: parent.right;
-                                top: parent.top;
-                                rightMargin: 24;
-                                topMargin: 24;
-                            }
-
-                            style: ButtonStyle {
-                                label: Item {
-                                    //height: 32;
-                                    //width: 32;
-                                    Image {
-                                        id: infoIcon;
-                                        source: "../assets/Info-32.png";
-                                        anchors {
-                                            fill: parent;
-                                        }
-                                    }
-                                }
-
-                                background: Rectangle {
-                                    height: 32;
-                                    width: 32;
-                                    radius: 16;
-                                    border {
-                                        width: 1;
-                                        color: "#262626";
-                                    }
-
-                                    gradient: Gradient {
-                                        GradientStop {position: 0.0; color: "#2f2f2f";}
-                                        GradientStop {position: 0.0; color: "#1d1d1e";}
-
-                                    }
-                                }
-
-                            }
-                        }
-
-
-                        Rectangle {
-                            id: infoDropDown;
-                            z: gridView.z + 1;
-                            visible: true;
-                            color: "red";
-                            anchors {
-                                left: infoButton.right;
-                                leftMargin: 25;
-                                verticalCenter: infoButton.verticalCenter;
-                                verticalCenterOffset: 125;
-                            }
-
-                            height: 300;
-                            width: 200;
-                            Rectangle {
-                                z: parent.z + 1;
-                                rotation: 45;
-                                height: 25;
-                                width: 25;
-                                color: "red";
-                                anchors {
-                                    right: parent.left;
-                                    rightMargin: -15;
-                                    top: parent.top;
-                                    topMargin: 25;
-                                }
-                            }
-                        }
-*/
-                        Image {
-                            source: "../assets/GameView/play.png"
-                            visible: true;
-                            sourceSize {
-                                height: 64;
-                                width: 64;
-                            }
-                            height: 40;
-                            width: 40;
-                            anchors {
-                                fill: parent;
-                                topMargin: 60;
-                                leftMargin: 60;
-                                rightMargin: 60;
-                                bottomMargin: 5;
-                                bottom: parent.bottom;
-
-                            }
-                            MouseArea {
-                                anchors.fill: parent;
-                                onClicked: {
-                                    //console.log('clicked: ' + );
-                                    if (imageHighlight.checked)
-                                        imageHighlight.checked = false;
-                                    else
-                                        imageHighlight.checked = true;                                    
-                                    if (windowStack.currentItem.run)
-                                        headerBar.userText = title;
-                                }
-                            }
-                        }
-
                         MouseArea {
                             id: mouseArea;
                             propagateComposedEvents: true;
                             anchors.fill: parent;
                             hoverEnabled: true;
-                            //onEntered: infoButton.visible = true;
-                            //onExited: infoButton.visible = false;
+                            property bool containsMouse: false;
+                            onClicked: {
+                                //console.log('clicked: ' + );
+                                if (imageHighlight.checked)
+                                    imageHighlight.checked = false;
+                                else
+                                    imageHighlight.checked = true;
+                                //windowStack.push({item: gameView, properties: {coreName: "", gameName: "", run: true}});
+                                if (windowStack.currentItem.run)
+                                    headerBar.userText = title;
+                            }
+                            onEntered: containsMouse = true;
+                            onExited: containsMouse = false;
                         }
                     }
                 }
@@ -267,7 +178,7 @@ Rectangle {
                         left: parent.left;
                         right: parent.right;
                         bottom: parent.bottom;
-                        bottomMargin: titleLabel.font.pixelSize / 2;
+                        bottomMargin: -titleLabel.font.pixelSize;
                     }
 
                     text: title;
