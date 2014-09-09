@@ -13,7 +13,7 @@
 #include <QByteArray>
 #include <QSGTexture>
 #include <QEvent>
-
+#include <QSGSimpleTextureNode>
 #include "qdebug.h"
 #include "core.h"
 #include "audio.h"
@@ -34,6 +34,7 @@ class VideoItem : public QQuickItem {
     Q_PROPERTY(qreal volume READ volume WRITE setVolume NOTIFY volumeChanged)
     Q_PROPERTY(int filtering READ filtering WRITE setFiltering NOTIFY filteringChanged)
     Q_PROPERTY(bool stretchVideo READ stretchVideo WRITE setStretchVideo NOTIFY stretchVideoChanged)
+    Q_PROPERTY(qreal aspectRatio READ aspectRatio WRITE setAspectRatio NOTIFY aspectRatioChanged)
 
 
 public:
@@ -52,6 +53,7 @@ public:
     void setVolume(qreal volume);
     void setFiltering(int filtering);
     void setStretchVideo(bool stretchVideo);
+    void setAspectRatio(qreal aspectRatio);
 
 
     QString libcore() const
@@ -104,6 +106,11 @@ public:
         return m_stretch_video;
     }
 
+    qreal aspectRatio() const
+    {
+        return m_aspect_ratio;
+    }
+
 
 
 
@@ -115,12 +122,7 @@ protected:
     void keyReleaseEvent(QKeyEvent *event) override {
         keyEvent(event);
     };
-    void geometryChanged(const QRectF &newGeom, const QRectF &oldGeom) override {
-        Q_UNUSED(newGeom);
-        Q_UNUSED(oldGeom);
-        QQuickItem::geometryChanged(newGeom, oldGeom);
-        refreshItemGeometry();
-    };
+    QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *);
 
 signals:
     void libcoreChanged(QString);
@@ -133,20 +135,22 @@ signals:
     void volumeChanged(qreal);
     void filteringChanged();
     void stretchVideoChanged();
+    void aspectRatioChanged();
 
 public slots:
-    void paint();
+    //void paint();
     void cleanup();
     void saveGameState();
     void loadGameState();
     QStringList getAudioDevices();
+
 
 private slots:
     void handleWindowChanged(QQuickWindow *win);
     void handleGeometryChanged(int unused) {
         Q_UNUSED(unused);
         refreshItemGeometry();
-    }
+   }
     void handleSceneGraphInitialized();
     void updateFps() {
         m_fps = fps_count * (1000.0 / fps_timer.interval());
@@ -158,8 +162,7 @@ private slots:
 private:
     // Video
     // [1]
-    QOpenGLShaderProgram *m_program;
-    QSGTexture *texture_node;
+    QSGTexture *texture;
     Core *core;
     int item_w;
     int item_h;
@@ -171,6 +174,7 @@ private:
     qint64 fps_deviation;
     int m_filtering;
     bool m_stretch_video;
+    qreal m_aspect_ratio;
     // [1]
 
     // Qml defined variables

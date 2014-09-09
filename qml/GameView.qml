@@ -8,45 +8,27 @@ import phoenix.video 1.0
 import QtQuick.Window 2.0
 
 
-Item {
+Rectangle {
     id: gameView;
     width: 800;
     height: 600;
     visible: true;
-
+    color: "black";
     property string stackName: "gameview";
-
     property bool run: false;
     property string gameName: "";
     property string coreName: "";
-    property string systemDirectory: "";
-    property string saveDirectory: "";
     property bool loadSaveState: false
     property bool saveGameState: false;
-    property real volumeLevel: 1.0;
-    property string prevView: "";
-    property bool ranOnce: false;
-    property bool screenTimer: false;
-    property alias gameMouse: gameMouse;
-    property int filtering: 2;
-    property bool stretchVideo: false;
-
-    onVolumeLevelChanged: {
-        console.log("volume level: " + volumeLevel);
-    }
-
     property alias video: videoItem;
+    property alias gameMouse: gameMouse;
+    property string previousViewIcon: "";
 
-    Settings {
-
-        category: "Video";
-        //property alias vsync: gameView.checked;
-        property alias smooth: gameView.filtering;
-        property alias stretchVideo: gameView.stretchVideo;
-        property alias volumeLevel: gameView.volumeLevel;
-        //property alias autoFullscreen: autoFullscreenSwitch.checked;
+    Component.onCompleted: {
+        root.itemInView = "game";
+        root.gameShowing = true;
     }
-
+    Component.onDestruction: root.gameShowing = false;
 
     function timerEffects() {
         if (gameMouse.cursorShape !== Qt.ArrowCursor)
@@ -100,15 +82,19 @@ Item {
     VideoItem {
         id: videoItem;
         focus: true;
-        anchors.fill: parent;
-        systemDirectory: gameView.systemDirectory;
-        saveDirectory: gameView.saveDirectory;
+        anchors {
+            fill: parent;
+            rightMargin: root.stretchVideo ? 0 : (gameView.width / 4) / aspectRatio
+            leftMargin: root.stretchVideo ? 0 : (gameView.width / 4) / aspectRatio
+        }
+        systemDirectory: root.systemDirectory;
+        saveDirectory: root.saveDirectory;
         libcore: gameView.coreName;
         game: gameView.gameName;
         run: gameView.run;
-        volume: gameView.volumeLevel;
-        filtering: gameView.filtering;
-        stretchVideo: gameView.stretchVideo;
+        volume: root.volumeLevel;
+        filtering: root.filtering;
+        stretchVideo: root.stretchVideo;
 
         onRunChanged: {
             if (run)
