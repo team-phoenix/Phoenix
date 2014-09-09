@@ -70,7 +70,8 @@
     <file>Info-64.png</file>
     <file>Audio-64.png</file>
     <file>No-Art.png</file>
-
+    <file>No-Art-black.png</file>
+    <file>No-Art-alternate.png</file>
     <file>retropad.png</file>
     <file>more.png</file>
     <!-- -->
