@@ -64,6 +64,7 @@ public:
     }
 
 public slots:
+    void startAsyncScan(QUrl path);
     void scanFolder(QUrl folder_path);
     void scrapeInfo();
     GameLibraryModel *model() { return m_model; }

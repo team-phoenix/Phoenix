@@ -4,7 +4,7 @@ TARGET = phoenix
 INCLUDEPATH += ./include
 CONFIG += debug console c++11
 
-QT += widgets core gui multimedia qml quick sql
+QT += widgets core gui multimedia qml quick sql concurrent
 
 VERSION = 0.1
 

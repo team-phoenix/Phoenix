@@ -405,7 +405,7 @@ Rectangle {
             title: "Add Folder to Library";
             visible: false;
             onAccepted: {
-                phoenixLibrary.scanFolder(fileUrl);
+                phoenixLibrary.startAsyncScan(fileUrl);
             }
         }
 

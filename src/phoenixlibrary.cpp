@@ -6,6 +6,7 @@
 #include <QResource>
 #include <QXmlStreamReader>
 #include <QFile>
+#include <QtConcurrent>
 
 #include "phoenixlibrary.h"
 #include "librarydbmanager.h"
@@ -150,6 +151,12 @@ QRegularExpressionMatch PhoenixLibrary::parseFilename(QString filename)
     }
 }
 
+void PhoenixLibrary::startAsyncScan(QUrl path)
+{
+    QFuture<void> fut = QtConcurrent::run(this, &PhoenixLibrary::scanFolder, path);
+    Q_UNUSED(fut)
+}
+
 void PhoenixLibrary::scanFolder(QUrl folder_path)
 {
     QDirIterator dir_iter(folder_path.toLocalFile(), QDirIterator::Subdirectories);
@@ -164,7 +171,10 @@ void PhoenixLibrary::scanFolder(QUrl folder_path)
     setLabel("Importing Games");
     setProgress(0.0);
 
+    bool found_games = false;
     while (dir_iter.hasNext()) {
+        if (!found_games)
+            found_games = true;
         dir_iter.next();
         QFileInfo info(dir_iter.fileInfo());
 
@@ -185,10 +195,13 @@ void PhoenixLibrary::scanFolder(QUrl folder_path)
         q.exec();
     }
 
-    database.commit();
+    if (found_games) {
+        database.commit();
+        QMetaObject::invokeMethod(m_model, "select");
+    }
+
     setLabel("");
 
-    m_model->select();
 }
 
 void PhoenixLibrary::scrapeInfo()
