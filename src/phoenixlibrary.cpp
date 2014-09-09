@@ -36,6 +36,8 @@ PhoenixLibrary::PhoenixLibrary()
     import_thread->setPriority(QThread::NormalPriority);*/
 
     m_model = new GameLibraryModel(&dbm, this);
+    refreshCount();
+
     /*scraper = new TheGamesDB();
     scraper->moveToThread(import_thread);*/
 
@@ -196,11 +198,21 @@ void PhoenixLibrary::scanFolder(QUrl folder_path)
     if (found_games) {
         database.commit();
         QMetaObject::invokeMethod(m_model, "select");
+        QMetaObject::invokeMethod(this, "refreshCount");
     }
 
     setLabel("");
 
 }
+
+void PhoenixLibrary::refreshCount()
+{
+    while(m_model->canFetchMore())
+        m_model->fetchMore();
+    m_count = m_model->rowCount();
+    emit countChanged();
+}
+
 
 void PhoenixLibrary::scrapeInfo()
 {

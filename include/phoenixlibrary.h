@@ -17,6 +17,7 @@ class PhoenixLibrary : public QObject
     Q_OBJECT
     Q_PROPERTY(qreal progress READ progress WRITE setProgress NOTIFY progressChanged)
     Q_PROPERTY(QString label READ label WRITE setLabel NOTIFY labelChanged)
+    Q_PROPERTY(int count READ count NOTIFY countChanged)
     Q_ENUMS(Console);
 
 public:
@@ -36,6 +37,11 @@ public:
     qreal progress() const
     {
         return m_progress;
+    }
+
+    int count() const
+    {
+        return m_count;
     }
 
     enum Console {
@@ -67,11 +73,13 @@ public slots:
     void startAsyncScan(QUrl path);
     void scanFolder(QUrl folder_path);
     void scrapeInfo();
+    void refreshCount();
     GameLibraryModel *model() { return m_model; }
 
 signals:
     void labelChanged();
     void progressChanged();
+    void countChanged();
 
 private:
     LibraryDbManager dbm;
@@ -80,6 +88,7 @@ private:
     GameLibraryModel *m_model;
     QString m_label;
     int m_progress;
+    int m_count;
 
     const QMap<Console, QString> m_consoles {
         { Atari_Lynx,         "Atari Lynx" },

@@ -21,7 +21,7 @@ PhoenixWindow {
     title: "Phoenix";
     color: "black";
 
-    property bool clear: false;
+    property bool clear: (phoenixLibrary.count === 0);
     property string accentColor:"#e8433f";
     property int lastWindowStyle: Window.Windowed;
     property string borderColor: "#0b0b0b";
@@ -96,6 +96,7 @@ PhoenixWindow {
 
     PhoenixLibrary {
         id: phoenixLibrary;
+        onCountChanged: console.log(count);
     }
 
     MouseArea {
