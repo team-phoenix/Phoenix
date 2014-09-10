@@ -38,6 +38,17 @@ Rectangle {
     PhoenixScrollView {
         anchors.fill: parent;
 
+        MouseArea {
+            id: rootMouse;
+            anchors.fill: parent;
+            propagateComposedEvents: true;
+            hoverEnabled: true;
+            onMouseYChanged:  {
+
+                console.log("mousey: " + mouseY + "  itemheight: " + gridView.currentItem.height);
+            }
+        }
+
     GridView {
         id: gridView;
 
@@ -46,24 +57,58 @@ Rectangle {
         snapMode: GridView.NoSnap;
 
         Rectangle {
+            id: hoverMenu;
             visible: gridView.checked;
             color: "yellow";
             height: 250;
-            width: 150;
-            x: 10 + gridView.currentItem.width + gridView.currentItem.x;
-            y: 10 + gridView.currentItem.y;
+            width: 175;
+            property bool leftAlign: false;
+            property bool topAlign: true;
+            property int xLocation: 10 + gridView.currentItem.width + gridView.currentItem.x;
+            property int negativeXLocation: -30 - gridView.currentItem.width + gridView.currentItem.x;
+            x: {
+                if  (xLocation < gridView.width - gridView.currentItem.width) {
+                    leftAlign = false;
+                    return xLocation;
+                }
+                leftAlign = true;
+                return negativeXLocation;
+            }
+
+            y: {
+                if (gridView.currentItem.y < gridView.height - hoverMenu.height) {
+                    topAlign = true;
+                    return gridView.currentItem.y;
+                }
+                topAlign = false;
+                return (rootMouse.mouseY - gridView.currentItem.height) * 0.6;
+            }
+
+            /*onLeftAlignChanged: {
+                if (leftAlign) {
+                    triangle.anchors.left = undefined;
+                    triangle.anchors.right = hoverMenu.anchors.right;
+                }
+                else {
+                    triangle.anchors.left  = hoverMenu.anchors.left;
+                    riangle.anchors.right = undefined;
+                }
+            }*/
 
             Rectangle {
-                color: parent.color;
-                height: 15;
-                width: 15;
+                id: triangle;
+                color: "red";
+                height: 24;
+                width: 24;
+                rotation: 45;
+                x: !hoverMenu.leftAlign ? 0 - (width / 2) : hoverMenu.width  - (width / 2);
+
+                // Anchors didn't prove to work here, even with passing in
+                // undefined for the anchor. Could be a bug.
                 anchors {
-                    left: parent.left;
                     top: parent.top;
                     topMargin: 15;
-                    leftMargin: -7;
                 }
-                rotation: 45;
             }
         }
 
@@ -119,7 +164,7 @@ Rectangle {
             Item {
                 anchors.fill: parent;
 
-                Rectangle {
+                Item  {
                     id: imageHighlight;
 
                     property ExclusiveGroup exclusiveGroup: gridGroup;
@@ -131,7 +176,7 @@ Rectangle {
 
                     width: parent.width;
                     height: parent.height;
-                    color: "#000000FF";
+                    //color: "#000000FF";
 
                     onExclusiveGroupChanged: {
                         if (exclusiveGroup) {
@@ -172,7 +217,7 @@ Rectangle {
 
                         MouseArea {
                             id: mouseArea;
-                            //propagateComposedEvents: true;
+                            propagateComposedEvents: true;
                             anchors.fill: parent;
                             hoverEnabled: true;
                             property bool containsMouse: false;
