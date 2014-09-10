@@ -9,7 +9,7 @@ A super-slick libretro client powered by Qt5. Currently under early development.
 Environment
 -----------
 
-Dependencies: SDL2
+Dependencies: SDL2 for input and Qt5.3 for OpenGL and UI design.
 
 
 Building
