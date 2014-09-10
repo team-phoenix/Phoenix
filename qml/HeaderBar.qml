@@ -557,9 +557,9 @@ Rectangle {
             anchors {
                 verticalCenter: parent.verticalCenter;
             }
-            stepSize: 1;
-            minimumValue: 1;
-            maximumValue: 10;
+            stepSize: 0.2;
+            minimumValue: 1.5;
+            maximumValue: 5.0;
             value: 5;
 
             Settings {

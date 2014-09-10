@@ -45,6 +45,28 @@ Rectangle {
 
         snapMode: GridView.NoSnap;
 
+        Rectangle {
+            visible: gridView.checked;
+            color: "yellow";
+            height: 250;
+            width: 150;
+            x: 10 + gridView.currentItem.width + gridView.currentItem.x;
+            y: 10 + gridView.currentItem.y;
+
+            Rectangle {
+                color: parent.color;
+                height: 15;
+                width: 15;
+                anchors {
+                    left: parent.left;
+                    top: parent.top;
+                    topMargin: 15;
+                    leftMargin: -7;
+                }
+                rotation: 45;
+            }
+        }
+
         states: [
             State {
                 name: "resizing";
@@ -83,18 +105,17 @@ Rectangle {
         cellHeight: 300;
 
         model: phoenixLibrary.model();
+        highlightFollowsCurrentItem: false;
 
 
         ExclusiveGroup {
             id: gridGroup;
         }
 
-
         delegate: Item {
             id: gridItem;
-            height: gridView.cellHeight - (50 / gameGrid.zoomFactor);
-            width: gridView.cellWidth - (50 / gameGrid.zoomFactor);
-
+            height: gridView.cellHeight - (40 * gameGrid.zoomFactor);
+            width: gridView.cellWidth; //- (10 *  gameGrid.zoomFactor);
             Item {
                 anchors.fill: parent;
 
@@ -125,7 +146,7 @@ Rectangle {
                         width: image.paintedWidth;
                         anchors.centerIn: parent;
                         glowRadius: 10//mouseArea.containsMouse ? 5 : 10;
-                        spread: 0.1//mouseArea.containsMouse ? 0.8 : 0.1;
+                        spread: mouseArea.containsMouse ? 0.3 : 0.2;
                         color: mouseArea.containsMouse ? "#db5753" : "black";
                     }
 
@@ -151,12 +172,11 @@ Rectangle {
 
                         MouseArea {
                             id: mouseArea;
-                            propagateComposedEvents: true;
+                            //propagateComposedEvents: true;
                             anchors.fill: parent;
                             hoverEnabled: true;
                             property bool containsMouse: false;
                             onClicked: {
-                                //console.log('clicked: ' + );
                                 if (imageHighlight.checked)
                                     imageHighlight.checked = false;
                                 else
@@ -165,8 +185,15 @@ Rectangle {
                                 if (windowStack.currentItem.run)
                                     headerBar.userText = title;
                             }
-                            onEntered: containsMouse = true;
-                            onExited: containsMouse = false;
+                            onEntered: {
+                                containsMouse = true;
+                                gridView.checked = true;
+                                gridView.currentIndex = index;
+                            }
+                            onExited:  {
+                                containsMouse = false;
+                                gridView.checked = false;
+                            }
                         }
                     }
                 }
