@@ -75,6 +75,7 @@ public slots:
     void scrapeInfo();
     void refreshCount();
     GameLibraryModel *model() { return m_model; }
+    void deleteRow(int index);
 
 signals:
     void labelChanged();

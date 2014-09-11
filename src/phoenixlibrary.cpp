@@ -186,12 +186,13 @@ void PhoenixLibrary::scanFolder(QUrl folder_path)
 
         QRegularExpressionMatch m = parseFilename(info.completeBaseName());
 
-        q.prepare("INSERT INTO " table_games " (title, console, time_played, region)"
-                  " VALUES (?, ?, ?, ?)");
+        q.prepare("INSERT INTO " table_games " (title, console, time_played, region, filename)"
+                  " VALUES (?, ?, ?, ?, ?)");
         q.addBindValue(m.captured("title"));
         q.addBindValue("whatever");
         q.addBindValue("00:00");
         q.addBindValue(m.captured("region"));
+        q.addBindValue(info.absoluteFilePath());
         q.exec();
     }
 
@@ -203,6 +204,18 @@ void PhoenixLibrary::scanFolder(QUrl folder_path)
 
     setLabel("");
 
+}
+
+void PhoenixLibrary::deleteRow(int index)
+{
+    if (m_model->removeRow(index)) {
+        m_model->select();
+        m_model->submit();
+        refreshCount();
+    }
+    else {
+        m_model->revert();
+    }
 }
 
 void PhoenixLibrary::refreshCount()
