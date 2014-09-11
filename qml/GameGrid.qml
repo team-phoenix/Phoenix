@@ -42,7 +42,7 @@ Rectangle {
     Rectangle {
         id: descriptiveArea;
         color: "#212121";
-        height: expanded ? 150 : 0;
+        height: expanded ? 175 : 0;
         property bool expanded: false;
 
         anchors {
@@ -65,14 +65,58 @@ Rectangle {
                 topMargin: 1;
             }
 
+            Column {
+                anchors {
+                    left: parent.left;
+                    top: parent.top;
+                    margins: 15;
+                }
+
+                Text {
+                    text: gridView.currentItem.titleName;
+                    color: "#f1f1f1";
+                    renderType: Text.QtRendering;
+                    font {
+                        pixelSize: 16;
+                        bold: true;
+                        family: "Sans";
+                    }
+                }
+
+                Text {
+                    text: gridView.currentItem.systemName;
+                    color: "gray";
+                    renderType: Text.QtRendering;
+                    font {
+                        pixelSize: 14;
+                        family: "Sans";
+                    }
+                }
+            }
+
+            Image {
+                opacity: 0.3;
+                anchors {
+                    right: parent.right;
+                    top: parent.top;
+                    topMargin: 12;
+                    rightMargin: 12;
+                }
+
+                source: gridView.currentItem.imageSource;
+                height: 125;
+                width: 125;
+            }
+
+
             Row {
                 anchors {
                     bottom: parent.bottom;
-                    right: parent.right;
+                    horizontalCenter: parent.horizontalCenter;
                     bottomMargin: 5;
-                    rightMargin: 20;
                 }
                 spacing: 5;
+
                 PhoenixNormalButton {
                     text: "Play";
                     onClicked: {
@@ -120,6 +164,8 @@ Rectangle {
             onClicked:  {
                 gridView.holdItem = false;
                 descriptiveArea.expanded = false;
+                gridView.holdItem = false;
+                gridView.currentItem.glowColor = "black";
             }
         }
 
@@ -181,7 +227,9 @@ Rectangle {
             height: gridView.cellHeight - (40 * gameGrid.zoomFactor);
             width: gridView.cellWidth; //- (10 *  gameGrid.zoomFactor);
             property string glowColor: "black";
-
+            property string imageSource: !artwork ? "qrc:/assets/No-Art.png" : artwork;
+            property string titleName: title;
+            property string systemName: "Current System";
             Item {
                 id: subItem;
                 anchors.fill: parent;
@@ -207,21 +255,21 @@ Rectangle {
                         width: image.paintedWidth;
                         anchors.centerIn: parent;
                         glowRadius: 10//mouseArea.containsMouse ? 5 : 10;
-                        spread: gridView.holdItem && mouseArea.containsMouse ? 0.3 : 0.2;
+                        spread: mouseArea.containsMouse ? 0.3 : 0.2;
                         color:  gridItem.glowColor;
                     }
                     Image {
                         id: image;
                         anchors.fill: parent;
                         anchors.margins: 10;
-                        source: !artwork ? "qrc:/assets/No-Art.png" : artwork;
+                        source: gridItem.imageSource;
                         fillMode: Image.PreserveAspectFit;
 
                         CachedImage {
                             id: cachedImage;
                             imgsrc: image.source;
                             folder: "Artwork";
-                            fileName: title ? title : "";
+                            fileName: gridItem.titleName ? gridItem.titleName : "";
                             onLocalsrcChanged: {
                                 image.source = localsrc;
                             }
@@ -234,43 +282,25 @@ Rectangle {
                             propagateComposedEvents: true;
                             anchors.fill: parent;
                             hoverEnabled: true;
-                            enabled: !gridView.holdItem;
+                            enabled: !rootMouse.enabled;
                             property bool containsMouse: false;
-                            onContainsMouseChanged: {
-                                if (containsMouse) {
-                                    gridItem.glowColor = "#db5753";
-                                }
-                                else {
-                                    gridItem.glowColor = "black";
-                                }
-                            }
 
-                            onDoubleClicked: {
-                                if (windowStack.currentItem.run)
-                                    headerBar.userText = title;
+                            onPressed:  {
+                                gridView.holdItem = pressed;
+                                descriptiveArea.expanded = pressed;
+                                containsMouse = pressed;
                             }
-
                             onClicked: {
-                                console.log("clicked")
                                 gridView.currentIndex = index;
+                                if (gridView.currentItem.glowColor === "#db5753")
+                                    gridView.currentItem.glowColor = "black";
+                                else {
+                                    gridView.currentItem.glowColor = "#db5753"
+                                }
 
-                                    if (gridView.holdItem) {
-                                        gridView.holdItem = false;
-                                        descriptiveArea.expanded = false;
-                                    }
-                                    else {
-                                        gridView.holdItem = true;
-                                        descriptiveArea.expanded = true;
-                                    }
-                            }
-                            onEntered: {
-                                containsMouse = true;
-                                //gridView.checked = true;
-                                //gridView.currentIndex = index;
-                            }
-                            onExited:  {
-                                containsMouse = false;
-                                //gridView.checked = false;
+                                if (windowStack.currentItem.run)
+                                    headerBar.userText = gridItem.titleName;
+
                             }
                         }
                     }
@@ -286,7 +316,7 @@ Rectangle {
                         bottomMargin: -titleLabel.font.pixelSize;
                     }
 
-                    text: title ? title : "";
+                    text: gridItem.titleName;
                     color: "#f1f1f1";
 
                     font {
