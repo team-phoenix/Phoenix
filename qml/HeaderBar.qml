@@ -555,7 +555,7 @@ Rectangle {
 
         Slider {
             id: zoomSlider;
-            visible: !root.gameShowing;
+            visible: !root.gameShowing && !root.clear;
             width: 120;
             height: 25;
             anchors {
