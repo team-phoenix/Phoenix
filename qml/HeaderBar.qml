@@ -490,13 +490,8 @@ Rectangle {
             visible: !root.gameShowing;
             height: 31;
             width: 31;
-            onHoveredChanged: {
-                if (hovered) {
-                    opacity = 0.7;
-                }
-                else
-                    opacity = 1.0;
-            }
+            opacity: hovered ? 0.7 : 1.0;
+
             style: ButtonStyle {
                 background: Rectangle {
                     color: folderBtn.backgroundColor;
@@ -511,10 +506,8 @@ Rectangle {
                 }
 
             }
-            onPressedChanged: {
-                if (pressed) {
-                    folderDialog.visible = true;
-                }
+            onClicked: {
+                folderDialog.visible = true;
             }
         }
 
