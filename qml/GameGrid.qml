@@ -165,7 +165,8 @@ Rectangle {
                 gridView.holdItem = false;
                 descriptiveArea.expanded = false;
                 gridView.holdItem = false;
-                gridView.currentItem.glowColor = "black";
+                if (gridView.currentItem)
+                    gridView.currentItem.glowColor = "black";
             }
         }
 
@@ -226,10 +227,12 @@ Rectangle {
             id: gridItem;
             height: gridView.cellHeight - (40 * gameGrid.zoomFactor);
             width: gridView.cellWidth; //- (10 *  gameGrid.zoomFactor);
+
             property string glowColor: "black";
             property string imageSource: !artwork ? "qrc:/assets/No-Art.png" : artwork;
-            property string titleName: title;
+            property string titleName: title ? title : "";
             property string systemName: "Current System";
+
             Item {
                 id: subItem;
                 anchors.fill: parent;

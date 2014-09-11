@@ -210,8 +210,7 @@ void PhoenixLibrary::deleteRow(int index)
 {
     if (m_model->removeRow(index)) {
         m_model->select();
-        m_model->submit();
-        refreshCount();
+        QFuture<void> fut = QtConcurrent::run(this, &PhoenixLibrary::refreshCount);
     }
     else {
         m_model->revert();
