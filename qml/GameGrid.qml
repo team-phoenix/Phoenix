@@ -120,7 +120,7 @@ Rectangle {
                 PhoenixNormalButton {
                     text: "Play";
                     onClicked: {
-                        windowStack.push({item: gameView, properties: {coreName: "/usr/lib/libretro/fceumm_libretro.so", gameName: "/home/lee/Documents/sm.nes", run: true}});
+                        //windowStack.push({item: gameView, properties: {coreName: "", gameName: "", run: true}});
                     }
                 }
 
