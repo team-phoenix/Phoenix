@@ -96,7 +96,6 @@ PhoenixWindow {
 
     PhoenixLibrary {
         id: phoenixLibrary;
-        onCountChanged: console.log(count);
     }
 
     MouseArea {
@@ -384,7 +383,9 @@ PhoenixWindow {
                             id: pathDialog;
                             selectFolder: true;
                             title: "Add Game Folder";
-
+                            onAccepted: {
+                                phoenixLibrary.startAsyncScan(fileUrl);
+                            }
                         }
 
                         Button {

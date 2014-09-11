@@ -413,6 +413,7 @@ Rectangle {
             id: viewBtn;
             height: 27;
             width: 27;
+            visible: !root.clear;
             anchors.verticalCenter: parent.verticalCenter;
 
             property string backgroundColor: "#000000FF";
@@ -439,6 +440,7 @@ Rectangle {
             }
             onPressedChanged: {
                 if (pressed) {
+                    console.log(root.itemInView)
                     if (root.itemInView === "game") {
                         windowStack.currentItem.run = false;
                         volumeDropDown.visible = false;
@@ -446,13 +448,15 @@ Rectangle {
                         headerBar.userText = "Phoenix";
                     }
                     else if (root.itemInView === "grid") {
-                        headerBar.viewIcon = "../assets/list-8x.png";
+                        headerBar.viewIcon = "../assets/grid-three-up-8x.png";
                         windowStack.currentItem.stackId.push({item: gameTable, replace: true, immediate: true});
                     }
                     else {
-                        headerBar.viewIcon = "../assets/grid-three-up-8x.png";
+                        headerBar.viewIcon = "../assets/list-8x.png";
                         windowStack.currentItem.stackId.push({item: gameGrid, replace: true, immediate: true});
                     }
+
+
                 }
 
                 else
@@ -552,12 +556,12 @@ Rectangle {
         Slider {
             id: zoomSlider;
             visible: !root.gameShowing;
-            width: 150;
+            width: 120;
             height: 25;
             anchors {
                 verticalCenter: parent.verticalCenter;
             }
-            stepSize: 0.2;
+            stepSize: 0.5;
             minimumValue: 1.5;
             maximumValue: 5.0;
             value: 5;
@@ -573,6 +577,7 @@ Rectangle {
                 else
                     headerBar.sliderPressed = false;
             }
+
 
             onValueChanged: {
                 var prev = headerBar.sliderValue;
@@ -601,6 +606,21 @@ Rectangle {
                         anchors.fill: parent;
                         smooth: true;
                     }
+
+                    Rectangle {
+                        color: "#f1f1f1";
+                        height: 6;
+                        anchors {
+                            right: zoomHandle.right;
+                            rightMargin: 5;
+                            verticalCenter: parent.verticalCenter;
+                        }
+                        width: 10 * headerBar.sliderValue;
+
+                        // 14 seems to be the magic number.
+                        // It's a quick and dirty way to make
+                        // the effect work.
+                    }
                 }
 
                 groove: Rectangle {
@@ -610,18 +630,7 @@ Rectangle {
                     opacity: 0.8;
                     color: "#1a1a1a";
 
-                    Rectangle {
-                        color: "#f1f1f1";
-                        anchors {
-                            left: parent.left;
-                            top: parent.top;
-                            bottom: parent.bottom;
-                        }
-                        width: 14 * headerBar.sliderValue;
-                        // 14 seems to be the magic number.
-                        // It's a quick and dirty way to make
-                        // the effect work.
-                    }
+
 
                     Rectangle {
                         // topBorder;
