@@ -30,98 +30,106 @@ Rectangle {
         color: "#0b0b0b";
     }
 
+    Component.onCompleted: {
+        root.itemInView = "grid";
+    }
+
     onZoomFactorChanged: {
         if (gridView.cellHeight * zoomFactor !== gridView.cellHeight)
             resizeGrid = true;
     }
 
+    Rectangle {
+        id: descriptiveArea;
+        color: "#212121";
+        height: expanded ? 150 : 0;
+        property bool expanded: false;
+
+        anchors {
+            right: parent.right;
+            top: parent.top;
+            left: parent.left;
+        }
+
+        Behavior on height {
+            PropertyAnimation {}
+        }
+
+        Rectangle {
+            color: "#1a1a1a";
+            anchors {
+                fill: parent;
+                leftMargin: 1;
+                rightMargin: 1;
+                bottomMargin: 2;
+                topMargin: 1;
+            }
+
+            Row {
+                anchors {
+                    bottom: parent.bottom;
+                    right: parent.right;
+                    bottomMargin: 5;
+                    rightMargin: 20;
+                }
+                spacing: 5;
+                PhoenixNormalButton {
+                    text: "Play";
+                    onClicked: {
+                        windowStack.push({item: gameView, properties: {coreName: "/usr/lib/libretro/fceumm_libretro.so", gameName: "/home/lee/Documents/sm.nes", run: true}});
+                    }
+                }
+
+                PhoenixWarningButton {
+                    text: "Remove Game";
+                    onClicked:  {
+                        phoenixLibrary.deleteRow(gridView.currentIndex);
+                        descriptiveArea.expanded = false;
+                    }
+                }
+            }
+        }
+
+        Rectangle {
+            id: botBorder;
+            height: 1;
+            color: "#333333";
+            anchors {
+                bottom: parent.bottom;
+                left: parent.left;
+                right: parent.right;
+            }
+        }
+    }
+
     PhoenixScrollView {
-        anchors.fill: parent;
+        id: scrollView;
+        anchors {
+            top: descriptiveArea.bottom;
+            left: parent.left;
+            bottom: parent.bottom;
+            right: parent.right;
+        }
 
         MouseArea {
             id: rootMouse;
             anchors.fill: parent;
-            propagateComposedEvents: true;
+            enabled: gridView.holdItem;
+            propagateComposedEvents: false;
             hoverEnabled: true;
+            onClicked:  {
+                gridView.holdItem = false;
+                descriptiveArea.expanded = false;
+            }
         }
 
     GridView {
         id: gridView;
 
         property bool checked: false;
+        property bool holdItem: false;
 
         snapMode: GridView.NoSnap;
-
-        RectangularGlow {
-            visible: hoverMenu.visible;
-            anchors.fill: hoverMenu;
-            glowRadius: 5;
-            spread: 0.1;
-            color: "black";
-        }
-
-        Rectangle {
-            id: hoverMenu;
-            visible: gridView.checked;
-            height: 250;
-            width: 175;
-            radius: 3;
-            color: "#323333";
-
-            CustomBorder {
-                color: "#333333";
-            }
-
-            property bool leftAlign: false;
-            property bool topAlign: true;
-            property int xLocation: 10 + gridView.currentItem.width + gridView.currentItem.x;
-            property int negativeXLocation: -30 - gridView.currentItem.width + gridView.currentItem.x;
-            x: {
-                if  (xLocation < gridView.width - gridView.currentItem.width) {
-                    leftAlign = false;
-                    return xLocation;
-                }
-                leftAlign = true;
-                return negativeXLocation;
-            }
-
-            y: {
-                if (gridView.currentItem.y < gridView.height - hoverMenu.height) {
-                    topAlign = true;
-
-                    return gridView.currentItem.y;
-                }
-                topAlign = false;
-                return (rootMouse.mouseY - gridView.currentItem.height) * 0.6;
-            }
-
-            /*onLeftAlignChanged: {
-                if (leftAlign) {
-                    triangle.anchors.left = undefined;
-                    triangle.anchors.right = hoverMenu.anchors.right;
-                }
-                else {
-                    triangle.anchors.left  = hoverMenu.anchors.left;
-                    riangle.anchors.right = undefined;
-                }
-            }*/
-
-            Rectangle {
-                id: triangle;
-                color: parent.color;
-                height: 23;
-                width: 23;
-                rotation: 45;
-                x: !hoverMenu.leftAlign ? 0 - (width / 2) : hoverMenu.width  - (width / 2);
-
-                // Anchors didn't prove to work here, even with passing in
-                // undefined for the anchor. Could be a bug.
-                anchors {
-                    top: parent.top;
-                    topMargin: 30;
-                }
-            }
-        }
 
         states: [
             State {
@@ -172,7 +180,10 @@ Rectangle {
             id: gridItem;
             height: gridView.cellHeight - (40 * gameGrid.zoomFactor);
             width: gridView.cellWidth; //- (10 *  gameGrid.zoomFactor);
+            property string glowColor: "black";
+
             Item {
+                id: subItem;
                 anchors.fill: parent;
 
                 Item  {
@@ -187,13 +198,7 @@ Rectangle {
 
                     width: parent.width;
                     height: parent.height;
-                    //color: "#000000FF";
 
-                    onExclusiveGroupChanged: {
-                        if (exclusiveGroup) {
-                            exclusiveGroup.bindCheckable(imageHighlight);
-                        }
-                    }
 
                     RectangularGlow {
                         id: rectangularGlow;
@@ -202,10 +207,9 @@ Rectangle {
                         width: image.paintedWidth;
                         anchors.centerIn: parent;
                         glowRadius: 10//mouseArea.containsMouse ? 5 : 10;
-                        spread: mouseArea.containsMouse ? 0.3 : 0.2;
-                        color: mouseArea.containsMouse ? "#db5753" : "black";
+                        spread: gridView.holdItem && mouseArea.containsMouse ? 0.3 : 0.2;
+                        color:  gridItem.glowColor;
                     }
-
                     Image {
                         id: image;
                         anchors.fill: parent;
@@ -217,9 +221,8 @@ Rectangle {
                             id: cachedImage;
                             imgsrc: image.source;
                             folder: "Artwork";
-                            fileName: title;
+                            fileName: title ? title : "";
                             onLocalsrcChanged: {
-                                //console.log(localsrc);
                                 image.source = localsrc;
                             }
                         }
@@ -231,24 +234,43 @@ Rectangle {
                             propagateComposedEvents: true;
                             anchors.fill: parent;
                             hoverEnabled: true;
+                            enabled: !gridView.holdItem;
                             property bool containsMouse: false;
-                            onClicked: {
-                                if (imageHighlight.checked)
-                                    imageHighlight.checked = false;
-                                else
-                                    imageHighlight.checked = true;
-                                //windowStack.push({item: gameView, properties: {coreName: "", gameName: "", run: true}});
+                            onContainsMouseChanged: {
+                                if (containsMouse) {
+                                    gridItem.glowColor = "#db5753";
+                                }
+                                else {
+                                    gridItem.glowColor = "black";
+                                }
+                            }
+
+                            onDoubleClicked: {
                                 if (windowStack.currentItem.run)
                                     headerBar.userText = title;
                             }
+
+                            onClicked: {
+                                console.log("clicked")
+                                gridView.currentIndex = index;
+
+                                    if (gridView.holdItem) {
+                                        gridView.holdItem = false;
+                                        descriptiveArea.expanded = false;
+                                    }
+                                    else {
+                                        gridView.holdItem = true;
+                                        descriptiveArea.expanded = true;
+                                    }
+                            }
                             onEntered: {
                                 containsMouse = true;
-                                gridView.checked = true;
-                                gridView.currentIndex = index;
+                                //gridView.checked = true;
+                                //gridView.currentIndex = index;
                             }
                             onExited:  {
                                 containsMouse = false;
-                                gridView.checked = false;
+                                //gridView.checked = false;
                             }
                         }
                     }
@@ -264,7 +286,7 @@ Rectangle {
                         bottomMargin: -titleLabel.font.pixelSize;
                     }
 
-                    text: title;
+                    text: title ? title : "";
                     color: "#f1f1f1";
 
                     font {
