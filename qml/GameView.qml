@@ -83,10 +83,14 @@ Rectangle {
         id: videoItem;
         focus: true;
         anchors {
-            fill: parent;
-            rightMargin: root.stretchVideo ? 0 : (gameView.width / 4) / aspectRatio
-            leftMargin: root.stretchVideo ? 0 : (gameView.width / 4) / aspectRatio
+           centerIn: parent;
         }
+
+        height: parent.height;
+        width: stretchVideo ? parent.width : height * aspectRatio;
+
+        onWidthChanged: console.log(width / height)
+
         systemDirectory: root.systemDirectory;
         saveDirectory: root.saveDirectory;
         libcore: gameView.coreName;
@@ -95,6 +99,9 @@ Rectangle {
         volume: root.volumeLevel;
         filtering: root.filtering;
         stretchVideo: root.stretchVideo;
+
+        //property real ratio: width / height;
+        //onRatioChanged: console.log(ratio)
 
         onRunChanged: {
             if (run)
