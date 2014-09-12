@@ -127,7 +127,7 @@ Rectangle {
                 PhoenixWarningButton {
                     text: "Remove Game";
                     onClicked:  {
-                        phoenixLibrary.deleteRow(gridView.currentIndex);
+                        phoenixLibrary.deleteRow(gridView.currentItem.titleName);
                         descriptiveArea.expanded = false;
                     }
                 }
@@ -175,6 +175,8 @@ Rectangle {
 
         property bool checked: false;
         property bool holdItem: false;
+
+        onCountChanged: console.log(count)
 
         snapMode: GridView.NoSnap;
 

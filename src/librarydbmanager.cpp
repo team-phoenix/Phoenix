@@ -65,7 +65,7 @@ bool LibraryDbManager::createSchema()
     "   artwork TEXT,\n"
     "   /* file info */"
     "   directory TEXT,\n"
-    "   filename TEXT\n"
+    "   filename TEXT UNIQUE\n"
     ")");
     q.exec("CREATE INDEX title_index ON " table_games " (title)");
     q.exec("CREATE INDEX favorite_index ON " table_games " (is_favorite)");

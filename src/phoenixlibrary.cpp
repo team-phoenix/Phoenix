@@ -7,6 +7,7 @@
 #include <QXmlStreamReader>
 #include <QFile>
 #include <QtConcurrent>
+#include <QSqlError>
 
 #include "phoenixlibrary.h"
 #include "librarydbmanager.h"
@@ -36,7 +37,7 @@ PhoenixLibrary::PhoenixLibrary()
     import_thread->setPriority(QThread::NormalPriority);*/
 
     m_model = new GameLibraryModel(&dbm, this);
-    refreshCount();
+    m_model->setEditStrategy(QSqlTableModel::OnManualSubmit);
 
     /*scraper = new TheGamesDB();
     scraper->moveToThread(import_thread);*/
@@ -199,32 +200,66 @@ void PhoenixLibrary::scanFolder(QUrl folder_path)
     if (found_games) {
         database.commit();
         QMetaObject::invokeMethod(m_model, "select");
-        QMetaObject::invokeMethod(this, "refreshCount");
     }
 
     setLabel("");
 
 }
 
-void PhoenixLibrary::deleteRow(int index)
+void PhoenixLibrary::deleteRow(QString title)
 {
-    if (m_model->removeRow(index)) {
+    QSqlDatabase database = dbm.handle();
+    database.transaction();
+
+    QSqlQuery q(database);
+
+    q.prepare("DELETE FROM " table_games
+              " WHERE title = '" + title + "'");
+    if (q.exec()) {
+        database.commit();
         m_model->select();
-        QFuture<void> fut = QtConcurrent::run(this, &PhoenixLibrary::refreshCount);
+
+    }
+
+
+    else {
+        qCDebug(phxLibrary) << "Error deleting entry: " << q.lastQuery();
+    }
+
+    /*
+    if (m_model->removeRow(index)) {
+        if (m_model->submitAll())
+            qCDebug(phxLibrary) << "submitAll: true";
+        else {
+            qCDebug(phxLibrary) << "Warning: " << m_model->lastError().text();
+        }
     }
     else {
         m_model->revert();
+    }*/
+}
+
+void PhoenixLibrary::resetAll()
+{
+    QSqlDatabase database = dbm.handle();
+    database.transaction();
+
+    QSqlQuery q(database);
+
+    setLabel("Clearing Library");
+
+    q.prepare("DELETE FROM " table_games);
+
+    if (q.exec()) {
+        database.commit();
+        m_model->select();
+        setLabel("Library Cleared");
+    }
+    else {
+        qCDebug(phxLibrary) << "Error clearing library";
+        setLabel("Error Clearing Library");
     }
 }
-
-void PhoenixLibrary::refreshCount()
-{
-    while(m_model->canFetchMore())
-        m_model->fetchMore();
-    m_count = m_model->rowCount();
-    emit countChanged();
-}
-
 
 void PhoenixLibrary::scrapeInfo()
 {

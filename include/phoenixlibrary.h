@@ -73,9 +73,9 @@ public slots:
     void startAsyncScan(QUrl path);
     void scanFolder(QUrl folder_path);
     void scrapeInfo();
-    void refreshCount();
+    void resetAll();
     GameLibraryModel *model() { return m_model; }
-    void deleteRow(int index);
+    void deleteRow(QString title);
 
 signals:
     void labelChanged();

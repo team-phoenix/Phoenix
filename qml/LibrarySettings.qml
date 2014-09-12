@@ -108,7 +108,8 @@ Item {
        }
 
        PhoenixWarningButton {
-           text: "Delete";
+           text: "Reset Library";
+           onClicked: phoenixLibrary.resetAll();
        }
     }
 }
