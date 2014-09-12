@@ -89,8 +89,6 @@ Rectangle {
         height: parent.height;
         width: stretchVideo ? parent.width : height * aspectRatio;
 
-        onWidthChanged: console.log(width / height)
-
         systemDirectory: root.systemDirectory;
         saveDirectory: root.saveDirectory;
         libcore: gameView.coreName;
