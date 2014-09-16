@@ -17,6 +17,7 @@ GameLibraryModel::GameLibraryModel(LibraryDbManager *dbm, QObject *parent)
     role_names.insert(ConsoleRole, "console");
     role_names.insert(TimePlayedRole, "time_played");
     role_names.insert(ArtworkRole, "artwork");
+    role_names.insert(FileNameRole, "filename");
 
     setTable("games");
     select();

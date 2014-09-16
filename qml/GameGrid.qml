@@ -120,7 +120,7 @@ Rectangle {
                 PhoenixNormalButton {
                     text: "Play";
                     onClicked: {
-                        //windowStack.push({item: gameView, properties: {coreName: "", gameName: "", run: true}});
+                        windowStack.push({item: gameView, properties: {coreName: "", gameName: gridView.currentItem.fileName, run: true}});
                     }
                 }
 
@@ -234,6 +234,7 @@ Rectangle {
             property string imageSource: !artwork ? "qrc:/assets/No-Art.png" : artwork;
             property string titleName: title ? title : "";
             property string systemName: "Current System";
+            property string fileName: filename ? filename : "";
 
             Item {
                 id: subItem;

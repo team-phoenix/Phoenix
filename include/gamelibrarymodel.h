@@ -20,11 +20,16 @@ public:
         ConsoleRole,
         TimePlayedRole,
         ArtworkRole,
+        FileNameRole,
     };
 
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     virtual QHash<int, QByteArray> roleNames() const override;
     virtual bool select() override;
+    //bool removeRow(int row, const QModelIndex &parent)
+    //{
+    //    return QSqlTableModel::removeRow(row, parent);
+    //}
 
 public slots:
     void setFilter(const QString &filter, QVariantList params);

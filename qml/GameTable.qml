@@ -14,13 +14,19 @@ TableView {
 
     TableViewColumn {role: "title" ; title: "Name"; width: 350;}
     TableViewColumn {role: "console"; title: "Console"; width: 200; }
-    TableViewColumn {role: "time_played"; title: "Time Played"; width: 200; }
+    TableViewColumn {role: "time_played"; title: "Time Played"; width: 125; }
+    TableViewColumn {role: "filename"; title: "File Name"; width: 200; }
+
 
     onSortIndicatorColumnChanged: model.sort(sortIndicatorColumn, sortIndicatorOrder)
     onSortIndicatorOrderChanged: model.sort(sortIndicatorColumn, sortIndicatorOrder)
 
     ExclusiveGroup {
         id: rowGroup;
+    }
+
+    Component.onCompleted: {
+        root.itemInView = "table";
     }
 
     headerDelegate: Rectangle {
