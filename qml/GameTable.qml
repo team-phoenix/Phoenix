@@ -1,6 +1,6 @@
 import QtQuick 2.3
-import QtQuick.Controls 1.1
-import QtQuick.Controls.Styles 1.1
+import QtQuick.Controls 1.2
+import QtQuick.Controls.Styles 1.2
 
 TableView {
     id: table;
@@ -94,7 +94,7 @@ TableView {
 
             font {
                 bold: true;
-                pixelSize: 12;
+                pixelSize: 11;
                 family: "Sans";
             }
 

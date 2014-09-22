@@ -4,11 +4,11 @@ import QtQuick.Controls.Styles 1.2
 
 Button {
     id: normalButton;
-    text: "Backup";
+    text: "";
     property string textColor: "#f1f1f1";
     property string alternateTextColor: "#acacac";
     property Gradient buttonGradient: Gradient {
-        GradientStop {position: 0.0; color: pressed ? "#171717" : "#2f2f2f";}
+        GradientStop {position: 0.0; color: checked ? "#171717" : "#2f2f2f";}
         GradientStop {position: 0.8; color: "#252324";}
         GradientStop {position: 1.0; color: "#1b1b1b";}
     }
@@ -20,22 +20,24 @@ Button {
 
     property string outerBorderColor: "#121212";
     property string alternateOuterBorderColor: "#1a1a1a"
+    property int radius: 3;
 
     style: ButtonStyle {
         background: Rectangle {
             id: outerRectangle;
             implicitHeight: 25;
             implicitWidth: 50;
-            radius: 3;
+            radius: normalButton.radius;
             border {
-                width: control.pressed ? 1 : 0;
+                width: control.checked ? 1 : 0;
                 color: control.outerBorderColor;
             }
 
             gradient: control.innerBorderGradient;
 
             CustomBorder {
-                color: control.pressed ? control.outerBorderColor : control.alternateOuterBorderColor;
+                visible: !control.checked;
+                color: control.checked ? control.outerBorderColor : control.alternateOuterBorderColor;
             }
 
             Rectangle {
@@ -50,7 +52,7 @@ Button {
         }
         label: Text {
             renderType: Text.QtRendering;
-            color: control.pressed ? control.alternateTextColor : control.textColor;
+            color: control.checked ? control.alternateTextColor : control.textColor;
             text: control.text;
             verticalAlignment: Text.AlignVCenter;
             horizontalAlignment: Text.AlignHCenter;

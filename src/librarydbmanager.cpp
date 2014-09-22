@@ -58,14 +58,15 @@ bool LibraryDbManager::createSchema()
     "   /* game info */"
     "   title TEXT NOT NULL,\n"
     "   is_favorite BOOLEAN,\n"
-    "   console TEXT NOT NULL,\n"
+    "   system TEXT NOT NULL,\n"
     "   region TEXT,\n"
     "   goodtools_code TEXT,\n"
     "   time_played DATETIME,\n"
     "   artwork TEXT,\n"
     "   /* file info */"
     "   directory TEXT,\n"
-    "   filename TEXT UNIQUE\n"
+    "   filename TEXT UNIQUE,\n"
+    "   system_path TEXT\n"
     ")");
     q.exec("CREATE INDEX title_index ON " table_games " (title)");
     q.exec("CREATE INDEX favorite_index ON " table_games " (is_favorite)");
@@ -79,7 +80,7 @@ bool LibraryDbManager::loadFixtures()
     db.transaction();
     QSqlQuery q(db);
     for (int i = 0; i < 10000; i++) {
-        q.exec(QString("INSERT INTO " table_games " (title, console, time_played, artwork)"
+        q.exec(QString("INSERT INTO " table_games " (title, system, time_played, artwork)"
                        " VALUES (\"somegame %1\", \"test\", \"0h 0m 0s\", \"qrc:/assets/missing_artwork.png\")").arg(i));
     }
     db.commit();

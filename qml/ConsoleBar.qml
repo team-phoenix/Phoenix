@@ -187,17 +187,7 @@ Rectangle {
             topMargin: 10;
         }
 
-        model: ListModel {
-            ListElement {title: "All"; icon: "qrc:/assets/more.png";}
-            ListElement {title: "Atari Lynx"; icon: "qrc:/assets/consoleicons/lynx.png";}
-            ListElement {title: "Nintendo"; icon: "/assets/consoleicons/nes.png";}
-            ListElement {title: "Super Nintendo"; icon: "/assets/consoleicons/snes.png";}
-            ListElement {title: "Sony PlayStation"; icon: "/assets/consoleicons/ps1.png";}
-            ListElement {title: "Game Boy Advance"; icon: "/assets/consoleicons/gba.png";}
-            ListElement {title: "Game Boy Color"; icon: "/assets/consoleicons/gbc.png";}
-            ListElement {title: "Nintendo DS"; icon: "/assets/consoleicons/nds.png";}
-            ListElement {title: "DOSBox"; icon: "/assets/consoleicons/dosbox.png";}
-        }
+        model: phoenixLibrary.systemsModel();
 
         ExclusiveGroup {
             id: consoleGroup
@@ -216,7 +206,7 @@ Rectangle {
 
                 Image {
                     anchors.verticalCenter: parent.verticalCenter;
-                    source: icon;
+                    source: phoenixLibrary.systemIcon(modelData);
                     fillMode: Image.PreserveAspectFit;
                     sourceSize {
                         height: 24;
@@ -230,7 +220,7 @@ Rectangle {
                     id: consoleItem;
                     anchors.verticalCenter: parent.verticalCenter;
                     width: 140;
-                    text: title;
+                    text: modelData;
                     color: "#f1f1f1";
                     renderType: Text.QtRendering;
                     elide: Text.ElideRight;

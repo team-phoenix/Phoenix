@@ -12,7 +12,6 @@ Item {
     property bool expand: false;
 
     property bool contentVisible: false;
-    width: 150;
 
     SettingsWindow {
         id: settingsWindow;
@@ -21,22 +20,22 @@ Item {
 
     Rectangle {
         id: menuBar;
-        color: settingsBubble.stackBackgroundColor;
-        radius: 5;
+        //color: settingsBubble.stackBackgroundColor;
+        radius: 3;
         anchors {
-            top: parent.top;
-            bottom: parent.bottom;
-        }
-        width: 150;
-        border {
-            width: 1;
-            color: "#0b0b0b";
+            fill: parent;
         }
 
-        gradient: Gradient {
-            GradientStop {position: 0.0; color: "#30302f";}
-            GradientStop {position: 1.0; color: "#242424";}
+        border {
+            width: 1;
+            color: "#333333";
         }
+
+        //gradient: Gradient {
+         //   GradientStop {position: 0.0; color: "#30302f";}
+        //    GradientStop {position: 1.0; color: "#242424";}
+        //}
+        color: "#2f2f2f";
 
         ExclusiveGroup {
             id: menuGroup;
@@ -52,6 +51,7 @@ Item {
                 right: parent.right;
                 topMargin: 15;
             }
+            interactive: false;
             highlightFollowsCurrentItem: false;
             highlight: Item {
                 id: highlightItem;
@@ -158,7 +158,7 @@ Item {
                     spacing: 8;
                     anchors {
                         left: parent.left;
-                        leftMargin: 32;
+                        leftMargin: 24;
                     }
 
                     Image {

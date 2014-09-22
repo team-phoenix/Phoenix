@@ -17,10 +17,11 @@ public:
 
     enum GameRoles {
         TitleRole = Qt::UserRole + 1,
-        ConsoleRole,
+        SystemRole,
         TimePlayedRole,
         ArtworkRole,
         FileNameRole,
+        SystemPathRole,
     };
 
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;

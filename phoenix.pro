@@ -24,8 +24,11 @@ linux-g++ {
 }
 
 win32 {
+    QT +=  winextras gui-private
     LIBS += -LC:/SDL2/lib
-    LIBS += -lmingw32 -lSDL2main -lSDL2
+    LIBS += -LSDL2main -LSDL2
+    LIBS += -lgdi32 -ldwmapi
+
 
     DEFINES += SDL_WIN
     INCLUDEPATH += C:/SDL2/include
@@ -53,7 +56,8 @@ HEADERS += include/core.h                      \
            include/inputdevicemappingfactory.h \
            include/inputdevicefactory.h        \
            include/thegamesdb.h                \
-           include/cacheimage.h
+           include/cacheimage.h                \
+           include/platformmaanger.h
 
 SOURCES += src/main.cpp                        \
            src/videoitem.cpp                   \

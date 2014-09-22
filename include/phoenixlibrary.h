@@ -10,6 +10,7 @@
 #include "thegamesdb.h"
 #include "gamelibrarymodel.h"
 #include "librarydbmanager.h"
+#include "platformmanager.h"
 
 
 class PhoenixLibrary : public QObject
@@ -58,7 +59,8 @@ public:
         Sega_Game_Gear,
         Sega_CD,
         Sega_32X,
-        Sony_PlayStation
+        Sony_PlayStation,
+        Last
     };
     // Can't use template parameters with Q_PROPERTY
     typedef QMap<Console, QString> ConsoleMap;
@@ -76,6 +78,13 @@ public slots:
     void resetAll();
     GameLibraryModel *model() { return m_model; }
     void deleteRow(QString title);
+    QString getSystem(QString system);
+    QStringList coresModel(QString system);
+    QStringList systemsModel();
+    bool setPreferredCore(QString system, QString new_core);
+    QString systemIcon(QString system);
+
+
 
 signals:
     void labelChanged();
@@ -90,6 +99,9 @@ private:
     QString m_label;
     int m_progress;
     int m_count;
+    PlatformManager platform_manager;
+
+    QMap<QString, QStringList> cores_for_console;
 
     const QMap<Console, QString> m_consoles {
         { Atari_Lynx,         "Atari Lynx" },
@@ -107,11 +119,14 @@ private:
         { Sony_PlayStation,   "Sony PlayStation" },
     };
 
+    const QMap<QString, QString> icon_for_console;
+
+    QStringList excluded_consoles;
+
     QMap<Console, QVariantMap> core_for_console;
 
     QMap<QString, QVariantMap> core_for_extension;
 
-    QString getSystem(QString suffix);
     void loadXml(QString file_path);
     QRegularExpressionMatch parseFilename(QString filename);
 
