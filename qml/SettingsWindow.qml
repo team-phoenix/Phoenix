@@ -6,6 +6,7 @@ ApplicationWindow {
     height: 800;
     width: 600;
     title: "Settings";
+    color: "#323232";
 
     property alias video: videoSettings;
     property alias audio: audioSettings;
@@ -15,6 +16,18 @@ ApplicationWindow {
     property alias core: coreSettings;
     property alias library: librarySettings;
     property alias stack: stackView;
+
+    Behavior on height {
+        PropertyAnimation {
+            duration: 150;
+        }
+    }
+
+    Behavior on width {
+        PropertyAnimation {
+            duration: 150;
+        }
+    }
 
     onVisibleChanged: {
         if (visible) {

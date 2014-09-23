@@ -87,10 +87,11 @@ Item {
                     implicitWidth: 70;
                     checkable: true;
                     onClicked: {
-                        //if (checked)
-                         //   chec
-                        if (coreSettingsStack.currentItem.stackName !== "coreConsoles")
+                        if (coreSettingsStack.currentItem.stackName !== "coreConsoles") {
+                            settingsWindow.height = 400;
+                            settingsWindow.width = 250;
                             coreSettingsStack.push({item: coreConsoles, replace: true, immediate: true})
+                        }
                     }
                     exclusiveGroup: topButtonGroup;
                     anchors {
@@ -105,8 +106,11 @@ Item {
                     radius: 0;
                     exclusiveGroup: topButtonGroup;
                     checkable: true;onClicked: {
-                        if (coreSettingsStack.currentItem.stackName !== "corePreferred")
+                        if (coreSettingsStack.currentItem.stackName !== "corePreferred") {
+                            settingsWindow.height = 550;
+                            settingsWindow.width = 300;
                             coreSettingsStack.push({item: corePreferred, replace: true, immediate: true})
+                        }
                     }
                     anchors {
                         horizontalCenter: parent.horizontalCenter;
@@ -147,11 +151,14 @@ Item {
             property string stackName: "corePreferred";
 
             PhoenixScrollView {
+                frameColor: "#000000FF";
+                borderEnabled: false;
+                handleHeight: 10;
                 anchors {
                     fill: parent;
                     topMargin: 15;
                     //rightMargin: 15;
-                    //leftMargin: 15;
+                    leftMargin: 15;
                 }
             ListView {
                 spacing: 5;
