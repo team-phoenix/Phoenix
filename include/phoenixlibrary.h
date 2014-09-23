@@ -121,7 +121,7 @@ private:
         { Sega_32X,           "Sega 32X" },
         { Sony_PlayStation,   "Sony PlayStation" },
         { Arcade,             "Arcade" },
-        { FFMpeg,             "FIlm"},
+        { FFMpeg,             "Film"},
     };
 
 
