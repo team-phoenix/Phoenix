@@ -216,15 +216,13 @@ void PhoenixLibrary::scanFolder(QUrl folder_path)
 
         QRegularExpressionMatch m = parseFilename(info.completeBaseName());
 
-        QString system = core_for_extension[info.suffix()]["systemname"].toString();
-
-        QString clean_system = platform_manager.cleaned_system_name.value(system, system);
+        QString system = m_consoles.value(core_for_console.key(core_for_extension[info.suffix()]), "Unknown");
 
 
         q.prepare("INSERT INTO " table_games " (title, system, time_played, region, filename)"
                   " VALUES (?, ?, ?, ?, ?)");
         q.addBindValue(m.captured("title"));
-        q.addBindValue(clean_system);
+        q.addBindValue(system);
         q.addBindValue("00:00");
         q.addBindValue(m.captured("region"));
         q.addBindValue(info.absoluteFilePath());
