@@ -187,9 +187,12 @@ Item {
                             right: parent.right;
                             rightMargin: 25;
                         }
-
                         model: phoenixLibrary.coresModel(modelData);
-                        onCurrentTextChanged: phoenixLibrary.setPreferredCore(modelData, currentText);
+                        textRole: "coreName";
+                        onCurrentIndexChanged:  {
+                            var obj = phoenixLibrary.showPath(currentIndex, modelData);
+                            phoenixLibrary.setPreferredCore(modelData, obj);
+                        }
                     }
                 }
             }

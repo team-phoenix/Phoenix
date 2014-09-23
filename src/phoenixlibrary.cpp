@@ -90,9 +90,13 @@ PhoenixLibrary::PhoenixLibrary()
     }
 
     for (auto &core : libretro_cores_info.keys()) {
+
         QString system = libretro_cores_info[core]["systemname"].toString();
         QString cleaned_name = platform_manager.cleaned_system_name.value(system, system);
-        cores_for_console[cleaned_name].append(core);
+        QString display_name = libretro_cores_info[core].value("corename", "").toString();
+
+        cores_for_console[cleaned_name].append( new CoreModel(this, display_name, core));
+
     }
 
 
@@ -327,9 +331,9 @@ QString PhoenixLibrary::getSystem(QString system)
     return core_path;
 }
 
-QStringList PhoenixLibrary::coresModel(QString system)
+QList<QObject *> PhoenixLibrary::coresModel(QString system)
 {
-    return cores_for_console.value(system, QStringList(""));
+    return cores_for_console[system];
 }
 
 QStringList PhoenixLibrary::systemsModel()
@@ -344,4 +348,13 @@ QStringList PhoenixLibrary::systemsModel()
 QString PhoenixLibrary::systemIcon(QString system)
 {
     return icon_for_console.value(system, "");
+}
+
+QString PhoenixLibrary::showPath(int index, QString system)
+{
+    if (index < cores_for_console[system].length()) {
+        CoreModel *mod = static_cast<CoreModel *>(cores_for_console[system].at(index));
+        return mod->corePath();
+    }
+    return QString("");
 }

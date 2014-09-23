@@ -268,6 +268,15 @@ bool Core::loadGame(const char *path)
     
 } // Core::load_game()
 
+void Core::unload()
+{
+    symbols->retro_deinit();
+    symbols->retro_unload_game();
+    libretro_core->unload();
+    game_data.clear();
+    library_name.clear();
+}
+
 //  ________________________
 // |                        |
 // |       Callbacks        |

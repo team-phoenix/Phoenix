@@ -11,7 +11,7 @@
 #include "gamelibrarymodel.h"
 #include "librarydbmanager.h"
 #include "platformmanager.h"
-
+#include "coremodel.h"
 
 class PhoenixLibrary : public QObject
 {
@@ -79,10 +79,11 @@ public slots:
     GameLibraryModel *model() { return m_model; }
     void deleteRow(QString title);
     QString getSystem(QString system);
-    QStringList coresModel(QString system);
+    QList<QObject *> coresModel(QString system);
     QStringList systemsModel();
     bool setPreferredCore(QString system, QString new_core);
     QString systemIcon(QString system);
+    QString showPath(int index, QString system);
 
 
 
@@ -97,11 +98,11 @@ private:
     TheGamesDB *scraper;
     GameLibraryModel *m_model;
     QString m_label;
+    PlatformManager platform_manager;
     int m_progress;
     int m_count;
-    PlatformManager platform_manager;
 
-    QMap<QString, QStringList> cores_for_console;
+    QMap<QString, QList<QObject *>> cores_for_console;
 
     const QMap<Console, QString> m_consoles {
         { Atari_Lynx,         "Atari Lynx" },
@@ -118,6 +119,8 @@ private:
         { Sega_32X,           "Sega 32X" },
         { Sony_PlayStation,   "Sony PlayStation" },
     };
+
+
 
     const QMap<QString, QString> icon_for_console;
 
