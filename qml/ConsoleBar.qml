@@ -50,12 +50,81 @@ Rectangle {
         //}
     }
 
-    ListView {
-        id: listView;
+    Rectangle {
+        id: consoleHeader;
+        height: 36;
+        color: parent.color;
+        z: listView.z + 1;
         anchors {
             top: parent.top;
-            bottom: parent.bottom;
-            topMargin: 12;
+            //topMargin: 12;
+            left: parent.left;
+            right: parent.right;
+        }
+
+        MouseArea {
+            id: mouse;
+            anchors.fill: parent;
+            onClicked: {
+                if (listView.retractList)
+                    listView.retractList = false;
+                else
+                    listView.retractList = true;
+            }
+
+        }
+
+
+
+        Row {
+            anchors {
+                left: parent.left;
+                top: parent.top;
+                topMargin: 12;
+                leftMargin: 12;
+                horizontalCenter: parent.horizontalCenter;
+            }
+
+
+            Text {
+                renderType: Text.QtRendering;
+                text: "Consoles";
+                color: "#f1f1f1";
+                font {
+                    bold: true;
+                    family: "Sans";
+                    pixelSize: 12;
+                }
+            }
+            Image {
+                y: 2;
+                source: "../assets/arrow-down-b.png";
+                fillMode: Image.PreserveAspectFit;
+                height: 14;
+                width: 20;
+                sourceSize {
+                    width: 25;
+                    height: 25;
+                }
+            }
+        }
+    }
+
+    ListView {
+        id: listView;
+        visible: (height !== 0);
+        anchors {
+            top: consoleHeader.bottom;
+            //bottom: parent.bottom;
+            right: parent.right;
+            left: parent.left;
+            topMargin: 0;
+        }
+
+        height: retractList ? 0 : 500;
+
+        Behavior on height {
+            PropertyAnimation {}
         }
 
         snapMode: ListView.SnapToItem;
@@ -64,56 +133,6 @@ Rectangle {
         highlightFollowsCurrentItem: false;
 
         property bool retractList: false;
-
-        header: Item {
-            height: 25;
-            width: parent.width;
-            MouseArea {
-                id: mouse;
-                anchors.fill: parent;
-                onClicked: {
-                    if (listView.retractList)
-                        listView.retractList = false;
-                    else
-                        listView.retractList = true;
-                }
-
-            }
-
-
-
-            Row {
-                anchors {
-                    left: parent.left;
-                    leftMargin: 12;
-                    horizontalCenter: parent.horizontalCenter;
-                }
-
-
-                Text {
-
-                    renderType: Text.QtRendering;
-                    text: "Consoles";
-                    color: "#f1f1f1";
-                    font {
-                        bold: true;
-                        family: "Sans";
-                        pixelSize: 12;
-                    }
-                }
-                Image {
-                    y: 2;
-                    source: "../assets/arrow-down-b.png";
-                    fillMode: Image.PreserveAspectFit;
-                    height: 14;
-                    width: 20;
-                    sourceSize {
-                        width: 25;
-                        height: 25;
-                    }
-                }
-            }
-        }
 
         highlight: Item {
             id: highlightItem;
@@ -227,8 +246,8 @@ Rectangle {
         }
 
         delegate: Item {
-            visible: !listView.retractList;
-            height: listView.retractList ? 0 : 25;
+            //visible: !listView.retractList;
+            height: 25;
             width: consoleBar.width;
             Row {
                 id: row;
