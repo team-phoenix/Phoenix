@@ -29,10 +29,17 @@ PhoenixLibrary::PhoenixLibrary()
         {platform_manager.nintendo, "/assets/consoleicons/nes.png"},
         {platform_manager.super_nintendo, "/assets/consoleicons/snes.png"},
         {platform_manager.gameboy, "/assets/consoleicons/gbc.png"},
-        {platform_manager.playstation, "/assets/consoleicons/snes.png"},
+        {platform_manager.playstation, "/assets/consoleicons/ps1.png"},
         {platform_manager.gameboy_advance, "/assets/consoleicons/gba.png"},
-        {platform_manager.doxbox, "/assets/consoleicons/nes.png"},
-        {platform_manager.nintendo, "/assets/consoleicons/dosbox.png"},
+        {platform_manager.dos, "/assets/consoleicons/dosbox.png"},
+        {platform_manager._3do, "/assets/consoleicons/3do.png"},
+        {platform_manager.atari_7800, "/assets/consoleicons/7800.png"},
+        {platform_manager.gameboy, "/assets/consoleicons/gbc.png"},
+        {platform_manager.sega_saturn, "/assets/consoleicons/saturn.png"},
+        {platform_manager.nintendo_ds, "/assets/consoleicons/nds.png"},
+        {platform_manager.atari_lynx, "/assets/consoleicons/lynx.png"},
+        {platform_manager.video, ""}
+
     }
 
     //model: ListModel {

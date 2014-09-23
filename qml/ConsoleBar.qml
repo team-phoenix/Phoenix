@@ -63,28 +63,61 @@ Rectangle {
         interactive: true;
         highlightFollowsCurrentItem: false;
 
+        property bool retractList: false;
+
         header: Item {
             height: 25;
             width: parent.width;
-            Text {
+            MouseArea {
+                id: mouse;
+                anchors.fill: parent;
+                onClicked: {
+                    if (listView.retractList)
+                        listView.retractList = false;
+                    else
+                        listView.retractList = true;
+                }
+
+            }
+
+
+
+            Row {
                 anchors {
                     left: parent.left;
                     leftMargin: 12;
                     horizontalCenter: parent.horizontalCenter;
                 }
-                renderType: Text.QtRendering;
-                text: "Consoles";
-                color: "#f1f1f1";
-                font {
-                    bold: true;
-                    family: "Sans";
-                    pixelSize: 12;
+
+
+                Text {
+
+                    renderType: Text.QtRendering;
+                    text: "Consoles";
+                    color: "#f1f1f1";
+                    font {
+                        bold: true;
+                        family: "Sans";
+                        pixelSize: 12;
+                    }
+                }
+                Image {
+                    y: 2;
+                    source: "../assets/arrow-down-b.png";
+                    fillMode: Image.PreserveAspectFit;
+                    height: 14;
+                    width: 20;
+                    sourceSize {
+                        width: 25;
+                        height: 25;
+                    }
                 }
             }
         }
 
         highlight: Item {
             id: highlightItem;
+            visible: !listView.retractList;
             height: listView.currentItem.height;
             width: listView.width;
             anchors.verticalCenter: listView.currentItem.verticalCenter;
@@ -194,7 +227,8 @@ Rectangle {
         }
 
         delegate: Item {
-            height: 25;
+            visible: !listView.retractList;
+            height: listView.retractList ? 0 : 25;
             width: consoleBar.width;
             Row {
                 id: row;

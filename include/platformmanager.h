@@ -88,7 +88,7 @@ public:
     QString amiga = "Amiga";
     QString nintendo_ds = "Nintendo DS";
     QString nintendo_64 = "Nintendo 64";
-    QString playstation = "PlayStation";
+    QString playstation = "Sony PlayStation";
     QString arcade = "Arcade";
     QString msx = "MSX";
     QString atari_st = "Atari ST";
@@ -99,6 +99,10 @@ public:
     QString quake = "Quake";
     QString game = "Game";
     QString sega_saturn = "Sega Saturn";
+    QString _3do = "3DO";
+    QString atari_lynx = "Atari Lynx";
+    QString dos = "DOS";
+    QString video = "Film";
 
     QMap<QString, QString> cleaned_system_name {
         {"Sega 16bit + 32X (Various)", sega_genesis},
@@ -124,40 +128,6 @@ public:
         {"Game Boy Advance", vbam},
         {"Sony PlayStation", mednafen_psx}
     };
-
-
-    QMap<QString, QString> display_system_name {
-        {_2048, "2048"},
-        {_3dengine, "3D Engine"},
-        {_4do, "3DO"},
-        {bluemsx, "BlueMSX"},
-        {bnes, "bNES"},
-        {bsnes_accuracy, "bSNES Accuracy"},
-        {bsnes_balanced, "bSNES Balanced"},
-        {bsnes_performance, "bSNES Performance"},
-
-        {_2048, "2048"},
-        {_3dengine, "3D Engine"},
-        {_4do, "3DO"},
-        {bluemsx, "BlueMSX"},
-        {bnes, "bNES"},
-        {bsnes_accuracy, "bSNES Accuracy"},
-        {bsnes_balanced, "bSNES Balanced"},
-        {bsnes_performance, "bSNES Performance"},
-
-        {_2048, "2048"},
-        {_3dengine, "3D Engine"},
-        {_4do, "3DO"},
-        {bluemsx, "BlueMSX"},
-        {bnes, "bNES"},
-        {bsnes_accuracy, "bSNES Accuracy"},
-        {bsnes_balanced, "bSNES Balanced"},
-        {bsnes_performance, "bSNES Performance"},
-        {bsnes_accuracy_mercury, "bSNES Accuracy"},
-        {bsnes_balanced_mercury, "bSNES (Mercury Balanced)"}
-    };
-
-
 
 };
 

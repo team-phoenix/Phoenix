@@ -60,6 +60,8 @@ public:
         Sega_CD,
         Sega_32X,
         Sony_PlayStation,
+        Arcade,
+        FFMpeg,
         Last
     };
     // Can't use template parameters with Q_PROPERTY
@@ -106,11 +108,11 @@ private:
 
     const QMap<Console, QString> m_consoles {
         { Atari_Lynx,         "Atari Lynx" },
-        { IBM_PC,             "DOSBox" },
+        { IBM_PC,             "DOS" },
         { Nintendo_NES,       "Nintendo" },
         { Nintendo_SNES,      "Super Nintendo" },
         { Nintendo_Game_Boy,  "Game Boy Advance" },
-        { Nintendo_GBA,       "Game Boy Color" },
+        { Nintendo_GBA,       "Game Boy" },
         { Nintendo_DS,        "Nintendo DS" },
         { Sega_Master_System, "Sega Master System" },
         { Sega_Mega_Drive,    "Sega Mega Drive" },
@@ -118,6 +120,8 @@ private:
         { Sega_CD,            "Sega CD" },
         { Sega_32X,           "Sega 32X" },
         { Sony_PlayStation,   "Sony PlayStation" },
+        { Arcade,             "Arcade" },
+        { FFMpeg,             "FIlm"},
     };
 
 
