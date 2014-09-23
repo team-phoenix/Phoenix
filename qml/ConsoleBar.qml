@@ -60,6 +60,7 @@ Rectangle {
             //topMargin: 12;
             left: parent.left;
             right: parent.right;
+            rightMargin: 1;
         }
 
         MouseArea {
