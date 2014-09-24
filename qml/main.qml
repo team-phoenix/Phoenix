@@ -19,9 +19,8 @@ PhoenixWindow {
     swapInterval: 0;
     frameless: false;
     title: "Phoenix";
-    color: "black";
 
-    property bool clear: (phoenixLibrary.count === 0);
+    property bool clear: false//(phoenixLibrary.count === 0);
     property string accentColor:"#e8433f";
     property int lastWindowStyle: Window.Windowed;
     property string borderColor: "#0b0b0b";
@@ -173,11 +172,12 @@ PhoenixWindow {
 
         anchors {
             top: headerBar.bottom;
-            topMargin: 5;
+            topMargin: 3;
             left: parent.left;
             leftMargin: 10;
         }
         height: 200;
+        width: 125;
 
         stackBackgroundColor: "#f4f4f4";
         contentColor: "#f4f4f4";
@@ -186,11 +186,16 @@ PhoenixWindow {
         Rectangle {
             visible: parent.visible;
             opacity: parent.visible ? 1.0 : 0.0;
-            height: 20;
-            width: 20;
+            height: 15;
+            width: 15;
             rotation: 45;
             color: "#2f2f2f";
             z: settingsDropDown.z + 1;
+            anchors {
+                left: parent.left;
+                leftMargin: 16;
+                verticalCenter: settingsDropDown.top;
+            }
 
             Rectangle {
                 anchors {
@@ -200,7 +205,7 @@ PhoenixWindow {
                     right: parent.right;
                 }
                 height: 1;
-                color: "#0b0b0b";
+                color: "#333333";
             }
 
             Rectangle {
@@ -210,7 +215,7 @@ PhoenixWindow {
                     bottom: parent.bottom;
                 }
                 width: 1;
-                color: "#0b0b0b";
+                color: "#333333";
             }
 
             Behavior on opacity {
@@ -222,26 +227,20 @@ PhoenixWindow {
                 }
             }
 
-            anchors {
-                left: parent.left;
-                leftMargin: 14;
-                verticalCenter: settingsDropDown.top;
-            }
+
 
         }
 
     }
 
-    DropShadow {
-        source: settingsDropDown;
-        anchors.fill: source;
-        horizontalOffset: 1;
-        verticalOffset: 2;
-        visible: source.visible;
-        radius: 4;
-        samples: radius * 2;
+    RectangularGlow {
+        anchors.fill: settingsDropDown;
+        visible: settingsDropDown.visible;
         color: "#80000000";
-        transparentBorder: true;
+
+                glowRadius: 10
+                spread: 0;
+                cornerRadius: 6;
     }
 
     StackView {

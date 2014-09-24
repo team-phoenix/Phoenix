@@ -10,7 +10,8 @@
 #include "thegamesdb.h"
 #include "gamelibrarymodel.h"
 #include "librarydbmanager.h"
-
+#include "platformmanager.h"
+#include "coremodel.h"
 
 class PhoenixLibrary : public QObject
 {
@@ -58,7 +59,10 @@ public:
         Sega_Game_Gear,
         Sega_CD,
         Sega_32X,
-        Sony_PlayStation
+        Sony_PlayStation,
+        Arcade,
+        FFMpeg,
+        Last
     };
     // Can't use template parameters with Q_PROPERTY
     typedef QMap<Console, QString> ConsoleMap;
@@ -76,6 +80,14 @@ public slots:
     void resetAll();
     GameLibraryModel *model() { return m_model; }
     void deleteRow(QString title);
+    QString getSystem(QString system);
+    QList<QObject *> coresModel(QString system);
+    QStringList systemsModel();
+    bool setPreferredCore(QString system, QString new_core);
+    QString systemIcon(QString system);
+    QString showPath(int index, QString system);
+
+
 
 signals:
     void labelChanged();
@@ -88,16 +100,19 @@ private:
     TheGamesDB *scraper;
     GameLibraryModel *m_model;
     QString m_label;
+    PlatformManager platform_manager;
     int m_progress;
     int m_count;
 
+    QMap<QString, QList<QObject *>> cores_for_console;
+
     const QMap<Console, QString> m_consoles {
         { Atari_Lynx,         "Atari Lynx" },
-        { IBM_PC,             "DOSBox" },
+        { IBM_PC,             "DOS" },
         { Nintendo_NES,       "Nintendo" },
         { Nintendo_SNES,      "Super Nintendo" },
         { Nintendo_Game_Boy,  "Game Boy Advance" },
-        { Nintendo_GBA,       "Game Boy Color" },
+        { Nintendo_GBA,       "Game Boy" },
         { Nintendo_DS,        "Nintendo DS" },
         { Sega_Master_System, "Sega Master System" },
         { Sega_Mega_Drive,    "Sega Mega Drive" },
@@ -105,13 +120,20 @@ private:
         { Sega_CD,            "Sega CD" },
         { Sega_32X,           "Sega 32X" },
         { Sony_PlayStation,   "Sony PlayStation" },
+        { Arcade,             "Arcade" },
+        { FFMpeg,             "Film"},
     };
+
+
+
+    const QMap<QString, QString> icon_for_console;
+
+    QStringList excluded_consoles;
 
     QMap<Console, QVariantMap> core_for_console;
 
     QMap<QString, QVariantMap> core_for_extension;
 
-    QString getSystem(QString suffix);
     void loadXml(QString file_path);
     QRegularExpressionMatch parseFilename(QString filename);
 

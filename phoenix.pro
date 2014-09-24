@@ -24,8 +24,11 @@ linux-g++ {
 }
 
 win32 {
+    QT +=  winextras gui-private
     LIBS += -LC:/SDL2/lib
     LIBS += -lmingw32 -lSDL2main -lSDL2
+    LIBS += -lgdi32 -ldwmapi
+
 
     DEFINES += SDL_WIN
     INCLUDEPATH += C:/SDL2/include
@@ -53,7 +56,9 @@ HEADERS += include/core.h                      \
            include/inputdevicemappingfactory.h \
            include/inputdevicefactory.h        \
            include/thegamesdb.h                \
-           include/cacheimage.h
+           include/cacheimage.h                \
+           include/platformmanager.h           \
+           include/coremodel.h
 
 SOURCES += src/main.cpp                        \
            src/videoitem.cpp                   \
@@ -72,6 +77,7 @@ SOURCES += src/main.cpp                        \
            src/phoenixlibrary.cpp              \
            src/phoenixwindow.cpp               \
            src/thegamesdb.cpp                  \
-           src/cacheimage.cpp
+           src/cacheimage.cpp                  \
+           src/coremodel.cpp
 
 RESOURCES = qml/qml.qrc assets/assets.qrc

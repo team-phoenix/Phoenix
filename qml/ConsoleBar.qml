@@ -50,28 +50,44 @@ Rectangle {
         //}
     }
 
-    ListView {
-        id: listView;
+    Rectangle {
+        id: consoleHeader;
+        height: 36;
+        color: parent.color;
+        z: listView.z + 1;
         anchors {
             top: parent.top;
-            bottom: parent.bottom;
-            topMargin: 12;
+            //topMargin: 12;
+            left: parent.left;
+            right: parent.right;
+            rightMargin: 1;
         }
 
-        snapMode: ListView.SnapToItem;
-        orientation: ListView.Vertical;
-        interactive: true;
-        highlightFollowsCurrentItem: false;
+        MouseArea {
+            id: mouse;
+            anchors.fill: parent;
+            onClicked: {
+                if (listView.retractList)
+                    listView.retractList = false;
+                else
+                    listView.retractList = true;
+            }
 
-        header: Item {
-            height: 25;
-            width: parent.width;
+        }
+
+
+
+        Row {
+            anchors {
+                left: parent.left;
+                top: parent.top;
+                topMargin: 12;
+                leftMargin: 12;
+                horizontalCenter: parent.horizontalCenter;
+            }
+
+
             Text {
-                anchors {
-                    left: parent.left;
-                    leftMargin: 12;
-                    horizontalCenter: parent.horizontalCenter;
-                }
                 renderType: Text.QtRendering;
                 text: "Consoles";
                 color: "#f1f1f1";
@@ -81,10 +97,47 @@ Rectangle {
                     pixelSize: 12;
                 }
             }
+            Image {
+                y: 2;
+                source: "../assets/arrow-down-b.png";
+                fillMode: Image.PreserveAspectFit;
+                height: 14;
+                width: 20;
+                sourceSize {
+                    width: 25;
+                    height: 25;
+                }
+            }
         }
+    }
+
+    ListView {
+        id: listView;
+        visible: (height !== 0);
+        anchors {
+            top: consoleHeader.bottom;
+            //bottom: parent.bottom;
+            right: parent.right;
+            left: parent.left;
+            topMargin: 0;
+        }
+
+        height: retractList ? 0 : 500;
+
+        Behavior on height {
+            PropertyAnimation {}
+        }
+
+        snapMode: ListView.SnapToItem;
+        orientation: ListView.Vertical;
+        interactive: true;
+        highlightFollowsCurrentItem: false;
+
+        property bool retractList: false;
 
         highlight: Item {
             id: highlightItem;
+            visible: !listView.retractList;
             height: listView.currentItem.height;
             width: listView.width;
             anchors.verticalCenter: listView.currentItem.verticalCenter;
@@ -187,23 +240,14 @@ Rectangle {
             topMargin: 10;
         }
 
-        model: ListModel {
-            ListElement {title: "All"; icon: "qrc:/assets/more.png";}
-            ListElement {title: "Atari Lynx"; icon: "qrc:/assets/consoleicons/lynx.png";}
-            ListElement {title: "Nintendo"; icon: "/assets/consoleicons/nes.png";}
-            ListElement {title: "Super Nintendo"; icon: "/assets/consoleicons/snes.png";}
-            ListElement {title: "Sony PlayStation"; icon: "/assets/consoleicons/ps1.png";}
-            ListElement {title: "Game Boy Advance"; icon: "/assets/consoleicons/gba.png";}
-            ListElement {title: "Game Boy Color"; icon: "/assets/consoleicons/gbc.png";}
-            ListElement {title: "Nintendo DS"; icon: "/assets/consoleicons/nds.png";}
-            ListElement {title: "DOSBox"; icon: "/assets/consoleicons/dosbox.png";}
-        }
+        model: phoenixLibrary.systemsModel();
 
         ExclusiveGroup {
             id: consoleGroup
         }
 
         delegate: Item {
+            //visible: !listView.retractList;
             height: 25;
             width: consoleBar.width;
             Row {
@@ -216,7 +260,7 @@ Rectangle {
 
                 Image {
                     anchors.verticalCenter: parent.verticalCenter;
-                    source: icon;
+                    source: phoenixLibrary.systemIcon(modelData);
                     fillMode: Image.PreserveAspectFit;
                     sourceSize {
                         height: 24;
@@ -230,7 +274,7 @@ Rectangle {
                     id: consoleItem;
                     anchors.verticalCenter: parent.verticalCenter;
                     width: 140;
-                    text: title;
+                    text: modelData;
                     color: "#f1f1f1";
                     renderType: Text.QtRendering;
                     elide: Text.ElideRight;

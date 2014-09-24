@@ -8,6 +8,7 @@
 #include <QFile>
 #include <QtConcurrent>
 #include <QSqlError>
+#include <QApplication>
 
 #include "phoenixlibrary.h"
 #include "librarydbmanager.h"
@@ -17,24 +18,48 @@
 
 PhoenixLibrary::PhoenixLibrary()
     : core_for_console {
-        { Atari_Lynx,         libretro_cores_info["handy_libretro"] },
-        { IBM_PC,             libretro_cores_info["dosbox_libretro"] },
-        { Nintendo_NES,       libretro_cores_info["nestopia_libretro"] },
-        { Nintendo_SNES,      libretro_cores_info["snes9x_libretro"] },
-        { Nintendo_Game_Boy,  libretro_cores_info["gambatte_libretro"] },
-        { Nintendo_GBA,       libretro_cores_info["vbam_libretro"] },
-        { Nintendo_DS,        libretro_cores_info["desmume_libretro"] },
-        { Sega_Master_System, libretro_cores_info["picodrive_libretro"] },
-        { Sega_Mega_Drive,    libretro_cores_info["picodrive_libretro"] },
-        { Sega_Game_Gear,     libretro_cores_info["picodrive_libretro"] },
-        { Sega_CD,            libretro_cores_info["picodrive_libretro"] },
-        { Sega_32X,           libretro_cores_info["picodrive_libretro"] },
-        { Sony_PlayStation,   libretro_cores_info["pcsx_rearmed_libretro"] },
+        { Nintendo_NES,       libretro_cores_info[platform_manager.preferred_cores[platform_manager.nintendo]] },
+        { Nintendo_SNES,      libretro_cores_info[platform_manager.preferred_cores[platform_manager.super_nintendo]] },
+        { Nintendo_Game_Boy,  libretro_cores_info[platform_manager.preferred_cores[platform_manager.gameboy]] },
+        { Nintendo_GBA,       libretro_cores_info[platform_manager.preferred_cores[platform_manager.gameboy_advance]] },
+        { Sony_PlayStation,   libretro_cores_info[platform_manager.preferred_cores[platform_manager.playstation]] },
+    },
+
+    icon_for_console {
+        {platform_manager.nintendo, "/assets/consoleicons/nes.png"},
+        {platform_manager.super_nintendo, "/assets/consoleicons/snes.png"},
+        {platform_manager.gameboy, "/assets/consoleicons/gbc.png"},
+        {platform_manager.playstation, "/assets/consoleicons/ps1.png"},
+        {platform_manager.gameboy_advance, "/assets/consoleicons/gba.png"},
+        {platform_manager.dos, "/assets/consoleicons/dosbox.png"},
+        {platform_manager._3do, "/assets/consoleicons/3do.png"},
+        {platform_manager.atari_7800, "/assets/consoleicons/7800.png"},
+        {platform_manager.gameboy, "/assets/consoleicons/gbc.png"},
+        {platform_manager.sega_saturn, "/assets/consoleicons/saturn.png"},
+        {platform_manager.nintendo_ds, "/assets/consoleicons/nds.png"},
+        {platform_manager.atari_lynx, "/assets/consoleicons/lynx.png"},
+        {platform_manager.video, ""}
+
     }
+
+    //model: ListModel {
+    //    ListElement {title: "All"; icon: "qrc:/assets/more.png";}
+    //    ListElement {title: "Atari Lynx"; icon: "qrc:/assets/consoleicons/lynx.png";}
+     //   ListElement {title: "Nintendo"; icon: "/assets/consoleicons/nes.png";}
+     //   ListElement {title: "Super Nintendo"; icon: "/assets/consoleicons/snes.png";}
+     //   ListElement {title: "Sony PlayStation"; icon: "/assets/consoleicons/ps1.png";}
+    //    ListElement {title: "Game Boy Advance"; icon: "/assets/consoleicons/gba.png";}
+     //   ListElement {title: "Game Boy Color"; icon: "/assets/consoleicons/gbc.png";}
+    //    ListElement {title: "Nintendo DS"; icon: "/assets/consoleicons/nds.png";}
+    //    ListElement {title: "DOSBox"; icon: "/assets/consoleicons/dosbox.png";}
+    //}
 {
     /*import_thread = new QThread();
     import_thread->setObjectName("phoenix-scraper");
     import_thread->setPriority(QThread::NormalPriority);*/
+
+    excluded_consoles = QStringList() << platform_manager.nintendo_ds << platform_manager.mupen64plus << platform_manager.ppsspp
+                                      << platform_manager.desmume;
 
     m_model = new GameLibraryModel(&dbm, this);
     m_model->setEditStrategy(QSqlTableModel::OnManualSubmit);
@@ -54,11 +79,15 @@ PhoenixLibrary::PhoenixLibrary()
             if (ext.isEmpty())
                 continue;
 
+
             if (core_for_extension.contains(ext)) {
                 QDebug dbg = qWarning(phxLibrary);
                 dbg << "Multiple cores for extension" << ext << ":";
-                for (auto &c : core_for_extension.values(ext))
+                for (auto &c : core_for_extension.values(ext)) {
                     dbg << c["display_name"].toString();
+                    qCDebug(phxLibrary) << "EXTENSION: " << ext;
+
+                }
 
                 dbg << "and" << core["display_name"].toString();
             }
@@ -66,6 +95,17 @@ PhoenixLibrary::PhoenixLibrary()
             core_for_extension.insertMulti(ext, core);
         }
     }
+
+    for (auto &core : libretro_cores_info.keys()) {
+
+        QString system = libretro_cores_info[core]["systemname"].toString();
+        QString cleaned_name = platform_manager.cleaned_system_name.value(system, system);
+        QString display_name = libretro_cores_info[core].value("corename", "").toString();
+
+        cores_for_console[cleaned_name].append( new CoreModel(this, display_name, core));
+
+    }
+
 
     /*connect(import_thread, SIGNAL(started()), this, SLOT(scanFolder()));
     connect(this, SIGNAL(destroyed()), import_thread, SLOT(deleteLater()));
@@ -187,14 +227,19 @@ void PhoenixLibrary::scanFolder(QUrl folder_path)
 
         QRegularExpressionMatch m = parseFilename(info.completeBaseName());
 
-        q.prepare("INSERT INTO " table_games " (title, console, time_played, region, filename)"
+        QString system = m_consoles.value(core_for_console.key(core_for_extension[info.suffix()]), "Unknown");
+
+
+        q.prepare("INSERT INTO " table_games " (title, system, time_played, region, filename)"
                   " VALUES (?, ?, ?, ?, ?)");
         q.addBindValue(m.captured("title"));
-        q.addBindValue("whatever");
+        q.addBindValue(system);
         q.addBindValue("00:00");
         q.addBindValue(m.captured("region"));
         q.addBindValue(info.absoluteFilePath());
         q.exec();
+
+        qCDebug(phxLibrary) << system;
     }
 
     if (found_games) {
@@ -263,4 +308,60 @@ void PhoenixLibrary::resetAll()
 
 void PhoenixLibrary::scrapeInfo()
 {
+}
+
+bool PhoenixLibrary::setPreferredCore(QString system, QString new_core)
+{
+    qCDebug(phxLibrary) << "Changing: " << system << " with new value: " << new_core;
+
+    if (platform_manager.preferred_cores.contains(system)) {
+        platform_manager.preferred_cores[system] = new_core;
+        return true;
+    }
+    return false;
+}
+
+QString PhoenixLibrary::getSystem(QString system)
+{
+    QString core_path = "";
+#ifdef Q_OS_WIN32
+        QString temp = platform_manager.preferred_cores.value(system, "");
+        if (temp != "")
+            core_path = QApplication::applicationDirPath() + "/cores/" + temp + ".dll";
+#endif
+#ifdef Q_OS_LINUX
+        QString temp = platform_manager.preferred_cores.value(system, "");
+        if (temp != "")
+            core_path = "/usr/lib/libretro/" + temp + ".so";
+#endif
+
+    return core_path;
+}
+
+QList<QObject *> PhoenixLibrary::coresModel(QString system)
+{
+    return cores_for_console[system];
+}
+
+QStringList PhoenixLibrary::systemsModel()
+{
+    QStringList systems_list;
+    for (auto &system :  m_consoles)
+        systems_list.append(system);
+    qCDebug(phxLibrary) << systems_list;
+    return systems_list;
+}
+
+QString PhoenixLibrary::systemIcon(QString system)
+{
+    return icon_for_console.value(system, "");
+}
+
+QString PhoenixLibrary::showPath(int index, QString system)
+{
+    if (index < cores_for_console[system].length()) {
+        CoreModel *mod = static_cast<CoreModel *>(cores_for_console[system].at(index));
+        return mod->corePath();
+    }
+    return QString("");
 }

@@ -3,13 +3,18 @@ import QtQuick.Controls 1.1
 import QtQuick.Controls.Styles 1.1
 
 ScrollView {
+    id: scrollView;
+    property string frameColor: "#262626";
+    property bool borderEnabled: true;
+    property int handleHeight: 30;
     style: ScrollViewStyle {
         id: scrollStyle;
         property int handleWidth: 10
         frame: Rectangle {
-            color: gameGrid.color;
+            color: scrollView.frameColor;
             //width: 0;
             Rectangle {
+                visible: scrollView.borderEnabled;
                 anchors {
                     top: parent.top;
                     left: parent.left;
@@ -30,7 +35,7 @@ ScrollView {
             radius: 3;
             x: 3;
             implicitWidth: scrollStyle.handleWidth - (x * 2);
-            implicitHeight: 30;
+            implicitHeight: scrollView.handleHeight;
             gradient: Gradient {
                 GradientStop {position: 0.0; color: "#2b2a2b";}
                 GradientStop {position: 1.0; color: "#252525";}

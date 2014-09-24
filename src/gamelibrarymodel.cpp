@@ -14,10 +14,11 @@ GameLibraryModel::GameLibraryModel(LibraryDbManager *dbm, QObject *parent)
 {
     role_names = QSqlTableModel::roleNames();
     role_names.insert(TitleRole, "title");
-    role_names.insert(ConsoleRole, "console");
+    role_names.insert(SystemRole, "system");
     role_names.insert(TimePlayedRole, "time_played");
     role_names.insert(ArtworkRole, "artwork");
     role_names.insert(FileNameRole, "filename");
+    role_names.insert(SystemPathRole, "system_path");
 
     setTable("games");
     select();

@@ -143,6 +143,7 @@ public slots:
     void saveGameState();
     void loadGameState();
     QStringList getAudioDevices();
+    void unload();
 
 
 private slots:

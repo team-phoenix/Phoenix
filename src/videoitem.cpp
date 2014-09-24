@@ -31,6 +31,7 @@ VideoItem::VideoItem()
 
 VideoItem::~VideoItem()
 {
+    unload();
     delete core;
     if (texture)
         texture->deleteLater();
@@ -305,5 +306,10 @@ QSGNode *VideoItem::updatePaintNode(QSGNode *old_node, UpdatePaintNodeData *pain
 
     return tex_node;
 
+}
+
+void VideoItem::unload()
+{
+    core->unload();
 }
 

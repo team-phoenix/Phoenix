@@ -120,7 +120,13 @@ Rectangle {
                 PhoenixNormalButton {
                     text: "Play";
                     onClicked: {
-                        windowStack.push({item: gameView, properties: {coreName: "", gameName: gridView.currentItem.fileName, run: true}});
+                        console.log("gameName: " + gridView.currentItem.fileName);
+                        console.log("system: " + gridView.currentItem.systemName);
+                        console.log("system Path: " + gridView.currentItem.systemPathName);
+                        var core = phoenixLibrary.getSystem(gridView.currentItem.systemName);
+                        console.log("core: " + core);
+                        if (gridView.currentItem.fileName !== "" && core !== "")
+                            windowStack.push({item: gameView, properties: {coreName: core, gameName: gridView.currentItem.fileName, run: true}});
                     }
                 }
 
@@ -233,8 +239,9 @@ Rectangle {
             property string glowColor: "black";
             property string imageSource: !artwork ? "qrc:/assets/No-Art.png" : artwork;
             property string titleName: title ? title : "";
-            property string systemName: "Current System";
+            property string systemName: system ? system : "";
             property string fileName: filename ? filename : "";
+            property string systemPathName: system_path ? system_path : "";
 
             Item {
                 id: subItem;
