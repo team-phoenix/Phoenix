@@ -20,6 +20,7 @@ class PhoenixLibrary : public QObject
     Q_PROPERTY(QString label READ label WRITE setLabel NOTIFY labelChanged)
     Q_PROPERTY(int count READ count NOTIFY countChanged)
     Q_ENUMS(Console);
+    Q_PROPERTY(bool importUrls READ importUrls WRITE setImportUrls NOTIFY importUrlsChanged)
 
 public:
     PhoenixLibrary();
@@ -29,6 +30,7 @@ public:
     void setFolderPath(QUrl path);
     void setProgress(qreal progress);
     void setLabel(QString label);
+    void setImportUrls(bool importUrls);
 
     QString label() const
     {
@@ -43,6 +45,11 @@ public:
     int count() const
     {
         return m_count;
+    }
+
+    bool importUrls()
+    {
+        return m_import_urls;
     }
 
     enum Console {
@@ -86,6 +93,8 @@ public slots:
     bool setPreferredCore(QString system, QString new_core);
     QString systemIcon(QString system);
     QString showPath(int index, QString system);
+    void cacheUrls(QList<QUrl> list);
+    void importDroppedFiles();
 
 
 
@@ -93,6 +102,7 @@ signals:
     void labelChanged();
     void progressChanged();
     void countChanged();
+    void importUrlsChanged();
 
 private:
     LibraryDbManager dbm;
@@ -103,6 +113,8 @@ private:
     PlatformManager platform_manager;
     int m_progress;
     int m_count;
+    QList<QUrl> file_urls;
+    bool m_import_urls;
 
     QMap<QString, QList<QObject *>> cores_for_console;
 

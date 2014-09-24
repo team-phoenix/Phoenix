@@ -259,14 +259,13 @@ PhoenixWindow {
                 anchors.fill: parent;
                 onEntered: {
                     backdropGrid.showBorder = true;
-                    console.log("entered")
-
-                    for (var i=0; i < drag.urls.length; i++) {
-                        console.log(drag.urls[i]);
-                   }
+                    phoenixLibrary.cacheUrls(drag.urls);
                 }
 
-                onDropped: backdropGrid.showBorder = false;
+                onDropped: {
+                    phoenixLibrary.importUrls = true;
+                    backdropGrid.showBorder = false;
+                }
                 onExited:  backdropGrid.showBorder = false;
             }
 
@@ -662,14 +661,13 @@ PhoenixWindow {
                     anchors.fill: parent;
                     onEntered: {
                         backdropGrid.showBorder = true;
-                        console.log("entered")
-
-                        for (var i=0; i < drag.urls.length; i++) {
-                            console.log(drag.urls[i]);
-                       }
+                        phoenixLibrary.cacheUrls(drag.urls);
                     }
 
-                    onDropped: backdropGrid.showBorder = false;
+                    onDropped: {
+                        phoenixLibrary.importUrls = true;
+                        backdropGrid.showBorder = false;
+                    }
                     onExited:  backdropGrid.showBorder = false;
                 }
 

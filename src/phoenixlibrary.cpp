@@ -57,6 +57,7 @@ PhoenixLibrary::PhoenixLibrary()
     /*import_thread = new QThread();
     import_thread->setObjectName("phoenix-scraper");
     import_thread->setPriority(QThread::NormalPriority);*/
+    m_import_urls = false;
 
     excluded_consoles = QStringList() << platform_manager.nintendo_ds << platform_manager.mupen64plus << platform_manager.ppsspp
                                       << platform_manager.desmume;
@@ -364,4 +365,58 @@ QString PhoenixLibrary::showPath(int index, QString system)
         return mod->corePath();
     }
     return QString("");
+}
+
+void PhoenixLibrary::cacheUrls(QList<QUrl> list) {
+    file_urls = list;
+}
+
+void PhoenixLibrary::importDroppedFiles()
+{
+    int length = file_urls.length();
+    if (!length)
+        return;
+
+    QSqlDatabase database = dbm.handle();
+    database.transaction();
+
+    QSqlQuery q(database);
+    for (int i=0; i < length; ++i) {
+
+        QFileInfo file = QFileInfo(file_urls[i].toLocalFile());
+
+        setLabel("Importing Games");
+
+        if (!core_for_extension.contains(file.suffix()))
+            continue; // not a known rom extension
+
+        QRegularExpressionMatch m = parseFilename(file.completeBaseName());
+
+        QString system = m_consoles.value(core_for_console.key(core_for_extension[file.suffix()]), "Unknown");
+
+        q.prepare("INSERT INTO " table_games " (title, system, time_played, region, filename)"
+                  " VALUES (?, ?, ?, ?, ?)");
+        q.addBindValue(m.captured("title"));
+        q.addBindValue(system);
+        q.addBindValue("00:00");
+        q.addBindValue(m.captured("region"));
+        q.addBindValue(file.absoluteFilePath());
+        q.exec();
+
+    }
+
+    database.commit();
+    QMetaObject::invokeMethod(m_model, "select");
+}
+
+void PhoenixLibrary::setImportUrls(bool importUrls)
+{
+    m_import_urls = importUrls;
+    emit importUrlsChanged();
+
+    if (m_import_urls) {
+        QFuture<void> fut = QtConcurrent::run(this, &PhoenixLibrary::importDroppedFiles);
+    }
+
+    m_import_urls = false;
 }
