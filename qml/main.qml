@@ -265,6 +265,7 @@ PhoenixWindow {
                         console.log(drag.urls[i]);
                    }
                 }
+
                 onDropped: backdropGrid.showBorder = false;
                 onExited:  backdropGrid.showBorder = false;
             }
@@ -431,17 +432,6 @@ PhoenixWindow {
         id: windowStack;
         z: headerBar.z - 1;
 
-        DropArea {
-            id: dropArea;
-            anchors.fill: parent;
-            onEntered: {
-                console.assert("Entered DropArea");
-                for (var i=0; i < drag.urls.length; ++i) {
-                    console.log(drag.urls[i]);
-                }
-            }
-        }
-
         height: headerBar.visible ? (parent.height - headerBar.height) : (parent.height);
         anchors {
             top: (currentItem !== null && currentItem.stackName == "gameview") ? headerBar.top : headerBar.bottom;
@@ -497,10 +487,13 @@ PhoenixWindow {
         id: homeScreen;
 
         Item {
+            id: backdropGrid;
             property string stackName: "homescreen";
             property StackView stackId: gameStack;
 
-
+            property string actionColor: "#e8433f";
+            property int borderWidth: 5;
+            property bool showBorder: false;
 
                     //Rectangle {
                       //  anchors {
@@ -513,6 +506,147 @@ PhoenixWindow {
                        // color: "#f27b77";
                     //}
 
+
+            Rectangle {
+                id: actionBorderLeft;
+                z: consoleBar.z + 1;
+                visible: parent.showBorder;
+                color: parent.actionColor;
+                anchors {
+                    top: parent.top;
+                    topMargin: 1;
+                    bottomMargin: 1;
+                    bottom: parent.bottom;
+                    left: parent.left;
+                }
+                width: parent.borderWidth;
+
+                Rectangle {
+                    anchors {
+                        left: parent.left;
+                        top: parent.top;
+                        bottom: parent.bottom;
+                    }
+                    width: 1;
+                    color: "#f27b77";
+                }
+
+                Rectangle {
+                    anchors {
+                        left: parent.left;
+                        top: parent.top;
+                        right: parent.right;
+                    }
+                    height: 1;
+                    color: "#f27b77";
+                }
+
+                Rectangle {
+                    anchors {
+                        left: parent.left;
+                        right: parent.right;
+                        bottom: parent.bottom;
+                    }
+                    height: 1;
+                    color: "#f27b77";
+                }
+
+            }
+
+            Rectangle {
+                id: actionBorderTop;
+                color: parent.actionColor;
+                z: consoleBar.z + 1;
+                visible: parent.showBorder;
+                anchors {
+                    top: parent.top;
+                    topMargin: 1;
+                    left: actionBorderLeft.right;
+                    right: consoleBar.right;
+                    rightMargin: 1;
+                }
+                height: parent.borderWidth;
+
+                Rectangle {
+                    anchors {
+                        left: parent.left;
+                        top: parent.top;
+                        right: parent.right;
+                    }
+                    height: 1;
+                    color: "#f27b77";
+                }
+
+                Rectangle {
+                    anchors {
+                        bottom: parent.bottom;
+                        top: parent.top;
+                        right: parent.right;
+                    }
+                    width: 1;
+                    color: "#f27b77";
+                }
+            }
+
+            Rectangle {
+                id: actionBorderRight;
+                color: parent.actionColor;
+                visible: parent.showBorder;
+                z: consoleBar.z + 1;
+                anchors {
+                    top: actionBorderTop.bottom;
+                    bottom: actionBorderBottom.top;
+                    right: consoleBar.right;
+                    rightMargin: 1;
+                }
+                width: parent.borderWidth
+
+                Rectangle {
+                    anchors {
+                        bottom: parent.bottom;
+                        top: parent.top;
+                        right: parent.right;
+                    }
+                    width: 1;
+                    color: "#f27b77";
+                }
+            }
+
+            Rectangle {
+                id: actionBorderBottom;
+                color: parent.actionColor;
+                visible: parent.showBorder;
+                z: consoleBar.z + 1;
+                anchors {
+                    bottom: parent.bottom;
+                    bottomMargin: 1;
+                    left: actionBorderLeft.right;
+                    right: consoleBar.right;
+                    rightMargin: 1;
+                }
+                height: parent.borderWidth;
+
+                Rectangle {
+                    anchors {
+                        left: parent.left;
+                        bottom: parent.bottom;
+                        right: parent.right;
+                    }
+                    height: 1;
+                    color: "#f27b77";
+                }
+
+                Rectangle {
+                    anchors {
+                        bottom: parent.bottom;
+                        top: parent.top;
+                        right: parent.right;
+                    }
+                    width: 1;
+                    color: "#f27b77";
+                }
+            }
+
             ConsoleBar {
                 id: consoleBar;
                 z: headerBar.z - 1;
@@ -523,6 +657,23 @@ PhoenixWindow {
                     bottom: parent.bottom;
                 }
                 width: 200;
+
+                DropArea {
+                    anchors.fill: parent;
+                    onEntered: {
+                        backdropGrid.showBorder = true;
+                        console.log("entered")
+
+                        for (var i=0; i < drag.urls.length; i++) {
+                            console.log(drag.urls[i]);
+                       }
+                    }
+
+                    onDropped: backdropGrid.showBorder = false;
+                    onExited:  backdropGrid.showBorder = false;
+                }
+
+
             }
 
             StackView {
