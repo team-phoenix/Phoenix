@@ -265,7 +265,8 @@ PhoenixWindow {
                         console.log(drag.urls[i]);
                    }
                 }
-                onExited: backdropGrid.showBorder = false;
+                onDropped: backdropGrid.showBorder = false;
+                onExited:  backdropGrid.showBorder = false;
             }
 
             //MouseArea {
