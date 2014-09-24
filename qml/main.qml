@@ -9,6 +9,7 @@ import Qt.labs.settings 1.0
 import phoenix.window 1.0
 import phoenix.library 1.0
 import QtQuick.Window 2.0
+import QtWinExtras 1.0
 
 PhoenixWindow {
     id: root;
@@ -16,7 +17,7 @@ PhoenixWindow {
     height: Screen.height / 2;
     minimumHeight: 480;
     minimumWidth: 640;
-    swapInterval: 0;
+    //swapInterval: 0;
     frameless: false;
     title: "Phoenix";
 
@@ -105,12 +106,193 @@ PhoenixWindow {
 
     Component {
         id: gameGrid;
+
+        Item {
+            id: backdropGrid;
+            property string actionColor: "#e8433f";
+            property int borderWidth: 5;
+            property bool showBorder: false;
+        Rectangle {
+            id: actionBorderLeft;
+            z: grid.z + 1;
+            visible: parent.showBorder;
+            color: parent.actionColor;
+            anchors {
+                top: parent.top;
+                topMargin: 1;
+                bottomMargin: 1;
+                bottom: parent.bottom;
+                left: parent.left;
+            }
+            width: parent.borderWidth;
+
+            Rectangle {
+                anchors {
+                    left: parent.left;
+                    top: parent.top;
+                    bottom: parent.bottom;
+                }
+                width: 1;
+                color: "#f27b77";
+            }
+
+            Rectangle {
+                anchors {
+                    left: parent.left;
+                    top: parent.top;
+                    right: parent.right;
+                }
+                height: 1;
+                color: "#f27b77";
+            }
+
+            Rectangle {
+                anchors {
+                    left: parent.left;
+                    right: parent.right;
+                    bottom: parent.bottom;
+                }
+                height: 1;
+                color: "#f27b77";
+            }
+
+        }
+
+        Rectangle {
+            id: actionBorderTop;
+            color: parent.actionColor;
+            z: grid.z + 1;
+            visible: parent.showBorder;
+            anchors {
+                top: parent.top;
+                topMargin: 1;
+                left: actionBorderLeft.right;
+                right: parent.right;
+                rightMargin: 1;
+            }
+            height: parent.borderWidth;
+
+            Rectangle {
+                anchors {
+                    left: parent.left;
+                    top: parent.top;
+                    right: parent.right;
+                }
+                height: 1;
+                color: "#f27b77";
+            }
+
+            Rectangle {
+                anchors {
+                    bottom: parent.bottom;
+                    top: parent.top;
+                    right: parent.right;
+                }
+                width: 1;
+                color: "#f27b77";
+            }
+        }
+
+        Rectangle {
+            id: actionBorderRight;
+            color: parent.actionColor;
+            visible: parent.showBorder;
+            z: grid.z + 1;
+            anchors {
+                top: actionBorderTop.bottom;
+                bottom: actionBorderBottom.top;
+                right: parent.right;
+                rightMargin: 1;
+            }
+            width: parent.borderWidth
+
+            Rectangle {
+                anchors {
+                    bottom: parent.bottom;
+                    top: parent.top;
+                    right: parent.right;
+                }
+                width: 1;
+                color: "#f27b77";
+            }
+        }
+
+        Rectangle {
+            id: actionBorderBottom;
+            color: parent.actionColor;
+            visible: parent.showBorder;
+            z: grid.z + 1;
+            anchors {
+                bottom: parent.bottom;
+                bottomMargin: 1;
+                left: actionBorderLeft.right;
+                right: parent.right;
+                rightMargin: 1;
+            }
+            height: parent.borderWidth;
+
+            Rectangle {
+                anchors {
+                    left: parent.left;
+                    bottom: parent.bottom;
+                    right: parent.right;
+                }
+                height: 1;
+                color: "#f27b77";
+            }
+
+            Rectangle {
+                anchors {
+                    bottom: parent.bottom;
+                    top: parent.top;
+                    right: parent.right;
+                }
+                width: 1;
+                color: "#f27b77";
+            }
+        }
+
         GameGrid {
+            id: grid;
+
+            DropArea {
+                anchors.fill: parent;
+                onEntered: {
+                    backdropGrid.showBorder = true;
+                    console.log("entered")
+
+                    for (var i=0; i < drag.urls.length; i++) {
+                        console.log(drag.urls[i]);
+                   }
+                }
+                onExited: backdropGrid.showBorder = false;
+            }
+
+            //MouseArea {
+               // anchors.fill: parent;
+                //propagateComposedEvents: true;
+                //hoverEnabled: true;
+                //onEntered: {
+                //    backdropGrid.showBorder = true;
+                //}
+
+                //onExited: backdropGrid.showBorder = false;
+            //}
             property string itemName: "grid";
             color: "#262626";
             zoomFactor: headerBar.sliderValue;
             zoomSliderPressed: headerBar.sliderPressed;
+            anchors.fill: parent;
+            //height: parent.height;
+            //width: parent.width;
+            Behavior on height {
+                PropertyAnimation {}
+            }
 
+            Behavior on width {
+                PropertyAnimation {}
+            }
+        }
         }
     }
 
@@ -243,9 +425,21 @@ PhoenixWindow {
                 cornerRadius: 6;
     }
 
+
     StackView {
         id: windowStack;
         z: headerBar.z - 1;
+
+        DropArea {
+            id: dropArea;
+            anchors.fill: parent;
+            onEntered: {
+                console.assert("Entered DropArea");
+                for (var i=0; i < drag.urls.length; ++i) {
+                    console.log(drag.urls[i]);
+                }
+            }
+        }
 
         height: headerBar.visible ? (parent.height - headerBar.height) : (parent.height);
         anchors {
@@ -292,7 +486,10 @@ PhoenixWindow {
 
     Component {
         id: gameView;
-        GameView {}
+        GameView {
+
+        }
+
     }
 
     Component {
@@ -302,6 +499,18 @@ PhoenixWindow {
             property string stackName: "homescreen";
             property StackView stackId: gameStack;
 
+
+
+                    //Rectangle {
+                      //  anchors {
+                        //    fill: parent;
+                       // }
+                       // opacity: 0.1;
+
+
+
+                       // color: "#f27b77";
+                    //}
 
             ConsoleBar {
                 id: consoleBar;
@@ -321,7 +530,7 @@ PhoenixWindow {
 
                 onCurrentItemChanged: {
                     if (currentItem)
-                    parent.stackName = currentItem.itemName;
+                        gameStack.stackName = currentItem.itemName;
                 }
 
                 initialItem: {
@@ -337,6 +546,7 @@ PhoenixWindow {
                     top: parent.top;
                     bottom: parent.bottom;
                 }
+
             }
 
             Component {
