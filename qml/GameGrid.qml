@@ -73,7 +73,7 @@ Rectangle {
                 }
 
                 Text {
-                    text: gridView.currentItem.titleName;
+                    text: gridView.currentItem ? gridView.currentItem.titleName : "";
                     color: "#f1f1f1";
                     renderType: Text.QtRendering;
                     font {
@@ -84,7 +84,7 @@ Rectangle {
                 }
 
                 Text {
-                    text: gridView.currentItem.systemName;
+                    text: gridView.currentItem ? gridView.currentItem.systemName : "";
                     color: "gray";
                     renderType: Text.QtRendering;
                     font {
@@ -103,7 +103,7 @@ Rectangle {
                     rightMargin: 12;
                 }
 
-                source: gridView.currentItem.imageSource;
+                source: gridView.currentItem ? gridView.currentItem.imageSource : "";
                 height: 125;
                 width: 125;
             }
