@@ -54,6 +54,7 @@ public:
 
     enum Console {
         InvalidConsole = 0,
+        All,
         Atari_Lynx,
         IBM_PC,
         Nintendo_NES,
@@ -119,6 +120,7 @@ private:
     QMap<QString, QList<QObject *>> cores_for_console;
 
     const QMap<Console, QString> m_consoles {
+        { All,                "All" },
         { Atari_Lynx,         "Atari Lynx" },
         { IBM_PC,             "DOS" },
         { Nintendo_NES,       "Nintendo" },

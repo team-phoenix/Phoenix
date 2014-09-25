@@ -289,6 +289,12 @@ Rectangle {
                 anchors.fill: parent;
                 onClicked: {
                     listView.currentIndex = index;
+                    if (modelData === "All") {
+                        phoenixLibrary.model().setFilter("title LIKE ?", ['%%'])
+                    }
+                    else {
+                        phoenixLibrary.model().setFilter("system = ?", [modelData]);
+                    }
                 }
             }
         }
