@@ -233,7 +233,7 @@ Rectangle {
 
         delegate: Item {
             id: gridItem;
-            height: gridView.cellHeight - (40 * gameGrid.zoomFactor);
+            height: gridView.cellHeight - (50 * gameGrid.zoomFactor);
             width: gridView.cellWidth; //- (10 *  gameGrid.zoomFactor);
 
             property string glowColor: "black";
@@ -323,10 +323,14 @@ Rectangle {
                     id: titleLabel;
                     renderType: Text.QtRendering;
                     anchors {
+                        //horizontalCenter: parent.horizontalCenter;
                         left: parent.left;
+                        leftMargin: 20;
+                        //leftMargin: 50;
                         right: parent.right;
+                        rightMargin: 20;
                         bottom: parent.bottom;
-                        bottomMargin: -titleLabel.font.pixelSize;
+                        bottomMargin: -titleLabel.font.pixelSize * 2;
                     }
 
                     text: gridItem.titleName;
@@ -334,7 +338,7 @@ Rectangle {
 
                     font {
                         bold: true;
-                        pixelSize: 3 + gridView.cellWidth / 20;
+                        pixelSize: 2 + gridView.cellWidth / 23;
                         family: "Sans";
                     }
 
