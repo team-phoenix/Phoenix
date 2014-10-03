@@ -9,10 +9,10 @@ import sqlite3
 import os
 import sys
 import getopt
-import ast
 
 UNKNOWN_VALUE = ""
 TABLE_VALUE = "NOINTRO"
+VERSION_FILE = "console_database_version.txt"
 
 def xml2sqlite(file, connection):
     '''
@@ -25,6 +25,9 @@ def xml2sqlite(file, connection):
         
         try:
             for child in root:   #(child.tag == game), (child.attrib == [name])
+                if child.tag != "game":
+                    continue
+                    
                 gamename = UNKNOWN_VALUE
                 description = UNKNOWN_VALUE
                 romname = UNKNOWN_VALUE
@@ -60,11 +63,17 @@ def xml2sqlite(file, connection):
                     
             c.close()
             return True;
+            
         except sqlite3.Error as err:
             for i in err.args:
                 print(i)
             c.close()
             return False
+
+def create_version_file(files_list):
+    with open(VERSION_FILE, "w") as out_file:
+        for i in files_list:
+            out_file.write("{:}\n".format(i))
 
 def main(argv):
     files_list = list()
@@ -77,12 +86,15 @@ def main(argv):
       
     for opt, arg in opts:
         if opt == "-h":
-            print("\nxml2sqlite.py -i '[<input_file>, <input_file>]' -o <output_file>")
-            print("\n-i, --input = Takes in string that can be evaluated to a python list")
+            print("\nxml2sqlite.py -i <input_directory> -o <output_file>")
+            print("\n-i, --input = Takes in directory to where the xml files are located")
             print("-o, --output = Is a single file")
             sys.exit()
         elif opt in ("-i", "--input"):
-            files_list = ast.literal_eval(arg)
+            if not os.path.isdir(arg):
+                print("Input directory does not exist.")
+                sys.exit(2)
+            files_list = [os.path.join(arg, i) for i in os.listdir(arg) if os.path.isfile(os.path.join(arg, i)) ]
         elif opt in ("-o", "--output"):
             out_file = arg
 
@@ -103,13 +115,17 @@ def main(argv):
 
     results = list()
     for i in files_list:
+        if ".xml" not in i:
+            print("\nSkipping ", i, "\n")
+            continue
         status = xml2sqlite(i, connection)
         if status:
             results.append("[OK] {:}".format(i))
         else:
             results.append("[Error] {:}".format(i))
     c.close()
-
+    create_version_file(results)
+    
     print()
     for i in results:
         print(i)
