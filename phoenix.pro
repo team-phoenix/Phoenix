@@ -80,4 +80,4 @@ SOURCES += src/main.cpp                        \
            src/cacheimage.cpp                  \
            src/coremodel.cpp
 
-RESOURCES = qml/qml.qrc assets/assets.qrc
+RESOURCES = qml/qml.qrc assets/assets.qrc databases/databases.qrc
