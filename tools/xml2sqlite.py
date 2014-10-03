@@ -15,6 +15,9 @@ UNKNOWN_VALUE = ""
 TABLE_VALUE = "NOINTRO"
 
 def xml2sqlite(file, connection):
+    '''
+    Converts opens up an XML file and inserts found elements into an SQL database.
+    '''
     with open(file, 'r') as open_file:
         tree = ET.parse(open_file)
         root = tree.getroot()
@@ -48,10 +51,7 @@ def xml2sqlite(file, connection):
                     if "sha1" in keys:
                         sha1 = subchild.attrib['sha1']
 
-                
-                    
                     params = (gamename, description, romname, size, crc, sha1)
-                    
                     if "" in params:
                         continue;
 
@@ -116,6 +116,9 @@ def main(argv):
 
             
 def test_read():
+    '''
+    This used to test the created database with single lookups.
+    '''
     out_file = os.path.dirname(os.path.realpath(__file__)) + "/gamedatabase.db"
     connection = sqlite3.connect(out_file)
     c = connection.cursor()
@@ -123,11 +126,6 @@ def test_read():
     for row in c:
         print(row)
     c.close()        
-
-prefix = "C:\\Users\\lee\\Desktop\\github\\Phoenix\\databases\\"
-suffix = ".xml"
-#main([prefix + "Nintendo 64" + suffix])
-#test_read()
 
 if __name__ == "__main__":
     main(sys.argv[1:])
