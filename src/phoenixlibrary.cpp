@@ -228,7 +228,7 @@ void PhoenixLibrary::scanFolder(QUrl folder_path)
 
         QRegularExpressionMatch m = parseFilename(info.completeBaseName());
 
-        QString system = m_consoles.value(core_for_console.key(core_for_extension[info.suffix()]), "Unknown");
+        QString system = m_consoles.value(core_for_console.key(core_for_extension[info.suffix().toLower()]), "Unknown");
 
 
         q.prepare("INSERT INTO " table_games " (title, system, time_played, region, filename)"
@@ -260,7 +260,8 @@ void PhoenixLibrary::deleteRow(QString title)
     QSqlQuery q(database);
 
     q.prepare("DELETE FROM " table_games
-              " WHERE title = '" + title + "'");
+              " WHERE title = ?");
+    q.addBindValue(title);
     if (q.exec()) {
         database.commit();
         m_model->select();
@@ -392,7 +393,7 @@ void PhoenixLibrary::importDroppedFiles()
 
         QRegularExpressionMatch m = parseFilename(file.completeBaseName());
 
-        QString system = m_consoles.value(core_for_console.key(core_for_extension[file.suffix()]), "Unknown");
+        QString system = m_consoles.value(core_for_console.key(core_for_extension[file.suffix().toLower()]), "Unknown");
 
         q.prepare("INSERT INTO " table_games " (title, system, time_played, region, filename)"
                   " VALUES (?, ?, ?, ?, ?)");
