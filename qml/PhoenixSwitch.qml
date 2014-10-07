@@ -1,6 +1,7 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.1
 import QtQuick.Controls.Styles 1.1
+import QtQuick.Layouts 1.1
 
 
 Switch {
@@ -17,6 +18,41 @@ Switch {
                 color: control.checked ? "#3fe86b" : "#e8433f";
             }
             radius: 3;
+
+            RowLayout {
+                anchors.fill: parent;
+                spacing: 8;
+                Image {
+                    source: "../assets/dot.png";
+                    sourceSize {
+                        height: 12;
+                        width: 12;
+                    }
+                    height: 12;
+                    width: 12;
+
+                    anchors {
+                        left: parent.left;
+                        leftMargin: 8;
+                        verticalCenter: parent.verticalCenter;
+                    }
+                }
+                Image {
+                    source: "../assets/x.png";
+                    sourceSize {
+                        height: 12;
+                        width: 12;
+                    }
+                    height: 12;
+                    width: 12;
+
+                    anchors {
+                        right: parent.right;
+                        rightMargin: 8;
+                        verticalCenter: parent.verticalCenter;
+                    }
+                }
+            }
         }
         handle: Item {
             //implicitHeight: 16;
@@ -37,6 +73,7 @@ Switch {
                     width: 1;
                     color: "#0b0b0b";
                 }
+
 
                 Rectangle {
                     visible: false;
