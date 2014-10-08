@@ -7,6 +7,7 @@
 
 #include "librarydbmanager.h"
 #include "logging.h"
+#include "systemdatabase"
 
 
 QSqlDatabase &LibraryDbManager::handle()
@@ -18,7 +19,7 @@ QSqlDatabase &LibraryDbManager::handle()
 
 void LibraryDbManager::open()
 {
-    db = QSqlDatabase::addDatabase("QSQLITE");
+    db = QSqlDatabase::addDatabase("QSQLITE", "first");
 
     QString dataPathStr = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation);
     Q_ASSERT(!dataPathStr.isEmpty());

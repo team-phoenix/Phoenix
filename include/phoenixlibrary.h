@@ -12,6 +12,7 @@
 #include "librarydbmanager.h"
 #include "platformmanager.h"
 #include "coremodel.h"
+#include "systemdatabase.h"
 
 class PhoenixLibrary : public QObject
 {
@@ -84,7 +85,8 @@ public:
 public slots:
     void startAsyncScan(QUrl path);
     void scanFolder(QUrl folder_path);
-    void scrapeInfo();
+    //GameData *scrapeInfo(QString name, QString system);
+    //GameData *asyncScrapeInfo(QString name, QString system);
     void resetAll();
     GameLibraryModel *model() { return m_model; }
     void deleteRow(QString title);
@@ -108,7 +110,7 @@ signals:
 private:
     LibraryDbManager dbm;
     QThread *import_thread;
-    TheGamesDB *scraper;
+    //TheGamesDB scraper;
     GameLibraryModel *m_model;
     QString m_label;
     PlatformManager platform_manager;
@@ -116,6 +118,8 @@ private:
     int m_count;
     QList<QUrl> file_urls;
     bool m_import_urls;
+
+    SystemDatabase system_db;
 
     QMap<QString, QList<QObject *>> cores_for_console;
 
@@ -150,6 +154,8 @@ private:
 
     void loadXml(QString file_path);
     QRegularExpressionMatch parseFilename(QString filename);
+    QByteArray generateSha1Sum(QString file);
+    void scanSystemDatabase(QByteArray hash, QString &name, QString &system);
 
 };
 

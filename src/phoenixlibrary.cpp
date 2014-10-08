@@ -9,6 +9,7 @@
 #include <QtConcurrent>
 #include <QSqlError>
 #include <QApplication>
+#include <QCryptographicHash>
 
 #include "phoenixlibrary.h"
 #include "librarydbmanager.h"
@@ -54,9 +55,6 @@ PhoenixLibrary::PhoenixLibrary()
     //    ListElement {title: "DOSBox"; icon: "/assets/consoleicons/dosbox.png";}
     //}
 {
-    /*import_thread = new QThread();
-    import_thread->setObjectName("phoenix-scraper");
-    import_thread->setPriority(QThread::NormalPriority);*/
     m_import_urls = false;
 
     excluded_consoles = QStringList() << platform_manager.nintendo_ds << platform_manager.mupen64plus << platform_manager.ppsspp
@@ -65,8 +63,6 @@ PhoenixLibrary::PhoenixLibrary()
     m_model = new GameLibraryModel(&dbm, this);
     m_model->setEditStrategy(QSqlTableModel::OnManualSubmit);
 
-    /*scraper = new TheGamesDB();
-    scraper->moveToThread(import_thread);*/
 
     for (auto &core: libretro_cores_info) {
         QString exts = core["supported_extensions"].toString();
@@ -115,14 +111,9 @@ PhoenixLibrary::PhoenixLibrary()
 
 PhoenixLibrary::~PhoenixLibrary()
 {
-    //if (scraper) {
-     //   scraper->deleteLater();
-    //}
+
     if (m_model)
         m_model->deleteLater();
-
-    //if (import_thread)
-       // import_thread->deleteLater();
 
 }
 
@@ -229,18 +220,23 @@ void PhoenixLibrary::scanFolder(QUrl folder_path)
         QRegularExpressionMatch m = parseFilename(info.completeBaseName());
 
         QString system = m_consoles.value(core_for_console.key(core_for_extension[info.suffix().toLower()]), "Unknown");
+        QByteArray hash = generateSha1Sum(info.absoluteFilePath());
+
+        QString title = m.captured("title");
+
+        scanSystemDatabase(hash, title, system);
+
 
 
         q.prepare("INSERT INTO " table_games " (title, system, time_played, region, filename)"
                   " VALUES (?, ?, ?, ?, ?)");
-        q.addBindValue(m.captured("title"));
+        q.addBindValue(title);
         q.addBindValue(system);
         q.addBindValue("00:00");
         q.addBindValue(m.captured("region"));
         q.addBindValue(info.absoluteFilePath());
         q.exec();
 
-        qCDebug(phxLibrary) << system;
     }
 
     if (found_games) {
@@ -308,9 +304,20 @@ void PhoenixLibrary::resetAll()
     }
 }
 
-void PhoenixLibrary::scrapeInfo()
+/*GameData *PhoenixLibrary::asyncScrapeInfo(QString name, QString system)
 {
+    QFuture<GameData *> fut = QtConcurrent::run(this, &PhoenixLibrary::scrapeInfo, name, system);
+    if (fut.isFinished())
+        name = fut.result()->
 }
+
+GameData *PhoenixLibrary::scrapeInfo(QString name, QString system)
+{
+    scraper.setData(new GameData);
+    scraper.setGameName(name);
+    scraper.setGamePlatform(system);
+    scraper.start();
+}*/
 
 bool PhoenixLibrary::setPreferredCore(QString system, QString new_core)
 {
@@ -394,10 +401,15 @@ void PhoenixLibrary::importDroppedFiles()
         QRegularExpressionMatch m = parseFilename(file.completeBaseName());
 
         QString system = m_consoles.value(core_for_console.key(core_for_extension[file.suffix().toLower()]), "Unknown");
+        QByteArray hash = generateSha1Sum(file.absoluteFilePath());
+
+        QString title = m.captured("title");
+
+        scanSystemDatabase(hash, title, system);
 
         q.prepare("INSERT INTO " table_games " (title, system, time_played, region, filename)"
                   " VALUES (?, ?, ?, ?, ?)");
-        q.addBindValue(m.captured("title"));
+        q.addBindValue(title);
         q.addBindValue(system);
         q.addBindValue("00:00");
         q.addBindValue(m.captured("region"));
@@ -417,7 +429,51 @@ void PhoenixLibrary::setImportUrls(bool importUrls)
 
     if (m_import_urls) {
         QFuture<void> fut = QtConcurrent::run(this, &PhoenixLibrary::importDroppedFiles);
+        Q_UNUSED(fut)
     }
 
     m_import_urls = false;
+}
+
+QByteArray PhoenixLibrary::generateSha1Sum(QString file)
+{
+    QFile game_file(file);
+    if (!game_file.open(QIODevice::ReadOnly))
+        return QByteArray("");
+
+    QByteArray game_data = game_file.readAll();
+
+    QCryptographicHash sha1_hash(QCryptographicHash::Sha1);
+    sha1_hash.addData(game_data);
+    QByteArray result = sha1_hash.result().toHex();
+
+    game_file.close();
+    return result;
+}
+
+void PhoenixLibrary::scanSystemDatabase(QByteArray hash, QString &name, QString &system)
+{
+
+    Q_UNUSED(system)
+
+    QSqlDatabase db = system_db.handle();
+    db.transaction();
+
+    QSqlQuery q(db);
+
+    q.prepare("SELECT sha1, gamename FROM NOINTRO WHERE sha1 LIKE ?");
+    q.addBindValue("%" + hash + "%");
+
+
+
+    if (!q.exec())
+        qCDebug(phxLibrary) << q.executedQuery() << q.lastError();
+
+    QString game_name;
+    while(q.next()) {
+        game_name = q.value(1).toString();
+    }
+
+    name = (game_name == "") ? name : game_name;
+
 }
