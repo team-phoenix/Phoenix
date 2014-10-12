@@ -7,7 +7,7 @@
 
 #include "librarydbmanager.h"
 #include "logging.h"
-#include "systemdatabase"
+#include "systemdatabase.h"
 
 
 QSqlDatabase &LibraryDbManager::handle()
