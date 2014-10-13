@@ -9,7 +9,6 @@
 #include <QThread>
 #include <QList>
 #include <SDL2/SDL.h>
-
 #include "inputdevice.h"
 
 

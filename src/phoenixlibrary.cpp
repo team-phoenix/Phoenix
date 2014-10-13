@@ -11,11 +11,12 @@
 #include <QApplication>
 #include <QCryptographicHash>
 
+#include <memory>
+
 #include "phoenixlibrary.h"
 #include "librarydbmanager.h"
 #include "libretro_cores_info.h"
 #include "logging.h"
-
 
 PhoenixLibrary::PhoenixLibrary()
     : core_for_console {
@@ -226,7 +227,7 @@ void PhoenixLibrary::scanFolder(QUrl folder_path)
 
         scanSystemDatabase(hash, title, system);
 
-
+        requestExtraData(title, system);
 
         q.prepare("INSERT INTO " table_games " (title, system, time_played, region, filename)"
                   " VALUES (?, ?, ?, ?, ?)");
@@ -246,6 +247,15 @@ void PhoenixLibrary::scanFolder(QUrl folder_path)
 
     setLabel("");
 
+}
+
+void PhoenixLibrary::requestExtraData(QString& title, QString& system)
+{
+    auto tgdb = std::make_shared<TheGamesDB>(new TheGamesDB());
+    connect(tgdb.get(), &TheGamesDB::dataReady, this, [this, tgdb](GameData* data) {
+
+    });
+    tgdb->getGameData(title, system);
 }
 
 void PhoenixLibrary::deleteRow(QString title)

@@ -156,7 +156,7 @@ private:
     QRegularExpressionMatch parseFilename(QString filename);
     QByteArray generateSha1Sum(QString file);
     void scanSystemDatabase(QByteArray hash, QString &name, QString &system);
-
+    void requestExtraData(QString& title, QString& system);
 };
 
 

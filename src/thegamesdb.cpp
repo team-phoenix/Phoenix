@@ -16,21 +16,21 @@ const QStringList EXPRESSIONS = (QStringList() << " "
 
 TheGamesDB::TheGamesDB()
 {
+    state = None;
     manager = new QNetworkAccessManager(this);
-    reply = nullptr;
+    game_data = new GameData();
 
-    connect (this, SIGNAL(started()), this, SLOT(populateData()));
-    connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(processRequest(QNetworkReply *)));
+    connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(processRequest(QNetworkReply*)));
 }
 
 TheGamesDB::TheGamesDB (QObject *parent)
     : QObject(parent)
 {
+    state = None;
     manager = new QNetworkAccessManager(this);
-    reply = nullptr;
+    game_data = new GameData();
 
-    connect (this, SIGNAL(started()), this, SLOT(populateData()));
-    connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(processRequest(QNetworkReply *)));
+    connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(processRequest(QNetworkReply*)));
 }
 
 TheGamesDB::~TheGamesDB()
@@ -38,53 +38,17 @@ TheGamesDB::~TheGamesDB()
     qCDebug(phxLibrary) << "delting scraper";
     if (manager)
         manager->deleteLater();
-    if (reply)
-        reply->deleteLater();
+    delete game_data;
 }
 
-void TheGamesDB::start()
+void TheGamesDB::processRequest(QNetworkReply*)
 {
-    emit started();
-}
-
-void TheGamesDB::setGameName(QString name)
-{
-    m_game_name = name;
-}
-
-void TheGamesDB::setGamePlatform(QString platform)
-{
-    m_game_platform = platform;
-}
-
-void TheGamesDB::setUrl(QUrl url)
-{
-    m_url = url;
-}
-
-void TheGamesDB::setData(GameData *data)
-{
-    game_data = data;
-}
-
-void TheGamesDB::processRequest(QNetworkReply *m_reply)
-{
-    reply = m_reply;
-
-    connect(this, SIGNAL(completedRequest()), reply, SLOT(deleteLater()));
-    connect(reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(processErrors(QNetworkReply::NetworkError)));
-
-}
-
-void TheGamesDB::getNetworkReply()
-{
-
-
-    QNetworkRequest request(m_url);
-    request.setRawHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31");
-
-    manager->get(request);
-
+    switch (state) {
+        case RequestingId:
+            qDebug() << "Requesting Id";
+            state = None;
+            break;
+    }
 }
 
 QString TheGamesDB::cleanString(QString string)
@@ -95,22 +59,9 @@ QString TheGamesDB::cleanString(QString string)
     return string.toLower();
 }
 
-void TheGamesDB::processErrors(QNetworkReply::NetworkError error)
-{
-    switch(error) {
-        case QNetworkReply::NoError:
-            qDebug() << "Network is good";
-            break;
-        default:
-            qDebug() << "Network error: " << error;
-            emit finished();
-            break;
-    }
-}
-
 void TheGamesDB::findXMLGame()
 {
-    QXmlStreamReader reader(reply);
+    /*QXmlStreamReader reader(reply);
 
     while (!reader.atEnd()) {
         reader.readNext();
@@ -186,13 +137,13 @@ void TheGamesDB::findXMLGame()
                 game_data->clear_logo= text;
             }
         }
-    }
+    }*/
 }
 
 
 void TheGamesDB::parseXMLforId(QString game_name)
 {
-    QXmlStreamReader reader(reply);
+    /*QXmlStreamReader reader(reply);
 
     while (!reader.atEnd()) {
         reader.readNext();
@@ -210,32 +161,17 @@ void TheGamesDB::parseXMLforId(QString game_name)
                 }
             }
         }
-    }
+    }*/
 }
 
-void TheGamesDB::getGame(QString game_id) {
+/*void TheGamesDB::getGame(QString game_id) {
     setUrl(BASE_URL + "Getgame_data->php?id=" + game_id);
     getNetworkReply();
+}*/
 
-    findXMLGame();
-
-    emit completedRequest();
-}
-
-void TheGamesDB::getGameId() {
-    setUrl(BASE_URL + "GetGamesList.php?name=" + m_game_name + "&platform=" + m_game_platform);
-    getNetworkReply();
-    parseXMLforId(m_game_name);
-
-    emit completedRequest();
-}
-
-void TheGamesDB::populateData()
+void TheGamesDB::getGameData(QString &title, QString &system)
 {
-    getGameId();
-    getGame(game_data->id);
-    qDebug(phxLibrary) << game_data->title;
-
-    emit outputData(game_data);
-    emit finished();
+    // Grab the first data
+    state = RequestingId;
+    manager->get(QNetworkRequest(QUrl("http://www.google.com"/*BASE_URL + "GetGamesList.php?name=" + title + "&platform=" + system)*/));
 }
