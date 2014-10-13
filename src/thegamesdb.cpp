@@ -41,14 +41,27 @@ TheGamesDB::~TheGamesDB()
     delete game_data;
 }
 
-void TheGamesDB::processRequest(QNetworkReply*)
+void TheGamesDB::processRequest(QNetworkReply* reply)
 {
+    qCDebug(phxLibrary) << "processing rquest";
     switch (state) {
         case RequestingId:
-            qDebug() << "Requesting Id";
+            parseXMLforId(m_game_name, reply);
+            state = RequestingData;
+
+            manager->get(QNetworkRequest(QUrl(BASE_URL + "GetGame.php?id=" + game_data->id)));
+            break;
+        case RequestingData:
+            qDebug() << "Parsing XML for game";
+            findXMLGame(reply);
             state = None;
+            emit dataReady(game_data);
+            break;
+        default:
             break;
     }
+
+    reply->deleteLater();
 }
 
 QString TheGamesDB::cleanString(QString string)
@@ -59,9 +72,9 @@ QString TheGamesDB::cleanString(QString string)
     return string.toLower();
 }
 
-void TheGamesDB::findXMLGame()
+void TheGamesDB::findXMLGame(QNetworkReply* reply)
 {
-    /*QXmlStreamReader reader(reply);
+    QXmlStreamReader reader(reply);
 
     while (!reader.atEnd()) {
         reader.readNext();
@@ -137,13 +150,13 @@ void TheGamesDB::findXMLGame()
                 game_data->clear_logo= text;
             }
         }
-    }*/
+    }
 }
 
 
-void TheGamesDB::parseXMLforId(QString game_name)
+void TheGamesDB::parseXMLforId(QString game_name, QNetworkReply* reply)
 {
-    /*QXmlStreamReader reader(reply);
+    QXmlStreamReader reader(reply);
 
     while (!reader.atEnd()) {
         reader.readNext();
@@ -161,17 +174,15 @@ void TheGamesDB::parseXMLforId(QString game_name)
                 }
             }
         }
-    }*/
+    }
 }
 
-/*void TheGamesDB::getGame(QString game_id) {
-    setUrl(BASE_URL + "Getgame_data->php?id=" + game_id);
-    getNetworkReply();
-}*/
-
-void TheGamesDB::getGameData(QString &title, QString &system)
+void TheGamesDB::getGameData(QString title, QString system)
 {
     // Grab the first data
+    qCDebug(phxLibrary) << "loading this";
     state = RequestingId;
-    manager->get(QNetworkRequest(QUrl("http://www.google.com"/*BASE_URL + "GetGamesList.php?name=" + title + "&platform=" + system)*/));
+    m_game_name = title;
+    m_game_platform = system;
+    manager->get(QNetworkRequest(QUrl(BASE_URL + "GetGamesList.php?name=" + title + "&platform=" + system)));
 }

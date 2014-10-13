@@ -1,4 +1,3 @@
-
 #include <QRegularExpression>
 #include <QDirIterator>
 #include <QCryptographicHash>
@@ -112,7 +111,6 @@ PhoenixLibrary::PhoenixLibrary()
 
 PhoenixLibrary::~PhoenixLibrary()
 {
-
     if (m_model)
         m_model->deleteLater();
 
@@ -189,11 +187,21 @@ QRegularExpressionMatch PhoenixLibrary::parseFilename(QString filename)
 
 void PhoenixLibrary::startAsyncScan(QUrl path)
 {
-    QFuture<void> fut = QtConcurrent::run(this, &PhoenixLibrary::scanFolder, path);
-    Q_UNUSED(fut)
+    QFuture<bool> fut = QtConcurrent::run(this, &PhoenixLibrary::scanFolder, path);
+    fut.waitForFinished();
+    QSqlDatabase database = dbm.handle();
+    database.transaction();
+
+    QSqlQuery q(database);
+
+    q.prepare("SELECT title, system FROM " table_games);
+    if (q.exec()) {
+        while (q.next())
+            requestExtraData(q.value(0).toString(), q.value(1).toString());
+    }
 }
 
-void PhoenixLibrary::scanFolder(QUrl folder_path)
+bool PhoenixLibrary::scanFolder(QUrl folder_path)
 {
     QDirIterator dir_iter(folder_path.toLocalFile(), QDirIterator::Subdirectories);
 
@@ -225,9 +233,10 @@ void PhoenixLibrary::scanFolder(QUrl folder_path)
 
         QString title = m.captured("title");
 
+
+
         scanSystemDatabase(hash, title, system);
 
-        requestExtraData(title, system);
 
         q.prepare("INSERT INTO " table_games " (title, system, time_played, region, filename)"
                   " VALUES (?, ?, ?, ?, ?)");
@@ -246,14 +255,19 @@ void PhoenixLibrary::scanFolder(QUrl folder_path)
     }
 
     setLabel("");
+    return true;
 
 }
 
-void PhoenixLibrary::requestExtraData(QString& title, QString& system)
+void PhoenixLibrary::requestExtraData(QString title, QString system)
 {
     auto tgdb = std::make_shared<TheGamesDB>(new TheGamesDB());
     connect(tgdb.get(), &TheGamesDB::dataReady, this, [this, tgdb](GameData* data) {
+        // Now update the artwork
+        QSqlDatabase database = dbm.handle();
+        database.transaction();
 
+        delete data;
     });
     tgdb->getGameData(title, system);
 }

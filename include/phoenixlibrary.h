@@ -1,4 +1,3 @@
-
 #ifndef PHOENIXLIBRARY_H
 #define PHOENIXLIBRARY_H
 
@@ -84,7 +83,7 @@ public:
 
 public slots:
     void startAsyncScan(QUrl path);
-    void scanFolder(QUrl folder_path);
+    bool scanFolder(QUrl folder_path);
     //GameData *scrapeInfo(QString name, QString system);
     //GameData *asyncScrapeInfo(QString name, QString system);
     void resetAll();
@@ -156,7 +155,7 @@ private:
     QRegularExpressionMatch parseFilename(QString filename);
     QByteArray generateSha1Sum(QString file);
     void scanSystemDatabase(QByteArray hash, QString &name, QString &system);
-    void requestExtraData(QString& title, QString& system);
+    void requestExtraData(QString title, QString system);
 };
 
 

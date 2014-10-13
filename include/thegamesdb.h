@@ -61,7 +61,7 @@ public:
 
     ~TheGamesDB();
 
-    void getGameData(QString& title, QString& system);
+    void getGameData(QString title, QString system);
 signals:
     void dataReady(GameData*);
 
@@ -77,8 +77,8 @@ private:
     QString m_game_platform;
 
     QString cleanString(QString string);
-    void findXMLGame();
-    void parseXMLforId(QString game_name);
+    void findXMLGame(QNetworkReply* reply);
+    void parseXMLforId(QString game_name, QNetworkReply* reply);
 };
 
 #endif // THEGAMESDB_H
