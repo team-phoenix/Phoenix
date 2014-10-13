@@ -21,6 +21,7 @@ PhoenixWindow {
     frameless: false;
     title: "Phoenix";
 
+    property string infoBarText: "";
     property bool clear: false//(phoenixLibrary.count === 0);
     property string accentColor:"#e8433f";
     property int lastWindowStyle: Window.Windowed;
@@ -496,6 +497,30 @@ PhoenixWindow {
         height: 55;
         //color: "#3b3b3b";
         fontSize: 14;
+    }
+
+    InfoBar {
+        id: infoBar;
+        anchors {
+            left: parent.left;
+            right: parent.right;
+            top: headerBar.bottom;
+            leftMargin: 1;
+            rightMargin: 1;
+        }
+        z: headerBar.z + 1;
+    }
+
+    DropShadow {
+        visible: infoBar.visible;
+        anchors.fill: source;
+        source: infoBar;
+        horizontalOffset: 0
+        verticalOffset: 6
+        radius: 8.0
+        samples: 16
+        color: "#80000000"
+        transparentBorder: true;
     }
 
     SettingsDropDown {

@@ -22,5 +22,6 @@
     <file>CustomBorder.qml</file>
     <file>PhoenixNormalButton.qml</file>
     <file>PhoenixWarningButton.qml</file>
+    <file>InfoBar.qml</file>
 </qresource>
 </RCC>
