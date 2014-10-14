@@ -70,7 +70,7 @@ Item {
 
             ScrollView {
                 id: inputMapper;
-                property var curDevice: inputmanager.getDevice(gridView.headerItem.currentDevice);
+                property var curDevice: gridView.headerItem.curDevice;
                 visible: stackView.width > width;
                 height: 400;
                 width: 400;
@@ -82,7 +82,7 @@ Item {
                     cellHeight: 30;
                     cellWidth: 150;
                     header: Item {
-                        property int currentDevice: devicesBox.currentIndex;
+                        property alias curDevice: playersBox.curDevice;
                         height: 45;
                         width: 125;
 
@@ -94,14 +94,19 @@ Item {
                             spacing: 15;
 
                             ComboBox {
+                                id: playersBox;
                                 property int num: devicesBox.count;
                                 width: 125;
+                                property var curDevice;
                                 model:  {
                                     var mod = [];
                                     for (var i=0; i < num; ++i) {
                                         mod.push("Player " + (i + 1));
                                     }
                                     return mod;
+                                }
+                                onCurrentIndexChanged: {
+                                    curDevice = inputmanager.getDevice(currentIndex);
                                 }
                             }
                             ComboBox {
@@ -155,7 +160,10 @@ Item {
                             width: 100;
                             height: 20;
                             text: {
-                                text: inputMapper.curDevice.mapping().getMapping(retroId);
+                                if (inputMapper.curDevice != null)
+                                    text: inputMapper.curDevice.mapping().getMapping(retroId);
+                                else
+                                    text: "Null";
                             }
                             anchors.right: parent.right;
                             anchors.rightMargin: 50;
