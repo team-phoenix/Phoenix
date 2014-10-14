@@ -40,13 +40,17 @@ Rectangle {
     }
 
     onSaveGameStateChanged: {
-        if (saveGameState)
+        if (saveGameState) {
             videoItem.saveGameState();
+            saveGameState = false;
+        }
     }
 
     onLoadSaveStateChanged: {
-        if (loadSaveState)
+        if (loadSaveState) {
             videoItem.loadGameState();
+            loadSaveState = false;
+        }
     }
 
 

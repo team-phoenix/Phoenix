@@ -391,7 +391,7 @@ bool Core::environmentCallback(unsigned cmd, void *data)
                     break;
                 case RETRO_HW_CONTEXT_OPENGLES2:
                     qDebug() << "OpenGL ES 2 context was selected";
-                    Core::core->hw_callback.context_type = RETRO_HW_CONTEXT_OPENGLES2;\
+                    Core::core->hw_callback.context_type = RETRO_HW_CONTEXT_OPENGLES2;
                     break;
                  case RETRO_HW_CONTEXT_OPENGLES3:
                     qDebug() << "OpenGL 3 context was selected";
@@ -400,7 +400,7 @@ bool Core::environmentCallback(unsigned cmd, void *data)
                     qCritical() << "RETRO_HW_CONTEXT: " << Core::core->hw_callback.context_type << " was not handled";
                     break;
             }
-            return false;
+            break;
 
         case RETRO_ENVIRONMENT_GET_VARIABLE: { // 15
             auto *rv = static_cast<struct retro_variable *>(data);

@@ -30,8 +30,6 @@ InputDeviceMapping *InputManager::mappingForDevice(QVariantMap device)
     Q_ASSERT(device.contains("driver"));
     QString driverName = device.value("driver").toString();
     return InputDeviceMappingFactory::createMapping(driverName);
-
-    return nullptr;
 }
 
 void InputManager::append(InputDevice *device)

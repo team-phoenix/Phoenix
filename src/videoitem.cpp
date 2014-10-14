@@ -138,6 +138,7 @@ void VideoItem::setCore(QString libcore)
 
     const retro_system_info *i = core->getSystemInfo();
     qCDebug(phxVideo) << "Loaded core" << i->library_name << i->library_version;
+    m_libcore = libcore;
     emit libcoreChanged(libcore);
 }
 
