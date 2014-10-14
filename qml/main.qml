@@ -9,7 +9,6 @@ import Qt.labs.settings 1.0
 import phoenix.window 1.0
 import phoenix.library 1.0
 import QtQuick.Window 2.0
-import QtWinExtras 1.0
 
 PhoenixWindow {
     id: root;
