@@ -144,7 +144,7 @@ void PhoenixLibrary::handleOnlineDatabaseResponse(GameData* data)
     qDebug() << "Game received: " << data->title << " On Platform: " << data->platform << " And artwork: " << data->front_boxart << " and: " << data->back_boxart;
     QSqlQuery q(database);
 
-    q.prepare("UPDATE " table_games " SET artwork = ? WHERE title = ? AND system = ?");
+    q.prepare("UPDATE " % LibraryDbManager::table_games % " SET artwork = ? WHERE title = ? AND system = ?");
 
     q.addBindValue(data->front_boxart);
     q.addBindValue(data->libraryName);
@@ -237,7 +237,7 @@ void PhoenixLibrary::startAsyncScan(QUrl path)
 
         QSqlQuery q(database);
 
-        q.prepare("SELECT title, system FROM " table_games);
+        q.prepare("SELECT title, system FROM " % LibraryDbManager::table_games);
         if (q.exec()) {
             while (q.next())
                 thegamesdb->getGameData(q.value(0).toString(), q.value(1).toString());
