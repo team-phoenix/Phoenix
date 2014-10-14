@@ -228,7 +228,7 @@ void PhoenixLibrary::scanFolder(QUrl folder_path)
 
 
 
-        q.prepare("INSERT INTO " table_games " (title, system, time_played, region, filename)"
+        q.prepare("INSERT INTO " % LibraryDbManager::table_games % " (title, system, time_played, region, filename)"
                   " VALUES (?, ?, ?, ?, ?)");
         q.addBindValue(title);
         q.addBindValue(system);
@@ -255,8 +255,7 @@ void PhoenixLibrary::deleteRow(QString title)
 
     QSqlQuery q(database);
 
-    q.prepare("DELETE FROM " table_games
-              " WHERE title = ?");
+    q.prepare(QStringLiteral("DELETE FROM ") % LibraryDbManager::table_games % QStringLiteral(" WHERE title = ?"));
     q.addBindValue(title);
     if (q.exec()) {
         database.commit();
@@ -291,7 +290,7 @@ void PhoenixLibrary::resetAll()
 
     setLabel("Clearing Library");
 
-    q.prepare("DELETE FROM " table_games);
+    q.prepare(QStringLiteral("DELETE FROM ") % LibraryDbManager::table_games);
 
     if (q.exec()) {
         database.commit();
@@ -407,8 +406,8 @@ void PhoenixLibrary::importDroppedFiles()
 
         scanSystemDatabase(hash, title, system);
 
-        q.prepare("INSERT INTO " table_games " (title, system, time_played, region, filename)"
-                  " VALUES (?, ?, ?, ?, ?)");
+        q.prepare(QStringLiteral("INSERT INTO ") % LibraryDbManager::table_games % QStringLiteral(" (title, system, time_played, region, filename)") %
+                  QStringLiteral(" VALUES (?, ?, ?, ?, ?)"));
         q.addBindValue(title);
         q.addBindValue(system);
         q.addBindValue("00:00");
