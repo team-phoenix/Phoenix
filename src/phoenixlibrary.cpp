@@ -18,31 +18,47 @@
 
 
 PhoenixLibrary::PhoenixLibrary()
-    : core_for_console {
+    : core_for_console(QMap<PhoenixLibrary::Console,QVariantMap> {
         { Nintendo_NES,       libretro_cores_info[platform_manager.preferred_cores[platform_manager.nintendo]] },
         { Nintendo_SNES,      libretro_cores_info[platform_manager.preferred_cores[platform_manager.super_nintendo]] },
         { Nintendo_Game_Boy,  libretro_cores_info[platform_manager.preferred_cores[platform_manager.gameboy]] },
         { Nintendo_GBA,       libretro_cores_info[platform_manager.preferred_cores[platform_manager.gameboy_advance]] },
         { Sony_PlayStation,   libretro_cores_info[platform_manager.preferred_cores[platform_manager.playstation]] },
-    },
+    }),
 
-    icon_for_console {
-        {platform_manager.nintendo, "/assets/consoleicons/nes.png"},
-        {platform_manager.super_nintendo, "/assets/consoleicons/snes.png"},
-        {platform_manager.gameboy, "/assets/consoleicons/gbc.png"},
-        {platform_manager.playstation, "/assets/consoleicons/ps1.png"},
-        {platform_manager.gameboy_advance, "/assets/consoleicons/gba.png"},
-        {platform_manager.dos, "/assets/consoleicons/dosbox.png"},
-        {platform_manager._3do, "/assets/consoleicons/3do.png"},
-        {platform_manager.atari_7800, "/assets/consoleicons/7800.png"},
-        {platform_manager.gameboy, "/assets/consoleicons/gbc.png"},
-        {platform_manager.sega_saturn, "/assets/consoleicons/saturn.png"},
-        {platform_manager.nintendo_ds, "/assets/consoleicons/nds.png"},
-        {platform_manager.atari_lynx, "/assets/consoleicons/lynx.png"},
-        {platform_manager.video, ""}
-
-    }
-
+    icon_for_console(QMap<QString, QString>{
+        { platform_manager.nintendo, "/assets/consoleicons/nes.png" },
+        { platform_manager.super_nintendo, "/assets/consoleicons/snes.png" },
+        { platform_manager.gameboy, "/assets/consoleicons/gbc.png" },
+        { platform_manager.playstation, "/assets/consoleicons/ps1.png" },
+        { platform_manager.gameboy_advance, "/assets/consoleicons/gba.png" },
+        { platform_manager.dos, "/assets/consoleicons/dosbox.png" },
+        { platform_manager._3do, "/assets/consoleicons/3do.png" },
+        { platform_manager.atari_7800, "/assets/consoleicons/7800.png" },
+        { platform_manager.gameboy, "/assets/consoleicons/gbc.png" },
+        { platform_manager.sega_saturn, "/assets/consoleicons/saturn.png" },
+        { platform_manager.nintendo_ds, "/assets/consoleicons/nds.png" },
+        { platform_manager.atari_lynx, "/assets/consoleicons/lynx.png" },
+        { platform_manager.video, "" }
+    }),
+    m_consoles(QMap<PhoenixLibrary::Console,QString>{
+        { All, "All" },
+        { Atari_Lynx, "Atari Lynx" },
+        { IBM_PC, "DOS" },
+        { Nintendo_NES, "Nintendo" },
+        { Nintendo_SNES, "Super Nintendo" },
+        { Nintendo_Game_Boy, "Game Boy" },
+        { Nintendo_GBA, "Game Boy Advance" },
+        { Nintendo_DS, "Nintendo DS" },
+        { Sega_Master_System, "Sega Master System" },
+        { Sega_Mega_Drive, "Sega Mega Drive" },
+        { Sega_Game_Gear, "Sega Game Gear" },
+        { Sega_CD, "Sega CD" },
+        { Sega_32X, "Sega 32X" },
+        { Sony_PlayStation, "Sony PlayStation" },
+        { Arcade, "Arcade" },
+        { FFMpeg, "Film" },
+    })
     //model: ListModel {
     //    ListElement {title: "All"; icon: "qrc:/assets/more.png";}
     //    ListElement {title: "Atari Lynx"; icon: "qrc:/assets/consoleicons/lynx.png";}

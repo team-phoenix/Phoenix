@@ -123,24 +123,7 @@ private:
 
     QMap<QString, QList<QObject *>> cores_for_console;
 
-    const QMap<Console, QString> m_consoles {
-        { All,                "All" },
-        { Atari_Lynx,         "Atari Lynx" },
-        { IBM_PC,             "DOS" },
-        { Nintendo_NES,       "Nintendo" },
-        { Nintendo_SNES,      "Super Nintendo" },
-        { Nintendo_Game_Boy,  "Game Boy"},
-        { Nintendo_GBA,       "Game Boy Advance" },
-        { Nintendo_DS,        "Nintendo DS" },
-        { Sega_Master_System, "Sega Master System" },
-        { Sega_Mega_Drive,    "Sega Mega Drive" },
-        { Sega_Game_Gear,     "Sega Game Gear" },
-        { Sega_CD,            "Sega CD" },
-        { Sega_32X,           "Sega 32X" },
-        { Sony_PlayStation,   "Sony PlayStation" },
-        { Arcade,             "Arcade" },
-        { FFMpeg,             "Film"},
-    };
+    const QMap<Console, QString> m_consoles;
 
 
 
