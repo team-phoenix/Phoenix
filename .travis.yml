@@ -1,6 +1,6 @@
 language: cpp
 before_install:
-- sudo add-apt-repository --yes ppa:beineri/opt-qt531
+- sudo add-apt-repository --yes ppa:beineri/opt-qt532
 - sudo apt-add-repository --yes ppa:zoogie/sdl2-snapshots
 - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
 - sudo apt-get update -qq
