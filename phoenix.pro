@@ -33,13 +33,13 @@ win32 {
     DEFINES += SDL_WIN
     INCLUDEPATH += C:/SDL2/include
 
-    copy:CONFIG(debug) {
-        QMAKE_POST_LINK += $$QMAKE_COPY databases/systemdatabase.db $${OUT_PWD}\\debug $$escape_expand(\\n\\t)
+    CONFIG(debug) {
+        QMAKE_POST_LINK += $$QMAKE_COPY $${PWD}\\databases/systemdatabase.db $${OUT_PWD}\\debug $$escape_expand(\\n\\t)
         QMAKE_POST_LINK += $$QMAKE_COPY C:/SDL2/lib/SDL2.dll $${OUT_PWD}\\debug $$escape_expand(\\n\\t)
     }
 
-    copy:CONFIG(release) {
-        QMAKE_POST_LINK += $$QMAKE_COPY databases/systemdatabase.db $${OUT_PWD}\\release $$escape_expand(\\n\\t)
+    CONFIG(release) {
+        QMAKE_POST_LINK += $$QMAKE_COPY $${PWD}\\databases/systemdatabase.db $${OUT_PWD}\\release $$escape_expand(\\n\\t)
         QMAKE_POST_LINK += $$QMAKE_COPY C:/SDL2/lib/SDL2.dll $${OUT_PWD}\\release $$escape_expand(\\n\\t)
     }
 }
