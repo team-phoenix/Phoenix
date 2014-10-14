@@ -70,16 +70,19 @@ Item {
 
             ScrollView {
                 id: inputMapper;
+                property var curDevice: inputmanager.getDevice(gridView.headerItem.currentDevice);
                 visible: stackView.width > width;
                 height: 400;
                 width: 400;
                 GridView {
+                    id: gridView;
                     //anchors.fill: parent;
                     height: parent.height;
                     width: parent.width;
                     cellHeight: 30;
                     cellWidth: 150;
                     header: Item {
+                        property int currentDevice: devicesBox.currentIndex;
                         height: 45;
                         width: 125;
 
@@ -151,7 +154,9 @@ Item {
                             readOnly: true;
                             width: 100;
                             height: 20;
-                            text: retroId;
+                            text: {
+                                text: inputMapper.curDevice.mapping().getMapping(retroId);
+                            }
                             anchors.right: parent.right;
                             anchors.rightMargin: 50;
                             horizontalAlignment: Text.AlignHCenter;

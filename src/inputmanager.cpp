@@ -14,7 +14,9 @@ InputManager::InputManager()
 
 InputManager::~InputManager()
 {
-    devices.clear(); // XXX: MEMORY LEAK ??
+    for (auto& device : devices)
+        delete device;
+    devices.clear();
 }
 
 QVariantList InputManager::enumerateDevices()
@@ -73,6 +75,7 @@ void InputManager::scanDevices()
         mapping = mappingForPort(0);
 
     }
+
     devices.insert(0, InputDeviceFactory::createFromMapping(mapping));
 }
 

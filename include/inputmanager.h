@@ -22,9 +22,9 @@ public:
     void append(InputDevice *device);
 
     QList<InputDevice *> getDevices() const;
-    InputDevice *getDevice(unsigned port) const;
 
 public slots:
+    InputDevice *getDevice(unsigned port) const;
     QVariantList enumerateDevices();
     // return empty mapping for device
     InputDeviceMapping *mappingForDevice(QVariantMap device);
