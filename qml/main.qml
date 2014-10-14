@@ -862,11 +862,6 @@ PhoenixWindow {
                 id: gameStack;
                 z: windowStack.z;
 
-                onCurrentItemChanged: {
-                    if (currentItem)
-                        gameStack.stackName = currentItem.itemName;
-                }
-
                 initialItem: {
                     if (root.clear === true)
                         return emptyScreen;
