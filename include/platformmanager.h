@@ -6,7 +6,31 @@
 
 class PlatformManager {
 public:
-    PlatformManager() {}
+    PlatformManager() :
+        cleaned_system_name(QMap<QString,QString>{
+            { "Sega 16bit + 32X (Various)", sega_genesis },
+            { "Super Nintendo Entertainment System", super_nintendo },
+            { "DOOM game engine", doom },
+            { "PSP", psp },
+            { "Commodore Amiga", amiga },
+            { "Nintendo Entertainment System", nintendo },
+            { "PSP RemotePlay", psp_remote_play },
+            { "Game Boy/Game Boy Color", gameboy },
+            { "Quake 1 game engine", quake },
+            { "Saturn", sega_saturn },
+            { "2048 game clone", game },
+            { "MSX/SVI/ColecoVision/SG-1000", msx },
+            { "Arcade (various)", arcade },
+            { "Atari ST/STE/TT/Falcon", atari_st }
+        }),
+        preferred_cores(QMap<QString,QString>{
+            { "Nintendo", fceumm },
+            { "Super Nintendo", snes9x },
+            { "Game Boy", gambatte },
+            { "Game Boy Advance", vbam },
+            { "Sony PlayStation", mednafen_psx }
+        })
+    {}
     ~PlatformManager() {}
 
 
@@ -104,31 +128,9 @@ public:
     QString dos = "DOS";
     QString video = "Film";
 
-    QMap<QString, QString> cleaned_system_name {
-        {"Sega 16bit + 32X (Various)", sega_genesis},
-        {"Super Nintendo Entertainment System", super_nintendo},
-        {"DOOM game engine", doom},
-        {"PSP", psp},
-        {"Commodore Amiga", amiga},
-        {"Nintendo Entertainment System",nintendo},
-        {"PSP RemotePlay", psp_remote_play},
-        {"Game Boy/Game Boy Color", gameboy},
-        {"Quake 1 game engine", quake},
-        {"Saturn", sega_saturn},
-        {"2048 game clone", game},
-        {"MSX/SVI/ColecoVision/SG-1000", msx},
-        {"Arcade (various)", arcade},
-        {"Atari ST/STE/TT/Falcon", atari_st}
-    };
 
-    QMap<QString, QString> preferred_cores {
-        {"Nintendo", fceumm},
-        {"Super Nintendo", snes9x},
-        {"Game Boy", gambatte},
-        {"Game Boy Advance", vbam},
-        {"Sony PlayStation", mednafen_psx}
-    };
-
+    QMap<QString, QString> cleaned_system_name;
+    QMap<QString, QString> preferred_cores;
 };
 
 #endif // PLATFORMMANAGER_H

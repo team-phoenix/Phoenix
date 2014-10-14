@@ -4,8 +4,7 @@
 
 #include <QSqlDatabase>
 
-#define table_version "schema_version"
-#define table_games "games"
+
 
 class LibraryDbManager
 {
@@ -21,6 +20,8 @@ public:
 
     int version() const;
 
+    static const QString table_games;
+
 private:
     LibraryDbManager(const LibraryDbManager &);
     LibraryDbManager &operator=(const LibraryDbManager &);
@@ -29,7 +30,6 @@ private:
     bool createSchema();
     bool loadFixtures();
 
-    constexpr static const char *database_name = "gamelibrary.sqlite";
 };
 
 

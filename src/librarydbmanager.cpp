@@ -4,11 +4,16 @@
 #include <QDir>
 #include <QSqlError>
 #include <QSqlQuery>
+#include <QStringBuilder>
 
 #include "librarydbmanager.h"
 #include "logging.h"
 #include "systemdatabase.h"
 
+static const QString table_version = QStringLiteral("schema_version");
+static const QString database_name = QStringLiteral("gamelibrary.sqlite");
+
+const QString LibraryDbManager::table_games = QStringLiteral("games");
 
 QSqlDatabase &LibraryDbManager::handle()
 {
@@ -52,25 +57,25 @@ bool LibraryDbManager::createSchema()
     qCDebug(phxLibrary, "Initializing database schema");
     db.transaction();
     QSqlQuery q(db);
-    q.exec("CREATE TABLE " table_version " (version INTEGER NOT NULL)");
-    q.exec("INSERT INTO " table_version " (version) VALUES (0)");
-    q.exec("CREATE TABLE " table_games " (\n"
-    "   id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
-    "   /* game info */"
-    "   title TEXT NOT NULL,\n"
-    "   is_favorite BOOLEAN,\n"
-    "   system TEXT NOT NULL,\n"
-    "   region TEXT,\n"
-    "   goodtools_code TEXT,\n"
-    "   time_played DATETIME,\n"
-    "   artwork TEXT,\n"
-    "   /* file info */"
-    "   directory TEXT,\n"
-    "   filename TEXT UNIQUE,\n"
-    "   system_path TEXT\n"
-    ")");
-    q.exec("CREATE INDEX title_index ON " table_games " (title)");
-    q.exec("CREATE INDEX favorite_index ON " table_games " (is_favorite)");
+    q.exec(QStringLiteral("CREATE TABLE ") % table_version % QStringLiteral(" (version INTEGER NOT NULL)"));
+    q.exec(QStringLiteral("INSERT INTO ") % table_version % QStringLiteral(" (version) VALUES (0)"));
+    q.exec(QStringLiteral("CREATE TABLE ") % table_games % QStringLiteral(" (\n") %
+    QStringLiteral("   id INTEGER PRIMARY KEY AUTOINCREMENT,\n") %
+    QStringLiteral("   /* game info */") %
+    QStringLiteral("   title TEXT NOT NULL,\n") %
+    QStringLiteral("   is_favorite BOOLEAN,\n") %
+    QStringLiteral("   system TEXT NOT NULL,\n") %
+    QStringLiteral("   region TEXT,\n") %
+    QStringLiteral("   goodtools_code TEXT,\n") %
+    QStringLiteral("   time_played DATETIME,\n") %
+    QStringLiteral("   artwork TEXT,\n") %
+    QStringLiteral("   /* file info */") %
+    QStringLiteral("   directory TEXT,\n") %
+    QStringLiteral("   filename TEXT UNIQUE,\n") %
+    QStringLiteral("   system_path TEXT\n") %
+    QStringLiteral(")"));
+    q.exec(QStringLiteral("CREATE INDEX title_index ON ") % table_games % QStringLiteral(" (title)"));
+    q.exec(QStringLiteral("CREATE INDEX favorite_index ON ") % table_games % QStringLiteral(" (is_favorite)"));
     db.commit();
     return true;
 }
@@ -80,9 +85,10 @@ bool LibraryDbManager::loadFixtures()
     qCDebug(phxLibrary, "Loading fixtures");
     db.transaction();
     QSqlQuery q(db);
+    const QString command = QStringLiteral("INSERT INTO ") % table_games % QStringLiteral(" (title, system, time_played, artwork)") %
+    QStringLiteral(" VALUES (\"somegame %2\", \"test\", \"0h 0m 0s\", \"qrc:/assets/missing_artwork.png\")");
     for (int i = 0; i < 10000; i++) {
-        q.exec(QString("INSERT INTO " table_games " (title, system, time_played, artwork)"
-                       " VALUES (\"somegame %1\", \"test\", \"0h 0m 0s\", \"qrc:/assets/missing_artwork.png\")").arg(i));
+        q.exec(command.arg(i));
     }
     db.commit();
     return true;
@@ -90,7 +96,7 @@ bool LibraryDbManager::loadFixtures()
 
 int LibraryDbManager::version() const
 {
-    QSqlQuery q("SELECT version FROM " table_version " LIMIT 0,1", db);
+    QSqlQuery q(QStringLiteral("SELECT version FROM ") % table_version % QStringLiteral(" LIMIT 0,1"), db);
     if(!q.exec()) {
         qCDebug(phxLibrary, "Error while retreiving db version: %s",
                             qPrintable(q.lastError().text()));
