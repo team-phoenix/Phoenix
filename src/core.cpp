@@ -374,7 +374,7 @@ bool Core::environmentCallback(unsigned cmd, void *data)
 
         case RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK: // 12
             qDebug() << "\tRETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK (12) (handled)";
-            Core::core->symbols->retro_keyboard_event = (decltype(symbols->retro_keyboard_event))data;
+            Core::core->symbols->retro_keyboard_event = (decltype(LibretroSymbols::retro_keyboard_event))data;
             break;
 
         case RETRO_ENVIRONMENT_SET_DISK_CONTROL_INTERFACE: // 13
@@ -442,7 +442,7 @@ bool Core::environmentCallback(unsigned cmd, void *data)
         
         case RETRO_ENVIRONMENT_SET_FRAME_TIME_CALLBACK: // 21
             qDebug() << "RETRO_ENVIRONMENT_SET_FRAME_TIME_CALLBACK (21)";
-            Core::core->symbols->retro_frame_time = (decltype(symbols->retro_frame_time))data;
+            Core::core->symbols->retro_frame_time = (decltype(LibretroSymbols::retro_frame_time))data;
             break;
 
         case RETRO_ENVIRONMENT_SET_AUDIO_CALLBACK: // 22
