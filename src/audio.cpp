@@ -111,6 +111,16 @@ void Audio::runChanged( bool _isRunning )
     }
 }
 
+void Audio::stateChanged(QAudio::State s)
+{
+    if(s == QAudio::IdleState && aout->error() == QAudio::UnderrunError) {
+        aio = aout->start();
+    }
+    if(s != QAudio::IdleState && s != QAudio::ActiveState) {
+        qCDebug(phxAudio) << "State changed:" << s;
+    }
+}
+
 void Audio::setVolume(qreal level)
 {
     if (aout)

@@ -30,15 +30,7 @@ signals:
     void formatChanged();
 
 public slots:
-    void stateChanged(QAudio::State s)
-    {
-        if(s == QAudio::IdleState && aout->error() == QAudio::UnderrunError) {
-            aio = aout->start();
-        }
-        if(s != QAudio::IdleState && s != QAudio::ActiveState) {
-            qCDebug(phxAudio) << "State changed:" << s;
-        }
-    }
+    void stateChanged(QAudio::State s);
 
     void runChanged(bool isRunning);
     void setVolume(qreal level);
