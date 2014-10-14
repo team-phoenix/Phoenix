@@ -6,7 +6,6 @@ import QtQuick.Layouts 1.1
 
 import phoenix.image 1.0
 
-
 Rectangle {
     id: gameGrid;
     color: "#262626";
@@ -125,8 +124,9 @@ Rectangle {
                         console.log("system Path: " + gridView.currentItem.systemPathName);
                         var core = phoenixLibrary.getSystem(gridView.currentItem.systemName);
                         console.log("core: " + core);
-                        if (gridView.currentItem.fileName !== "" && core !== "")
+                        if (gridView.currentItem.fileName !== "" && core !== "") {
                             windowStack.push({item: gameView, properties: {coreName: core, gameName: gridView.currentItem.fileName, run: true}});
+                        }
                     }
                 }
 

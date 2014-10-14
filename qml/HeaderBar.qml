@@ -723,7 +723,7 @@ Rectangle {
             text: "Save";
             height: 15;
             width: 15;
-            onClicked: gameView.saveGameState = true;
+            onClicked: windowStack.currentItem.saveGameState = true;
         }
 
         Button {

@@ -662,9 +662,7 @@ PhoenixWindow {
     Component {
         id: gameView;
         GameView {
-
         }
-
     }
 
     Component {
