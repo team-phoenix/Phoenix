@@ -23,8 +23,8 @@ public:
     GameData() {
     }
 
-    QString alias;
-    QString name;
+    QString libraryName;
+    QString librarySystem;
     QString id;
     QString title;
     QString developer;
@@ -49,46 +49,48 @@ public:
 class TheGamesDB : public QObject {
     Q_OBJECT
 public:
-    TheGamesDB();
-    explicit TheGamesDB(QObject *parent);
+    enum QueryState {
+        None,
+        RequestingId,
+        RequestingData,
+        Finishing
+    };
 
+    TheGamesDB();
     ~TheGamesDB();
 
-    void setGameName(QString name);
-    void setGamePlatform(QString platform);
-    void setData(GameData *data);
+    void getGameData(QString title, QString system);
+
+    const QMap<QString, QString> PlatformsMap {
+        { "Atari Lynx", "Atari Lynx" },
+        { "DOS", "DOS" },
+        { "Game Boy Advance", "Nintendo Game Boy Advance" },
+        { "Nintendo", "Nintendo Entertainment System (NES)" },
+        { "Super Nintendo", "Super Nintendo (SNES)" },
+        { "Game Boy", "Nintendo Game Boy" },
+        { "Nintendo DS", "Nintendo DS" },
+        { "Sega Master System", "Sega Master System" },
+        { "Sega Mega Drive", "Sega Mega Drive" },
+        { "Sega Game Gear", "Sega Game Gear" },
+        { "Sega CD", "Sega CD" },
+        { "Sega 32X", "Sega 32X" },
+        { "Sony PlayStation", "Sony Playstation" },
+        { "Arcade", "Arcade" },
+        { "Film", "Film" }
+    };
 
 signals:
-    void finished(GameData *);
-    void finished();
-    void started();
-    void completedRequest();
-    void outputData(GameData *);
+    void dataReady(GameData*);
 
 public slots:
-    void processRequest(QNetworkReply *m_reply);
-    void processErrors(QNetworkReply::NetworkError);
-    void populateData();
-    void start();
-
+    void processRequest(QNetworkReply*);
 
 private:
     QNetworkAccessManager *manager;
-    QNetworkReply *reply;
-
-    GameData *game_data;
-    QString m_game_name;
-    QString m_game_platform;
-    QUrl m_url;
 
     QString cleanString(QString string);
-    void getGame(QString game_id);
-    void findXMLGame();
-    void parseXMLforId(QString game_name);
-    void getGameId();
-    void getNetworkReply();
-    void setUrl(QUrl url);
-
+    GameData* findXMLGame(QString id, QNetworkReply* reply);
+    QString parseXMLforId(QString game_name, QNetworkReply* reply);
 };
 
 #endif // THEGAMESDB_H

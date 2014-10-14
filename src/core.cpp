@@ -33,7 +33,6 @@ Core* Core::core = nullptr;
 Core::Core()
 {
     libretro_core = nullptr;
-    video_data = nullptr;
     audio_buf = nullptr;
     system_av_info = new retro_system_av_info();
     system_info = new retro_system_info();
@@ -295,7 +294,6 @@ void Core::audioSampleCallback(int16_t left, int16_t right)
 
 size_t Core::audioSampleBatchCallback(const int16_t *data, size_t frames)
 {
-
     core->audio_data = data;
     core->audio_frames = frames;
     if (core->audio_buf)
