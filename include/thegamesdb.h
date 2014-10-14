@@ -23,8 +23,8 @@ public:
     GameData() {
     }
 
-    QString alias;
-    QString name;
+    QString libraryName;
+    QString librarySystem;
     QString id;
     QString title;
     QString developer;
@@ -57,11 +57,14 @@ public:
     };
 
     TheGamesDB();
-    explicit TheGamesDB(QObject *parent);
-
     ~TheGamesDB();
 
     void getGameData(QString title, QString system);
+
+    const QMap<QString, QString> PlatformsMap {
+        { "Game Boy Advance", "Nintendo Game Boy Advance" }
+    };
+
 signals:
     void dataReady(GameData*);
 
@@ -71,14 +74,9 @@ public slots:
 private:
     QNetworkAccessManager *manager;
 
-    QueryState state;
-    GameData *game_data;
-    QString m_game_name;
-    QString m_game_platform;
-
     QString cleanString(QString string);
-    void findXMLGame(QNetworkReply* reply);
-    void parseXMLforId(QString game_name, QNetworkReply* reply);
+    GameData* findXMLGame(QString id, QNetworkReply* reply);
+    QString parseXMLforId(QString game_name, QNetworkReply* reply);
 };
 
 #endif // THEGAMESDB_H

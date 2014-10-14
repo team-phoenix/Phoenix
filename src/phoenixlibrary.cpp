@@ -60,6 +60,10 @@ PhoenixLibrary::PhoenixLibrary()
     excluded_consoles = QStringList() << platform_manager.nintendo_ds << platform_manager.mupen64plus << platform_manager.ppsspp
                                       << platform_manager.desmume;
 
+    thegamesdb = new TheGamesDB();
+
+    connect(thegamesdb, &TheGamesDB::dataReady, this, &PhoenixLibrary::handleOnlineDatabaseResponse);
+
     m_model = new GameLibraryModel(&dbm, this);
     m_model->setEditStrategy(QSqlTableModel::OnManualSubmit);
 
@@ -113,7 +117,28 @@ PhoenixLibrary::~PhoenixLibrary()
 {
     if (m_model)
         m_model->deleteLater();
+    delete thegamesdb;
+}
 
+void PhoenixLibrary::handleOnlineDatabaseResponse(GameData* data)
+{
+    // Now update the artwork
+    QSqlDatabase database = dbm.handle();
+    database.transaction();
+    qDebug() << "Game received: " << data->title << " On Platform: " << data->platform << " And artwork: " << data->front_boxart << " and: " << data->back_boxart;
+    QSqlQuery q(database);
+
+    q.prepare("UPDATE " table_games " SET artwork = ? WHERE title = ? AND system = ?");
+
+    q.addBindValue(data->front_boxart);
+    q.addBindValue(data->libraryName);
+    q.addBindValue(data->librarySystem);
+
+    q.exec();
+    database.commit();
+
+    QMetaObject::invokeMethod(m_model, "select");
+    delete data;
 }
 
 void PhoenixLibrary::setLabel(QString label)
@@ -188,17 +213,21 @@ QRegularExpressionMatch PhoenixLibrary::parseFilename(QString filename)
 void PhoenixLibrary::startAsyncScan(QUrl path)
 {
     QFuture<bool> fut = QtConcurrent::run(this, &PhoenixLibrary::scanFolder, path);
-    fut.waitForFinished();
-    QSqlDatabase database = dbm.handle();
-    database.transaction();
+    auto watcher = std::make_shared<QFutureWatcher<bool>>(new QFutureWatcher<bool>());
+    // Request and update the artworks when the folder scan is finished
+    connect(watcher.get(), &QFutureWatcher<bool>::finished, this, [this, watcher]() {
+        QSqlDatabase database = dbm.handle();
+        database.transaction();
 
-    QSqlQuery q(database);
+        QSqlQuery q(database);
 
-    q.prepare("SELECT title, system FROM " table_games);
-    if (q.exec()) {
-        while (q.next())
-            requestExtraData(q.value(0).toString(), q.value(1).toString());
-    }
+        q.prepare("SELECT title, system FROM " table_games);
+        if (q.exec()) {
+            while (q.next())
+                thegamesdb->getGameData(q.value(0).toString(), q.value(1).toString());
+        }
+    });
+    watcher->setFuture(fut);
 }
 
 bool PhoenixLibrary::scanFolder(QUrl folder_path)
@@ -257,19 +286,6 @@ bool PhoenixLibrary::scanFolder(QUrl folder_path)
     setLabel("");
     return true;
 
-}
-
-void PhoenixLibrary::requestExtraData(QString title, QString system)
-{
-    auto tgdb = std::make_shared<TheGamesDB>(new TheGamesDB());
-    connect(tgdb.get(), &TheGamesDB::dataReady, this, [this, tgdb](GameData* data) {
-        // Now update the artwork
-        QSqlDatabase database = dbm.handle();
-        database.transaction();
-
-        delete data;
-    });
-    tgdb->getGameData(title, system);
 }
 
 void PhoenixLibrary::deleteRow(QString title)

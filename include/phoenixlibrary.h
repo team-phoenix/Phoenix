@@ -82,6 +82,7 @@ public:
     }
 
 public slots:
+    void handleOnlineDatabaseResponse(GameData* data);
     void startAsyncScan(QUrl path);
     bool scanFolder(QUrl folder_path);
     //GameData *scrapeInfo(QString name, QString system);
@@ -146,6 +147,7 @@ private:
     const QMap<QString, QString> icon_for_console;
 
     QStringList excluded_consoles;
+    TheGamesDB* thegamesdb;
 
     QMap<Console, QVariantMap> core_for_console;
 
@@ -155,7 +157,6 @@ private:
     QRegularExpressionMatch parseFilename(QString filename);
     QByteArray generateSha1Sum(QString file);
     void scanSystemDatabase(QByteArray hash, QString &name, QString &system);
-    void requestExtraData(QString title, QString system);
 };
 
 
