@@ -22,7 +22,7 @@ public:
     class Mapping : public InputDeviceMapping
     {
     public:
-        Mapping() {};
+        Mapping() {}
 
         virtual InputDeviceEvent *eventFromString(QString) override;
 

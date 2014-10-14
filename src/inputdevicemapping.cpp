@@ -69,3 +69,12 @@ bool InputDeviceMapping::populateFromDict(QVariantMap deviceinfo)
     setDeviceType(RETRO_DEVICE_JOYPAD); // TODO
     return true;
 }
+
+QString InputDeviceMapping::getMappingByRetroId(QString retroId)
+{
+    for (auto m = mapping.begin(); m != mapping.end(); ++m) {
+        if (m->second == retroId.toInt())
+            return QString(*m->first);
+    }
+    return "None";
+}

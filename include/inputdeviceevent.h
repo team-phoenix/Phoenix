@@ -6,6 +6,7 @@
 
 #include <QtGlobal>
 #include <QHash>
+#include <QDebug>
 
 
 class InputDeviceEvent

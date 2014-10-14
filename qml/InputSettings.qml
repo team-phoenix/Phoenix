@@ -70,7 +70,7 @@ Item {
 
             ScrollView {
                 id: inputMapper;
-                property var curDevice: gridView.headerItem.curDevice;
+                property var mapping: gridView.headerItem.curMapping;
                 visible: stackView.width > width;
                 height: 400;
                 width: 400;
@@ -82,7 +82,7 @@ Item {
                     cellHeight: 30;
                     cellWidth: 150;
                     header: Item {
-                        property alias curDevice: playersBox.curDevice;
+                        property alias curMapping: playersBox.curMapping;
                         height: 45;
                         width: 125;
 
@@ -97,7 +97,7 @@ Item {
                                 id: playersBox;
                                 property int num: devicesBox.count;
                                 width: 125;
-                                property var curDevice;
+                                property var curMapping;
                                 model:  {
                                     var mod = [];
                                     for (var i=0; i < num; ++i) {
@@ -106,7 +106,7 @@ Item {
                                     return mod;
                                 }
                                 onCurrentIndexChanged: {
-                                    curDevice = inputmanager.getDevice(currentIndex);
+                                    curMapping = inputmanager.mappingForPort(currentIndex);
                                 }
                             }
                             ComboBox {
@@ -160,10 +160,7 @@ Item {
                             width: 100;
                             height: 20;
                             text: {
-                                if (inputMapper.curDevice != null)
-                                    text: inputMapper.curDevice.mapping().getMapping(retroId);
-                                else
-                                    text: "Null";
+                                   text: inputMapper.mapping.getMappingByRetroId(retroId);
                             }
                             anchors.right: parent.right;
                             anchors.rightMargin: 50;

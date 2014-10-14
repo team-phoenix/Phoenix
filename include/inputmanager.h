@@ -23,8 +23,9 @@ public:
 
     QList<InputDevice *> getDevices() const;
 
-public slots:
     InputDevice *getDevice(unsigned port) const;
+
+public slots:
     QVariantList enumerateDevices();
     // return empty mapping for device
     InputDeviceMapping *mappingForDevice(QVariantMap device);
