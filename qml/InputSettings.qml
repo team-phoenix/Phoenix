@@ -118,22 +118,22 @@ Item {
                     }
 
                     model: ListModel {
-                        ListElement {controllerButton: "Up"; retroId: "0";}
-                        ListElement {controllerButton: "Down"; retroId: "1";}
-                        ListElement {controllerButton: "Left"; retroId: "2";}
-                        ListElement {controllerButton: "Right"; retroId: "3";}
-                        ListElement {controllerButton: "Select"; retroId: "4";}
-                        ListElement {controllerButton: "Start"; retroId: "5";}
-                        ListElement {controllerButton: "A"; retroId: "6";}
-                        ListElement {controllerButton: "B"; retroId: "7";}
-                        ListElement {controllerButton: "X"; retroId: "8";}
-                        ListElement {controllerButton: "Y"; retroId: "9";}
-                        ListElement {controllerButton: "R"; retroId: "10";}
-                        ListElement {controllerButton: "L"; retroId: "11";}
-                        ListElement {controllerButton: "RB"; retroId: "A1";}
-                        ListElement {controllerButton: "LB"; retroId: "A2";}
-                        ListElement {controllerButton: "R3"; retroId: "12";}
-                        ListElement {controllerButton: "L3"; retroId: "13";}
+                        ListElement {controllerButton: "Up"; retroId: "4";}
+                        ListElement {controllerButton: "Down"; retroId: "5";}
+                        ListElement {controllerButton: "Left"; retroId: "6";}
+                        ListElement {controllerButton: "Right"; retroId: "7";}
+                        ListElement {controllerButton: "Select"; retroId: "2";}
+                        ListElement {controllerButton: "Start"; retroId: "3";}
+                        ListElement {controllerButton: "A"; retroId: "8";}
+                        ListElement {controllerButton: "B"; retroId: "0";}
+                        ListElement {controllerButton: "X"; retroId: "9";}
+                        ListElement {controllerButton: "Y"; retroId: "1";}
+                        ListElement {controllerButton: "R"; retroId: "11";}
+                        ListElement {controllerButton: "L"; retroId: "10";}
+                        ListElement {controllerButton: "RB"; retroId: "13";}
+                        ListElement {controllerButton: "LB"; retroId: "12";}
+                        ListElement {controllerButton: "R3"; retroId: "15";}
+                        ListElement {controllerButton: "L3"; retroId: "14";}
 
                     }
 
