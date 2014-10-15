@@ -78,3 +78,15 @@ QString InputDeviceMapping::getMappingByRetroId(QString retroId)
     }
     return "None";
 }
+
+void InputDeviceMapping::remapMapping(QString previousEvent, QString event, QString retroId)
+{
+    // Remove the previous mapping
+    auto prevEv = eventFromString(previousEvent);
+    if (prevEv != nullptr)
+        mapping.erase(prevEv);
+
+    auto ev = eventFromString(event);
+    if (ev != nullptr)
+        setMapping(ev, retroId.toUInt());
+}

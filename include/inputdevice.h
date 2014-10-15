@@ -31,6 +31,7 @@ public:
 
 signals:
     void inputEventReceived(InputDeviceEvent *ev, int16_t value);
+    void inputEventReceivedQML(QString name, int16_t value);
 
 public slots:
     QString deviceName() const { return device_name; }

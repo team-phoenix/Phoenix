@@ -1,5 +1,6 @@
 
 #include <QSettings>
+#include <QQmlEngine>
 
 #include "inputmanager.h"
 #include "joystick.h"
@@ -41,7 +42,10 @@ void InputManager::append(InputDevice *device)
 
 InputDevice *InputManager::getDevice(unsigned port) const
 {
-    return devices.at(port);
+    InputDevice* device = devices.at(port);
+    // Don't allow QML to take ownership of our devices
+    QQmlEngine::setObjectOwnership(device, QQmlEngine::CppOwnership);
+    return device;
 }
 
 QList<InputDevice *> InputManager::getDevices() const

@@ -71,7 +71,9 @@ Item {
             ScrollView {
                 id: inputMapper;
                 property var mapping: gridView.headerItem.curMapping;
+                property var device: gridView.headerItem.curDevice;
                 visible: stackView.width > width;
+                property bool waitingUpdate: false;
                 height: 400;
                 width: 400;
                 GridView {
@@ -83,6 +85,7 @@ Item {
                     cellWidth: 150;
                     header: Item {
                         property alias curMapping: playersBox.curMapping;
+                        property alias curDevice: playersBox.curDevice;
                         height: 45;
                         width: 125;
 
@@ -98,6 +101,7 @@ Item {
                                 property int num: devicesBox.count;
                                 width: 125;
                                 property var curMapping;
+                                property var curDevice;
                                 model:  {
                                     var mod = [];
                                     for (var i=0; i < num; ++i) {
@@ -107,6 +111,7 @@ Item {
                                 }
                                 onCurrentIndexChanged: {
                                     curMapping = inputmanager.mappingForPort(currentIndex);
+                                    curDevice = inputmanager.getDevice(currentIndex);
                                 }
                             }
                             ComboBox {
@@ -118,23 +123,23 @@ Item {
                     }
 
                     model: ListModel {
-                        ListElement {controllerButton: "Up"; retroId: "4";}
-                        ListElement {controllerButton: "Down"; retroId: "5";}
-                        ListElement {controllerButton: "Left"; retroId: "6";}
-                        ListElement {controllerButton: "Right"; retroId: "7";}
-                        ListElement {controllerButton: "Select"; retroId: "2";}
-                        ListElement {controllerButton: "Start"; retroId: "3";}
-                        ListElement {controllerButton: "A"; retroId: "8";}
-                        ListElement {controllerButton: "B"; retroId: "0";}
-                        ListElement {controllerButton: "X"; retroId: "9";}
-                        ListElement {controllerButton: "Y"; retroId: "1";}
-                        ListElement {controllerButton: "R"; retroId: "11";}
-                        ListElement {controllerButton: "L"; retroId: "10";}
-                        ListElement {controllerButton: "RB"; retroId: "13";}
-                        ListElement {controllerButton: "LB"; retroId: "12";}
-                        ListElement {controllerButton: "R3"; retroId: "15";}
-                        ListElement {controllerButton: "L3"; retroId: "14";}
-
+                        id: buttonsModel;
+                        ListElement {controllerButton: "Up"; retroId: "4"; updating: false;}
+                        ListElement {controllerButton: "Down"; retroId: "5"; updating: false;}
+                        ListElement {controllerButton: "Left"; retroId: "6"; updating: false;}
+                        ListElement {controllerButton: "Right"; retroId: "7"; updating: false;}
+                        ListElement {controllerButton: "Select"; retroId: "2"; updating: false;}
+                        ListElement {controllerButton: "Start"; retroId: "3"; updating: false;}
+                        ListElement {controllerButton: "A"; retroId: "8"; updating: false;}
+                        ListElement {controllerButton: "B"; retroId: "0"; updating: false;}
+                        ListElement {controllerButton: "X"; retroId: "9"; updating: false;}
+                        ListElement {controllerButton: "Y"; retroId: "1"; updating: false;}
+                        ListElement {controllerButton: "R"; retroId: "11"; updating: false;}
+                        ListElement {controllerButton: "L"; retroId: "10"; updating: false;}
+                        ListElement {controllerButton: "RB"; retroId: "13"; updating: false;}
+                        ListElement {controllerButton: "LB"; retroId: "12"; updating: false;}
+                        ListElement {controllerButton: "R3"; retroId: "15"; updating: false;}
+                        ListElement {controllerButton: "L3"; retroId: "14"; updating: false;}
                     }
 
                     delegate: Item {
@@ -160,15 +165,45 @@ Item {
                             width: 100;
                             height: 20;
                             text: {
-                                   text: inputMapper.mapping.getMappingByRetroId(retroId);
+                                   if (updating)
+                                       text: "WAITING";
+                                   else
+                                       text: inputMapper.mapping.getMappingByRetroId(retroId);
                             }
                             anchors.right: parent.right;
                             anchors.rightMargin: 50;
                             horizontalAlignment: Text.AlignHCenter;
                             MouseArea {
+                                id: buttonMouseArea;
                                 anchors.fill: parent;
                                 onClicked: {
-                                    //inputmanager.iterateDevices();
+                                    if (inputMapper.waitingUpdate)
+                                        return;
+                                    inputMapper.waitingUpdate = true;
+                                    buttonsModel.get(index).updating = true;
+                                    console.log("Changing mapping for " + controllerButton + " on device: " + inputMapper.device.deviceName());
+                                    inputMapper.device.inputEventReceivedQML.connect(keyReceived);
+                                }
+
+                                function keyReceived(ev, value) {
+                                    var prevBinding = inputMapper.mapping.getMappingByRetroId(retroId);
+                                    inputMapper.mapping.remapMapping(prevBinding, ev, retroId);
+                                    inputMapper.waitingUpdate = false;
+                                    buttonsModel.get(index).updating = false;
+                                    console.log("RECEIVED event: " + ev + " and value: " + value);
+                                    console.log("New binding: " + inputMapper.mapping.getMappingByRetroId(retroId));
+                                    inputMapper.device.inputEventReceivedQML.disconnect(keyReceived);
+                                }
+
+                                Connections {
+                                    target: settingsWindow;
+
+                                    onVisibleChanged: {
+                                        if (!settingsWindow.visible) {
+                                            inputMapper.waitingUpdate = false;
+                                            inputMapper.device.inputEventReceivedQML.disconnect(buttonMouseArea.keyReceived);
+                                        }
+                                    }
                                 }
                             }
                         }

@@ -3,6 +3,7 @@ import QtQuick.Controls 1.1
 
 ApplicationWindow {
     id: settingsWindow;
+    modality: "WindowModal";
     height: 800;
     width: 600;
     title: "Settings";
