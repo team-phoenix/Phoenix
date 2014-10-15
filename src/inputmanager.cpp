@@ -1,5 +1,6 @@
 
 #include <QSettings>
+#include <QQmlEngine>
 
 #include "inputmanager.h"
 #include "joystick.h"
@@ -14,7 +15,9 @@ InputManager::InputManager()
 
 InputManager::~InputManager()
 {
-    devices.clear(); // XXX: MEMORY LEAK ??
+    for (auto& device : devices)
+        delete device;
+    devices.clear();
 }
 
 QVariantList InputManager::enumerateDevices()
@@ -39,7 +42,10 @@ void InputManager::append(InputDevice *device)
 
 InputDevice *InputManager::getDevice(unsigned port) const
 {
-    return devices.at(port);
+    InputDevice* device = devices.at(port);
+    // Don't allow QML to take ownership of our devices
+    QQmlEngine::setObjectOwnership(device, QQmlEngine::CppOwnership);
+    return device;
 }
 
 QList<InputDevice *> InputManager::getDevices() const
@@ -73,6 +79,7 @@ void InputManager::scanDevices()
         mapping = mappingForPort(0);
 
     }
+
     devices.insert(0, InputDeviceFactory::createFromMapping(mapping));
 }
 

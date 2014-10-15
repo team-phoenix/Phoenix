@@ -20,7 +20,7 @@ class InputDeviceMapping : public QObject
 
 public:
     InputDeviceMapping();
-    virtual ~InputDeviceMapping() { };
+    virtual ~InputDeviceMapping() { }
 
     virtual bool isValid();
 
@@ -49,7 +49,9 @@ public:
 
     void setMapping(InputDeviceEvent *ev, retro_device_id id)
     {
+        qDebug() << "Previous mapping for " << QString(*ev) << " was: " << mapping[ev];
         mapping[ev] = id;
+        qDebug() << "New mapping for " << QString(*ev) << " is: " << id;
     }
 
     void setMapping(const InputDeviceEvent *ev, retro_device_id id)
@@ -62,6 +64,8 @@ public slots:
     // the input id to the given retro_device_id
     virtual QVariant setMappingOnInput(retro_device_id id, QJSValue cb) = 0;
     virtual void cancelMappingOnInput(QVariant cancelInfo) = 0;
+    virtual QString getMappingByRetroId(QString retroId);
+    virtual void remapMapping(QString previousEvent, QString event, QString retroId);
 
 protected:
     // Type of retro device mapped:
@@ -73,7 +77,7 @@ protected:
 };
 
 // to be able to use Connection objects in QVariants
-Q_DECLARE_METATYPE(QMetaObject::Connection);
+Q_DECLARE_METATYPE(QMetaObject::Connection)
 
 
 #endif

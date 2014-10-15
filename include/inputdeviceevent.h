@@ -6,11 +6,14 @@
 
 #include <QtGlobal>
 #include <QHash>
+#include <QDebug>
 
 
 class InputDeviceEvent
 {
 public:
+    virtual ~InputDeviceEvent() {}
+
     virtual InputDeviceEvent *clone() const = 0;
 
     // compare two device event
@@ -176,6 +179,5 @@ private:
     TEvent m_event;
     TEvent_default_t<TEvent> default_t;
 };
-
 
 #endif

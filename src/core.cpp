@@ -51,8 +51,6 @@ Core::Core()
 
     is_dupe_frame = false;
 
-    input_manager.scanDevices();
-
     Core::core = this;
 
 } // Core::Core()

@@ -22,7 +22,7 @@ public:
     class Mapping : public InputDeviceMapping
     {
     public:
-        Mapping() {};
+        Mapping() {}
 
         virtual InputDeviceEvent *eventFromString(QString) override;
 
@@ -37,6 +37,7 @@ public:
 
 private:
     QWindow *topLevelWindow;
+    QWindow *settingsWindow;
 
     // process QKeyEvent sent from some widget/window
     // as a button press in this virtual Input Device

@@ -50,7 +50,9 @@ int main(int argc, char *argv[])
     qmlRegisterType<GameLibraryModel>();
     qmlRegisterType<PhoenixLibrary>("phoenix.library", 1, 0, "PhoenixLibrary");
     qmlRegisterType<InputDeviceMapping>();
+    qmlRegisterType<InputDevice>();
     qRegisterMetaType<retro_device_id>("retro_device_id");
+    qRegisterMetaType<int16_t>("int16_t");
 
     QQmlApplicationEngine engine;
 
@@ -64,6 +66,8 @@ int main(int argc, char *argv[])
     QQuickWindow *window = qobject_cast<QQuickWindow *>(topLevel);
 
     window->show();
+
+    input_manager.scanDevices();
 
     return a.exec();
 }
