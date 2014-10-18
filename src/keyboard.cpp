@@ -19,7 +19,7 @@ Keyboard::Keyboard(InputDeviceMapping *mapping) : InputDevice(mapping)
 Keyboard::~Keyboard()
 {
     topLevelWindow->removeEventFilter(this);
-    settingsWindow->removeEventFilter(this);
+    //settingsWindow->removeEventFilter(this);
 }
 
 QVariantList Keyboard::enumerateDevices()
