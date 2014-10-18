@@ -164,12 +164,7 @@ Item {
                             readOnly: true;
                             width: 100;
                             height: 20;
-                            text: {
-                                   if (updating)
-                                       text: "WAITING";
-                                   else
-                                       text: inputMapper.mapping.getMappingByRetroId(retroId);
-                            }
+                            text: updating ? "WAITING" : inputMapper.mapping.getMappingByRetroId(retroId);
                             anchors.right: parent.right;
                             anchors.rightMargin: 50;
                             horizontalAlignment: Text.AlignHCenter;
@@ -182,17 +177,17 @@ Item {
                                     inputMapper.waitingUpdate = true;
                                     buttonsModel.get(index).updating = true;
                                     console.log("Changing mapping for " + controllerButton + " on device: " + inputMapper.device.deviceName());
-                                    inputMapper.device.inputEventReceivedQML.connect(keyReceived);
+                                    inputMapper.device.inputEventReceived.connect(keyReceived);
                                 }
 
                                 function keyReceived(ev, value) {
                                     var prevBinding = inputMapper.mapping.getMappingByRetroId(retroId);
+                                    console.log("RECEIVED event: " + ev + " and value: " + value);
                                     inputMapper.mapping.remapMapping(prevBinding, ev, retroId);
                                     inputMapper.waitingUpdate = false;
                                     buttonsModel.get(index).updating = false;
-                                    console.log("RECEIVED event: " + ev + " and value: " + value);
                                     console.log("New binding: " + inputMapper.mapping.getMappingByRetroId(retroId));
-                                    inputMapper.device.inputEventReceivedQML.disconnect(keyReceived);
+                                    inputMapper.device.inputEventReceived.disconnect(keyReceived);
                                 }
 
                                 Connections {
@@ -201,7 +196,7 @@ Item {
                                     onVisibleChanged: {
                                         if (!settingsWindow.visible) {
                                             inputMapper.waitingUpdate = false;
-                                            inputMapper.device.inputEventReceivedQML.disconnect(buttonMouseArea.keyReceived);
+                                            inputMapper.device.inputEventReceived.disconnect(buttonMouseArea.keyReceived);
                                         }
                                     }
                                 }

@@ -53,6 +53,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<InputDevice>();
     qRegisterMetaType<retro_device_id>("retro_device_id");
     qRegisterMetaType<int16_t>("int16_t");
+    qRegisterMetaType<InputDeviceEvent *>();
 
     QQmlApplicationEngine engine;
 

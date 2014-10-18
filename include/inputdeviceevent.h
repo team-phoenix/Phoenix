@@ -38,6 +38,8 @@ protected:
     int m_type;
 };
 
+Q_DECLARE_METATYPE(InputDeviceEvent *)
+
 // for use as key in std containers
 namespace std
 {

@@ -65,7 +65,8 @@ public slots:
     virtual QVariant setMappingOnInput(retro_device_id id, QJSValue cb) = 0;
     virtual void cancelMappingOnInput(QVariant cancelInfo) = 0;
     virtual QString getMappingByRetroId(QString retroId);
-    virtual void remapMapping(QString previousEvent, QString event, QString retroId);
+    virtual void remapMapping(QString previousEvent, QVariant event, QString retroId);
+
 
 protected:
     // Type of retro device mapped:
