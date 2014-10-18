@@ -19,6 +19,9 @@ Keyboard::Keyboard(InputDeviceMapping *mapping) : InputDevice(mapping)
 Keyboard::~Keyboard()
 {
     topLevelWindow->removeEventFilter(this);
+    // Removing settingsWindow from the even list caused a segfault.
+    // We may want to keep an eye on this.
+
     //settingsWindow->removeEventFilter(this);
 }
 
