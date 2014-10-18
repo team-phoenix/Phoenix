@@ -23,14 +23,12 @@ TheGamesDB::TheGamesDB()
 
 TheGamesDB::~TheGamesDB()
 {
-    qCDebug(phxLibrary) << "delting scraper";
     if (manager)
         manager->deleteLater();
 }
 
 void TheGamesDB::processRequest(QNetworkReply* reply)
 {
-    qCDebug(phxLibrary) << "processing rquest";
     switch (reply->property("state").toInt()) {
         case RequestingId:
         {
@@ -186,7 +184,6 @@ QString TheGamesDB::parseXMLforId(QString game_name, QNetworkReply* reply)
 void TheGamesDB::getGameData(QString title, QString system)
 {
     // Grab the first data
-    qCDebug(phxLibrary) << "loading this";
     auto reply = manager->get(QNetworkRequest(QUrl(BASE_URL + "GetGamesList.php?name=" + title + "&platform=" + PlatformsMap[system])));
     reply->setProperty("gameName", title);
     reply->setProperty("gameSystem", system);
