@@ -160,42 +160,43 @@ Item {
                     //rightMargin: 15;
                     leftMargin: 15;
                 }
-            ListView {
-                spacing: 5;
-                model: phoenixLibrary.systemsModel();
-                delegate: RowLayout {
-                    anchors {
-                        left: parent.left;
-                        right: parent.right;
-                    }
-
-                    spacing: 25;
-                    Text {
-                        text: modelData;
-                        renderType: Text.QtRendering;
-                        color: "#f1f1f1";
-                        font {
-                            family: "Sans";
-                            pixelSize: 12;
-                        }
-                    }
-
-                    PhoenixComboBox {
-                        id: filteringSwitch;
-                        implicitHeight: 25;
+                ListView {
+                    spacing: 5;
+                    model: phoenixLibrary.systemsModel();
+                    delegate: RowLayout {
+                        visible: modelData !== "All";
                         anchors {
+                            left: parent.left;
                             right: parent.right;
-                            rightMargin: 25;
                         }
-                        model: phoenixLibrary.coresModel(modelData);
-                        textRole: "coreName";
-                        onCurrentIndexChanged:  {
-                            var obj = phoenixLibrary.showPath(currentIndex, modelData);
-                            phoenixLibrary.setPreferredCore(modelData, obj);
+
+                        spacing: 25;
+                        Text {
+                            text: modelData;
+                            renderType: Text.QtRendering;
+                            color: "#f1f1f1";
+                            font {
+                                family: "Sans";
+                                pixelSize: 12;
+                            }
+                        }
+
+                        PhoenixComboBox {
+                            id: filteringSwitch;
+                            implicitHeight: 25;
+                            anchors {
+                                right: parent.right;
+                                rightMargin: 25;
+                            }
+                            model: phoenixLibrary.coresModel(modelData);
+                            textRole: "coreName";
+                            onCurrentIndexChanged:  {
+                                var obj = phoenixLibrary.showPath(currentIndex, modelData);
+                                phoenixLibrary.setPreferredCore(modelData, obj);
+                            }
                         }
                     }
                 }
-            }
             }
         }
     }

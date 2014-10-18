@@ -9,6 +9,7 @@
 #include <QSqlError>
 #include <QApplication>
 #include <QCryptographicHash>
+#include <QApplication>
 
 #include <memory>
 
@@ -59,17 +60,6 @@ PhoenixLibrary::PhoenixLibrary()
         { Arcade, "Arcade" },
         { FFMpeg, "Film" },
     })
-    //model: ListModel {
-    //    ListElement {title: "All"; icon: "qrc:/assets/more.png";}
-    //    ListElement {title: "Atari Lynx"; icon: "qrc:/assets/consoleicons/lynx.png";}
-     //   ListElement {title: "Nintendo"; icon: "/assets/consoleicons/nes.png";}
-     //   ListElement {title: "Super Nintendo"; icon: "/assets/consoleicons/snes.png";}
-     //   ListElement {title: "Sony PlayStation"; icon: "/assets/consoleicons/ps1.png";}
-    //    ListElement {title: "Game Boy Advance"; icon: "/assets/consoleicons/gba.png";}
-     //   ListElement {title: "Game Boy Color"; icon: "/assets/consoleicons/gbc.png";}
-    //    ListElement {title: "Nintendo DS"; icon: "/assets/consoleicons/nds.png";}
-    //    ListElement {title: "DOSBox"; icon: "/assets/consoleicons/dosbox.png";}
-    //}
 {
     m_import_urls = false;
 
@@ -113,13 +103,22 @@ PhoenixLibrary::PhoenixLibrary()
         }
     }
 
+    QString base_path = QApplication::applicationDirPath();
     for (auto &core : libretro_cores_info.keys()) {
 
         QString system = libretro_cores_info[core]["systemname"].toString();
         QString cleaned_name = platform_manager.cleaned_system_name.value(system, system);
         QString display_name = libretro_cores_info[core].value("corename", "").toString();
-
-        cores_for_console[cleaned_name].append( new CoreModel(this, display_name, core));
+#ifdef Q_OS_WIN32
+        QString full_path = base_path + "/cores/" + core + ".dll";
+#endif
+#ifdef Q_OS_LINUX
+        QString full_path = "/usr/lib/libretro/" + core + ".so";
+#endif
+        QFile in_file(full_path);
+        qCDebug(phxLibrary) << cleaned_name;
+        if (in_file.exists())
+            cores_for_console[cleaned_name].append( new CoreModel(this, display_name, core));
 
     }
 
