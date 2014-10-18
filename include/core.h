@@ -101,10 +101,10 @@ public:
     };
 
     // Audio
-    const int16_t *getAudioData() const { return audio_data; };
-    size_t getAudioFrames() const { return audio_frames; };
-    int16_t getLeftChannel() const { return left_channel; };
-    int16_t getRightChannel() const { return right_channel; };
+    //const int16_t *getAudioData() const { return audio_data; };
+    //size_t getAudioFrames() const { return audio_frames; };
+    //int16_t getLeftChannel() const { return left_channel; };
+    //int16_t getRightChannel() const { return right_channel; };
 
     // System
     void setSystemDirectory(QString system_directory);
@@ -213,8 +213,6 @@ private:
     retro_pixel_format pixel_format;
 
     // Audio
-    size_t audio_frames;
-    const int16_t *audio_data;
     int16_t left_channel;
     int16_t right_channel;
 

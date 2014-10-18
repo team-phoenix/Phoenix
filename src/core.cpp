@@ -44,8 +44,6 @@ Core::Core()
     video_width = 0;
     pixel_format = RETRO_PIXEL_FORMAT_UNKNOWN;
 
-    audio_data = nullptr;
-    audio_frames = 0;
     left_channel = 0;
     right_channel = 0;
 
@@ -57,11 +55,6 @@ Core::Core()
 
 Core::~Core()
 {
-    delete libretro_core;
-    delete system_av_info;
-    delete system_info;
-    delete symbols;
-    Core::core = nullptr;
 
 } // Core::~Core()
 
@@ -267,11 +260,18 @@ bool Core::loadGame(const char *path)
 
 void Core::unload()
 {
-    symbols->retro_deinit();
     symbols->retro_unload_game();
+    symbols->retro_deinit();
     libretro_core->unload();
     game_data.clear();
     library_name.clear();
+
+    delete libretro_core;
+    delete system_av_info;
+    delete symbols;
+    delete system_info;
+    qCDebug(phxCore) << "Finished unloading core";
+
 }
 
 //  ________________________
@@ -281,8 +281,6 @@ void Core::unload()
 
 void Core::audioSampleCallback(int16_t left, int16_t right)
 {
-    Core::core->left_channel = left;
-    Core::core->right_channel = right;
     if (core->audio_buf) {
         uint32_t sample = ((uint16_t) left << 16) | (uint16_t) right;
         core->audio_buf->write((const char*)&sample, sizeof(int16_t) * 2);
@@ -292,8 +290,6 @@ void Core::audioSampleCallback(int16_t left, int16_t right)
 
 size_t Core::audioSampleBatchCallback(const int16_t *data, size_t frames)
 {
-    core->audio_data = data;
-    core->audio_frames = frames;
     if (core->audio_buf)
         core->audio_buf->write((const char *)data, frames * sizeof(int16_t) * 2);
 
