@@ -116,7 +116,6 @@ PhoenixLibrary::PhoenixLibrary()
         QString full_path = "/usr/lib/libretro/" + core + ".so";
 #endif
         QFile in_file(full_path);
-        qCDebug(phxLibrary) << cleaned_name;
         if (in_file.exists())
             cores_for_console[cleaned_name].append( new CoreModel(this, display_name, core));
 
