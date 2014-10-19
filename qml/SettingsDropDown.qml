@@ -1,6 +1,7 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.1
 import QtQuick.Controls.Styles 1.1
+import QtQuick.Dialogs 1.1
 
 Item {
     id: settingsBubble;
@@ -53,82 +54,13 @@ Item {
             }
             interactive: false;
             highlightFollowsCurrentItem: false;
-            highlight: Item {
+            highlight: Rectangle {
                 id: highlightItem;
                 height: listView.currentItem.height;
                 width: listView.width;
                 anchors.verticalCenter: listView.currentItem.verticalCenter;
                 y: listView.currentItem.y;
-
-                //Component.onCompleted: visible = false;
-
-                Item {
-                    id: innerItem;
-                    height: parent.height;
-                    width: parent.width;
-
-                    Rectangle {
-                        id: topBorder;
-                        z: mainColor.z + 1;
-                        anchors {
-                            top: parent.top;
-                            left: parent.left;
-                            leftMargin: menuBar.border.width;
-                            right: parent.right;
-                        }
-                        height: 1;
-                        color: "#262625";
-                    }
-
-                    Rectangle {
-                        anchors {
-                            right: parent.left;
-                            rightMargin: menuBar.border.width;
-                            top: topBorder.bottom;
-                            bottom: bottomBorder.top;
-                        }
-                        width: 1;
-                        color: "#212121";
-                    }
-
-                    Rectangle {
-                        anchors {
-                            left: parent.left;
-                            leftMargin: menuBar.border.width;
-                            top: topBorder.bottom;
-                            bottom: bottomBorder.top;
-                        }
-                        width: 1;
-                        color: "#212121";
-                    }
-
-                    Rectangle {
-                        id: mainColor;
-                        anchors {
-                            left: parent.left;
-                            leftMargin: menuBar.border.width;
-                            right: parent.right;
-                            top: parent.top;
-                            bottom: parent.bottom;
-                        }
-                        color: listView.currentItem ? "#171717" : "#000000FF";
-                    }
-
-                    Rectangle {
-                        // bottomBorder;
-                        id: bottomBorder;
-                        z: topBorder.z;
-                        anchors {
-                            bottom: parent.bottom;
-                            left: parent.left;
-                            leftMargin: menuBar.border.width;
-                            right: parent.right;
-                        }
-                        height: 1;
-                        color: "#474747";
-                    }
-
-                }
+                color: listView.currentItem ? "#525252" : "#000000FF";
             }
 
             property var stacks: { "Input": settingsWindow.input,
@@ -142,18 +74,46 @@ Item {
             property string currentName: "";
 
             model: ListModel {
-                ListElement {title: "Input"; iconSource: "../assets/Controls-64.png";}
-                ListElement {title: "Library"; iconSource: "";}
-                ListElement {title: "Save"; iconSource: "";}
-                ListElement {title: "Cores"; iconSource: "../assets/Core-32.png";}
-                ListElement {title: "Advanced"; iconSource: "";}
-                ListElement {title: "Video"; iconSource: "";}
-                ListElement {title: "Audio"; iconSource: "";}
+                ListElement {title: "Input"; useStack: true; iconSource: "";}
+                ListElement {title: "Library"; useStack: true; iconSource: "";}
+                ListElement {title: "Save"; useStack: true; iconSource: "";}
+                ListElement {title: "Cores"; useStack: true; iconSource: "";}
+                ListElement {title: "Advanced"; useStack: true; iconSource: "";}
+                ListElement {title: "Video"; useStack: true; iconSource: "";}
+                ListElement {title: "Audio"; useStack: true; iconSource: "";}
+                ListElement {title: "Add Folder"; useStack: false; iconSource: "";}
+            }
 
+            FileDialog {
+                id: folderDialog;
+                selectFolder: true;
+                title: "Add Folder to Library";
+                visible: false;
+                onAccepted: phoenixLibrary.startAsyncScan(fileUrl);
             }
 
             delegate: Item {
                 height: 25;
+                width: parent.width;
+                MouseArea {
+                    anchors.fill: parent;
+                    hoverEnabled: true;
+                    onMouseYChanged: listView.currentIndex = index;
+                    onClicked: {
+                        if (title === listView.currentName) {
+                            listView.currentName = "";
+                        }
+                        else {
+                            if (useStack) {
+                                settingsWindow.stack.push({item: listView.stacks[title], replace: true, immediate: true});
+                                settingsWindow.visible = true;
+                            }
+                            if (title == "Add Folder")
+                                folderDialog.visible = true;
+                        }
+                    }
+                }
+
                 Row  {
                     spacing: 8;
                     anchors {
@@ -175,7 +135,7 @@ Item {
                         renderType: Text.QtRendering;
                         font {
                             family: "Sans";
-                            pixelSize: 12;
+                            pixelSize: 11;
                         }
 
                         color: settingsBubble.textColor;
@@ -183,19 +143,6 @@ Item {
                         horizontalAlignment: Text.AlignLeft;
                         verticalAlignment: Text.AlignVCenter;
 
-                        MouseArea {
-                            anchors.fill: parent;
-                            onClicked: {
-                                if (title === listView.currentName) {
-                                    listView.currentName = "";
-                                }
-                                else {
-                                    listView.currentIndex = index;
-                                    settingsWindow.stack.push({item: listView.stacks[title], replace: true, immediate: true});
-                                    settingsWindow.visible = true;
-                                }
-                            }
-                        }
                     }
                 }
             }

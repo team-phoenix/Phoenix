@@ -2,7 +2,6 @@ import QtQuick 2.3
 import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.1
-import QtQuick.Dialogs 1.1
 import QtGraphicalEffects 1.0
 import Qt.labs.settings 1.0
 
@@ -361,13 +360,13 @@ Rectangle {
             leftMargin: 20;
             verticalCenter: parent.verticalCenter;
         }
-        spacing: 10;
+        spacing: 15;
 
-        Button {
+        PhoenixNormalButton {
             id: settingsBtn;
-            visible: !root.gameShowing;
-            height: 27;
-            width: 27;
+            visible: true;
+            height: 30;
+            width: 30;
             anchors.verticalCenter: parent.verticalCenter;
             property string backgroundColor: "#000000FF";
             onHoveredChanged: {
@@ -377,105 +376,101 @@ Rectangle {
                 else
                     opacity = 1.0;
             }
-            style: ButtonStyle {
-                background: Rectangle {
-                    color: settingsBtn.backgroundColor;
-                }
-
-                label: Image{
-                    source: "../assets/cog-6x.png";
-                    sourceSize.height: settingsBtn.height;
-                    sourceSize.width: settingsBtn.width;
-                }
-
+            Image {
+                anchors.centerIn: parent;
+                source: !root.gameShowing ? "../assets/cog-6x.png" : "../assets/GameView/home.png";
+                sourceSize.height: settingsBtn.height * 0.6;
+                sourceSize.width: settingsBtn.width * 0.6;
             }
 
             onClicked:  {
-                if (settingsDropDown.visible)
-                    settingsDropDown.visible = false;
+                if (root.itemInView === "game") {
+                    windowStack.currentItem.run = false;
+                    volumeDropDown.visible = false;
+                    windowStack.push({item: homeScreen, replace: true})
+                    headerBar.userText = "Phoenix";
+                }
                 else {
-                    settingsDropDown.visible = true;
-                }
-            }
-        }
-
-        FileDialog {
-            id: folderDialog;
-            selectFolder: true;
-            title: "Add Folder to Library";
-            visible: false;
-            onAccepted: {
-                phoenixLibrary.startAsyncScan(fileUrl);
-            }
-        }
-
-        Button {
-            id: viewBtn;
-            height: 27;
-            width: 27;
-            visible: !root.clear;
-            anchors.verticalCenter: parent.verticalCenter;
-
-            property string backgroundColor: "#000000FF";
-            property string imageSource: headerBar.viewIcon;
-            onHoveredChanged: {
-                if (hovered) {
-                    opacity = 0.7;
-                }
-                else
-                    opacity = 1.0;
-            }
-            style: ButtonStyle {
-                background: Rectangle {
-                    color: viewBtn.backgroundColor;
-                }
-
-                label: Image{
-                    source: viewBtn.imageSource;
-                    //opacity: 0.85;
-                    sourceSize.height: viewBtn.height;
-                    sourceSize.width: viewBtn.width;
-                }
-
-            }
-            onPressedChanged: {
-                if (pressed) {
-                    console.log(root.itemInView)
-                    if (root.itemInView === "game") {
-                        windowStack.currentItem.run = false;
-                        volumeDropDown.visible = false;
-                        windowStack.push({item: homeScreen, replace: true})
-                        headerBar.userText = "Phoenix";
-                    }
-                    else if (root.itemInView === "grid") {
-                        headerBar.viewIcon = "../assets/grid-three-up-8x.png";
-                        windowStack.currentItem.stackId.push({item: gameTable, replace: true, immediate: true});
-                    }
+                    if (settingsDropDown.visible)
+                        settingsDropDown.visible = false;
                     else {
-                        headerBar.viewIcon = "../assets/list-8x.png";
-                        windowStack.currentItem.stackId.push({item: gameGrid, replace: true, immediate: true});
+                        settingsDropDown.visible = true;
                     }
-
-
                 }
-
-                else
-                    backgroundColor = "#000000FF";
             }
         }
 
-        Button {
+        Row {
+            visible: !root.gameShowing;
+            anchors.verticalCenter: parent.verticalCenter;
+            spacing: -1;
+
+            ExclusiveGroup {
+                id: viewGroup;
+            }
+
+            PhoenixNormalButton {
+                id: tableButton;
+                anchors.verticalCenter: parent.verticalCenter;
+                height: 30;
+                width: 30;
+                checkable: true;
+                exclusiveGroup: viewGroup;
+
+                Image {
+                    anchors.centerIn: parent;
+                    source: "../assets/list-8x.png";
+                    sourceSize.height: settingsBtn.height * 0.6;
+                    sourceSize.width: settingsBtn.width * 0.6;
+                    opacity: parent.checked ? 0.5 : 1.0;
+                }
+                onPressedChanged: {
+                    if (pressed)
+                        windowStack.currentItem.stackId.push({item: gameTable, replace: true, immediate: true})
+                }
+            }
+
+            PhoenixNormalButton {
+                id: viewBtn;
+                height: 30;
+                width: 30;
+                anchors.verticalCenter: parent.verticalCenter;
+                checkable: true;
+                checked: true;
+                exclusiveGroup: viewGroup;
+
+                property string backgroundColor: "#000000FF";
+
+                Image {
+                    anchors.centerIn: parent;
+                    source: "../assets/grid-three-up-8x.png";
+                    sourceSize.height: settingsBtn.height * 0.6;
+                    sourceSize.width: settingsBtn.width * 0.6;
+                    opacity: parent.checked ? 0.5 : 1.0;
+                }
+
+                onPressedChanged: {
+                    if (pressed)
+                        windowStack.currentItem.stackId.push({item: gameGrid, replace: true, immediate: true});
+                }
+            }
+        }
+
+        PhoenixNormalButton {
             id: playBtn;
             visible: root.gameShowing;
             anchors.verticalCenter: parent.verticalCenter;
+            height: 30;
+            width: 30;
 
-            style: ButtonStyle {
-                background: Image {
-                    source: headerBar.playIcon;
-                    sourceSize.width: 20;
-                    sourceSize.height: 20;
-                }
+            Image {
+                anchors.centerIn: parent;
+                source: headerBar.playIcon;
+                sourceSize.height: settingsBtn.height * 0.6;
+                sourceSize.width: settingsBtn.width * 0.6;
+                opacity: parent.checked ? 0.5 : 1.0;
             }
+
             onClicked:  {
                 if (windowStack.currentItem.run)
                     windowStack.currentItem.run = false;
@@ -484,64 +479,31 @@ Rectangle {
             }
         }
 
-        Button {
-            id: folderBtn;
-            property string backgroundColor: "#000000FF";
-            visible: !root.gameShowing;
-            height: 31;
-            width: 31;
-            opacity: hovered ? 0.7 : 1.0;
-
-            style: ButtonStyle {
-                background: Rectangle {
-                    color: folderBtn.backgroundColor;
-                }
-
-                label: Image{
-                    source: headerBar.folderIcon;
-                    sourceSize {
-                        width: 22;
-                        height: 22;
-                    }
-                }
-
-            }
-            onClicked: {
-                folderDialog.visible = true;
-            }
-        }
-
-        Button {
+        PhoenixNormalButton {
             id: volumeBtn;
             visible: root.gameShowing;
             anchors.verticalCenter: parent.verticalCenter;
-            height: 20;
-            width: 20;
+            height: 30;
+            width: 30;
             checkable: true;
             checked: false;
 
             property string backgroundImage: "../assets/volume-high-8x.png";
-            onHoveredChanged: {
-                if (hovered) {
-                    opacity = 0.7;
-                }
-                else
-                    opacity = 1.0;
+
+            Image {
+                anchors.centerIn: parent;
+                source: parent.backgroundImage;
+                sourceSize.height: settingsBtn.height * 0.6;
+                sourceSize.width: settingsBtn.width * 0.6;
+                opacity: parent.checked ? 0.5 : 1.0;
             }
+
             onCheckedChanged: {
                 if (checked) {
                     volumeDropDown.visible = true;
                 }
                 else {
                     volumeDropDown.visible = false;
-                }
-            }
-
-            style: ButtonStyle {
-                background: Image {
-                    source: volumeBtn.backgroundImage;
-                    sourceSize.width: volumeBtn.width;
-                    sourceSize.height: volumeBtn.height;
                 }
             }
         }
@@ -682,17 +644,15 @@ Rectangle {
         id: userArea;
         anchors.centerIn: parent;
         spacing: 10;
-        Image {
+        /*Image {
             id: userImage;
-            height: 22;
-            width: 22;
-            source: "../assets/Account-32.png"
-            sourceSize {
-                height: userImage.height;
-                width: userImage.width;
-            }
+            height: 20;
+            width: 65;
+            source: "../assets/phoenix-logo.png";
+            fillMode: Image.PreserveAspectFit;
 
-        }
+
+        }*/
 
         Text {
             id: userAreaText;
@@ -716,24 +676,38 @@ Rectangle {
             verticalCenter: parent.verticalCenter;
         }
 
-        Button {
+        PhoenixNormalButton {
             id: saveBtn;
             visible: root.gameShowing;
             anchors.verticalCenter: parent.verticalCenter;
-            text: "Save";
-            height: 15;
-            width: 15;
+            height: 30;
+            width: 30;
             onClicked: windowStack.currentItem.saveGameState = true;
+
+            Image {
+                anchors.centerIn: parent;
+                source: "../assets/GameView/save-state.png";
+                sourceSize.height: settingsBtn.height * 0.6;
+                sourceSize.width: settingsBtn.width * 0.6;
+                opacity: parent.pressed ? 0.5 : 1.0;
+            }
         }
 
-        Button {
+        PhoenixNormalButton {
             id: loadBtn;
             visible: root.gameShowing;
             anchors.verticalCenter: parent.verticalCenter;
-            text: "Load";
-            height: 20;
-            width: 20;
+            height: 30;
+            width: 30;
             onClicked: windowStack.currentItem.loadSaveState = true;
+
+            Image {
+                anchors.centerIn: parent;
+                source: "../assets/GameView/load-state.png";
+                sourceSize.height: settingsBtn.height * 0.6;
+                sourceSize.width: settingsBtn.width * 0.6;
+                opacity: parent.pressed ? 0.5 : 1.0;
+            }
         }
 
         Button {

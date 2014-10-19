@@ -543,7 +543,7 @@ PhoenixWindow {
             left: parent.left;
             leftMargin: 10;
         }
-        height: 200;
+        height: 275;
         width: 125;
 
         stackBackgroundColor: "#f4f4f4";
@@ -560,7 +560,7 @@ PhoenixWindow {
             z: settingsDropDown.z + 1;
             anchors {
                 left: parent.left;
-                leftMargin: 16;
+                leftMargin: 17;
                 verticalCenter: settingsDropDown.top;
             }
 
@@ -588,9 +588,9 @@ PhoenixWindow {
             Behavior on opacity {
                 NumberAnimation {
                     easing {
-                        type: Easing.OutQuad;
+                        type: Easing.Linear;
                     }
-                    duration: 200;
+                    duration: 1000;
                 }
             }
 

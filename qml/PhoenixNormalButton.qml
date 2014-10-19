@@ -8,13 +8,13 @@ Button {
     property string textColor: "#f1f1f1";
     property string alternateTextColor: "#acacac";
     property Gradient buttonGradient: Gradient {
-        GradientStop {position: 0.0; color: checked ? "#171717" : "#2f2f2f";}
-        GradientStop {position: 0.8; color: "#252324";}
-        GradientStop {position: 1.0; color: "#1b1b1b";}
+        GradientStop {position: 0.0; color: checked ? "#171717" : "#424142";}
+        GradientStop {position: 0.5; color: "#3e3e3f";}
+        GradientStop {position: 1.0; color: "#2f2e2f";}
     }
 
     property Gradient innerBorderGradient: Gradient {
-        GradientStop {position: 0.0; color: "#454547";}
+        GradientStop {position: 0.0; color: "#4f4f52";}
         GradientStop {position: 1.0; color: "#262626";}
     }
 
@@ -37,11 +37,13 @@ Button {
 
             CustomBorder {
                 visible: !control.checked;
+                radius: parent.radius;
                 color: control.checked ? control.outerBorderColor : control.alternateOuterBorderColor;
             }
 
             Rectangle {
                 id: innerRectangle;
+                radius: parent.radius;
                 anchors {
                     fill: parent;
                     margins: 1;

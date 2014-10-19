@@ -10,6 +10,8 @@
     <file>GameView/star.png</file>
     <file>GameView/game-controller-b.png</file>
     <file>GameView/home.png</file>
+    <file>GameView/save-state.png</file>
+    <file>GameView/load-state.png</file>
     <!-- -->
     <file>consoleicons/dinothawr.png</file>
     <file>consoleicons/dosbox.png</file>
@@ -77,6 +79,7 @@
     <file>arrow-down-b.png</file>
     <file>x.png</file>
     <file>dot.png</file>
+    <file>phoenix-logo.png</file>
     <!-- -->
     <file>gamecontrollerdb.txt</file>
 </qresource>
