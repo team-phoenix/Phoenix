@@ -136,7 +136,7 @@ Rectangle {
             right: parent.right;
             top: parent.top;
             rightMargin: 5;
-            topMargin: 5;
+            topMargin: 60;
         }
     }
 }

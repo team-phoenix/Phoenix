@@ -13,6 +13,7 @@ VideoItem::VideoItem()
     m_stretch_video = false;
     m_filtering = 2;
     m_aspect_ratio = 0.0;
+    m_fps = 0;
 
     audio = new Audio();
     Q_CHECK_PTR(audio);
@@ -23,6 +24,7 @@ VideoItem::VideoItem()
     connect(&fps_timer, SIGNAL(timeout()), this, SLOT(updateFps()));
     frame_timer.invalidate();
     fps_deviation = 0;
+    fps_count = 0;
 
     connect(this, SIGNAL(runChanged(bool)), audio, SLOT(runChanged(bool)));
     connect(this, SIGNAL(volumeChanged(qreal)), audio, SLOT(setVolume(qreal)));
