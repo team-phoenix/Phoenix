@@ -267,9 +267,10 @@ Rectangle {
                         height: image.paintedHeight;
                         width: image.paintedWidth;
                         anchors.centerIn: parent;
-                        glowRadius: 10//mouseArea.containsMouse ? 5 : 10;
-                        spread: mouseArea.containsMouse ? 0.3 : 0.2;
+                        glowRadius: mouseArea.containsMouse ? 5 : 2;
+                        spread: mouseArea.containsMouse ? 0.5 : 0.1;
                         color:  gridItem.glowColor;
+                        cornerRadius: 3;
                     }
                     Image {
                         id: image;

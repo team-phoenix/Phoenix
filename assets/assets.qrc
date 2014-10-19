@@ -4,14 +4,14 @@
     <file>GameView/play.png</file>
     <file>GameView/pause.png</file>
     <file>GameView/navicon-round.png</file>
-    <file>GameView/arrow-expand.png</file>
-    <file>GameView/arrow-shrink.png</file>
     <file>GameView/power.png</file>
-    <file>GameView/star.png</file>
     <file>GameView/game-controller-b.png</file>
     <file>GameView/home.png</file>
     <file>GameView/save-state.png</file>
     <file>GameView/load-state.png</file>
+    <file>GameView/favorite-empty.png</file>
+    <file>GameView/favorite-full.png</file>
+    <file>GameView/fullscreen.png</file>
     <!-- -->
     <file>consoleicons/dinothawr.png</file>
     <file>consoleicons/dosbox.png</file>

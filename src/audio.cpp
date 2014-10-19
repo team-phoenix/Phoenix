@@ -65,6 +65,7 @@ void Audio::threadStarted()
 //    qDebug() << QThread::currentThread() << &thread;
     if(!afmt.isValid()) {
         // we don't have a valid audio format yet...
+        qCDebug(phxAudio) << "afmt is not valid";
         return;
     }
     aout = new QAudioOutput(afmt);
@@ -80,7 +81,14 @@ void Audio::threadStarted()
 void Audio::handlePeriodTimer()
 {
     Q_ASSERT(QThread::currentThread() == &thread);
-    Q_ASSERT(aio);
+    if (!aio) {
+        static bool error_msg = true;
+        if (error_msg) {
+            qCDebug(phxAudio) << "Audio device was not found, stopping all audio writes.";
+            error_msg= false;
+        }
+        return;
+    }
     int toWrite = aout->bytesFree();
     if(!toWrite)
         return;

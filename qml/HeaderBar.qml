@@ -471,11 +471,13 @@ Rectangle {
                 opacity: parent.checked ? 0.5 : 1.0;
             }
 
-            onClicked:  {
-                if (windowStack.currentItem.run)
-                    windowStack.currentItem.run = false;
-                else
-                    windowStack.currentItem.run = true;
+            onPressedChanged:  {
+                if (pressed) {
+                    if (windowStack.currentItem.run)
+                        windowStack.currentItem.run = false;
+                    else
+                        windowStack.currentItem.run = true;
+                }
             }
         }
 
@@ -710,36 +712,37 @@ Rectangle {
             }
         }
 
-        Button {
+        PhoenixNormalButton {
             id: favoriteBtn;
             visible: root.gameShowing;
-            height: 28;
-            width: 28;
+            height: 30;
+            width: 30;
             anchors.verticalCenter: parent.verticalCenter;
-            style: ButtonStyle {
-                background: Image {
-                    source: "/assets/GameView/star.png";
-                    sourceSize.width: favoriteBtn.height;
-                    sourceSize.height: favoriteBtn.width;
-                }
+            Image {
+                anchors.centerIn: parent;
+                source: "/assets/GameView/favorite-empty.png";
+                sourceSize.height: settingsBtn.height * 0.6;
+                sourceSize.width: settingsBtn.width * 0.6;
+                opacity: parent.pressed ? 0.5 : 1.0;
             }
         }
 
-        Button {
+        PhoenixNormalButton {
             id: resizeBtn;
             visible: root.gameShowing;
-            height: 26;
-            width: 26;
+            height: 30;
+            width: 30;
             anchors.verticalCenter: parent.verticalCenter;
             onClicked: {
                 root.swapScreenSize();
             }
-            style: ButtonStyle {
-                background: Image {
-                    source: "/assets/GameView/arrow-expand.png";
-                    sourceSize.width: resizeBtn.width;
-                    sourceSize.height: resizeBtn.height;
-                }
+
+            Image {
+                anchors.centerIn: parent;
+                source: "/assets/GameView/fullscreen.png";
+                sourceSize.height: settingsBtn.height * 0.6;
+                sourceSize.width: settingsBtn.width * 0.6;
+                opacity: parent.pressed ? 0.5 : 1.0;
             }
         }
     }

@@ -23,5 +23,6 @@
     <file>PhoenixNormalButton.qml</file>
     <file>PhoenixWarningButton.qml</file>
     <file>InfoBar.qml</file>
+    <file>PhoenixButtonRow.qml</file>
 </qresource>
 </RCC>
