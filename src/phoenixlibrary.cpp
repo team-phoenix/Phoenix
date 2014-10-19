@@ -148,10 +148,11 @@ void PhoenixLibrary::handleOnlineDatabaseResponse(GameData* data)
     q.addBindValue(data->libraryName);
     q.addBindValue(data->librarySystem);
 
-    q.exec();
-    database.commit();
-
-    QMetaObject::invokeMethod(m_model, "select");
+    if (q.exec()) {
+        database.commit();
+        QMetaObject::invokeMethod(m_model, "select");
+    }
+    qDebug() << "Game done with adding data";
     delete data;
 }
 
