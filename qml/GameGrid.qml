@@ -278,6 +278,7 @@ Rectangle {
                         anchors.margins: 10;
                         source: gridItem.imageSource;
                         fillMode: Image.PreserveAspectFit;
+                        asynchronous: true;
 
                         CachedImage {
                             id: cachedImage;

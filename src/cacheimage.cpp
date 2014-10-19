@@ -1,5 +1,6 @@
 
 #include "cacheimage.h"
+#include <QtConcurrent>
 
 
 CachedImage::CachedImage(QObject *parent)
@@ -7,6 +8,21 @@ CachedImage::CachedImage(QObject *parent)
 {
     // signal/slot when manager object emits finished signal execute downloadFinished method
     connect(&manager, SIGNAL(finished(QNetworkReply*)), SLOT(downloadFinished(QNetworkReply*)));
+
+    /*
+     * CachedImage {
+                            id: cachedImage;
+                            imgsrc: image.source;
+                            folder: "Artwork";
+                            fileName: gridItem.titleName ? gridItem.titleName : "";
+                            onLocalsrcChanged: {
+                                image.source = localsrc;
+                            }
+                        }
+
+                        Component.onCompleted: cachedImage.start();
+
+     */
 }
 
 void CachedImage::returnCached(QUrl imgUrl)
@@ -163,5 +179,5 @@ QString CachedImage::localsrc()
 
 void CachedImage::start()
 {
-    cacheImage();
+    QFuture<void> fut = QtConcurrent::run(this, &CachedImage::cacheImage);
 }
