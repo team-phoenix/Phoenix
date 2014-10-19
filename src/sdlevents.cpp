@@ -37,6 +37,10 @@ SDLEvents::~SDLEvents()
     thread.quit();
     thread.wait();
     delete[] event_list;
+    for (int i=0; i<event_callbacks.length(); ++i) {
+        delete event_callbacks.at(i);
+    }
+    event_callbacks.clear();
 }
 
 void SDLEvents::threadStarted()
