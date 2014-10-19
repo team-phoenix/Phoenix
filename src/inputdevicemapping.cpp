@@ -86,8 +86,7 @@ void InputDeviceMapping::remapMapping(QString previousEvent, QVariant event, QSt
     if (prevEv != nullptr)
         mapping.erase(prevEv);
 
-    InputDeviceEvent *e = event.value<InputDeviceEvent *>();
-    auto ev = eventFromString(QString(*e));
-    if (ev != nullptr)
+    InputDeviceEvent *ev = event.value<InputDeviceEvent *>();
+    if (ev)
         setMapping(ev, retroId.toUInt());
 }
