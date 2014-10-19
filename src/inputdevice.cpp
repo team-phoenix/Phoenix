@@ -10,7 +10,7 @@ InputDevice::InputDevice(InputDeviceMapping *mapping)
 
 InputDevice::~InputDevice()
 {
-
+    delete m_mapping;
 }
 
 void InputDevice::setDeviceName(const char *new_name)

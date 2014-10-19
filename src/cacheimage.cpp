@@ -27,6 +27,8 @@ CachedImage::CachedImage(QObject *parent)
 
 void CachedImage::returnCached(QUrl imgUrl)
 {
+    // Valgrind says we're leaking memory here
+
     QQmlApplicationEngine eng;
     //Store the qml app offline storage location
     //In android it's application path/files/QML/OfflineStorage/
@@ -85,7 +87,8 @@ void CachedImage::downloadFinished(QNetworkReply *reply)
         qDebug() << "Something went worng on download";
         m_localUrl = "";
         emit localsrcChanged();
-    } else {
+    }
+    else {
         //Create a filename off the url
         filename = saveFileName();
         if (filename[0] == "true") {
@@ -99,6 +102,7 @@ void CachedImage::downloadFinished(QNetworkReply *reply)
             emit localsrcChanged();
         }
     }
+    reply->deleteLater();
 }
 
 bool CachedImage::saveToDisk(const QString &filename, QIODevice *data)

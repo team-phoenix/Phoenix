@@ -76,14 +76,14 @@ bool Core::saveGameState(QString path, QString name)
         QFile *file = new QFile(path + "/" + name + "_STATE.sav");
         qCDebug(phxCore) << file->fileName();
 
-        file->open(QIODevice::WriteOnly);
-        if (file->isOpen()) {
+        if (file->open(QIODevice::WriteOnly)) {
             file->write(QByteArray(static_cast<char *>(data), static_cast<int>(size)));
             qCDebug(phxCore) << "Save State wrote to "<< file->fileName();
             file->close();
-            delete file;
             loaded = true;
         }
+        delete file;
+
     }
     delete[] data;
     return loaded;
