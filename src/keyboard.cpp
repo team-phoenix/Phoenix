@@ -53,7 +53,6 @@ inline void Keyboard::processKeyEvent(QKeyEvent *event)
     bool is_pressed = (event->type() == QEvent::KeyPress) ? true : false;
     auto ev = KeyboardKeyEvent::fromKeyEvent(event);
     emit inputEventReceived(&ev, is_pressed);
-    emit inputEventReceivedQML(QString(ev), is_pressed);
 
     auto retro_id = m_mapping->getMapping(&ev);
     if (retro_id != (unsigned)~0)

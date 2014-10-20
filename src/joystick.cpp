@@ -153,7 +153,6 @@ bool Joystick::controllerButtonChanged(const SDL_Event *event) {
     bool is_pressed = (cbutton->type == SDL_CONTROLLERBUTTONDOWN) ? true : false;
 
     emit inputEventReceived(&ev, is_pressed);
-    emit inputEventReceivedQML(QString(ev), is_pressed);
 
     auto retro_id = m_mapping->getMapping(&ev);
     if (retro_id != (unsigned)~0)
@@ -169,7 +168,6 @@ bool Joystick::controllerAxisChanged(const SDL_Event *event) {
     const SDL_ControllerAxisEvent *caxis = &event->caxis;
     auto ev = ControllerAxisEvent::fromSDLEvent(*caxis);
     emit inputEventReceived(&ev, caxis->value);
-    emit inputEventReceivedQML(QString(ev), caxis->value);
 
     // make analog stick emulate dpad
     if (m_mapping->deviceType() == RETRO_DEVICE_JOYPAD) {
