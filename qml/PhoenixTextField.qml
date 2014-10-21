@@ -23,53 +23,12 @@ TextField {
             height: 25;
             width: 175;
 
-            Rectangle {
-                // topBorder;
-                anchors {
-                    top: parent.top;
-                    left: parent.left;
-                    right: parent.right;
+            CustomBorder {
+                gradient: Gradient {
+                    GradientStop {position: 0.05; color: "#1f1f1f";}
+                    GradientStop {position: 0.9; color: "#141414";}
+                    GradientStop {position: 0.95; color: "#3b3b3b";}
                 }
-                radius: 3;
-                height: 1;
-                color: "#1f1f1f";
-            }
-
-            Rectangle {
-                // leftBorder;
-                anchors {
-                    top: parent.top;
-                    bottom: parent.bottom;
-                    left: parent.left;
-                }
-                radius: 3;
-                width: 1;
-                color: "#141414";
-            }
-
-            Rectangle {
-                // rightBorder;
-                anchors {
-                    top: parent.top;
-                    bottom: parent.bottom;
-                    right: parent.right;
-                }
-                radius: 3;
-                width: 1;
-                color: "#141414";
-            }
-
-            Rectangle {
-                // bottomBorder;
-                radius: 3;
-
-                anchors {
-                    bottom: parent.bottom;
-                    left: parent.left;
-                    right: parent.right;
-                }
-                height: 1;
-                color: "#3b3b3b";
             }
         }
     }
