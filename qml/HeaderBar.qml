@@ -64,7 +64,7 @@ Rectangle {
                 rightMargin: 2;
             }
             height: 1;
-            color: "#4d4d4d";
+            color: "#4f4f4f";
         }
     }
 
@@ -74,12 +74,15 @@ Rectangle {
             left: parent.left;
             top: parent.top;
             bottom: parent.bottom;
+            topMargin: 2;
         }
 
         Rectangle {
             anchors {
                 top: parent.top;
                 bottom: parent.bottom;
+                bottomMargin: -1;
+                topMargin: -2;
             }
             width: 1
             color: root.borderColor;
@@ -116,6 +119,8 @@ Rectangle {
             anchors {
                 top: parent.top;
                 bottom: parent.bottom;
+                topMargin: -1;
+                bottomMargin: -1;
             }
             width: 1;
             color: root.borderColor;
@@ -135,6 +140,8 @@ Rectangle {
             anchors {
                 left: parent.left;
                 right: parent.right;
+                leftMargin: 1;
+                rightMargin: 1;
             }
             height: 1;
             color: "#292929";
@@ -562,81 +569,45 @@ Rectangle {
                         radius: 10;
                         anchors.fill: parent;
                         smooth: true;
-                    }
 
-                    Rectangle {
-                        color: "#f1f1f1";
-                        height: 6;
-                        anchors {
-                            right: zoomHandle.right;
-                            rightMargin: 5;
-                            verticalCenter: parent.verticalCenter;
+                       CustomBorder {
+                           color: "black"
                         }
-                        width: 10 * headerBar.sliderValue;
-
-                        // 14 seems to be the magic number.
-                        // It's a quick and dirty way to make
-                        // the effect work.
                     }
                 }
 
                 groove: Rectangle {
-                    height: 6;
+                    height: 5;
                     width: zoomSlider.width;
-                    radius: 6;
+                    radius: 3;
                     opacity: 0.8;
                     color: "#1a1a1a";
-
-
-
-                    Rectangle {
-                        // topBorder;
-                        anchors {
-                            top: parent.top;
-                            left: parent.left;
-                            right: parent.right;
-                        }
-                        radius: 3;
-                        height: 1;
-                        color: "#1f1f1f";
-                    }
-
-                    Rectangle {
-                        // leftBorder;
-                        anchors {
-                            top: parent.top;
-                            bottom: parent.bottom;
-                            left: parent.left;
-                        }
-                        radius: 3;
+                    border {
                         width: 1;
-                        color: "#141414";
+                        color: "black";
                     }
 
                     Rectangle {
-                        // rightBorder;
+                        color: "#f1f1f1";
+                        radius: parent.radius;
                         anchors {
                             top: parent.top;
                             bottom: parent.bottom;
-                            right: parent.right;
-                        }
-                        radius: 3;
-                        width: 1;
-                        color: "#141414";
-                    }
-
-                    Rectangle {
-                        // bottomBorder;
-                        radius: 3;
-
-                        anchors {
-                            bottom: parent.bottom;
                             left: parent.left;
-                            right: parent.right;
+                            topMargin: 1;
+                            bottomMargin: 1;
+                            leftMargin: 1;
                         }
-                        height: 1;
-                        color: "#3b3b3b";
+                        width: (zoomSlider.value >= 3.0) ? 10  * (zoomSlider.value * 2.0) : 6  * (zoomSlider.value * 2.0);
                     }
+
+                    CustomBorder {
+                        gradient: Gradient {
+                            GradientStop {position: 0.0; color: "#1a1a1a";}
+                            GradientStop {position: 0.95; color: "#4a4a4a";}
+                        }
+                    }
+
                 }
             }
         }
