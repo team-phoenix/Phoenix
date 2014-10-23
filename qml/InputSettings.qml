@@ -50,7 +50,7 @@ Item {
             height: 500;
             spacing: 15;
 
-            Image {
+           /* Image {
                 visible: stackView.width > width;
 
                 fillMode: Image.PreserveAspectFit;
@@ -64,7 +64,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter;
                 anchors.verticalCenterOffset: -110;
 
-            }
+            }*/
 
 
 
@@ -72,6 +72,7 @@ Item {
                 id: inputMapper;
                 property var mapping: gridView.headerItem.curMapping;
                 property var device: gridView.headerItem.curDevice;
+                property int deviceIndex: 0;
                 visible: stackView.width > width;
                 property bool waitingUpdate: false;
                 height: 400;
@@ -110,6 +111,7 @@ Item {
                                     return mod;
                                 }
                                 onCurrentIndexChanged: {
+                                    inputMapper.deviceIndex = currentIndex;
                                     curMapping = inputmanager.mappingForPort(currentIndex);
                                     curDevice = inputmanager.getDevice(currentIndex);
                                 }
@@ -183,7 +185,7 @@ Item {
                                 function keyReceived(ev, value) {
                                     var prevBinding = inputMapper.mapping.getMappingByRetroId(retroId);
                                     console.log("RECEIVED event: " + ev + " and value: " + value);
-                                    inputMapper.mapping.remapMapping(prevBinding, ev, retroId);
+                                    inputMapper.mapping.remapMapping(prevBinding, ev, retroId, inputMapper.deviceIndex);
                                     inputMapper.waitingUpdate = false;
                                     buttonsModel.get(index).updating = false;
                                     console.log("New binding: " + inputMapper.mapping.getMappingByRetroId(retroId));

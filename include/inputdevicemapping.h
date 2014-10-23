@@ -47,12 +47,7 @@ public:
         return defaultV;
     }
 
-    void setMapping(InputDeviceEvent *ev, retro_device_id id)
-    {
-        qDebug() << "Previous mapping for " << QString(*ev) << " was: " << mapping[ev];
-        mapping[ev] = id;
-        qDebug() << "New mapping for " << QString(*ev) << " is: " << id;
-    }
+    void setMapping(InputDeviceEvent *ev, retro_device_id id, unsigned port);
 
     void setMapping(const InputDeviceEvent *ev, retro_device_id id)
     {
@@ -65,7 +60,7 @@ public slots:
     virtual QVariant setMappingOnInput(retro_device_id id, QJSValue cb) = 0;
     virtual void cancelMappingOnInput(QVariant cancelInfo) = 0;
     virtual QString getMappingByRetroId(QString retroId);
-    virtual void remapMapping(QString previousEvent, QVariant event, QString retroId);
+    virtual void remapMapping(QString previousEvent, QVariant event, QString retroId, unsigned port);
 
 
 protected:

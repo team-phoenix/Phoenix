@@ -26,13 +26,32 @@ static const device_settings_mapping joypad_settings_mapping {
     { "joypad_left", RETRO_DEVICE_ID_JOYPAD_LEFT },
     { "joypad_right", RETRO_DEVICE_ID_JOYPAD_RIGHT },
     { "joypad_a", RETRO_DEVICE_ID_JOYPAD_A },
-    { "joypad_x", RETRO_DEVICE_ID_JOYPAD_B },
+    { "joypad_x", RETRO_DEVICE_ID_JOYPAD_X },
     { "joypad_l", RETRO_DEVICE_ID_JOYPAD_L },
     { "joypad_r", RETRO_DEVICE_ID_JOYPAD_R },
     { "joypad_l2", RETRO_DEVICE_ID_JOYPAD_L2 },
     { "joypad_r2", RETRO_DEVICE_ID_JOYPAD_R2 },
     { "joypad_l3", RETRO_DEVICE_ID_JOYPAD_L3 },
     { "joypad_r3", RETRO_DEVICE_ID_JOYPAD_R3 },
+};
+
+static const QMap<retro_device_id, QString> id_to_qstring {
+    { RETRO_DEVICE_ID_JOYPAD_B, "joypad_b" },
+    { RETRO_DEVICE_ID_JOYPAD_Y, "joypad_y" },
+    { RETRO_DEVICE_ID_JOYPAD_SELECT, "joypad_select" },
+    { RETRO_DEVICE_ID_JOYPAD_START, "joypad_start" },
+    { RETRO_DEVICE_ID_JOYPAD_UP, "joypad_up" },
+    { RETRO_DEVICE_ID_JOYPAD_DOWN, "joypad_down" },
+    { RETRO_DEVICE_ID_JOYPAD_LEFT, "joypad_left" },
+    { RETRO_DEVICE_ID_JOYPAD_RIGHT, "joypad_right" },
+    { RETRO_DEVICE_ID_JOYPAD_A, "joypad_a" },
+    { RETRO_DEVICE_ID_JOYPAD_X, "joypad_x" },
+    { RETRO_DEVICE_ID_JOYPAD_L, "joypad_l" },
+    { RETRO_DEVICE_ID_JOYPAD_R, "joypad_r" },
+    { RETRO_DEVICE_ID_JOYPAD_L2, "joypad_l2" },
+    { RETRO_DEVICE_ID_JOYPAD_R2, "joypad_r2" },
+    { RETRO_DEVICE_ID_JOYPAD_L3, "joypad_l3" },
+    { RETRO_DEVICE_ID_JOYPAD_R3, "joypad_r3" },
 };
 
 static const QMap<QString, const device_settings_mapping *> settings_mappings {
@@ -79,7 +98,7 @@ QString InputDeviceMapping::getMappingByRetroId(QString retroId)
     return "None";
 }
 
-void InputDeviceMapping::remapMapping(QString previousEvent, QVariant event, QString retroId)
+void InputDeviceMapping::remapMapping(QString previousEvent, QVariant event, QString retroId, unsigned port)
 {
     // Remove the previous mapping
     auto prevEv = eventFromString(previousEvent);
@@ -88,5 +107,18 @@ void InputDeviceMapping::remapMapping(QString previousEvent, QVariant event, QSt
 
     InputDeviceEvent *ev = event.value<InputDeviceEvent *>();
     if (ev)
-        setMapping(ev, retroId.toUInt());
+        setMapping(ev, retroId.toUInt(), port);
+
+}
+
+void InputDeviceMapping::setMapping(InputDeviceEvent *ev, retro_device_id id, unsigned port)
+{
+    qDebug() << "Previous mapping for " << QString(*ev) << " was: " << mapping[ev];
+    mapping[ev] = id;
+    qDebug() << "New mapping for " << QString(*ev) << " is: " << mapping[ev];
+
+    QSettings s;
+    s.beginGroup("input");
+    s.beginGroup(QString("port%1").arg(port));
+    s.setValue(id_to_qstring.value(id), QString(*ev));
 }
