@@ -106,14 +106,24 @@ void InputDeviceMapping::remapMapping(QString previousEvent, QVariant event, QSt
         mapping.erase(prevEv);
 
     InputDeviceEvent *ev = event.value<InputDeviceEvent *>();
-    if (ev)
+    if (ev) {
+        for (auto m=mapping.begin(); m != mapping.end(); ++m) {
+            qDebug() << QString(*(m->first));
+            QString prev_event = QString(*(m->first));
+            if (prev_event == QString(*ev)) {
+                qDebug() << "Value is already mapped";
+                return;
+            }
+        }
         setMapping(ev, retroId.toUInt(), port);
+    }
 
 }
 
 void InputDeviceMapping::setMapping(InputDeviceEvent *ev, retro_device_id id, unsigned port)
 {
     qDebug() << "Previous mapping for " << QString(*ev) << " was: " << mapping[ev];
+
     mapping[ev] = id;
     qDebug() << "New mapping for " << QString(*ev) << " is: " << mapping[ev];
 
