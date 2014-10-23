@@ -75,8 +75,16 @@ Item {
                 property int deviceIndex: 0;
                 visible: stackView.width > width;
                 property bool waitingUpdate: false;
+                property bool setupWalkthrough: false;
+                property int walkthroughCount: 0;
+
+                onSetupWalkthroughChanged: {
+                    gridView.currentItem.overrideFocus = true;
+                }
+
                 height: 400;
                 width: 400;
+
                 GridView {
                     id: gridView;
                     //anchors.fill: parent;
@@ -121,6 +129,16 @@ Item {
                                 width: 125;
                                 model: inputmanager.enumerateDevices();
                             }
+
+                            Button {
+                                text: "Configure All";
+                                onClicked: {
+                                    gridView.currentIndex = 0;
+                                    inputMapper.walkthroughCount = 0;
+                                    inputMapper.setupWalkthrough = false;
+                                    inputMapper.setupWalkthrough = true;
+                                }
+                            }
                         }
                     }
 
@@ -145,8 +163,48 @@ Item {
                     }
 
                     delegate: Item {
+                        id: gridItem;
                         height: 30;
                         width: 225;
+                        property bool overrideFocus: false;
+
+                        function startUpdate() {
+                            if (inputMapper.waitingUpdate)
+                                return;
+                            inputMapper.waitingUpdate = true;
+                            buttonsModel.get(index).updating = true;
+                            console.log("Changing mapping for " + controllerButton + " on device: " + inputMapper.device.deviceName());
+                            inputMapper.device.inputEventReceived.connect(keyReceived);
+                        }
+
+                        function keyReceived(ev, value) {
+                            if (value) {
+                                var prevBinding = inputMapper.mapping.getMappingByRetroId(retroId);
+                                console.log("RECEIVED event: " + ev + " and value: " + value);
+                                inputMapper.mapping.remapMapping(prevBinding, ev, retroId, inputMapper.deviceIndex);
+                                inputMapper.waitingUpdate = false;
+                                buttonsModel.get(index).updating = false;
+                                console.log("New binding: " + inputMapper.mapping.getMappingByRetroId(retroId));
+                                inputMapper.device.inputEventReceived.disconnect(keyReceived);
+
+                                if (inputMapper.setupWalkthrough) {
+                                    inputMapper.walkthroughCount += 1;
+                                    gridItem.overrideFocus = false;
+                                    if (inputMapper.walkthroughCount < gridView.count) {
+                                        gridView.currentIndex += 1;
+                                        gridView.currentItem.overrideFocus = true;
+                                    }
+                                }
+                            }
+
+                        }
+
+                        onOverrideFocusChanged: {
+                            if (overrideFocus) {
+                                startUpdate();
+                            }
+                        }
+
                         Text {
                             renderType: Text.QtRendering;
                             text: controllerButton;
@@ -166,7 +224,7 @@ Item {
                             readOnly: true;
                             width: 100;
                             height: 20;
-                            text: updating ? "WAITING" : inputMapper.mapping.getMappingByRetroId(retroId);
+                            text: updating ? "WAITING" : inputMapper.mapping.getMappingByRetroId(retroId) ;
                             anchors.right: parent.right;
                             anchors.rightMargin: 50;
                             horizontalAlignment: Text.AlignHCenter;
@@ -174,22 +232,7 @@ Item {
                                 id: buttonMouseArea;
                                 anchors.fill: parent;
                                 onClicked: {
-                                    if (inputMapper.waitingUpdate)
-                                        return;
-                                    inputMapper.waitingUpdate = true;
-                                    buttonsModel.get(index).updating = true;
-                                    console.log("Changing mapping for " + controllerButton + " on device: " + inputMapper.device.deviceName());
-                                    inputMapper.device.inputEventReceived.connect(keyReceived);
-                                }
-
-                                function keyReceived(ev, value) {
-                                    var prevBinding = inputMapper.mapping.getMappingByRetroId(retroId);
-                                    console.log("RECEIVED event: " + ev + " and value: " + value);
-                                    inputMapper.mapping.remapMapping(prevBinding, ev, retroId, inputMapper.deviceIndex);
-                                    inputMapper.waitingUpdate = false;
-                                    buttonsModel.get(index).updating = false;
-                                    console.log("New binding: " + inputMapper.mapping.getMappingByRetroId(retroId));
-                                    inputMapper.device.inputEventReceived.disconnect(keyReceived);
+                                    gridItem.startUpdate();
                                 }
 
                                 Connections {
@@ -197,8 +240,9 @@ Item {
 
                                     onVisibleChanged: {
                                         if (!settingsWindow.visible) {
+                                            if (inputMapper.waitingUpdate)
+                                                inputMapper.device.inputEventReceived.disconnect(buttonMouseArea.keyReceived);
                                             inputMapper.waitingUpdate = false;
-                                            inputMapper.device.inputEventReceived.disconnect(buttonMouseArea.keyReceived);
                                         }
                                     }
                                 }
