@@ -4,6 +4,7 @@
 
 #include <QList>
 #include <QObject>
+#include <QWindow>
 
 #include "inputdevice.h"
 #include "inputdevicemapping.h"
@@ -32,9 +33,13 @@ public slots:
     InputDeviceMapping *mappingForPort(unsigned port);
 
     InputDevice *getDevice(unsigned port) const;
+    void attachDevices();
+    void removeDevices();
 
 private:
     QList<InputDevice *> devices;
+    QWindow *top_window;
+    QWindow *settings_window;
 };
 
 #endif

@@ -178,7 +178,7 @@ Item {
                         }
 
                         function keyReceived(ev, value) {
-                            if (value) {
+                            //if (value) {
                                 var prevBinding = inputMapper.mapping.getMappingByRetroId(retroId);
                                 console.log("RECEIVED event: " + ev + " and value: " + value);
                                 inputMapper.mapping.remapMapping(prevBinding, ev, retroId, inputMapper.deviceIndex);
@@ -195,7 +195,7 @@ Item {
                                         gridView.currentItem.overrideFocus = true;
                                     }
                                 }
-                            }
+                            //}
 
                         }
 
@@ -240,8 +240,7 @@ Item {
 
                                     onVisibleChanged: {
                                         if (!settingsWindow.visible) {
-                                            if (inputMapper.waitingUpdate)
-                                                inputMapper.device.inputEventReceived.disconnect(buttonMouseArea.keyReceived);
+                                            inputMapper.device.inputEventReceived.disconnect(buttonMouseArea.keyReceived);
                                             inputMapper.waitingUpdate = false;
                                         }
                                     }

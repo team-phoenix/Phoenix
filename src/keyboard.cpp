@@ -10,19 +10,12 @@
 Keyboard::Keyboard(InputDeviceMapping *mapping) : InputDevice(mapping)
 {
     setDeviceName("Keyboard (Qt KeyEvent)");
-    topLevelWindow = QGuiApplication::topLevelWindows()[0];
-    topLevelWindow->installEventFilter(this);
-    settingsWindow = QGuiApplication::allWindows()[0];
-    settingsWindow->installEventFilter(this);
+
 }
 
 Keyboard::~Keyboard()
 {
-    // Removing settingsWindow and topLevelWindow from the event list caused a segfault.
-    // We may want to keep an eye on this.
 
-    //topLevelWindow->removeEventFilter(this);
-    //settingsWindow->removeEventFilter(this);
 }
 
 QVariantList Keyboard::enumerateDevices()

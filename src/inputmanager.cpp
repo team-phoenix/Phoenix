@@ -1,6 +1,7 @@
 
 #include <QSettings>
 #include <QQmlEngine>
+#include <QGuiApplication>
 
 #include "inputmanager.h"
 #include "joystick.h"
@@ -11,6 +12,8 @@
 
 InputManager::InputManager()
 {
+    top_window = nullptr;
+    settings_window = nullptr;
 }
 
 InputManager::~InputManager()
@@ -103,4 +106,31 @@ InputDeviceMapping *InputManager::mappingForPort(unsigned port)
     }
 
     return mapping;
+}
+
+void InputManager::attachDevices()
+{
+    for (int i=0; i < devices.length(); ++i) {
+        InputDevice *device = devices.at(i);\
+        if (device == nullptr)
+            break;
+        top_window = QGuiApplication::topLevelWindows()[0];
+        top_window->installEventFilter(device);
+        settings_window = QGuiApplication::allWindows()[0];
+        settings_window->installEventFilter(device);
+    }
+
+}
+
+void InputManager::removeDevices()
+{
+    for (int i=0;i < devices.length(); ++i) {
+        InputDevice *device = devices.at(i);
+        if (device == nullptr)
+            break;
+
+        top_window->removeEventFilter(device);
+        settings_window->installEventFilter(device);
+
+    }
 }
