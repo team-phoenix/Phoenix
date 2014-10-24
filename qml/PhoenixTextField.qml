@@ -6,28 +6,38 @@ TextField {
     id: searchBar;
     width: 175;
     height: 25;
-    placeholderText: "Sample";
-    visible: headerBar.searchBarVisible;
-    font {
-        pixelSize: 12;
-    }
+    placeholderText: "Hello World!";
+    property int radius: 3;
+    property string color: "red";
+    property string borderColor: "black";
+    property int renderType: Text.QtRendering;
+    property color placeholderTextColor: "white";
     textColor: "#f1f1f1";
 
     style: TextFieldStyle {
-        placeholderTextColor: "#f1f1f1";
-        renderType: Text.QtRendering;
+        placeholderTextColor: control.placeholderTextColor;
+        renderType: control.renderType;
 
         background: Rectangle {
-            radius: 3;
-            color: "#1a1a1a";
-            height: 25;
-            width: 175;
+            radius: control.radius;
+            height: control.height;
+            width: control.width;
+            border {
+                width: 1;
+                color: control.borderColor;
+            }
 
+            gradient: Gradient {
+                GradientStop {position: 0.0; color: "#191919";}
+                GradientStop {position: 0.40; color: "#2b2b2c";}
+                GradientStop {position: 1.0; color: "#2e2e2e";}
+            }
             CustomBorder {
                 gradient: Gradient {
-                    GradientStop {position: 0.05; color: "#1f1f1f";}
-                    GradientStop {position: 0.9; color: "#141414";}
-                    GradientStop {position: 0.95; color: "#3b3b3b";}
+                    GradientStop {position: 0.0; color: "#1d1d1d";}
+                    GradientStop {position: 0.05; color: "#2e2e2e";}
+                    GradientStop {position: 0.90; color: "#2e2e2e";}
+                    GradientStop {position: 1.0; color: "#4e4e51";}
                 }
             }
         }

@@ -274,15 +274,14 @@ Item {
                             }
                         }
 
-                        TextField {
+                        PhoenixTextField {
                             id: buttonField;
                             readOnly: true;
                             width: 100;
                             height: 20;
-                            property int radius: 3;
-                            property string color: "red";
-                            property string borderColor: "black";
-                            property int renderType: Text.QtRendering;
+                            radius: 3;
+                            borderColor: "black";
+                            renderType: Text.QtRendering;
                             textColor: "#f1f1f1";
                             text: updating ? "WAITING" : inputMapper.mapping.getMappingByRetroId(retroId) ;
                             anchors {
@@ -295,33 +294,6 @@ Item {
                             font {
                                 family: "Sans";
                                 pixelSize: 11;
-                            }
-
-                            style: TextFieldStyle {
-                                renderType: control.renderType;
-                                background: Rectangle {
-                                    width: control.width;
-                                    height: control.height;
-                                    radius: control.radius;
-                                    color: control.color;
-                                    border {
-                                        width: 1;
-                                        color: control.borderColor;
-                                    }
-                                    gradient: Gradient {
-                                        GradientStop {position: 0.0; color: "#191919";}
-                                        GradientStop {position: 0.40; color: "#2b2b2c";}
-                                        GradientStop {position: 1.0; color: "#2e2e2e";}
-                                    }
-                                    CustomBorder {
-                                        gradient: Gradient {
-                                            GradientStop {position: 0.0; color: "#1d1d1d";}
-                                            GradientStop {position: 0.05; color: "#2e2e2e";}
-                                            GradientStop {position: 0.90; color: "#2e2e2e";}
-                                            GradientStop {position: 1.0; color: "#4e4e51";}
-                                        }
-                                    }
-                                }
                             }
 
                             MouseArea {

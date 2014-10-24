@@ -720,14 +720,17 @@ Rectangle {
 
     PhoenixTextField {
         id: searchBar;
-        width: 175;
         placeholderText: "Search";
+        placeholderTextColor: textColor;
         visible: !root.gameShowing;
+        radius: 3;
         font {
             pixelSize: 12;
+            family: "Sans";
         }
         textColor: "#f1f1f1";
         height: 25;
+        width: 175;
         anchors {
             right: parent.right;
             rightMargin: 20;
