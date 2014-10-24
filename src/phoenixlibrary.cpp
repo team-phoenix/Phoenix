@@ -214,6 +214,9 @@ QRegularExpressionMatch PhoenixLibrary::parseFilename(QString filename)
     // else, just match the whole filename as title
     return QRegularExpression("^(?<title>.*)$").match(filename);
 
+    // Currently Unfinished code. Only extracts title and region from filename
+    // not the goodtools code.
+
     if (m_title.hasMatch()) {
         qCDebug(phxLibrary) << m_title;
 
