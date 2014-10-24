@@ -32,6 +32,7 @@ ApplicationWindow {
 
     onVisibleChanged: {
         if (visible) {
+            inputmanager.attachDevices();
             var name = stackView.currentItem.name;
             //settingsDropDown.visible = false;
             if (name === "video") {
@@ -43,6 +44,11 @@ ApplicationWindow {
                 settingsWindow.width = 250;
             }
 
+            else if (name === "input") {
+                settingsWindow.height = 525;
+                settingsWindow.width = 350;
+            }
+
             else {
                 settingsWindow.height = 400;
                 settingsWindow.width = 250;
@@ -50,6 +56,7 @@ ApplicationWindow {
         }
         else {
             settingsDropDown.visible = false;
+            inputmanager.removeDevices();
         }
     }
 

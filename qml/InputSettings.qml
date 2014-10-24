@@ -1,56 +1,127 @@
 import QtQuick 2.3
-import QtQuick.Controls 1.1
+import QtQuick.Controls 1.2
+import QtQuick.Layouts 1.1
+import QtQuick.Controls.Styles 1.2
 
 Item {
 
     Column {
         anchors {
             fill: parent;
-            topMargin: 25;
+            topMargin: 15;
         }
-        spacing: 25;
+        spacing: 30;
 
-        Column {
-            id: inputHeader;
+        Item {
+            height: 75;
             anchors {
                 left: parent.left;
-                //top: parent.top;
-                //topMargin: 25;
-                leftMargin: 25;
+                right: parent.right;
             }
-            spacing: 5;
 
-            Text {
-                text: "Input Settings"
-                renderType: Text.QtRendering;
-                color: settingsBubble.textColor;
-                font {
-                    family: "Sans";
-                    pixelSize: 18;
+            Row {
+                anchors {
+                    horizontalCenter: parent.horizontalCenter;
+                }
+                spacing: 10;
+
+                Image {
+                    id: videoImage;
+                    source: "../assets/Core-64.png";
+                    height: 48;
+                    width: 48;
+                }
+
+                Column {
+                    id: videoHeader;
+                    anchors.verticalCenter: videoImage.verticalCenter;
+                    spacing: 2;
+
+                    Text {
+                        text: "Input Settings"
+                        renderType: Text.QtRendering;
+                        color: settingsBubble.textColor;
+                        font {
+                            family: "Sans";
+                            pixelSize: 18;
+                        }
+                    }
+
+                    Text {
+                        text: "Configure Game Controllers"
+                        renderType: Text.QtRendering;
+                        color: settingsBubble.alternateTextColor;
+                        font {
+                            family: "Sans";
+                            pixelSize: 13;
+                        }
+                    }
                 }
             }
 
-            Text {
-                text: "Adjust your input devices"
-                renderType: Text.QtRendering;
-                color: settingsBubble.alternateTextColor;
-                font {
-                    family: "Sans";
-                    pixelSize: 14;
+            Rectangle {
+                color: "#141414";
+                anchors {
+                    left: parent.left;
+                    right: parent.right;
+                    bottom: parent.bottom;
+                    bottomMargin: 0;
+                    leftMargin: 5;
+                    rightMargin: 5;
+                }
+                height: 1;
+
+                ExclusiveGroup {
+                    id: topButtonGroup;
+                }
+                ListView {
+                    id: listView;
+
+                    property var curMapping;
+                    property var curDevice;
+
+                    z: 1;
+                    anchors.centerIn: parent;
+                    orientation: ListView.Horizontal;
+                    width: (spacing !== 0) ? currentItem.width * count * spacing: currentItem.width * count;
+                    height: currentItem.height;
+
+                    model: ListModel {
+                        ListElement {player: "Player 1"; selected: true; curvature: 3;}
+                        ListElement {player: "Player 2"; selected: false; curvature: 0;}
+                        ListElement {player: "Player 3"; selected: false; curvature: 0;}
+                        ListElement {player: "Player 4"; selected: false; curvature: 3;}
+                    }
+                    onCurrentIndexChanged: {
+                        inputMapper.deviceIndex = currentIndex;
+                        curMapping = inputmanager.mappingForPort(currentIndex);
+                        curDevice = inputmanager.getDevice(currentIndex);
+                    }
+                    delegate: PhoenixNormalButton {
+                        property bool innerItem: (curvature == 0);
+
+                        text: player;
+                        z: innerItem ? listView.z + 1 : listView.z;
+                        radius: 0;
+                        implicitWidth: 70;
+                        checkable: true;
+                        checked: selected;
+                        exclusiveGroup: topButtonGroup;
+
+
+                    }
                 }
             }
         }
 
         Row {
             anchors {
-                left: parent.left;
-                leftMargin: 25;
-                right: parent.right;
+                horizontalCenter: parent.horizontalCenter;
             }
             height: 500;
             spacing: 15;
 
-           /* Image {
+           /*Image {
                 visible: stackView.width > width;
 
                 fillMode: Image.PreserveAspectFit;
@@ -70,10 +141,10 @@ Item {
 
             ScrollView {
                 id: inputMapper;
-                property var mapping: gridView.headerItem.curMapping;
-                property var device: gridView.headerItem.curDevice;
+                property var mapping: listView.curMapping;
+                property var device: listView.curDevice;
                 property int deviceIndex: 0;
-                visible: stackView.width > width;
+                //visible: stackView.width > width;
                 property bool waitingUpdate: false;
                 property bool setupWalkthrough: false;
                 property int walkthroughCount: 0;
@@ -81,6 +152,8 @@ Item {
                 onSetupWalkthroughChanged: {
                     gridView.currentItem.overrideFocus = true;
                 }
+                Component.onDestruction: waitingUpdate = false;
+
 
                 height: 400;
                 width: 400;
@@ -91,10 +164,8 @@ Item {
                     height: parent.height;
                     width: parent.width;
                     cellHeight: 30;
-                    cellWidth: 150;
+                    cellWidth: 175;
                     header: Item {
-                        property alias curMapping: playersBox.curMapping;
-                        property alias curDevice: playersBox.curDevice;
                         height: 45;
                         width: 125;
 
@@ -106,32 +177,14 @@ Item {
                             spacing: 15;
 
                             ComboBox {
-                                id: playersBox;
-                                property int num: devicesBox.count;
-                                width: 125;
-                                property var curMapping;
-                                property var curDevice;
-                                model:  {
-                                    var mod = [];
-                                    for (var i=0; i < num; ++i) {
-                                        mod.push("Player " + (i + 1));
-                                    }
-                                    return mod;
-                                }
-                                onCurrentIndexChanged: {
-                                    inputMapper.deviceIndex = currentIndex;
-                                    curMapping = inputmanager.mappingForPort(currentIndex);
-                                    curDevice = inputmanager.getDevice(currentIndex);
-                                }
-                            }
-                            ComboBox {
                                 id: devicesBox;
                                 width: 125;
                                 model: inputmanager.enumerateDevices();
                             }
 
-                            Button {
+                            PhoenixNormalButton {
                                 text: "Configure All";
+                                implicitWidth: 100;
                                 onClicked: {
                                     gridView.currentIndex = 0;
                                     inputMapper.walkthroughCount = 0;
@@ -168,17 +221,8 @@ Item {
                         width: 225;
                         property bool overrideFocus: false;
 
-                        function startUpdate() {
-                            if (inputMapper.waitingUpdate)
-                                return;
-                            inputMapper.waitingUpdate = true;
-                            buttonsModel.get(index).updating = true;
-                            console.log("Changing mapping for " + controllerButton + " on device: " + inputMapper.device.deviceName());
-                            inputMapper.device.inputEventReceived.connect(keyReceived);
-                        }
-
                         function keyReceived(ev, value) {
-                            //if (value) {
+                            if (value) {
                                 var prevBinding = inputMapper.mapping.getMappingByRetroId(retroId);
                                 console.log("RECEIVED event: " + ev + " and value: " + value);
                                 inputMapper.mapping.remapMapping(prevBinding, ev, retroId, inputMapper.deviceIndex);
@@ -195,9 +239,19 @@ Item {
                                         gridView.currentItem.overrideFocus = true;
                                     }
                                 }
-                            //}
-
+                            }
                         }
+
+                        function startUpdate() {
+                            if (inputMapper.waitingUpdate)
+                                return;
+                            inputMapper.waitingUpdate = true;
+                            buttonsModel.get(index).updating = true;
+                            console.log("Changing mapping for " + controllerButton + " on device: " + inputMapper.device.deviceName());
+                            inputMapper.device.inputEventReceived.connect(gridItem.keyReceived);
+                        }
+
+
 
                         onOverrideFocusChanged: {
                             if (overrideFocus) {
@@ -210,6 +264,7 @@ Item {
                             text: controllerButton;
                             anchors {
                                 right: buttonField.left;
+                                verticalCenter: parent.verticalCenter;
                                 rightMargin: 15;
                             }
 
@@ -224,27 +279,58 @@ Item {
                             readOnly: true;
                             width: 100;
                             height: 20;
+                            property int radius: 3;
+                            property string color: "red";
+                            property string borderColor: "black";
+                            property int renderType: Text.QtRendering;
+                            textColor: "#f1f1f1";
                             text: updating ? "WAITING" : inputMapper.mapping.getMappingByRetroId(retroId) ;
-                            anchors.right: parent.right;
-                            anchors.rightMargin: 50;
+                            anchors {
+                                verticalCenter: parent.verticalCenter;
+                                right: parent.right;
+                                rightMargin: 50;
+                            }
+
                             horizontalAlignment: Text.AlignHCenter;
+                            font {
+                                family: "Sans";
+                                pixelSize: 11;
+                            }
+
+                            style: TextFieldStyle {
+                                renderType: control.renderType;
+                                background: Rectangle {
+                                    width: control.width;
+                                    height: control.height;
+                                    radius: control.radius;
+                                    color: control.color;
+                                    border {
+                                        width: 1;
+                                        color: control.borderColor;
+                                    }
+                                    gradient: Gradient {
+                                        GradientStop {position: 0.0; color: "#191919";}
+                                        GradientStop {position: 0.40; color: "#2b2b2c";}
+                                        GradientStop {position: 1.0; color: "#2e2e2e";}
+                                    }
+                                    CustomBorder {
+                                        gradient: Gradient {
+                                            GradientStop {position: 0.0; color: "#1d1d1d";}
+                                            GradientStop {position: 0.05; color: "#2e2e2e";}
+                                            GradientStop {position: 0.90; color: "#2e2e2e";}
+                                            GradientStop {position: 1.0; color: "#4e4e51";}
+                                        }
+                                    }
+                                }
+                            }
+
                             MouseArea {
                                 id: buttonMouseArea;
                                 anchors.fill: parent;
                                 onClicked: {
                                     gridItem.startUpdate();
                                 }
-
-                                Connections {
-                                    target: settingsWindow;
-
-                                    onVisibleChanged: {
-                                        if (!settingsWindow.visible) {
-                                            inputMapper.device.inputEventReceived.disconnect(buttonMouseArea.keyReceived);
-                                            inputMapper.waitingUpdate = false;
-                                        }
-                                    }
-                                }
+                                    //inputMapper.device.inputEventReceived.disconnect(buttonMouseArea.keyReceived);
                             }
                         }
                     }

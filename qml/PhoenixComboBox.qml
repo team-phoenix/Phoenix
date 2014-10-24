@@ -98,3 +98,71 @@ ComboBox {
         }
     }
 }
+/*
+                            PhoenixNormalButton {
+                                id: playersBox;
+                                width: 125;
+                                property int num: devicesBox.count;
+                                property int delegateHeight: 25;
+
+                                property bool drop: false;
+                                property var model:  {
+                                    var mod = [];
+                                    for (var i=0; i < num; ++i) {
+                                        mod.push("Player " + (i + 1));
+                                    }
+                                    return mod;
+                                }
+                                property int currentIndex: 0;
+                                onPressedChanged: {
+                                    if (pressed) {
+                                        if (drop)
+                                            drop = false;
+                                        else
+                                            drop = true;
+                                    }
+
+                                }
+
+                                text: model[currentIndex];
+
+
+                                ListView {
+                                    id: repeater;
+                                    z: parent.z + 1;
+                                    visible: parent.drop;
+                                    anchors {
+                                        top: parent.bottom;
+                                    }
+                                    model: parent.model;
+                                    onCurrentIndexChanged: {
+                                        inputMapper.deviceIndex = currentIndex;
+                                        inputMapper.mapping = inputmanager.mappingForPort(currentIndex);
+                                        inputMapper.device = inputmanager.getDevice(currentIndex);
+                                    }
+
+                                    delegate: Rectangle {
+                                        color: "black";
+                                        z: parent.z;
+                                        width: playersBox.width + 12;
+                                        height: playersBox.height;
+                                        Text {
+                                            anchors {
+                                                left: parent.left;
+                                                leftMargin: 12;
+                                                verticalCenter: parent.verticalCenter;
+                                            }
+                                            font {
+                                                family: "Sans";
+                                                pixelSize: 11;
+                                            }
+
+                                            color: "#f1f1f1";
+
+                                            text: modelData;
+                                        }
+                                    }
+                                }
+                            }
+
+*/
