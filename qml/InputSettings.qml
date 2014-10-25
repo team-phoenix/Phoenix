@@ -115,10 +115,93 @@ Item {
         }
 
         Row {
+            z: 100;
+
             anchors {
                 horizontalCenter: parent.horizontalCenter;
             }
-            height: 500;
+
+            spacing: 15;
+
+            PhoenixNormalButton {
+                id: devicesBox;
+                width: 125;
+                property int count: model.length;
+                onCountChanged: console.log("model length: " + count)
+                property int delegateHeight: 25;
+
+                property bool drop: false;
+                property var model: inputmanager.enumerateDevices();
+
+                property int currentIndex: 0;
+                onPressedChanged: {
+                    if (pressed) {
+                        if (drop)
+                            drop = false;
+                        else
+                            drop = true;
+                    }
+
+                }
+
+                text: model[currentIndex]["text"];
+
+                ListView {
+                    id: repeater;
+                    visible: parent.drop;
+                    anchors {
+                        top: parent.bottom;
+                        horizontalCenter: parent.horizontalCenter;
+                    }
+                    z: 100;
+                    model: parent.model;
+                    width: devicesBox.width + 12;
+                    height: 400;
+                    delegate: Rectangle {
+                        color: "#49494c";
+                        z: 100;
+                        border {
+                            width: 1;
+                            color: "black";
+                        }
+
+                        width: devicesBox.width + 12;
+                        height: devicesBox.height;
+                        Text {
+                            anchors {
+                                left: parent.left;
+                                leftMargin: 12;
+                                verticalCenter: parent.verticalCenter;
+                            }
+                            font {
+                                family: "Sans";
+                                pixelSize: 11;
+                            }
+
+                            color: "#f1f1f1";
+
+                            text: modelData["text"];
+                        }
+                    }
+                }
+            }
+
+            PhoenixNormalButton {
+                text: "Configure All";
+                implicitWidth: 100;
+                onClicked: {
+                    gridView.currentIndex = 0;
+                    inputMapper.walkthroughCount = 0;
+                    inputMapper.setupWalkthrough = false;
+                    inputMapper.setupWalkthrough = true;
+                }
+            }
+        }
+
+        Row {
+            anchors {
+                horizontalCenter: parent.horizontalCenter;
+            }
             spacing: 15;
 
            /*Image {
@@ -153,9 +236,7 @@ Item {
                     gridView.currentItem.overrideFocus = true;
                 }
                 Component.onDestruction: waitingUpdate = false;
-
-
-                height: 400;
+                height: 350;
                 width: 400;
 
                 GridView {
@@ -163,38 +244,9 @@ Item {
                     //anchors.fill: parent;
                     height: parent.height;
                     width: parent.width;
-                    cellHeight: 30;
+                    cellHeight: 40;
                     cellWidth: 175;
-                    header: Item {
-                        height: 45;
-                        width: 125;
-
-                        Row {
-                            anchors {
-                                fill: parent;
-                                leftMargin: 60;
-                            }
-                            spacing: 15;
-
-                            ComboBox {
-                                id: devicesBox;
-                                width: 125;
-                                model: inputmanager.enumerateDevices();
-                            }
-
-                            PhoenixNormalButton {
-                                text: "Configure All";
-                                implicitWidth: 100;
-                                onClicked: {
-                                    gridView.currentIndex = 0;
-                                    inputMapper.walkthroughCount = 0;
-                                    inputMapper.setupWalkthrough = false;
-                                    inputMapper.setupWalkthrough = true;
-                                }
-                            }
-                        }
-                    }
-
+                    flow: GridView.TopToBottom;
                     model: ListModel {
                         id: buttonsModel;
                         ListElement {controllerButton: "Up"; retroId: "4"; updating: false;}
@@ -261,7 +313,7 @@ Item {
 
                         Text {
                             renderType: Text.QtRendering;
-                            text: controllerButton;
+                            text: controllerButton + ":";
                             anchors {
                                 right: buttonField.left;
                                 verticalCenter: parent.verticalCenter;
@@ -270,15 +322,18 @@ Item {
 
                             color: settingsBubble.textColor;
                             font {
-                                pixelSize: 12;
+                                pixelSize: 11;
+                                bold: true;
+                                family: "Sans";
                             }
+
                         }
 
                         PhoenixTextField {
                             id: buttonField;
                             readOnly: true;
                             width: 100;
-                            height: 20;
+                            height: 25;
                             radius: 3;
                             borderColor: "black";
                             renderType: Text.QtRendering;
