@@ -96,12 +96,14 @@ void VideoItem::setSystemDirectory(QString systemDirectory)
 {
     m_system_directory = systemDirectory;
     core->setSystemDirectory(systemDirectory);
+    emit systemDirectoryChanged();
 }
 
 void VideoItem::setSaveDirectory(QString saveDirectory)
 {
     m_save_directory = saveDirectory;
     core->setSaveDirectory(saveDirectory);
+    emit saveDirectoryChanged();
 
 }
 
