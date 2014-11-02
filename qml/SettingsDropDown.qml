@@ -29,13 +29,9 @@ Item {
 
         border {
             width: 1;
-            color: "#333333";
+            color: "#404040";
         }
 
-        //gradient: Gradient {
-         //   GradientStop {position: 0.0; color: "#30302f";}
-        //    GradientStop {position: 1.0; color: "#242424";}
-        //}
         color: "#2f2f2f";
 
         ExclusiveGroup {
@@ -61,6 +57,10 @@ Item {
                 anchors.verticalCenter: listView.currentItem.verticalCenter;
                 y: listView.currentItem.y;
                 color: listView.currentItem ? "#525252" : "#000000FF";
+                gradient: Gradient {
+                    GradientStop {position: 0.0; color: "#f34d32";}
+                    GradientStop {position: 1.0; color: "#f2243c";}
+                }
             }
 
             property var stacks: { "Input": settingsWindow.input,
@@ -93,7 +93,7 @@ Item {
             }
 
             delegate: Item {
-                height: 25;
+                height: 20;
                 width: parent.width;
                 MouseArea {
                     anchors.fill: parent;
@@ -119,6 +119,7 @@ Item {
                     anchors {
                         left: parent.left;
                         leftMargin: 24;
+                        verticalCenter: parent.verticalCenter;
                     }
 
                     Image {

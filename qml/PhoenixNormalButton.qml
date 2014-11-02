@@ -8,20 +8,26 @@ Button {
     property string textColor: "#f1f1f1";
     property string alternateTextColor: "#acacac";
     property Gradient buttonGradient: Gradient {
-        GradientStop {position: 0.0; color: checked ? "#1c1c1d" : "#4c4b4d";}
-        GradientStop {position: 0.5; color: checked ? "#262626" : "#424142";}
-        GradientStop {position: 1.0; color: checked ? "#2f2e2f" : "#363636";}
+        //GradientStop {position: 0.0; color: "#131313";}
+        GradientStop {position: 0.0; color: checked ? "#000000" : "#333332";}
+        GradientStop {position: 0.5; color: checked ? "#0f0f0f" : "#232322";}
+        GradientStop {position: 0.75; color: checked ? "#1b1c1c" : "#151615";}
+        GradientStop {position: 1.0; color: checked ? "#1e1f1f" : "#070908";}
     }
 
     property Gradient innerBorderGradient: Gradient {
-        GradientStop {position: 0.0; color: "#646466";}
-        GradientStop {position: 0.05; color: "#49494c";}
-        GradientStop {position: 1.0; color: "#292929";}
+        GradientStop {position: 0.0; color: "#4f4f4f";}
+        //GradientStop {position: 0.05; color: "#303030";}
+        GradientStop {position: 0.06; color: checked ? "#000000" : "#4f4f4f";}
+        GradientStop {position: 0.35; color: checked ? "#000000" : "#333332";}
+        GradientStop {position: 0.5; color: checked ? "#0f0f0f" : "#232322";}
+        GradientStop {position: 0.95; color: checked ? "#1b1c1c" : "#151615";}
+        GradientStop {position: 1.0; color: checked ? "#40403f" : "#080908";}
     }
 
-    property string outerBorderColor: "#121212";
+    property string outerBorderColor: "#40403f";
     property string alternateOuterBorderColor: "#1a1a1a"
-    property int radius: 3;
+    property int radius: 0;
 
     style: ButtonStyle {
         background: Rectangle {
@@ -29,21 +35,12 @@ Button {
             implicitHeight: 25;
             implicitWidth: 50;
             radius: normalButton.radius;
-            border {
-                width: control.checked ? 1 : 0;
-                color: control.outerBorderColor;
-            }
 
             gradient: control.innerBorderGradient;
 
             CustomBorder {
                 radius: parent.radius;
-                gradient: Gradient {
-                    GradientStop {position: 0.0; color: control.checked ? "#2f2f2f" : "black";}
-                    GradientStop {position: 0.05; color: "black";}
-                    GradientStop {position: 0.90; color: "black";}
-                    GradientStop {position: 1.0; color: control.checked ? "#4e4e51" : "black";}
-                }
+                color: "#0f0f0f";
             }
 
             Rectangle {

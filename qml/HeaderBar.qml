@@ -407,58 +407,82 @@ Rectangle {
             }
         }
 
-        Row {
+        Rectangle {
+            width: 58;
+            height: 30;
+            color: "#0f0f0f";
             visible: !root.gameShowing;
             anchors.verticalCenter: parent.verticalCenter;
-            spacing: -1;
 
-            ExclusiveGroup {
-                id: viewGroup;
-            }
-
-            PhoenixNormalButton {
-                id: tableButton;
-                anchors.verticalCenter: parent.verticalCenter;
-                height: 30;
-                width: 30;
-                checkable: true;
-                exclusiveGroup: viewGroup;
-
-                Image {
-                    anchors.centerIn: parent;
-                    source: "../assets/list-8x.png";
-                    sourceSize.height: settingsBtn.height * 0.6;
-                    sourceSize.width: settingsBtn.width * 0.6;
-                    opacity: parent.checked ? 0.5 : 1.0;
-                }
-                onPressedChanged: {
-                    if (pressed)
-                        windowStack.currentItem.stackId.push({item: gameTable, replace: true, immediate: true})
-                }
-            }
-
-            PhoenixNormalButton {
-                id: viewBtn;
-                height: 30;
-                width: 30;
-                anchors.verticalCenter: parent.verticalCenter;
-                checkable: true;
-                checked: true;
-                exclusiveGroup: viewGroup;
-
-                property string backgroundColor: "#000000FF";
-
-                Image {
-                    anchors.centerIn: parent;
-                    source: "../assets/grid-three-up-8x.png";
-                    sourceSize.height: settingsBtn.height * 0.6;
-                    sourceSize.width: settingsBtn.width * 0.6;
-                    opacity: parent.checked ? 0.5 : 1.0;
+            Row {
+                anchors {
+                    centerIn: parent;
+                    margins: 1;
                 }
 
-                onPressedChanged: {
-                    if (pressed)
-                        windowStack.currentItem.stackId.push({item: gameGrid, replace: true, immediate: true});
+                ExclusiveGroup {
+                    id: viewGroup;
+                }
+
+                PhoenixNormalButton {
+                    id: tableButton;
+                    anchors.verticalCenter: parent.verticalCenter;
+                    height: 28;
+                    width: 28;
+                    checkable: true;
+                    exclusiveGroup: viewGroup;
+
+                    Image {
+                        anchors.centerIn: parent;
+                        source: parent.checked ? "../assets/table-orange.png" : "../assets/table.png";
+                        sourceSize {
+                            height: 16;
+                            width: 16;
+                        }
+                    }
+                    onPressedChanged: {
+                        if (pressed) {
+                            checked = true;
+                            windowStack.currentItem.stackId.push({item: gameTable, replace: true, immediate: true})
+                        }
+                    }
+                }
+
+                PhoenixNormalButton {
+                    id: viewBtn;
+                    height: 28;
+                    width: 28;
+                    anchors.verticalCenter: parent.verticalCenter;
+                    checkable: true;
+                    checked: true;
+                    exclusiveGroup: viewGroup;
+
+                    onPressedChanged: {
+                        if (pressed) {
+                            checked = true;
+                            windowStack.currentItem.stackId.push({item: gameGrid, replace: true, immediate: true});
+                        }
+                    }
+
+
+                    Image {
+                        anchors.centerIn: parent;
+                        source: parent.checked ? "../assets/grid-orange.png" : "../assets/grid.png";
+                        sourceSize {
+                            height: 16;
+                            width: 16;
+                        }
+
+                       // MouseArea {
+                        //    anchors.fill: parent;
+                         //   propagateComposedEvents: true;
+                            //hoverEnabled: !viewBtn.checked;
+                            //onEntered: parent.source = "../assets/grid-orange.png";
+                            //onExited: parent.source = "../assets/grid.png";
+                       // }
+                    }
+
+
                 }
             }
         }

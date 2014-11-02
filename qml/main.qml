@@ -493,7 +493,7 @@ PhoenixWindow {
             }
         }
 
-        height: 55;
+        height: 60;
         //color: "#3b3b3b";
         fontSize: 14;
     }
@@ -526,16 +526,6 @@ PhoenixWindow {
         id: settingsDropDown;
         z: headerBar.z + 1;
         visible: false;
-        opacity: visible ? 1.0 : 0.0;
-
-        Behavior on opacity {
-            NumberAnimation {
-                easing {
-                    type: Easing.OutQuad;
-                }
-                duration: 200;
-            }
-        }
 
         anchors {
             top: headerBar.bottom;
@@ -546,17 +536,16 @@ PhoenixWindow {
         height: 275;
         width: 125;
 
-        stackBackgroundColor: "#f4f4f4";
+        stackBackgroundColor: "#2e2e2e";
         contentColor: "#f4f4f4";
         textColor: "#f1f1f1";
 
         Rectangle {
             visible: parent.visible;
-            opacity: parent.visible ? 1.0 : 0.0;
             height: 15;
             width: 15;
             rotation: 45;
-            color: "#2f2f2f";
+            color: "#2e2e2e";
             z: settingsDropDown.z + 1;
             anchors {
                 left: parent.left;
@@ -572,7 +561,7 @@ PhoenixWindow {
                     right: parent.right;
                 }
                 height: 1;
-                color: "#333333";
+                color: "#404040";
             }
 
             Rectangle {
@@ -582,20 +571,8 @@ PhoenixWindow {
                     bottom: parent.bottom;
                 }
                 width: 1;
-                color: "#333333";
+                color: "#404040";
             }
-
-            Behavior on opacity {
-                NumberAnimation {
-                    easing {
-                        type: Easing.Linear;
-                    }
-                    duration: 1000;
-                }
-            }
-
-
-
         }
 
     }
@@ -604,10 +581,9 @@ PhoenixWindow {
         anchors.fill: settingsDropDown;
         visible: settingsDropDown.visible;
         color: "#80000000";
-
-                glowRadius: 10
-                spread: 0;
-                cornerRadius: 6;
+        glowRadius: 10
+        spread: 0;
+        cornerRadius: 6;
     }
 
 

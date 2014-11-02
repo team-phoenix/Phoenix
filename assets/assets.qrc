@@ -49,8 +49,10 @@
     <file>file-8x.png</file>
     <file>folder-8x.png</file>
     <file>fullscreen-enter-8x.png</file>
-    <file>grid-three-up-8x.png</file>
-    <file>list-8x.png</file>
+    <file>grid.png</file>
+    <file>grid-orange.png</file>
+    <file>table.png</file>
+    <file>table-orange.png</file>
     <file>volume-mute.png</file>
     <file>volume-off-8x.png</file>
     <file>volume-low-8x.png</file>
