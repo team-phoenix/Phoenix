@@ -26,8 +26,8 @@ InputManager::~InputManager()
 QVariantList InputManager::enumerateDevices()
 {
     QVariantList devices;
-    devices += Keyboard::enumerateDevices();
-    devices += Joystick::enumerateDevices();
+    devices.append(Keyboard::enumerateDevices());
+    devices.append(Joystick::enumerateDevices());
     return devices;
 }
 
@@ -45,6 +45,10 @@ void InputManager::append(InputDevice *device)
 
 InputDevice *InputManager::getDevice(unsigned port) const
 {
+    //if (port >= devices.length()) {
+     //   qCDebug(phxLibrary) << "Input device isnt connected: "  << devices.length();
+    //    return nullptr;
+    //}
     InputDevice* device = devices.at(port);
     // Don't allow QML to take ownership of our devices
     QQmlEngine::setObjectOwnership(device, QQmlEngine::CppOwnership);
@@ -124,13 +128,13 @@ void InputManager::attachDevices()
 
 void InputManager::removeDevices()
 {
-    for (int i=0;i < devices.length(); ++i) {
+    for (int i=0; i < devices.length(); ++i) {
         InputDevice *device = devices.at(i);
         if (device == nullptr)
             break;
 
         top_window->removeEventFilter(device);
-        settings_window->installEventFilter(device);
+        settings_window->removeEventFilter(device);
 
     }
 }
