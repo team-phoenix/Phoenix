@@ -1,6 +1,5 @@
 
 #include "cacheimage.h"
-#include <QtConcurrent>
 
 
 CachedImage::CachedImage(QObject *parent)
@@ -8,7 +7,6 @@ CachedImage::CachedImage(QObject *parent)
 {
     // signal/slot when manager object emits finished signal execute downloadFinished method
     connect(&manager, SIGNAL(finished(QNetworkReply*)), SLOT(downloadFinished(QNetworkReply*)));
-
     /*
      * CachedImage {
                             id: cachedImage;
@@ -183,5 +181,5 @@ QString CachedImage::localsrc()
 
 void CachedImage::start()
 {
-    QFuture<void> fut = QtConcurrent::run(this, &CachedImage::cacheImage);
+    cacheImage();
 }
