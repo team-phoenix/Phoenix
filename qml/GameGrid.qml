@@ -119,14 +119,8 @@ Rectangle {
                 PhoenixNormalButton {
                     text: "Play";
                     onClicked: {
-                        console.log("gameName: " + gridView.currentItem.fileName);
-                        console.log("system: " + gridView.currentItem.systemName);
-                        console.log("system Path: " + gridView.currentItem.systemPathName);
                         var core = phoenixLibrary.getSystem(gridView.currentItem.systemName);
-                        console.log("core: " + core);
-                        if (gridView.currentItem.fileName !== "" && core !== "") {
-                            windowStack.push({item: gameView, properties: {coreName: core, gameName: gridView.currentItem.fileName, run: true}});
-                        }
+                        root.gameAndCoreCheck(gridView.currentItem.fileName, core);
                     }
                 }
 

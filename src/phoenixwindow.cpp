@@ -1,5 +1,8 @@
 #include <phoenixwindow.h>
 
+#include <QLibrary>
+#include <QFile>
+
 PhoenixWindow::PhoenixWindow()
 {
     m_surface_format = requestedFormat();
@@ -18,6 +21,23 @@ PhoenixWindow::PhoenixWindow()
 PhoenixWindow::~PhoenixWindow()
 {
 
+}
+
+bool PhoenixWindow::loadCore(QString core_path)
+{
+    QLibrary libretro_core(core_path);
+    bool result = libretro_core.load();
+    libretro_core.unload();
+    return result;
+}
+
+bool PhoenixWindow::loadGame(QString game_path)
+{
+    QFile in_file(game_path);
+    bool result = in_file.open(QIODevice::ReadOnly);
+
+    in_file.close();
+    return result;
 }
 
 void PhoenixWindow::setWindowScreen(QScreen *screen)

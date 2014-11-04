@@ -37,6 +37,20 @@ PhoenixWindow {
     property bool stretchVideo: false;
     property string itemInView: "grid";
 
+    function gameAndCoreCheck(file_name, core)
+    {
+        if (core !== "" && file_name !== "") {
+            if (root.loadCore(core)) {
+                if (root.loadGame(file_name))
+                    windowStack.push({item: gameView, properties: {coreName: core, gameName: file_name, run: true}});
+                else
+                    console.log("Game could not be loaded");
+            }
+            else
+                console.log("Core could not be loaded");
+        }
+    }
+
     onGameShowingChanged: {
         if (gameShowing) {
             headerBar.previousViewIcon = headerBar.viewIcon;

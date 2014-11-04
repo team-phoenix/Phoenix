@@ -235,8 +235,8 @@ TableView {
                     var system_name = table.model.get(styleData.row)["system"];
                     var core = phoenixLibrary.getSystem(system_name);
                     var file_name = table.model.get(styleData.row)["filename"];
-                    if (core !== "" && file_name !== "")
-                        windowStack.push({item: gameView, properties: {coreName: core, gameName: file_name, run: true}});
+                    root.gameAndCoreCheck(file_name, core);
+
                 }
 
                 onClicked: {
