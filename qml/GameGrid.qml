@@ -256,7 +256,7 @@ Rectangle {
 
                     RectangularGlow {
                         id: rectangularGlow;
-                        visible: true;
+                        visible: width !== 0 && height !== 0;
                         height: image.paintedHeight;
                         width: image.paintedWidth;
                         anchors.centerIn: parent;
