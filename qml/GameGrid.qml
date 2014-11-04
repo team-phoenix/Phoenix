@@ -182,8 +182,6 @@ Rectangle {
         property bool checked: false;
         property bool holdItem: false;
 
-        onCountChanged: console.log(count)
-
         snapMode: GridView.NoSnap;
 
         states: [
@@ -267,8 +265,8 @@ Rectangle {
                         height: image.paintedHeight;
                         width: image.paintedWidth;
                         anchors.centerIn: parent;
-                        glowRadius: mouseArea.containsMouse ? 5 : 2;
-                        spread: mouseArea.containsMouse ? 0.5 : 0.1;
+                        glowRadius: 6;
+                        spread: mouseArea.containsMouse ? 0.2 : 0.1;
                         color:  gridItem.glowColor;
                         cornerRadius: 3;
                     }
