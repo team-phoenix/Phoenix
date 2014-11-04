@@ -37,17 +37,19 @@ PhoenixWindow {
     property bool stretchVideo: false;
     property string itemInView: "grid";
 
-    function gameAndCoreCheck(file_name, core)
+    function gameAndCoreCheck(title, system, file_name, core)
     {
         if (core !== "" && file_name !== "") {
             if (root.loadCore(core)) {
-                if (root.loadGame(file_name))
+                if (root.loadGame(file_name)) {
+                    infoBar.height = 0;
                     windowStack.push({item: gameView, properties: {coreName: core, gameName: file_name, run: true}});
+                }
                 else
-                    console.log("Game could not be loaded");
+                    root.infoBarText = title + " could not be loaded.";
             }
             else
-                console.log("Core could not be loaded");
+                root.infoBarText = system + " core could not be loaded.";
         }
     }
 
@@ -522,18 +524,6 @@ PhoenixWindow {
             rightMargin: 1;
         }
         z: headerBar.z + 1;
-    }
-
-    DropShadow {
-        visible: infoBar.visible;
-        anchors.fill: source;
-        source: infoBar;
-        horizontalOffset: 0
-        verticalOffset: 6
-        radius: 8.0
-        samples: 16
-        color: "#80000000"
-        transparentBorder: true;
     }
 
     SettingsDropDown {

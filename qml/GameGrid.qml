@@ -119,8 +119,9 @@ Rectangle {
                 PhoenixNormalButton {
                     text: "Play";
                     onClicked: {
-                        var core = phoenixLibrary.getSystem(gridView.currentItem.systemName);
-                        root.gameAndCoreCheck(gridView.currentItem.fileName, core);
+                        var curItem = gridView.currentItem;
+                        var core = phoenixLibrary.getSystem(curItem.systemName);
+                        root.gameAndCoreCheck(curItem.titleName, curItem.systemName, curItem.fileName, core);
                     }
                 }
 

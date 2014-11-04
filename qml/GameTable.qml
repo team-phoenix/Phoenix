@@ -232,10 +232,9 @@ TableView {
                 anchors.fill: parent;
                 onDoubleClicked: {
                     row.checked = true;
-                    var system_name = table.model.get(styleData.row)["system"];
-                    var core = phoenixLibrary.getSystem(system_name);
-                    var file_name = table.model.get(styleData.row)["filename"];
-                    root.gameAndCoreCheck(file_name, core);
+                    var map = table.model.get(styleData.row);
+                    var core = phoenixLibrary.getSystem(map["system"]);
+                    root.gameAndCoreCheck(map["title"], map["system"], map["filename"], core);
 
                 }
 
