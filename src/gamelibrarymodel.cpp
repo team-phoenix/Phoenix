@@ -61,7 +61,6 @@ bool GameLibraryModel::select()
     QSqlQuery qu(database());
     qu.prepare(query);
     for (auto &val : params) {
-        qCDebug(phxLibrary) << val;
         qu.addBindValue(val);
     }
     qu.exec();
@@ -80,4 +79,13 @@ void GameLibraryModel::setFilter(const QString &filter, QVariantList _params)
 {
     this->params = _params;
     QSqlTableModel::setFilter(filter);
+}
+
+QVariantMap GameLibraryModel::get(int inx)
+{
+    QVariantMap map;
+    foreach (int i, roleNames().keys()) {
+        map[roleNames().value(i)] = data(index(inx, 0), i);
+    }
+    return map;
 }

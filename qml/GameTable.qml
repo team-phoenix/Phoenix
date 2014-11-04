@@ -13,7 +13,7 @@ TableView {
     model: phoenixLibrary.model();
 
     TableViewColumn {role: "title" ; title: "Name"; width: 350;}
-    TableViewColumn {role: "console"; title: "Console"; width: 200; }
+    TableViewColumn {role: "system"; title: "Console"; width: 200; }
     TableViewColumn {role: "time_played"; title: "Time Played"; width: 125; }
     TableViewColumn {role: "filename"; title: "File Name"; width: 200; }
 
@@ -212,7 +212,7 @@ TableView {
             height: 25;
 
             property ExclusiveGroup exclusiveGroup: rowGroup;
-            property bool checked: false
+            property bool checked: false;
 
             onExclusiveGroupChanged: {
                 if (exclusiveGroup) {
@@ -228,23 +228,33 @@ TableView {
                     color = styleData.alternate ? "#262626" : "#2e2e2e";
                 }
             }
-
             MouseArea {
                 anchors.fill: parent;
-                onPressed: row.checked = true;
-            }
+                onDoubleClicked: {
+                    row.checked = true;
+                    var system_name = table.model.get(styleData.row)["system"];
+                    var core = phoenixLibrary.getSystem(system_name);
+                    var file_name = table.model.get(styleData.row)["filename"];
+                    if (core !== "" && file_name !== "")
+                        windowStack.push({item: gameView, properties: {coreName: core, gameName: file_name, run: true}});
+                }
 
+                onClicked: {
+                    row.checked = true;
+                }
+            }
         }
 
         itemDelegate: Item {
+            width: control.width;
+            height: 25;
+
             Text {
                 anchors {
                     left: parent.left;
                     leftMargin: 15;
                     verticalCenter: parent.verticalCenter;
                 }
-                renderType: Text.QtRendering;
-                width: control.width;
                 color: "#f1f1f1";
                 text: styleData.value;
 
