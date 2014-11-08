@@ -3,7 +3,7 @@
 #define JOYSTICKEVENTS_H
 
 #include <QHash>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #include "inputdeviceevent.h"
 

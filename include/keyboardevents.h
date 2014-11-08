@@ -10,7 +10,7 @@ typedef std::pair<Qt::Key, Qt::KeyboardModifiers> QtKeyboardKeyEvent;
 inline uint qHash(const QtKeyboardKeyEvent &kev, uint seed = 0);
 
 #include <QKeyEvent>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #include "inputdeviceevent.h"
 
