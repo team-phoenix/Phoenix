@@ -3,16 +3,18 @@
 #include <QLibrary>
 #include <QFile>
 
+#ifdef Q_OS_WIN32
+    #include <windowsx.h>
+    #include <windows.h>
+    #include <QApplication>
+    #include <QDesktopWidget>
+#endif
+
 PhoenixWindow::PhoenixWindow()
 {
     m_surface_format = requestedFormat();
-    pressed = false;
-    resize_w = false;
-    resize_h = false;
-    drag = false;
-    click_x = 0;
-    click_y = 0;
     m_frameless = false;
+    mouse_pressed = false;
     // Fix a bug that appears when you leave the software with alt + f4 when it is in fullscreen. This blocks the software fullscreen
     //this->show();
 
@@ -73,102 +75,170 @@ void PhoenixWindow::setFrameless(bool frameless)
 {
     m_frameless = frameless;
     if (frameless)
-        setFlags(Qt::FramelessWindowHint);
+        setFlags(Qt::FramelessWindowHint | Qt::Window);
     emit framelessChanged();
 }
 
-
-void PhoenixWindow::mousePressEvent(QMouseEvent *event)
+/*void PhoenixWindow::mousePressEvent(QMouseEvent *event)
 {
-    if (!frameless()) {
+
+    //qCDebug(phxLibrary) << mouse_pressed;
+
+    if (!this->frameless() || event->button() != Qt::LeftButton) {
         QQuickWindow::mousePressEvent(event);
         return;
     }
 
-    if (event->button() != Qt::LeftButton)
-        event->ignore();
     else {
-        pressed = true;
-        click_x = event->x();
-        click_y = event->y();
-        qDebug() << click_y;
-        if (click_y > 10 && click_y  < 55)
-            drag = true;
-        else if (click_y < 10)
-            resize_h = true;
-        if (click_x < 10)
-            resize_w = true;
-
+        mouse_pressed = true;
     }
+
     QQuickWindow::mousePressEvent(event);
+
 
 }
 
 void PhoenixWindow::mouseReleaseEvent(QMouseEvent *event)
 {
-    if (!frameless()) {
-        QQuickWindow::mouseReleaseEvent(event);
-        return;
-    }
-    pressed = false;
-    drag = false;
-    resize_w = false;
-    resize_h = false;
-    click_x = 0;
-    click_y = 0;
-
-    QQuickWindow::mouseReleaseEvent(event);
-}
-
-void PhoenixWindow::mouseMoveEvent(QMouseEvent *event)
-{
-    if (!frameless()) {
-        QQuickWindow::mouseMoveEvent(event);
+    if (!this->frameless() || event->button() != Qt::LeftButton) {
+        QQuickWindow::mousePressEvent(event);
         return;
     }
 
-    if (event->x() < 10 && event->y() < 10)
-        setCursor(Qt::SizeFDiagCursor);
-    else if (event->x() < 10)
-        setCursor(Qt::SizeHorCursor);
-    else if (event->y() < 10)
-        setCursor(Qt::SizeVerCursor);
-    else
-        setCursor(Qt::ArrowCursor);
+    else {
+        mouse_pressed = false;
+        qCDebug(phxLibrary) << mouse_pressed;
 
-    if (pressed && drag) {
-        setX(event->globalX() - click_x);
-        setY(event->globalY() - click_y);
     }
 
-    if (pressed && resize_w) {
-        qDebug() << width() - (event->x() - click_x);
-        //if (width() >= minimumWidth()) {
-            setWidth(width() - (event->x() - click_x));
-            setX(event->globalX() - click_x);
-        //}
-    }
+    QQuickWindow::mousePressEvent(event);
 
-    if (pressed && resize_h) {
-        setHeight(height() - (event->y() - click_y));
-        setY(event->globalY() - click_y);
-    }
+}*/
 
-    QQuickWindow::mouseMoveEvent(event);
-}
-
-
-void PhoenixWindow::mouseDoubleClickEvent(QMouseEvent *event)
+bool PhoenixWindow::nativeEvent(const QByteArray &eventType, void *message, long *result)
 {
 
-    if (!frameless()) {
-        QQuickWindow::mouseDoubleClickEvent(event);
-        return;
-    }
+#ifdef Q_OS_WIN32
+    if (frameless()) {
+        if (eventType == "windows_generic_MSG") {
+            MSG *win_msg = (MSG *)message;
+            if (!windowHandle)
+                windowHandle = win_msg->hwnd;
+            switch(win_msg->message) {
+                case WM_CLOSE: {
+                    return close();
+                    break;
+                }
+                case WM_SETFOCUS: {
+                    qCDebug(phxLibrary) << "Got focus";
+                    break;
+                }
 
-    if (visibility() == QWindow::Windowed)
-        setVisibility(QWindow::FullScreen);
-    else
-        setVisibility(QWindow::Windowed);
-    QQuickWindow::mouseDoubleClickEvent(event);
+                case WM_KILLFOCUS: {
+                    qCDebug(phxLibrary) << "Lost Focus";
+                    break;
+                }
+
+                case WM_ACTIVATE: {
+
+                    if (LOWORD(win_msg->wParam) == WA_ACTIVE)
+                        qCDebug(phxLibrary) << "Activated window";
+                    else
+                        qCDebug(phxLibrary) << "I am inactive window";
+                    break;
+                }
+
+                case WM_NCCALCSIZE: {
+                    if (frameless())
+                        return 0;
+                    break;
+                }
+
+                /*case WM_GETMINMAXINFO: {
+                    QRect maxRect = QApplication::desktop()->availableGeometry();
+                    QSize szMin = this->minimumSize();
+                    QSize szMax = this->maximumSize();
+                    PMINMAXINFO lpMMI = (PMINMAXINFO)win_msg->lParam;
+                    lpMMI->ptMaxSize.x = maxRect.width();
+                    lpMMI->ptMaxSize.y = maxRect.height();
+                    lpMMI->ptMaxPosition.x = 0;
+                    lpMMI->ptMaxPosition.y = 0;
+                    lpMMI->ptMinTrackSize.x = szMin.width();
+                    lpMMI->ptMinTrackSize.y = szMin.height();
+                    lpMMI->ptMaxTrackSize.x = szMax.width();
+                    lpMMI->ptMaxTrackSize.y = szMax.height();
+                    *result = 0;
+                    return true;
+                }*/
+
+                case WM_NCHITTEST: {
+                    const LONG borderWidth = 8; //in pixels
+                    RECT winrect;
+                    GetWindowRect(windowHandle, &winrect);
+                    long x = GET_X_LPARAM(win_msg->lParam);
+                    long y = GET_Y_LPARAM(win_msg->lParam);
+
+
+                    //bottom left corner
+                    if ( x >= winrect.left && x < winrect.left + borderWidth &&
+                      y < winrect.bottom && y >= winrect.bottom - borderWidth )
+                    {
+                      *result =  HTBOTTOMLEFT;
+                    }
+                    //bottom right corner
+                    if ( x < winrect.right && x >= winrect.right - borderWidth &&
+                      y < winrect.bottom && y >= winrect.bottom - borderWidth )
+                    {
+                      *result = HTBOTTOMRIGHT;
+                    }
+                    //top left corner
+                    if ( x >= winrect.left && x < winrect.left + borderWidth &&
+                      y >= winrect.top && y < winrect.top + borderWidth )
+                    {
+                      *result = HTTOPLEFT;
+                    }
+                    //top right corner
+                    if ( x < winrect.right && x >= winrect.right - borderWidth &&
+                      y >= winrect.top && y < winrect.top + borderWidth )
+                    {
+                      *result = HTTOPRIGHT;
+                    }
+                    //left border
+                    if ( x >= winrect.left && x < winrect.left + borderWidth )
+                    {
+                      *result = HTLEFT;
+                    }
+                    //right border
+                    if ( x < winrect.right && x >= winrect.right - borderWidth )
+                    {
+                      *result = HTRIGHT;
+                    }
+                    //bottom border
+                    if ( y < winrect.bottom && y >= winrect.bottom - borderWidth )
+                    {
+                      *result = HTBOTTOM;
+                    }
+                    //top border
+                    if ( y >= winrect.top && y < winrect.top + borderWidth )
+                    {
+                      *result = HTTOP;
+                    }
+
+                    if (*result == 0) {
+                        *result = HTCAPTION;
+                    }
+                    return true;
+                }
+
+                default:
+                    break;
+            }
+        }
+    }
+#endif
+
+    return QQuickWindow::nativeEvent(eventType, message, result);
+
 }
+
+

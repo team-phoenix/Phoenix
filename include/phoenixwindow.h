@@ -64,19 +64,17 @@ private:
     QSurfaceFormat m_surface_format;
     int m_swap_interval;
     int m_swap_behavior;
-
-    void mousePressEvent(QMouseEvent *event);
-    void mouseReleaseEvent(QMouseEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
-    void mouseDoubleClickEvent(QMouseEvent *event);
-
-    bool pressed;
-    bool resize_w;
-    bool resize_h;
-    bool drag;
-    int click_x;
-    int click_y;
+    bool mouse_pressed;
     bool m_frameless;
+
+#ifdef Q_OS_WIN32
+    HWND windowHandle = nullptr;
+#endif
+
+
+    //void mousePressEvent(QMouseEvent *event);
+   // void mouseReleaseEvent(QMouseEvent *event);
+    bool nativeEvent(const QByteArray &eventType, void *message, long *result);
 };
 
 #endif // PHOENIXWINDOW_H
