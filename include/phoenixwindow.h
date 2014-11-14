@@ -69,6 +69,7 @@ private:
 
 #ifdef Q_OS_WIN32
     HWND windowHandle = nullptr;
+    void paintPicture(MSG *pMessage, long *result);
 #endif
 
 

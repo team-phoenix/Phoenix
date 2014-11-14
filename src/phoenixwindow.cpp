@@ -8,6 +8,10 @@
     #include <windows.h>
     #include <QApplication>
     #include <QDesktopWidget>
+    #include <QPainter>
+    #include <QPixmap>
+    #include <qt_windows.h>
+    #include <QtWinExtras/qwinfunctions.h>
 #endif
 
 PhoenixWindow::PhoenixWindow()
@@ -115,11 +119,69 @@ void PhoenixWindow::mouseReleaseEvent(QMouseEvent *event)
 
 }*/
 
+void PhoenixWindow::paintPicture(MSG *pMessage, long *result)
+{
+    RECT winRect1;
+        RECT winRectCl;
+        ::GetWindowRect(windowHandle, &winRect1);
+        ::GetClientRect(windowHandle, &winRectCl);
+        HDC hDeviceContext = ::GetWindowDC(windowHandle);
+        LONG lStyle = ::GetWindowLong(windowHandle, GWL_STYLE);
+
+        POINT ptTopLeft = {winRectCl.left, winRectCl.top};
+        POINT ptBottomRight = {winRectCl.right, winRectCl.bottom};
+
+        ::ClientToScreen(windowHandle, &ptTopLeft);
+        ::ClientToScreen(windowHandle, &ptBottomRight);
+        winRectCl.left = ptTopLeft.x - winRect1.left;
+        winRectCl.top = ptTopLeft.y - winRect1.top;
+        winRectCl.right = ptBottomRight.x - winRect1.left;
+        winRectCl.bottom = ptBottomRight.y - winRect1.top;
+
+        winRect1.right = winRect1.right - winRect1.left;
+        winRect1.bottom = winRect1.bottom - winRect1.top;
+        winRect1.top = 0;
+        winRect1.left = 0;
+
+        HRGN hRgnOuter = ::CreateRectRgn(winRect1.left, winRect1.top, winRect1.right, winRect1.bottom);
+        HRGN hRgnInner = ::CreateRectRgn(winRectCl.left, winRectCl.top, winRectCl.right, winRectCl.bottom);
+        HRGN hRgnCombine = ::CreateRectRgn(winRect1.left, winRect1.top, winRect1.right, winRect1.bottom);
+
+        ::CombineRgn(hRgnCombine, hRgnOuter, hRgnInner, RGN_DIFF);
+        ::SelectClipRgn(hDeviceContext, hRgnCombine);
+
+        QPixmap pix(winRect1.right, winRect1.bottom);
+        QPainter paint(&pix);
+        QRect rc(0,0,winRect1.right, winRect1.bottom);
+
+        paint.fillRect(rc, QColor(28,28,28));
+        QLinearGradient grad(0,0,0,40);
+        grad.setColorAt(0, QColor(255,255,255,180));
+        grad.setColorAt(0.33, QColor(255,255,255,80));
+        grad.setColorAt(0.33, QColor(255,255,255,0));
+        grad.setColorAt(1, QColor(255,255,255,0));
+        paint.fillRect(QRect(0,0,winRect1.right, 40), grad);
+
+        HBITMAP hBmp = QtWin::toHBITMAP(pix);
+
+        HDC hDC = ::CreateCompatibleDC(hDeviceContext);
+        ::SelectObject(hDC, hBmp);
+        ::BitBlt(hDeviceContext, winRect1.left, winRect1.top, winRect1.right, winRect1.bottom, hDC, 0, 0, SRCCOPY);
+        ::DeleteDC(hDC);
+        ::DeleteObject(hBmp);
+
+        ::DeleteObject(hRgnOuter);
+        ::DeleteObject(hRgnInner);
+        ::DeleteObject(hRgnCombine);
+        ::ReleaseDC(windowHandle, hDeviceContext);
+        *result = 0;
+}
+
 bool PhoenixWindow::nativeEvent(const QByteArray &eventType, void *message, long *result)
 {
 
 #ifdef Q_OS_WIN32
-    if (frameless()) {
+    if (!frameless()) {
         if (eventType == "windows_generic_MSG") {
             MSG *win_msg = (MSG *)message;
             if (!windowHandle)
@@ -131,11 +193,13 @@ bool PhoenixWindow::nativeEvent(const QByteArray &eventType, void *message, long
                 }
                 case WM_SETFOCUS: {
                     qCDebug(phxLibrary) << "Got focus";
+                    paintPicture(win_msg, result);
                     break;
                 }
 
                 case WM_KILLFOCUS: {
                     qCDebug(phxLibrary) << "Lost Focus";
+                    paintPicture(win_msg, result);
                     break;
                 }
 
@@ -149,9 +213,14 @@ bool PhoenixWindow::nativeEvent(const QByteArray &eventType, void *message, long
                 }
 
                 case WM_NCCALCSIZE: {
-                    if (frameless())
+                    if (!frameless())
                         return 0;
                     break;
+                }
+
+                case WM_NCPAINT: {
+                    paintPicture(win_msg, result);
+                    return true;
                 }
 
                 /*case WM_GETMINMAXINFO: {
@@ -171,7 +240,7 @@ bool PhoenixWindow::nativeEvent(const QByteArray &eventType, void *message, long
                     return true;
                 }*/
 
-                case WM_NCHITTEST: {
+                /*case WM_NCHITTEST: {
                     const LONG borderWidth = 8; //in pixels
                     RECT winrect;
                     GetWindowRect(windowHandle, &winrect);
@@ -229,7 +298,7 @@ bool PhoenixWindow::nativeEvent(const QByteArray &eventType, void *message, long
                     }
                     return true;
                 }
-
+*/
                 default:
                     break;
             }
