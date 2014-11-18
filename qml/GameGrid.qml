@@ -38,137 +38,10 @@ Rectangle {
             resizeGrid = true;
     }
 
-    Rectangle {
-        id: descriptiveArea;
-        color: "#212121";
-        height: expanded ? 175 : 0;
-        property bool expanded: false;
-
-        anchors {
-            right: parent.right;
-            top: parent.top;
-            left: parent.left;
-        }
-
-        Behavior on height {
-            PropertyAnimation {}
-        }
-
-        Rectangle {
-            color: "#1a1a1a";
-            anchors {
-                fill: parent;
-                leftMargin: 1;
-                rightMargin: 1;
-                bottomMargin: 2;
-                topMargin: 1;
-            }
-
-            Column {
-                anchors {
-                    left: parent.left;
-                    top: parent.top;
-                    margins: 15;
-                }
-
-                Text {
-                    text: gridView.currentItem ? gridView.currentItem.titleName : "";
-                    color: "#f1f1f1";
-                    renderType: Text.QtRendering;
-                    font {
-                        pixelSize: 16;
-                        bold: true;
-                        family: "Sans";
-                    }
-                }
-
-                Text {
-                    text: gridView.currentItem ? gridView.currentItem.systemName : "";
-                    color: "gray";
-                    renderType: Text.QtRendering;
-                    font {
-                        pixelSize: 14;
-                        family: "Sans";
-                    }
-                }
-            }
-
-            Image {
-                opacity: 0.3;
-                anchors {
-                    right: parent.right;
-                    top: parent.top;
-                    topMargin: 12;
-                    rightMargin: 12;
-                }
-
-                source: gridView.currentItem ? gridView.currentItem.imageSource : "";
-                height: 125;
-                width: 125;
-            }
-
-
-            Row {
-                anchors {
-                    bottom: parent.bottom;
-                    horizontalCenter: parent.horizontalCenter;
-                    bottomMargin: 5;
-                }
-                spacing: 5;
-
-                PhoenixNormalButton {
-                    text: "Play";
-                    onClicked: {
-                        var curItem = gridView.currentItem;
-                        var core = phoenixLibrary.getSystem(curItem.systemName);
-                        root.gameAndCoreCheck(curItem.titleName, curItem.systemName, curItem.fileName, core);
-                    }
-                }
-
-                PhoenixWarningButton {
-                    text: "Remove Game";
-                    onClicked:  {
-                        phoenixLibrary.deleteRow(gridView.currentItem.titleName);
-                        descriptiveArea.expanded = false;
-                    }
-                }
-            }
-        }
-
-        Rectangle {
-            id: botBorder;
-            height: 1;
-            color: "#333333";
-            anchors {
-                bottom: parent.bottom;
-                left: parent.left;
-                right: parent.right;
-            }
-        }
-    }
-
     PhoenixScrollView {
         id: scrollView;
         anchors {
-            top: descriptiveArea.bottom;
-            left: parent.left;
-            bottom: parent.bottom;
-            right: parent.right;
-        }
-
-        MouseArea {
-            id: rootMouse;
-            anchors.fill: parent;
-            enabled: gridView.holdItem;
-            propagateComposedEvents: false;
-            hoverEnabled: true;
-            onClicked:  {
-                gridView.holdItem = false;
-                descriptiveArea.expanded = false;
-                gridView.holdItem = false;
-                if (gridView.currentItem)
-                    gridView.currentItem.glowColor = "black";
-            }
+            fill: parent;
         }
 
     GridView {
@@ -178,6 +51,14 @@ Rectangle {
         property bool holdItem: false;
 
         snapMode: GridView.NoSnap;
+
+        MouseArea {
+            id: gridBackgroundMouse;
+            anchors.fill: parent;
+            enabled: false;
+            propagateComposedEvents: true;
+            onClicked: gridView.currentItem.showMenu = false;
+        }
 
         states: [
             State {
@@ -228,6 +109,7 @@ Rectangle {
             id: gridItem;
             height: gridView.cellHeight - (50 * gameGrid.zoomFactor);
             width: gridView.cellWidth; //- (10 *  gameGrid.zoomFactor);
+            z: 0;
 
             property string glowColor: "black";
             property string imageSource: !artwork ? "qrc:/assets/No-Art.png" : artwork;
@@ -235,6 +117,7 @@ Rectangle {
             property string systemName: system ? system : "";
             property string fileName: filename ? filename : "";
             property string systemPathName: system_path ? system_path : "";
+            property bool showMenu: false;
 
             Item {
                 id: subItem;
@@ -267,6 +150,7 @@ Rectangle {
                     }
                     Image {
                         id: image;
+                        z: 0;
                         anchors.fill: parent;
                         anchors.margins: 10;
                         source: gridItem.imageSource;
@@ -275,6 +159,25 @@ Rectangle {
                         sourceSize {
                             height: 275;
                             width: 275;
+                        }
+
+                        RightClickMenu {
+                            id: dropdownMenu;
+                            width: 100;
+                            height: 200;
+                            color: "red";
+                            radius: 3;
+                            z: gridItem.z;
+                            visible: gridItem.showMenu;
+                            anchors {
+                                left: parent.right;
+                                leftMargin: -10 * gameGrid.zoomFactor;
+                                verticalCenter: parent.verticalCenter;
+                                verticalCenterOffset: 65 / gameGrid.zoomFactor;
+                            }
+                            onVisibleChanged: {
+                                gridBackgroundMouse.enabled = visible;
+                            }
                         }
 
                         CachedImage {
@@ -294,16 +197,36 @@ Rectangle {
                             propagateComposedEvents: true;
                             anchors.fill: parent;
                             hoverEnabled: true;
-                            enabled: !rootMouse.enabled;
+                            enabled: true;
                             property bool containsMouse: false;
+                            acceptedButtons: Qt.LeftButton | Qt.RightButton
 
                             onPressed:  {
                                 gridView.holdItem = pressed;
-                                descriptiveArea.expanded = pressed;
                                 containsMouse = pressed;
+
                             }
+
+                            onDoubleClicked: {
+                                var curItem = gridView.currentItem;
+                                var core = phoenixLibrary.getSystem(curItem.systemName);
+                                root.gameAndCoreCheck(curItem.titleName, curItem.systemName, curItem.fileName, core);
+                            }
+
                             onClicked: {
+                                gridView.currentItem.z = 0;
+                                gridView.currentItem.showMenu = false;
+                                gridView.currentItem.glowColor = "black";
                                 gridView.currentIndex = index;
+                                gridView.currentItem.z = 100;
+
+                                if (mouse.button == Qt.RightButton) {
+                                    if (gridView.currentItem.showMenu)
+                                        gridView.currentItem.showMenu = false;
+                                    else
+                                        gridView.currentItem.showMenu = true;
+                                }
+
                                 if (gridView.currentItem.glowColor === "#db5753")
                                     gridView.currentItem.glowColor = "black";
                                 else {
@@ -312,7 +235,6 @@ Rectangle {
 
                                 if (windowStack.currentItem.run)
                                     headerBar.userText = gridItem.titleName;
-
                             }
                         }
                     }

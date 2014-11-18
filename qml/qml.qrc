@@ -6,6 +6,7 @@
     <file>GameView.qml</file>
     <file>HeaderBar.qml</file>
     <file>main.qml</file>
+	<file>RightClickMenu.qml</file>
     <file>SettingsWindow.qml</file>
     <file>VideoSettings.qml</file>
     <file>AudioSettings.qml</file>
