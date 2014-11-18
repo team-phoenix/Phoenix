@@ -17,6 +17,7 @@ TheGamesDB::TheGamesDB()
     manager = new QNetworkAccessManager(this);
 
     connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(processRequest(QNetworkReply*)));
+    hit_ratio = 3/4.0;
 
 }
 
@@ -186,10 +187,19 @@ QString TheGamesDB::parseXMLforId(QString game_name, QNetworkReply* reply)
             else if (element == "GameTitle") {
                 QString text = reader.readElementText();
                 QString cleaned_title = cleanString(text);
+                QString cleaned_game = cleanString(game_name);
 
-                if (cleaned_title.indexOf(cleanString(game_name)) != -1) {
-                    break;
+                QStringList c = cleaned_title.split(" ");
+                int found_count = 0;
+                for (int i=0; i < c.length(); ++i) {
+                    if (cleaned_game.indexOf(c.at(i)) != -1)
+                        found_count++;
                 }
+
+                float found_ratio = static_cast<float>(found_count / (float)c.length());
+                qCDebug(phxLibrary) << cleaned_title << cleaned_game << found_ratio;
+                if (found_ratio >= hit_ratio)
+                    break;
                 else
                     id = "";
             }

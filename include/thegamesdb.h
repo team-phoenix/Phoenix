@@ -91,6 +91,7 @@ private:
     QString cleanString(QString string);
     GameData* findXMLGame(QString id, QNetworkReply* reply);
     QString parseXMLforId(QString game_name, QNetworkReply* reply);
+    float hit_ratio;
 };
 
 #endif // THEGAMESDB_H
