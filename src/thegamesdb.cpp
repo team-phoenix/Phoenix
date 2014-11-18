@@ -3,16 +3,14 @@
 
 const QString BASE_URL = "http://thegamesdb.net/api/";
 const QString ART_BASE_URL = "http://thegamesdb.net/banners/";
-const QStringList EXPRESSIONS = (QStringList() << " "
-                                               << "-"
+const QStringList EXPRESSIONS = (QStringList() << "-"
                                                << "\\"
                                                << "/"
-                                               << "("
-                                               << ")"
                                                << "!"
                                                << "."
                                                << "?"
-                                               << ":");
+                                               << ":"
+                                               );
 
 TheGamesDB::TheGamesDB()
 {
@@ -34,6 +32,9 @@ void TheGamesDB::processRequest(QNetworkReply* reply)
         case RequestingId:
         {
             QString id = parseXMLforId(reply->property("gameName").toString(), reply);
+            if (id == "") {
+                return;
+            }
 
             auto secondReply = manager->get(QNetworkRequest(QUrl(BASE_URL + "GetGame.php?id=" + id)));
             secondReply->setProperty("gameId", id);
@@ -60,11 +61,24 @@ void TheGamesDB::processRequest(QNetworkReply* reply)
 
 QString TheGamesDB::cleanString(QString string)
 {
-    for (int i=0; i < EXPRESSIONS.length(); i++) {
-        string.remove(EXPRESSIONS.at(i));
+    QStringList str_list = string.split(" ");
+    for (int i=0; i < str_list.length(); ++i) {
+        if (str_list.at(i).contains("(")) {
+            if (str_list.at(i).contains(")"))
+                str_list.removeAt(i);
+            else
+                str_list.removeAll("(");
+        }
     }
-    QString stringNormalized = string.normalized(QString::NormalizationForm_KD);
+
+    QString new_str = str_list.join(" ");
+
+    for (int i=0; i < EXPRESSIONS.length(); i++) {
+        new_str.remove(EXPRESSIONS.at(i));
+    }
+    QString stringNormalized = new_str.normalized(QString::NormalizationForm_KD);
     stringNormalized.remove(QRegExp("[^a-zA-Z\\s]"));
+
     return stringNormalized.toLower();
 }
 
@@ -172,9 +186,12 @@ QString TheGamesDB::parseXMLforId(QString game_name, QNetworkReply* reply)
             else if (element == "GameTitle") {
                 QString text = reader.readElementText();
                 QString cleaned_title = cleanString(text);
+
                 if (cleaned_title.indexOf(cleanString(game_name)) != -1) {
                     break;
                 }
+                else
+                    id = "";
             }
         }
     }
