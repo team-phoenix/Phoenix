@@ -13,6 +13,7 @@ DEFINES += '"PHOENIX_VERSION=\\"$$VERSION\\""'
 LIBS += -lSDL2
 
 linux-g++ {
+    INCLUDEPATH += /usr/include/SDL2/
     QMAKE_CXXFLAGS_RELEASE = -D_FORTIFY_SOURCE=2
 
     # GCC >= 4.9
