@@ -119,6 +119,7 @@ void PhoenixWindow::mouseReleaseEvent(QMouseEvent *event)
 
 }*/
 
+#ifdef Q_OS_WIN32
 void PhoenixWindow::paintPicture(MSG *pMessage, long *result)
 {
     RECT winRect1;
@@ -176,6 +177,7 @@ void PhoenixWindow::paintPicture(MSG *pMessage, long *result)
         ::ReleaseDC(windowHandle, hDeviceContext);
         *result = 0;
 }
+#endif
 
 bool PhoenixWindow::nativeEvent(const QByteArray &eventType, void *message, long *result)
 {

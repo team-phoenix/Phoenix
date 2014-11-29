@@ -498,10 +498,8 @@ QByteArray PhoenixLibrary::generateSha1Sum(QString file)
     if (!game_file.open(QIODevice::ReadOnly))
         return QByteArray("");
 
-    QByteArray game_data = game_file.readAll();
-
     QCryptographicHash sha1_hash(QCryptographicHash::Sha1);
-    sha1_hash.addData(game_data);
+    sha1_hash.addData(&game_file);
     QByteArray result = sha1_hash.result().toHex();
 
     game_file.close();
