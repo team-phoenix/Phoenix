@@ -23,6 +23,7 @@ public:
     GameData() {
     }
 
+    int libraryId;
     QString libraryName;
     QString librarySystem;
     QString id;
@@ -59,7 +60,7 @@ public:
     TheGamesDB();
     ~TheGamesDB();
 
-    void getGameData(QString title, QString system);
+    Q_INVOKABLE void getGameData(int id, QString title, QString system);
 
     const QMap<QString, QString> PlatformsMap {
         { "Atari Lynx", "Atari Lynx" },

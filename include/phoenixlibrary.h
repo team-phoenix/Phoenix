@@ -72,6 +72,7 @@ public:
         FFMpeg,
         Last
     };
+
     // Can't use template parameters with Q_PROPERTY
     typedef QMap<Console, QString> ConsoleMap;
 
@@ -84,7 +85,6 @@ public:
 public slots:
     void handleOnlineDatabaseResponse(GameData* data);
     void startAsyncScan(QUrl path);
-    bool scanFolder(QUrl folder_path);
     //GameData *scrapeInfo(QString name, QString system);
     //GameData *asyncScrapeInfo(QString name, QString system);
     void resetAll();
@@ -125,8 +125,6 @@ private:
 
     const QMap<Console, QString> m_consoles;
 
-
-
     const QMap<QString, QString> icon_for_console;
 
     QStringList excluded_consoles;
@@ -139,6 +137,9 @@ private:
     void loadXml(QString file_path);
     QRegularExpressionMatch parseFilename(QString filename);
     QByteArray generateSha1Sum(QString file);
+    bool insertGame(QSqlQuery &q, QFileInfo path);
+    QVector<int> scanFolder(QUrl folder_path);
+    void importMetadata(QVector<int> games_id);
     void scanSystemDatabase(QByteArray hash, QString &name, QString &system);
 };
 

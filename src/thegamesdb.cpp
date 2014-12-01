@@ -39,6 +39,7 @@ void TheGamesDB::processRequest(QNetworkReply* reply)
 
             auto secondReply = manager->get(QNetworkRequest(QUrl(BASE_URL + "GetGame.php?id=" + id)));
             secondReply->setProperty("gameId", id);
+            secondReply->setProperty("libraryId", reply->property("libraryId"));
             secondReply->setProperty("gameName", reply->property("gameName"));
             secondReply->setProperty("gameSystem", reply->property("gameSystem"));
             secondReply->setProperty("state", RequestingData);
@@ -48,6 +49,7 @@ void TheGamesDB::processRequest(QNetworkReply* reply)
         {
             qDebug() << "Parsing XML for game";
             GameData* game_data = findXMLGame(reply->property("gameId").toString(), reply);
+            game_data->libraryId = reply->property("libraryId").toInt();
             game_data->libraryName = reply->property("gameName").toString();
             game_data->librarySystem = reply->property("gameSystem").toString();
             emit dataReady(game_data);
@@ -209,10 +211,11 @@ QString TheGamesDB::parseXMLforId(QString game_name, QNetworkReply* reply)
     return id;
 }
 
-void TheGamesDB::getGameData(QString title, QString system)
+void TheGamesDB::getGameData(int id, QString title, QString system)
 {
     // Grab the first data
     auto reply = manager->get(QNetworkRequest(QUrl(BASE_URL + "GetGamesList.php?name=" + title + "&platform=" + PlatformsMap[system])));
+    reply->setProperty("libraryId", id);
     reply->setProperty("gameName", title);
     reply->setProperty("gameSystem", system);
     reply->setProperty("state", RequestingId);

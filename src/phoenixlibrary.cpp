@@ -142,11 +142,10 @@ void PhoenixLibrary::handleOnlineDatabaseResponse(GameData* data)
     qDebug() << "Game received: " << data->title << " On Platform: " << data->platform << " And artwork: " << data->front_boxart << " and: " << data->back_boxart;
     QSqlQuery q(database);
 
-    q.prepare("UPDATE " % LibraryDbManager::table_games % " SET artwork = ? WHERE title = ? AND system = ?");
+    q.prepare("UPDATE " % LibraryDbManager::table_games % " SET artwork = ? WHERE id = ?");
 
     q.addBindValue(data->front_boxart);
-    q.addBindValue(data->libraryName);
-    q.addBindValue(data->librarySystem);
+    q.addBindValue(data->libraryId);
 
     if (q.exec()) {
         database.commit();
@@ -230,25 +229,94 @@ QRegularExpressionMatch PhoenixLibrary::parseFilename(QString filename)
 
 void PhoenixLibrary::startAsyncScan(QUrl path)
 {
-    QFuture<bool> fut = QtConcurrent::run(this, &PhoenixLibrary::scanFolder, path);
-    auto watcher = std::make_shared<QFutureWatcher<bool>>(new QFutureWatcher<bool>());
+    QFuture<QVector<int>> fut = QtConcurrent::run(this, &PhoenixLibrary::scanFolder, path);
+    auto watcher = std::make_shared<QFutureWatcher<QVector<int>>>();
+
     // Request and update the artworks when the folder scan is finished
     connect(watcher.get(), &QFutureWatcher<bool>::finished, this, [this, watcher]() {
-        QSqlDatabase database = dbm.handle();
-        database.transaction();
-
-        QSqlQuery q(database);
-
-        q.prepare("SELECT title, system FROM " % LibraryDbManager::table_games);
-        if (q.exec()) {
-            while (q.next())
-                thegamesdb->getGameData(q.value(0).toString(), q.value(1).toString());
-        }
+        auto inserted_games = watcher->result();
+        QFuture<void> fut = QtConcurrent::run(this, &PhoenixLibrary::importMetadata,
+                                              inserted_games);
     });
     watcher->setFuture(fut);
 }
 
-bool PhoenixLibrary::scanFolder(QUrl folder_path)
+void PhoenixLibrary::importMetadata(QVector<int> games_id)
+{
+    QString what_games;
+    what_games.reserve(games_id.size()*4);
+
+    setLabel("Retrieving Metadata & Art");
+    setProgress(0.0);
+
+    // build a comma separated string from roms id that were just inserted
+    for (auto i = games_id.begin(); i != games_id.end(); ++i) {
+        what_games.append(QString::number(*i));
+        if (std::next(i) != games_id.end())
+            what_games.append(",");
+    }
+
+    QSqlDatabase database = dbm.handle();
+    database.transaction();
+
+    QSqlQuery q(database);
+
+    q.exec(QStringLiteral("SELECT id, directory, filename FROM %1 WHERE id IN (%2)")
+                          .arg(LibraryDbManager::table_games).arg(what_games));
+    if (!q.exec()) {
+        qCWarning(phxLibrary) << "Error while trying to find metadata for imported games";
+    }
+    for (uint i = 0; q.next(); i++) {
+        setProgress((qreal)i / games_id.size() * 100.0);
+        int id = q.value(0).toInt();
+        QString path(QDir(q.value(1).toString()).filePath(q.value(2).toString()));
+        QByteArray hash = generateSha1Sum(path); // TODO: CRC32
+        QString title, system;
+        scanSystemDatabase(hash, title, system);
+        QSqlQuery qupdate(database);
+        qupdate.prepare(QStringLiteral("UPDATE %1 SET title = ?, system = ? WHERE id = ?")
+                                       .arg(LibraryDbManager::table_games));
+        qupdate.addBindValue(title);
+        qupdate.addBindValue(system);
+        qupdate.addBindValue(id);
+        qupdate.exec();
+
+        // call getGameData in its thread
+        QMetaObject::invokeMethod(thegamesdb, "getGameData", Qt::QueuedConnection,
+                                  Q_ARG(int, id), Q_ARG(QString, title),
+                                  Q_ARG(QString, system));
+    }
+    database.commit();
+
+    setLabel("");
+}
+
+bool PhoenixLibrary::insertGame(QSqlQuery &q, QFileInfo path)
+{
+    if (!core_for_extension.contains(path.suffix()))
+        return false; // not a known rom extension
+
+    QRegularExpressionMatch m = parseFilename(path.completeBaseName());
+
+    auto core = core_for_extension[path.suffix().toLower()];
+    QString system = m_consoles.value(core_for_console.key(core), "Unknown");
+
+    QString title = m.captured("title");
+
+
+    q.prepare("INSERT INTO " % LibraryDbManager::table_games %
+              " (title, system, time_played, region, directory, filename)"
+              " VALUES (?, ?, ?, ?, ?, ?)");
+    q.addBindValue(title);
+    q.addBindValue(system);
+    q.addBindValue("00:00");
+    q.addBindValue(m.captured("region"));
+    q.addBindValue(path.dir().path());
+    q.addBindValue(path.fileName());
+    return q.exec();
+}
+
+QVector<int> PhoenixLibrary::scanFolder(QUrl folder_path)
 {
     QDirIterator dir_iter(folder_path.toLocalFile(), QDirIterator::Subdirectories);
 
@@ -259,6 +327,7 @@ bool PhoenixLibrary::scanFolder(QUrl folder_path)
 
     setLabel("Importing Games");
     setProgress(0.0);
+    QVector<int> inserted_games;
 
     bool found_games = false;
     while (dir_iter.hasNext()) {
@@ -270,30 +339,12 @@ bool PhoenixLibrary::scanFolder(QUrl folder_path)
         if (!info.isFile())
             continue;
 
-        if (!core_for_extension.contains(info.suffix()))
-            continue; // not a known rom extension
-
-        QRegularExpressionMatch m = parseFilename(info.completeBaseName());
-
-        QString system = m_consoles.value(core_for_console.key(core_for_extension[info.suffix().toLower()]), "Unknown");
-        QByteArray hash = generateSha1Sum(info.absoluteFilePath());
-
-        QString title = m.captured("title");
-
-
-
-        scanSystemDatabase(hash, title, system);
-
-
-        q.prepare("INSERT INTO " % LibraryDbManager::table_games % " (title, system, time_played, region, filename)"
-                  " VALUES (?, ?, ?, ?, ?)");
-        q.addBindValue(title);
-        q.addBindValue(system);
-        q.addBindValue("00:00");
-        q.addBindValue(m.captured("region"));
-        q.addBindValue(info.absoluteFilePath());
-        q.exec();
-
+        if (insertGame(q, info) && q.lastInsertId().isValid()) {
+            inserted_games.append(q.lastInsertId().toInt());
+        } else {
+            qCWarning(phxLibrary) << "Unable to import game" << info.fileName()
+                                  << "; error:" << q.lastError();
+        }
     }
 
     if (found_games) {
@@ -302,8 +353,7 @@ bool PhoenixLibrary::scanFolder(QUrl folder_path)
     }
 
     setLabel("");
-    return true;
-
+    return inserted_games;
 }
 
 void PhoenixLibrary::deleteRow(QString title)
@@ -445,34 +495,14 @@ void PhoenixLibrary::importDroppedFiles()
     QSqlDatabase database = dbm.handle();
     database.transaction();
 
+    setLabel("Importing Games");
+
     QSqlQuery q(database);
     for (int i=0; i < length; ++i) {
 
         QFileInfo file = QFileInfo(file_urls[i].toLocalFile());
 
-        setLabel("Importing Games");
-
-        if (!core_for_extension.contains(file.suffix()))
-            continue; // not a known rom extension
-
-        QRegularExpressionMatch m = parseFilename(file.completeBaseName());
-
-        QString system = m_consoles.value(core_for_console.key(core_for_extension[file.suffix().toLower()]), "Unknown");
-        QByteArray hash = generateSha1Sum(file.absoluteFilePath());
-
-        QString title = m.captured("title");
-
-        scanSystemDatabase(hash, title, system);
-
-        q.prepare(QStringLiteral("INSERT INTO ") % LibraryDbManager::table_games % QStringLiteral(" (title, system, time_played, region, filename)") %
-                  QStringLiteral(" VALUES (?, ?, ?, ?, ?)"));
-        q.addBindValue(title);
-        q.addBindValue(system);
-        q.addBindValue("00:00");
-        q.addBindValue(m.captured("region"));
-        q.addBindValue(file.absoluteFilePath());
-        q.exec();
-
+        insertGame(q, file);
     }
 
     database.commit();
@@ -500,7 +530,7 @@ QByteArray PhoenixLibrary::generateSha1Sum(QString file)
 
     QCryptographicHash sha1_hash(QCryptographicHash::Sha1);
     sha1_hash.addData(&game_file);
-    QByteArray result = sha1_hash.result().toHex();
+    QByteArray result = sha1_hash.result();
 
     game_file.close();
     return result;
@@ -516,16 +546,16 @@ void PhoenixLibrary::scanSystemDatabase(QByteArray hash, QString &name, QString 
 
     QSqlQuery q(db);
 
+    // LIKE == case insensitive
     q.prepare("SELECT sha1, gamename FROM NOINTRO WHERE sha1 LIKE ?");
-    q.addBindValue("%" + hash + "%");
-
+    q.addBindValue(hash.toHex());
 
 
     if (!q.exec())
         qCDebug(phxLibrary) << q.executedQuery() << q.lastError();
 
     QString game_name;
-    while(q.next()) {
+    while (q.next()) {
         game_name = q.value(1).toString();
     }
 

@@ -10,6 +10,7 @@
 #include "logging.h"
 #include "systemdatabase.h"
 
+
 static const QString table_version = QStringLiteral("schema_version");
 static const QString database_name = QStringLiteral("gamelibrary.sqlite");
 
@@ -72,7 +73,8 @@ bool LibraryDbManager::createSchema()
     QStringLiteral("   /* file info */") %
     QStringLiteral("   directory TEXT,\n") %
     QStringLiteral("   filename TEXT UNIQUE,\n") %
-    QStringLiteral("   system_path TEXT\n") %
+    QStringLiteral("   sha1 BLOB\n") %
+    QStringLiteral("   crc32 BLOB\n") %
     QStringLiteral(")"));
     q.exec(QStringLiteral("CREATE INDEX title_index ON ") % table_games % QStringLiteral(" (title)"));
     q.exec(QStringLiteral("CREATE INDEX favorite_index ON ") % table_games % QStringLiteral(" (is_favorite)"));
