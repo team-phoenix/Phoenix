@@ -324,7 +324,7 @@ Rectangle {
     Rectangle {
         id: progressArea;
         z: 1;
-        visible: false;//consoleBar.progressText !== "";
+        visible: consoleBar.progressText !== "";
         anchors {
             bottom: parent.bottom;
             left: parent.left;
