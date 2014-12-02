@@ -181,7 +181,7 @@ void PhoenixWindow::paintPicture(MSG *pMessage, long *result)
 
 bool PhoenixWindow::nativeEvent(const QByteArray &eventType, void *message, long *result)
 {
-
+/*
 #ifdef Q_OS_WIN32
     if (!frameless()) {
         if (eventType == "windows_generic_MSG") {
@@ -300,13 +300,14 @@ bool PhoenixWindow::nativeEvent(const QByteArray &eventType, void *message, long
                     }
                     return true;
                 }
-*/
+
                 default:
                     break;
             }
         }
     }
 #endif
+*/
 
     return QQuickWindow::nativeEvent(eventType, message, result);
 
