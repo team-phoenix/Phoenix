@@ -123,14 +123,14 @@ private:
 
     QMap<QString, QList<QObject *>> cores_for_console;
 
-    const QMap<Console, QString> m_consoles;
+    QMap<Console, QVariantMap> core_for_console;
 
     const QMap<QString, QString> icon_for_console;
 
+    const QMap<Console, QString> m_consoles;
+
     QStringList excluded_consoles;
     TheGamesDB* thegamesdb;
-
-    QMap<Console, QVariantMap> core_for_console;
 
     QMap<QString, QVariantMap> core_for_extension;
 
