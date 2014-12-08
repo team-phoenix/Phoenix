@@ -41,6 +41,7 @@ public:
     QString localsrc();
     QString folder();
     QString fileName();
+    QString suffix();
 
     void setFileName(const QString &fileName);
     void setFolder(const QString &folder);
@@ -53,6 +54,8 @@ private:
     QString m_src;
     QString m_folder;
     QString m_filename;
+    QString m_suffix;
+
 
 public slots:
     void downloadFinished(QNetworkReply *reply);

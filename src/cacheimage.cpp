@@ -1,31 +1,17 @@
 
 #include "cacheimage.h"
-
+#include <QFileInfo>
 
 CachedImage::CachedImage(QObject *parent)
     : QObject(parent)
 {
     // signal/slot when manager object emits finished signal execute downloadFinished method
     connect(&manager, SIGNAL(finished(QNetworkReply*)), SLOT(downloadFinished(QNetworkReply*)));
-    /*
-     * CachedImage {
-                            id: cachedImage;
-                            imgsrc: image.source;
-                            folder: "Artwork";
-                            fileName: gridItem.titleName ? gridItem.titleName : "";
-                            onLocalsrcChanged: {
-                                image.source = localsrc;
-                            }
-                        }
 
-                        Component.onCompleted: cachedImage.start();
-
-     */
 }
 
 void CachedImage::returnCached(QUrl imgUrl)
 {
-    // Valgrind says we're leaking memory here
 
     QQmlApplicationEngine eng;
     //Store the qml app offline storage location
@@ -68,6 +54,10 @@ void CachedImage::cacheImage()
     }
 
     QUrl imgUrl(m_src);
+    QFileInfo info_src(m_src);
+    //m_suffix = info_src.suffix();
+    setFileName(m_filename + "." + info_src.suffix());
+
     //Do following when url
     if (imgUrl.url().startsWith("http://") || imgUrl.url().startsWith("https://")) {
         returnCached(imgUrl);
@@ -142,9 +132,14 @@ QString CachedImage::fileName()
     return m_filename;
 }
 
+QString CachedImage::suffix()
+{
+    return m_suffix;
+}
+
 void CachedImage::setFileName(const QString &fileName)
 {
-    m_filename = fileName + ".jpg";
+    m_filename = fileName;
     emit fileNameChanged();
 }
 
