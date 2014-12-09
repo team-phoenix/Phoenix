@@ -369,39 +369,34 @@ Rectangle {
         }
         spacing: 15;
 
-        PhoenixNormalButton {
+        Image {
             id: settingsBtn;
+            source: !root.gameShowing ? "../assets/cog-6x.png" : "../assets/GameView/home.png";
             visible: true;
-            height: 30;
-            width: 30;
+            sourceSize {
+                height: 20;
+                width: 20;
+
+            }
             anchors.verticalCenter: parent.verticalCenter;
             property string backgroundColor: "#000000FF";
-            onHoveredChanged: {
-                if (hovered) {
-                    opacity = 0.7;
-                }
-                else
-                    opacity = 1.0;
-            }
-            Image {
-                anchors.centerIn: parent;
-                source: !root.gameShowing ? "../assets/cog-6x.png" : "../assets/GameView/home.png";
-                sourceSize.height: settingsBtn.height * 0.6;
-                sourceSize.width: settingsBtn.width * 0.6;
-            }
 
-            onClicked:  {
-                if (root.itemInView === "game") {
-                    windowStack.currentItem.run = false;
-                    volumeDropDown.visible = false;
-                    windowStack.push({item: homeScreen, replace: true})
-                    headerBar.userText = "Phoenix";
-                }
-                else {
-                    if (settingsDropDown.visible)
-                        settingsDropDown.visible = false;
+            MouseArea {
+                anchors.fill: parent;
+
+                onClicked:  {
+                    if (root.itemInView === "game") {
+                        windowStack.currentItem.run = false;
+                        volumeDropDown.visible = false;
+                        windowStack.push({item: homeScreen, replace: true})
+                        headerBar.userText = "Phoenix";
+                    }
                     else {
-                        settingsDropDown.visible = true;
+                        if (settingsDropDown.visible)
+                            settingsDropDown.visible = false;
+                        else {
+                            settingsDropDown.visible = true;
+                        }
                     }
                 }
             }
