@@ -26,7 +26,6 @@ PhoenixLibrary::PhoenixLibrary()
         { Nintendo_GBA,       libretro_cores_info[platform_manager.preferred_cores[platform_manager.gameboy_advance]] },
         { Sony_PlayStation,   libretro_cores_info[platform_manager.preferred_cores[platform_manager.playstation]] },
     }),
-
     icon_for_console(QMap<QString, QString>{
         { platform_manager.nintendo, "/assets/consoleicons/nes.png" },
         { platform_manager.super_nintendo, "/assets/consoleicons/snes.png" },
@@ -62,6 +61,7 @@ PhoenixLibrary::PhoenixLibrary()
     })
 {
     m_import_urls = false;
+    m_progress = 0;
 
     excluded_consoles = QStringList() << platform_manager.nintendo_ds << platform_manager.mupen64plus << platform_manager.ppsspp
                                       << platform_manager.desmume;
