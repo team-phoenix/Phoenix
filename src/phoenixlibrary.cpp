@@ -63,16 +63,13 @@ PhoenixLibrary::PhoenixLibrary()
     m_import_urls = false;
     m_progress = 0;
 
+
     excluded_consoles = QStringList() << platform_manager.nintendo_ds << platform_manager.mupen64plus << platform_manager.ppsspp
                                       << platform_manager.desmume;
 
-    thegamesdb = new TheGamesDB();
-
-    connect(thegamesdb, &TheGamesDB::dataReady, this, &PhoenixLibrary::handleOnlineDatabaseResponse);
 
     m_model = new GameLibraryModel(&dbm, this);
     m_model->setEditStrategy(QSqlTableModel::OnManualSubmit);
-
 
     for (auto &core: libretro_cores_info) {
         QString exts = core["supported_extensions"].toString();
@@ -121,39 +118,22 @@ PhoenixLibrary::PhoenixLibrary()
 
     }
 
+    network_queue = new NetworkQueue();
+    network_queue->setGameModel(m_model);
+    network_queue->setLibraryDatabase(dbm);
 
     /*connect(import_thread, SIGNAL(started()), this, SLOT(scanFolder()));
     connect(this, SIGNAL(destroyed()), import_thread, SLOT(deleteLater()));
     connect(import_thread, SIGNAL(finished()), import_thread, SLOT(deleteLater()));*/
+
 }
 
 PhoenixLibrary::~PhoenixLibrary()
 {
     if (m_model)
         m_model->deleteLater();
-    delete thegamesdb;
 }
 
-void PhoenixLibrary::handleOnlineDatabaseResponse(GameData* data)
-{
-    // Now update the artwork
-    QSqlDatabase database = dbm.handle();
-    database.transaction();
-    qDebug() << "Game received: " << data->title << " On Platform: " << data->platform << " And artwork: " << data->front_boxart << " and: " << data->back_boxart;
-    QSqlQuery q(database);
-
-    q.prepare("UPDATE " % LibraryDbManager::table_games % " SET artwork = ? WHERE id = ?");
-
-    q.addBindValue(data->front_boxart);
-    q.addBindValue(data->libraryId);
-
-    if (q.exec()) {
-        database.commit();
-        QMetaObject::invokeMethod(m_model, "select");
-    }
-    qDebug() << "Game done with adding data";
-    delete data;
-}
 
 void PhoenixLibrary::setLabel(QString label)
 {
@@ -229,14 +209,31 @@ QRegularExpressionMatch PhoenixLibrary::parseFilename(QString filename)
 
 void PhoenixLibrary::startAsyncScan(QUrl path)
 {
+
     QFuture<QVector<int>> fut = QtConcurrent::run(this, &PhoenixLibrary::scanFolder, path);
     auto watcher = std::make_shared<QFutureWatcher<QVector<int>>>();
+    auto checksum_watcher = std::make_shared<QFutureWatcher<void>>();
+
+
+    connect(checksum_watcher.get(), &QFutureWatcher<void>::finished, this, [this] {
+        qCDebug(phxLibrary) << "Running artwork fetch";
+        network_queue->start();
+
+    });
 
     // Request and update the artworks when the folder scan is finished
-    connect(watcher.get(), &QFutureWatcher<bool>::finished, this, [this, watcher]() {
+    connect(watcher.get(), &QFutureWatcher<bool>::finished, this, [this, watcher, checksum_watcher]() {
         auto inserted_games = watcher->result();
-        QFuture<void> fut = QtConcurrent::run(this, &PhoenixLibrary::importMetadata,
+
+        QFuture<void> f = QtConcurrent::run(this, &PhoenixLibrary::importMetadata,
                                               inserted_games);
+        checksum_watcher->setFuture(f);
+
+            //QMetaObject::invokeMethod(&network_queue, "start");
+            //network_queue.start();
+            //network_queue.waitForFinished();
+
+
     });
     watcher->setFuture(fut);
 }
@@ -266,6 +263,7 @@ void PhoenixLibrary::importMetadata(QVector<int> games_id)
     if (!q.exec()) {
         qCWarning(phxLibrary) << "Error while trying to find metadata for imported games";
     }
+
     for (uint i = 0; q.next(); i++) {
         setProgress((qreal)i / games_id.size() * 100.0);
         int id = q.value(0).toInt();
@@ -281,14 +279,19 @@ void PhoenixLibrary::importMetadata(QVector<int> games_id)
         qupdate.addBindValue(id);
         qupdate.exec();
 
-        // call getGameData in its thread
-        QMetaObject::invokeMethod(thegamesdb, "getGameData", Qt::QueuedConnection,
-                                  Q_ARG(int, id), Q_ARG(QString, title),
-                                  Q_ARG(QString, system));
-    }
-    database.commit();
+        // call enqueueContext in its thread
+        Scraper::ScraperContext context;
+        context.id = id;
+        context.title = title;
+        context.system = system;
+        network_queue->enqueueContext(context);
 
+    }
+
+
+    database.commit();
     setLabel("");
+
 }
 
 bool PhoenixLibrary::insertGame(QSqlQuery &q, QFileInfo path)

@@ -70,7 +70,9 @@ HEADERS += include/core.h                      \
            include/cacheimage.h                \
            include/platformmanager.h           \
            include/coremodel.h                 \
-           include/systemdatabase.h
+           include/systemdatabase.h            \
+           include/networkqueue.h              \
+           include/scraper.h                   \
 
 SOURCES += src/main.cpp                        \
            src/videoitem.cpp                   \
@@ -91,6 +93,8 @@ SOURCES += src/main.cpp                        \
            src/thegamesdb.cpp                  \
            src/cacheimage.cpp                  \
            src/coremodel.cpp                   \
-           src/systemdatabase.cpp
+           src/systemdatabase.cpp              \
+           src/networkqueue.cpp                \
+           src/scraper.cpp
 
 RESOURCES = qml/qml.qrc assets/assets.qrc

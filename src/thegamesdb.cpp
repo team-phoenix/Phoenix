@@ -1,34 +1,19 @@
 #include "qdebug.h"
 #include "thegamesdb.h"
 
-const QString BASE_URL = "http://thegamesdb.net/api/";
-const QString ART_BASE_URL = "http://thegamesdb.net/banners/";
-const QStringList EXPRESSIONS = (QStringList() << "-"
-                                               << "\\"
-                                               << "/"
-                                               << "!"
-                                               << "."
-                                               << "?"
-                                               << ":"
-                                               );
-
 TheGamesDB::TheGamesDB()
 {
-    manager = new QNetworkAccessManager(this);
-
-    connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(processRequest(QNetworkReply*)));
-    hit_ratio = 3/4.0;
-
+    setBaseUrl("http://thegamesdb.net/api/");
 }
 
 TheGamesDB::~TheGamesDB()
 {
-    if (manager)
-        manager->deleteLater();
+
 }
 
 void TheGamesDB::processRequest(QNetworkReply* reply)
 {
+
     switch (reply->property("state").toInt()) {
         case RequestingId:
         {
@@ -37,7 +22,7 @@ void TheGamesDB::processRequest(QNetworkReply* reply)
                 return;
             }
 
-            auto secondReply = manager->get(QNetworkRequest(QUrl(BASE_URL + "GetGame.php?id=" + id)));
+            auto secondReply = networkManager()->get(QNetworkRequest(QUrl(baseUrl() + "GetGame.php?id=" + id)));
             secondReply->setProperty("gameId", id);
             secondReply->setProperty("libraryId", reply->property("libraryId"));
             secondReply->setProperty("gameName", reply->property("gameName"));
@@ -48,7 +33,7 @@ void TheGamesDB::processRequest(QNetworkReply* reply)
         case RequestingData:
         {
             qDebug() << "Parsing XML for game";
-            GameData* game_data = findXMLGame(reply->property("gameId").toString(), reply);
+            ScraperData* game_data = findXMLGame(reply->property("gameId").toString(), reply);
             game_data->libraryId = reply->property("libraryId").toInt();
             game_data->libraryName = reply->property("gameName").toString();
             game_data->librarySystem = reply->property("gameSystem").toString();
@@ -62,32 +47,10 @@ void TheGamesDB::processRequest(QNetworkReply* reply)
     reply->deleteLater();
 }
 
-QString TheGamesDB::cleanString(QString string)
+
+Scraper::ScraperData* TheGamesDB::findXMLGame(QString id, QNetworkReply* reply)
 {
-    QStringList str_list = string.split(" ");
-    for (int i=0; i < str_list.length(); ++i) {
-        if (str_list.at(i).contains("(")) {
-            if (str_list.at(i).contains(")"))
-                str_list.removeAt(i);
-            else
-                str_list.removeAll("(");
-        }
-    }
-
-    QString new_str = str_list.join(" ");
-
-    for (int i=0; i < EXPRESSIONS.length(); i++) {
-        new_str.remove(EXPRESSIONS.at(i));
-    }
-    QString stringNormalized = new_str.normalized(QString::NormalizationForm_KD);
-    stringNormalized.remove(QRegExp("[^a-zA-Z\\s]"));
-
-    return stringNormalized.toLower();
-}
-
-GameData* TheGamesDB::findXMLGame(QString id, QNetworkReply* reply)
-{
-    GameData* game_data = new GameData();
+    ScraperData* game_data = new ScraperData();
     game_data->id = id;
 
     QXmlStreamReader reader(reply);
@@ -156,6 +119,8 @@ GameData* TheGamesDB::findXMLGame(QString id, QNetworkReply* reply)
             else if (element == "boxart") {
                 QStringRef side = reader.attributes().value("side");
                 QString text = reader.readElementText();
+                const QString ART_BASE_URL = "http://thegamesdb.net/banners/";
+
                 if (side == "back" || side == "l/ba")
                     game_data->back_boxart = ART_BASE_URL + text;
                 else if (side == "front" || side == "l/fro")
@@ -211,12 +176,15 @@ QString TheGamesDB::parseXMLforId(QString game_name, QNetworkReply* reply)
     return id;
 }
 
-void TheGamesDB::getGameData(int id, QString title, QString system)
+void TheGamesDB::getGameData(Scraper::ScraperContext context)
 {
     // Grab the first data
-    auto reply = manager->get(QNetworkRequest(QUrl(BASE_URL + "GetGamesList.php?name=" + title + "&platform=" + PlatformsMap[system])));
-    reply->setProperty("libraryId", id);
-    reply->setProperty("gameName", title);
-    reply->setProperty("gameSystem", system);
+
+    auto reply = networkManager()->get(QNetworkRequest(QUrl(baseUrl() + "GetGamesList.php?name=" + context.title + "&platform=" + PlatformsMap[context.system])));
+    if (context.id != -1)
+        reply->setProperty("libraryId", context.id);
+
+    reply->setProperty("gameName", context.title);
+    reply->setProperty("gameSystem", context.system);
     reply->setProperty("state", RequestingId);
 }

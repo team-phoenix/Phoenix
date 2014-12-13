@@ -32,6 +32,7 @@ public:
     //}
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
+
 public slots:
     void setFilter(const QString &filter, QVariantList params);
     virtual void sort(int column, Qt::SortOrder order) override

@@ -24,7 +24,7 @@ public:
 
 private:
     LibraryDbManager(const LibraryDbManager &);
-    LibraryDbManager &operator=(const LibraryDbManager &);
+    //LibraryDbManager &operator=(const LibraryDbManager &);
     QSqlDatabase db;
 
     bool createSchema();

@@ -12,7 +12,7 @@
 #include "platformmanager.h"
 #include "coremodel.h"
 #include "systemdatabase.h"
-
+#include "networkqueue.h"
 
 class PhoenixLibrary : public QObject
 {
@@ -20,7 +20,7 @@ class PhoenixLibrary : public QObject
     Q_PROPERTY(qreal progress READ progress WRITE setProgress NOTIFY progressChanged)
     Q_PROPERTY(QString label READ label WRITE setLabel NOTIFY labelChanged)
     Q_PROPERTY(int count READ count NOTIFY countChanged)
-    Q_ENUMS(Console);
+    Q_ENUMS(Console)
     Q_PROPERTY(bool importUrls READ importUrls WRITE setImportUrls NOTIFY importUrlsChanged)
 
 public:
@@ -84,7 +84,6 @@ public:
     }
 
 public slots:
-    void handleOnlineDatabaseResponse(GameData* data);
     void startAsyncScan(QUrl path);
     //GameData *scrapeInfo(QString name, QString system);
     //GameData *asyncScrapeInfo(QString name, QString system);
@@ -109,6 +108,7 @@ signals:
     void importUrlsChanged();
 
 private:
+    NetworkQueue *network_queue;
     LibraryDbManager dbm;
     QThread *import_thread;
     //TheGamesDB scraper;

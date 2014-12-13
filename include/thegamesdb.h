@@ -3,10 +3,6 @@
 #define THEGAMESDB_H
 
 #include <QObject>
-#include <QEventLoop>
-#include <QNetworkRequest>
-#include <QtNetwork/QNetworkAccessManager>
-#include <QNetworkReply>
 #include <QDir>
 #include <QStringList>
 #include <QString>
@@ -17,50 +13,16 @@
 #include <QXmlStreamAttributes>
 
 #include "logging.h"
+#include "scraper.h"
 
-class GameData {
+
+class TheGamesDB : public Scraper {
 public:
-    GameData() {
-    }
-
-    int libraryId;
-    QString libraryName;
-    QString librarySystem;
-    QString id;
-    QString title;
-    QString developer;
-    QString platform_id;
-    QString platform;
-    QString release_date;
-    QString overview;
-    QString esrb;
-    QString genre;
-    QString players;
-    QString co_op;
-    QString youtube;
-    QString publisher;
-    QString rating;
-    QString back_boxart;
-    QString front_boxart;
-    QString clear_logo;
-    QString play_time;
-
-};
-
-class TheGamesDB : public QObject {
-    Q_OBJECT
-public:
-    enum QueryState {
-        None,
-        RequestingId,
-        RequestingData,
-        Finishing
-    };
 
     TheGamesDB();
     ~TheGamesDB();
 
-    Q_INVOKABLE void getGameData(int id, QString title, QString system);
+    Q_INVOKABLE void getGameData(Scraper::ScraperContext context);
 
     const QMap<QString, QString> PlatformsMap {
         { "Atari Lynx", "Atari Lynx" },
@@ -80,19 +42,14 @@ public:
         { "Film", "Film" }
     };
 
-signals:
-    void dataReady(GameData*);
-
 public slots:
-    void processRequest(QNetworkReply*);
+
+    void processRequest(QNetworkReply *reply);
 
 private:
-    QNetworkAccessManager *manager;
 
-    QString cleanString(QString string);
-    GameData* findXMLGame(QString id, QNetworkReply* reply);
+    Scraper::ScraperData* findXMLGame(QString id, QNetworkReply* reply);
     QString parseXMLforId(QString game_name, QNetworkReply* reply);
-    float hit_ratio;
 };
 
 #endif // THEGAMESDB_H
