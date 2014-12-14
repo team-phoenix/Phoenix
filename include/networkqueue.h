@@ -22,11 +22,13 @@ public:
     void setScraper(Scraper *scraper);
     void setGameModel(GameLibraryModel *model);
     void setLibraryDatabase(LibraryDbManager &dbm);
+    int requestCount();
 
 
 signals:
     void finished();
     void progress(qreal);
+    void label(QString);
 
 public slots:
     void enqueueContext(Scraper::ScraperContext context);
@@ -46,6 +48,7 @@ private:
 
     qreal m_progress;
     int counter;
+    int m_request_count;
     bool m_finished = false;
 
 };

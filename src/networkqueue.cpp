@@ -13,17 +13,17 @@ NetworkQueue::NetworkQueue()
 
     m_progress = 0.0;
     counter = 0;
+    m_request_count = 0;
 
     m_game_model = nullptr;
 
+    connect(m_scraper, &Scraper::dataReady, this, &NetworkQueue::appendToLibrary);
     connect(this, &NetworkQueue::finished, &network_thread, &QThread::quit);
     connect(&network_thread, &QThread::started, this, &NetworkQueue::progressRequests, Qt::DirectConnection);
-    connect(&network_thread, &QThread::finished, this, &NetworkQueue::deleteLater);
 }
 
 NetworkQueue::~NetworkQueue()
 {
-    delete m_scraper;
 }
 
 void NetworkQueue::enqueueData(int id, QString title, QString system)
@@ -52,13 +52,16 @@ void NetworkQueue::enqueueContext(Scraper::ScraperContext context)
 
 void NetworkQueue::progressRequests()
 {
-    connect(m_scraper, &Scraper::dataReady, this, &NetworkQueue::appendToLibrary);
-
-    qCDebug(phxLibrary) << QThread::currentThread() << network_thread.thread();
+    m_request_count = internal_queue.length();
 
     while (!internal_queue.isEmpty()) {
         m_scraper->getGameData(internal_queue.dequeue());
     }
+}
+
+int NetworkQueue::requestCount()
+{
+   return m_request_count;
 }
 
 void NetworkQueue::setGameModel(GameLibraryModel *model)
@@ -80,6 +83,8 @@ void NetworkQueue::appendToLibrary(Scraper::ScraperData *data)
 {
     qCDebug(phxLibrary) << "Game received: " << data->title << " On Platform: " << data->platform << " And artwork: " << data->front_boxart << " and: " << data->back_boxart;
     counter++;
+    if (counter == 1)
+        emit label("Attaching Artwork");
 
     QSqlDatabase database = db_manager.handle();
     database.transaction();
@@ -97,12 +102,13 @@ void NetworkQueue::appendToLibrary(Scraper::ScraperData *data)
 
     delete data;
 
+    emit ((qreal)counter / m_request_count * 100.0);
 
-    if (internal_queue.length() > 0)
-        emit ((qreal)counter / internal_queue.size() * 100.0);
-
-    if (counter == internal_queue.length()) {
+    if (counter == m_request_count) {
+        emit label("");
         emit finished();
+        m_request_count = 0;
+        counter = 0;
     }
 
 }

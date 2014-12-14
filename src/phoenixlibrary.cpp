@@ -122,6 +122,8 @@ PhoenixLibrary::PhoenixLibrary()
     network_queue->setGameModel(m_model);
     network_queue->setLibraryDatabase(dbm);
 
+    connect(network_queue, &NetworkQueue::label, this, &PhoenixLibrary::setLabel);
+    connect(network_queue, &NetworkQueue::progress, this, &PhoenixLibrary::setProgress);
     /*connect(import_thread, SIGNAL(started()), this, SLOT(scanFolder()));
     connect(this, SIGNAL(destroyed()), import_thread, SLOT(deleteLater()));
     connect(import_thread, SIGNAL(finished()), import_thread, SLOT(deleteLater()));*/

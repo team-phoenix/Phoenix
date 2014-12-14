@@ -29,8 +29,6 @@ public:
     ~PhoenixLibrary();
 
     void setFolderPath(QUrl path);
-    void setProgress(qreal progress);
-    void setLabel(QString label);
     void setImportUrls(bool importUrls);
 
     QString label() const
@@ -84,9 +82,10 @@ public:
     }
 
 public slots:
+    void setProgress(qreal progress);
+    void setLabel(QString label);
+
     void startAsyncScan(QUrl path);
-    //GameData *scrapeInfo(QString name, QString system);
-    //GameData *asyncScrapeInfo(QString name, QString system);
     void resetAll();
     GameLibraryModel *model() { return m_model; }
     void deleteRow(QString title);
