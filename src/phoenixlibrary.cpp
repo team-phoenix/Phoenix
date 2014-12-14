@@ -344,7 +344,8 @@ QVector<int> PhoenixLibrary::scanFolder(QUrl folder_path)
 
         if (insertGame(q, info) && q.lastInsertId().isValid()) {
             inserted_games.append(q.lastInsertId().toInt());
-        } else {
+        }
+        else {
             qCWarning(phxLibrary) << "Unable to import game" << info.fileName()
                                   << "; error:" << q.lastError();
         }
@@ -489,27 +490,34 @@ void PhoenixLibrary::cacheUrls(QList<QUrl> list) {
     file_urls = list;
 }
 
-void PhoenixLibrary::importDroppedFiles()
+QVector<int> PhoenixLibrary::importDroppedFiles(QList<QUrl> url_list)
 {
-    int length = file_urls.length();
-    if (!length)
-        return;
-
     QSqlDatabase database = dbm.handle();
     database.transaction();
 
-    setLabel("Importing Games");
-
     QSqlQuery q(database);
-    for (int i=0; i < length; ++i) {
 
-        QFileInfo file = QFileInfo(file_urls[i].toLocalFile());
+    setLabel("Importing Games");
+    setProgress(0.0);
+    QVector<int> inserted_games;
 
-        insertGame(q, file);
+
+    for (int i=0; i < url_list.length(); ++i) {
+
+        QFileInfo info = QFileInfo(url_list[i].toLocalFile());
+        if (insertGame(q, info)      && q.lastInsertId().isValid())
+            inserted_games.append(q.lastInsertId().toInt());
+        else {
+            qCWarning(phxLibrary) << "Unable to import game" << info.fileName()
+                                  << "; error:" << q.lastError();
+        }
     }
 
     database.commit();
     QMetaObject::invokeMethod(m_model, "select");
+
+    setLabel("");
+    return inserted_games;
 }
 
 void PhoenixLibrary::setImportUrls(bool importUrls)
@@ -518,8 +526,27 @@ void PhoenixLibrary::setImportUrls(bool importUrls)
     emit importUrlsChanged();
 
     if (m_import_urls) {
-        QFuture<void> fut = QtConcurrent::run(this, &PhoenixLibrary::importDroppedFiles);
-        Q_UNUSED(fut)
+        if (file_urls.length() > 0) {
+            QFuture<QVector<int>> fut = QtConcurrent::run(this, &PhoenixLibrary::importDroppedFiles, file_urls);
+            auto watcher = std::make_shared<QFutureWatcher<QVector<int>>>();
+            auto checksum_watcher = std::make_shared<QFutureWatcher<void>>();
+            connect(checksum_watcher.get(), &QFutureWatcher<void>::finished, this, [this] {
+                qCDebug(phxLibrary) << "Running artwork fetch";
+                network_queue->start();
+
+            });
+
+            // Request and update the artworks when the folder scan is finished
+            connect(watcher.get(), &QFutureWatcher<bool>::finished, this, [this, watcher, checksum_watcher]() {
+                auto inserted_games = watcher->result();
+
+                QFuture<void> f = QtConcurrent::run(this, &PhoenixLibrary::importMetadata,
+                                                      inserted_games);
+                checksum_watcher->setFuture(f);
+
+            });
+            watcher->setFuture(fut);
+        }
     }
 
     m_import_urls = false;

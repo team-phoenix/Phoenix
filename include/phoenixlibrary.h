@@ -97,7 +97,7 @@ public slots:
     QString systemIcon(QString system);
     QString showPath(int index, QString system);
     void cacheUrls(QList<QUrl> list);
-    void importDroppedFiles();
+    QVector<int> importDroppedFiles(QList<QUrl> url_list);
 
 
 
