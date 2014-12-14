@@ -97,7 +97,7 @@ void NetworkQueue::appendToLibrary(Scraper::ScraperData *data)
 
     if (q.exec()) {
         database.commit();
-        m_game_model->select();
+        QMetaObject::invokeMethod(m_game_model, "select");
     }
 
     delete data;
