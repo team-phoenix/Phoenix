@@ -173,6 +173,8 @@ QString TheGamesDB::parseXMLforId(QString game_name, QNetworkReply* reply)
         }
     }
 
+    reply->deleteLater();
+
     return id;
 }
 
