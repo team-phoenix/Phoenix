@@ -133,6 +133,7 @@ Scraper::ScraperData* TheGamesDB::findXMLGame(QString id, QNetworkReply* reply)
         }
     }
 
+    reply->deleteLater();
     return game_data;
 }
 
