@@ -19,7 +19,7 @@ NetworkQueue::NetworkQueue()
 
     connect(m_scraper, &Scraper::dataReady, this, &NetworkQueue::appendToLibrary);
     connect(this, &NetworkQueue::finished, &network_thread, &QThread::quit);
-    connect(&network_thread, &QThread::started, this, &NetworkQueue::progressRequests, Qt::DirectConnection);
+    connect(&network_thread, &QThread::started, this, &NetworkQueue::progressRequests);
 }
 
 NetworkQueue::~NetworkQueue()
@@ -54,8 +54,13 @@ void NetworkQueue::progressRequests()
 {
     m_request_count = internal_queue.length();
 
+    emit label("Fetching Artwork");
+    emit progress(0.0);
+    int temp_count = 0;
     while (!internal_queue.isEmpty()) {
+        emit progress((qreal)temp_count / m_request_count * 100.0);
         m_scraper->getGameData(internal_queue.dequeue());
+        temp_count++;
     }
 }
 
@@ -83,8 +88,10 @@ void NetworkQueue::appendToLibrary(Scraper::ScraperData *data)
 {
     qCDebug(phxLibrary) << "Game received: " << data->title << " On Platform: " << data->platform << " And artwork: " << data->front_boxart << " and: " << data->back_boxart;
     counter++;
-    if (counter == 1)
+    if (counter == 1) {
+        emit progress(0.0);
         emit label("Attaching Artwork");
+    }
 
     QSqlDatabase database = db_manager.handle();
     database.transaction();
@@ -95,16 +102,16 @@ void NetworkQueue::appendToLibrary(Scraper::ScraperData *data)
     q.addBindValue(data->front_boxart);
     q.addBindValue(data->libraryId);
 
-    if (q.exec()) {
-        database.commit();
-        QMetaObject::invokeMethod(m_game_model, "select");
-    }
+    q.exec();
 
     delete data;
 
     emit ((qreal)counter / m_request_count * 100.0);
 
     if (counter == m_request_count) {
+        database.commit();
+        QMetaObject::invokeMethod(m_game_model, "select");
+
         emit label("");
         emit finished();
         m_request_count = 0;
