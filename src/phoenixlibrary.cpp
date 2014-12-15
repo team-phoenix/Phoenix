@@ -124,9 +124,6 @@ PhoenixLibrary::PhoenixLibrary()
 
     connect(network_queue, &NetworkQueue::label, this, &PhoenixLibrary::setLabel);
     connect(network_queue, &NetworkQueue::progress, this, &PhoenixLibrary::setProgress);
-    /*connect(import_thread, SIGNAL(started()), this, SLOT(scanFolder()));
-    connect(this, SIGNAL(destroyed()), import_thread, SLOT(deleteLater()));
-    connect(import_thread, SIGNAL(finished()), import_thread, SLOT(deleteLater()));*/
 
 }
 
@@ -317,7 +314,7 @@ bool PhoenixLibrary::insertGame(QSqlQuery &q, QFileInfo path)
     q.addBindValue("00:00");
     q.addBindValue(m.captured("region"));
     q.addBindValue(path.dir().path());
-    q.addBindValue(path.fileName());
+    q.addBindValue(path.absoluteFilePath());
     return q.exec();
 }
 
@@ -415,6 +412,9 @@ void PhoenixLibrary::resetAll()
         qCDebug(phxLibrary) << "Error clearing library";
         setLabel("Error Clearing Library");
     }
+
+    setLabel("");
+
 }
 
 /*GameData *PhoenixLibrary::asyncScrapeInfo(QString name, QString system)
