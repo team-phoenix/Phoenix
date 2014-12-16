@@ -32,12 +32,19 @@ void TheGamesDB::processRequest(QNetworkReply* reply)
         }
         case RequestingData:
         {
-            qDebug() << "Parsing XML for game";
             ScraperData* game_data = findXMLGame(reply->property("gameId").toString(), reply);
             game_data->libraryId = reply->property("libraryId").toInt();
             game_data->libraryName = reply->property("gameName").toString();
             game_data->librarySystem = reply->property("gameSystem").toString();
+
+            emit progress((qreal)current_count / request_count * 100.0);
+
+            if (current_count == request_count) {
+                current_count = 0;
+                request_count = 0;
+            }
             emit dataReady(game_data);
+
             break;
         }
         default:
@@ -165,7 +172,6 @@ QString TheGamesDB::parseXMLforId(QString game_name, QNetworkReply* reply)
                 }
 
                 float found_ratio = static_cast<float>(found_count / (float)c.length());
-                qCDebug(phxLibrary) << cleaned_title << cleaned_game << found_ratio;
                 if (found_ratio >= hit_ratio)
                     break;
                 else
@@ -182,6 +188,11 @@ QString TheGamesDB::parseXMLforId(QString game_name, QNetworkReply* reply)
 void TheGamesDB::getGameData(Scraper::ScraperContext context)
 {
     // Grab the first data
+    current_count++;
+    if (current_count == 1) {
+        emit label("Fetching Artwork");
+        emit progress(0.0);
+    }
 
     auto reply = networkManager()->get(QNetworkRequest(QUrl(baseUrl() + "GetGamesList.php?name=" + context.title + "&platform=" + PlatformsMap[context.system])));
     if (context.id != -1)

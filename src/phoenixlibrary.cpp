@@ -215,9 +215,7 @@ void PhoenixLibrary::startAsyncScan(QUrl path)
 
 
     connect(checksum_watcher.get(), &QFutureWatcher<void>::finished, this, [this] {
-        qCDebug(phxLibrary) << "Running artwork fetch";
         network_queue->start();
-
     });
 
     // Request and update the artworks when the folder scan is finished

@@ -60,14 +60,18 @@ public:
 
     void setHitRatio(qreal ratio);
     void setBaseUrl(QString base_url);
+    void setRequestCount(int count);
     QString cleanString(QString string);
 
     qreal hit_ratio;
-
+    int request_count;
+    int current_count;
 
 
 signals:
     void dataReady(Scraper::ScraperData *data);
+    void progress(qreal);
+    void label(QString);
 
 public slots:
     virtual void processRequest(QNetworkReply*);

@@ -6,6 +6,8 @@ Scraper::Scraper(QObject *parent)
     : QObject(parent)
 {
     hit_ratio = 3/4.0;
+    current_count = 0;
+    request_count = 0;
     m_expressions = (QStringList() << "-"
                                    << "\\"
                                    << "/"
@@ -27,6 +29,11 @@ Scraper::~Scraper()
 void Scraper::setHitRatio(qreal ratio)
 {
     hit_ratio = ratio;
+}
+
+void Scraper::setRequestCount(int count)
+{
+    request_count = count;
 }
 
 QStringList Scraper::expressions()
