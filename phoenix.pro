@@ -24,6 +24,11 @@ linux-g++ {
     }
 }
 
+macx {
+    INCLUDEPATH += /usr/local/include/SDL2/
+    LIBS += -L/usr/local/lib
+}
+
 win32 {
     QT +=  winextras gui-private
     LIBS += -LC:/SDL2/lib

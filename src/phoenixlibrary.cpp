@@ -112,6 +112,9 @@ PhoenixLibrary::PhoenixLibrary()
 #ifdef Q_OS_LINUX
         QString full_path = "/usr/lib/libretro/" + core + ".so";
 #endif
+#ifdef Q_OS_MACX
+        QString full_path = "/usr/local/lib/libretro/" + core + ".dylib";
+#endif
         QFile in_file(full_path);
         if (in_file.exists())
             cores_for_console[cleaned_name].append( new CoreModel(this, display_name, core));
@@ -453,6 +456,11 @@ QString PhoenixLibrary::getSystem(QString system)
         QString temp = platform_manager.preferred_cores.value(system, "");
         if (temp != "")
             core_path = "/usr/lib/libretro/" + temp + ".so";
+#endif
+#ifdef Q_OS_MACX
+        QString temp = platform_manager.preferred_cores.value(system, "");
+        if (temp != "")
+            core_path = "/usr/local/lib/libretro/" + temp + ".dylib";
 #endif
 
     return core_path;

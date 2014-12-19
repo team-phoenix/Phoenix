@@ -88,7 +88,7 @@ bool LibraryDbManager::loadFixtures()
     db.transaction();
     QSqlQuery q(db);
     const QString command = QStringLiteral("INSERT INTO ") % table_games % QStringLiteral(" (title, system, time_played, artwork)") %
-    QStringLiteral(" VALUES (\"somegame %2\", \"test\", \"0h 0m 0s\", \"qrc:/assets/missing_artwork.png\")");
+    QStringLiteral(" VALUES (\"somegame %2\", \"test\", \"0h 0m 0s\", \"qrc:/assets/No-Art.png\")");
     for (int i = 0; i < 10000; i++) {
         q.exec(command.arg(i));
     }
