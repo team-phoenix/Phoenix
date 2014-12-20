@@ -6,6 +6,7 @@
 #include <QString>
 
 #include "QObject"
+#include <atomic>
 
 
 class Scraper : public QObject {
@@ -65,7 +66,7 @@ public:
 
     qreal hit_ratio;
     int request_count;
-    int current_count;
+    std::atomic<int> current_count;
 
 
 signals:

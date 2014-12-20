@@ -17,10 +17,12 @@ void TheGamesDB::processRequest(QNetworkReply* reply)
     switch (reply->property("state").toInt()) {
         case RequestingId:
         {
+
             QString id = parseXMLforId(reply->property("gameName").toString(), reply);
             if (id == "") {
                 return;
             }
+
 
             auto secondReply = networkManager()->get(QNetworkRequest(QUrl(baseUrl() + "GetGame.php?id=" + id)));
             secondReply->setProperty("gameId", id);
@@ -37,7 +39,7 @@ void TheGamesDB::processRequest(QNetworkReply* reply)
             game_data->libraryName = reply->property("gameName").toString();
             game_data->librarySystem = reply->property("gameSystem").toString();
 
-            emit progress((qreal)current_count / request_count * 100.0);
+            emit progress((qreal)current_count.load(std::memory_order_relaxed) / request_count * 100.0);
 
             if (current_count == request_count) {
                 current_count = 0;

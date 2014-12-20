@@ -3,10 +3,10 @@
 #include <QStringList>
 
 Scraper::Scraper(QObject *parent)
-    : QObject(parent)
+    : QObject(parent),
+      current_count(0)
 {
     hit_ratio = 3/4.0;
-    current_count = 0;
     request_count = 0;
     m_expressions = (QStringList() << "-"
                                    << "\\"

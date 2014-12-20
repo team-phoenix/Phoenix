@@ -6,14 +6,15 @@
 #include "thegamesdb.h"
 
 NetworkQueue::NetworkQueue()
+    : counter(0),
+      m_request_count(0)
 {
     this->moveToThread(&network_thread);
     m_scraper = nullptr;
     setScraper(new TheGamesDB());
+    m_scraper->moveToThread(&network_thread);
 
     m_progress = 0.0;
-    counter = 0;
-    m_request_count = 0;
 
     m_game_model = nullptr;
 
@@ -45,7 +46,6 @@ void NetworkQueue::enqueueData(int id, QString title, QString system)
 void NetworkQueue::setScraper(Scraper *scraper)
 {
     m_scraper = scraper;
-    m_scraper->moveToThread(&network_thread);
 }
 
 void NetworkQueue::enqueueContext(Scraper::ScraperContext context)
@@ -60,11 +60,14 @@ void NetworkQueue::progressRequests()
     emit label("Dispatching Requests");
     emit progress(0.0);
     int temp_count = 0;
-    m_scraper->setRequestCount(m_request_count);
+    qCDebug(phxLibrary) << "processing ";
+
+    m_scraper->setRequestCount(m_request_count.load(std::memory_order_relaxed));
     while (!internal_queue.isEmpty()) {
-        emit progress((qreal)temp_count / m_request_count * 100.0);
-        m_scraper->getGameData(internal_queue.dequeue());
         temp_count++;
+        m_scraper->getGameData(internal_queue.dequeue());
+        emit progress((qreal)temp_count / m_request_count * 100.0);
+
     }
 }
 
@@ -85,13 +88,13 @@ void NetworkQueue::setLibraryDatabase(LibraryDbManager &dbm)
 
 void NetworkQueue::start()
 {
-    network_thread.start(QThread::LowPriority);
+    network_thread.start(QThread::HighPriority);
 }
 
 void NetworkQueue::appendToLibrary(Scraper::ScraperData *data)
 {
     counter++;
-    if (counter == 1) {
+    if (counter.load(std::memory_order_relaxed) == 1) {
         emit progress(0.0);
         emit label("Attaching Artwork");
     }
@@ -112,7 +115,8 @@ void NetworkQueue::appendToLibrary(Scraper::ScraperData *data)
 
     if (counter == m_request_count) {
         database.commit();
-        QMetaObject::invokeMethod(m_game_model, "select");
+
+        QMetaObject::invokeMethod(m_game_model, "select", Qt::QueuedConnection);
 
         emit label("");
         emit finished();

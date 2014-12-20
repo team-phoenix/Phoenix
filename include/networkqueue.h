@@ -6,6 +6,7 @@
 #include <QNetworkReply>
 #include <QUrl>
 #include <QObject>
+#include <atomic>
 
 #include "librarydbmanager.h"
 #include "gamelibrarymodel.h"
@@ -47,8 +48,8 @@ private:
     LibraryDbManager db_manager;
 
     qreal m_progress;
-    int counter;
-    int m_request_count;
+    std::atomic<int> counter;
+    std::atomic<int> m_request_count;
     bool m_finished = false;
 
 };
