@@ -258,7 +258,7 @@ void PhoenixLibrary::importMetadata(QVector<int> games_id)
 
     QSqlQuery q(database);
 
-    q.exec(QStringLiteral("SELECT id, directory, filename FROM %1 WHERE id IN (%2)")
+    q.exec(QStringLiteral("SELECT id, directory, filename, title, system FROM %1 WHERE id IN (%2)")
                           .arg(LibraryDbManager::table_games).arg(what_games));
     if (!q.exec()) {
         qCWarning(phxLibrary) << "Error while trying to find metadata for imported games";
@@ -269,7 +269,8 @@ void PhoenixLibrary::importMetadata(QVector<int> games_id)
         int id = q.value(0).toInt();
         QString path(QDir(q.value(1).toString()).filePath(q.value(2).toString()));
         QByteArray hash = generateSha1Sum(path); // TODO: CRC32
-        QString title, system;
+        QString title = q.value(3).toString();
+        QString system = q.value(4).toString();
         scanSystemDatabase(hash, title, system);
         QSqlQuery qupdate(database);
         qupdate.prepare(QStringLiteral("UPDATE %1 SET title = ?, system = ? WHERE id = ?")
@@ -281,6 +282,7 @@ void PhoenixLibrary::importMetadata(QVector<int> games_id)
 
         // call enqueueContext in its thread
         Scraper::ScraperContext context;
+        qCDebug(phxLibrary) << title << system;
         context.id = id;
         context.title = title;
         context.system = system;
