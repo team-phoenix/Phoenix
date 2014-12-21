@@ -4,7 +4,6 @@
 
 #include <QObject>
 #include <QNetworkAccessManager>
-#include <QQmlApplicationEngine>
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QSslError>
@@ -27,6 +26,8 @@ class CachedImage : public QObject
     Q_PROPERTY(QString folder READ folder WRITE setFolder NOTIFY folderChanged)
 
     Q_PROPERTY(QString fileName READ fileName WRITE setFileName NOTIFY fileNameChanged)
+    Q_PROPERTY(QString cacheDirectory READ cacheDirectory  WRITE setCacheDirectory  NOTIFY cacheDirectoryChanged)
+
 
     QNetworkAccessManager manager;
 
@@ -42,14 +43,16 @@ public:
     QString folder();
     QString fileName();
     QString suffix();
+    QString cacheDirectory();
 
     void setFileName(const QString &fileName);
     void setFolder(const QString &folder);
+    void setCacheDirectory(const QString &cacheDirectory);
 
     Q_INVOKABLE void start();
 
 private:
-    QString m_localPath;
+    QString m_cache_directory;
     QString m_localUrl;
     QString m_src;
     QString m_folder;
@@ -68,6 +71,7 @@ signals:
     void folderChanged();
     void fileNameChanged();
     void cacheLoaded(bool);
+    void cacheDirectoryChanged();
 };
 
 #endif // CACHEIMAGE_H

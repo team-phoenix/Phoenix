@@ -8,28 +8,27 @@ CachedImage::CachedImage(QObject *parent)
     // signal/slot when manager object emits finished signal execute downloadFinished method
     connect(&manager, SIGNAL(finished(QNetworkReply*)), SLOT(downloadFinished(QNetworkReply*)));
 
+
 }
 
 void CachedImage::returnCached(QUrl imgUrl)
 {
 
-    QQmlApplicationEngine eng;
     //Store the qml app offline storage location
     //In android it's application path/files/QML/OfflineStorage/
-    m_localPath = QDir::fromNativeSeparators(eng.offlineStoragePath() + "\\");
 
     if(m_folder != "")
-        m_localPath += m_folder + "/";
+        setCacheDirectory(m_cache_directory + m_folder + "/");
 
-    QDir dir(m_localPath);
+    QDir dir(cacheDirectory());
     if (!dir.exists()) {
-        if (!dir.mkpath(m_localPath)) {
+        if (!dir.mkpath(cacheDirectory())) {
             qDebug() << "Couldn't create subdirectory";
             return;
         }
     }
 
-    if(!QFile::exists(m_localPath + m_filename)) { // This check seems to be taking a long time to do for each file
+    if(!QFile::exists(cacheDirectory() + m_filename)) { // This check seems to be taking a long time to do for each file
         //Create the request to be sent with Network Access Maanager
         emit cacheLoaded(false);
         QNetworkRequest req(imgUrl);
@@ -37,9 +36,9 @@ void CachedImage::returnCached(QUrl imgUrl)
         // that will be listened by constructor connector
         manager.get(req);
     } else {
-        //qDebug() << "exists: " << m_localPath + m_filename;
+        //qDebug() << "exists: " << cacheDirectory() + m_filename;
         //The file is already downloaded, let's just emit the local path
-        m_localUrl = "file:///" + m_localPath + m_filename;
+        m_localUrl = "file:///" + cacheDirectory() + m_filename;
         emit cacheLoaded(true);
         emit localsrcChanged();
     }
@@ -109,7 +108,7 @@ bool CachedImage::saveToDisk(const QString &filename, QIODevice *data)
 
 QStringList CachedImage::saveFileName()
 {
-    QString basename = m_localPath + m_filename;
+    QString basename = cacheDirectory() + m_filename;
     QStringList result;
     /*
     * the result stringlist contains of 2 elements that need to be returned
@@ -127,6 +126,11 @@ QStringList CachedImage::saveFileName()
     return result;
 }
 
+QString CachedImage::cacheDirectory()
+{
+    return m_cache_directory;
+}
+
 QString CachedImage::fileName()
 {
     return m_filename;
@@ -135,6 +139,12 @@ QString CachedImage::fileName()
 QString CachedImage::suffix()
 {
     return m_suffix;
+}
+
+void CachedImage::setCacheDirectory(const QString &cacheDirectory)
+{
+    m_cache_directory = cacheDirectory;
+    emit cacheDirectoryChanged();
 }
 
 void CachedImage::setFileName(const QString &fileName)

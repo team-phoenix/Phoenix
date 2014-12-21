@@ -185,6 +185,7 @@ Rectangle {
                             imgsrc: image.source;
                             folder: "Artwork";
                             fileName: gridItem.titleName ? gridItem.titleName : "";
+                            cacheDirectory: root.cacheDirectory;
                             onLocalsrcChanged: {
                                 image.source = localsrc;
                             }
