@@ -36,6 +36,8 @@ PhoenixWindow {
     property int filtering: 2;
     property bool stretchVideo: false;
     property string itemInView: "grid";
+    property string lastGameName: "Phoenix";
+    property string lastSystemName: "";
 
     function gameAndCoreCheck(title, system, file_name, core)
     {

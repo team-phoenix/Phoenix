@@ -210,6 +210,8 @@ Rectangle {
                             onDoubleClicked: {
                                 var curItem = gridView.currentItem;
                                 var core = phoenixLibrary.getSystem(curItem.systemName);
+                                root.lastGameName = title;
+                                root.lastSystemName = system;
                                 root.gameAndCoreCheck(curItem.titleName, curItem.systemName, curItem.fileName, core);
                             }
 

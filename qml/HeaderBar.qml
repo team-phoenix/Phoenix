@@ -18,7 +18,7 @@ Rectangle {
     property bool sliderVisible: true;
     property bool searchBarVisible: true;
     property real volumeLevel: volumeSlider.value;
-    property string userText: "Phoenix";
+    property string systemText: "";
     property string previousViewIcon: "";
 
     property Timer timer: Timer {
@@ -632,10 +632,30 @@ Rectangle {
         }
     }
 
-    Row {
-        id: userArea;
-        anchors.centerIn: parent;
-        spacing: 10;
+    Item {
+        anchors {
+            top: parent.top;
+            bottom: parent.bottom;
+            horizontalCenter: parent.horizontalCenter;
+        }
+        width: 250;
+
+        Rectangle {
+            id: leftSeparator;
+            width: 1;
+            anchors {
+                top: parent.top;
+                topMargin: 2;
+                bottom: parent.bottom;
+                left: parent.left;
+            }
+
+            gradient: Gradient {
+                GradientStop {position: 0.0; color: "#4f4f4f";}
+                GradientStop {position: 1.0; color: "#1c1c1c";}
+            }
+        }
+
         /*Image {
             id: userImage;
             height: 20;
@@ -646,17 +666,63 @@ Rectangle {
 
         }*/
 
-        Text {
-            id: userAreaText;
-            text: headerBar.userText;
-            anchors.verticalCenter: parent.verticalCenter;
-            renderType: Text.QtRendering;
-            font {
-                family: "Sans";
-                pixelSize: 16;
-                bold: true;
+        Rectangle {
+            anchors {
+                top: parent.top;
+                bottom: parent.bottom;
+                left: leftSeparator.right;
+                right: rightSeparator.left;
             }
-            color: "#f1f1f1";
+            color: "transparent";
+
+            Column {
+                anchors {
+                    centerIn: parent;
+                }
+
+                spacing: 4;
+
+                Text {
+                    id: userAreaText;
+                    text: root.lastGameName;
+                    renderType: Text.QtRendering;
+                    font {
+                        family: "Sans";
+                        pixelSize: text !== "Phoenix" ? 12 : 14;
+                        bold: true;
+                    }
+                    anchors.horizontalCenter: parent.horizontalCenter;
+                    color: "#d9d9d9";
+                }
+                Text {
+                    id: systemText;
+                    text: root.lastSystemName;
+                    renderType: Text.QtRendering;
+                    elide: Text.ElideRight;
+                    anchors.horizontalCenter: parent.horizontalCenter;
+                    font {
+                        family: "Sans";
+                        pixelSize: 11;
+                    }
+                    visible: text !== "Phoenix";
+                    color: "#d9d9d9";
+                }
+            }
+        }
+
+        Rectangle {
+            id: rightSeparator;
+            width: 1;
+            anchors {
+                top: parent.top;
+                topMargin: 2;
+                bottom: parent.bottom;
+                right: parent.right;
+            }
+            gradient: Gradient {
+                GradientStop {position: 0.0; color: "#4f4f4f";}
+                GradientStop {position: 1.0; color: "#1c1c1c";}
+            }
         }
     }
 
