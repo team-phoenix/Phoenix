@@ -4,7 +4,6 @@
 #include <QQuickWindow>
 #include <QtQuick/QQuickView>
 #include <QQmlContext>
-#include <QDir>
 
 #ifdef Q_OS_LINUX
 #include <pthread.h>
@@ -65,8 +64,7 @@ int main(int argc, char *argv[])
     engine.load(QUrl("qrc:/qml/main.qml"));
     QObject *topLevel = engine.rootObjects().value(0);
     PhoenixWindow *window = qobject_cast<PhoenixWindow *>(topLevel);
-
-    window->setCacheDirectory(QDir::fromNativeSeparators(engine.offlineStoragePath() + "\\"));
+    window->setCacheDirectory(engine.offlineStoragePath() + "/");
     window->show();
 
     input_manager.scanDevices();
