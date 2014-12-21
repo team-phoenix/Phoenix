@@ -197,9 +197,7 @@ void TheGamesDB::getGameData(Scraper::ScraperContext context)
     }
 
     auto reply = networkManager()->get(QNetworkRequest(QUrl(baseUrl() + "GetGamesList.php?name=" + context.title + "&platform=" + PlatformsMap[context.system])));
-    if (context.id != -1)
-        reply->setProperty("libraryId", context.id);
-
+    reply->setProperty("libraryId", context.id);
     reply->setProperty("gameName", context.title);
     reply->setProperty("gameSystem", context.system);
     reply->setProperty("state", RequestingId);

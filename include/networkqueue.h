@@ -45,9 +45,7 @@ private:
     QQueue<Scraper::ScraperContext> internal_queue;
     Scraper *m_scraper;
     GameLibraryModel *m_game_model;
-    LibraryDbManager db_manager;
 
-    qreal m_progress;
     std::atomic<int> counter;
     std::atomic<int> m_request_count;
     bool m_finished = false;

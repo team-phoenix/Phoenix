@@ -9,21 +9,20 @@ NetworkQueue::NetworkQueue()
     : counter(0),
       m_request_count(0)
 {
-    this->moveToThread(&network_thread);
-    m_scraper = nullptr;
-    setScraper(new TheGamesDB());
-    m_scraper->moveToThread(&network_thread);
 
-    m_progress = 0.0;
+    setScraper(new TheGamesDB());
+
+    this->moveToThread(&network_thread);
+
+    m_scraper->moveToThread(&network_thread);
 
     m_game_model = nullptr;
 
-    connect(m_scraper, &Scraper::dataReady, this, &NetworkQueue::appendToLibrary);
     connect(this, &NetworkQueue::finished, &network_thread, &QThread::quit);
     connect(&network_thread, &QThread::started, this, &NetworkQueue::progressRequests);
     connect(m_scraper, &Scraper::progress, this, &NetworkQueue::progress);
     connect(m_scraper, &Scraper::label, this, &NetworkQueue::label);
-
+    connect(m_scraper, &Scraper::dataReady, this, &NetworkQueue::appendToLibrary);
 }
 
 NetworkQueue::~NetworkQueue()
@@ -36,8 +35,6 @@ void NetworkQueue::enqueueData(int id, QString title, QString system)
     context.id = id;
     context.title = title;
     context.system = system;
-
-    m_progress++;
 
     internal_queue.enqueue(context);
 
@@ -60,7 +57,6 @@ void NetworkQueue::progressRequests()
     emit label("Dispatching Requests");
     emit progress(0.0);
     int temp_count = 0;
-    qCDebug(phxLibrary) << "processing ";
 
     m_scraper->setRequestCount(m_request_count.load(std::memory_order_relaxed));
     while (!internal_queue.isEmpty()) {
@@ -81,22 +77,18 @@ void NetworkQueue::setGameModel(GameLibraryModel *model)
     m_game_model = model;
 }
 
-void NetworkQueue::setLibraryDatabase(LibraryDbManager &dbm)
-{
-    db_manager = dbm;
-}
-
 void NetworkQueue::start()
 {
-    network_thread.start(QThread::HighPriority);
+    network_thread.start(QThread::HighestPriority);
 }
 
 void NetworkQueue::appendToLibrary(Scraper::ScraperData *data)
 {
     counter++;
+
     if (counter.load(std::memory_order_relaxed) == 1) {
-        emit progress(0.0);
         emit label("Attaching Artwork");
+        emit progress(0.0);
     }
 
 
@@ -108,23 +100,19 @@ void NetworkQueue::appendToLibrary(Scraper::ScraperData *data)
 
     q.addBindValue(data->front_boxart);
     q.addBindValue(data->libraryId);
-
     q.exec();
-
-    emit ((qreal)counter / m_request_count * 100.0);
-
-    if (counter == m_request_count) {
-        database.commit();
-
-        QMetaObject::invokeMethod(m_game_model, "select", Qt::QueuedConnection);
-
-        emit label("");
-        emit finished();
-        m_request_count = 0;
-        counter = 0;
-    }
 
     delete data;
 
+    emit progress((qreal)counter.load(std::memory_order_relaxed) / m_request_count * 100.0);
 
+    if (counter == m_request_count) {
+        database.commit();
+        QMetaObject::invokeMethod(m_game_model, "submitAll", Qt::QueuedConnection);
+        counter = 0;
+        m_request_count = 0;
+
+        emit label("");
+        emit finished();
+    }
 }

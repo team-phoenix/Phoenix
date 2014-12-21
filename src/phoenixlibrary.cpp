@@ -123,7 +123,6 @@ PhoenixLibrary::PhoenixLibrary()
 
     network_queue = new NetworkQueue();
     network_queue->setGameModel(m_model);
-    network_queue->setLibraryDatabase(dbm);
 
     connect(network_queue, &NetworkQueue::label, this, &PhoenixLibrary::setLabel);
     connect(network_queue, &NetworkQueue::progress, this, &PhoenixLibrary::setProgress);
@@ -134,6 +133,7 @@ PhoenixLibrary::~PhoenixLibrary()
 {
     if (m_model)
         m_model->deleteLater();
+    delete network_queue;
 }
 
 
