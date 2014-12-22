@@ -402,84 +402,11 @@ Rectangle {
             }
         }
 
-        Rectangle {
-            width: 58;
-            height: 30;
-            color: "#0f0f0f";
+        PhoenixViewButtons {
+            height: 32;
+            width: height * 2;
             visible: !root.gameShowing;
             anchors.verticalCenter: parent.verticalCenter;
-
-            Row {
-                anchors {
-                    centerIn: parent;
-                    margins: 1;
-                }
-
-                ExclusiveGroup {
-                    id: viewGroup;
-                }
-
-                PhoenixNormalButton {
-                    id: tableButton;
-                    anchors.verticalCenter: parent.verticalCenter;
-                    height: 28;
-                    width: 28;
-                    checkable: true;
-                    exclusiveGroup: viewGroup;
-
-                    Image {
-                        anchors.centerIn: parent;
-                        source: parent.checked ? "../assets/table-orange.png" : "../assets/table.png";
-                        sourceSize {
-                            height: 16;
-                            width: 16;
-                        }
-                    }
-                    onPressedChanged: {
-                        if (pressed) {
-                            checked = true;
-                            windowStack.currentItem.stackId.push({item: gameTable, replace: true, immediate: true})
-                        }
-                    }
-                }
-
-                PhoenixNormalButton {
-                    id: viewBtn;
-                    height: 28;
-                    width: 28;
-                    anchors.verticalCenter: parent.verticalCenter;
-                    checkable: true;
-                    checked: true;
-                    exclusiveGroup: viewGroup;
-
-                    onPressedChanged: {
-                        if (pressed) {
-                            checked = true;
-                            windowStack.currentItem.stackId.push({item: gameGrid, replace: true, immediate: true});
-                        }
-                    }
-
-
-                    Image {
-                        anchors.centerIn: parent;
-                        source: parent.checked ? "../assets/grid-orange.png" : "../assets/grid.png";
-                        sourceSize {
-                            height: 16;
-                            width: 16;
-                        }
-
-                       // MouseArea {
-                        //    anchors.fill: parent;
-                         //   propagateComposedEvents: true;
-                            //hoverEnabled: !viewBtn.checked;
-                            //onEntered: parent.source = "../assets/grid-orange.png";
-                            //onExited: parent.source = "../assets/grid.png";
-                       // }
-                    }
-
-
-                }
-            }
         }
 
         PhoenixNormalButton {
@@ -572,26 +499,39 @@ Rectangle {
                 id: sliderStyle;
 
                 handle: Item {
-                    height: 18;
-                    width: 18;
+                    height: 22;
+                    width: 22;
 
                     Rectangle {
                         id: zoomHandle;
                         gradient: Gradient {
-                            GradientStop{ position: 0.0; color: "#f1f1f1";}
-                            GradientStop{ position: 0.5; color: "#f1f2f1";}
-                            GradientStop{ position: 0.7; color: "#e2e2e2";}
-                            GradientStop{ position: 1.0; color: "#cbcacb";}
+                            GradientStop{ position: 0.0; color: "#343434";}
+                            GradientStop{ position: 0.5; color: "#343433";}
+                            GradientStop{ position: 0.7; color: "#2c2d2c";}
+                            GradientStop{ position: 1.0; color: "#242424";}
 
                         }
 
-                        radius: 10;
-                        anchors.fill: parent;
-                        smooth: true;
+                        radius: width * 0.5;
+                        anchors.centerIn: parent;
+                        height: 18;
+                        width: 18;
 
-                       CustomBorder {
-                           color: "black"
-                        }
+                       //CustomBorder {
+                       //    color: "black"
+                        //}
+
+                    }
+                    DropShadow {
+                        source: zoomHandle;
+                        anchors.fill: source;
+                        horizontalOffset: 0;
+                        verticalOffset: 1;
+                        color: "black";
+                        opacity: 1.0;
+                        radius: 2;
+                        samples: radius * 2;
+
                     }
                 }
 
@@ -638,42 +578,63 @@ Rectangle {
             bottom: parent.bottom;
             horizontalCenter: parent.horizontalCenter;
         }
-        width: 250;
+        width: 275;
 
-        Rectangle {
+        Row {
             id: leftSeparator;
-            width: 1;
             anchors {
                 top: parent.top;
                 topMargin: 2;
                 bottom: parent.bottom;
+                bottomMargin: 2;
                 left: parent.left;
             }
 
-            gradient: Gradient {
-                GradientStop {position: 0.0; color: "#4f4f4f";}
-                GradientStop {position: 1.0; color: "#1c1c1c";}
+            Rectangle {
+                width: 1;
+                anchors {
+                    top: parent.top;
+                    bottom: parent.bottom;
+                }
+
+                gradient: Gradient {
+                    GradientStop {position: 0.0; color: "#4f4f4f";}
+                    GradientStop {position: 1.0; color: "#1c1c1c";}
+                }
             }
+
+            Rectangle {
+                width: 1;
+                gradient: Gradient {
+                    GradientStop {position: 0.0; color: "#070707";}
+                    GradientStop {position: 1.0; color: "#1d1d1d";}
+                }
+
+                anchors {
+                    top: parent.top;
+                    bottom: parent.bottom;
+                }
+            }
+
         }
-
-        /*Image {
-            id: userImage;
-            height: 20;
-            width: 65;
-            source: "../assets/phoenix-logo.png";
-            fillMode: Image.PreserveAspectFit;
-
-
-        }*/
 
         Rectangle {
             anchors {
                 top: parent.top;
+                topMargin: 2;
                 bottom: parent.bottom;
+                bottomMargin: 2;
                 left: leftSeparator.right;
                 right: rightSeparator.left;
             }
             color: "transparent";
+
+            MouseArea {
+                anchors.fill: parent;
+                hoverEnabled: true;
+                onEntered: parent.color = "#1d1d1d";
+                onExited: parent.color = "transparent";
+            }
 
             Column {
                 anchors {
@@ -710,20 +671,41 @@ Rectangle {
             }
         }
 
-        Rectangle {
+        Row {
             id: rightSeparator;
-            width: 1;
             anchors {
                 top: parent.top;
-                topMargin: 2;
                 bottom: parent.bottom;
                 right: parent.right;
+                topMargin: 2;
+                bottomMargin: 2;
             }
-            gradient: Gradient {
-                GradientStop {position: 0.0; color: "#4f4f4f";}
-                GradientStop {position: 1.0; color: "#1c1c1c";}
+            Rectangle {
+                width: 1;
+                gradient: Gradient {
+                    GradientStop {position: 0.0; color: "#070707";}
+                    GradientStop {position: 1.0; color: "#1d1d1d";}
+                }
+
+                anchors {
+                    top: parent.top;
+                    bottom: parent.bottom;
+                }
+            }
+            Rectangle {
+                width: 1;
+                anchors {
+                    top: parent.top;
+                    bottom: parent.bottom;
+                }
+                gradient: Gradient {
+                    GradientStop {position: 0.0; color: "#4f4f4f";}
+                    GradientStop {position: 1.0; color: "#1c1c1c";}
+                }
             }
         }
+
+
     }
 
     Row {
