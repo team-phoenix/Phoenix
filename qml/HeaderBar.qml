@@ -467,6 +467,8 @@ Rectangle {
             anchors {
                 verticalCenter: parent.verticalCenter;
             }
+            visible: !root.gameShowing && !root.clear;
+
             spacing: 12;
 
             Image {
@@ -484,7 +486,6 @@ Rectangle {
 
             Slider {
                 id: zoomSlider;
-                visible: !root.gameShowing && !root.clear;
                 width: 120;
                 height: 25;
 
