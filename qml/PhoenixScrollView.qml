@@ -4,7 +4,7 @@ import QtQuick.Controls.Styles 1.1
 
 ScrollView {
     id: scrollView;
-    property string frameColor: "#262626";
+    property string frameColor: "#292727";
     property bool borderEnabled: true;
     property int handleHeight: 30;
     style: ScrollViewStyle {

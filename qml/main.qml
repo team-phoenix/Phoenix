@@ -298,7 +298,7 @@ PhoenixWindow {
                 //onExited: backdropGrid.showBorder = false;
             //}
             property string itemName: "grid";
-            color: "#262626";
+            color: "#292727";
             zoomFactor: headerBar.sliderValue;
             zoomSliderPressed: headerBar.sliderPressed;
             anchors.fill: parent;
@@ -813,13 +813,13 @@ PhoenixWindow {
             ConsoleBar {
                 id: consoleBar;
                 z: headerBar.z - 1;
-                color: "#262626";
+                color: "#292727";
                 anchors {
                     left: parent.left;
                     top: parent.top;
                     bottom: parent.bottom;
                 }
-                width: 200;
+                width: 225;
 
                 DropArea {
                     anchors.fill: parent;

@@ -94,7 +94,7 @@ Rectangle {
                 font {
                     bold: true;
                     family: "Sans";
-                    pixelSize: 12;
+                    pixelSize: 13;
                 }
             }
             Image {
@@ -135,102 +135,43 @@ Rectangle {
 
         property bool retractList: false;
 
-        highlight: Item {
+        highlight: Rectangle {
             id: highlightItem;
             visible: !listView.retractList;
             height: listView.currentItem.height;
             width: listView.width;
             anchors.verticalCenter: listView.currentItem.verticalCenter;
             y: listView.currentItem.y;
-            Item {
-                id: innerItem;
-                height: parent.height;
-                width: parent.width;
+            gradient: Gradient {
+                GradientStop {position: 0.0; color: "#0b0b0b";}
+                GradientStop {position: 0.05; color: "#1a1a1a";}
+                GradientStop {position: 1.0; color: "#1a1a1a";}
+            }
+            Rectangle {
+                anchors {
+                    left: parent.left;
+                    top: parent.top;
+                    bottom: parent.bottom;
+                    topMargin: 2;
+                    leftMargin: 2;
+                    bottomMargin: 2;
 
-
-
-
-                Rectangle {
-                    id: mainColor;
-                    anchors {
-                        left: parent.left;
-                        right: parent.right;
-                        top: parent.top;
-                        bottom: parent.bottom;
-                    }
-                    color: listView.currentItem ? "#171717" : "#000000FF";
-                    Rectangle {
-                        id: topBorder;
-                        color: "#f27b77";
-                        anchors {
-                            left: parent.left;
-                            leftMargin: leftBord.width;
-                            top: parent.top;
-                        }
-                        height: 2;
-                        width: 4;
-                    }
-
-                    Row {
-                        // leftAccent;
-                        anchors {
-                            left: parent.left;
-                            leftMargin: leftBord.width;
-                            bottom: bottomB.top;
-                            top: topBorder.bottom;
-                        }
-
-                        Rectangle {
-                            anchors {
-                                top: parent.top;
-                                bottom: parent.bottom;
-                            }
-                            width: 1;
-                            color: "#db5753";
-                        }
-
-                        Rectangle {
-                            anchors {
-                                top: parent.top;
-                                bottom: parent.bottom;
-                            }
-                            width: 3;
-                            color: "#e8433f";
-                        }
-
-                    }
-
-                    Column {
-                        id: bottomB;
-                        anchors {
-                            right: parent.right;
-                            rightMargin: rightBord.width;
-                            left: parent.left;
-                            leftMargin: leftBord.width;
-                            bottom: parent.bottom;
-                        }
-
-                        Rectangle {
-                            color: "#a22f2c";
-                            anchors {
-                                left: parent.left;
-                            }
-                            width: 4;
-                            height: 2;
-                        }
-                        Rectangle {
-                            color: "#474747";
-                            anchors {
-                                left: parent.left;
-                                right: parent.right;
-                            }
-                            height: 1;
-                        }
-                    }
+                }
+                width: 4;
+                gradient: Gradient {
+                    GradientStop {position: 0.0; color: "#f06612";}
+                    GradientStop {position: 1.0; color: "#dc113b";}
                 }
 
-
+                CustomBorder {
+                    gradient: Gradient {
+                        GradientStop {position: 0.0; color: "#ff944a";}
+                        GradientStop {position: 1.0; color: "#ef516c";}
+                    }
+                }
             }
+
+
         }
 
         anchors {
@@ -248,7 +189,7 @@ Rectangle {
 
         delegate: Item {
             //visible: !listView.retractList;
-            height: 25;
+            height: 26;
             width: consoleBar.width;
             Row {
                 id: row;
@@ -281,6 +222,7 @@ Rectangle {
                     font {
                         family: "Sans";
                         pixelSize: 11;
+                        bold: true;
                     }
                 }
             }
