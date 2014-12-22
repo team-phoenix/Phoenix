@@ -81,6 +81,8 @@
     <file>arrow-down-b.png</file>
     <file>x.png</file>
     <file>dot.png</file>
+	<file>small-icon.png</file>
+	<file>big-icon.png</file>
     <!-- -->
     <file>gamecontrollerdb.txt</file>
 </qresource>

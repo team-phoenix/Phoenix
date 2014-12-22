@@ -463,110 +463,171 @@ Rectangle {
             }
         }
 
-        Slider {
-            id: zoomSlider;
-            visible: !root.gameShowing && !root.clear;
-            width: 120;
-            height: 25;
+        Row {
             anchors {
                 verticalCenter: parent.verticalCenter;
             }
-            stepSize: 0.5;
-            minimumValue: 1.5;
-            maximumValue: 5.0;
-            value: 5;
+            spacing: 12;
 
-            Settings {
-                category: "UI";
-                property alias zoomFactor: zoomSlider.value;
+            Image {
+                source: "../assets/small-icon.png";
+                height: 6;
+                width: 6;
+                sourceSize {
+                    height: 6;
+                    width: 6;
+                }
+                anchors {
+                    verticalCenter: parent.verticalCenter;
+                }
             }
 
-            onPressedChanged: {
-                if (pressed)
-                    headerBar.sliderPressed = true;
-                else
-                    headerBar.sliderPressed = false;
-            }
+            Slider {
+                id: zoomSlider;
+                visible: !root.gameShowing && !root.clear;
+                width: 120;
+                height: 25;
+
+                stepSize: 0.5;
+                minimumValue: 1.5;
+                maximumValue: 5.0;
+                value: 5;
+
+                Settings {
+                    category: "UI";
+                    property alias zoomFactor: zoomSlider.value;
+                }
+
+                onPressedChanged: {
+                    if (pressed)
+                        headerBar.sliderPressed = true;
+                    else
+                        headerBar.sliderPressed = false;
+                }
 
 
-            onValueChanged: {
-                var prev = headerBar.sliderValue;
-                headerBar.sliderValue = value;
+                onValueChanged: {
+                    var prev = headerBar.sliderValue;
+                    headerBar.sliderValue = value;
 
-            }
+                }
 
-            style: SliderStyle {
-                id: sliderStyle;
+                style: SliderStyle {
+                    id: sliderStyle;
 
-                handle: Item {
-                    height: 22;
-                    width: 22;
+                    handle: Item {
+                        height: 24;
+                        width: 24;
 
-                    Rectangle {
-                        id: zoomHandle;
-                        gradient: Gradient {
-                            GradientStop{ position: 0.0; color: "#343434";}
-                            GradientStop{ position: 0.5; color: "#343433";}
-                            GradientStop{ position: 0.7; color: "#2c2d2c";}
-                            GradientStop{ position: 1.0; color: "#242424";}
+                        Rectangle {
+                            id: zoomHandle;
+                            gradient: Gradient {
+                                GradientStop{ position: 0.0; color: "#343434";}
+                                GradientStop{ position: 0.5; color: "#343433";}
+                                GradientStop{ position: 0.7; color: "#2c2d2c";}
+                                GradientStop{ position: 1.0; color: "#242424";}
+
+                            }
+
+                            radius: width * 0.5;
+                            anchors.centerIn: parent;
+                            height: 17;
+                            width: 17;
+
+                            CustomBorder {
+                                radius: parent.width / 2;
+                                gradient: Gradient {
+                                    GradientStop{ position: 0.0; color: "#595959";}
+                                    GradientStop{ position: 1.0; color: "black";}
+                                }
+                            }
+
+                            Rectangle {
+                                radius: width / 2;
+                                anchors {
+                                    centerIn: parent;
+                                }
+                                width: parent.width * 0.36;
+                                height: parent.height * 0.36;
+
+                                CustomBorder {
+                                    radius: parent.width / 2;
+                                    gradient: Gradient {
+                                        GradientStop{ position: 0.0; color: "black";}
+                                        GradientStop{ position: 1.0; color: "#595959";}
+                                    }
+
+                                }
+
+                                gradient: Gradient {
+                                    GradientStop{ position: 0.0; color: "#070707";}
+                                    GradientStop{ position: 1.0; color: "#222221";}
+                                }
+                            }
+
+                           //CustomBorder {
+                           //    color: "black"
+                            //}
 
                         }
+                        /*DropShadow {
+                            source: zoomHandle;
+                            anchors.fill: source;
+                            horizontalOffset: 0;
+                            verticalOffset: 1;
+                            color: "black";
+                            opacity: 1.0;
+                            radius: 2;
+                            samples: radius * 2;
 
-                        radius: width * 0.5;
-                        anchors.centerIn: parent;
-                        height: 18;
-                        width: 18;
-
-                       //CustomBorder {
-                       //    color: "black"
-                        //}
-
+                        }*/
                     }
-                    DropShadow {
-                        source: zoomHandle;
-                        anchors.fill: source;
-                        horizontalOffset: 0;
-                        verticalOffset: 1;
-                        color: "black";
-                        opacity: 1.0;
-                        radius: 2;
-                        samples: radius * 2;
+
+                    groove: Rectangle {
+                        height: 5;
+                        width: zoomSlider.width;
+                        radius: 3;
+                        opacity: 0.8;
+                        color: "#1a1a1a";
+                        border {
+                            width: 1;
+                            color: "black";
+                        }
+
+                        /*Rectangle {
+                            color: "#f1f1f1";
+                            radius: parent.radius;
+                            anchors {
+                                top: parent.top;
+                                bottom: parent.bottom;
+                                left: parent.left;
+                                topMargin: 1;
+                                bottomMargin: 1;
+                                leftMargin: 1;
+                            }
+                            width: (zoomSlider.value >= 3.0) ? 10  * (zoomSlider.value * 2.0) : 6  * (zoomSlider.value * 2.0);
+                        }*/
+
+                        CustomBorder {
+                            gradient: Gradient {
+                                GradientStop {position: 0.0; color: "#1a1a1a";}
+                                GradientStop {position: 0.95; color: "#4a4a4a";}
+                            }
+                        }
 
                     }
                 }
-
-                groove: Rectangle {
-                    height: 5;
-                    width: zoomSlider.width;
-                    radius: 3;
-                    opacity: 0.8;
-                    color: "#1a1a1a";
-                    border {
-                        width: 1;
-                        color: "black";
-                    }
-
-                    Rectangle {
-                        color: "#f1f1f1";
-                        radius: parent.radius;
-                        anchors {
-                            top: parent.top;
-                            bottom: parent.bottom;
-                            left: parent.left;
-                            topMargin: 1;
-                            bottomMargin: 1;
-                            leftMargin: 1;
-                        }
-                        width: (zoomSlider.value >= 3.0) ? 10  * (zoomSlider.value * 2.0) : 6  * (zoomSlider.value * 2.0);
-                    }
-
-                    CustomBorder {
-                        gradient: Gradient {
-                            GradientStop {position: 0.0; color: "#1a1a1a";}
-                            GradientStop {position: 0.95; color: "#4a4a4a";}
-                        }
-                    }
-
+            }
+            Image {
+                source: "../assets/big-icon.png";
+                height: 11;
+                width: 11;
+                sourceSize {
+                    height: 11;
+                    width: 11;
+                }
+                anchors {
+                    verticalCenter: parent.verticalCenter;
                 }
             }
         }
