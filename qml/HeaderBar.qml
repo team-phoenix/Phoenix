@@ -490,7 +490,7 @@ Rectangle {
                 height: 25;
 
                 stepSize: 0.5;
-                minimumValue: 1.5;
+                minimumValue: 3.0;
                 maximumValue: 5.0;
                 value: 5;
 

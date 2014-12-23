@@ -511,7 +511,7 @@ PhoenixWindow {
             }
         }
 
-        height: 60;
+        height: 62;
         //color: "#3b3b3b";
         fontSize: 14;
     }

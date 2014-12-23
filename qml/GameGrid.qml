@@ -79,10 +79,10 @@ Rectangle {
                // target: gridView;
                 //properties: "cellWidth, cellHeight";
                 easing {
-                    type: Easing.OutCubic;
+                    type: Easing.Linear;
                 }
                 //to: 100 * zoomFactor;
-                duration: 250;
+                duration: 50;
             }
         }
 
@@ -98,26 +98,62 @@ Rectangle {
         cellHeight: 300;
 
         model: phoenixLibrary.model();
-        highlightFollowsCurrentItem: false;
+        highlightFollowsCurrentItem:true;
+
+        highlight: Item {
+            anchors.fill: gridView.currentItem;
+            visible: !gridView.currentItem.imageLoaded;
+
+            RectangularGlow {
+                    id: effect
+                    anchors.fill: realHighlighter;
+                    glowRadius: 10
+                    spread: 0.3
+                    color: "#d0000000";
+                    cornerRadius: realHighlighter.radius + glowRadius
+                }
 
 
-        ExclusiveGroup {
-            id: gridGroup;
+            Rectangle {
+                id: realHighlighter;
+                property bool isEvenWidth: gridView.currentItem.paintedWidth % 2 == 0;
+                width: isEvenWidth ? gridView.currentItem.paintedWidth + 11 : gridView.currentItem.paintedWidth + 14;
+                height: gridView.currentItem.paintedHeight + 12;
+                anchors {
+                    centerIn: parent;
+                    horizontalCenterOffset: isEvenWidth ? 0 : 1;
+                }
+
+                gradient: Gradient {
+                    GradientStop {position: 0.0; color: "#ff730f";}
+                    GradientStop {position: 1.0; color: "#e9163b";}
+                }
+                CustomBorder {
+                    gradient: Gradient {
+                        GradientStop {position: 0.0; color: "#ff944a";}
+                        GradientStop {position: 1.0; color: "#ef516c";}
+                    }
+                }
+
+            }
+
         }
+
 
         delegate: Item {
             id: gridItem;
             height: gridView.cellHeight - (50 * gameGrid.zoomFactor);
             width: gridView.cellWidth; //- (10 *  gameGrid.zoomFactor);
             z: 0;
-
-            property string glowColor: "black";
+            property bool imageLoaded: false;
             property string imageSource: !artwork ? "qrc:/assets/No-Art.png" : artwork;
             property string titleName: title ? title : "";
             property string systemName: system ? system : "";
             property string fileName: filename ? filename : "";
             property string systemPathName: system_path ? system_path : "";
             property bool showMenu: false;
+            property int paintedWidth: width;
+            property int paintedHeight: height;
 
             Item {
                 id: subItem;
@@ -126,9 +162,6 @@ Rectangle {
                 Item  {
                     id: imageHighlight;
 
-                    property ExclusiveGroup exclusiveGroup: gridGroup;
-                    property bool checked: false
-
                     anchors {
                         centerIn: parent;
                     }
@@ -136,29 +169,51 @@ Rectangle {
                     width: parent.width;
                     height: parent.height;
 
-
-                    RectangularGlow {
-                        id: rectangularGlow;
-                        visible: width !== 0 && height !== 0;
-                        height: image.paintedHeight;
-                        width: image.paintedWidth;
-                        anchors.centerIn: parent;
-                        glowRadius: 6;
-                        spread: mouseArea.containsMouse ? 0.2 : 0.1;
-                        color:  gridItem.glowColor;
-                        cornerRadius: 3;
-                    }
                     Image {
                         id: image;
-                        z: 0;
                         anchors.fill: parent;
                         anchors.margins: 10;
                         source: gridItem.imageSource;
                         fillMode: Image.PreserveAspectFit;
                         asynchronous: true;
+                        onPaintedHeightChanged:  {
+                            gridItem.paintedHeight = paintedHeight;
+                        }
+                        onPaintedWidthChanged: gridItem.paintedWidth = paintedWidth;
+
+
                         sourceSize {
-                            height: 275;
-                            width: 275;
+                            height: 200;
+                            width: 200;
+                        }
+
+                        onStatusChanged: {
+                            if (status == Image.Ready)
+                                gridItem.imageLoaded = false;
+                            else
+                                gridItem.imageLoaded = true;
+                        }
+
+                        Component.onCompleted: {
+                            cachedImage.start();
+                        }
+
+                        Item {
+                            z: image.z - 1;
+                            anchors.centerIn: parent;
+                            width: parent.paintedWidth;
+                            height: parent.paintedHeight;
+
+
+                            Rectangle {
+                                color: "black";
+                                z: parent.z - 1;
+                                anchors {
+                                    fill: parent;
+                                    margins: -1;
+                                }
+                            }
+
                         }
 
                         RightClickMenu {
@@ -186,12 +241,11 @@ Rectangle {
                             folder: "Artwork";
                             fileName: gridItem.titleName ? gridItem.titleName : "";
                             cacheDirectory: root.cacheDirectory;
+
                             onLocalsrcChanged: {
                                 image.source = localsrc;
                             }
                         }
-
-                        Component.onCompleted: cachedImage.start();
 
                         MouseArea {
                             id: mouseArea;
@@ -203,6 +257,7 @@ Rectangle {
                             acceptedButtons: Qt.LeftButton | Qt.RightButton
 
                             onPressed:  {
+                                gridView.currentIndex = index;
                                 gridView.holdItem = pressed;
                                 containsMouse = pressed;
 
@@ -211,15 +266,14 @@ Rectangle {
                             onDoubleClicked: {
                                 var curItem = gridView.currentItem;
                                 var core = phoenixLibrary.getSystem(curItem.systemName);
+                                root.gameAndCoreCheck(curItem.titleName, curItem.systemName, curItem.fileName, core);
                                 root.lastGameName = title;
                                 root.lastSystemName = system;
-                                root.gameAndCoreCheck(curItem.titleName, curItem.systemName, curItem.fileName, core);
                             }
 
                             onClicked: {
                                 gridView.currentItem.z = 0;
                                 gridView.currentItem.showMenu = false;
-                                gridView.currentItem.glowColor = "black";
                                 gridView.currentIndex = index;
                                 gridView.currentItem.z = 100;
 
@@ -228,12 +282,6 @@ Rectangle {
                                         gridView.currentItem.showMenu = false;
                                     else
                                         gridView.currentItem.showMenu = true;
-                                }
-
-                                if (gridView.currentItem.glowColor === "#db5753")
-                                    gridView.currentItem.glowColor = "black";
-                                else {
-                                    gridView.currentItem.glowColor = "#db5753"
                                 }
 
                                 if (windowStack.currentItem.run)

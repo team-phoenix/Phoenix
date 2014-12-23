@@ -235,6 +235,8 @@ TableView {
                     var map = table.model.get(styleData.row);
                     var core = phoenixLibrary.getSystem(map["system"]);
                     root.gameAndCoreCheck(map["title"], map["system"], map["filename"], core);
+                    root.lastGameName = map["title"];
+                    root.lastSystemName = map["system"];
 
                 }
 

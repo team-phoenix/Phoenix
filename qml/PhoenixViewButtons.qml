@@ -85,8 +85,8 @@ Rectangle {
             MouseArea {
                 anchors.fill: parent;
                 onClicked: {
-                    tableButton.checked = true;
                     windowStack.currentItem.stackId.push({item: gameTable, replace: true, immediate: true});
+                    tableButton.checked = true;
                 }
             }
 
@@ -152,8 +152,8 @@ Rectangle {
             MouseArea {
                 anchors.fill: parent;
                 onClicked: {
-                    gridButton.checked = true;
                     windowStack.currentItem.stackId.push({item: gameGrid, replace: true, immediate: true});
+                    gridButton.checked = true;
                 }
             }
 
