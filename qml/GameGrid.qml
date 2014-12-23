@@ -105,13 +105,14 @@ Rectangle {
             visible: !gridView.currentItem.imageLoaded;
 
             RectangularGlow {
-                    id: effect
-                    anchors.fill: realHighlighter;
-                    glowRadius: 10
-                    spread: 0.3
-                    color: "#d0000000";
-                    cornerRadius: realHighlighter.radius + glowRadius
-                }
+                id: effect;
+                anchors.fill: realHighlighter;
+                visible: realHighlighter.visible;
+                glowRadius: 6;
+                spread: 0.1;
+                color: "#ec302e";
+                cornerRadius: realHighlighter.radius + glowRadius;
+            }
 
 
             Rectangle {
@@ -135,6 +136,34 @@ Rectangle {
                     }
                 }
 
+            }
+
+            RectangularGlow {
+                visible: dropdownMenu.visible;
+                anchors.fill: dropdownMenu;
+                glowRadius: 10;
+                spread: 0.1;
+                color: "#d0000000";
+                cornerRadius: dropdownMenu.radius + glowRadius;
+            }
+
+            RightClickMenu {
+                id: dropdownMenu;
+                width: 100;
+                height: 200;
+                color: "#1e1e1e";
+                radius: 3;
+                z: gridView.currentItem.z;
+                visible: gridView.currentItem.showMenu;
+                anchors {
+                    left: parent.right;
+                    leftMargin: -10 * gameGrid.zoomFactor;
+                    verticalCenter: parent.verticalCenter;
+                    verticalCenterOffset: 65 / gameGrid.zoomFactor;
+                }
+                onVisibleChanged: {
+                    gridBackgroundMouse.enabled = visible;
+                }
             }
 
         }
@@ -216,25 +245,6 @@ Rectangle {
 
                         }
 
-                        RightClickMenu {
-                            id: dropdownMenu;
-                            width: 100;
-                            height: 200;
-                            color: "red";
-                            radius: 3;
-                            z: gridItem.z;
-                            visible: gridItem.showMenu;
-                            anchors {
-                                left: parent.right;
-                                leftMargin: -10 * gameGrid.zoomFactor;
-                                verticalCenter: parent.verticalCenter;
-                                verticalCenterOffset: 65 / gameGrid.zoomFactor;
-                            }
-                            onVisibleChanged: {
-                                gridBackgroundMouse.enabled = visible;
-                            }
-                        }
-
                         CachedImage {
                             id: cachedImage;
                             imgsrc: image.source;
@@ -310,7 +320,7 @@ Rectangle {
 
                     font {
                         bold: true;
-                        pixelSize: 2 + gridView.cellWidth / 23;
+                        pointSize: 9;
                         family: "Sans";
                     }
 
