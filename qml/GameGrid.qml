@@ -108,7 +108,7 @@ Rectangle {
                 id: effect;
                 anchors.fill: realHighlighter;
                 visible: realHighlighter.visible;
-                glowRadius: 6;
+                glowRadius: 11;
                 spread: 0.1;
                 color: "#ec302e";
                 cornerRadius: realHighlighter.radius + glowRadius;
@@ -117,9 +117,10 @@ Rectangle {
 
             Rectangle {
                 id: realHighlighter;
+                radius: 11;
                 property bool isEvenWidth: gridView.currentItem.paintedWidth % 2 == 0;
-                width: isEvenWidth ? gridView.currentItem.paintedWidth + 11 : gridView.currentItem.paintedWidth + 14;
-                height: gridView.currentItem.paintedHeight + 12;
+                width: gridView.currentItem.paintedWidth + 16;
+                height: gridView.currentItem.paintedHeight + 16;
                 anchors {
                     centerIn: parent;
                     horizontalCenterOffset: isEvenWidth ? 0 : 1;
@@ -128,12 +129,6 @@ Rectangle {
                 gradient: Gradient {
                     GradientStop {position: 0.0; color: "#ff730f";}
                     GradientStop {position: 1.0; color: "#e9163b";}
-                }
-                CustomBorder {
-                    gradient: Gradient {
-                        GradientStop {position: 0.0; color: "#ff944a";}
-                        GradientStop {position: 1.0; color: "#ef516c";}
-                    }
                 }
 
             }
@@ -183,6 +178,7 @@ Rectangle {
             property bool showMenu: false;
             property int paintedWidth: width;
             property int paintedHeight: height;
+            onPaintedHeightChanged: console.log(paintedHeight)
 
             Item {
                 id: subItem;
@@ -198,11 +194,34 @@ Rectangle {
                     width: parent.width;
                     height: parent.height;
 
+                    /*DropShadow {
+                        source: image;
+                        anchors.fill: source;
+                        horizontalOffset: 0;
+                        verticalOffset: 2;
+                        color: "#d0000000";
+                        radius: 4.0;
+                        samples: radius * 2;
+                        transparentBorder: false;
+                    }*/
+
+                    RectangularGlow {
+                        anchors.centerIn: image;
+                        width: image.paintedWidth;
+                        height: image.paintedHeight;
+                        glowRadius: 2;
+                        spread: 0.1;
+                        color: "#f0000000";
+                        cornerRadius: 11 + glowRadius;
+                    }
+
                     Image {
                         id: image;
-                        anchors.fill: parent;
-                        anchors.margins: 10;
-                        source: gridItem.imageSource;
+                        anchors {
+                            fill: parent;
+                            margins: 10;
+                        }
+                        source: "../assets/No-Art.png"//gridItem.imageSource;
                         fillMode: Image.PreserveAspectFit;
                         asynchronous: true;
                         onPaintedHeightChanged:  {
@@ -227,24 +246,6 @@ Rectangle {
                             cachedImage.start();
                         }
 
-                        Item {
-                            z: image.z - 1;
-                            anchors.centerIn: parent;
-                            width: parent.paintedWidth;
-                            height: parent.paintedHeight;
-
-
-                            Rectangle {
-                                color: "black";
-                                z: parent.z - 1;
-                                anchors {
-                                    fill: parent;
-                                    margins: -1;
-                                }
-                            }
-
-                        }
-
                         CachedImage {
                             id: cachedImage;
                             imgsrc: image.source;
@@ -267,6 +268,7 @@ Rectangle {
                             acceptedButtons: Qt.LeftButton | Qt.RightButton
 
                             onPressed:  {
+
                                 gridView.currentIndex = index;
                                 gridView.holdItem = pressed;
                                 containsMouse = pressed;
