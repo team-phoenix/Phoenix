@@ -4,8 +4,6 @@ import QtQuick.Controls.Styles 1.1
 import QtGraphicalEffects 1.0
 import QtQuick.Layouts 1.1
 
-import phoenix.image 1.0
-
 Rectangle {
     id: gameGrid;
     color: "#262626";
@@ -178,7 +176,6 @@ Rectangle {
             property bool showMenu: false;
             property int paintedWidth: width;
             property int paintedHeight: height;
-            onPaintedHeightChanged: console.log(paintedHeight)
 
             Item {
                 id: subItem;
@@ -207,22 +204,25 @@ Rectangle {
 
                     RectangularGlow {
                         anchors.centerIn: image;
-                        width: image.paintedWidth;
-                        height: image.paintedHeight;
-                        glowRadius: 2;
-                        spread: 0.1;
-                        color: "#f0000000";
-                        cornerRadius: 11 + glowRadius;
+                        width: image.width;
+                        height: image.height;
+                        glowRadius: 3;
+                        spread: 0.3;
+                        color: "black";
+                        cornerRadius: 8;
                     }
 
-                    Image {
+                    RoundedImage {
                         id: image;
                         anchors {
-                            fill: parent;
-                            margins: 10;
+                            top: parent.top;
+                            bottom: parent.bottom;
+                            horizontalCenter: parent.horizontalCenter;
                         }
-                        source: "../assets/No-Art.png"//gridItem.imageSource;
-                        fillMode: Image.PreserveAspectFit;
+
+                        source: gridItem.imageSource;
+                        width: height * aspectRatio;
+                        /*fillMode: Image.PreserveAspectFit;
                         asynchronous: true;
                         onPaintedHeightChanged:  {
                             gridItem.paintedHeight = paintedHeight;
@@ -244,9 +244,9 @@ Rectangle {
 
                         Component.onCompleted: {
                             cachedImage.start();
-                        }
+                        }*/
 
-                        CachedImage {
+                        /*CachedImage {
                             id: cachedImage;
                             imgsrc: image.source;
                             folder: "Artwork";
@@ -299,7 +299,7 @@ Rectangle {
                                 if (windowStack.currentItem.run)
                                     headerBar.userText = gridItem.titleName;
                             }
-                        }
+                        }*/
                     }
                 }
 

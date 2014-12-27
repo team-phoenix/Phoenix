@@ -25,5 +25,6 @@
     <file>PhoenixWarningButton.qml</file>
     <file>InfoBar.qml</file>
 	<file>PhoenixViewButtons.qml</file>
+	<file>RoundedImage.qml</file>
 </qresource>
 </RCC>

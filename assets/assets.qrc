@@ -83,6 +83,7 @@
     <file>dot.png</file>
 	<file>small-icon.png</file>
 	<file>big-icon.png</file>
+	<file>border-highlight.png</file>
     <!-- -->
     <file>gamecontrollerdb.txt</file>
 </qresource>
