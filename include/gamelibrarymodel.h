@@ -34,7 +34,17 @@ public:
 
 
 public slots:
+
+#ifdef Q_OS_MACX
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Woverloaded-virtual"
+    // Member declaration raising the warning.
+#endif
     void setFilter(const QString &filter, QVariantList params);
+#ifdef Q_OS_MACX
+#pragma clang diagnostic pop
+#endif
+
     virtual void sort(int column, Qt::SortOrder order) override
     {
         QSqlTableModel::sort(column, order);
