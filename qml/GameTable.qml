@@ -1,6 +1,7 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Styles 1.2
+import QtGraphicalEffects 1.0
 
 TableView {
     id: table;
@@ -209,7 +210,7 @@ TableView {
             id: row;
             color: styleData.alternate ? "#262626" : "#2e2e2e";
             width: parent.width;
-            height: 25;
+            height: 27;
 
             property ExclusiveGroup exclusiveGroup: rowGroup;
             property bool checked: false;
@@ -220,14 +221,135 @@ TableView {
                 }
             }
 
-            onCheckedChanged: {
-                if (checked) {
-                    color = table.highlightColor;
+           Rectangle {
+                id: highlighter;
+                visible: parent.checked;
+                anchors {
+                    fill: parent;
                 }
-                else {
-                    color = styleData.alternate ? "#262626" : "#2e2e2e";
+                color: "transparent";
+
+                border {
+                    width: 1;
+                    color: "#260e03";
                 }
+
+                Rectangle {
+                    id: topBorder;
+                    anchors {
+                        top: parent.top;
+                        topMargin: 1;
+                        leftMargin: 1;
+                        rightMargin: 1;
+                        left: parent.left;
+                        right: parent.right;
+                    }
+                    gradient: Gradient {
+                        GradientStop {position: 0.0; color: "#f34a21";}
+                        GradientStop {position: 1.0; color: "#f14126";}
+                    }
+
+                    height: 4;
+
+                    Rectangle {
+                        anchors {
+                            top: parent.top;
+                            left: parent.left;
+                            right: parent.right;
+                        }
+                        color: "white";
+                        opacity: 0.25;
+                        height: 1;
+                    }
+
+                }
+
+                Rectangle {
+                    id: bottomBorder;
+                    anchors {
+                        bottom: parent.bottom;
+                        left: parent.left;
+                        right: parent.right;
+                        bottomMargin: 1;
+                        rightMargin: 1;
+                        leftMargin: 1;
+                    }
+                    color: "#e5143d";
+
+                    height: 4;
+
+                    Rectangle {
+                        anchors {
+                            bottom: parent.bottom;
+                            left: parent.left;
+                            right: parent.right;
+                        }
+                        color: "white";
+                        opacity: 0.25;
+                        height: 1;
+                    }
+                }
+
+                Rectangle {
+                    id: leftBorder;
+                    anchors {
+                        top: topBorder.bottom;
+                        left: parent.left;
+                        bottom: bottomBorder.top;
+                        leftMargin: 1;
+                    }
+                    gradient: Gradient {
+                        GradientStop {position: 0.0; color: "#ef372b";}
+                        GradientStop {position: 1.0; color: "#e5143d";}
+                    }
+                    width: 4;
+
+                    Rectangle {
+                        anchors {
+                            top: parent.top;
+                            topMargin: -leftBorder.width / 2;
+                            bottomMargin: -leftBorder.width / 2;
+                            left: parent.left;
+                            bottom: parent.bottom;
+                        }
+                        color: "white";
+                        opacity: 0.25;
+                        width: 1;
+                    }
+                }
+
+                Rectangle {
+                    id: rightBorder;
+                    anchors {
+                        top: topBorder.bottom;
+                        right: parent.right;
+                        bottom: bottomBorder.top;
+                        rightMargin: 1;
+
+                    }
+                    gradient: Gradient {
+                        GradientStop {position: 0.0; color: "#ef372b";}
+                        GradientStop {position: 1.0; color: "#e5143d";}
+                    }
+                    width: 4;
+
+                    Rectangle {
+                        anchors {
+                            top: parent.top;
+                            topMargin: -rightBorder.width / 2;
+                            bottomMargin: -rightBorder.width / 2;
+                            right: parent.right;
+                            bottom: parent.bottom;
+                        }
+                        color: "white";
+                        opacity: 0.25;
+                        width: 1;
+                    }
+                }
+
+
             }
+
             MouseArea {
                 anchors.fill: parent;
                 onDoubleClicked: {
