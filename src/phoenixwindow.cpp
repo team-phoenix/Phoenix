@@ -231,7 +231,7 @@ bool PhoenixWindow::nativeEvent(const QByteArray &eventType, void *message, long
                     return true;
                 }
 
-                /*case WM_GETMINMAXINFO: {
+                case WM_GETMINMAXINFO: {
                     QRect maxRect = QApplication::desktop()->availableGeometry();
                     QSize szMin = this->minimumSize();
                     QSize szMax = this->maximumSize();
@@ -246,9 +246,9 @@ bool PhoenixWindow::nativeEvent(const QByteArray &eventType, void *message, long
                     lpMMI->ptMaxTrackSize.y = szMax.height();
                     *result = 0;
                     return true;
-                }*/
+                }
 
-                /*case WM_NCHITTEST: {
+                case WM_NCHITTEST: {
                     const LONG borderWidth = 8; //in pixels
                     RECT winrect;
                     GetWindowRect(windowHandle, &winrect);
