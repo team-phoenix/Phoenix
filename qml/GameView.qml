@@ -27,8 +27,12 @@ Rectangle {
     Component.onCompleted: {
         root.itemInView = "game";
         root.gameShowing = true;
+        inputmanager.attachDevices();
     }
-    Component.onDestruction: root.gameShowing = false;
+    Component.onDestruction:  {
+        root.gameShowing = false;
+        inputmanager.removeDevices();
+    }
 
     function timerEffects() {
         if (gameMouse.cursorShape !== Qt.ArrowCursor)
