@@ -1,5 +1,6 @@
 
 #include "inputdevice.h"
+#include "inputdevicemapping.h"
 
 
 InputDevice::InputDevice(InputDeviceMapping *mapping)
