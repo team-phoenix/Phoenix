@@ -123,67 +123,14 @@ Item {
 
             spacing: 15;
 
-            PhoenixNormalButton {
+            ComboBox {
                 id: devicesBox;
                 width: 125;
-                property int count: model.length;
-                onCountChanged: console.log("model length: " + count)
-                property int delegateHeight: 25;
-
-                property bool drop: false;
-                property var model: inputmanager.enumerateDevices();
-
-                property int currentIndex: 0;
-                onPressedChanged: {
-                    if (pressed) {
-                        if (drop)
-                            drop = false;
-                        else
-                            drop = true;
-                    }
-
+                model: inputmanager.enumerateDevices();
+                onCurrentIndexChanged: {
+                    //listView.curDevice = inputmanager.getDevice(currentIndex);
                 }
 
-                text: model[currentIndex]["text"];
-
-                ListView {
-                    id: repeater;
-                    visible: parent.drop;
-                    anchors {
-                        top: parent.bottom;
-                        horizontalCenter: parent.horizontalCenter;
-                    }
-                    z: 100;
-                    model: parent.model;
-                    width: devicesBox.width + 12;
-                    height: 400;
-                    delegate: Rectangle {
-                        color: "#49494c";
-                        z: 100;
-                        border {
-                            width: 1;
-                            color: "black";
-                        }
-
-                        width: devicesBox.width + 12;
-                        height: devicesBox.height;
-                        Text {
-                            anchors {
-                                left: parent.left;
-                                leftMargin: 12;
-                                verticalCenter: parent.verticalCenter;
-                            }
-                            font {
-                                family: "Sans";
-                                pixelSize: 11;
-                            }
-
-                            color: "#f1f1f1";
-
-                            text: modelData["text"];
-                        }
-                    }
-                }
             }
 
             PhoenixNormalButton {
@@ -225,7 +172,7 @@ Item {
             ScrollView {
                 id: inputMapper;
                 property var mapping: listView.curMapping;
-                property var device: listView.curDevice;
+                property alias device: listView.curDevice;
                 property int deviceIndex: 0;
                 //visible: stackView.width > width;
                 property bool waitingUpdate: false;
