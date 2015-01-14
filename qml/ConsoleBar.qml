@@ -89,15 +89,15 @@ Rectangle {
 
             Text {
                 renderType: Text.QtRendering;
-                text: "Consoles";
-                color: "#f1f1f1";
+                text: "CONSOLES";
+                color: "#68686b";
                 font {
                     bold: true;
                     family: "Sans";
-                    pixelSize: 13;
+                    pixelSize: 11;
                 }
             }
-            Image {
+            /*Image {
                 y: 2;
                 source: "../assets/arrow-down-b.png";
                 fillMode: Image.PreserveAspectFit;
@@ -107,7 +107,7 @@ Rectangle {
                     width: 25;
                     height: 25;
                 }
-            }
+            }*/
         }
     }
 
