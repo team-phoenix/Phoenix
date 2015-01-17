@@ -541,46 +541,9 @@ PhoenixWindow {
         }
         height: 275;
         width: 125;
-
         stackBackgroundColor: "#2e2e2e";
         contentColor: "#f4f4f4";
         textColor: "#f1f1f1";
-
-        Rectangle {
-            visible: parent.visible;
-            height: 15;
-            width: 15;
-            rotation: 45;
-            color: "#2e2e2e";
-            z: settingsDropDown.z + 1;
-            anchors {
-                left: parent.left;
-                leftMargin: 17;
-                verticalCenter: settingsDropDown.top;
-            }
-
-            Rectangle {
-                anchors {
-                    top: parent.top;
-                    left: parent.left;
-                    leftMargin: 1;
-                    right: parent.right;
-                }
-                height: 1;
-                color: "#404040";
-            }
-
-            Rectangle {
-                anchors {
-                    top: parent.top;
-                    left: parent.left;
-                    bottom: parent.bottom;
-                }
-                width: 1;
-                color: "#404040";
-            }
-        }
-
     }
 
     RectangularGlow {
