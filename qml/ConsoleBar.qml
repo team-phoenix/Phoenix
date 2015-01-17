@@ -94,7 +94,7 @@ Rectangle {
                 font {
                     bold: true;
                     family: "Sans";
-                    pixelSize: 11;
+                    pixelSize: 11
                 }
             }
             /*Image {
@@ -188,6 +188,7 @@ Rectangle {
         }
 
         delegate: Item {
+            id: item;
             //visible: !listView.retractList;
             height: 26;
             width: consoleBar.width;
@@ -197,9 +198,10 @@ Rectangle {
                     fill: parent;
                     leftMargin: 25;
                 }
-                spacing: 7;
+                spacing: 8;
 
                 Image {
+                    visible: false;
                     anchors.verticalCenter: parent.verticalCenter;
                     source: phoenixLibrary.systemIcon(modelData);
                     fillMode: Image.PreserveAspectFit;
@@ -211,19 +213,18 @@ Rectangle {
                     width: 20;
                 }
 
-                Text {
+                TextGradient {
                     id: consoleItem;
                     anchors.verticalCenter: parent.verticalCenter;
-                    width: 140;
+                    width: item.width * 0.6;
+                    height: 22//item.height;
                     text: modelData;
-                    color: "#f1f1f1";
-                    renderType: Text.QtRendering;
+                    textColor: "#f1f1f1";
+                    enableGradient: index === listView.currentIndex;
                     elide: Text.ElideRight;
-                    font {
-                        family: "Sans";
-                        pixelSize: 11;
-                        bold: true;
-                    }
+                    bold: true//enableGradient;
+                    pointSize: 8;
+
                 }
             }
 

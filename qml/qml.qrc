@@ -26,5 +26,6 @@
     <file>InfoBar.qml</file>
 	<file>PhoenixViewButtons.qml</file>
 	<file>RoundedImage.qml</file>
+	<file>TextGradient.qml</file>
 </qresource>
 </RCC>
