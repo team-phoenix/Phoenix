@@ -230,18 +230,15 @@ Item {
                         }
                     }
 
-                    Text {
+                    TextGradient {
                         height: 25;
-                        renderType: Text.QtRendering;
-                        font {
-                            family: "Sans";
-                            pixelSize: 11;
-                        }
-
-                        color: settingsBubble.textColor//index === listView.currentIndex ? settingsBubble.textColor : "#8c8c8c";
+                        width: listView.width;
+                        pointSize: 7;
+                        textColor: settingsBubble.textColor;
                         text: title;
-                        horizontalAlignment: Text.AlignLeft;
-                        verticalAlignment: Text.AlignVCenter;
+                        enableGradient: index === listView.currentIndex;
+                        //horizontalAlignment: Text.AlignLeft;
+                        //verticalAlignment: Text.AlignVCenter;
 
                     }
                 }
