@@ -12,15 +12,43 @@ Rectangle {
     property real progressValue: phoenixLibrary.progress;
     property string progressText: phoenixLibrary.label;
 
-    Rectangle {
+    Row {
         id: rightBord;
         anchors {
+            right: parent.right;
             top: parent.top;
             bottom: parent.bottom;
+
+        }
+
+        Rectangle {
+            anchors {
+                top: parent.top;
+                bottom: parent.bottom;
+            }
+            width: 1;
+            color: "#333131";
+        }
+
+        Rectangle {
+            anchors {
+                top: parent.top;
+                bottom: parent.bottom;
+            }
+            width: 1;
+            color: "#0b0b0b";
+        }
+    }
+
+    Rectangle {
+        id: bottomBorder;
+        anchors {
+            bottom: parent.bottom;
+            left: parent.left;
             right: parent.right;
         }
-        width: 1;
-        color: "#1a1a1a";
+        color: "#0b0b0b";
+        height: 1;
     }
 
     Row {
@@ -37,17 +65,18 @@ Rectangle {
                 bottom: parent.bottom;
             }
             width: 1;
-            color: root.borderColor;
+            color: "#0b0b0b";
         }
 
-        //Rectangle {
-        //    anchors {
-         //       top: parent.top;
-        //        bottom: parent.bottom;
-         //   }
-        //    width: 1;
-         //   color: "#191919";
-        //}
+        Rectangle {
+            anchors {
+                top: parent.top;
+                bottom: parent.bottom;
+                bottomMargin: 1;
+            }
+            width: 1;
+            color: "#333131";
+        }
     }
 
     Rectangle {
@@ -61,6 +90,45 @@ Rectangle {
             left: parent.left;
             right: parent.right;
             rightMargin: 1;
+        }
+
+        Row {
+            // leftBord;
+            anchors {
+                left: parent.left;
+                top: parent.top;
+                bottom: parent.bottom;
+            }
+
+            Rectangle {
+                anchors {
+                    top: parent.top;
+                    bottom: parent.bottom;
+                }
+                width: 1;
+                color: "#0b0b0b";
+            }
+
+            Rectangle {
+                anchors {
+                    top: parent.top;
+                    bottom: parent.bottom;
+                    bottomMargin: 1;
+                }
+                width: 1;
+                color: "#333131";
+            }
+        }
+
+        Rectangle {
+            // rightBorder;
+            anchors {
+                top: parent.top;
+                bottom: parent.bottom;
+                right: parent.right;
+            }
+            width: 1;
+            color: "#333131";
         }
 
         MouseArea {
@@ -116,10 +184,10 @@ Rectangle {
         visible: (height !== 0);
         anchors {
             top: consoleHeader.bottom;
+            topMargin: 1;
             //bottom: parent.bottom;
             right: parent.right;
             left: parent.left;
-            topMargin: 0;
         }
 
         height: retractList ? 0 : 500;
@@ -130,7 +198,7 @@ Rectangle {
 
         snapMode: ListView.SnapToItem;
         orientation: ListView.Vertical;
-        interactive: true;
+        interactive: false;
         highlightFollowsCurrentItem: false;
 
         property bool retractList: false;
@@ -145,8 +213,30 @@ Rectangle {
             gradient: Gradient {
                 GradientStop {position: 0.0; color: "#0b0b0b";}
                 GradientStop {position: 0.05; color: "#1a1a1a";}
-                GradientStop {position: 1.0; color: "#1a1a1a";}
+                GradientStop {position: 0.95; color: "#1a1a1a";}
+                GradientStop {position: 1.0; color: "#0b0b0b";}
             }
+
+            CustomBorder {
+                color: "#393737";
+                shareMargin: false;
+                _topMargin: 1;
+                _bottomMargin: 1;
+                _leftMargin: -1;
+                _rightMargin: -1;
+            }
+
+            Rectangle {
+                anchors {
+                    right: parent.right;
+                    top: parent.top;
+                    bottom: parent.bottom;
+                }
+                width: 1;
+                color: "#0b0b0b"
+
+            }
+
             Rectangle {
                 anchors {
                     left: parent.left;
@@ -222,7 +312,7 @@ Rectangle {
                     textColor: "#f1f1f1";
                     enableGradient: index === listView.currentIndex;
                     elide: Text.ElideRight;
-                    bold: true//enableGradient;
+                    bold: index == listView.currentIndex//enableGradient;
                     pointSize: 8;
 
                 }
