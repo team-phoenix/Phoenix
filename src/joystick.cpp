@@ -188,6 +188,28 @@ bool Joystick::controllerAxisChanged(const SDL_Event *event) {
     return true;
 }
 
+bool Joystick::joystickButtonChanged(const SDL_Event *event)
+{
+    if (!JoystickMatchEvent(event->cbutton))
+        return false;
+
+    const SDL_ControllerButtonEvent *cbutton = &event->cbutton;
+    auto ev = ControllerButtonEvent::fromSDLEvent(*cbutton);
+    bool is_pressed = (cbutton->type == SDL_JOYBUTTONDOWN);
+    emit inputEventReceived(&ev, is_pressed);
+
+    auto retro_id = m_mapping->getMapping(&ev);
+
+
+    if (retro_id != (unsigned)~0) {
+        //qCDebug(phxInput) << is_pressed << cbutton << retro_id;
+
+        setState(retro_id, is_pressed);
+    }
+
+    return true;
+}
+
 bool Joystick::handleSDLEvent(const SDL_Event *event)
 {
     switch (event->type) {
@@ -210,8 +232,8 @@ bool Joystick::handleSDLEvent(const SDL_Event *event)
 
         case SDL_JOYBUTTONDOWN:
         case SDL_JOYBUTTONUP:
-//            joyButtonChanged(event);
-            break;
+            joystickButtonChanged(event);
+        break;
 
         case SDL_CONTROLLERAXISMOTION:
             controllerAxisChanged(event);

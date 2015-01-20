@@ -1,6 +1,7 @@
 
 #include <QSettings>
 #include <QQmlEngine>
+#include <QtConcurrent>
 #include <QGuiApplication>
 
 #include "inputmanager.h"
@@ -60,15 +61,21 @@ QList<InputDevice *> InputManager::getDevices() const
     return devices;
 }
 
-void InputManager::scanDevices()
+void InputManager::scanDevicesAsync()
 {
-    auto *mapping = mappingForPort(0);
-    if (mapping == nullptr) {
+    QFuture<void> fut = QtConcurrent::run(this, &InputManager::scanDevices);
+}
+
+void InputManager::scanKeyboard()
+{
+    int current_port = devices.length();
+    auto *keyboard_mapping = mappingForPort(current_port);
+    if (keyboard_mapping == nullptr) {
         // define default input mapping
         // TODO: move this to a separate func
         QSettings s;
         s.beginGroup("input");
-        s.beginGroup("port0");
+        s.beginGroup(QString("port%1").arg(current_port));
         s.setValue("input_driver", "qt_keyboard");
         s.setValue("device_type", "joypad");
         s.setValue("joypad_select", "Backspace");
@@ -83,11 +90,66 @@ void InputManager::scanDevices()
         s.setValue("joypad_right", "Right");
         s.setValue("joypad_l", "t");
         s.setValue("joypad_r", "g");
-        mapping = mappingForPort(0);
+        keyboard_mapping = mappingForPort(current_port);
 
     }
 
-    devices.insert(0, InputDeviceFactory::createFromMapping(mapping));
+    devices.insert(current_port, InputDeviceFactory::createFromMapping(keyboard_mapping));
+}
+
+void InputManager::scanJoysticks()
+{
+    qCDebug(phxInput) << "Started controller scan.";
+
+    int current_port = devices.length();
+    int joysticks = SDL_NumJoysticks();
+    for (int i=0; i < joysticks; ++i) {
+        current_port++;
+        auto *sdl_mapping = mappingForPort(current_port);
+        if (sdl_mapping == nullptr) {
+            QSettings s;
+            s.beginGroup("input");
+            s.beginGroup(QString("port%1").arg(current_port));
+            s.setValue("input_driver", "sdl_joystick");
+            s.setValue("device_type", "joypad");
+
+            s.setValue("joypad_a", "a");
+            s.setValue("joypad_b","b");
+            s.setValue("joypad_y","y");
+            s.setValue("joypad_x","x");
+            s.setValue("joypad_up","dpup");
+            s.setValue("joypad_down","dpdown");
+            s.setValue("joypad_left","dpleft");
+            s.setValue("joypad_right","dpright");
+            //s.setValue("joypad_leftstick", "leftstick");
+            //s.setValue("joypad_rightstick", "rightstick");
+            s.setValue("joypad_l","leftshoulder");
+            s.setValue("joypad_r","rightshoulder");
+            s.setValue("joypad_select","back");
+            s.setValue("joypad_start","start");
+
+            sdl_mapping = mappingForPort(current_port);
+        }
+
+        devices.insert(current_port, InputDeviceFactory::createFromMapping(sdl_mapping));
+
+    }
+    QString message;
+    if (joysticks == 0)
+        message = "No controllers were found.";
+    else
+        message = joysticks + "Controllers Found.";
+    qCDebug(phxInput) << message;
+    emit label(message);
+}
+
+void InputManager::scanDevices()
+{
+
+    scanKeyboard();
+    scanJoysticks();
+
+    // NOTES: some of the buttons in joystick.cpp line 216 aren't having proper values.
 }
 
 // load Mapping for a given port from the settings

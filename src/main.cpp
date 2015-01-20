@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
     window->setCacheDirectory(engine.offlineStoragePath() + "/");
     window->show();
 
-    input_manager.scanDevices();
+    input_manager.scanDevicesAsync();
 
     return a.exec();
 }

@@ -18,13 +18,19 @@ public:
     InputManager();
     virtual ~InputManager();
 
-    void scanDevices();
+
+
 
     void append(InputDevice *device);
 
     QList<InputDevice *> getDevices() const;
 
 public slots:
+    void scanDevicesAsync();
+    void scanDevices();
+    void scanJoysticks();
+    void scanKeyboard();
+
     QVariantList enumerateDevices();
     // return empty mapping for device
     InputDeviceMapping *mappingForDevice(QVariantMap device);
@@ -35,6 +41,9 @@ public slots:
     InputDevice *getDevice(unsigned port) const;
     void attachDevices();
     void removeDevices();
+
+signals:
+    void label(QString);
 
 private:
     QList<InputDevice *> devices;

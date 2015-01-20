@@ -65,7 +65,7 @@ private:
     bool controllerButtonChanged(const SDL_Event *event);
     bool controllerAxisChanged(const SDL_Event *event);
 
-    bool joyButtonChanged(const SDL_Event *event);
+    bool joystickButtonChanged(const SDL_Event *event);
 
     // convenience functions to check that an event matches the current joystick/controller
     template <typename SDLEventType> bool ControllerMatchEvent(const SDLEventType &event);
