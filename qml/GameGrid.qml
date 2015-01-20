@@ -3,6 +3,7 @@ import QtQuick.Controls 1.1
 import QtQuick.Controls.Styles 1.1
 import QtGraphicalEffects 1.0
 import QtQuick.Layouts 1.1
+import phoenix.image 1.0
 
 Rectangle {
     id: gameGrid;
@@ -99,34 +100,68 @@ Rectangle {
         highlightFollowsCurrentItem:true;
 
         highlight: Item {
+            id: highlighter;
             anchors.fill: gridView.currentItem;
             visible: !gridView.currentItem.imageLoaded;
+            property bool isEvenWidth: gridView.currentItem.paintedWidth % 2 == 0;
+
 
             RectangularGlow {
                 id: effect;
                 anchors.fill: realHighlighter;
                 visible: realHighlighter.visible;
-                glowRadius: 11;
+                glowRadius: 12;
                 spread: 0.1;
                 color: "#ec302e";
-                cornerRadius: realHighlighter.radius + glowRadius;
+                cornerRadius: realHighlighter.radius + glowRadius * 2;
             }
-
 
             Rectangle {
                 id: realHighlighter;
-                radius: 11;
-                property bool isEvenWidth: gridView.currentItem.paintedWidth % 2 == 0;
-                width: gridView.currentItem.paintedWidth + 16;
-                height: gridView.currentItem.paintedHeight + 16;
+                radius: 2;
+                width: gridView.currentItem.paintedWidth + 20;
+                height: gridView.currentItem.paintedHeight + 20;
                 anchors {
                     centerIn: parent;
-                    horizontalCenterOffset: isEvenWidth ? 0 : 1;
+                    horizontalCenterOffset: highlighter.isEvenWidth ? 0 : 1;
                 }
 
                 gradient: Gradient {
                     GradientStop {position: 0.0; color: "#ff730f";}
                     GradientStop {position: 1.0; color: "#e9163b";}
+                }
+
+                Rectangle {
+                    anchors {
+                        centerIn: parent;
+                        verticalCenterOffset: 1;
+                        horizontalCenterOffset: 0;
+                    }
+
+                    height: parent.height - 15;
+                    width: parent.width - 16;
+                    color: "#0f0f0f";
+                    opacity: 0.40;
+                    radius: 2;
+
+                    CustomBorder {
+                        color: "white";
+                        opacity: 0.75;
+                        radius: 2;
+                    }
+                }
+
+
+                CustomBorder {
+
+                    gradient: Gradient {
+                        GradientStop {position: 0.0; color: "#fea266";}
+                        GradientStop {position: 1.0; color: "#ed5871";}
+                    }
+
+                    CustomBorder {
+                        color: "#0f0f0f";
+                    }
                 }
 
             }
@@ -191,28 +226,31 @@ Rectangle {
                     width: parent.width;
                     height: parent.height;
 
-                    /*DropShadow {
+                    /*InnerShadow {
                         source: image;
                         anchors.fill: source;
                         horizontalOffset: 0;
-                        verticalOffset: 2;
-                        color: "#d0000000";
+                        verticalOffset: 0;
+                        color: "#b0000000";
                         radius: 4.0;
                         samples: radius * 2;
-                        transparentBorder: false;
+                        spread: 1.0;
                     }*/
 
                     RectangularGlow {
+                        visible: index !== gridView.currentIndex && image.visible && image.status === Image.Ready;
                         anchors.centerIn: image;
-                        width: image.width;
-                        height: image.height;
-                        glowRadius: 3;
-                        spread: 0.3;
-                        color: "black";
-                        cornerRadius: 8;
+                        width: image.paintedWidth;
+                        height: image.paintedHeight;
+                        glowRadius: 15;
+                        spread: 0.1;
+                        color: "#40000000";
+                        cornerRadius: 2;
                     }
 
-                    RoundedImage {
+
+                    Image {
+                        //visible: false;
                         id: image;
                         anchors {
                             top: parent.top;
@@ -221,8 +259,8 @@ Rectangle {
                         }
 
                         source: gridItem.imageSource;
-                        width: height * aspectRatio;
-                        /*fillMode: Image.PreserveAspectFit;
+                        width: 100 //* aspectRatio;
+                        fillMode: Image.PreserveAspectFit;
                         asynchronous: true;
                         onPaintedHeightChanged:  {
                             gridItem.paintedHeight = paintedHeight;
@@ -244,9 +282,89 @@ Rectangle {
 
                         Component.onCompleted: {
                             cachedImage.start();
-                        }*/
+                        }
 
-                        /*CachedImage {
+
+
+                        Rectangle {
+                            id: topBorder;
+                            y: leftBorder.y;
+                            visible: parent.visible && parent.status === Image.Ready;
+                            anchors {
+                                left: leftBorder.right;
+                                right: parent.right;
+                                rightMargin: 1;
+                            }
+                            width: parent.paintedWidth;
+                            opacity: 0.3;
+                            color: "white";
+                            height: 1;
+                        }
+
+                        Rectangle {
+                            id: borderBorder;
+                            y: leftBorder.y + leftBorder.height - 1;
+                            visible: parent.visible && parent.status === Image.Ready;
+                            anchors {
+                                left: leftBorder.right;
+                                right: parent.right;
+                                rightMargin: 1;
+                            }
+                            width: parent.paintedWidth;
+                            opacity: 0.3;
+                            color: "white";
+                            height: 1;
+                        }
+
+                        Rectangle {
+                            id: leftBorder;
+                            property bool adjustHeight: 8 % (parent.paintedHeight % 10)  === 0;
+                            visible: parent.visible && parent.status === Image.Ready;
+                            width: 1;
+                            height: adjustHeight ? parent.paintedHeight : parent.paintedHeight + 1;
+                            anchors {
+                                left: parent.left;
+                                verticalCenter: parent.verticalCenter;
+                                verticalCenterOffset: adjustHeight ? 0 : 1;
+                                //rightMargin: 1;
+                            }
+                            opacity: 0.3;
+                            color: "white";
+                        }
+
+                        Rectangle {
+                            id: rightBorder;
+                            property bool adjustHeight: 8 % (parent.paintedHeight % 10)  === 0;
+                            visible: parent.visible && parent.status === Image.Ready;
+                            width: 1;
+                            height: adjustHeight ? parent.paintedHeight : parent.paintedHeight + 1;
+                            anchors {
+                                right: parent.right;
+                                verticalCenter: parent.verticalCenter;
+                                verticalCenterOffset: adjustHeight ? 0 : 1;
+                                //rightMargin: 1;
+                            }
+                            onXChanged: console.log(x)
+                            onYChanged: console.log(y)
+                            opacity: 0.3;
+                            color: "white";
+                        }
+
+                        CustomBorder {
+                            visible: parent.visible && parent.status === Image.Ready;
+                            anchors {
+                                fill: undefined;
+                                centerIn: parent;
+                                verticalCenterOffset: (parent.paintedHeight % 10)  === 4 ? 0 : 1;
+                            }
+                            property bool evenWidth: parent.paintedWidth % 2 === 0;
+                            width: parent.paintedWidth + 2//evenWidth ? parent.paintedWidth + 1 : parent.paintedWidth + 3;
+                            height: (parent.paintedHeight % 10)  === 4 ? parent.paintedHeight + 2 : parent.paintedHeight + 3;
+                            color: "black";
+                            radius: 0;
+                        }
+
+                        CachedImage {
                             id: cachedImage;
                             imgsrc: image.source;
                             folder: "Artwork";
@@ -268,7 +386,7 @@ Rectangle {
                             acceptedButtons: Qt.LeftButton | Qt.RightButton
 
                             onPressed:  {
-
+                                console.log(gridItem.titleName + image.paintedHeight)
                                 gridView.currentIndex = index;
                                 gridView.holdItem = pressed;
                                 containsMouse = pressed;
@@ -299,7 +417,7 @@ Rectangle {
                                 if (windowStack.currentItem.run)
                                     headerBar.userText = gridItem.titleName;
                             }
-                        }*/
+                        }
                     }
                 }
 
