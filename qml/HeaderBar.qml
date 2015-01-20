@@ -514,14 +514,14 @@ Rectangle {
                 }
 
                 style: SliderStyle {
-                    id: sliderStyle;
+                    //id: sliderStyle;
 
-                    handle: Item {
-                        height: 24;
-                        width: 24;
+                    handle: Rectangle {
+                        height: 15;
+                        width: 15;
 
-                        Rectangle {
-                            id: zoomHandle;
+
+                            //id: zoomHandle;
                             gradient: Gradient {
                                 GradientStop{ position: 0.0; color: "#343434";}
                                 GradientStop{ position: 0.5; color: "#343433";}
@@ -531,9 +531,6 @@ Rectangle {
                             }
 
                             radius: width * 0.5;
-                            anchors.centerIn: parent;
-                            height: 17;
-                            width: 17;
 
                             CustomBorder {
                                 radius: parent.width / 2;
@@ -543,7 +540,7 @@ Rectangle {
                                 }
                             }
 
-                            Rectangle {
+                            /*Rectangle {
                                 radius: width / 2;
                                 anchors {
                                     centerIn: parent;
@@ -564,13 +561,13 @@ Rectangle {
                                     GradientStop{ position: 0.0; color: "#070707";}
                                     GradientStop{ position: 1.0; color: "#222221";}
                                 }
-                            }
+                            }*/
 
                            //CustomBorder {
                            //    color: "black"
                             //}
 
-                        }
+
                         /*DropShadow {
                             source: zoomHandle;
                             anchors.fill: source;

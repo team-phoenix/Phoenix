@@ -28,25 +28,27 @@ Rectangle {
 
     DropShadow {
         anchors.fill: source;
-        horizontalOffset: 1
+        horizontalOffset: -1;
         visible: !tableButton.checked;
-        verticalOffset: 4
-        radius: 16.0
+        verticalOffset: 3;
+        radius: 16.0;
         samples: radius * 2;
-        color: "#e0000000"
+        color: "#a0000000";
         source: tableButton;
         transparentBorder: true;
+        spread: 0.1;
     }
 
     DropShadow {
         anchors.fill: source;
         visible: !gridButton.checked;
-        horizontalOffset: 2;
-        verticalOffset: 4;
-        radius: 8.0
+        horizontalOffset: 1;
+        verticalOffset: 3;
+        radius: 8.0;
         samples: radius * 2;
-        color: "#b0000000"
+        color: "#a0000000";
         source: gridButton;
+        spread: 0.1;
         transparentBorder: true;
     }
 
