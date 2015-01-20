@@ -64,7 +64,6 @@ void Audio::setFormat(QAudioFormat _afmt)
     soxr_io_ratio = (double)afmt_in.sampleRate() / afmt_out.sampleRate();
     if (error) {}
 
-    emit formatChanged();
 #else
     qCDebug(phxAudio, "setFormat(%iHz %ibits)", _afmt.sampleRate(), _afmt.sampleSize());
 /*    QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
@@ -72,9 +71,10 @@ void Audio::setFormat(QAudioFormat _afmt)
         qCWarning(phxAudio) << "Audio format not supported by output device !";
         return;
     }*/
-    afmt = _afmt;
-    emit formatChanged();
+    afmt_out = _afmt;
 #endif
+    emit formatChanged();
+
 
 }
 
@@ -95,13 +95,13 @@ void Audio::handleFormatChanged()
     }
 
     aio->moveToThread(&thread);
-    timer.setInterval(afmt.durationForBytes(aout->periodSize() * 1.5) / 1000);
+    timer.setInterval(afmt_out.durationForBytes(aout->periodSize() * 1.5) / 1000);
 
 }
 
 void Audio::threadStarted()
 {
-    if(!afmt.isValid()) {
+    if(!afmt_in.isValid()) {
         // we don't have a valid audio format yet...
         qCDebug(phxAudio) << "afmt is not valid";
         return;

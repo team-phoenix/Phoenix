@@ -128,6 +128,9 @@ void PhoenixWindow::mouseReleaseEvent(QMouseEvent *event)
 #ifdef Q_OS_WIN32
 void PhoenixWindow::paintPicture(MSG *pMessage, long *result)
 {
+    Q_UNUSED(pMessage)
+    Q_UNUSED(result)
+    /*
     RECT winRect1;
         RECT winRectCl;
         ::GetWindowRect(windowHandle, &winRect1);
@@ -182,6 +185,7 @@ void PhoenixWindow::paintPicture(MSG *pMessage, long *result)
         ::DeleteObject(hRgnCombine);
         ::ReleaseDC(windowHandle, hDeviceContext);
         *result = 0;
+        */
 }
 #endif
 

@@ -46,7 +46,8 @@ private slots:
 
 private:
     bool isRunning; // is core running
-    QAudioFormat afmt;
+    QAudioFormat afmt_out;
+    QAudioFormat afmt_in;
     QAudioOutput *aout;
     QIODevice *aio;
     AudioBuffer *m_abuf;
@@ -54,8 +55,6 @@ private:
     QTimer timer;
 
 #ifdef Q_OS_LINUX
-    QAudioFormat afmt_out;
-    QAudioFormat afmt_in;
     qreal deviation;
     soxr_t soxr;
     double soxr_io_ratio;
