@@ -5,7 +5,7 @@ before_install:
   - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
   - sudo apt-get update -qq
   - sudo apt-get install -qq g++-4.8
-  - sudo apt-get install -qq -y qt53base qt53declarative qt53imageformats qt53location qt53multimedia qt53qbs qt53quickcontrols qt53script qt53tools qt53translations libsdl2-dev
+  - sudo apt-get install -qq -y qt53base qt53declarative qt53imageformats qt53location qt53multimedia qt53qbs qt53quickcontrols qt53script qt53tools qt53translations libsdl2-dev libsoxr-dev
   - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
 script:
   - source /opt/qt53/bin/qt53-env.sh
