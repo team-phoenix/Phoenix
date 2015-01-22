@@ -84,6 +84,8 @@
 	<file>small-icon.png</file>
 	<file>big-icon.png</file>
 	<file>border-highlight.png</file>
+	<file>glow-mask.png</file>
+	<file>black-mask.png</file>
     <!-- -->
     <file>gamecontrollerdb.txt</file>
 </qresource>

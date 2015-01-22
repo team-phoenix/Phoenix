@@ -105,10 +105,9 @@ Rectangle {
             visible: !gridView.currentItem.imageLoaded;
             property bool isEvenWidth: gridView.currentItem.paintedWidth % 2 == 0;
 
-
             RectangularGlow {
                 id: effect;
-                anchors.fill: realHighlighter;
+                anchors.fill: highlightBorder;
                 visible: realHighlighter.visible;
                 glowRadius: 12;
                 spread: 0.1;
@@ -116,14 +115,25 @@ Rectangle {
                 cornerRadius: realHighlighter.radius + glowRadius * 2;
             }
 
+            BorderImage {
+                id: highlightBorder;
+                source: "../assets/border-highlight.png";
+                anchors {
+                    fill: realHighlighter;
+                }
+
+                z: realHighlighter.z + 1;
+                verticalTileMode: BorderImage.Stretch;
+                horizontalTileMode: BorderImage.Stretch;
+            }
+
             Rectangle {
                 id: realHighlighter;
-                radius: 2;
-                width: gridView.currentItem.paintedWidth + 20;
-                height: gridView.currentItem.paintedHeight + 20;
+                radius: 3;
+                width: gridView.currentItem.paintedWidth + 21;
+                height: gridView.currentItem.paintedHeight + 21;
                 anchors {
                     centerIn: parent;
-                    horizontalCenterOffset: highlighter.isEvenWidth ? 0 : 1;
                 }
 
                 gradient: Gradient {
@@ -134,25 +144,25 @@ Rectangle {
                 Rectangle {
                     anchors {
                         centerIn: parent;
-                        verticalCenterOffset: 1;
-                        horizontalCenterOffset: 0;
+                        //verticalCenterOffset: 1;
+                        //horizontalCenterOffset: 0;
                     }
 
-                    height: parent.height - 15;
-                    width: parent.width - 16;
-                    color: "#0f0f0f";
-                    opacity: 0.40;
+                    height: gridView.currentItem.paintedHeight + 2;
+                    width: gridView.currentItem.paintedWidth + 2;
+                    color: "white";
+                    opacity: 0.35;
                     radius: 2;
 
-                    CustomBorder {
+                    /*CustomBorder {
                         color: "white";
-                        opacity: 0.75;
+                        opacity: 0.85;
                         radius: 2;
-                    }
+                    }*/
                 }
 
 
-                CustomBorder {
+                /*CustomBorder {
 
                     gradient: Gradient {
                         GradientStop {position: 0.0; color: "#fea266";}
@@ -160,9 +170,9 @@ Rectangle {
                     }
 
                     CustomBorder {
-                        color: "#0f0f0f";
+                        color: "black";
                     }
-                }
+                }*/
 
             }
 
@@ -197,6 +207,7 @@ Rectangle {
         }
 
 
+
         delegate: Item {
             id: gridItem;
             height: gridView.cellHeight - (50 * gameGrid.zoomFactor);
@@ -212,32 +223,17 @@ Rectangle {
             property int paintedWidth: width;
             property int paintedHeight: height;
 
+
+
             Item {
                 id: subItem;
                 anchors.fill: parent;
 
                 Item  {
                     id: imageHighlight;
+                    anchors.fill: parent;
 
-                    anchors {
-                        centerIn: parent;
-                    }
-
-                    width: parent.width;
-                    height: parent.height;
-
-                    /*InnerShadow {
-                        source: image;
-                        anchors.fill: source;
-                        horizontalOffset: 0;
-                        verticalOffset: 0;
-                        color: "#b0000000";
-                        radius: 4.0;
-                        samples: radius * 2;
-                        spread: 1.0;
-                    }*/
-
-                    RectangularGlow {
+                    /*RectangularGlow {
                         visible: index !== gridView.currentIndex && image.visible && image.status === Image.Ready;
                         anchors.centerIn: image;
                         width: image.paintedWidth;
@@ -246,11 +242,46 @@ Rectangle {
                         spread: 0.1;
                         color: "#40000000";
                         cornerRadius: 2;
+                    }*/
+
+                   /* BrightnessContrast {
+                        //z: image.z + 1;
+                        source: image;
+                        anchors {
+                            fill: image;
+                            margins: -1;
+                        }
+                        brightness: 0.5
+                        //contrast: 0.5
+                    }*/
+
+                    Rectangle {
+                        radius: 3;
+                        anchors {
+                            fill: borderImage;
+                            margins: -1;
+                        }
+                        onHeightChanged: gridItem.paintedHeight = height;
+                        onWidthChanged: gridItem.paintedWidth = width;
+                        z: borderImage.z - 1;
+                        color: "black";
                     }
 
+                    BorderImage {
+                        z: image.z + 1;
+                        id: borderImage;
+                        source: "../assets/glow-mask.png"
+                        width: image.height * image.aspectRatio;
+                        height: image.height;
+                        anchors.centerIn: image;
+                        verticalTileMode: BorderImage.Stretch;
+                        horizontalTileMode: BorderImage.Stretch;
+                    }
 
                     Image {
-                        //visible: false;
+                        visible: true;
+                        property real aspectRatio: paintedWidth / paintedHeight;
+
                         id: image;
                         anchors {
                             top: parent.top;
@@ -259,18 +290,13 @@ Rectangle {
                         }
 
                         source: gridItem.imageSource;
-                        width: 100 //* aspectRatio;
+                        width: 201 //* aspectRatio;
                         fillMode: Image.PreserveAspectFit;
                         asynchronous: true;
-                        onPaintedHeightChanged:  {
-                            gridItem.paintedHeight = paintedHeight;
-                        }
-                        onPaintedWidthChanged: gridItem.paintedWidth = paintedWidth;
-
 
                         sourceSize {
-                            height: 200;
-                            width: 200;
+                            height: 201;
+                            width: 201;
                         }
 
                         onStatusChanged: {
@@ -282,11 +308,12 @@ Rectangle {
 
                         Component.onCompleted: {
                             cachedImage.start();
+                            //console.log("center: " + paintedHeight / 2 + ", " + paintedWidth / 2)
                         }
 
 
 
-                        Rectangle {
+                        /*Rectangle {
                             id: topBorder;
                             y: leftBorder.y;
                             visible: parent.visible && parent.status === Image.Ready;
@@ -323,11 +350,13 @@ Rectangle {
                             width: 1;
                             height: adjustHeight ? parent.paintedHeight : parent.paintedHeight + 1;
                             anchors {
-                                left: parent.left;
+                                //left: parent.left;
                                 verticalCenter: parent.verticalCenter;
                                 verticalCenterOffset: adjustHeight ? 0 : 1;
                                 //rightMargin: 1;
                             }
+                            x: parent.x;
+                            onXChanged: console.log("x: "+ x)
                             opacity: 0.3;
                             color: "white";
                         }
@@ -348,21 +377,24 @@ Rectangle {
                             onYChanged: console.log(y)
                             opacity: 0.3;
                             color: "white";
-                        }
+                        }*/
 
-                        CustomBorder {
+                        /*CustomBorder {
+                            id: customBorder;
                             visible: parent.visible && parent.status === Image.Ready;
                             anchors {
                                 fill: undefined;
                                 centerIn: parent;
-                                verticalCenterOffset: (parent.paintedHeight % 10)  === 4 ? 0 : 1;
+                                alignWhenCentered:true;
+                                //verticalCenterOffset: (parent.paintedHeight % 10)  === 4 ? 0 : 1;
                             }
                             property bool evenWidth: parent.paintedWidth % 2 === 0;
-                            width: parent.paintedWidth + 2//evenWidth ? parent.paintedWidth + 1 : parent.paintedWidth + 3;
-                            height: (parent.paintedHeight % 10)  === 4 ? parent.paintedHeight + 2 : parent.paintedHeight + 3;
+                            width: parent.paintedWidth;
+                            height: parent.paintedHeight;
                             color: "black";
                             radius: 0;
-                        }
+
+                        }*/
 
                         CachedImage {
                             id: cachedImage;
@@ -386,7 +418,7 @@ Rectangle {
                             acceptedButtons: Qt.LeftButton | Qt.RightButton
 
                             onPressed:  {
-                                console.log(gridItem.titleName + image.paintedHeight)
+                                console.log(gridItem.titleName + image.paintedHeight + " :: " + image.width)
                                 gridView.currentIndex = index;
                                 gridView.holdItem = pressed;
                                 containsMouse = pressed;
@@ -432,7 +464,7 @@ Rectangle {
                         right: parent.right;
                         rightMargin: 20;
                         bottom: parent.bottom;
-                        bottomMargin: -titleLabel.font.pixelSize * 2;
+                        bottomMargin: -titleLabel.font.pixelSize * 3;
                     }
 
                     text: gridItem.titleName;
