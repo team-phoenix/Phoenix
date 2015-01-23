@@ -101,7 +101,7 @@ Rectangle {
 
         highlight: Item {
             id: highlighter;
-            anchors.fill: gridView.currentItem;
+            //anchors.fill: gridView.currentItem;
             visible: !gridView.currentItem.imageLoaded;
             property bool isEvenWidth: gridView.currentItem.paintedWidth % 2 == 0;
 
@@ -118,6 +118,7 @@ Rectangle {
             BorderImage {
                 id: highlightBorder;
                 source: "../assets/border-highlight.png";
+                visible: realHighlighter.visible
                 anchors {
                     fill: realHighlighter;
                 }
@@ -233,8 +234,10 @@ Rectangle {
                     id: imageHighlight;
                     anchors.fill: parent;
 
-                    /*RectangularGlow {
-                        visible: index !== gridView.currentIndex && image.visible && image.status === Image.Ready;
+                    property bool imageVisible: image.visible && image.status === Image.Ready;
+
+                    RectangularGlow {
+                        visible: index !== gridView.currentIndex && parent.imageVisible;
                         anchors.centerIn: image;
                         width: image.paintedWidth;
                         height: image.paintedHeight;
@@ -242,18 +245,8 @@ Rectangle {
                         spread: 0.1;
                         color: "#40000000";
                         cornerRadius: 2;
-                    }*/
+                    }
 
-                   /* BrightnessContrast {
-                        //z: image.z + 1;
-                        source: image;
-                        anchors {
-                            fill: image;
-                            margins: -1;
-                        }
-                        brightness: 0.5
-                        //contrast: 0.5
-                    }*/
 
                     Rectangle {
                         radius: 3;
@@ -261,6 +254,7 @@ Rectangle {
                             fill: borderImage;
                             margins: -1;
                         }
+                        visible: parent.imageVisible;
                         onHeightChanged: gridItem.paintedHeight = height;
                         onWidthChanged: gridItem.paintedWidth = width;
                         z: borderImage.z - 1;
@@ -270,6 +264,7 @@ Rectangle {
                     BorderImage {
                         z: image.z + 1;
                         id: borderImage;
+                        visible: parent.imageVisible;
                         source: "../assets/glow-mask.png"
                         width: image.height * image.aspectRatio;
                         height: image.height;
@@ -308,93 +303,7 @@ Rectangle {
 
                         Component.onCompleted: {
                             cachedImage.start();
-                            //console.log("center: " + paintedHeight / 2 + ", " + paintedWidth / 2)
                         }
-
-
-
-                        /*Rectangle {
-                            id: topBorder;
-                            y: leftBorder.y;
-                            visible: parent.visible && parent.status === Image.Ready;
-                            anchors {
-                                left: leftBorder.right;
-                                right: parent.right;
-                                rightMargin: 1;
-                            }
-                            width: parent.paintedWidth;
-                            opacity: 0.3;
-                            color: "white";
-                            height: 1;
-                        }
-
-                        Rectangle {
-                            id: borderBorder;
-                            y: leftBorder.y + leftBorder.height - 1;
-                            visible: parent.visible && parent.status === Image.Ready;
-                            anchors {
-                                left: leftBorder.right;
-                                right: parent.right;
-                                rightMargin: 1;
-                            }
-                            width: parent.paintedWidth;
-                            opacity: 0.3;
-                            color: "white";
-                            height: 1;
-                        }
-
-                        Rectangle {
-                            id: leftBorder;
-                            property bool adjustHeight: 8 % (parent.paintedHeight % 10)  === 0;
-                            visible: parent.visible && parent.status === Image.Ready;
-                            width: 1;
-                            height: adjustHeight ? parent.paintedHeight : parent.paintedHeight + 1;
-                            anchors {
-                                //left: parent.left;
-                                verticalCenter: parent.verticalCenter;
-                                verticalCenterOffset: adjustHeight ? 0 : 1;
-                                //rightMargin: 1;
-                            }
-                            x: parent.x;
-                            onXChanged: console.log("x: "+ x)
-                            opacity: 0.3;
-                            color: "white";
-                        }
-
-                        Rectangle {
-                            id: rightBorder;
-                            property bool adjustHeight: 8 % (parent.paintedHeight % 10)  === 0;
-                            visible: parent.visible && parent.status === Image.Ready;
-                            width: 1;
-                            height: adjustHeight ? parent.paintedHeight : parent.paintedHeight + 1;
-                            anchors {
-                                right: parent.right;
-                                verticalCenter: parent.verticalCenter;
-                                verticalCenterOffset: adjustHeight ? 0 : 1;
-                                //rightMargin: 1;
-                            }
-                            onXChanged: console.log(x)
-                            onYChanged: console.log(y)
-                            opacity: 0.3;
-                            color: "white";
-                        }*/
-
-                        /*CustomBorder {
-                            id: customBorder;
-                            visible: parent.visible && parent.status === Image.Ready;
-                            anchors {
-                                fill: undefined;
-                                centerIn: parent;
-                                alignWhenCentered:true;
-                                //verticalCenterOffset: (parent.paintedHeight % 10)  === 4 ? 0 : 1;
-                            }
-                            property bool evenWidth: parent.paintedWidth % 2 === 0;
-                            width: parent.paintedWidth;
-                            height: parent.paintedHeight;
-                            color: "black";
-                            radius: 0;
-
-                        }*/
 
                         CachedImage {
                             id: cachedImage;
@@ -418,7 +327,6 @@ Rectangle {
                             acceptedButtons: Qt.LeftButton | Qt.RightButton
 
                             onPressed:  {
-                                console.log(gridItem.titleName + image.paintedHeight + " :: " + image.width)
                                 gridView.currentIndex = index;
                                 gridView.holdItem = pressed;
                                 containsMouse = pressed;
