@@ -12,6 +12,8 @@ Rectangle {
     width: 500;
 
     property string itemBackgroundColor: "red";
+    property bool showSystem: true;
+
     property real zoomFactor: 1;
     property bool zoomSliderPressed: false;
     property bool resizeGrid: false;
@@ -51,13 +53,16 @@ Rectangle {
 
         snapMode: GridView.NoSnap;
 
-        MouseArea {
+        /*MouseArea {
             id: gridBackgroundMouse;
             anchors.fill: parent;
             enabled: false;
             propagateComposedEvents: true;
-            onClicked: gridView.currentItem.showMenu = false;
-        }
+            onClicked: {
+                console.log("ada")
+                gridView.currentItem.showMenu = false;
+            }
+        }*/
 
         states: [
             State {
@@ -180,30 +185,43 @@ Rectangle {
             RectangularGlow {
                 visible: dropdownMenu.visible;
                 anchors.fill: dropdownMenu;
-                glowRadius: 10;
-                spread: 0.1;
-                color: "#d0000000";
+                glowRadius: 3;
+                spread: 0.3;
+                color: "#f0000000";
                 cornerRadius: dropdownMenu.radius + glowRadius;
             }
 
-            RightClickMenu {
+            Rectangle {
+                color: "#4e4e4e";
                 id: dropdownMenu;
                 width: 100;
                 height: 200;
-                color: "#1e1e1e";
-                radius: 3;
-                z: gridView.currentItem.z;
-                visible: gridView.currentItem.showMenu;
                 anchors {
                     left: parent.right;
                     leftMargin: -10 * gameGrid.zoomFactor;
                     verticalCenter: parent.verticalCenter;
                     verticalCenterOffset: 65 / gameGrid.zoomFactor;
                 }
-                onVisibleChanged: {
-                    gridBackgroundMouse.enabled = visible;
+                z: gridView.currentItem.z;
+                visible: gridView.currentItem.showMenu;
+                radius: 2;
+                //onVisibleChanged: {
+                 //   gridBackgroundMouse.enabled = visible;
+                //}
+
+                RightClickMenu {
+                    id: rightClickMenu;
+                    anchors {
+                        fill: parent;
+                        margins: 1;
+                    }
+
+                    color: "#141414";
+                    radius: parent.radius;
                 }
             }
+
+
 
         }
 
@@ -294,6 +312,9 @@ Rectangle {
                             width: 201;
                         }
 
+
+                        //onPaintedHeightChanged: console.log(paintedWidth / 2 - subItem.x)
+
                         onStatusChanged: {
                             if (status == Image.Ready)
                                 gridItem.imageLoaded = false;
@@ -327,6 +348,8 @@ Rectangle {
                             acceptedButtons: Qt.LeftButton | Qt.RightButton
 
                             onPressed:  {
+                                if (gridView.currentItem.showMenu)
+                                    gridView.currentItem.showMenu = false;
                                 gridView.currentIndex = index;
                                 gridView.holdItem = pressed;
                                 containsMouse = pressed;
@@ -361,31 +384,57 @@ Rectangle {
                     }
                 }
 
-                Text {
-                    id: titleLabel;
-                    renderType: Text.QtRendering;
+                Column {
+                    spacing: 2;
                     anchors {
-                        //horizontalCenter: parent.horizontalCenter;
-                        left: parent.left;
-                        leftMargin: 20;
-                        //leftMargin: 50;
-                        right: parent.right;
-                        rightMargin: 20;
-                        bottom: parent.bottom;
-                        bottomMargin: -titleLabel.font.pixelSize * 3;
+                        horizontalCenter: parent.horizontalCenter;
+                        //leftMargin: 40;
+                        top: imageHighlight.bottom;
+                        topMargin: 24;
+                    }
+                    //height: 50;
+                    width: 125;
+
+                    Text {
+                        id: titleLabel;
+                        renderType: Text.QtRendering;
+                        anchors {
+                            left: parent.left;
+                            right: parent.right;
+                        }
+
+                        text: gridItem.titleName;
+                        color: "#f1f1f1";
+
+                        font {
+                            bold: true;
+                            pixelSize: 11;
+                            family: "Sans";
+                        }
+
+                        elide: Text.ElideRight;
+                        horizontalAlignment: Text.AlignHCenter;
                     }
 
-                    text: gridItem.titleName;
-                    color: "#f1f1f1";
+                    Text {
+                        id: systemLabel;
+                        visible: gameGrid.showSystem;
+                        renderType: Text.QtRendering;
+                        anchors {
+                            left: parent.left;
+                            right: parent.right;
+                        }
 
-                    font {
-                        bold: true;
-                        pointSize: 9;
-                        family: "Sans";
+                        text: gridItem.systemName;
+                        color: "#f1f1f1";
+                        font {
+                            pixelSize: 10;
+                            family: "Sans";
+                        }
+
+                        elide: Text.ElideRight;
+                        horizontalAlignment: Text.AlignHCenter;
                     }
-
-                    elide: Text.ElideRight;
-                    horizontalAlignment: Text.AlignHCenter;
                 }
             }
         }
