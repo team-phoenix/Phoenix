@@ -24,11 +24,34 @@ Rectangle {
     property alias gameMouse: gameMouse;
     property string previousViewIcon: "";
 
+    function checkVisibility(visible)
+    {
+        if (visible) {
+            ranOnce = true;
+            timerEffects();
+            headerBar.sliderVisible = false;
+            headerBar.searchBarVisible = false;
+            prevView = headerBar.viewIcon;
+            headerBar.viewIcon = "../assets/GameView/home.png";
+        }
+        else {
+            headerBar.sliderVisible = true;
+            headerBar.searchBarVisible = true;
+            headerBar.timer.stop();
+            if (ranOnce)
+                headerBar.viewIcon = prevView;
+        }
+    }
+
     Component.onCompleted: {
         root.itemInView = "game";
         root.gameShowing = true;
         inputmanager.attachDevices();
+        checkVisibility(visible);
     }
+
+    onVisibleChanged: checkVisibility(visible);
+
     Component.onDestruction:  {
         root.gameShowing = false;
         inputmanager.removeDevices();
@@ -57,42 +80,41 @@ Rectangle {
         }
     }
 
-
-    onVisibleChanged: {
-        if (visible) {
-            ranOnce = true;
-            timerEffects();
-            headerBar.sliderVisible = false;
-            headerBar.searchBarVisible = false;
-            prevView = headerBar.viewIcon;
-            headerBar.viewIcon = "../assets/GameView/home.png";
-        }
-        else {
-            headerBar.sliderVisible = true;
-            headerBar.searchBarVisible = true;
-            headerBar.timer.stop();
-            if (ranOnce)
-                headerBar.viewIcon = prevView;
-        }
-    }
-
     MouseArea {
         id: gameMouse;
-        anchors.fill: parent;
+        anchors {
+            fill: parent;
+            topMargin: headerBar.height;
+        }
+
         hoverEnabled: true
         onMouseXChanged: timerEffects();
         onMouseYChanged: timerEffects();
+        onEntered: headerBar.timer.restart();
+        onExited: headerBar.timer.stop();
+
         onDoubleClicked: {
             root.swapScreenSize();
         }
     }
+/*
+   ShaderEffectSource {
+        id: shaderSource;
+        sourceItem: videoItem;
+        //anchors.fill: videoItem;
+        hideSource: true;
+    }*/
+
 
     VideoItem {
         id: videoItem;
+
+
         focus: true;
         anchors {
            centerIn: parent;
         }
+
 
         height: parent.height;
         width: stretchVideo ? parent.width : height * aspectRatio;
