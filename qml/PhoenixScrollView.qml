@@ -9,7 +9,20 @@ ScrollView {
     property int handleHeight: 30;
     style: ScrollViewStyle {
         id: scrollStyle;
-        property int handleWidth: 10
+        property int handleWidth: 12
+        transientScrollBars: false;
+        scrollToClickedPosition: false;
+        handleOverlap: -3;
+
+        Behavior on handleWidth {
+            PropertyAnimation {
+                easing {
+                    type: Easing.Linear;
+                }
+                duration: 100;
+            }
+        }
+
         frame: Rectangle {
             color: scrollView.frameColor;
             //width: 0;
@@ -24,11 +37,6 @@ ScrollView {
                 color: "#1a1a1a";
             }
         }
-
-        transientScrollBars: true;
-        scrollToClickedPosition: true;
-        handleOverlap: -3;
-
 
         handle: Rectangle {
             color: "red"
@@ -91,13 +99,14 @@ ScrollView {
         }
 
         scrollBarBackground: Rectangle {
+            id: scrollBackground;
             radius: 3;
             color: "#1c1c1c";
             height: control.height;
-            width: styleData.hovered ? 16 : 12;
+            width: styleData.hovered ? 20 : 12;
             onWidthChanged:  {
                 if (styleData.hovered)
-                    scrollStyle.handleWidth = 16;
+                    scrollStyle.handleWidth = 20;
                 else
                     scrollStyle.handleWidth = 12;
             }
@@ -106,6 +115,29 @@ ScrollView {
                 width: 1;
                 color: "#1a1a1a";
             }
+
+            Behavior on width {
+                PropertyAnimation {
+                    easing {
+                        type: Easing.Linear;
+                    }
+                    duration: 100;
+                }
+            }
         }
+
+        // hide these controls
+        incrementControl: Rectangle {
+            implicitWidth: 0;
+            implicitHeight: 0;
+        }
+
+        decrementControl: Rectangle {
+            implicitWidth: 0;
+            implicitHeight: 0;
+
+        }
+
+
     }
 }
