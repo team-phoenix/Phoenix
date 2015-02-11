@@ -22,7 +22,7 @@ Rectangle {
     property string previousViewIcon: "";
 
     property Timer timer: Timer {
-        interval: 4000;
+        interval: 1000;
         running: false;
 
         onTriggered: {
