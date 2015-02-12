@@ -25,7 +25,8 @@
     <file>PhoenixWarningButton.qml</file>
     <file>InfoBar.qml</file>
 	<file>PhoenixViewButtons.qml</file>
-	<file>RoundedImage.qml</file>
+	<file>GridImage.qml</file>
 	<file>TextGradient.qml</file>
+	<file>DynamicImage.qml</file>
 </qresource>
 </RCC>

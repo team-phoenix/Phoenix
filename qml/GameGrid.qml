@@ -107,11 +107,8 @@ Rectangle {
 
         highlight: Item {
             id: highlighter;
-            //anchors.fill: gridView.currentItem;
-            visible: !gridView.currentItem.imageLoaded;
             property bool isEvenWidth: gridView.currentItem.paintedWidth % 2 == 0;
             z: gridView.highlighterZValue;
-            Component.onCompleted: console.log("x: " + x)
 
             RectangularGlow {
                 id: effect;
@@ -244,6 +241,18 @@ Rectangle {
             property bool showMenu: false;
             property int paintedWidth: width;
             property int paintedHeight: height;
+            property real imageProgress: 0.0;
+
+            /*onImageLoadedChanged: {
+                if (imageLoaded) {
+                    paintedHeight = imageHighlight.loadingImage.paintedHeight + 21;
+                    paintedWidth = imageHighlight.loadingImage.paintedWidth + 21;
+                }
+                else {
+                    /paintedHeight = blackBorder.paintedHeight + 21;
+                    paintedWidth = blackBorder.paintedWidth + 21;
+                }
+            }*/
 
 
 
@@ -251,138 +260,10 @@ Rectangle {
                 id: subItem;
                 anchors.fill: parent;
 
-                Item  {
+                GridImage  {
                     id: imageHighlight;
                     anchors.fill: parent;
 
-                    property bool imageVisible: image.visible && image.status === Image.Ready;
-
-                    RectangularGlow {
-                        visible: index !== gridView.currentIndex && parent.imageVisible;
-                        anchors.centerIn: image;
-                        width: image.paintedWidth;
-                        height: image.paintedHeight;
-                        glowRadius: 15;
-                        spread: 0.1;
-                        color: "#40000000";
-                        cornerRadius: 2;
-                    }
-
-
-                    Rectangle {
-                        radius: 3;
-                        anchors {
-                            fill: borderImage;
-                            margins: -1;
-                        }
-                        visible: parent.imageVisible;
-                        onHeightChanged: gridItem.paintedHeight = height;
-                        onWidthChanged: gridItem.paintedWidth = width;
-                        z: borderImage.z - 1;
-                        color: "black";
-                    }
-
-                    BorderImage {
-                        z: image.z + 1;
-                        id: borderImage;
-                        visible: parent.imageVisible;
-                        source: "../assets/glow-mask.png"
-                        width: image.height * image.aspectRatio;
-                        height: image.height;
-                        anchors.centerIn: image;
-                        verticalTileMode: BorderImage.Stretch;
-                        horizontalTileMode: BorderImage.Stretch;
-                    }
-
-                    Image {
-                        visible: true;
-                        property real aspectRatio: paintedWidth / paintedHeight;
-
-                        id: image;
-                        anchors {
-                            top: parent.top;
-                            bottom: parent.bottom;
-                            horizontalCenter: parent.horizontalCenter;
-                        }
-
-                        source: gridItem.imageSource;
-                        width: 201 //* aspectRatio;
-                        fillMode: Image.PreserveAspectFit;
-                        asynchronous: true;
-
-                        sourceSize {
-                            height: 201;
-                            width: 201;
-                        }
-
-                        onStatusChanged: {
-                            if (status == Image.Ready)
-                                gridItem.imageLoaded = false;
-                            else
-                                gridItem.imageLoaded = true;
-                        }
-
-                        Component.onCompleted: {
-                            cachedImage.start();
-                        }
-
-                        CachedImage {
-                            id: cachedImage;
-                            imgsrc: image.source;
-                            folder: "Artwork";
-                            fileName: gridItem.titleName ? gridItem.titleName : "";
-                            cacheDirectory: root.cacheDirectory;
-
-                            onLocalsrcChanged: {
-                                image.source = localsrc;
-                            }
-                        }
-
-                        MouseArea {
-                            id: mouseArea;
-                            propagateComposedEvents: true;
-                            anchors.fill: parent;
-                            hoverEnabled: true;
-                            enabled: true;
-                            property bool containsMouse: false;
-                            acceptedButtons: Qt.LeftButton | Qt.RightButton
-
-                            onPressed:  {
-                                if (gridView.currentItem.showMenu)
-                                    gridView.currentItem.showMenu = false;
-
-                                gridView.currentIndex = index;
-                                //gridView.currentItem.z = 2;
-                                //gridView.highlighterZValue = 1;
-                                gridView.holdItem = pressed;
-                                containsMouse = pressed;
-
-                            }
-
-                            onDoubleClicked: {
-                                var curItem = gridView.currentItem;
-                                var core = phoenixLibrary.getSystem(curItem.systemName);
-                                root.gameAndCoreCheck(curItem.titleName, curItem.systemName, curItem.fileName, core);
-                                root.lastGameName = title;
-                                root.lastSystemName = system;
-                            }
-
-                            onClicked: {
-                                gridView.currentItem.showMenu = false;
-                                gridView.currentIndex = index;
-
-                                if (mouse.button == Qt.RightButton) {
-                                    if (gridView.currentItem.showMenu)
-                                        gridView.currentItem.showMenu = false;
-                                    else
-                                        gridView.currentItem.showMenu = true;
-                                }
-
-                                if (windowStack.currentItem.run)
-                                    headerBar.userText = gridItem.titleName;
-                            }
-                        }
-                    }
                 }
 
                 Column {
