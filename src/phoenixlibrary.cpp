@@ -318,7 +318,12 @@ bool PhoenixLibrary::insertGame(QSqlQuery &q, QFileInfo path)
     q.addBindValue(m.captured("region"));
     q.addBindValue(path.dir().path());
     q.addBindValue(path.absoluteFilePath());
-    return q.exec();
+
+    bool result = q.exec();
+    if (result)
+        emit rowAdded();
+
+    return result;
 }
 
 QVector<int> PhoenixLibrary::scanFolder(QUrl folder_path)
@@ -364,6 +369,7 @@ QVector<int> PhoenixLibrary::scanFolder(QUrl folder_path)
 
 void PhoenixLibrary::deleteRow(QString title)
 {
+
     QSqlDatabase database = dbm.handle();
     database.transaction();
 
@@ -374,7 +380,6 @@ void PhoenixLibrary::deleteRow(QString title)
     if (q.exec()) {
         database.commit();
         m_model->select();
-
     }
 
 

@@ -39,13 +39,13 @@ Rectangle {
             resizeGrid = true;
     }
 
-    /*PhoenixScrollView {
+
+
+    PhoenixScrollView {
         id: scrollView;
         anchors {
             fill: parent;
-        }*/
-
-
+        }
 
     GridView {
         id: gridView;
@@ -54,7 +54,6 @@ Rectangle {
         property bool holdItem: false;
 
         snapMode: GridView.NoSnap;
-        anchors.fill: parent;
 
         /*MouseArea {
             id: gridBackgroundMouse;
@@ -66,6 +65,7 @@ Rectangle {
                 gridView.currentItem.showMenu = false;
             }
         }*/
+
 
         states: [
             State {
@@ -106,7 +106,11 @@ Rectangle {
 
         model: phoenixLibrary.model();
         highlightFollowsCurrentItem:true;
+
         property int highlighterZValue: 1;
+        property string titleToDelete: "";
+
+
 
         highlight: Item {
             id: highlighter;
@@ -225,9 +229,13 @@ Rectangle {
                     radius: parent.radius;
                 }
             }
+        }
 
 
-
+        Connections {
+            target: phoenixLibrary;
+            onRowAdded: console.log("Game Added.");
+            onRowDeleted: console.log(titleToDelete + " was deleted.");
         }
 
         delegate: Item {
@@ -245,6 +253,7 @@ Rectangle {
             property int paintedWidth: width;
             property int paintedHeight: height;
             property real imageProgress: 0.0;
+            property bool itemDeleted: false;
 
             /*onImageLoadedChanged: {
                 if (imageLoaded) {
@@ -323,5 +332,6 @@ Rectangle {
                 }
             }
         }
+    }
     }
 }

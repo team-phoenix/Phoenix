@@ -9,7 +9,7 @@ Item  {
     property bool imageVisible: image.visible && image.status === Image.Ready;
 
     RectangularGlow {
-        visible: index !== gridView.currentIndex && parent.imageVisible;
+        visible: index !== gridView.currentIndex && parent.imageVisible && !gridItem.itemDeleted;
         anchors.centerIn: image;
         width: image.paintedWidth;
         height: image.paintedHeight;
@@ -27,7 +27,7 @@ Item  {
             fill: borderImage;
             margins: -1;
         }
-        visible: parent.imageVisible;
+        visible: parent.imageVisible && !gridItem.itemDeleted;
         onHeightChanged: gridItem.paintedHeight = height;
         onWidthChanged: gridItem.paintedWidth = width;
         z: borderImage.z - 1;
@@ -37,7 +37,7 @@ Item  {
     BorderImage {
         z: image.z + 1;
         id: borderImage;
-        visible: parent.imageVisible;
+        visible: parent.imageVisible && !gridItem.itemDeleted;
         source: "../assets/glow-mask.png"
         width: image.height * image.aspectRatio;
         height: image.height;
@@ -79,6 +79,7 @@ Item  {
             bottom: parent.bottom;
             horizontalCenter: parent.horizontalCenter;
         }
+
         onProgressChanged: gridItem.imageProgress = image.progress;
 
         onStatusChanged: {

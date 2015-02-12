@@ -105,6 +105,8 @@ signals:
     void progressChanged();
     void countChanged();
     void importUrlsChanged();
+    void rowDeleted();
+    void rowAdded();
 
 private:
     NetworkQueue *network_queue;
