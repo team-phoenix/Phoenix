@@ -39,11 +39,13 @@ Rectangle {
             resizeGrid = true;
     }
 
-    PhoenixScrollView {
+    /*PhoenixScrollView {
         id: scrollView;
         anchors {
             fill: parent;
-        }
+        }*/
+
+
 
     GridView {
         id: gridView;
@@ -52,6 +54,7 @@ Rectangle {
         property bool holdItem: false;
 
         snapMode: GridView.NoSnap;
+        anchors.fill: parent;
 
         /*MouseArea {
             id: gridBackgroundMouse;
@@ -320,6 +323,5 @@ Rectangle {
                 }
             }
         }
-    }
     }
 }
