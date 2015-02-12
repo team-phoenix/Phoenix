@@ -103,12 +103,15 @@ Rectangle {
 
         model: phoenixLibrary.model();
         highlightFollowsCurrentItem:true;
+        property int highlighterZValue: 1;
 
         highlight: Item {
             id: highlighter;
             //anchors.fill: gridView.currentItem;
             visible: !gridView.currentItem.imageLoaded;
             property bool isEvenWidth: gridView.currentItem.paintedWidth % 2 == 0;
+            z: gridView.highlighterZValue;
+            Component.onCompleted: console.log("x: " + x)
 
             RectangularGlow {
                 id: effect;
@@ -141,6 +144,7 @@ Rectangle {
                 anchors {
                     centerIn: parent;
                 }
+                z: parent.z + 2;
 
                 gradient: Gradient {
                     GradientStop {position: 0.0; color: "#ff730f";}
@@ -196,15 +200,16 @@ Rectangle {
                 id: dropdownMenu;
                 width: 100;
                 height: 200;
+                x: realHighlighter.x + realHighlighter.width + 12;
                 anchors {
-                    left: parent.right;
-                    leftMargin: -10 * gameGrid.zoomFactor;
+                    //left: parent.right;
+                    //leftMargin: -10 * gameGrid.zoomFactor;
                     verticalCenter: parent.verticalCenter;
                     verticalCenterOffset: 65 / gameGrid.zoomFactor;
                 }
-                z: gridView.currentItem.z;
                 visible: gridView.currentItem.showMenu;
                 radius: 2;
+                z: 2;
                 //onVisibleChanged: {
                  //   gridBackgroundMouse.enabled = visible;
                 //}
@@ -225,13 +230,11 @@ Rectangle {
 
         }
 
-
-
         delegate: Item {
             id: gridItem;
             height: gridView.cellHeight - (50 * gameGrid.zoomFactor);
             width: gridView.cellWidth; //- (10 *  gameGrid.zoomFactor);
-            z: 0;
+            z: index == gridView.currentIndex ? 2 : 0;
             property bool imageLoaded: false;
             property string imageSource: !artwork ? "qrc:/assets/No-Art.png" : artwork;
             property string titleName: title ? title : "";
@@ -312,9 +315,6 @@ Rectangle {
                             width: 201;
                         }
 
-
-                        //onPaintedHeightChanged: console.log(paintedWidth / 2 - subItem.x)
-
                         onStatusChanged: {
                             if (status == Image.Ready)
                                 gridItem.imageLoaded = false;
@@ -350,7 +350,10 @@ Rectangle {
                             onPressed:  {
                                 if (gridView.currentItem.showMenu)
                                     gridView.currentItem.showMenu = false;
+
                                 gridView.currentIndex = index;
+                                //gridView.currentItem.z = 2;
+                                //gridView.highlighterZValue = 1;
                                 gridView.holdItem = pressed;
                                 containsMouse = pressed;
 
@@ -365,10 +368,8 @@ Rectangle {
                             }
 
                             onClicked: {
-                                gridView.currentItem.z = 0;
                                 gridView.currentItem.showMenu = false;
                                 gridView.currentIndex = index;
-                                gridView.currentItem.z = 100;
 
                                 if (mouse.button == Qt.RightButton) {
                                     if (gridView.currentItem.showMenu)
