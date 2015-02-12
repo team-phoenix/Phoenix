@@ -62,6 +62,8 @@ PhoenixWindow {
         }
         else {
             headerBar.viewIcon = headerBar.previousViewIcon;
+            if (root.visibility === Window.FullScreen)
+                root.visibility = root.lastWindowStyle;
         }
     }
 
