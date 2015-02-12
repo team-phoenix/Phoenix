@@ -12,9 +12,20 @@ Image {
     id: image;
 
     source: gridItem.imageSource;
-    width: 201;
+    width: gridItem.itemDeleted ? 0 : 201;
     fillMode: Image.PreserveAspectFit;
     asynchronous: true;
+
+    Behavior on width {
+        PropertyAnimation {duration: 200;  easing.type: Easing.Linear;}
+    }
+
+    onWidthChanged: {
+        if (width === 0) {
+            if (gridView.titleToDelete !== "")
+                phoenixLibrary.deleteRow(gridView.titleToDelete);
+        }
+    }
 
     anchors {
         top: parent.top;
@@ -38,7 +49,7 @@ Image {
         minimumValue: 0.0;
         maximumValue: 1.0;
         height: 12;
-        width: parent.paintedWidth / 2;
+        width: parent.paintedWidth / 2 + 1;
 
         style: ProgressBarStyle {
             background: Rectangle {
