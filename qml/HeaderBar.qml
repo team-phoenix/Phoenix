@@ -472,11 +472,9 @@ Rectangle {
             spacing: 12;
 
             Image {
-                source: "../assets/small-icon.png";
-                height: 6;
-                width: 6;
+                source: root.itemInView === "grid" ? "../assets/small-icon.png" : "../assets/small-icon-disabled.png";
                 sourceSize {
-                    height: 6;
+                    height: 7;
                     width: 6;
                 }
                 anchors {
@@ -488,11 +486,23 @@ Rectangle {
                 id: zoomSlider;
                 width: 120;
                 height: 25;
-
                 stepSize: 0.5;
                 minimumValue: 3.0;
                 maximumValue: 5.0;
                 value: 5;
+
+                MouseArea {
+                    enabled: root.itemInView !== "grid";
+                    anchors.fill: parent;
+                    hoverEnabled: true;
+                    propagateComposedEvents: false;
+                    onWheel: {
+
+                    }
+                    onClicked: {
+
+                    }
+                }
 
                 Settings {
                     category: "UI";
@@ -617,12 +627,12 @@ Rectangle {
                 }
             }
             Image {
-                source: "../assets/big-icon.png";
-                height: 11;
-                width: 11;
+                source: root.itemInView === "grid" ? "../assets/big-icon.png" : "../assets/big-icon-disabled.png";
+                //height: 15;
+                //width: 15;
                 sourceSize {
-                    height: 11;
-                    width: 11;
+                    height: 10;
+                    width: 9;
                 }
                 anchors {
                     verticalCenter: parent.verticalCenter;
