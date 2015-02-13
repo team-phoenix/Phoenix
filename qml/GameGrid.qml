@@ -67,7 +67,7 @@ Rectangle {
         }*/
 
 
-        states: [
+        /*states: [
             State {
                 name: "resizing";
                 when: gameGrid.resizeGrid;
@@ -78,7 +78,7 @@ Rectangle {
                 }
             }
 
-        ]
+        ]*/
 
         Behavior on cellHeight {
             PropertyAnimation {
@@ -97,13 +97,11 @@ Rectangle {
             fill: parent;
             leftMargin: (parent.width >= cellWidth) ? ((parent.width % cellWidth) / 2) : 0;
             rightMargin: leftMargin;
-            topMargin: 40;
             bottomMargin: 40;
         }
 
-        cellWidth: 300;
-        cellHeight: 300;
-
+        cellHeight: 130 * gameGrid.zoomFactor;
+        cellWidth: 100 * gameGrid.zoomFactor;
         model: phoenixLibrary.model();
         highlightFollowsCurrentItem:true;
 
@@ -147,7 +145,10 @@ Rectangle {
                 height: gridView.currentItem.paintedHeight + 21;
                 anchors {
                     centerIn: parent;
-                }
+               }
+
+                y: gridView.currentItem.artwork_1.y;
+                x: gridView.currentItem.artwork_1.x;
                 z: parent.z + 2;
 
                 gradient: Gradient {
@@ -240,8 +241,8 @@ Rectangle {
 
         delegate: Item {
             id: gridItem;
-            height: gridView.cellHeight - (50 * gameGrid.zoomFactor);
-            width: gridView.cellWidth; //- (10 *  gameGrid.zoomFactor);
+            height: gridView.cellHeight;
+            width: gridView.cellWidth;
             z: index == gridView.currentIndex ? 2 : 0;
             property bool imageLoaded: false;
             property string imageSource: !artwork ? "qrc:/assets/No-Art.png" : artwork;
@@ -254,82 +255,17 @@ Rectangle {
             property int paintedHeight: height;
             property real imageProgress: 0.0;
             property bool itemDeleted: false;
+            property alias artwork_1: imageHighlight;
 
-            /*onImageLoadedChanged: {
-                if (imageLoaded) {
-                    paintedHeight = imageHighlight.loadingImage.paintedHeight + 21;
-                    paintedWidth = imageHighlight.loadingImage.paintedWidth + 21;
-                }
-                else {
-                    /paintedHeight = blackBorder.paintedHeight + 21;
-                    paintedWidth = blackBorder.paintedWidth + 21;
-                }
-            }*/
-
-
-
-            Item {
-                id: subItem;
-                anchors.fill: parent;
-
-                GridImage  {
-                    id: imageHighlight;
-                    anchors.fill: parent;
-
-                }
-
-                Column {
-                    spacing: 2;
-                    anchors {
-                        horizontalCenter: parent.horizontalCenter;
-                        //leftMargin: 40;
-                        top: imageHighlight.bottom;
-                        topMargin: 24;
-                    }
-                    //height: 50;
-                    width: 125;
-
-                    Text {
-                        id: titleLabel;
-                        renderType: Text.QtRendering;
-                        anchors {
-                            left: parent.left;
-                            right: parent.right;
-                        }
-
-                        text: gridItem.titleName;
-                        color: "#f1f1f1";
-
-                        font {
-                            bold: true;
-                            pixelSize: 11;
-                            family: "Sans";
-                        }
-
-                        elide: Text.ElideRight;
-                        horizontalAlignment: Text.AlignHCenter;
-                    }
-
-                    Text {
-                        id: systemLabel;
-                        visible: gameGrid.showSystem;
-                        renderType: Text.QtRendering;
-                        anchors {
-                            left: parent.left;
-                            right: parent.right;
-                        }
-
-                        text: gridItem.systemName;
-                        color: "#f1f1f1";
-                        font {
-                            pixelSize: 10;
-                            family: "Sans";
-                        }
-
-                        elide: Text.ElideRight;
-                        horizontalAlignment: Text.AlignHCenter;
-                    }
-                }
+            GridImage  {
+                id: imageHighlight;
+                anchors {
+                    fill: parent;
+                    leftMargin: 50;
+                    rightMargin: 50;
+                    topMargin: 100;
+                    bottomMargin: 100;
+               }
             }
         }
     }

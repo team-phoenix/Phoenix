@@ -12,9 +12,15 @@ Image {
     id: image;
 
     source: gridItem.imageSource;
-    width: gridItem.itemDeleted ? 0 : 201;
     fillMode: Image.PreserveAspectFit;
     asynchronous: true;
+
+    sourceSize {
+        height: 171;
+        width: 171;
+    }
+
+
 
     Behavior on width {
         PropertyAnimation {duration: 200;  easing.type: Easing.Linear;}
@@ -28,12 +34,18 @@ Image {
     }
 
     anchors {
+        //top: parent.top;
+        //bottom: parent.bottom;
+        //bottom: parent.bottom;
         top: parent.top;
         bottom: parent.bottom;
         horizontalCenter: parent.horizontalCenter;
     }
 
-    onPaintedHeightChanged: gridItem.paintedHeight = paintedHeight;
+    width: gridItem.itemDeleted ? 0 : 151;
+    onPaintedHeightChanged: {
+        gridItem.paintedHeight = paintedHeight;
+    }
     onPaintedWidthChanged: gridItem.paintedWidth = paintedWidth;
 
     ProgressBar {
@@ -76,11 +88,6 @@ Image {
         }
     }
 
-    sourceSize {
-        height: 201;
-        width: 201;
-    }
-
     CachedImage {
         id: cachedImage;
         imgsrc: image.source;
@@ -111,8 +118,6 @@ Image {
                 gridView.currentItem.showMenu = false;
 
             gridView.currentIndex = index;
-            //gridView.currentItem.z = 2;
-            //gridView.highlighterZValue = 1;
             gridView.holdItem = pressed;
             containsMouse = pressed;
 

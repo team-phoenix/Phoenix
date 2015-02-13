@@ -4,18 +4,17 @@ import phoenix.image 1.0
 
 Item  {
     id: imageHighlight;
-    anchors.fill: parent;
+
 
     property bool imageVisible: image.visible && image.status === Image.Ready;
+    property alias artwork: image;
 
     RectangularGlow {
         visible: index !== gridView.currentIndex && parent.imageVisible && !gridItem.itemDeleted;
-        anchors.centerIn: image;
-        width: image.paintedWidth;
-        height: image.paintedHeight;
-        glowRadius: 15;
+        anchors.fill: blackBorder;
+        glowRadius: 7;
         spread: 0.1;
-        color: "#40000000";
+        color: "#b0000000";
         cornerRadius: 2;
     }
 
@@ -39,9 +38,14 @@ Item  {
         id: borderImage;
         visible: parent.imageVisible && !gridItem.itemDeleted;
         source: "../assets/glow-mask.png"
-        width: image.height * image.aspectRatio;
-        height: image.height;
-        anchors.centerIn: image;
+        width: height * image.aspectRatio;
+        height: image.paintedHeight;
+        anchors {
+            centerIn: image;
+            //horizontalCenter: image.horizontalCenter;
+        }
+
+
         verticalTileMode: BorderImage.Stretch;
         horizontalTileMode: BorderImage.Stretch;
     }
@@ -60,7 +64,7 @@ Item  {
 
     function finishCreation() {
          if (component.status === Component.Ready) {
-             loadingImage = component.createObject(imageHighlight, {"source": "../assets/No-Art.png"});
+             loadingImage = component.createObject(image, {"source": "../assets/No-Art.png"});
              if (loadingImage === null) {
                  // Error Handling
                  console.log("Error creating image object");
@@ -74,11 +78,10 @@ Item  {
 
     DynamicImage {
         id: image;
-        anchors {
-            top: parent.top;
-            bottom: parent.bottom;
-            horizontalCenter: parent.horizontalCenter;
-        }
+
+
+        //verticalAlignment: Image.AlignBottom;
+        //horizontalAlignment: Image.AlignHCenter;
 
         onProgressChanged: gridItem.imageProgress = image.progress;
 
@@ -94,6 +97,60 @@ Item  {
                 if (imageHighlight.loadingImage !== null && imageHighlight.loadingImage !== undefined)
                     imageHighlight.loadingImage.destroy();
             }
+        }
+    }
+
+    Column {
+        anchors {
+            top: image.bottom;
+            topMargin: 15;
+            horizontalCenter: image.horizontalCenter;
+        }
+
+        spacing: 2;
+        x: image.width - image.paintedWidth
+
+        width: 150;
+
+        Text {
+            id: titleLabel;
+            renderType: Text.QtRendering;
+            anchors {
+                left: parent.left;
+                right: parent.right;
+            }
+
+            text: gridItem.titleName;
+            color: "#f1f1f1";
+
+            font {
+                bold: true;
+                pixelSize: 11;
+                family: "Sans";
+            }
+
+            elide: Text.ElideRight;
+            horizontalAlignment: Text.AlignHCenter;
+        }
+
+        Text {
+            id: systemLabel;
+            visible: gameGrid.showSystem;
+            renderType: Text.QtRendering;
+            anchors {
+                left: parent.left;
+                right: parent.right;
+            }
+
+            text: gridItem.systemName;
+            color: "#f1f1f1";
+            font {
+                pixelSize: 10;
+                family: "Sans";
+            }
+
+            elide: Text.ElideRight;
+            horizontalAlignment: Text.AlignHCenter;
         }
     }
 }
