@@ -70,6 +70,7 @@ PhoenixLibrary::PhoenixLibrary()
 
     m_model = new GameLibraryModel(&dbm, this);
     m_model->setEditStrategy(QSqlTableModel::OnManualSubmit);
+    m_model->select();
 
     for (auto &core: libretro_cores_info) {
         QString exts = core["supported_extensions"].toString();
@@ -290,8 +291,9 @@ void PhoenixLibrary::importMetadata(QVector<int> games_id)
 
     }
 
-
     database.commit();
+    QMetaObject::invokeMethod(m_model, "submitAll");
+
     setLabel("");
 
 }
@@ -320,9 +322,9 @@ bool PhoenixLibrary::insertGame(QSqlQuery &q, QFileInfo path)
     q.addBindValue(path.absoluteFilePath());
 
     bool result = q.exec();
-    if (result)
+    if (result) {
         emit rowAdded();
-
+    }
     return result;
 }
 
@@ -360,7 +362,9 @@ QVector<int> PhoenixLibrary::scanFolder(QUrl folder_path)
 
     if (found_games) {
         database.commit();
-        QMetaObject::invokeMethod(m_model, "select");
+        QMetaObject::invokeMethod(m_model, "submitAll");
+
+        //QMetaObject::invokeMethod(m_model, "select");
     }
 
     setLabel("");
@@ -379,7 +383,7 @@ void PhoenixLibrary::deleteRow(QString title)
     q.addBindValue(title);
     if (q.exec()) {
         database.commit();
-        m_model->select();
+        QMetaObject::invokeMethod(m_model, "submitAll");
     }
 
 
@@ -413,7 +417,7 @@ void PhoenixLibrary::resetAll()
 
     if (q.exec()) {
         database.commit();
-        m_model->select();
+        QMetaObject::invokeMethod(m_model, "submitAll");
         setLabel("Library Cleared");
     }
     else {
@@ -529,7 +533,7 @@ QVector<int> PhoenixLibrary::importDroppedFiles(QList<QUrl> url_list)
     }
 
     database.commit();
-    QMetaObject::invokeMethod(m_model, "select");
+    QMetaObject::invokeMethod(m_model, "submitAll");
 
     setLabel("");
     return inserted_games;
