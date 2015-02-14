@@ -14,6 +14,7 @@ Image {
     source: gridItem.imageSource;
     fillMode: Image.PreserveAspectFit;
     asynchronous: true;
+    property bool hovered: false;
 
     sourceSize {
         height: 171;
@@ -112,6 +113,8 @@ Image {
         enabled: true;
         property bool containsMouse: false;
         acceptedButtons: Qt.LeftButton | Qt.RightButton
+        onEntered: parent.hovered = true;
+        onExited: parent.hovered = false;
 
         onPressed:  {
             if (gridView.currentItem.showMenu)

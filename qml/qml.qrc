@@ -28,5 +28,6 @@
 	<file>GridImage.qml</file>
 	<file>TextGradient.qml</file>
 	<file>DynamicImage.qml</file>
+	<file>MarqueeText.qml</file>
 </qresource>
 </RCC>

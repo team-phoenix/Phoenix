@@ -101,6 +101,7 @@ Item  {
     }
 
     Column {
+        id: textColumn;
         anchors {
             top: image.bottom;
             topMargin: 15;
@@ -108,29 +109,19 @@ Item  {
         }
 
         spacing: 2;
-        x: image.width - image.paintedWidth
+        //x: image.width - image.paintedWidth
 
         width: 150;
 
-        Text {
+        MarqueeText {
             id: titleLabel;
-            renderType: Text.QtRendering;
-            anchors {
-                left: parent.left;
-                right: parent.right;
-            }
-
             text: gridItem.titleName;
-            color: "#f1f1f1";
-
-            font {
-                bold: true;
-                pixelSize: 11;
-                family: "Sans";
-            }
-
-            elide: Text.ElideRight;
-            horizontalAlignment: Text.AlignHCenter;
+            anchors.horizontalCenter: parent.horizontalCenter;
+            width: parent.width;
+            textColor: "#f1f1f1";
+            interval: 200;
+            fontSize: 10;
+            running: index == gridView.currentIndex || image.hovered ? true : false;
         }
 
         Text {
