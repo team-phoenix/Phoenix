@@ -355,11 +355,7 @@ TableView {
                 onDoubleClicked: {
                     row.checked = true;
                     var map = table.model.get(styleData.row);
-                    var core = phoenixLibrary.getSystem(map["system"]);
-                    root.gameAndCoreCheck(map["title"], map["system"], map["filename"], core);
-                    root.lastGameName = map["title"];
-                    root.lastSystemName = map["system"];
-
+                    root.playGame(map["title"], map["system"], map["filename"], phoenixLibrary.getSystem(map["system"]));
                 }
 
                 onClicked: {

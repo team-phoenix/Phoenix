@@ -47,11 +47,42 @@ Rectangle {
             fill: parent;
         }
 
+        Keys.onPressed: {
+            switch (event.key) {
+                case Qt.Key_Right:
+                    gridView.moveCurrentIndexRight();
+                   // event.accepted = true;
+                    break;
+                case Qt.Key_Left:
+                    gridView.moveCurrentIndexLeft();
+                    //event.accepted = true;
+                    break;
+                case Qt.Key_Up:
+                    gridView.moveCurrentIndexUp();
+                    //event.accepted = true;
+                    break;
+                case Qt.Key_Down:
+                    gridView.moveCurrentIndexDown();
+                    //event.accepted = true;
+                    break;
+                case Qt.Key_PageDown:
+
+                default:
+                    break;
+            }
+
+        }
+
+        focus: true;
+
     GridView {
         id: gridView;
 
         property bool checked: false;
         property bool holdItem: false;
+
+        keyNavigationWraps: true;
+
 
         snapMode: GridView.NoSnap;
 
@@ -103,7 +134,7 @@ Rectangle {
         cellHeight: 130 * gameGrid.zoomFactor;
         cellWidth: 100 * gameGrid.zoomFactor;
         model: phoenixLibrary.model();
-        highlightFollowsCurrentItem:true;
+        highlightFollowsCurrentItem: true;
 
         property int highlighterZValue: 1;
         property string titleToDelete: "";

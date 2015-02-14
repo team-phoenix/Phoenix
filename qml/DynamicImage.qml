@@ -124,11 +124,10 @@ Image {
         }
 
         onDoubleClicked: {
-            var curItem = gridView.currentItem;
-            var core = phoenixLibrary.getSystem(curItem.systemName);
-            root.gameAndCoreCheck(curItem.titleName, curItem.systemName, curItem.fileName, core);
-            root.lastGameName = title;
-            root.lastSystemName = system;
+            root.playGame(gridView.currentItem.titleName,
+                     gridView.currentItem.systemName,
+                     gridView.currentItem.fileName,
+                     phoenixLibrary.getSystem(gridView.currentItem.systemName));
         }
 
         onClicked: {
@@ -141,9 +140,6 @@ Image {
                 else
                     gridView.currentItem.showMenu = true;
             }
-
-            if (windowStack.currentItem.run)
-                headerBar.userText = gridItem.titleName;
         }
     }
 }
