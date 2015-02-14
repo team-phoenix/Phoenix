@@ -864,10 +864,10 @@ Rectangle {
             pixelSize: 12;
             family: "Sans";
         }
-        Component.onCompleted: focus = true;
         textColor: "#f1f1f1";
         height: 25;
         width: 175;
+        focus: false;
         anchors {
             right: parent.right;
             rightMargin: 20;
