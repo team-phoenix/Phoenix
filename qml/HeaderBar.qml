@@ -856,14 +856,15 @@ Rectangle {
 
     PhoenixTextField {
         id: searchBar;
-        placeholderText: "Search Game...";
-        placeholderTextColor: textColor;
+        placeholderText: "Search";
+        placeholderTextColor: "#808080";
         visible: !root.gameShowing;
         radius: 3;
         font {
             pixelSize: 12;
             family: "Sans";
         }
+        Component.onCompleted: focus = true;
         textColor: "#f1f1f1";
         height: 25;
         width: 175;
