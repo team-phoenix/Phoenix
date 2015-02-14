@@ -88,6 +88,7 @@
 	<file>black-mask.png</file>
 	<file>big-icon-disabled.png</file>
 	<file>small-icon-disabled.png</file>
+	<file>search.png</file>
     <!-- -->
     <file>gamecontrollerdb.txt</file>
 </qresource>

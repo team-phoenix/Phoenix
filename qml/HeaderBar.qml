@@ -487,9 +487,9 @@ Rectangle {
                 width: 120;
                 height: 25;
                 stepSize: 0.5;
-                minimumValue: 3.0;
-                maximumValue: 5.0;
-                value: 5;
+                minimumValue: 2.0;
+                maximumValue: 3.0;
+                value: minimumValue;
 
                 MouseArea {
                     enabled: root.itemInView !== "grid";
@@ -856,7 +856,7 @@ Rectangle {
 
     PhoenixTextField {
         id: searchBar;
-        placeholderText: "Search";
+        placeholderText: "Search Game...";
         placeholderTextColor: textColor;
         visible: !root.gameShowing;
         radius: 3;
@@ -880,9 +880,7 @@ Rectangle {
             onTriggered: phoenixLibrary.model().setFilter("title LIKE ?", ['%'+searchBar.text+'%']);
         }
 
-        onTextChanged: {
-            searchTimer.restart();
-        }
+        onTextChanged: searchTimer.restart();
 
         Image {
             id: image;
@@ -891,13 +889,15 @@ Rectangle {
                 right: parent.right;
                 margins: 5;
             }
-            visible: (searchBar.displayText === "") ? false : true;
-            source: "../assets/delete-4x.png"
-            sourceSize.height: 15;
-            sourceSize.width: 15;
+            source: searchBar.text === "" ? "../assets/search.png" : "../assets/delete-4x.png";
+            sourceSize.height: 12;
+            sourceSize.width: 12;
+
             MouseArea {
                 anchors.fill: parent;
-                onClicked: searchBar.text = "";
+                onClicked: {
+                    searchBar.text = "";
+                }
             }
         }
     }
