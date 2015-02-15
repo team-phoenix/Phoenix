@@ -489,7 +489,7 @@ Rectangle {
                 focus: false;
                 width: 120;
                 height: 25;
-                stepSize: 0.25;
+                stepSize: 0.01;
                 minimumValue: 1.0;
                 maximumValue: 5.0;
                 value: minimumValue;
