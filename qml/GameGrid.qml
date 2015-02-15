@@ -158,6 +158,7 @@ Rectangle {
             id: highlighter;
             property bool isEvenWidth: gridView.currentItem.paintedWidth % 2 == 0;
             z: gridView.highlighterZValue;
+            visible: root.gridFocus;
 
             RectangularGlow {
                 id: effect;

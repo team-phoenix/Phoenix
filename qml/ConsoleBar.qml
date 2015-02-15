@@ -254,6 +254,7 @@ Rectangle {
             }
 
             Rectangle {
+                id: leftBorder;
                 anchors {
                     right: parent.right;
                     top: parent.top;
@@ -261,30 +262,95 @@ Rectangle {
                 }
                 width: 1;
                 color: "#0b0b0b"
-
             }
 
-            Rectangle {
+            Item {
+                id: accentBorder;
                 anchors {
-                    left: parent.left;
-                    top: parent.top;
-                    bottom: parent.bottom;
-                    topMargin: 2;
+                    fill: parent;
                     leftMargin: 2;
-                    bottomMargin: 2;
-
-                }
-                width: 4;
-                gradient: Gradient {
-                    GradientStop {position: 0.0; color: "#f06612";}
-                    GradientStop {position: 1.0; color: "#dc113b";}
+                    rightMargin: 2;
                 }
 
-                CustomBorder {
-                    gradient: Gradient {
-                        GradientStop {position: 0.0; color: "#ff944a";}
-                        GradientStop {position: 1.0; color: "#ef516c";}
+
+
+
+
+                Rectangle {
+                    id: leftAccent;
+
+                    anchors {
+                        left: parent.left;
+                        top: parent.top;
+                        bottom: parent.bottom;
+                        //topMargin: 2;
+                        //bottomMargin: 2;
+
                     }
+                    width: 4;
+                    gradient: Gradient {
+                        GradientStop {position: 0.0; color: "#f06612";}
+                        GradientStop {position: 1.0; color: "#dc113b";}
+                    }
+
+                    //CustomBorder {
+                        //gradient: Gradient {
+                         //   GradientStop {position: 0.0; color: "#ff944a";}
+                        //    GradientStop {position: 1.0; color: "#ef516c";}
+                        //}
+                    //}
+                }
+
+                Rectangle {
+                    id: topAccent;
+                    visible: root.consoleBarFocus
+                    anchors {
+                        top: parent.top;
+                        left: leftAccent.right;
+                        right: parent.right;
+                    }
+                    height: 4;
+                    gradient: Gradient {
+                        GradientStop {position: 0.0; color: "#ff710f";}
+                        GradientStop {position: 1.0; color: "#ff710f";}
+                    }
+                }
+
+                Rectangle {
+                    id: rightAccent;
+                    visible: root.consoleBarFocus
+                    anchors {
+                        top: topAccent.bottom;
+                        right: parent.right;
+                        bottom: parent.bottom;
+                    }
+                    width: 4;
+                    gradient: Gradient {
+                        GradientStop {position: 0.0; color: "#f06612";}
+                        GradientStop {position: 1.0; color: "#dc113b";}
+                    }
+
+                    //CustomBorder {
+                        //gradient: Gradient {
+                            //GradientStop {position: 0.0; color: "#ff944a";}
+                            //GradientStop {position: 1.0; color: "#ef516c";}
+                        //}
+                    //}
+                }
+
+                Rectangle {
+                    visible: root.consoleBarFocus
+                    anchors {
+                        bottom: parent.bottom;
+                        left: leftAccent.right;
+                        right: rightAccent.left;
+                    }
+                    height: 4;
+                    gradient: Gradient {
+                        GradientStop {position: 0.0; color: "#f0362b";}
+                        GradientStop {position: 1.0; color: "#ed2931";}
+                    }
+
                 }
             }
 

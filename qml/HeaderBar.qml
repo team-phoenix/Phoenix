@@ -859,6 +859,18 @@ Rectangle {
 
     PhoenixTextField {
         id: searchBar;
+
+        CustomBorder {
+            id: customBorder;
+            _margin: 3;
+            border.color: "black";
+            visible: parent.text !== "";
+            gradient: Gradient {
+                GradientStop {position: 0.0; color: "#fa5e18";}
+                GradientStop {position: 1.0; color: "#ee2e2e";}
+            }
+        }
+
         placeholderText: "Search";
         placeholderTextColor: "#808080";
         visible: !root.gameShowing;
