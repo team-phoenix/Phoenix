@@ -14,11 +14,12 @@ Audio::Audio(QObject *parent)
         this->moveToThread(&thread);
         connect(&thread, SIGNAL(started()), SLOT(threadStarted()));
         thread.setObjectName("phoenix-audio");
-
+/*
 #ifdef Q_OS_LINUX
         soxr = nullptr;
         deviation = 0.005;
 #endif
+        */
 
         m_abuf = new AudioBuffer();
         Q_CHECK_PTR(m_abuf);
@@ -39,6 +40,8 @@ void Audio::start()
 /* This needs to be called on the audio thread*/
 void Audio::setFormat(QAudioFormat _afmt)
 {
+
+    /*
 #ifdef Q_OS_LINUX
     qCDebug(phxAudio, "setFormat(%iHz %ibits)", _afmt.sampleRate(), _afmt.sampleSize());
     QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
@@ -65,6 +68,7 @@ void Audio::setFormat(QAudioFormat _afmt)
     if (error) {}
 
 #else
+*/
     qCDebug(phxAudio, "setFormat(%iHz %ibits)", _afmt.sampleRate(), _afmt.sampleSize());
 /*    QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
     if (!info.isFormatSupported(_afmt)) {
@@ -72,7 +76,7 @@ void Audio::setFormat(QAudioFormat _afmt)
         return;
     }*/
     afmt_out = _afmt;
-#endif
+//#endif
     emit formatChanged();
 
 
@@ -125,7 +129,7 @@ void Audio::handlePeriodTimer()
     if(!toWrite)
         return;
 
-
+/*
 #ifdef Q_OS_LINUX
     int half_size = aout->bufferSize() / 2;
         int delta_mid = toWrite - half_size;
@@ -166,11 +170,12 @@ void Audio::handlePeriodTimer()
         Q_UNUSED(wrote);
 
 #else
+*/
     QVarLengthArray<char, 4096*4> tmpbuf(toWrite);
     int read = m_abuf->read(tmpbuf.data(), toWrite);
     int wrote = aio->write(tmpbuf.data(), read);
     Q_UNUSED(wrote);
-#endif
+//#endif
 
 
 }

@@ -8,9 +8,11 @@
 #include <QAudioOutput>
 #include <QDebug>
 
+/*
 #ifdef Q_OS_LINUX
 #include <soxr.h>
 #endif
+*/
 
 #include "audiobuffer.h"
 #include "logging.h"
@@ -53,12 +55,13 @@ private:
     AudioBuffer *m_abuf;
     QThread thread;
     QTimer timer;
-
+/*
 #ifdef Q_OS_LINUX
     qreal deviation;
     soxr_t soxr;
     double soxr_io_ratio;
 #endif
+    */
 
 };
 
