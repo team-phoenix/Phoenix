@@ -21,6 +21,8 @@ Rectangle {
     property string systemText: "";
     property string previousViewIcon: "";
 
+    property alias textField: searchBar;
+
     property Timer timer: Timer {
         interval: 1000;
         running: false;
@@ -484,6 +486,7 @@ Rectangle {
 
             Slider {
                 id: zoomSlider;
+                focus: false;
                 width: 120;
                 height: 25;
                 stepSize: 0.5;
@@ -859,6 +862,40 @@ Rectangle {
         placeholderText: "Search";
         placeholderTextColor: "#808080";
         visible: !root.gameShowing;
+        property string carriedEvent: "";
+        onCarriedEventChanged: {
+            if (carriedEvent !== "")
+                text += carriedEvent.toLowerCase();
+            carriedEvent = "";
+        }
+
+        Keys.onPressed: {
+            switch (event.key) {
+                case Qt.Key_Tab:
+                    event.accepted = true;
+                    console.log("header tab pressed");
+                    if (root.keyBoardFocus == 1)
+                        root.keyBoardFocus = 2;
+                    else
+                        root.keyBoardFocus = 1;
+                    console.log(root.keyBoardFocus)
+                    break;
+                case Qt.Key_Backspace:
+                    if (text !== "")
+                        text = text.substring(0, text.length - 1);
+                    event.accepted = true;
+                    break;
+
+                default:
+                    var firstLetter = String.fromCharCode(event.key).charAt(0);
+                    if (firstLetter.match("^[a-zA-Z]+$")) {
+                        insert(searchBar.length, String.fromCharCode(event.key).toLowerCase());
+                        event.accepted = true;
+                    }
+                    break;
+            }
+        }
+
         radius: 3;
         font {
             pixelSize: 12;

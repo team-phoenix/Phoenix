@@ -18,6 +18,7 @@ Rectangle {
     property bool zoomSliderPressed: false;
     property bool resizeGrid: false;
 
+
     Rectangle {
         // bottomBorder;
         z: gridView.z + 1;
@@ -43,37 +44,49 @@ Rectangle {
 
     PhoenixScrollView {
         id: scrollView;
+        focus: root.gridFocus;
+        onFocusChanged: {
+            //console.log(focus ? "grid has focus" : "grid lost focus");
+            //if (focus)
+                //scrollView.forceActiveFocus();
+        }
+
         anchors {
             fill: parent;
         }
 
+        Keys.forwardTo: headerBar.textField;
+        Keys.priority: Keys.BeforeItem;
         Keys.onPressed: {
             switch (event.key) {
                 case Qt.Key_Right:
                     gridView.moveCurrentIndexRight();
-                   // event.accepted = true;
+                    event.accepted = true;
                     break;
                 case Qt.Key_Left:
                     gridView.moveCurrentIndexLeft();
-                    //event.accepted = true;
+                    event.accepted = true;
                     break;
                 case Qt.Key_Up:
                     gridView.moveCurrentIndexUp();
-                    //event.accepted = true;
+                    event.accepted = true;
                     break;
                 case Qt.Key_Down:
                     gridView.moveCurrentIndexDown();
-                    //event.accepted = true;
+                    event.accepted = true;
                     break;
-                case Qt.Key_PageDown:
+                case Qt.Key_Tab:
+                    console.log("TAB PRESSEEDDDD");
+                    break;
 
                 default:
+                    //headerBar.textField.carriedEvent = String.fromCharCode(event.key);
+                    //headerBar.textField.focus = true;
+
                     break;
             }
 
         }
-
-        focus: true;
 
     GridView {
         id: gridView;
@@ -81,7 +94,7 @@ Rectangle {
         property bool checked: false;
         property bool holdItem: false;
 
-        keyNavigationWraps: true;
+        //keyNavigationWraps: true;
 
 
         snapMode: GridView.NoSnap;

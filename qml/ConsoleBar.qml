@@ -12,6 +12,8 @@ Rectangle {
     property real progressValue: phoenixLibrary.progress;
     property string progressText: phoenixLibrary.label;
 
+    property alias list: listView;
+
     Row {
         id: rightBord;
         anchors {
@@ -182,6 +184,7 @@ Rectangle {
     ListView {
         id: listView;
         visible: (height !== 0);
+        focus: root.consoleBarFocus;
         anchors {
             top: consoleHeader.bottom;
             topMargin: 1;
@@ -196,12 +199,36 @@ Rectangle {
             PropertyAnimation {}
         }
 
+        keyNavigationWraps: true;
         snapMode: ListView.SnapToItem;
         orientation: ListView.Vertical;
         interactive: false;
-        highlightFollowsCurrentItem: false;
+        highlightFollowsCurrentItem: true;
 
         property bool retractList: false;
+
+        Keys.forwardTo: headerBar.textField;
+        Keys.priority: Keys.BeforeItem;
+        Keys.onPressed: {
+            switch (event.key) {
+                case Qt.Key_Right:
+                //case Qt.Key_Tab:
+                    root.keyBoardFocus = 2;
+                    event.accepted = true;
+                    break;
+                case Qt.Key_Down:
+                    listView.incrementCurrentIndex();
+                    event.accepted = true;
+                    break;
+                case Qt.Key_Up:
+                    listView.decrementCurrentIndex();
+                    event.accepted = true;
+                    break;
+
+                default:
+                    break;
+            }
+        }
 
         highlight: Rectangle {
             id: highlightItem;
@@ -273,15 +300,27 @@ Rectangle {
 
         model: phoenixLibrary.systemsModel();
 
+        onCurrentIndexChanged: {
+            if (currentItem.text === "All") {
+                phoenixLibrary.model().setFilter("title LIKE ?", ['%%'])
+            }
+            else {
+                phoenixLibrary.model().setFilter("system = ?", [currentItem.text]);
+            }
+        }
+
         ExclusiveGroup {
             id: consoleGroup
         }
+
+
 
         delegate: Item {
             id: item;
             //visible: !listView.retractList;
             height: 26;
             width: consoleBar.width;
+            property string text: modelData;
             Row {
                 id: row;
                 anchors {
@@ -322,12 +361,12 @@ Rectangle {
                 anchors.fill: parent;
                 onClicked: {
                     listView.currentIndex = index;
-                    if (modelData === "All") {
-                        phoenixLibrary.model().setFilter("title LIKE ?", ['%%'])
-                    }
-                    else {
-                        phoenixLibrary.model().setFilter("system = ?", [modelData]);
-                    }
+                    //if (modelData === "All") {
+                    //    phoenixLibrary.model().setFilter("title LIKE ?", ['%%'])
+                    //}
+                    //else {
+                    //    phoenixLibrary.model().setFilter("system = ?", [modelData]);
+                    //}
                 }
             }
         }

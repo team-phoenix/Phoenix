@@ -39,6 +39,19 @@ PhoenixWindow {
     property string lastGameName: "Phoenix";
     property string lastSystemName: "";
 
+    property int keyBoardFocus: 2;
+    property bool gridFocus: keyBoardFocus === 2;
+    property bool consoleBarFocus: keyBoardFocus === 1;
+
+    function playGame(title, system, filename, core)
+    {
+        if (root.gameAndCoreCheck(title, system, filename, core)) {
+            root.lastGameName = title;
+            root.lastSystemName = system;
+            headerBar.userText = title;
+        }
+    }
+
     function gameAndCoreCheck(title, system, file_name, core)
     {
         if (core !== "" && file_name !== "") {
@@ -46,6 +59,7 @@ PhoenixWindow {
                 if (root.loadGame(file_name)) {
                     infoBar.height = 0;
                     windowStack.push({item: gameView, properties: {coreName: core, gameName: file_name, run: true}});
+                    return true;
                 }
                 else
                     root.infoBarText = title + " could not be loaded.";
@@ -53,6 +67,7 @@ PhoenixWindow {
             else
                 root.infoBarText = system + " core could not be loaded.";
         }
+        return false;
     }
 
     onGameShowingChanged: {
@@ -820,6 +835,8 @@ PhoenixWindow {
                     top: parent.top;
                     bottom: parent.bottom;
                 }
+
+
 
             }
 
