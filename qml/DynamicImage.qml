@@ -10,6 +10,7 @@ Image {
     property real aspectRatio: paintedWidth / paintedHeight;
 
     id: image;
+    width: gridItem.itemDeleted ? 0 : parent.width;
 
     source: gridItem.imageSource;
     fillMode: Image.PreserveAspectFit;
@@ -17,14 +18,14 @@ Image {
     property bool hovered: false;
 
     sourceSize {
-        height: 171;
-        width: 171;
+        height: 500;
+        width: 500;
     }
 
 
 
     Behavior on width {
-        PropertyAnimation {duration: 200;  easing.type: Easing.Linear;}
+        PropertyAnimation {duration: 50;  easing.type: Easing.Linear;}
     }
 
     onWidthChanged: {
@@ -35,19 +36,13 @@ Image {
     }
 
     anchors {
-        //top: parent.top;
-        //bottom: parent.bottom;
-        //bottom: parent.bottom;
         top: parent.top;
         bottom: parent.bottom;
         horizontalCenter: parent.horizontalCenter;
     }
 
-    width: gridItem.itemDeleted ? 0 : 151;
-    onPaintedHeightChanged: {
-        gridItem.paintedHeight = paintedHeight;
-    }
-    onPaintedWidthChanged: gridItem.paintedWidth = paintedWidth;
+    onPaintedHeightChanged: gridItem.paintedHeight = paintedHeight;
+    onPaintedWidthChanged:  gridItem.paintedWidth = paintedWidth;
 
     ProgressBar {
         z: 100;

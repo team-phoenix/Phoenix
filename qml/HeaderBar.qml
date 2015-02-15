@@ -489,9 +489,9 @@ Rectangle {
                 focus: false;
                 width: 120;
                 height: 25;
-                stepSize: 0.5;
-                minimumValue: 2.0;
-                maximumValue: 3.0;
+                stepSize: 0.25;
+                minimumValue: 1.0;
+                maximumValue: 5.0;
                 value: minimumValue;
 
                 MouseArea {
@@ -927,7 +927,9 @@ Rectangle {
             interval: 300;
             running: false;
             repeat: false;
-            onTriggered: phoenixLibrary.model().setFilter("title LIKE ?", ['%'+searchBar.text+'%']);
+            onTriggered: {
+                phoenixLibrary.model().setFilter("title LIKE ?", ['%'+searchBar.text+'%']);
+            }
         }
 
         onTextChanged: searchTimer.restart();

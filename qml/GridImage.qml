@@ -104,14 +104,14 @@ Item  {
         id: textColumn;
         anchors {
             top: image.bottom;
-            topMargin: 15;
+            topMargin: 5;
             horizontalCenter: image.horizontalCenter;
         }
 
-        spacing: 2;
+        spacing: 0;
         //x: image.width - image.paintedWidth
 
-        width: 150;
+        width: parent.width;
 
         MarqueeText {
             id: titleLabel;
