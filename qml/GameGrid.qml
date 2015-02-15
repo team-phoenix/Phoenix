@@ -11,6 +11,9 @@ Rectangle {
     height: 500;
     width: 500;
 
+
+
+
     property string itemBackgroundColor: "red";
     property bool showSystem: true;
 
@@ -93,6 +96,17 @@ Rectangle {
 
         property bool checked: false;
         property bool holdItem: false;
+
+        Text {
+            visible: gridView.count == 0;
+            anchors.centerIn: parent;
+            text: "0 Games Were Found, (PLACE HOLDER)";
+            color: "#f1f1f1";
+            font {
+                family: "Sans";
+                pixelSize: 32;
+            }
+        }
 
         //keyNavigationWraps: true;
 
