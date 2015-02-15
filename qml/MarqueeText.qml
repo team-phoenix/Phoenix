@@ -26,7 +26,7 @@ Item {
         {
             marqueeText.x = marqueeText.parent.width;
         }
-        marqueeText.x -= 10;
+        marqueeText.x -= 1;
     }
 
     Text {
