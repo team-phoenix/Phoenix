@@ -57,7 +57,6 @@ PhoenixLibrary::PhoenixLibrary()
         { Sega_32X, "Sega 32X" },
         { Sony_PlayStation, "Sony PlayStation" },
         { Arcade, "Arcade" },
-        { FFMpeg, "Film" },
     })
 {
     m_import_urls = false;

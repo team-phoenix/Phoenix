@@ -68,7 +68,6 @@ public:
         Sega_32X,
         Sony_PlayStation,
         Arcade,
-        FFMpeg,
         Last
     };
 
