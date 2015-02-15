@@ -64,6 +64,7 @@ QList<InputDevice *> InputManager::getDevices() const
 void InputManager::scanDevicesAsync()
 {
     QFuture<void> fut = QtConcurrent::run(this, &InputManager::scanDevices);
+    Q_UNUSED(fut)
 }
 
 void InputManager::scanKeyboard()
@@ -148,6 +149,10 @@ void InputManager::scanDevices()
 
     scanKeyboard();
     scanJoysticks();
+
+    for (int i=0; i < devices.length(); ++i) {
+        devices.at(i)->moveToThread(this->thread());
+    }
 
     // NOTES: some of the buttons in joystick.cpp line 216 aren't having proper values.
 }
