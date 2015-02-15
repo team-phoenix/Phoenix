@@ -109,3 +109,6 @@ SOURCES += src/main.cpp                        \
            src/scraper.cpp
 
 RESOURCES = qml/qml.qrc assets/assets.qrc
+
+DISTFILES += \
+    .astylerc
