@@ -7,19 +7,16 @@
 #include "keyboardevents.h"
 
 
-Keyboard::Keyboard(InputDeviceMapping *mapping) : InputDevice(mapping)
-{
-    setDeviceName("Keyboard (Qt KeyEvent)");
+Keyboard::Keyboard( InputDeviceMapping *mapping ) : InputDevice( mapping ) {
+    setDeviceName( "Keyboard (Qt KeyEvent)" );
 
 }
 
-Keyboard::~Keyboard()
-{
+Keyboard::~Keyboard() {
 
 }
 
-QVariantList Keyboard::enumerateDevices()
-{
+QVariantList Keyboard::enumerateDevices() {
     return {
         QVariantMap {
             {"text", "Keyboard"}, // for QML model
@@ -29,63 +26,67 @@ QVariantList Keyboard::enumerateDevices()
     };
 }
 
-bool Keyboard::eventFilter(QObject *obj, QEvent *event)
-{
-    Q_UNUSED(obj);
+bool Keyboard::eventFilter( QObject *obj, QEvent *event ) {
+    Q_UNUSED( obj );
     auto type = event->type();
-    if (type == QEvent::KeyPress || type == QEvent::KeyRelease) {
-        QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
-        processKeyEvent(keyEvent);
+
+    if( type == QEvent::KeyPress || type == QEvent::KeyRelease ) {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent *>( event );
+        processKeyEvent( keyEvent );
         return true;
     }
+
     return false;
 }
 
-inline void Keyboard::processKeyEvent(QKeyEvent *event)
-{
-    bool is_pressed = (event->type() == QEvent::KeyPress) ? true : false;
-    auto ev = KeyboardKeyEvent::fromKeyEvent(event);
-    emit inputEventReceived(&ev, is_pressed);
+inline void Keyboard::processKeyEvent( QKeyEvent *event ) {
+    bool is_pressed = ( event->type() == QEvent::KeyPress ) ? true : false;
+    auto ev = KeyboardKeyEvent::fromKeyEvent( event );
+    emit inputEventReceived( &ev, is_pressed );
 
-    auto retro_id = m_mapping->getMapping(&ev);
-    if (retro_id != (unsigned)~0)
-        setState(retro_id, is_pressed);
+    auto retro_id = m_mapping->getMapping( &ev );
+
+    if( retro_id != ( unsigned )~0 ) {
+        setState( retro_id, is_pressed );
+    }
 }
 
-QVariant Keyboard::Mapping::setMappingOnInput(retro_device_id id, QJSValue cb)
-{
+QVariant Keyboard::Mapping::setMappingOnInput( retro_device_id id, QJSValue cb ) {
     auto conn = std::make_shared<QMetaObject::Connection>();
 
-    auto handleInput = [this, id, cb, conn] (InputDeviceEvent *ev, int16_t val) mutable {
-        if (val == 0)
+    auto handleInput = [this, id, cb, conn]( InputDeviceEvent * ev, int16_t val ) mutable {
+        if( val == 0 ) {
             return;
+        }
 
-        this->setMapping(ev, id);
-//        if (cb.isCallable())
-//            cb.call({ id, ev });
-        QObject::disconnect(*conn);
+        this->setMapping( ev, id );
+        //        if (cb.isCallable())
+        //            cb.call({ id, ev });
+        QObject::disconnect( *conn );
     };
 
-    if (!keyboard) {
+    if( !keyboard ) {
         // no std::make_unique in c++11
-        keyboard = std::unique_ptr<Keyboard>(new Keyboard(this));
+        keyboard = std::unique_ptr<Keyboard>( new Keyboard( this ) );
     }
-    *conn = connect(keyboard.get(), &InputDevice::inputEventReceived, handleInput);
-    qCDebug(phxInput) << "waiting for keyboard input";
-    return QVariant::fromValue(*conn);
+
+    *conn = connect( keyboard.get(), &InputDevice::inputEventReceived, handleInput );
+    qCDebug( phxInput ) << "waiting for keyboard input";
+    return QVariant::fromValue( *conn );
 }
 
-void Keyboard::Mapping::cancelMappingOnInput(QVariant cancelInfo)
-{
-    if (cancelInfo.canConvert<QMetaObject::Connection>())
-        QObject::disconnect(cancelInfo.value<QMetaObject::Connection>());
+void Keyboard::Mapping::cancelMappingOnInput( QVariant cancelInfo ) {
+    if( cancelInfo.canConvert<QMetaObject::Connection>() ) {
+        QObject::disconnect( cancelInfo.value<QMetaObject::Connection>() );
+    }
 }
 
-InputDeviceEvent *Keyboard::Mapping::eventFromString(QString evname)
-{
-    auto ev = KeyboardKeyEvent::fromString(evname);
-    if (ev.isValid())
+InputDeviceEvent *Keyboard::Mapping::eventFromString( QString evname ) {
+    auto ev = KeyboardKeyEvent::fromString( evname );
+
+    if( ev.isValid() ) {
         return ev.clone();
+    }
 
     return nullptr;
 }

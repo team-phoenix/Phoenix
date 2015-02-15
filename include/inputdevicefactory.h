@@ -9,20 +9,19 @@
 #include "keyboard.h"
 
 
-class InputDeviceFactory
-{
-public:
-    static InputDevice *createFromMapping(InputDeviceMapping *mapping)
-    {
-        auto &type = typeid(*mapping);
+class InputDeviceFactory {
+    public:
+        static InputDevice *createFromMapping( InputDeviceMapping *mapping ) {
+            auto &type = typeid( *mapping );
 
-        if (type == typeid(Keyboard::Mapping))
-            return new Keyboard(mapping);
-        else if (type == typeid(Joystick::Mapping))
-            return new Joystick(mapping);
+            if( type == typeid( Keyboard::Mapping ) ) {
+                return new Keyboard( mapping );
+            } else if( type == typeid( Joystick::Mapping ) ) {
+                return new Joystick( mapping );
+            }
 
-        return nullptr;
-    }
+            return nullptr;
+        }
 };
 
 #endif

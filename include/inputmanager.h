@@ -10,45 +10,44 @@
 #include "inputdevicemapping.h"
 
 
-class InputManager : public QObject
-{
-    Q_OBJECT
+class InputManager : public QObject {
+        Q_OBJECT
 
-public:
-    InputManager();
-    virtual ~InputManager();
-
+    public:
+        InputManager();
+        virtual ~InputManager();
 
 
 
-    void append(InputDevice *device);
 
-    QList<InputDevice *> getDevices() const;
+        void append( InputDevice *device );
 
-public slots:
-    void scanDevicesAsync();
-    void scanDevices();
-    void scanJoysticks();
-    void scanKeyboard();
+        QList<InputDevice *> getDevices() const;
 
-    QVariantList enumerateDevices();
-    // return empty mapping for device
-    InputDeviceMapping *mappingForDevice(QVariantMap device);
+    public slots:
+        void scanDevicesAsync();
+        void scanDevices();
+        void scanJoysticks();
+        void scanKeyboard();
 
-    // load existing mapping for designated port from settings
-    InputDeviceMapping *mappingForPort(unsigned port);
+        QVariantList enumerateDevices();
+        // return empty mapping for device
+        InputDeviceMapping *mappingForDevice( QVariantMap device );
 
-    InputDevice *getDevice(unsigned port) const;
-    void attachDevices();
-    void removeDevices();
+        // load existing mapping for designated port from settings
+        InputDeviceMapping *mappingForPort( unsigned port );
 
-signals:
-    void label(QString);
+        InputDevice *getDevice( unsigned port ) const;
+        void attachDevices();
+        void removeDevices();
 
-private:
-    QList<InputDevice *> devices;
-    QWindow *top_window;
-    QWindow *settings_window;
+    signals:
+        void label( QString );
+
+    private:
+        QList<InputDevice *> devices;
+        QWindow *top_window;
+        QWindow *settings_window;
 };
 
 #endif

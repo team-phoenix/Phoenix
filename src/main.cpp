@@ -21,50 +21,49 @@
 
 InputManager input_manager; // global
 
-int main(int argc, char *argv[])
-{
+int main( int argc, char *argv[] ) {
 #ifdef Q_OS_LINUX
     // When using QAudioOutput on linux/ALSA, we need to
     // block SIGIO on all threads except the audio thread
     sigset_t set;
-    sigemptyset(&set);
-    sigaddset(&set, SIGIO);
-    pthread_sigmask(SIG_BLOCK, &set, nullptr);
+    sigemptyset( &set );
+    sigaddset( &set, SIGIO );
+    pthread_sigmask( SIG_BLOCK, &set, nullptr );
 #endif
 
-    qSetMessagePattern("[%{if-debug}D%{endif}%{if-warning}W%{endif}"
-                       "%{if-critical}C%{endif}%{if-fatal}F%{endif}]"
-                       "%{if-category} [%{category}]:%{endif} %{message}");
+    qSetMessagePattern( "[%{if-debug}D%{endif}%{if-warning}W%{endif}"
+                        "%{if-critical}C%{endif}%{if-fatal}F%{endif}]"
+                        "%{if-category} [%{category}]:%{endif} %{message}" );
 
-    QGuiApplication a(argc, argv);
-    a.setApplicationName("Phoenix");
-    a.setApplicationVersion(PHOENIX_VERSION);
-    a.setOrganizationName("Phoenix");
-//    a.setOrganizationDomain("phoenix-emu.org");
+    QGuiApplication a( argc, argv );
+    a.setApplicationName( "Phoenix" );
+    a.setApplicationVersion( PHOENIX_VERSION );
+    a.setOrganizationName( "Phoenix" );
+    //    a.setOrganizationDomain("phoenix-emu.org");
     QSettings settings;
 
 
-    qmlRegisterType<PhoenixWindow>("phoenix.window", 1, 0, "PhoenixWindow");
-    qmlRegisterType<CachedImage>("phoenix.image", 1, 0, "CachedImage");
-    qmlRegisterType<VideoItem>("phoenix.video", 1, 0, "VideoItem");
+    qmlRegisterType<PhoenixWindow>( "phoenix.window", 1, 0, "PhoenixWindow" );
+    qmlRegisterType<CachedImage>( "phoenix.image", 1, 0, "CachedImage" );
+    qmlRegisterType<VideoItem>( "phoenix.video", 1, 0, "VideoItem" );
     qmlRegisterType<GameLibraryModel>();
-    qmlRegisterType<PhoenixLibrary>("phoenix.library", 1, 0, "PhoenixLibrary");
+    qmlRegisterType<PhoenixLibrary>( "phoenix.library", 1, 0, "PhoenixLibrary" );
     qmlRegisterType<InputDeviceMapping>();
     qmlRegisterType<InputDevice>();
-    qRegisterMetaType<retro_device_id>("retro_device_id");
-    qRegisterMetaType<int16_t>("int16_t");
+    qRegisterMetaType<retro_device_id>( "retro_device_id" );
+    qRegisterMetaType<int16_t>( "int16_t" );
     qRegisterMetaType<InputDeviceEvent *>();
 
     QQmlApplicationEngine engine;
     // first, set the context properties
     QQmlContext *rctx = engine.rootContext();
-    rctx->setContextProperty("inputmanager", &input_manager);
+    rctx->setContextProperty( "inputmanager", &input_manager );
 
     // then, load qml and display the window
-    engine.load(QUrl("qrc:/qml/main.qml"));
-    QObject *topLevel = engine.rootObjects().value(0);
-    PhoenixWindow *window = qobject_cast<PhoenixWindow *>(topLevel);
-    window->setCacheDirectory(engine.offlineStoragePath() + "/");
+    engine.load( QUrl( "qrc:/qml/main.qml" ) );
+    QObject *topLevel = engine.rootObjects().value( 0 );
+    PhoenixWindow *window = qobject_cast<PhoenixWindow *>( topLevel );
+    window->setCacheDirectory( engine.offlineStoragePath() + "/" );
     window->show();
 
     input_manager.scanDevicesAsync();

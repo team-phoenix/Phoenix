@@ -5,16 +5,16 @@
 #include "logging.h"
 
 class SystemDatabase {
-public:
-    SystemDatabase();
-    ~SystemDatabase();
+    public:
+        SystemDatabase();
+        ~SystemDatabase();
 
-    QSqlDatabase &handle();
-    void open();
-    bool valid();
+        QSqlDatabase &handle();
+        void open();
+        bool valid();
 
-private:
-    QSqlDatabase db;
+    private:
+        QSqlDatabase db;
 };
 
 #endif // SYSTEMDATABASE_H

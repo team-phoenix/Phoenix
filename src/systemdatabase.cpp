@@ -5,18 +5,15 @@
 #include <QFile>
 #include <QSqlQuery>
 
-SystemDatabase::SystemDatabase()
-{
+SystemDatabase::SystemDatabase() {
     open();
 }
 
-SystemDatabase::~SystemDatabase()
-{
+SystemDatabase::~SystemDatabase() {
     db.close();
 }
 
-void SystemDatabase::open()
-{
+void SystemDatabase::open() {
 
     /*
      *  QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "second");
@@ -30,28 +27,31 @@ void SystemDatabase::open()
             qFatal("Could not open database %s", qPrintable(db.lastError().driverText()));
 
      * */
-    db = QSqlDatabase::addDatabase("QSQLITE", "second");
+    db = QSqlDatabase::addDatabase( "QSQLITE", "second" );
     QString path = QApplication::applicationDirPath() + "/systemdatabase.db";
 
-    db.setDatabaseName(path);
+    db.setDatabaseName( path );
 
-    if (!QFile::exists(path))
-        qFatal("%s does not exist", qPrintable(path));
-    if (!db.open())
-        qFatal("Could not open database %s", qPrintable(db.lastError().driverText()));
+    if( !QFile::exists( path ) ) {
+        qFatal( "%s does not exist", qPrintable( path ) );
+    }
+
+    if( !db.open() ) {
+        qFatal( "Could not open database %s", qPrintable( db.lastError().driverText() ) );
+    }
 
 
 
 }
 
-QSqlDatabase &SystemDatabase::handle()
-{
-    if (!db.isValid())
+QSqlDatabase &SystemDatabase::handle() {
+    if( !db.isValid() ) {
         open();
+    }
+
     return db;
 }
 
-bool SystemDatabase::valid()
-{
+bool SystemDatabase::valid() {
     return db.isValid();
 }
