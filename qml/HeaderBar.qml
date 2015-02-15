@@ -871,7 +871,7 @@ Rectangle {
             }
         }
 
-        placeholderText: "Search";
+        placeholderText: "Search Games...";
         placeholderTextColor: "#808080";
         visible: !root.gameShowing;
         property string carriedEvent: "";
