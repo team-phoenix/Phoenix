@@ -66,7 +66,6 @@ int main( int argc, char *argv[] ) {
     engine.load( QUrl( "qrc:/qml/main.qml" ) );
     QObject *topLevel = engine.rootObjects().value( 0 );
     PhoenixWindow *window = qobject_cast<PhoenixWindow *>( topLevel );
-    window->setCacheDirectory( engine.offlineStoragePath() + "/" );
     window->show();
 
     input_manager.scanDevicesAsync();

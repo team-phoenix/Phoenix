@@ -55,11 +55,6 @@ void PhoenixWindow::setWinSwapBehavior( int behavior ) {
     emit swapBehaviorChanged( behavior );
 }
 
-void PhoenixWindow::setCacheDirectory( const QString &cacheDirectory ) {
-    m_cache_directory = cacheDirectory;
-    emit cacheDirectoryChanged();
-}
-
 void PhoenixWindow::setWinSwapInterval( int interval ) {
     m_swap_interval = interval;
     m_surface_format.setSwapInterval( interval );

@@ -11,14 +11,13 @@ class PhoenixWindow : public QQuickWindow {
         Q_PROPERTY( int swapInterval READ swapInterval WRITE setWinSwapInterval NOTIFY swapIntervalChanged )
         Q_PROPERTY( int swapBehavior READ swapBehavior WRITE setWinSwapBehavior NOTIFY swapBehaviorChanged )
         Q_PROPERTY( bool frameless READ frameless WRITE setFrameless NOTIFY framelessChanged )
-        Q_PROPERTY( QString cacheDirectory READ cacheDirectory WRITE setCacheDirectory NOTIFY cacheDirectoryChanged )
 
     public:
         PhoenixWindow();
         ~PhoenixWindow();
         void setWindowScreen( QScreen *screen );
         void setWinFormat();
-        void setCacheDirectory( const QString &cacheDirectory );
+
         QScreen *window_screen() {
             return screen();
         }
@@ -34,10 +33,6 @@ class PhoenixWindow : public QQuickWindow {
 
         bool frameless() const {
             return m_frameless;
-        }
-
-        QString cacheDirectory() {
-            return m_cache_directory;
         }
 
     public slots:
@@ -61,7 +56,6 @@ class PhoenixWindow : public QQuickWindow {
         void swapIntervalChanged( int );
         void swapBehaviorChanged( int );
         void framelessChanged();
-        void cacheDirectoryChanged();
 
     private:
         QSurfaceFormat m_surface_format;
@@ -69,7 +63,6 @@ class PhoenixWindow : public QQuickWindow {
         int m_swap_behavior;
         bool mouse_pressed;
         bool m_frameless;
-        QString m_cache_directory;
 
 #ifdef Q_OS_WIN32
         HWND windowHandle = nullptr;
