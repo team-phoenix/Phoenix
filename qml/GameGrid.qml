@@ -11,12 +11,8 @@ Rectangle {
     height: 500;
     width: 500;
 
-
-
-
     property string itemBackgroundColor: "red";
     property bool showSystem: true;
-
     property real zoomFactor: 1;
     property bool zoomSliderPressed: false;
     property bool resizeGrid: false;
@@ -96,6 +92,10 @@ Rectangle {
 
             property bool checked: false;
             property bool holdItem: false;
+            property bool indexUpdated: false;
+
+            property bool animateHighlighter: false;
+            onCurrentIndexChanged: animateHighlighter = true;
 
             Text {
                 visible: gridView.count == 0;
@@ -111,7 +111,7 @@ Rectangle {
             //keyNavigationWraps: true;
 
 
-            snapMode: GridView.NoSnap;
+            //snapMode: GridView.NoSnap;
 
             /*MouseArea {
                 id: gridBackgroundMouse;
@@ -161,11 +161,14 @@ Rectangle {
             cellHeight: 100 * gameGrid.zoomFactor;
             cellWidth: 100 * gameGrid.zoomFactor;
             model: phoenixLibrary.model();
-            highlightFollowsCurrentItem: true;
+            highlightFollowsCurrentItem: false;
 
             property int highlighterZValue: 1;
             property string titleToDelete: "";
+            property bool shrink: false;
+            property int queuedIndex: 0;
 
+            currentIndex: 2;
 
 
             highlight: Item {
@@ -173,6 +176,12 @@ Rectangle {
                 property bool isEvenWidth: gridView.currentItem.paintedWidth % 2 == 0;
                 z: gridView.highlighterZValue;
                 visible: root.gridFocus;
+                //y: (gridView.currentItem.height + gridView.currentItem.y) / 2;
+                //x: (gridView.currentItem.x + gridView.currentItem.width) / 2;
+                height: gridView.currentItem.height;
+                width: gridView.currentItem.width;
+                y: gridView.currentItem.y;
+                x: gridView.currentItem.x;
 
                 RectangularGlow {
                     id: effect;
@@ -200,15 +209,80 @@ Rectangle {
                 Rectangle {
                     id: realHighlighter;
                     radius: 3;
-                    width: gridView.currentItem.artworkItemAlias.artwork.paintedWidth +15;
+                    width: gridView.currentItem.artworkItemAlias.artwork.paintedWidth + 15;
                     height: gridView.currentItem.artworkItemAlias.artwork.paintedHeight + 15;
                     anchors {
-                        centerIn: parent;
-                   }
+                        centerIn: highlighter;
+                    }
 
-                    y: gridView.currentItem.artworkItemAlias.artwork.y;
-                    x: gridView.currentItem.artworkItemAlias.artwork.x;
                     z: parent.z + 2;
+
+                    Component.onCompleted: state = "grow";
+
+                    states: [
+                       State {
+                            name: "shrink";
+                            when: gridView.shrink;
+                            PropertyChanges {
+                                id: shrinkAnimation;
+                                target: realHighlighter;
+                                height: 0;
+                                width: 0;
+                                y: (gridView.currentItem.height + gridView.currentItem.y) / 2;
+                                x: (gridView.currentItem.x + gridView.currentItem.width) / 2;
+                            }
+                        },
+                        State {
+                            id: grow;
+                            name: "grow";
+                            PropertyChanges {
+                                id: growAnimation;
+                                target: realHighlighter;
+
+                                width: gridView.currentItem.artworkItemAlias.artwork.paintedWidth + 15;
+                                height: gridView.currentItem.artworkItemAlias.artwork.paintedHeight + 15;
+
+                            }
+                        }
+
+                    ]
+
+                    transitions: [
+                        Transition {
+                            from: "grow";
+                            to: "shrink";
+                            NumberAnimation {
+                                properties: "width,height,x,y";
+                                easing.type: Easing.InBack;
+                                duration: 250;
+                            }
+
+                            onRunningChanged: {
+                                if (!running) {
+                                    realHighlighter.state = "grow";
+                                    gridView.currentIndex = gridView.queuedIndex;
+                                }
+
+                            }
+                        },
+                        Transition {
+                            from: "shrink";
+                            to: "grow";
+                            NumberAnimation {
+                                properties: "width,height,x,y";
+                                easing.type: Easing.OutBack;
+                                duration: 250;
+                            }
+
+                            onRunningChanged: {
+                                if (!running) {
+                                    gridView.shrink = false;
+                                }
+                            }
+
+                        }
+                    ]
+
 
                     gradient: Gradient {
                         GradientStop {position: 0.0; color: "#ff730f";}
@@ -261,9 +335,7 @@ Rectangle {
                     visible: gridView.currentItem.showMenu;
                     radius: 2;
                     z: 2;
-                    //onVisibleChanged: {
-                     //   gridBackgroundMouse.enabled = visible;
-                    //}
+
 
                     RightClickMenu {
                         id: rightClickMenu;

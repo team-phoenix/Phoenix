@@ -4,14 +4,12 @@ import QtQuick.Controls.Styles 1.3;
 import phoenix.image 1.0
 
 Image {
-    visible: true;
+    id: image;
 
     property bool locallyCache: true;
     property real aspectRatio: paintedWidth / paintedHeight;
 
-    id: image;
     width: gridItem.itemDeleted ? 0 : parent.width;
-
     source: gridItem.imageSource;
     fillMode: Image.PreserveAspectFit;
     asynchronous: true;
@@ -22,6 +20,11 @@ Image {
         width: 500;
     }
 
+    anchors {
+        top: parent.top;
+        bottom: parent.bottom;
+        horizontalCenter: parent.horizontalCenter;
+    }
 
 
     Behavior on width {
@@ -35,12 +38,9 @@ Image {
         }
     }
 
-    anchors {
-        top: parent.top;
-        bottom: parent.bottom;
-        horizontalCenter: parent.horizontalCenter;
+    Component.onCompleted: {
+        cachedImage.start();
     }
-
 
     ProgressBar {
         z: 100;
@@ -94,10 +94,6 @@ Image {
         }
     }
 
-    Component.onCompleted: {
-        cachedImage.start();
-    }
-
     MouseArea {
         id: mouseArea;
         propagateComposedEvents: true;
@@ -113,7 +109,6 @@ Image {
             if (gridView.currentItem.showMenu)
                 gridView.currentItem.showMenu = false;
 
-            gridView.currentIndex = index;
             gridView.holdItem = pressed;
             containsMouse = pressed;
 
@@ -128,7 +123,8 @@ Image {
 
         onClicked: {
             gridView.currentItem.showMenu = false;
-            gridView.currentIndex = index;
+            gridView.shrink = true;
+            gridView.queuedIndex = index;
 
             if (mouse.button == Qt.RightButton) {
                 if (gridView.currentItem.showMenu)
