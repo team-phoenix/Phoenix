@@ -41,8 +41,6 @@ Image {
         horizontalCenter: parent.horizontalCenter;
     }
 
-    onPaintedHeightChanged: gridItem.paintedHeight = paintedHeight;
-    onPaintedWidthChanged:  gridItem.paintedWidth = paintedWidth;
 
     ProgressBar {
         z: 100;

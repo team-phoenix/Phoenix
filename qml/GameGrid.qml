@@ -200,14 +200,14 @@ Rectangle {
                 Rectangle {
                     id: realHighlighter;
                     radius: 3;
-                    width: gridView.currentItem.paintedWidth +15;
-                    height: gridView.currentItem.paintedHeight + 15;
+                    width: gridView.currentItem.artworkItemAlias.artwork.paintedWidth +15;
+                    height: gridView.currentItem.artworkItemAlias.artwork.paintedHeight + 15;
                     anchors {
                         centerIn: parent;
                    }
 
-                    y: gridView.currentItem.artwork_1.y;
-                    x: gridView.currentItem.artwork_1.x;
+                    y: gridView.currentItem.artworkItemAlias.artwork.y;
+                    x: gridView.currentItem.artworkItemAlias.artwork.x;
                     z: parent.z + 2;
 
                     gradient: Gradient {
@@ -222,8 +222,8 @@ Rectangle {
                             //horizontalCenterOffset: 0;
                         }
 
-                        height: gridView.currentItem.paintedHeight + 2;
-                        width: gridView.currentItem.paintedWidth + 2;
+                        height: gridView.currentItem.artworkItemAlias.artwork.paintedHeight + 2;
+                        width: gridView.currentItem.artworkItemAlias.artwork.paintedWidth + 2;
                         color: "white";
                         opacity: 0.35;
                         radius: 2;
@@ -234,19 +234,6 @@ Rectangle {
                             radius: 2;
                         }*/
                     }
-
-
-                    /*CustomBorder {
-
-                        gradient: Gradient {
-                            GradientStop {position: 0.0; color: "#fea266";}
-                            GradientStop {position: 1.0; color: "#ed5871";}
-                        }
-
-                        CustomBorder {
-                            color: "black";
-                        }
-                    }*/
 
                 }
 
@@ -314,10 +301,10 @@ Rectangle {
                 property int paintedHeight: height;
                 property real imageProgress: 0.0;
                 property bool itemDeleted: false;
-                property alias artwork_1: imageHighlight;
+                property alias artworkItemAlias: artworkItem;
 
                 GridImage  {
-                    id: imageHighlight;
+                    id: artworkItem;
                     anchors {
                         fill: parent;
                         leftMargin: 10;
