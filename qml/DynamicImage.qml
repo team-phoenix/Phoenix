@@ -38,9 +38,6 @@ Image {
         }
     }
 
-    Component.onCompleted: {
-        cachedImage.start();
-    }
 
     ProgressBar {
         z: 100;
@@ -87,10 +84,14 @@ Image {
         imgsrc: image.source;
         folder: "Artwork";
         fileName: gridItem.titleName ? gridItem.titleName : "";
-        cacheDirectory: root.cacheDirectory;
+        cacheDirectory: phoenixglobals.offlineStoragePath();
 
         onLocalsrcChanged: {
             image.source = localsrc;
+        }
+
+        Component.onCompleted: {
+            cachedImage.start();
         }
     }
 

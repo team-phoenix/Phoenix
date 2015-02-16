@@ -17,7 +17,7 @@
 #include "phoenixwindow.h"
 #include "phoenixlibrary.h"
 #include "cacheimage.h"
-
+#include "phoenixglobals.h"
 
 InputManager input_manager; // global
 
@@ -57,7 +57,10 @@ int main( int argc, char *argv[] ) {
     QQmlApplicationEngine engine;
     // first, set the context properties
     QQmlContext *rctx = engine.rootContext();
+    PhoenixGlobals phxGlobals;
+    phxGlobals.setOfflineStoragePath(engine.offlineStoragePath() + "/");
     rctx->setContextProperty( "inputmanager", &input_manager );
+    rctx->setContextProperty("phoenixglobals", &phxGlobals);
 
     // then, load qml and display the window
     engine.load( QUrl( "qrc:/qml/main.qml" ) );

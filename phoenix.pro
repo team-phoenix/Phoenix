@@ -84,6 +84,7 @@ HEADERS += include/core.h                      \
            include/systemdatabase.h            \
            include/networkqueue.h              \
            include/scraper.h                   \
+           include/phoenixglobals.h
 
 SOURCES += src/main.cpp                        \
            src/videoitem.cpp                   \
