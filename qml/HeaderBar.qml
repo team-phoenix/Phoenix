@@ -900,7 +900,7 @@ Rectangle {
 
                 default:
                     var firstLetter = String.fromCharCode(event.key).charAt(0);
-                    if (firstLetter.match("^[a-zA-Z]+$")) {
+                    if (firstLetter.match("^[a-zA-Z ]+$")) {
                         insert(searchBar.length, String.fromCharCode(event.key).toLowerCase());
                         event.accepted = true;
                     }
