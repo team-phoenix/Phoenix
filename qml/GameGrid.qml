@@ -59,23 +59,24 @@ Rectangle {
         Keys.onPressed: {
             switch (event.key) {
                 case Qt.Key_Right:
-                    gridView.moveCurrentIndexRight();
+                    gridView.shrink = true;
+                    gridView.moveCurrentDirection = gridView.moveCurrentIndexRight();
                     event.accepted = true;
                     break;
                 case Qt.Key_Left:
-                    gridView.moveCurrentIndexLeft();
+                    gridView.shrink = true;
+                    gridView.moveCurrentDirection = gridView.moveCurrentIndexLeft();
                     event.accepted = true;
                     break;
                 case Qt.Key_Up:
-                    gridView.moveCurrentIndexUp();
+                    gridView.shrink = true;
+                    gridView.moveCurrentDirection =  gridView.moveCurrentIndexUp();
                     event.accepted = true;
                     break;
                 case Qt.Key_Down:
-                    gridView.moveCurrentIndexDown();
+                    gridView.shrink = true;
+                    gridView.moveCurrentDirection = gridView.moveCurrentIndexDown();
                     event.accepted = true;
-                    break;
-                case Qt.Key_Tab:
-                    console.log("TAB PRESSEEDDDD");
                     break;
 
                 default:
@@ -94,6 +95,8 @@ Rectangle {
             property bool holdItem: false;
             property bool indexUpdated: false;
 
+            property var moveCurrentDirection;
+
             property bool animateHighlighter: false;
             onCurrentIndexChanged: animateHighlighter = true;
 
@@ -107,36 +110,6 @@ Rectangle {
                     pixelSize: 32;
                 }
             }
-
-            //keyNavigationWraps: true;
-
-
-            //snapMode: GridView.NoSnap;
-
-            /*MouseArea {
-                id: gridBackgroundMouse;
-                anchors.fill: parent;
-                enabled: false;
-                propagateComposedEvents: true;
-                onClicked: {
-                    console.log("ada")
-                    gridView.currentItem.showMenu = false;
-                }
-            }*/
-
-
-            /*states: [
-                State {
-                    name: "resizing";
-                    when: gameGrid.resizeGrid;
-                    PropertyChanges {
-                        target: gridView;
-                        cellHeight: 100 * gameGrid.zoomFactor;
-                        cellWidth: 100 * gameGrid.zoomFactor;
-                    }
-                }
-
-            ]*/
 
             Behavior on cellHeight {
                 PropertyAnimation {
@@ -163,7 +136,6 @@ Rectangle {
             model: phoenixLibrary.model();
             highlightFollowsCurrentItem: false;
 
-            property int highlighterZValue: 1;
             property string titleToDelete: "";
             property bool shrink: false;
             property int queuedIndex: 0;
@@ -174,7 +146,7 @@ Rectangle {
             highlight: Item {
                 id: highlighter;
                 property bool isEvenWidth: gridView.currentItem.paintedWidth % 2 == 0;
-                z: gridView.highlighterZValue;
+                z: 1;
                 visible: root.gridFocus;
                 //y: (gridView.currentItem.height + gridView.currentItem.y) / 2;
                 //x: (gridView.currentItem.x + gridView.currentItem.width) / 2;
@@ -251,16 +223,22 @@ Rectangle {
                         Transition {
                             from: "grow";
                             to: "shrink";
+
                             NumberAnimation {
                                 properties: "width,height,x,y";
                                 easing.type: Easing.InBack;
-                                duration: 250;
+                                duration: 1;
                             }
 
                             onRunningChanged: {
                                 if (!running) {
                                     realHighlighter.state = "grow";
-                                    gridView.currentIndex = gridView.queuedIndex;
+                                    if (gridView.moveCurrentDirection !== -1) {
+                                        gridView.moveCurrentDirection;
+                                    }
+                                    else
+                                        gridView.currentIndex = gridView.queuedIndex;
+
                                 }
 
                             }
@@ -271,12 +249,13 @@ Rectangle {
                             NumberAnimation {
                                 properties: "width,height,x,y";
                                 easing.type: Easing.OutBack;
-                                duration: 250;
+                                duration: 150;
                             }
 
                             onRunningChanged: {
                                 if (!running) {
                                     gridView.shrink = false;
+                                    gridView.moveCurrentDirection = -1;
                                 }
                             }
 
