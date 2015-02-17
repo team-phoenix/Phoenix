@@ -15,8 +15,8 @@ void CachedImage::returnCached( QUrl imgUrl ) {
     //Store the qml app offline storage location
     //In android it's application path/files/QML/OfflineStorage/
 
-    if( m_folder != "" ) {
-        setCacheDirectory( m_cache_directory + m_folder + "/" );
+    if( folder() != "") {
+        setCacheDirectory( cacheDirectory() + folder() + "/" );
     }
 
     QDir dir( cacheDirectory() );
