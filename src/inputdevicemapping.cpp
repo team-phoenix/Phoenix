@@ -1,7 +1,8 @@
 
 #include "libretro.h"
-
 #include "inputdevicemapping.h"
+
+#include <QRegExp>
 
 
 InputDeviceMapping::InputDeviceMapping() {
@@ -135,7 +136,7 @@ QString InputDeviceMapping::getGamepadName(QString retroID)
 {
     //"joypad_"
     QString value = id_to_qstring.value(retroID.toUInt(), "");
-    value = value.remove("joypad_");
+    value = value.remove("joypad_", Qt::CaseInsensitive);
     return value.left(1).toUpper() + value.mid(1);
 
 }

@@ -4,6 +4,9 @@ import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.2
 
 Item {
+    id: inputSettings;
+    property var currentMapping;
+    property var currentDevice;
 
     Column {
         anchors {
@@ -77,8 +80,8 @@ Item {
                 ListView {
                     id: listView;
 
-                    property var curMapping;
-                    property var curDevice;
+                    property var currentMapping;
+                    property var currentDevice;
 
                     z: 1;
                     anchors.centerIn: parent;
@@ -92,11 +95,8 @@ Item {
                         ListElement {player: "Player 3"; selected: false; curvature: 0;}
                         ListElement {player: "Player 4"; selected: false; curvature: 3;}
                     }
-                    onCurrentIndexChanged: {
-                        inputMapper.deviceIndex = currentIndex;
-                        curMapping = inputmanager.mappingForPort(currentIndex);
-                        curDevice = inputmanager.getDevice(currentIndex);
-                    }
+                    onCurrentIndexChanged: inputSettings.currentMapping = inputmanager.mappingForPort(currentIndex);
+
                     delegate: PhoenixNormalButton {
                         property bool innerItem: (curvature == 0);
 
@@ -107,7 +107,6 @@ Item {
                         checkable: true;
                         checked: selected;
                         exclusiveGroup: topButtonGroup;
-
 
                     }
                 }
@@ -128,7 +127,8 @@ Item {
                 width: 125;
                 model: inputmanager.enumerateDevices();
                 onCurrentIndexChanged: {
-                    //listView.curDevice = inputmanager.getDevice(currentIndex);
+                    inputSettings.currentDevice = inputmanager.getDevice(currentIndex);
+                    console.log(inputSettings.currentDevice.deviceName() + " was selected.");
                 }
 
             }
@@ -171,9 +171,7 @@ Item {
 
             ScrollView {
                 id: inputMapper;
-                property var mapping: listView.curMapping;
-                property alias device: listView.curDevice;
-                property int deviceIndex: 0;
+
                 //visible: stackView.width > width;
                 property bool waitingUpdate: false;
                 property bool setupWalkthrough: false;
@@ -196,17 +194,14 @@ Item {
                     flow: GridView.TopToBottom;
 
                     Component.onCompleted: {
-                        inputMapper.mapping.updateModel();
-                        model = inputMapper.mapping.model();
+                        inputSettings.currentMapping.updateModel();
+                        model = inputSettings.currentMapping.model();
                     }
 
                     Timer {
                         id: textFieldTimer;
                         interval: 500;
-                        onTriggered: {
-                            //gridView.currentItem.buttonField.text = gridView.currentItem.textFieldText;
-                            gridView.currentItem.buttonField.state = "normal";
-                        }
+                        onTriggered: gridView.currentItem.buttonField.state = "waiting";
                     }
 
 
@@ -221,29 +216,29 @@ Item {
 
 
                         function keyReceived(ev, value) {
+
                             if (value) {
-                                var event = inputMapper.mapping.variantToString(ev);
-                                if (inputMapper.mapping.collisionDetected(event, index)) {
+
+                                var event = inputSettings.currentMapping.variantToString(ev);
+                                if (inputSettings.currentMapping.collisionDetected(event, index)) {
                                     textField.state = "collision";
-                                    //textField.text = "'" + event + "'" + " is already used.";
                                     textFieldTimer.start();
-                                    //inputMapper.device.inputEventReceived.disconnect(keyReceived);
                                     return;
                                 }
 
-                                //var prevBinding = modelData.deviceEvent//inputMapper.mapping.getMappingByRetroId(modelData.d);
-                                //console.log("RECEIVED event: " + ev + " and value: " + value);
-                                //inputMapper.mapping.remapMapping(prevBinding, ev, modelData.retroID, inputMapper.deviceIndex);
+
                                 inputMapper.waitingUpdate = false;
                                 modelData.updating = false;
-                                modelData.deviceEvent = event;
+                                var list = event.split("[");
+                                modelData.deviceEvent = list.length <= 1 ? event : list[1].replace("]", "");
 
-                                inputMapper.device.inputEventReceived.disconnect(keyReceived);
-                                inputMapper.mapping.saveModel(inputMapper.deviceIndex);
-                                //textField.text = modelData.updating ? "Waiting..." : modelData.deviceEvent;
+                                inputSettings.currentDevice.inputEventReceived.disconnect(keyReceived);
+                                inputSettings.currentMapping.saveModel(devicesBox.currentIndex);
                                 console.log(modelData.deviceEvent + " was set! ");
 
                                 textField.state = "normal";
+
+                                inputSettings.currentDevice.deleteEventPtr(ev);
 
 
                                 if (inputMapper.setupWalkthrough) {
@@ -266,8 +261,8 @@ Item {
                             textField.state = "waiting";
 
                             modelData.updating = true;
-                            console.log("Changing mapping for " + modelData.deviceEvent + " on device: " + inputMapper.device.deviceName());
-                            inputMapper.device.inputEventReceived.connect(gridItem.keyReceived);
+                            console.log("Changing mapping for " + modelData.deviceEvent + " on device: " + inputSettings.currentDevice.deviceName());
+                            inputSettings.currentDevice.inputEventReceived.connect(gridItem.keyReceived);
                         }
 
 
@@ -280,7 +275,7 @@ Item {
 
                         Text {
                             renderType: Text.QtRendering;
-                            text: inputMapper.mapping.getGamepadName(modelData.retroID) + ":";
+                            text: inputSettings.currentMapping.getGamepadName(modelData.retroID) + ":";
                             anchors {
                                 right: textField.left;
                                 verticalCenter: parent.verticalCenter;
@@ -363,6 +358,7 @@ Item {
                             ]
 
                             text: modelData.updating ? "Waiting..." : modelData.deviceEvent;
+
                             anchors {
                                 verticalCenter: parent.verticalCenter;
                                 right: parent.right;
@@ -385,7 +381,7 @@ Item {
                                     gridView.currentIndex = index;
                                     gridItem.startUpdate();
                                 }
-                                    //inputMapper.device.inputEventReceived.disconnect(buttonMouseArea.keyReceived);
+                                    //inputSettings.currentDevice.inputEventReceived.disconnect(buttonMouseArea.keyReceived);
                             }
                         }
                     }

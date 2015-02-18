@@ -85,6 +85,11 @@ void InputManager::scanKeyboard() {
         s.setValue( "joypad_right", "Right" );
         s.setValue( "joypad_l", "t" );
         s.setValue( "joypad_r", "g" );
+
+
+        s.setValue("joypad_leftstick", "");
+        s.setValue("joypad_rightstick", "");
+
         keyboard_mapping = mappingForPort( current_port );
 
     }
@@ -99,7 +104,6 @@ void InputManager::scanJoysticks() {
     int joysticks = SDL_NumJoysticks();
 
     for( int i = 0; i < joysticks; ++i ) {
-        current_port++;
         auto *sdl_mapping = mappingForPort( current_port );
 
         if( sdl_mapping == nullptr ) {
@@ -128,6 +132,8 @@ void InputManager::scanJoysticks() {
         }
 
         devices.insert( current_port, InputDeviceFactory::createFromMapping( sdl_mapping ) );
+        current_port++;
+
 
     }
 

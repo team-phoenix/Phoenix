@@ -9,9 +9,15 @@ InputDevice::InputDevice( InputDeviceMapping *mapping )
 }
 
 InputDevice::~InputDevice() {
-    delete m_mapping;
+   // delete m_mapping;
 }
 
 void InputDevice::setDeviceName( const char *new_name ) {
     device_name = QString( new_name );
+}
+
+void InputDevice::deleteEventPtr(InputDeviceEvent *ev)
+{
+    if (ev)
+        delete ev;
 }

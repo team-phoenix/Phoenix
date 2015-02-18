@@ -42,7 +42,7 @@ bool Keyboard::eventFilter( QObject *obj, QEvent *event ) {
 inline void Keyboard::processKeyEvent( QKeyEvent *event ) {
     bool is_pressed = ( event->type() == QEvent::KeyPress ) ? true : false;
     auto ev = KeyboardKeyEvent::fromKeyEvent( event );
-    emit inputEventReceived( &ev, is_pressed );
+    emit inputEventReceived( new KeyboardKeyEvent(ev), is_pressed );
 
     auto retro_id = m_mapping->getMapping( &ev );
 
@@ -54,7 +54,7 @@ inline void Keyboard::processKeyEvent( QKeyEvent *event ) {
 QVariant Keyboard::Mapping::setMappingOnInput( retro_device_id id, QJSValue cb ) {
     auto conn = std::make_shared<QMetaObject::Connection>();
 
-    auto handleInput = [this, id, cb, conn]( InputDeviceEvent * ev, int16_t val ) mutable {
+    auto handleInput = [this, id, cb, conn]( InputDeviceEvent *ev, int16_t val ) mutable {
         if( val == 0 ) {
             return;
         }

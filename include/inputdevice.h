@@ -39,6 +39,8 @@ class InputDevice : public QObject {
             return m_mapping;
         }
 
+        void deleteEventPtr(InputDeviceEvent *ev);
+
     protected:
         void setDeviceName( const char *new_name );
         void setState( retro_device_id id, int16_t state ) {
