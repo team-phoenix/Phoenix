@@ -162,6 +162,9 @@ private:
 
         void deleteModel();
 
+signals:
+        void modelChanged();
+
 };
 
 // to be able to use Connection objects in QVariants

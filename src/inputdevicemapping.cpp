@@ -10,22 +10,22 @@ InputDeviceMapping::InputDeviceMapping() {
 
 QList<QObject *> InputDeviceMapping::model()
 {
-    updateModel();
     return m_model;
 }
 
 void InputDeviceMapping::updateModel()
 {
+
     QList<QObject *> list;
     for( auto m = mapping.begin(); m != mapping.end(); ++m ) {
         QString event = QString( *( m->first ) );
         QString id = QString::number(m->second);
         list.append( new MappingModel(event, id));
 
-        //qDebug() <<  prev_event << " == " << QString(previousEvent) << " :: " << "ev:  " << QString(*ev);
     }
 
     m_model = list;
+    emit modelChanged();
 }
 
 void InputDeviceMapping::deleteModel()
@@ -147,7 +147,6 @@ bool InputDeviceMapping::collisionDetected(QString event, unsigned index)
     for (auto *obj_ptr : model()) {
         auto mapping_obj = static_cast<MappingModel *>(obj_ptr);
         result = mapping_obj->deviceEvent() == event;
-        //qDebug() << mapping_obj->deviceEvent() << " " <<  i << " index: " << index << " " << event;
 
         if (result) {
             if (i == index) {

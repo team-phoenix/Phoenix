@@ -194,16 +194,18 @@ Item {
                     cellHeight: 40;
                     cellWidth: 175;
                     flow: GridView.TopToBottom;
-                    model: inputMapper.mapping.model();
+
+                    Component.onCompleted: {
+                        inputMapper.mapping.updateModel();
+                        model = inputMapper.mapping.model();
+                    }
 
                     Timer {
                         id: textFieldTimer;
                         interval: 500;
                         onTriggered: {
-                            gridView.currentItem.buttonField.borderWidth = 1;
-                            gridView.currentItem.buttonField.borderColor = gridView.currentItem.textFieldColor;
-                            gridView.currentItem.buttonField.text = gridView.currentItem.textFieldText;
-                            gridView.currentItem.buttonField.borderWidth = gridView.currentItem.textFieldBorderWidth;
+                            //gridView.currentItem.buttonField.text = gridView.currentItem.textFieldText;
+                            gridView.currentItem.buttonField.state = "normal";
                         }
                     }
 
@@ -214,9 +216,6 @@ Item {
                         width: 225;
                         property bool overrideFocus: false;
                         property alias buttonField: textField;
-                        property string textFieldText: modelData.updating ? "Waiting..." : modelData.deviceEvent;
-                        property color textFieldColor: modelData.updating ? "blue" : "black";
-                        property int textFieldBorderWidth: modelData.updating ? 4 : 1;
 
 
 
@@ -225,20 +224,14 @@ Item {
                             if (value) {
                                 var event = inputMapper.mapping.variantToString(ev);
                                 if (inputMapper.mapping.collisionDetected(event, index)) {
-                                    textField.borderWidth = 4;
-                                    textField.borderColor = "red";
-                                    textField.text = "'" + event + "'" + " is already used.";
+                                    textField.state = "collision";
+                                    //textField.text = "'" + event + "'" + " is already used.";
                                     textFieldTimer.start();
                                     //inputMapper.device.inputEventReceived.disconnect(keyReceived);
                                     return;
                                 }
 
-                                if (textFieldTimer.running)
-                                    textFieldTimer.stop();
-
-
-
-                                var prevBinding = modelData.deviceEvent//inputMapper.mapping.getMappingByRetroId(modelData.d);
+                                //var prevBinding = modelData.deviceEvent//inputMapper.mapping.getMappingByRetroId(modelData.d);
                                 //console.log("RECEIVED event: " + ev + " and value: " + value);
                                 //inputMapper.mapping.remapMapping(prevBinding, ev, modelData.retroID, inputMapper.deviceIndex);
                                 inputMapper.waitingUpdate = false;
@@ -247,10 +240,10 @@ Item {
 
                                 inputMapper.device.inputEventReceived.disconnect(keyReceived);
                                 inputMapper.mapping.saveModel(inputMapper.deviceIndex);
-                                textField.text = modelData.updating ? "Waiting..." : modelData.deviceEvent;
-                                textField.borderColor = "black";
-                                textField.borderWidth = 1;
-                                console.log(event + " was set! ");
+                                //textField.text = modelData.updating ? "Waiting..." : modelData.deviceEvent;
+                                console.log(modelData.deviceEvent + " was set! ");
+
+                                textField.state = "normal";
 
 
                                 if (inputMapper.setupWalkthrough) {
@@ -267,10 +260,12 @@ Item {
                         function startUpdate() {
                             if (inputMapper.waitingUpdate)
                                 return;
+
                             inputMapper.waitingUpdate = true;
+
+                            textField.state = "waiting";
+
                             modelData.updating = true;
-                            textField.borderWidth = 4;
-                            textField.borderColor = "blue";
                             console.log("Changing mapping for " + modelData.deviceEvent + " on device: " + inputMapper.device.deviceName());
                             inputMapper.device.inputEventReceived.connect(gridItem.keyReceived);
                         }
@@ -307,10 +302,65 @@ Item {
                             width: 100;
                             height: 25;
                             radius: 3;
-                            borderWidth: modelData.updating ? 4 : 1;
-                            borderColor: modelData.updating ? "blue" : "black";
                             renderType: Text.QtRendering;
                             textColor: "#f1f1f1";
+
+                            Component.onCompleted: state = "normal";
+
+                            states: [
+                                State {
+                                    name: "collision";
+                                    PropertyChanges {
+                                        target: textField;
+                                        borderWidth: 4;
+                                        borderColor: "red";
+                                    }
+                                },
+
+                                State {
+                                    name: "waiting";
+                                    PropertyChanges {
+                                        target: textField;
+                                        borderWidth: 4;
+                                        borderColor: "blue";
+                                    }
+                                },
+
+                                State {
+                                    name: "normal";
+                                    PropertyChanges {
+                                        target: textField;
+                                        borderWidth: 1;
+                                        borderColor: "black";
+                                    }
+
+                                }
+
+                            ]
+
+                            transitions: [
+                                Transition {
+                                    from: "normal";
+                                    to: "waiting";
+
+                                        NumberAnimation {
+                                            properties: "borderWidth";
+                                            easing.type: Easing.InBack;
+                                            duration: 200;
+                                        }
+
+                                },
+                                Transition {
+                                    from: "waiting";
+                                    to: "normal";
+                                        NumberAnimation {
+                                            properties: "borderWidth";
+                                            easing.type: Easing.Linear;
+                                            duration: 10;
+                                        }
+                                }
+
+                            ]
 
                             text: modelData.updating ? "Waiting..." : modelData.deviceEvent;
                             anchors {
@@ -329,6 +379,9 @@ Item {
                                 id: buttonMouseArea;
                                 anchors.fill: parent;
                                 onClicked: {
+                                    if (textFieldTimer.running)
+                                        textFieldTimer.stop();
+
                                     gridView.currentIndex = index;
                                     gridItem.startUpdate();
                                 }
