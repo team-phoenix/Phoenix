@@ -12,6 +12,7 @@ TextField {
     property string borderColor: "black";
     property int renderType: Text.QtRendering;
     property color placeholderTextColor: "white";
+    property int borderWidth: 1;
     textColor: "#f1f1f1";
 
     style: TextFieldStyle {
@@ -23,7 +24,7 @@ TextField {
             height: control.height;
             width: control.width;
             border {
-                width: 1;
+                width: control.borderWidth;
                 color: control.borderColor;
             }
 

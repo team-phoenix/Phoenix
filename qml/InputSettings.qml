@@ -194,41 +194,64 @@ Item {
                     cellHeight: 40;
                     cellWidth: 175;
                     flow: GridView.TopToBottom;
-                    model: ListModel {
-                        id: buttonsModel;
-                        ListElement {controllerButton: "Up"; retroId: "4"; updating: false;}
-                        ListElement {controllerButton: "Down"; retroId: "5"; updating: false;}
-                        ListElement {controllerButton: "Left"; retroId: "6"; updating: false;}
-                        ListElement {controllerButton: "Right"; retroId: "7"; updating: false;}
-                        ListElement {controllerButton: "Select"; retroId: "2"; updating: false;}
-                        ListElement {controllerButton: "Start"; retroId: "3"; updating: false;}
-                        ListElement {controllerButton: "A"; retroId: "8"; updating: false;}
-                        ListElement {controllerButton: "B"; retroId: "0"; updating: false;}
-                        ListElement {controllerButton: "X"; retroId: "9"; updating: false;}
-                        ListElement {controllerButton: "Y"; retroId: "1"; updating: false;}
-                        ListElement {controllerButton: "R"; retroId: "11"; updating: false;}
-                        ListElement {controllerButton: "L"; retroId: "10"; updating: false;}
-                        ListElement {controllerButton: "RB"; retroId: "13"; updating: false;}
-                        ListElement {controllerButton: "LB"; retroId: "12"; updating: false;}
-                        ListElement {controllerButton: "R3"; retroId: "15"; updating: false;}
-                        ListElement {controllerButton: "L3"; retroId: "14"; updating: false;}
+                    model: inputMapper.mapping.model();
+
+                    Timer {
+                        id: textFieldTimer;
+                        interval: 500;
+                        onTriggered: {
+                            gridView.currentItem.buttonField.borderWidth = 1;
+                            gridView.currentItem.buttonField.borderColor = gridView.currentItem.textFieldColor;
+                            gridView.currentItem.buttonField.text = gridView.currentItem.textFieldText;
+                            gridView.currentItem.buttonField.borderWidth = gridView.currentItem.textFieldBorderWidth;
+                        }
                     }
+
 
                     delegate: Item {
                         id: gridItem;
                         height: 30;
                         width: 225;
                         property bool overrideFocus: false;
+                        property alias buttonField: textField;
+                        property string textFieldText: modelData.updating ? "Waiting..." : modelData.deviceEvent;
+                        property color textFieldColor: modelData.updating ? "blue" : "black";
+                        property int textFieldBorderWidth: modelData.updating ? 4 : 1;
+
+
+
 
                         function keyReceived(ev, value) {
                             if (value) {
-                                var prevBinding = inputMapper.mapping.getMappingByRetroId(retroId);
-                                console.log("RECEIVED event: " + ev + " and value: " + value);
-                                inputMapper.mapping.remapMapping(prevBinding, ev, retroId, inputMapper.deviceIndex);
+                                var event = inputMapper.mapping.variantToString(ev);
+                                if (inputMapper.mapping.collisionDetected(event, index)) {
+                                    textField.borderWidth = 4;
+                                    textField.borderColor = "red";
+                                    textField.text = "'" + event + "'" + " is already used.";
+                                    textFieldTimer.start();
+                                    //inputMapper.device.inputEventReceived.disconnect(keyReceived);
+                                    return;
+                                }
+
+                                if (textFieldTimer.running)
+                                    textFieldTimer.stop();
+
+
+
+                                var prevBinding = modelData.deviceEvent//inputMapper.mapping.getMappingByRetroId(modelData.d);
+                                //console.log("RECEIVED event: " + ev + " and value: " + value);
+                                //inputMapper.mapping.remapMapping(prevBinding, ev, modelData.retroID, inputMapper.deviceIndex);
                                 inputMapper.waitingUpdate = false;
-                                buttonsModel.get(index).updating = false;
-                                console.log("New binding: " + inputMapper.mapping.getMappingByRetroId(retroId));
+                                modelData.updating = false;
+                                modelData.deviceEvent = event;
+
                                 inputMapper.device.inputEventReceived.disconnect(keyReceived);
+                                inputMapper.mapping.saveModel(inputMapper.deviceIndex);
+                                textField.text = modelData.updating ? "Waiting..." : modelData.deviceEvent;
+                                textField.borderColor = "black";
+                                textField.borderWidth = 1;
+                                console.log(event + " was set! ");
+
 
                                 if (inputMapper.setupWalkthrough) {
                                     inputMapper.walkthroughCount += 1;
@@ -245,8 +268,10 @@ Item {
                             if (inputMapper.waitingUpdate)
                                 return;
                             inputMapper.waitingUpdate = true;
-                            buttonsModel.get(index).updating = true;
-                            console.log("Changing mapping for " + controllerButton + " on device: " + inputMapper.device.deviceName());
+                            modelData.updating = true;
+                            textField.borderWidth = 4;
+                            textField.borderColor = "blue";
+                            console.log("Changing mapping for " + modelData.deviceEvent + " on device: " + inputMapper.device.deviceName());
                             inputMapper.device.inputEventReceived.connect(gridItem.keyReceived);
                         }
 
@@ -260,9 +285,9 @@ Item {
 
                         Text {
                             renderType: Text.QtRendering;
-                            text: controllerButton + ":";
+                            text: inputMapper.mapping.getGamepadName(modelData.retroID) + ":";
                             anchors {
-                                right: buttonField.left;
+                                right: textField.left;
                                 verticalCenter: parent.verticalCenter;
                                 rightMargin: 15;
                             }
@@ -277,15 +302,17 @@ Item {
                         }
 
                         PhoenixTextField {
-                            id: buttonField;
+                            id: textField;
                             readOnly: true;
                             width: 100;
                             height: 25;
                             radius: 3;
-                            borderColor: "black";
+                            borderWidth: modelData.updating ? 4 : 1;
+                            borderColor: modelData.updating ? "blue" : "black";
                             renderType: Text.QtRendering;
                             textColor: "#f1f1f1";
-                            text: updating ? "WAITING" : inputMapper.mapping.getMappingByRetroId(retroId) ;
+
+                            text: modelData.updating ? "Waiting..." : modelData.deviceEvent;
                             anchors {
                                 verticalCenter: parent.verticalCenter;
                                 right: parent.right;
@@ -302,6 +329,7 @@ Item {
                                 id: buttonMouseArea;
                                 anchors.fill: parent;
                                 onClicked: {
+                                    gridView.currentIndex = index;
                                     gridItem.startUpdate();
                                 }
                                     //inputMapper.device.inputEventReceived.disconnect(buttonMouseArea.keyReceived);

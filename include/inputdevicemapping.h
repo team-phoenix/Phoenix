@@ -6,6 +6,10 @@
 
 #include <QSettings>
 #include <QJSValue>
+#include <QMap>
+#include <QVariantMap>
+#include <memory>
+#include <QList>
 
 #include "libretro_types.h"
 #include "inputdevice.h"
@@ -14,6 +18,69 @@
 
 // Class to map input from some device (eg keyboard, mouse, joystick)
 // to retro_device_id events for the given retro_device_type.
+
+class MappingModel : public QObject {
+    Q_OBJECT
+
+    Q_PROPERTY(QString deviceEvent READ deviceEvent WRITE setDeviceEvent NOTIFY deviceEventChanged)
+    Q_PROPERTY(QString retroID READ retroID WRITE setRetroID NOTIFY retroIDChanged)
+    Q_PROPERTY(bool updating READ updating WRITE setUpdating NOTIFY updatingChanged)
+
+public:
+
+
+    MappingModel(QString devEvent, QString id)
+    {
+        setDeviceEvent(devEvent);
+        setRetroID(id);
+    }
+
+    void setDeviceEvent(QString deviceEvent)
+    {
+        m_device_event = deviceEvent;
+        emit deviceEventChanged();
+    }
+
+   void setRetroID(QString id)
+   {
+       m_retro_id = id;
+       emit retroIDChanged();
+   }
+
+   void setUpdating(bool update)
+   {
+       m_updating = update;
+       emit updatingChanged();
+   }
+
+   QString deviceEvent()
+   {
+       return m_device_event;
+   }
+
+   QString retroID()
+   {
+       return m_retro_id;
+   }
+
+   bool updating()
+   {
+       return m_updating;
+   }
+
+signals:
+    void deviceEventChanged();
+    void retroIDChanged();
+    void updatingChanged();
+
+private:
+    QString m_retro_id;
+    QString m_device_event;
+    bool m_updating = false;
+
+};
+
+
 class InputDeviceMapping : public QObject {
         Q_OBJECT
 
@@ -65,6 +132,21 @@ class InputDeviceMapping : public QObject {
         virtual QString getMappingByRetroId( QString retroId );
         virtual void remapMapping( QString previousEvent, QVariant event, QString retroId, unsigned port );
 
+        QString getGamepadName(QString retroID);
+        QString variantToString(QVariant event)
+        {
+            return QString(*(event.value<InputDeviceEvent *>()));
+
+        }
+
+        bool collisionDetected(QString event, unsigned port);
+
+        void saveModel(unsigned port);
+
+
+        QList<QObject *> model();
+        void updateModel();
+
 
     protected:
         // Type of retro device mapped:
@@ -73,6 +155,13 @@ class InputDeviceMapping : public QObject {
         retro_device_type device_type;
 
         std::unordered_map<InputDeviceEvent *, retro_device_id> mapping;
+
+private:
+
+        QList<QObject *> m_model;
+
+        void deleteModel();
+
 };
 
 // to be able to use Connection objects in QVariants
