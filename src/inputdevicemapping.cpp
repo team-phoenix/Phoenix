@@ -8,6 +8,32 @@ InputDeviceMapping::InputDeviceMapping() {
     device_type = RETRO_DEVICE_NONE;
 }
 
+QList<QObject *> InputDeviceMapping::model()
+{
+    updateModel();
+    return m_model;
+}
+
+void InputDeviceMapping::updateModel()
+{
+    QList<QObject *> list;
+    for( auto m = mapping.begin(); m != mapping.end(); ++m ) {
+        QString event = QString( *( m->first ) );
+        QString id = QString::number(m->second);
+        list.append( new MappingModel(event, id));
+
+        //qDebug() <<  prev_event << " == " << QString(previousEvent) << " :: " << "ev:  " << QString(*ev);
+    }
+
+    m_model = list;
+}
+
+void InputDeviceMapping::deleteModel()
+{
+    for (auto obj : model())
+        delete obj;
+}
+
 bool InputDeviceMapping::isValid() {
     return ( device_type != RETRO_DEVICE_NONE );
 }
@@ -97,11 +123,42 @@ bool InputDeviceMapping::populateFromDict( QVariantMap deviceinfo ) {
 QString InputDeviceMapping::getMappingByRetroId( QString retroId ) {
     for( auto m = mapping.begin(); m != mapping.end(); ++m ) {
         if( m->second == retroId.toUInt() ) {
+            // SIGILL IS HERE
             return QString( *m->first );
         }
     }
 
     return "None";
+}
+
+QString InputDeviceMapping::getGamepadName(QString retroID)
+{
+    //"joypad_"
+    QString value = id_to_qstring.value(retroID.toUInt(), "");
+    value = value.remove("joypad_");
+    return value.left(1).toUpper() + value.mid(1);
+
+}
+
+bool InputDeviceMapping::collisionDetected(QString event, unsigned index)
+{
+    int i = 0;
+    bool result = false;
+    for (auto *obj_ptr : model()) {
+        auto mapping_obj = static_cast<MappingModel *>(obj_ptr);
+        result = mapping_obj->deviceEvent() == event;
+        //qDebug() << mapping_obj->deviceEvent() << " " <<  i << " index: " << index << " " << event;
+
+        if (result) {
+            if (i == index) {
+                result = false;
+            }
+            break;
+        }
+        ++i;
+    }
+
+    return result;
 }
 
 void InputDeviceMapping::remapMapping( QString previousEvent, QVariant event, QString retroId, unsigned port ) {
@@ -116,13 +173,17 @@ void InputDeviceMapping::remapMapping( QString previousEvent, QVariant event, QS
 
     if( ev ) {
         for( auto m = mapping.begin(); m != mapping.end(); ++m ) {
-            qDebug() << QString( *( m->first ) );
+            //qDebug() << QString( *( m->first ) );
             QString prev_event = QString( *( m->first ) );
 
-            if( prev_event == QString( *ev ) ) {
-                qDebug() << "Value is already mapped";
-                return;
-            }
+            //qDebug() <<  prev_event << " == " << QString(previousEvent) << " :: " << "ev:  " << QString(*ev);
+
+            //if( prev_event == QString( *ev ) ) {
+             //   qDebug() << "Value is already mapped";
+               // return;
+            //}
+
+
         }
 
         setMapping( ev, retroId.toUInt(), port );
@@ -130,14 +191,26 @@ void InputDeviceMapping::remapMapping( QString previousEvent, QVariant event, QS
 
 }
 
+void InputDeviceMapping::saveModel(unsigned port)
+{
+    QSettings settings;
+    settings.beginGroup("input");
+    settings.beginGroup( QString( "port%1" ).arg( port ) );
+    for (QObject *obj : model()) {
+        auto mapping_obj = static_cast<MappingModel *>(obj);
+        settings.setValue( id_to_qstring.value(mapping_obj->retroID().toUInt()), mapping_obj->deviceEvent());
+
+    }
+}
+
 void InputDeviceMapping::setMapping( InputDeviceEvent *ev, retro_device_id id, unsigned port ) {
-    qDebug() << "Previous mapping for " << QString( *ev ) << " was: " << mapping[ev];
+    //qDebug() << "Previous mapping for " << QString( *ev ) << " was: " << mapping[ev];
 
     mapping[ev] = id;
-    qDebug() << "New mapping for " << QString( *ev ) << " is: " << mapping[ev];
+    //qDebug() << "New mapping for " << QString( *ev ) << " is: " << mapping[ev];
 
-    QSettings s;
-    s.beginGroup( "input" );
-    s.beginGroup( QString( "port%1" ).arg( port ) );
-    s.setValue( id_to_qstring.value( id ), QString( *ev ) );
+    //QSettings s;
+    //s.beginGroup( "input" );
+    //s.beginGroup( QString( "port%1" ).arg( port ) );
+    //s.setValue( id_to_qstring.value( id ), QString( *ev ) );
 }
