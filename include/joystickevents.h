@@ -63,8 +63,8 @@ class ControllerButtonEvent : public InputDeviceEventHelper<InputDeviceButtonEve
 
     protected:
         virtual QString toString() const override {
-            return QString( "controller_button[%1]" )
-                   .arg( SDL_GameControllerGetStringForButton( event() ) );
+            return QString(SDL_GameControllerGetStringForButton( event() ));//QString( "controller_button[%1]" )
+                   //.arg( SDL_GameControllerGetStringForButton( event() ) );
         }
 };
 
@@ -97,8 +97,8 @@ class ControllerAxisEvent : public InputDeviceEventHelper<InputDeviceAnalogEvent
 
     protected:
         virtual QString toString() const override {
-            return QString( "controller_axis[%1]" )
-                   .arg( SDL_GameControllerGetStringForAxis( event() ) );
+            return QString(SDL_GameControllerGetStringForAxis( event() ) );//QString( "controller_axis[%1]" )
+                   //.arg( SDL_GameControllerGetStringForAxis( event() ) );
         }
 };
 

@@ -80,9 +80,6 @@ Item {
                 ListView {
                     id: listView;
 
-                    property var currentMapping;
-                    property var currentDevice;
-
                     z: 1;
                     anchors.centerIn: parent;
                     orientation: ListView.Horizontal;
@@ -130,9 +127,7 @@ Item {
                 model: inputmanager.enumerateDevices();
                 onCurrentIndexChanged: {
                     inputSettings.currentMapping = inputmanager.mappingForPort(currentIndex);
-                    mappingmodel.setDeviceMap(inputSettings.currentMapping);
-
-                    console.log(inputSettings.currentDevice.deviceName() + " was selected.");
+                    mappingmodel.setDeviceMap(inputmanager.mappingForPort(currentIndex));
                 }
 
             }
@@ -204,6 +199,11 @@ Item {
                         onTriggered: gridView.currentItem.buttonField.state = "waiting";
                     }
 
+                    function nullTest(data)
+                    {
+                        return data === null;
+                    }
+
 
                     delegate: Item {
                         id: gridItem;
@@ -228,10 +228,11 @@ Item {
                                 }
 
 
+
                                 inputMapper.waitingUpdate = false;
                                 modelData.updating = false;
-                                var list = event.split("[");
-                                modelData.deviceEvent = list.length <= 1 ? event : list[1].replace("]", "");
+                                //var list = event.split("[");
+                                modelData.deviceEvent = event //list.length <= 1 ? event : list[1].replace("]", "");
 
                                 inputSettings.currentDevice.inputEventReceived.disconnect(keyReceived);
                                 mappingmodel.saveModel(devicesBox.currentIndex);
@@ -261,6 +262,7 @@ Item {
 
                             textField.state = "waiting";
 
+
                             modelData.updating = true;
                             console.log("Changing mapping for " + modelData.deviceEvent + " on device: " + inputSettings.currentDevice.deviceName());
                             inputSettings.currentDevice.inputEventReceived.connect(gridItem.keyReceived);
@@ -276,7 +278,7 @@ Item {
 
                         Text {
                             renderType: Text.QtRendering;
-                            text: inputSettings.currentMapping.getGamepadName(modelData.retroID) + ":";
+                            text: modelData !== null ? inputSettings.currentMapping.getGamepadName(modelData.retroID) + ":" : "";
                             anchors {
                                 right: textField.left;
                                 verticalCenter: parent.verticalCenter;
@@ -358,7 +360,7 @@ Item {
 
                             ]
 
-                            text: modelData.updating ? "Waiting..." : modelData.deviceEvent;
+                            text: modelData !== null ? (modelData.updating ? "Waiting..." : modelData.deviceEvent) : "";
 
                             anchors {
                                 verticalCenter: parent.verticalCenter;

@@ -107,13 +107,14 @@ signals:
 protected:
     QHash<int, QByteArray> roleNames() const;
 
+private slots:
+    void deleteAll();
+
 private:
-    std::unordered_map<InputDeviceEvent *, retro_device_id> *m_map_data;
     QList<QObject *> m_list;
     QQmlContext *m_qml_context;
 
-    void populateModel();
-    void deleteAll();
+    void populateModel(std::unordered_map<InputDeviceEvent *, retro_device_id> *map);
 
 
 };

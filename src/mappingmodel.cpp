@@ -1,9 +1,11 @@
 #include "mappingmodel.h"
 
+#include <QtConcurrent>
+#include <QDebug>
+
 MappingModel::MappingModel(QObject *parent)
  : QObject(parent)
 {
-    m_map_data = nullptr;
     m_qml_context = nullptr;
 
     connect(this, &MappingModel::itemAdded, this, &MappingModel::update);
@@ -19,18 +21,27 @@ MappingModel::~MappingModel()
 
 void MappingModel::setDeviceMap(InputDeviceMapping *map)
 {
-    m_map_data = map->mappings();
-    populateModel();
+    if (map == nullptr) {
+        qDebug() << "InputDebviceMapping was null";
+        return;
+    }
+
+    m_list.clear();
+    populateModel(map->mappings());
     update();
+
+    //QFuture<void> fut = QtConcurrent::run(this, &MappingModel::populateModel);
 }
 
-void MappingModel::populateModel()
+void MappingModel::populateModel(std::unordered_map<InputDeviceEvent *, retro_device_id> *map)
 {
-    for( auto m = m_map_data->begin(); m != m_map_data->end(); ++m ) {
+    qDebug() << "Adding mapping with count: " << map->size();
+    for( auto m = map->begin(); m != map->end(); ++m ) {
         QString event = QString( *( m->first ) );
         QString id = QString::number(m->second);
         addMapping(new ExposedMapping(event, id));
     }
+
 }
 
 void MappingModel::addMapping(QObject *mapping)
@@ -92,6 +103,5 @@ void MappingModel::setContext(QQmlContext *context)
 
 void MappingModel::deleteAll()
 {
-    for (auto obj : m_list)
-        delete obj;
+    m_list.clear();
 }
