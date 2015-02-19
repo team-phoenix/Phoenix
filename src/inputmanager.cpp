@@ -85,8 +85,6 @@ void InputManager::scanKeyboard() {
         s.setValue( "joypad_right", "Right" );
         s.setValue( "joypad_l", "t" );
         s.setValue( "joypad_r", "g" );
-
-
         s.setValue("joypad_leftstick", "");
         s.setValue("joypad_rightstick", "");
 
@@ -121,8 +119,8 @@ void InputManager::scanJoysticks() {
             s.setValue( "joypad_down", "dpdown" );
             s.setValue( "joypad_left", "dpleft" );
             s.setValue( "joypad_right", "dpright" );
-            //s.setValue("joypad_leftstick", "leftstick");
-            //s.setValue("joypad_rightstick", "rightstick");
+            s.setValue("joypad_leftstick", "leftstick");
+            s.setValue("joypad_rightstick", "rightstick");
             s.setValue( "joypad_l", "leftshoulder" );
             s.setValue( "joypad_r", "rightshoulder" );
             s.setValue( "joypad_select", "back" );
@@ -213,4 +211,9 @@ void InputManager::removeDevices() {
         settings_window->removeEventFilter( device );
 
     }
+}
+
+QString InputManager::variantToString(QVariant event)
+{
+    return QString(*(event.value<InputDeviceEvent *>()));
 }

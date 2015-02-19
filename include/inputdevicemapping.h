@@ -8,85 +8,67 @@
 #include <QJSValue>
 #include <QMap>
 #include <QVariantMap>
-#include <memory>
-#include <QList>
 
 #include "libretro_types.h"
 #include "inputdevice.h"
 #include "inputdeviceevent.h"
+#include "mappingmodel.h"
 
 
 // Class to map input from some device (eg keyboard, mouse, joystick)
 // to retro_device_id events for the given retro_device_type.
 
-class MappingModel : public QObject {
-    Q_OBJECT
+typedef QMap<QString, retro_device_id> device_settings_mapping;
 
-    Q_PROPERTY(QString deviceEvent READ deviceEvent WRITE setDeviceEvent NOTIFY deviceEventChanged)
-    Q_PROPERTY(QString retroID READ retroID WRITE setRetroID NOTIFY retroIDChanged)
-    Q_PROPERTY(bool updating READ updating WRITE setUpdating NOTIFY updatingChanged)
-
-public:
-
-
-    MappingModel(QString devEvent, QString id)
-    {
-        setDeviceEvent(devEvent);
-        setRetroID(id);
-    }
-
-    void setDeviceEvent(QString deviceEvent)
-    {
-        m_device_event = deviceEvent;
-        emit deviceEventChanged();
-    }
-
-   void setRetroID(QString id)
-   {
-       m_retro_id = id;
-       emit retroIDChanged();
-   }
-
-   void setUpdating(bool update)
-   {
-       m_updating = update;
-       emit updatingChanged();
-   }
-
-   QString deviceEvent()
-   {
-       return m_device_event;
-   }
-
-   QString retroID()
-   {
-       return m_retro_id;
-   }
-
-   bool updating()
-   {
-       return m_updating;
-   }
-
-signals:
-    void deviceEventChanged();
-    void retroIDChanged();
-    void updatingChanged();
-
-private:
-    QString m_retro_id;
-    QString m_device_event;
-    bool m_updating = false;
-
+static const device_settings_mapping joypad_settings_mapping {
+    { "joypad_b", RETRO_DEVICE_ID_JOYPAD_B },
+    { "joypad_y", RETRO_DEVICE_ID_JOYPAD_Y },
+    { "joypad_select", RETRO_DEVICE_ID_JOYPAD_SELECT },
+    { "joypad_start", RETRO_DEVICE_ID_JOYPAD_START },
+    { "joypad_up", RETRO_DEVICE_ID_JOYPAD_UP },
+    { "joypad_down", RETRO_DEVICE_ID_JOYPAD_DOWN },
+    { "joypad_left", RETRO_DEVICE_ID_JOYPAD_LEFT },
+    { "joypad_right", RETRO_DEVICE_ID_JOYPAD_RIGHT },
+    { "joypad_a", RETRO_DEVICE_ID_JOYPAD_A },
+    { "joypad_x", RETRO_DEVICE_ID_JOYPAD_X },
+    { "joypad_l", RETRO_DEVICE_ID_JOYPAD_L },
+    { "joypad_r", RETRO_DEVICE_ID_JOYPAD_R },
+    { "joypad_l2", RETRO_DEVICE_ID_JOYPAD_L2 },
+    { "joypad_r2", RETRO_DEVICE_ID_JOYPAD_R2 },
+    { "joypad_l3", RETRO_DEVICE_ID_JOYPAD_L3 },
+    { "joypad_r3", RETRO_DEVICE_ID_JOYPAD_R3 },
 };
 
+static const QMap<retro_device_id, QString> id_to_qstring {
+    { RETRO_DEVICE_ID_JOYPAD_B, "joypad_b" },
+    { RETRO_DEVICE_ID_JOYPAD_Y, "joypad_y" },
+    { RETRO_DEVICE_ID_JOYPAD_SELECT, "joypad_select" },
+    { RETRO_DEVICE_ID_JOYPAD_START, "joypad_start" },
+    { RETRO_DEVICE_ID_JOYPAD_UP, "joypad_up" },
+    { RETRO_DEVICE_ID_JOYPAD_DOWN, "joypad_down" },
+    { RETRO_DEVICE_ID_JOYPAD_LEFT, "joypad_left" },
+    { RETRO_DEVICE_ID_JOYPAD_RIGHT, "joypad_right" },
+    { RETRO_DEVICE_ID_JOYPAD_A, "joypad_a" },
+    { RETRO_DEVICE_ID_JOYPAD_X, "joypad_x" },
+    { RETRO_DEVICE_ID_JOYPAD_L, "joypad_l" },
+    { RETRO_DEVICE_ID_JOYPAD_R, "joypad_r" },
+    { RETRO_DEVICE_ID_JOYPAD_L2, "joypad_l2" },
+    { RETRO_DEVICE_ID_JOYPAD_R2, "joypad_r2" },
+    { RETRO_DEVICE_ID_JOYPAD_L3, "joypad_l3" },
+    { RETRO_DEVICE_ID_JOYPAD_R3, "joypad_r3" },
+};
+
+static const QMap<QString, const device_settings_mapping *> settings_mappings {
+    { "joypad", &joypad_settings_mapping },
+};
 
 class InputDeviceMapping : public QObject {
         Q_OBJECT
-
     public:
         InputDeviceMapping();
         virtual ~InputDeviceMapping() { }
+
+
 
         virtual bool isValid();
 
@@ -124,6 +106,11 @@ class InputDeviceMapping : public QObject {
             mapping[ev->clone()] = id;
         }
 
+        std::unordered_map<InputDeviceEvent *, retro_device_id> *mappings()
+        {
+            return &mapping;
+        }
+
     public slots:
         // wait for any input on the underlying device and maps
         // the input id to the given retro_device_id
@@ -133,20 +120,6 @@ class InputDeviceMapping : public QObject {
         virtual void remapMapping( QString previousEvent, QVariant event, QString retroId, unsigned port );
 
         QString getGamepadName(QString retroID);
-        QString variantToString(QVariant event)
-        {
-            return QString(*(event.value<InputDeviceEvent *>()));
-
-        }
-
-        bool collisionDetected(QString event, unsigned port);
-
-        void saveModel(unsigned port);
-
-
-        QList<QObject *> model();
-        void updateModel();
-
 
     protected:
         // Type of retro device mapped:
@@ -157,13 +130,6 @@ class InputDeviceMapping : public QObject {
         std::unordered_map<InputDeviceEvent *, retro_device_id> mapping;
 
 private:
-
-        QList<QObject *> m_model;
-
-        void deleteModel();
-
-signals:
-        void modelChanged();
 
 };
 

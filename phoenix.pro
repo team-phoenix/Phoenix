@@ -84,7 +84,8 @@ HEADERS += include/core.h                      \
            include/systemdatabase.h            \
            include/networkqueue.h              \
            include/scraper.h                   \
-           include/phoenixglobals.h
+           include/phoenixglobals.h            \
+           include/mappingmodel.h
 
 SOURCES += src/main.cpp                        \
            src/videoitem.cpp                   \
@@ -107,7 +108,8 @@ SOURCES += src/main.cpp                        \
            src/coremodel.cpp                   \
            src/systemdatabase.cpp              \
            src/networkqueue.cpp                \
-           src/scraper.cpp
+           src/scraper.cpp                     \
+           src/mappingmodel.cpp
 
 RESOURCES = qml/qml.qrc assets/assets.qrc
 

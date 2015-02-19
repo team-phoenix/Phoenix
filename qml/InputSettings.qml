@@ -95,7 +95,9 @@ Item {
                         ListElement {player: "Player 3"; selected: false; curvature: 0;}
                         ListElement {player: "Player 4"; selected: false; curvature: 3;}
                     }
-                    onCurrentIndexChanged: inputSettings.currentMapping = inputmanager.mappingForPort(currentIndex);
+                    onCurrentIndexChanged: {
+                        inputSettings.currentDevice = inputmanager.getDevice(currentIndex);;
+                    }
 
                     delegate: PhoenixNormalButton {
                         property bool innerItem: (curvature == 0);
@@ -127,7 +129,9 @@ Item {
                 width: 125;
                 model: inputmanager.enumerateDevices();
                 onCurrentIndexChanged: {
-                    inputSettings.currentDevice = inputmanager.getDevice(currentIndex);
+                    inputSettings.currentMapping = inputmanager.mappingForPort(currentIndex);
+                    mappingmodel.setDeviceMap(inputSettings.currentMapping);
+
                     console.log(inputSettings.currentDevice.deviceName() + " was selected.");
                 }
 
@@ -192,11 +196,7 @@ Item {
                     cellHeight: 40;
                     cellWidth: 175;
                     flow: GridView.TopToBottom;
-
-                    Component.onCompleted: {
-                        inputSettings.currentMapping.updateModel();
-                        model = inputSettings.currentMapping.model();
-                    }
+                    model: mappingmodel.model();
 
                     Timer {
                         id: textFieldTimer;
@@ -216,11 +216,12 @@ Item {
 
 
                         function keyReceived(ev, value) {
+                            console.log("key pressed")
 
                             if (value) {
 
-                                var event = inputSettings.currentMapping.variantToString(ev);
-                                if (inputSettings.currentMapping.collisionDetected(event, index)) {
+                                var event = inputmanager.variantToString(ev);
+                                if (mappingmodel.collisionDetected(event, index)) {
                                     textField.state = "collision";
                                     textFieldTimer.start();
                                     return;
@@ -233,7 +234,7 @@ Item {
                                 modelData.deviceEvent = list.length <= 1 ? event : list[1].replace("]", "");
 
                                 inputSettings.currentDevice.inputEventReceived.disconnect(keyReceived);
-                                inputSettings.currentMapping.saveModel(devicesBox.currentIndex);
+                                mappingmodel.saveModel(devicesBox.currentIndex);
                                 console.log(modelData.deviceEvent + " was set! ");
 
                                 textField.state = "normal";

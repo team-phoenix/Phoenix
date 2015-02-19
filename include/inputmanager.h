@@ -8,6 +8,7 @@
 
 #include "inputdevice.h"
 #include "inputdevicemapping.h"
+#include "mappingmodel.h"
 
 
 class InputManager : public QObject {
@@ -38,8 +39,10 @@ class InputManager : public QObject {
         InputDeviceMapping *mappingForPort( unsigned port );
 
         InputDevice *getDevice( unsigned port ) const;
+
         void attachDevices();
         void removeDevices();
+        QString variantToString(QVariant event);
 
     signals:
         void label( QString );
