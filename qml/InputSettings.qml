@@ -7,6 +7,7 @@ Item {
     id: inputSettings;
     property var currentMapping;
     property var currentDevice;
+    property int currentPort: 0;
 
     Column {
         anchors {
@@ -85,27 +86,37 @@ Item {
                     orientation: ListView.Horizontal;
                     width: (spacing !== 0) ? currentItem.width * count * spacing: currentItem.width * count;
                     height: currentItem.height;
+                    interactive: false;
 
-                    model: ListModel {
-                        ListElement {player: "Player 1"; selected: true; curvature: 3;}
-                        ListElement {player: "Player 2"; selected: false; curvature: 0;}
-                        ListElement {player: "Player 3"; selected: false; curvature: 0;}
-                        ListElement {player: "Player 4"; selected: false; curvature: 3;}
-                    }
+                    model: inputmanager.enumerateDevices();
+                    /* ListModel {
+                        ListElement {player: "Player 1"; selected: true; curvature: 3; port: 0}
+                        ListElement {player: "Player 2"; selected: false; curvature: 0; port: 1}
+                        ListElement {player: "Player 3"; selected: false; curvature: 0; port: 2}
+                        ListElement {player: "Player 4"; selected: false; curvature: 3; port: 3}
+                    }*/
                     onCurrentIndexChanged: {
-                        inputSettings.currentDevice = inputmanager.getDevice(currentIndex);;
+                        inputSettings.currentDevice = inputmanager.getDevice(currentIndex);
+                        inputSettings.currentMapping = inputmanager.mappingForPort(currentIndex);
+                        mappingmodel.setDeviceMap(inputmanager.mappingForPort(currentIndex));
+                        inputSettings.currentPort = currentIndex;
                     }
 
                     delegate: PhoenixNormalButton {
-                        property bool innerItem: (curvature == 0);
-
-                        text: player;
+                        property bool innerItem: false;
+                        property string type: listView.model[index]["type"];
+                        text: type == "GamePad" ? "GamePad " + index : type;
                         z: innerItem ? listView.z + 1 : listView.z;
                         radius: 0;
                         implicitWidth: 70;
                         checkable: true;
-                        checked: selected;
+                        checked: ListView.isCurrentItem;
                         exclusiveGroup: topButtonGroup;
+
+                        MouseArea {
+                            anchors.fill: parent;
+                            onClicked: listView.currentIndex = index;
+                        }
 
                     }
                 }
@@ -121,16 +132,23 @@ Item {
 
             spacing: 15;
 
-            ComboBox {
+            /*ComboBox {
                 id: devicesBox;
                 width: 125;
                 model: inputmanager.enumerateDevices();
+                property int previousIndex: -1;
                 onCurrentIndexChanged: {
+                    if (previousIndex === -1)
+                        previousIndex = currentIndex;
+                    //else
+                        //inputmanager.swap(previousIndex, index);
+                    console.log("previousIndex: " + previousIndex + " and current: " + currentIndex)
+
                     inputSettings.currentMapping = inputmanager.mappingForPort(currentIndex);
                     mappingmodel.setDeviceMap(inputmanager.mappingForPort(currentIndex));
                 }
 
-            }
+            }*/
 
             PhoenixNormalButton {
                 text: "Configure All";

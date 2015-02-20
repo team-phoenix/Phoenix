@@ -18,9 +18,6 @@ class InputManager : public QObject {
         InputManager();
         virtual ~InputManager();
 
-
-
-
         void append( InputDevice *device );
 
         QList<InputDevice *> getDevices() const;
@@ -43,6 +40,7 @@ class InputManager : public QObject {
         void attachDevices();
         void removeDevices();
         QString variantToString(QVariant event);
+        bool swap(int index, int index_2);
 
     signals:
         void label( QString );

@@ -76,7 +76,8 @@ QVariantList Joystick::enumerateDevices() {
                 "driver", QString( SDL_IsGameController( i ) ? "sdl_gamecontroller"
                 : "sdl_joystick" )
             },
-            { "guid", QString( guidbuf ) }
+            { "guid", QString( guidbuf ) },
+            { "type", "GamePad"},
         } );
     }
 

@@ -217,3 +217,12 @@ QString InputManager::variantToString(QVariant event)
 {
     return QString(*(event.value<InputDeviceEvent *>()));
 }
+
+bool InputManager::swap(int index, int index_2)
+{
+    if (index < devices.length() && index_2 < devices.length() && index >=0 && index >= 0 && index != index_2) {
+        devices.swap(index, index_2);
+        return true;
+    }
+    return false;
+}
