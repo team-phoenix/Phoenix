@@ -221,8 +221,10 @@ QString InputManager::variantToString(QVariant event)
 
 bool InputManager::swap(int index, int index_2)
 {
-    if (index < devices.length() && index_2 < devices.length() && index >=0 && index >= 0 && index != index_2) {
+    qCDebug(phxInput) << index << " // " << index_2;
+    if (index < devices.length() && index_2 < devices.length() && index >=0 && index_2 >= 0 && index != index_2) {
         devices.swap(index, index_2);
+        updateModel();
         return true;
     }
     return false;
