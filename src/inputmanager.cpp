@@ -14,6 +14,7 @@
 InputManager::InputManager() {
     top_window = nullptr;
     settings_window = nullptr;
+    m_context = nullptr;
 }
 
 InputManager::~InputManager() {
@@ -225,4 +226,16 @@ bool InputManager::swap(int index, int index_2)
         return true;
     }
     return false;
+}
+
+void InputManager::setContext(QQmlContext *context)
+{
+    m_context = context;
+    updateModel();
+}
+
+void InputManager::updateModel()
+{
+    m_context->setContextProperty( "inputmanager", this);
+    emit updateChanged();
 }

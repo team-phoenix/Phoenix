@@ -5,6 +5,7 @@
 #include <QList>
 #include <QObject>
 #include <QWindow>
+#include <QQmlContext>
 
 #include "inputdevice.h"
 #include "inputdevicemapping.h"
@@ -41,14 +42,18 @@ class InputManager : public QObject {
         void removeDevices();
         QString variantToString(QVariant event);
         bool swap(int index, int index_2);
+        void setContext(QQmlContext *context);
+        void updateModel();
 
     signals:
         void label( QString );
+        void updateChanged();
 
     private:
         QList<InputDevice *> devices;
         QWindow *top_window;
         QWindow *settings_window;
+        QQmlContext *m_context;
 };
 
 #endif

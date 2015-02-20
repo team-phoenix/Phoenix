@@ -17,6 +17,7 @@
 #include "phoenixwindow.h"
 #include "phoenixlibrary.h"
 #include "cacheimage.h"
+#include "mappingmodel.h"
 #include "phoenixglobals.h"
 
 InputManager input_manager; // global
@@ -47,6 +48,7 @@ int main( int argc, char *argv[] ) {
     qmlRegisterType<CachedImage>( "phoenix.image", 1, 0, "CachedImage" );
     qmlRegisterType<VideoItem>( "phoenix.video", 1, 0, "VideoItem" );
     qmlRegisterType<GameLibraryModel>();
+    qmlRegisterType<MappingModel>();
     qmlRegisterType<PhoenixLibrary>( "phoenix.library", 1, 0, "PhoenixLibrary" );
     qmlRegisterType<InputDeviceMapping>();
     qmlRegisterType<InputDevice>();
@@ -57,9 +59,16 @@ int main( int argc, char *argv[] ) {
     QQmlApplicationEngine engine;
     // first, set the context properties
     QQmlContext *rctx = engine.rootContext();
+
     PhoenixGlobals phxGlobals;
     phxGlobals.setOfflineStoragePath(engine.offlineStoragePath() + "/");
-    rctx->setContextProperty( "inputmanager", &input_manager );
+
+    MappingModel mapping_model;
+
+    mapping_model.setContext(rctx);
+    input_manager.setContext(rctx);
+
+
     rctx->setContextProperty("phoenixglobals", &phxGlobals);
 
     // then, load qml and display the window
