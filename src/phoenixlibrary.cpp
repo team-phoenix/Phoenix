@@ -131,8 +131,8 @@ m_consoles( QMap<PhoenixLibrary::Console, QString> {
     network_queue = new NetworkQueue();
     network_queue->setGameModel( m_model );
 
-    connect( network_queue, &NetworkQueue::label, this, &PhoenixLibrary::setLabel );
-    connect( network_queue, &NetworkQueue::progress, this, &PhoenixLibrary::setProgress );
+    connect( network_queue, &NetworkQueue::label, this, &PhoenixLibrary::setLabel, Qt::DirectConnection);
+    connect( network_queue, &NetworkQueue::progress, this, &PhoenixLibrary::setProgress, Qt::DirectConnection);
 
 }
 

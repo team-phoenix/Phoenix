@@ -19,8 +19,8 @@ NetworkQueue::NetworkQueue()
 
     connect( this, &NetworkQueue::finished, &network_thread, &QThread::quit );
     connect( &network_thread, &QThread::started, this, &NetworkQueue::progressRequests );
-    connect( m_scraper, &Scraper::progress, this, &NetworkQueue::progress );
-    connect( m_scraper, &Scraper::label, this, &NetworkQueue::label );
+    connect( m_scraper, &Scraper::progress, this, &NetworkQueue::progress, Qt::DirectConnection);
+    connect( m_scraper, &Scraper::label, this, &NetworkQueue::label, Qt::DirectConnection);
     connect( m_scraper, &Scraper::dataReady, this, &NetworkQueue::appendToLibrary );
 }
 
