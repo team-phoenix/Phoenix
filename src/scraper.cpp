@@ -15,8 +15,9 @@ Scraper::Scraper( QObject *parent )
                       << "?"
                       << ":"
                     );
-    network_manager = new QNetworkAccessManager( this );
-    connect( network_manager, SIGNAL( finished( QNetworkReply * ) ), this, SLOT( processRequest( QNetworkReply * ) ) );
+    network_manager = new QNetworkAccessManager(this);
+    connect(network_manager, &QNetworkAccessManager::finished, this, &Scraper::processRequest);
+    connect(network_manager, &QNetworkAccessManager::networkAccessibleChanged, this, &Scraper::handleNetworkChanged);
 
 }
 
@@ -79,5 +80,27 @@ void Scraper::processRequest( QNetworkReply *reply ) {
 
 void Scraper::getGameData( Scraper::ScraperContext context ) {
     Q_UNUSED( context );
+}
+
+void Scraper::handleNetworkChanged(QNetworkAccessManager::NetworkAccessibility accessible )
+{
+    QString result;
+    if (accessible == QNetworkAccessManager::NotAccessible) {
+        result = "The Network isn't working";
+    }
+
+    else if (accessible == QNetworkAccessManager::Accessible)
+    {
+        result = "The Network is running";
+    }
+
+    else {
+        result = "The Network is unknown";
+    }
+
+    qDebug() << result;
+    emit label(result);
+
+
 }
 

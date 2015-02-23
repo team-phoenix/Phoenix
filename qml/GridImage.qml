@@ -1,6 +1,5 @@
 import QtQuick 2.4
 import QtGraphicalEffects 1.0
-import phoenix.image 1.0
 
 Item  {
     id: imageHighlight;
@@ -85,7 +84,7 @@ Item  {
 
         onProgressChanged: gridItem.imageProgress = image.progress;
 
-        onStatusChanged: {
+        /*onStatusChanged: {
 
             if (status !== Image.Ready) {
                 gridItem.imageLoaded = true;
@@ -97,7 +96,7 @@ Item  {
                 if (imageHighlight.loadingImage !== null && imageHighlight.loadingImage !== undefined)
                     imageHighlight.loadingImage.destroy();
             }
-        }
+        }*/
     }
 
     Column {

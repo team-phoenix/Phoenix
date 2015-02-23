@@ -1,9 +1,8 @@
-import QtQuick 2.3
-import QtQuick.Controls 1.1
-import QtQuick.Controls.Styles 1.1
+import QtQuick 2.4
+import QtQuick.Controls 1.2
+import QtQuick.Controls.Styles 1.2
 import QtGraphicalEffects 1.0
 import QtQuick.Layouts 1.1
-import phoenix.image 1.0
 
 Rectangle {
     id: gameGrid;
@@ -94,10 +93,16 @@ Rectangle {
             property bool checked: false;
             property bool holdItem: false;
             property bool indexUpdated: false;
-
+            property bool animateHighlighter: false;
+            property int cacheLimit: 6;
+            property int cacheValue: 0;
+            property string titleToDelete: "";
+            property bool shrink: false;
+            property int queuedIndex: 0;
+            property int cacheIndex: 0;
             property var moveCurrentDirection;
 
-            property bool animateHighlighter: false;
+            //cacheBuffer: 10;
             onCurrentIndexChanged: animateHighlighter = true;
 
             Text {
@@ -135,10 +140,6 @@ Rectangle {
             cellWidth: 100 * gameGrid.zoomFactor;
             model: phoenixLibrary.model();
             highlightFollowsCurrentItem: false;
-
-            property string titleToDelete: "";
-            property bool shrink: false;
-            property int queuedIndex: 0;
 
             currentIndex: 2;
 
@@ -227,7 +228,7 @@ Rectangle {
                             NumberAnimation {
                                 properties: "width,height,x,y";
                                 easing.type: Easing.InBack;
-                                duration: 1;
+                                duration: 150;
                             }
 
                             onRunningChanged: {
@@ -330,11 +331,15 @@ Rectangle {
             }
 
 
-            Connections {
-                target: phoenixLibrary;
-                onRowAdded: console.log("Game Added.");
-                onRowDeleted: console.log(titleToDelete + " was deleted.");
-            }
+            //Connections {
+            //    target: phoenixLibrary;
+            //    onRowAdded: console.log("Game Added.");
+            //   onRowDeleted: console.log(titleToDelete + " was deleted.");
+            //}
+
+
+
+
 
             delegate: Item {
                 id: gridItem;
@@ -353,6 +358,7 @@ Rectangle {
                 property real imageProgress: 0.0;
                 property bool itemDeleted: false;
                 property alias artworkItemAlias: artworkItem;
+                property bool startCache: false;
 
                 GridImage  {
                     id: artworkItem;

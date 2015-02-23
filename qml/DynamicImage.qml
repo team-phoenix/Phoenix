@@ -1,7 +1,6 @@
 import QtQuick 2.4
-import QtQuick.Controls 1.3
-import QtQuick.Controls.Styles 1.3;
-import phoenix.image 1.0
+import QtQuick.Controls 1.2;
+import QtQuick.Controls.Styles 1.2;
 
 Image {
     id: image;
@@ -11,6 +10,11 @@ Image {
 
     width: gridItem.itemDeleted ? 0 : parent.width;
     source: gridItem.imageSource;
+    onStatusChanged: {
+        if (status === Image.Error)
+            source = "../assets/No-Art.png";
+    }
+
     fillMode: Image.PreserveAspectFit;
     asynchronous: true;
     property bool hovered: false;
@@ -76,22 +80,6 @@ Image {
                     color: "#e6e4e4FF"
                 }
             }
-        }
-    }
-
-    CachedImage {
-        id: cachedImage;
-        imgsrc: image.source;
-        folder: "Artwork";
-        fileName: gridItem.titleName ? gridItem.titleName : "";
-        cacheDirectory: phoenixglobals.offlineStoragePath();
-
-        onLocalsrcChanged: {
-            image.source = localsrc;
-        }
-
-        Component.onCompleted: {
-            cachedImage.start();
         }
     }
 

@@ -22,6 +22,7 @@ class PhoenixLibrary : public QObject {
         Q_ENUMS( Console )
         Q_PROPERTY( bool importUrls READ importUrls WRITE setImportUrls NOTIFY importUrlsChanged )
 
+
     public:
         PhoenixLibrary();
 
@@ -75,7 +76,7 @@ class PhoenixLibrary : public QObject {
         }
 
     public slots:
-        void setProgress( qreal progress );
+        void setProgress( int progress );
         void setLabel( QString label );
 
         void startAsyncScan( QUrl path );
@@ -92,6 +93,7 @@ class PhoenixLibrary : public QObject {
         QString showPath( int index, QString system );
         void cacheUrls( QList<QUrl> list );
         QVector<int> importDroppedFiles( QList<QUrl> url_list );
+        void setCacheDirectory(QString cache_dir);
 
 
 
@@ -115,6 +117,8 @@ class PhoenixLibrary : public QObject {
         int m_count;
         QList<QUrl> file_urls;
         bool m_import_urls;
+
+        QString m_cache_directory;
 
         SystemDatabase system_db;
 

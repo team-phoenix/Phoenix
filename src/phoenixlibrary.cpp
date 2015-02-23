@@ -131,8 +131,8 @@ m_consoles( QMap<PhoenixLibrary::Console, QString> {
     network_queue = new NetworkQueue();
     network_queue->setGameModel( m_model );
 
-    connect( network_queue, &NetworkQueue::label, this, &PhoenixLibrary::setLabel, Qt::DirectConnection);
-    connect( network_queue, &NetworkQueue::progress, this, &PhoenixLibrary::setProgress, Qt::DirectConnection);
+    connect(network_queue, &NetworkQueue::label, this, &PhoenixLibrary::setLabel, Qt::DirectConnection);
+    connect(network_queue, &NetworkQueue::progress, this, &PhoenixLibrary::setProgress, Qt::DirectConnection);
 
 }
 
@@ -150,7 +150,7 @@ void PhoenixLibrary::setLabel( QString label ) {
     emit labelChanged();
 }
 
-void PhoenixLibrary::setProgress( qreal progress ) {
+void PhoenixLibrary::setProgress( int progress ) {
     m_progress = progress;
     emit progressChanged();
 }
@@ -255,7 +255,7 @@ void PhoenixLibrary::importMetadata( QVector<int> games_id ) {
     what_games.reserve( games_id.size() * 4 );
 
     setLabel( "Retrieving Metadata & Art" );
-    setProgress( 0.0 );
+    setProgress(0);
 
     // build a comma separated string from roms id that were just inserted
     for( auto i = games_id.begin(); i != games_id.end(); ++i ) {
@@ -279,24 +279,25 @@ void PhoenixLibrary::importMetadata( QVector<int> games_id ) {
     }
 
     for( uint i = 0; q.next(); i++ ) {
-        setProgress( ( qreal )i / games_id.size() * 100.0 );
+        setProgress( ( int )i / games_id.size() * 100);
         int id = q.value( 0 ).toInt();
         QString path( QDir( q.value( 1 ).toString() ).filePath( q.value( 2 ).toString() ) );
         QByteArray hash = generateSha1Sum( path ); // TODO: CRC32
         QString title = q.value( 3 ).toString();
         QString system = q.value( 4 ).toString();
-        scanSystemDatabase( hash, title, system );
+        //scanSystemDatabase( hash, title, system );
         QSqlQuery qupdate( database );
-        qupdate.prepare( QStringLiteral( "UPDATE %1 SET title = ?, system = ? WHERE id = ?" )
+        qupdate.prepare( QStringLiteral( "UPDATE %1 SET title = ?, system = ?, sha1 = ? WHERE id = ?" )
                          .arg( LibraryDbManager::table_games ) );
+
         qupdate.addBindValue( title );
         qupdate.addBindValue( system );
+        qupdate.addBindValue(hash);
         qupdate.addBindValue( id );
         qupdate.exec();
 
         // call enqueueContext in its thread
         Scraper::ScraperContext context;
-        qCDebug( phxLibrary ) << title << system;
         context.id = id;
         context.title = title;
         context.system = system;
@@ -352,7 +353,7 @@ QVector<int> PhoenixLibrary::scanFolder( QUrl folder_path ) {
     QSqlQuery q( database );
 
     setLabel( "Importing Games" );
-    setProgress( 0.0 );
+    setProgress( 0 );
     QVector<int> inserted_games;
 
     bool found_games = false;
@@ -539,7 +540,7 @@ QVector<int> PhoenixLibrary::importDroppedFiles( QList<QUrl> url_list ) {
     QSqlQuery q( database );
 
     setLabel( "Importing Games" );
-    setProgress( 0.0 );
+    setProgress( 0 );
     QVector<int> inserted_games;
 
 
@@ -602,7 +603,7 @@ QByteArray PhoenixLibrary::generateSha1Sum( QString file ) {
 
     QCryptographicHash sha1_hash( QCryptographicHash::Sha1 );
     sha1_hash.addData( &game_file );
-    QByteArray result = sha1_hash.result();
+    QByteArray result = sha1_hash.result().toHex();
 
     game_file.close();
     return result;
@@ -634,4 +635,10 @@ void PhoenixLibrary::scanSystemDatabase( QByteArray hash, QString &name, QString
 
     name = ( game_name == "" ) ? name : game_name;
 
+}
+
+void PhoenixLibrary::setCacheDirectory(QString cache_dir)
+{
+    m_cache_directory = cache_dir;
+    network_queue->setCacheDirectory(cache_dir);
 }

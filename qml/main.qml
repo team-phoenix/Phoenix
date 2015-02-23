@@ -43,6 +43,8 @@ PhoenixWindow {
     property bool gridFocus: keyBoardFocus === 2;
     property bool consoleBarFocus: keyBoardFocus === 1;
 
+    Component.onCompleted: phoenixLibrary.setCacheDirectory(phoenixglobals.offlineStoragePath())
+
     function playGame(title, system, filename, core)
     {
         if (root.gameAndCoreCheck(title, system, filename, core)) {
