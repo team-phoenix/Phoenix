@@ -2,7 +2,7 @@
 TEMPLATE = app
 TARGET = phoenix
 INCLUDEPATH += ./include
-CONFIG += debug console c++11
+CONFIG += console c++11
 
 QT += widgets core gui multimedia qml quick sql concurrent
 
@@ -38,9 +38,7 @@ macx {
 
 win32 {
     LIBS += -LC:/SDL2/lib
-    LIBS += -lmingw32 -lSDL2main -lSDL2
-    LIBS += -lgdi32 -ldwmapi
-
+    LIBS += -lmingw32 -lSDL2main -lSDL2 -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -luuid
 
     DEFINES += SDL_WIN
     INCLUDEPATH += C:/SDL2/include
