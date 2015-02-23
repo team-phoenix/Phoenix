@@ -210,7 +210,7 @@ QRegularExpressionMatch PhoenixLibrary::parseFilename( QString filename ) {
     // Currently Unfinished code. Only extracts title and region from filename
     // not the goodtools code.
 
-    if( m_title.hasMatch() ) {
+    /*if( m_title.hasMatch() ) {
         qCDebug( phxLibrary ) << m_title;
 
         auto match_iterator = re_goodtools.globalMatch( filename, m_title.capturedEnd() );
@@ -219,7 +219,7 @@ QRegularExpressionMatch PhoenixLibrary::parseFilename( QString filename ) {
             QRegularExpressionMatch match = match_iterator.next();
             qCDebug( phxLibrary ) << match;
         }
-    }
+    }*/
 }
 
 void PhoenixLibrary::startAsyncScan( QUrl path ) {
