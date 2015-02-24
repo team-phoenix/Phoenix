@@ -9,7 +9,7 @@ Item {
     property bool running: false
     property int textSeparation: 40
     property int delta: 10
-    property int animationDuration: 200
+    property int animationDuration: interval + 50
 
     // Will the rendered text fit completely inside its box?
     property bool narrow: marqueeTextDummy.width < parent.width
@@ -77,9 +77,9 @@ Item {
         id: marqueeTimer
         interval: animationDuration
         onTriggered: {
-            marqueeTextThree.width = parent.width
             marqueeTextOne.width = parent.width
             marqueeTextTwo.width = parent.width
+            marqueeTextThree.width = parent.width
         }
         repeat: false
         running: !narrow
@@ -145,12 +145,31 @@ Item {
         marqueeTextOne.width = marqueeTextDummy.width
         marqueeTextTwo.width = marqueeTextDummy.width
         marqueeTextThree.width = marqueeTextDummy.width
-        marqueeTimer.interval = animationDuration
         recalculate()
     }
     onWidthChanged: {
-        marqueeTimer.interval = 5
-        recalculate()
+        if( narrow ) {
+            marqueeTextOne.width = marqueeTextDummy.width
+            marqueeTextTwo.width = marqueeTextDummy.width
+            marqueeTextThree.width = marqueeTextDummy.width
+            state = 1;
+            marqueeTextOne.x = 0
+            state = 2;
+            marqueeTextTwo.x = marqueeTextDummy.width
+            state = 3;
+            marqueeTextThree.x = -marqueeTextDummy.width
+        }
+        else {
+            marqueeTextOne.width = parent.width
+            marqueeTextTwo.width = parent.width
+            marqueeTextThree.width = parent.width
+            state = 1;
+            marqueeTextOne.x = 0
+            state = 2;
+            marqueeTextTwo.x = marqueeTextDummy.width
+            state = 3;
+            marqueeTextThree.x = -marqueeTextDummy.width
+        }
     }
     Text {
         id: marqueeTextOne
@@ -163,7 +182,7 @@ Item {
         }
         font {
             bold: true
-            pixelSize: 0
+            pixelSize: fontSize
             family: "Sans"
         }
         renderType: Text.QtRendering
@@ -195,7 +214,7 @@ Item {
         }
         font {
             bold: true
-            pixelSize: 0
+            pixelSize: fontSize
             family: "Sans"
         }
         renderType: Text.QtRendering
@@ -227,7 +246,7 @@ Item {
         }
         font {
             bold: true
-            pixelSize: 0
+            pixelSize: fontSize
             family: "Sans"
         }
         renderType: Text.QtRendering
@@ -253,7 +272,7 @@ Item {
         visible: false
         font {
             bold: true
-            pixelSize: 0
+            pixelSize: fontSize
             family: "Sans"
         }
         renderType: Text.QtRendering
