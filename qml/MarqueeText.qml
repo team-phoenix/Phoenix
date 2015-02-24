@@ -1,107 +1,261 @@
 import QtQuick 2.4
 
 Item {
-    // Make the qml runtime constantly check parent's width so it changes as the grid gets resized
-    width: running ? parent.width : parent.width;
-    height: marqueeText.height + padding;
-    clip: true;
-
-    property string text: "Error!";
+    property string text: "Error!"
     property int padding : 10
     property int fontSize : 11
     property int interval : 100
-    property color textColor: "black";
-    property bool running: false;
-    property int textSeparation: 40;
-    property int displacement: 10;
+    property color textColor: "black"
+    property bool running: false
+    property int textSeparation: 40
+    property int delta: 10
+    property int animationDuration: 200
+
+    // Will the rendered text fit completely inside its box?
+    property bool narrow: marqueeTextDummy.width < parent.width
+
+    // Range: 0 to parent.width
+    // Does not apply to narrow text
+    property int displacement: 0
+
+    // 123, 231, or 312
+    // State represents the leftmost text
+    // Current center text is ( state + 1 ) % 3
+    property int state: 3
+
+    // Keep the parent's width constantly checked so this Item's width changes as the grid gets resized
+    width: parent.width
+    height: marqueeTextDummy.height + padding
+    clip: true
 
     Timer {
-        id: timer;
+        id: timer
         interval: parent.interval
-        onTriggered: parent.moveMarquee();
+        onTriggered: moveMarquee()
+        repeat: true
 
         // Only scroll if this text is wider than its parent
-        running: marqueeTextDuplicate.width > parent.width ? ( parent.running ) : false;
-
-        repeat: true;
+        running: narrow ? false : parent.running
     }
 
     function moveMarquee() {
-        marqueeText.width = marqueeTextDuplicate.width;
-        if( ( marqueeText.x + marqueeTextDuplicate.width + textSeparation ) < 0 ) {
-            marqueeText.x = 0;
+
+        displacement += delta
+
+        switch( state ) {
+        case 1:
+            marqueeTextOne.x = marqueeTextDummy.width
+            marqueeTextTwo.x = - displacement
+            marqueeTextThree.x = marqueeTextDummy.width - displacement + textSeparation
+            break
+        case 2:
+            marqueeTextTwo.x = marqueeTextDummy.width
+            marqueeTextThree.x = - displacement
+            marqueeTextOne.x = marqueeTextDummy.width - displacement + textSeparation
+            break
+        case 3:
+            marqueeTextThree.x = marqueeTextDummy.width
+            marqueeTextOne.x = - displacement
+            marqueeTextTwo.x = marqueeTextDummy.width - displacement + textSeparation
+            break
+        default:
+            break
         }
-        marqueeText.x -= displacement;
+
+        // Time for a state change
+        if( displacement > marqueeTextDummy.width + textSeparation ) {
+            state = ( state % 3 ) + 1
+            displacement = 0;
+        }
+
+    }
+
+    Component.onCompleted: recalculate()
+
+    // Wait for animation to finish before adding ...
+    Timer {
+        id: marqueeTimer
+        interval: animationDuration
+        onTriggered: {
+            marqueeTextThree.width = parent.width
+            marqueeTextOne.width = parent.width
+            marqueeTextTwo.width = parent.width
+        }
+        repeat: false
+        running: !narrow
+    }
+
+    function recalculate() {
+        if( narrow ) {
+            marqueeTextOne.width = marqueeTextDummy.width
+            marqueeTextTwo.width = marqueeTextDummy.width
+            marqueeTextThree.width = marqueeTextDummy.width
+        }
+
+        // Resize center text when not moused over and only if wider
+        // than parent to parent's width so elipses will get drawn
+        else if ( !running ) {
+            marqueeTimer.restart()
+            // Follow the shortest path back to left side
+            if( displacement > marqueeTextDummy.width / 2 ){
+                switch( state ) {
+                case 1:
+                    marqueeTextOne.x = marqueeTextDummy.width
+                    marqueeTextTwo.x = -marqueeTextDummy.width
+                    marqueeTextThree.x = 0
+                    break
+                case 2:
+                    marqueeTextTwo.x = marqueeTextDummy.width
+                    marqueeTextThree.x = -marqueeTextDummy.width
+                    marqueeTextOne.x = 0
+                    break
+                case 3:
+                    marqueeTextThree.x = marqueeTextDummy.width
+                    marqueeTextOne.x = -marqueeTextDummy.width
+                    marqueeTextTwo.x = 0
+                    break
+                }
+                displacement = 0
+                state = ( state % 3 ) + 1
+            }
+            else {
+                switch( state ) {
+                case 1:
+                    marqueeTextOne.x = marqueeTextDummy.width
+                    marqueeTextTwo.x = 0
+                    marqueeTextThree.x = marqueeTextDummy.width
+                    break
+                case 2:
+                    marqueeTextTwo.x = marqueeTextDummy.width
+                    marqueeTextThree.x = 0
+                    marqueeTextOne.x = marqueeTextDummy.width
+                    break
+                case 3:
+                    marqueeTextThree.x = marqueeTextDummy.width
+                    marqueeTextOne.x = 0
+                    marqueeTextTwo.x = marqueeTextDummy.width
+                    break
+                }
+                displacement = 0
+            }
+        }
     }
 
     onRunningChanged: {
-        // On mouse exit, make the titles that are wide enough to marquee the same width as their parent so elides work
-        if( running == false ){
-            if( ( marqueeTextDuplicate.width > parent.width ) ){
-                marqueeText.width = parent.width;
-                marqueeText.x = 0;
-            }
-        }
+        marqueeTextOne.width = marqueeTextDummy.width
+        marqueeTextTwo.width = marqueeTextDummy.width
+        marqueeTextThree.width = marqueeTextDummy.width
+        marqueeTimer.interval = animationDuration
+        recalculate()
     }
     onWidthChanged: {
-        // On resize, recalculate if elides should be drawn, setting it by messing with the text's width
-        if( running == false ){
-            if( ( marqueeTextDuplicate.width > parent.width ) ){
-                marqueeText.width = parent.width;
-                marqueeText.x = 0;
-            }
-            else {
-                marqueeText.width = marqueeTextDuplicate.width;
-            }
-        }
+        marqueeTimer.interval = 5
+        recalculate()
     }
-
     Text {
-        id: marqueeText
-        anchors.verticalCenter: parent.verticalCenter
+        id: marqueeTextOne
         color: parent.textColor
         text: parent.text
         anchors {
+            verticalCenter: parent.verticalCenter
             // Unlock the anchor if wider than the viewport so it'll stick to the left ( x = 0 )
-            horizontalCenter: marqueeTextDuplicate.width > parent.width ? undefined : parent.horizontalCenter;
+            horizontalCenter: narrow ? parent.horizontalCenter : undefined
         }
         font {
-            bold: true;
-            pixelSize: 0;
-            family: "Sans";
+            bold: true
+            pixelSize: 0
+            family: "Sans"
         }
-        renderType: Text.QtRendering;
+        renderType: Text.QtRendering
 
         // Shouldn't be necessary, but won't work right without the check
-        elide: parent.running ? Text.ElideRight : Text.ElideRight;
+        elide: parent.running ? Text.ElideRight : Text.ElideRight
 
         Behavior on x {
             PropertyAnimation {
                 easing {
-                    type: Easing.Linear;
+                    type: Easing.Linear
                 }
                 // Once marqueeTextDuplicate occupies the same position as the original
-                // marqueeText did ( x = 0 ), don't smooth the animation anymore; teleport the text back
-                duration: ( marqueeText.x + marqueeTextDuplicate.width + textSeparation < 0 ) ? 0 : 100;
+                // marqueeText did ( x = 0 ), don't smooth the animation anymore teleport the text back
+                duration: state == 1 ? 0 : animationDuration
+            }
+        }
+    }
+    Text {
+        id: marqueeTextTwo
+        color: parent.textColor
+        text: parent.text
+        x: marqueeTextDummy.width
+        visible: !narrow
+        anchors {
+            verticalCenter: parent.verticalCenter
+            // Unlock the anchor if wider than the viewport so it'll stick to the left ( x = 0 )
+            horizontalCenter: narrow ? parent.horizontalCenter : undefined
+        }
+        font {
+            bold: true
+            pixelSize: 0
+            family: "Sans"
+        }
+        renderType: Text.QtRendering
+
+        // Shouldn't be necessary, but won't work right without the check
+        elide: parent.running ? Text.ElideRight : Text.ElideRight
+
+        Behavior on x {
+            PropertyAnimation {
+                easing {
+                    type: Easing.Linear
+                }
+                // Once marqueeTextDuplicate occupies the same position as the original
+                // marqueeText did ( x = 0 ), don't smooth the animation anymore teleport the text back
+                duration: state == 2 ? 0 : animationDuration
+            }
+        }
+    }
+    Text {
+        id: marqueeTextThree
+        color: parent.textColor
+        text: parent.text
+        x: marqueeTextDummy.width
+        visible: !narrow
+        anchors {
+            verticalCenter: parent.verticalCenter
+            // Unlock the anchor if wider than the viewport so it'll stick to the left ( x = 0 )
+            horizontalCenter: narrow ? parent.horizontalCenter : undefined
+        }
+        font {
+            bold: true
+            pixelSize: 0
+            family: "Sans"
+        }
+        renderType: Text.QtRendering
+
+        // Shouldn't be necessary, but won't work right without the check
+        elide: parent.running ? Text.ElideRight : Text.ElideRight
+
+        Behavior on x {
+            PropertyAnimation {
+                easing {
+                    type: Easing.Linear
+                }
+                // Once marqueeTextDuplicate occupies the same position as the original
+                // marqueeText did ( x = 0 ), don't smooth the animation anymore teleport the text back
+                duration: state == 3 ? 0 : animationDuration
             }
         }
     }
 
     Text {
-        id: marqueeTextDuplicate
-        anchors.verticalCenter: parent.verticalCenter
-        color: parent.textColor
+        id: marqueeTextDummy
         text: parent.text
-        x: running ? marqueeText.x + marqueeText.width + textSeparation : parent.width
-        visible: ( width > parent.width ) && running
-        anchors {
-            horizontalCenter: running ? undefined : parent.right;
-        }
+        visible: false
         font {
-            bold: true;
+            bold: true
             pixelSize: 0
-            family: "Sans";
+            family: "Sans"
         }
-        renderType: Text.QtRendering;
+        renderType: Text.QtRendering
     }
 }
