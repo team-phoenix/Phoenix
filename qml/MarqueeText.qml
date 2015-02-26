@@ -20,10 +20,11 @@ Item {
 
     // 123, 231, or 312
     // State represents the leftmost text
+    // Leftmost text always not visible for the duration of the state
+    // Doesn't matter how it looks during this period
     // Current center text is ( state + 1 ) % 3
     property int state: 3
 
-    // Keep the parent's width constantly checked so this Item's width changes as the grid gets resized
     width: parent.width
     height: marqueeTextDummy.height + padding
     clip: true
@@ -39,6 +40,9 @@ Item {
     }
 
     function moveMarquee() {
+
+        // No more ...
+        textFullSize()
 
         displacement += delta
 
@@ -62,10 +66,10 @@ Item {
             break
         }
 
-        // Time for a state change
+        // Time for a state change?
         if( displacement > marqueeTextDummy.width + textSeparation ) {
             state = ( state % 3 ) + 1
-            displacement = 0;
+            displacement = 0
         }
 
     }
@@ -76,21 +80,27 @@ Item {
     Timer {
         id: marqueeTimer
         interval: animationDuration
-        onTriggered: {
-            marqueeTextOne.width = parent.width
-            marqueeTextTwo.width = parent.width
-            marqueeTextThree.width = parent.width
-        }
+        onTriggered: textClipped()
         repeat: false
         running: !narrow
     }
 
+    // Make text width as wide as the text actually is
+    function textFullSize() {
+        marqueeTextOne.width = marqueeTextDummy.width
+        marqueeTextTwo.width = marqueeTextDummy.width
+        marqueeTextThree.width = marqueeTextDummy.width
+    }
+
+    // Make text width the width of the parent
+    function textClipped() {
+        marqueeTextOne.width = parent.width
+        marqueeTextTwo.width = parent.width
+        marqueeTextThree.width = parent.width
+    }
+
     function recalculate() {
-        if( narrow ) {
-            marqueeTextOne.width = marqueeTextDummy.width
-            marqueeTextTwo.width = marqueeTextDummy.width
-            marqueeTextThree.width = marqueeTextDummy.width
-        }
+        if( narrow ) textFullSize()
 
         // Resize center text when not moused over and only if wider
         // than parent to parent's width so elipses will get drawn
@@ -114,6 +124,8 @@ Item {
                     marqueeTextOne.x = -marqueeTextDummy.width
                     marqueeTextTwo.x = 0
                     break
+                default:
+                    break
                 }
                 displacement = 0
                 state = ( state % 3 ) + 1
@@ -135,42 +147,54 @@ Item {
                     marqueeTextOne.x = 0
                     marqueeTextTwo.x = marqueeTextDummy.width
                     break
+                default:
+                    break
                 }
                 displacement = 0
             }
         }
     }
 
+    // Sometimes onWidthChanged is not fired
+    function widthChangedHandler() {
+        if( narrow ) {
+            textFullSize()
+            state = 1
+            marqueeTextOne.x = 0
+            state = 2
+            marqueeTextTwo.x = marqueeTextDummy.width
+            state = 3
+            marqueeTextThree.x = -marqueeTextDummy.width
+        }
+        // Reset to state 3
+        else {
+            textClipped()
+            state = 1
+            marqueeTextOne.x = 0
+            state = 2
+            marqueeTextTwo.x = marqueeTextDummy.width
+            state = 3
+            marqueeTextThree.x = marqueeTextDummy.width
+        }
+        displacement = 0
+    }
+
+    Timer {
+        interval: 1000
+        repeat: false
+        running: !marqueeTimer.running
+        onTriggered: widthChangedHandler()
+    }
+
+    onWidthChanged: {
+        widthChangedHandler()
+    }
+
     onRunningChanged: {
-        marqueeTextOne.width = marqueeTextDummy.width
-        marqueeTextTwo.width = marqueeTextDummy.width
-        marqueeTextThree.width = marqueeTextDummy.width
+        textFullSize()
         recalculate()
     }
-    onWidthChanged: {
-        if( narrow ) {
-            marqueeTextOne.width = marqueeTextDummy.width
-            marqueeTextTwo.width = marqueeTextDummy.width
-            marqueeTextThree.width = marqueeTextDummy.width
-            state = 1;
-            marqueeTextOne.x = 0
-            state = 2;
-            marqueeTextTwo.x = marqueeTextDummy.width
-            state = 3;
-            marqueeTextThree.x = -marqueeTextDummy.width
-        }
-        else {
-            marqueeTextOne.width = parent.width
-            marqueeTextTwo.width = parent.width
-            marqueeTextThree.width = parent.width
-            state = 1;
-            marqueeTextOne.x = 0
-            state = 2;
-            marqueeTextTwo.x = marqueeTextDummy.width
-            state = 3;
-            marqueeTextThree.x = -marqueeTextDummy.width
-        }
-    }
+
     Text {
         id: marqueeTextOne
         color: parent.textColor
@@ -265,7 +289,6 @@ Item {
             }
         }
     }
-
     Text {
         id: marqueeTextDummy
         text: parent.text
