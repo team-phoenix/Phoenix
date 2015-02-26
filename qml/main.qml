@@ -816,8 +816,6 @@ PhoenixWindow {
                     }
                     onExited:  backdropGrid.showBorder = false;
                 }
-
-
             }
 
             StackView {
@@ -838,7 +836,20 @@ PhoenixWindow {
                     bottom: parent.bottom;
                 }
 
+                InputIndicator {
+                    z: 100;
+                    id: inputIndicator;
+                    visible: false;
+                    anchors {
+                        left: parent.left;
+                        top: parent.top;
+                        topMargin: 12;
+                        leftMargin: 12;
+                    }
 
+                    height: 50;
+                    width: height;
+                }
 
             }
 

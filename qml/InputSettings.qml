@@ -95,11 +95,30 @@ Item {
                         ListElement {player: "Player 3"; selected: false; curvature: 0; port: 2}
                         ListElement {player: "Player 4"; selected: false; curvature: 3; port: 3}
                     }*/
-                    onCurrentIndexChanged: {
+
+                    function updateDevices()
+                    {
+                        console.log(currentIndex  + ", " + inputmanager.count);
                         inputSettings.currentDevice = inputmanager.getDevice(currentIndex);
                         inputSettings.currentMapping = inputmanager.mappingForPort(currentIndex);
                         mappingmodel.setDeviceMap(inputmanager.mappingForPort(currentIndex));
                         inputSettings.currentPort = currentIndex;
+                    }
+
+                    onCurrentIndexChanged: {
+                        if (inputmanager.count > 0 && currentIndex < inputmanager.count) {
+                            listView.updateDevices();
+                        }
+                    }
+
+
+
+                    Connections {
+                        target: inputmanager;
+                        onCountChanged: {
+                            inputmanager.updateModel();
+                            listView.updateDevices();
+                        }
                     }
 
                     delegate: PhoenixNormalButton {
@@ -154,10 +173,12 @@ Item {
                 text: "Configure All";
                 implicitWidth: 100;
                 onClicked: {
-                    gridView.currentIndex = 0;
-                    inputMapper.walkthroughCount = 0;
-                    inputMapper.setupWalkthrough = false;
-                    inputMapper.setupWalkthrough = true;
+                    if (inputmanager.count > 0) {
+                        gridView.currentIndex = 0;
+                        inputMapper.walkthroughCount = 0;
+                        inputMapper.setupWalkthrough = false;
+                        inputMapper.setupWalkthrough = true;
+                    }
                 }
             }
         }
@@ -229,9 +250,6 @@ Item {
                         width: 225;
                         property bool overrideFocus: false;
                         property alias buttonField: textField;
-
-
-
 
                         function keyReceived(ev, value) {
                             console.log("key pressed")

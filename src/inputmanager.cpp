@@ -25,6 +25,11 @@ InputManager::~InputManager() {
     devices.clear();
 }
 
+int InputManager::count()
+{
+    return devices.length();
+}
+
 QVariantList InputManager::enumerateDevices() {
     QVariantList devices;
     devices.append( Keyboard::enumerateDevices() );
@@ -141,7 +146,7 @@ void InputManager::scanJoysticks() {
     if( joysticks == 0 ) {
         message = "No controllers were found.";
     } else {
-        message = joysticks + "Controllers Found.";
+        message = QString::number(joysticks) + " Controllers Found.";
     }
 
     qCDebug( phxInput ) << message;
@@ -156,6 +161,8 @@ void InputManager::scanDevices() {
     for( int i = 0; i < devices.length(); ++i ) {
         devices.at( i )->moveToThread( this->thread() );
     }
+
+    emit countChanged();
 
     // NOTES: some of the buttons in joystick.cpp line 216 aren't having proper values.
 }
@@ -201,15 +208,16 @@ void InputManager::attachDevices() {
 }
 
 void InputManager::removeDevices() {
-    for( int i = 0; i < devices.length(); ++i ) {
-        InputDevice *device = devices.at( i );
+    for(auto *device : devices) {
 
         if( device == nullptr ) {
             break;
         }
 
-        top_window->removeEventFilter( device );
-        settings_window->removeEventFilter( device );
+        if (top_window && settings_window) {
+            top_window->removeEventFilter( device );
+            settings_window->removeEventFilter( device );
+        }
 
     }
 }

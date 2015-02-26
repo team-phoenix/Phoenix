@@ -13,7 +13,8 @@
 
 
 class InputManager : public QObject {
-        Q_OBJECT
+    Q_OBJECT
+    Q_PROPERTY(int count READ count NOTIFY countChanged)
 
     public:
         InputManager();
@@ -44,16 +45,19 @@ class InputManager : public QObject {
         bool swap(int index, int index_2);
         void setContext(QQmlContext *context);
         void updateModel();
+        int count();
 
     signals:
         void label( QString );
         void updateChanged();
+        void countChanged();
 
     private:
         QList<InputDevice *> devices;
         QWindow *top_window;
         QWindow *settings_window;
         QQmlContext *m_context;
+
 };
 
 #endif
