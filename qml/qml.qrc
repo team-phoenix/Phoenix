@@ -29,6 +29,6 @@
         <file>TextGradient.qml</file>
         <file>DynamicImage.qml</file>
         <file>MarqueeText.qml</file>
-		<file>InputIndicator.qml</file>        
+        <file>InputIndicator.qml</file>
     </qresource>
 </RCC>
