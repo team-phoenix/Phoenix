@@ -6,7 +6,7 @@ Item  {
 
 
     property bool imageVisible: image.visible && image.status === Image.Ready;
-    property alias artwork: image;
+    property alias artworkImage: image;
 
     RectangularGlow {
         visible: index !== gridView.currentIndex && parent.imageVisible && !gridItem.itemDeleted;
@@ -114,7 +114,7 @@ Item  {
 
         MarqueeText {
             id: titleLabel;
-            text: gridItem.titleName;
+            text: title;
             anchors.horizontalCenter: parent.horizontalCenter;
             width: parent.width;
             textColor: "#f1f1f1";
@@ -132,7 +132,7 @@ Item  {
                 right: parent.right;
             }
 
-            text: gridItem.systemName;
+            text: system;
             color: "#f1f1f1";
             font {
                 pixelSize: 10;
