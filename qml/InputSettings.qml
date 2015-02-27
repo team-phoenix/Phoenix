@@ -101,7 +101,7 @@ Item {
                     function updateDevices()
                     {
                         inputSettings.currentDevice = inputmanager.getDevice(currentIndex);
-                        inputSettings.currentMapping = inputmanager.mappingForPort(currentIndex);
+                        inputSettings.currentMapping = inputSettings.currentDevice.mapping();
                         inputSettings.currentPort = currentIndex;
                     }
 
@@ -154,24 +154,6 @@ Item {
             }
 
             spacing: 15;
-
-            /*ComboBox {
-                id: devicesBox;
-                width: 125;
-                model: inputmanager.enumerateDevices();
-                property int previousIndex: -1;
-                onCurrentIndexChanged: {
-                    if (previousIndex === -1)
-                        previousIndex = currentIndex;
-                    //else
-                        //inputmanager.swap(previousIndex, index);
-                    console.log("previousIndex: " + previousIndex + " and current: " + currentIndex)
-
-                    inputSettings.currentMapping = inputmanager.mappingForPort(currentIndex);
-                    mappingmodel.setDeviceMap(inputmanager.mappingForPort(currentIndex));
-                }
-
-            }*/
 
             PhoenixNormalButton {
                 text: "Configure All";
@@ -253,26 +235,6 @@ Item {
                         ListElement {retroId: 15; button: "R3";}
                     }
 
-                    /*
-    { RETRO_DEVICE_ID_JOYPAD_B, "joypad_b" },
-    { RETRO_DEVICE_ID_JOYPAD_Y, "joypad_y" },
-    { RETRO_DEVICE_ID_JOYPAD_SELECT, "joypad_select" },
-    { RETRO_DEVICE_ID_JOYPAD_START, "joypad_start" },
-    { RETRO_DEVICE_ID_JOYPAD_UP, "joypad_up" },
-    { RETRO_DEVICE_ID_JOYPAD_DOWN, "joypad_down" },
-    { RETRO_DEVICE_ID_JOYPAD_LEFT, "joypad_left" },
-    { RETRO_DEVICE_ID_JOYPAD_RIGHT, "joypad_right" },
-    { RETRO_DEVICE_ID_JOYPAD_A, "joypad_a" },
-    { RETRO_DEVICE_ID_JOYPAD_X, "joypad_x" },
-    { RETRO_DEVICE_ID_JOYPAD_L, "joypad_l" },
-    { RETRO_DEVICE_ID_JOYPAD_R, "joypad_r" },
-    { RETRO_DEVICE_ID_JOYPAD_L2, "joypad_l2" },
-    { RETRO_DEVICE_ID_JOYPAD_R2, "joypad_r2" },
-    { RETRO_DEVICE_ID_JOYPAD_L3, "joypad_l3" },
-    { RETRO_DEVICE_ID_JOYPAD_R3, "joypad_r3" },
-                      */
-                           //inputSettings.currentMapping.qmlModel();
-
                     Timer {
                         id: textFieldTimer;
                         interval: 500;
@@ -292,9 +254,6 @@ Item {
                         property bool overrideFocus: false;
                         property alias buttonField: textField;
                         property string event: inputSettings.currentMapping.getMappingByRetroId(retroId);
-                        //onEventChanged: {
-                            //console.log("event: " + event);
-                        //}
 
                         function keyReceived(ev, value) {
                             if (value) {
