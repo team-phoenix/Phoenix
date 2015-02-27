@@ -88,6 +88,8 @@ Item {
                     height: currentItem.height;
                     interactive: false;
 
+                    Component.onCompleted: updateDevices();
+
                     model: inputmanager.enumerateDevices();
                     /* ListModel {
                         ListElement {player: "Player 1"; selected: true; curvature: 3; port: 0}
@@ -98,15 +100,17 @@ Item {
 
                     function updateDevices()
                     {
-                        console.log(currentIndex  + ", " + inputmanager.count);
                         inputSettings.currentDevice = inputmanager.getDevice(currentIndex);
                         inputSettings.currentMapping = inputmanager.mappingForPort(currentIndex);
-                        mappingmodel.setDeviceMap(inputmanager.mappingForPort(currentIndex));
                         inputSettings.currentPort = currentIndex;
                     }
 
+                    currentIndex: 0;
+
                     onCurrentIndexChanged: {
                         if (inputmanager.count > 0 && currentIndex < inputmanager.count) {
+                            if (currentIndex > 0 && inputSettings.currentDevice !== undefined)
+                                inputSettings.currentDevice.inputEventReceived.disconnect(gridView.currentItem.keyReceived);
                             listView.updateDevices();
                         }
                     }
@@ -230,7 +234,44 @@ Item {
                     cellHeight: 40;
                     cellWidth: 175;
                     flow: GridView.TopToBottom;
-                    model: mappingmodel.model();
+                    model: ListModel {
+                        ListElement {retroId: 8; button: "A";}
+                        ListElement {retroId: 0; button: "B";}
+                        ListElement {retroId: 9; button: "X";}
+                        ListElement {retroId: 1; button: "Y";}
+                        ListElement {retroId: 2; button: "Select";}
+                        ListElement {retroId: 3; button: "Start";}
+                        ListElement {retroId: 4; button: "Up";}
+                        ListElement {retroId: 5; button: "Down";}
+                        ListElement {retroId: 6; button: "Left";}
+                        ListElement {retroId: 7; button: "Right";}
+                        ListElement {retroId: 10; button: "L";}
+                        ListElement {retroId: 11; button: "R";}
+                        ListElement {retroId: 12; button: "L2";}
+                        ListElement {retroId: 13; button: "R2";}
+                        ListElement {retroId: 14; button: "L3";}
+                        ListElement {retroId: 15; button: "R3";}
+                    }
+
+                    /*
+    { RETRO_DEVICE_ID_JOYPAD_B, "joypad_b" },
+    { RETRO_DEVICE_ID_JOYPAD_Y, "joypad_y" },
+    { RETRO_DEVICE_ID_JOYPAD_SELECT, "joypad_select" },
+    { RETRO_DEVICE_ID_JOYPAD_START, "joypad_start" },
+    { RETRO_DEVICE_ID_JOYPAD_UP, "joypad_up" },
+    { RETRO_DEVICE_ID_JOYPAD_DOWN, "joypad_down" },
+    { RETRO_DEVICE_ID_JOYPAD_LEFT, "joypad_left" },
+    { RETRO_DEVICE_ID_JOYPAD_RIGHT, "joypad_right" },
+    { RETRO_DEVICE_ID_JOYPAD_A, "joypad_a" },
+    { RETRO_DEVICE_ID_JOYPAD_X, "joypad_x" },
+    { RETRO_DEVICE_ID_JOYPAD_L, "joypad_l" },
+    { RETRO_DEVICE_ID_JOYPAD_R, "joypad_r" },
+    { RETRO_DEVICE_ID_JOYPAD_L2, "joypad_l2" },
+    { RETRO_DEVICE_ID_JOYPAD_R2, "joypad_r2" },
+    { RETRO_DEVICE_ID_JOYPAD_L3, "joypad_l3" },
+    { RETRO_DEVICE_ID_JOYPAD_R3, "joypad_r3" },
+                      */
+                           //inputSettings.currentMapping.qmlModel();
 
                     Timer {
                         id: textFieldTimer;
@@ -250,34 +291,25 @@ Item {
                         width: 225;
                         property bool overrideFocus: false;
                         property alias buttonField: textField;
+                        property string event: inputSettings.currentMapping.getMappingByRetroId(retroId);
+                        //onEventChanged: {
+                            //console.log("event: " + event);
+                        //}
 
                         function keyReceived(ev, value) {
-                            console.log("key pressed")
-
                             if (value) {
-
                                 var event = inputmanager.variantToString(ev);
-                                if (mappingmodel.collisionDetected(event, index)) {
+                                if (!inputSettings.currentMapping.remap(ev, retroId, inputSettings.currentPort)) {
                                     textField.state = "collision";
                                     textFieldTimer.start();
                                     return;
                                 }
 
-
-
                                 inputMapper.waitingUpdate = false;
-                                modelData.updating = false;
-                                //var list = event.split("[");
-                                modelData.deviceEvent = event //list.length <= 1 ? event : list[1].replace("]", "");
-
                                 inputSettings.currentDevice.inputEventReceived.disconnect(keyReceived);
-                                mappingmodel.saveModel(devicesBox.currentIndex);
-                                console.log(modelData.deviceEvent + " was set! ");
 
+                                gridItem.event = event;
                                 textField.state = "normal";
-
-                                inputSettings.currentDevice.deleteEventPtr(ev);
-
 
                                 if (inputMapper.setupWalkthrough) {
                                     inputMapper.walkthroughCount += 1;
@@ -299,12 +331,9 @@ Item {
                             textField.state = "waiting";
 
 
-                            modelData.updating = true;
-                            console.log("Changing mapping for " + modelData.deviceEvent + " on device: " + inputSettings.currentDevice.deviceName());
+                            console.log("Changing mapping for " + gridItem.event + " on device: " + inputSettings.currentDevice.deviceName());
                             inputSettings.currentDevice.inputEventReceived.connect(gridItem.keyReceived);
                         }
-
-
 
                         onOverrideFocusChanged: {
                             if (overrideFocus) {
@@ -314,7 +343,7 @@ Item {
 
                         Text {
                             renderType: Text.QtRendering;
-                            text: modelData !== null ? inputSettings.currentMapping.getGamepadName(modelData.retroID) + ":" : "";
+                            text: button;
                             anchors {
                                 right: textField.left;
                                 verticalCenter: parent.verticalCenter;
@@ -338,6 +367,19 @@ Item {
                             radius: 3;
                             renderType: Text.QtRendering;
                             textColor: "#f1f1f1";
+                            text: gridItem.event;
+                            horizontalAlignment: Text.AlignHCenter;
+
+                            anchors {
+                                verticalCenter: parent.verticalCenter;
+                                right: parent.right;
+                                rightMargin: 50;
+                            }
+
+                            font {
+                                family: "Sans";
+                                pixelSize: 11;
+                            }
 
                             Component.onCompleted: state = "normal";
 
@@ -396,27 +438,13 @@ Item {
 
                             ]
 
-                            text: modelData !== null ? (modelData.updating ? "Waiting..." : modelData.deviceEvent) : "";
-
-                            anchors {
-                                verticalCenter: parent.verticalCenter;
-                                right: parent.right;
-                                rightMargin: 50;
-                            }
-
-                            horizontalAlignment: Text.AlignHCenter;
-                            font {
-                                family: "Sans";
-                                pixelSize: 11;
-                            }
-
                             MouseArea {
                                 id: buttonMouseArea;
                                 anchors.fill: parent;
                                 onClicked: {
                                     if (textFieldTimer.running)
                                         textFieldTimer.stop();
-
+                                    console.log("shoudl update");
                                     gridView.currentIndex = index;
                                     gridItem.startUpdate();
                                 }

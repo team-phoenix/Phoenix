@@ -23,19 +23,23 @@ class InputDevice : public QObject {
 
         virtual ~InputDevice();
 
-        int16_t state( retro_device_id id ) const {
+        int16_t state( retro_device_id id ) const
+        {
             QMutexLocker lock( &ids_state_mutex );
             return ids_state.value( id, 0 );
         }
 
     signals:
-        void inputEventReceived( InputDeviceEvent *ev, int16_t value );
+        void inputEventReceived(InputDeviceEvent *ev, int16_t value);
+        void deviceAdded(InputDevice *device);
 
     public slots:
-        QString deviceName() const {
+        QString deviceName() const
+        {
             return device_name;
         }
-        InputDeviceMapping *mapping() const {
+        InputDeviceMapping *mapping()
+        {
             return m_mapping;
         }
 
@@ -43,7 +47,8 @@ class InputDevice : public QObject {
 
     protected:
         void setDeviceName( const char *new_name );
-        void setState( retro_device_id id, int16_t state ) {
+        void setState( retro_device_id id, int16_t state )
+        {
             QMutexLocker lock( &ids_state_mutex );
             ids_state[id] = state;
         }

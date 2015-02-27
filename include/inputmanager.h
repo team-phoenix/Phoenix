@@ -15,6 +15,8 @@
 class InputManager : public QObject {
     Q_OBJECT
     Q_PROPERTY(int count READ count NOTIFY countChanged)
+    Q_PROPERTY(bool attachDevices READ attachDevices WRITE setAttachDevices NOTIFY attachDevicesChanged)
+    Q_PROPERTY(bool findingDevices READ findingDevices WRITE setFindingDevices NOTIFY findingDevicesChanged)
 
     public:
         InputManager();
@@ -24,6 +26,11 @@ class InputManager : public QObject {
 
         QList<InputDevice *> getDevices() const;
 
+        bool attachDevices() const;
+        bool findingDevices() const;
+        void setFindingDevices(bool findDevices);
+        void setAttachDevices(bool attachDevices);
+
     public slots:
         void scanDevicesAsync();
         void scanDevices();
@@ -32,14 +39,14 @@ class InputManager : public QObject {
 
         QVariantList enumerateDevices();
         // return empty mapping for device
-        InputDeviceMapping *mappingForDevice( QVariantMap device );
+        InputDeviceMapping *mappingForDevice(QVariantMap device);
 
         // load existing mapping for designated port from settings
-        InputDeviceMapping *mappingForPort( unsigned port );
+        InputDeviceMapping *mappingForPort(unsigned port);
 
-        InputDevice *getDevice( unsigned port ) const;
+        InputDevice *getDevice(unsigned port) const;
 
-        void attachDevices();
+        void handleAttachDevices();
         void removeDevices();
         QString variantToString(QVariant event);
         bool swap(int index, int index_2);
@@ -51,12 +58,17 @@ class InputManager : public QObject {
         void label( QString );
         void updateChanged();
         void countChanged();
+        void attachDevicesChanged();
+        void findingDevicesChanged();
 
     private:
         QList<InputDevice *> devices;
         QWindow *top_window;
         QWindow *settings_window;
         QQmlContext *m_context;
+
+        bool m_attach_devices;
+        bool m_finding_devices;
 
 };
 

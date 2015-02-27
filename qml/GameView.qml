@@ -46,7 +46,12 @@ Rectangle {
     Component.onCompleted: {
         root.itemInView = "game";
         root.gameShowing = true;
-        inputmanager.attachDevices();
+        if (!inputmanager.findingDevices) {
+            inputmanager.attachDevices = true;
+        }
+        else {
+            inputmanager.countChanged.connect(inputmanager.handleAttachDevices);
+        }
         checkVisibility(visible);
     }
 
@@ -54,7 +59,10 @@ Rectangle {
 
     Component.onDestruction:  {
         root.gameShowing = false;
-        inputmanager.removeDevices();
+        if (!inputmanager.findDevices)
+            inputmanager.attachDevices = false;
+        else
+            inputmanager.countChanged.connect(inputmanager.removeDevices);
     }
 
     function timerEffects() {

@@ -91,7 +91,6 @@ Rectangle {
             id: gridView;
 
             property bool checked: false;
-            property bool holdItem: false;
             property bool indexUpdated: false;
             property bool animateHighlighter: false;
             property int cacheLimit: 6;
@@ -100,7 +99,7 @@ Rectangle {
             property bool shrink: false;
             property int queuedIndex: 0;
             property int cacheIndex: 0;
-            property var moveCurrentDirection;
+            property var moveCurrentDirection: -1;
 
             //cacheBuffer: 10;
             onCurrentIndexChanged: animateHighlighter = true;
@@ -141,7 +140,8 @@ Rectangle {
             model: phoenixLibrary.model();
             highlightFollowsCurrentItem: false;
 
-            currentIndex: 2;
+            currentIndex: 0;
+            property bool showRightClickMenu: false;
 
 
             highlight: Item {
@@ -182,8 +182,8 @@ Rectangle {
                 Rectangle {
                     id: realHighlighter;
                     radius: 3;
-                    width: gridView.currentItem.artworkItemAlias.artwork.paintedWidth + 15;
-                    height: gridView.currentItem.artworkItemAlias.artwork.paintedHeight + 15;
+                    width: gridView.currentItem.artworkItemAlias.artworkImage.paintedWidth + 15;
+                    height: gridView.currentItem.artworkItemAlias.artworkImage.paintedHeight + 15;
                     anchors {
                         centerIn: highlighter;
                     }
@@ -212,8 +212,8 @@ Rectangle {
                                 id: growAnimation;
                                 target: realHighlighter;
 
-                                width: gridView.currentItem.artworkItemAlias.artwork.paintedWidth + 15;
-                                height: gridView.currentItem.artworkItemAlias.artwork.paintedHeight + 15;
+                                width: gridView.currentItem.artworkItemAlias.artworkImage.paintedWidth + 15;
+                                height: gridView.currentItem.artworkItemAlias.artworkImage.paintedHeight + 15;
 
                             }
                         }
@@ -276,8 +276,8 @@ Rectangle {
                             //horizontalCenterOffset: 0;
                         }
 
-                        height: gridView.currentItem.artworkItemAlias.artwork.paintedHeight + 2;
-                        width: gridView.currentItem.artworkItemAlias.artwork.paintedWidth + 2;
+                        height: gridView.currentItem.artworkItemAlias.artworkImage.paintedHeight + 2;
+                        width: gridView.currentItem.artworkItemAlias.artworkImage.paintedWidth + 2;
                         color: "white";
                         opacity: 0.35;
                         radius: 2;
@@ -302,6 +302,7 @@ Rectangle {
 
                 Rectangle {
                     color: "#4e4e4e";
+                    visible: gridView.showRightClickMenu;
                     id: dropdownMenu;
                     width: 100;
                     height: 200;
@@ -312,7 +313,6 @@ Rectangle {
                         verticalCenter: parent.verticalCenter;
                         verticalCenterOffset: 65 / gameGrid.zoomFactor;
                     }
-                    visible: gridView.currentItem.showMenu;
                     radius: 2;
                     z: 2;
 
@@ -347,12 +347,6 @@ Rectangle {
                 width: gridView.cellWidth;
                 z: index == gridView.currentIndex ? 2 : 0;
                 property bool imageLoaded: false;
-                property string imageSource: !artwork ? "qrc:/assets/No-Art.png" : artwork;
-                property string titleName: title ? title : "";
-                property string systemName: system ? system : "";
-                property string fileName: filename ? filename : "";
-                property string systemPathName: system_path ? system_path : "";
-                property bool showMenu: false;
                 property int paintedWidth: width;
                 property int paintedHeight: height;
                 property real imageProgress: 0.0;

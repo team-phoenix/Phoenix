@@ -9,11 +9,12 @@ Image {
     property real aspectRatio: paintedWidth / paintedHeight;
 
     width: gridItem.itemDeleted ? 0 : parent.width;
-    source: gridItem.imageSource;
+    source: !artwork ? "qrc:/assets/No-Art.png" : artwork;
     onStatusChanged: {
         if (status === Image.Error)
-            source = "../assets/No-Art.png";
+            source = "qrc:/assets/No-Art.png";
     }
+
 
     fillMode: Image.PreserveAspectFit;
     asynchronous: true;
@@ -42,85 +43,31 @@ Image {
         }
     }
 
-
-    ProgressBar {
-        z: 100;
-        anchors {
-            horizontalCenter: parent.horizontalCenter;
-            bottom: parent.bottom;
-            bottomMargin: 16;
-        }
-
-        visible: value !== 1.0;
-        value: gridItem.imageProgress;
-        minimumValue: 0.0;
-        maximumValue: 1.0;
-        height: 12;
-        width: parent.paintedWidth / 2 + 1;
-
-        style: ProgressBarStyle {
-            background: Rectangle {
-                radius: 2;
-                height: control.height;
-                width: control.width;
-                color: "black";
-                border {
-                    width: 1;
-                    color: "#4e4d4d";
-                }
-            }
-
-            progress: Rectangle {
-                gradient: Gradient {
-                    GradientStop {position: 0.0; color: "#cdcbcb";}
-                    GradientStop {position: 1.0; color: "#a1a1a1";}
-                }
-                border {
-                    width: 1;
-                    color: "#e6e4e4FF"
-                }
-            }
-        }
-    }
-
     MouseArea {
         id: mouseArea;
         propagateComposedEvents: true;
         anchors.fill: parent;
         hoverEnabled: true;
         enabled: true;
-        property bool containsMouse: false;
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         onEntered: parent.hovered = true;
         onExited: parent.hovered = false;
 
-        onPressed:  {
-            if (gridView.currentItem.showMenu)
-                gridView.currentItem.showMenu = false;
-
-            gridView.holdItem = pressed;
-            containsMouse = pressed;
-
-        }
-
         onDoubleClicked: {
-            root.playGame(gridView.currentItem.titleName,
-                     gridView.currentItem.systemName,
-                     gridView.currentItem.fileName,
-                     phoenixLibrary.getSystem(gridView.currentItem.systemName));
+            root.playGame(title ,system, filename, phoenixLibrary.getSystem(system));
         }
 
         onClicked: {
-            gridView.currentItem.showMenu = false;
-            gridView.shrink = true;
-            gridView.queuedIndex = index;
-
             if (mouse.button == Qt.RightButton) {
-                if (gridView.currentItem.showMenu)
-                    gridView.currentItem.showMenu = false;
+                if (gridView.showRightClickMenu)
+                    gridView.showRightClickMenu = false;
                 else
-                    gridView.currentItem.showMenu = true;
+                    gridView.showRightClickMenu = true;
             }
+            else {
+                gridView.shrink = true;
+            }
+            gridView.queuedIndex = index;
         }
     }
 }

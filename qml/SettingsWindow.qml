@@ -30,9 +30,10 @@ ApplicationWindow {
         }
     }
 
+
     onVisibleChanged: {
+        console.log("window visiblity: " + visible)
         if (visible) {
-            inputmanager.attachDevices();
             var name = stackView.currentItem.name;
             //settingsDropDown.visible = false;
             if (name === "video") {
@@ -45,6 +46,12 @@ ApplicationWindow {
             }
 
             else if (name === "input") {
+                if (!inputmanager.findingDevices) {
+                    inputmanager.attachDevices = true;
+                }
+                else {
+                    inputmanager.countChanged.connect(inputmanager.handleAttachDevices);
+                }
                 settingsWindow.height = 525;
                 settingsWindow.width = 350;
             }
@@ -56,7 +63,12 @@ ApplicationWindow {
         }
         else {
             settingsDropDown.visible = false;
-            inputmanager.removeDevices();
+            console.log("find devices: " + inputmanager.findingDevices)
+            if (!inputmanager.findingDevices)
+                inputmanager.attachDevices = false;
+            else
+                inputmanager.countChanged.connect(inputmanager.removeDevices);
+            //inputmanager.removeDevices();
         }
     }
 

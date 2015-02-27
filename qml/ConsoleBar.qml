@@ -11,7 +11,6 @@ Rectangle {
 
     property real progressValue: phoenixLibrary.progress;
     property string progressText: phoenixLibrary.label;
-
     property alias list: listView;
 
     Row {

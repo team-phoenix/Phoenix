@@ -237,7 +237,6 @@ bool Joystick::joystickButtonChanged( const SDL_Event *event ) {
 }
 
 bool Joystick::handleSDLEvent( const SDL_Event *event ) {
-
     switch( event->type ) {
         case SDL_CONTROLLERDEVICEADDED:
         case SDL_JOYDEVICEADDED:
@@ -262,7 +261,7 @@ bool Joystick::handleSDLEvent( const SDL_Event *event ) {
 
         case SDL_JOYBUTTONDOWN:
         case SDL_JOYBUTTONUP:
-            joystickButtonChanged( event );
+            joystickButtonChanged(event);
             qDebug() << "button pressed";
             break;
 

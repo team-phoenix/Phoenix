@@ -6,9 +6,6 @@
 #include <QSettings>
 #include <QQmlContext>
 
-#include <unordered_map>
-#include "inputdevicemapping.h"
-
 class ExposedMapping : public QObject  {
     Q_OBJECT
     Q_PROPERTY(QString deviceEvent READ deviceEvent WRITE setDeviceEvent NOTIFY deviceEventChanged)
@@ -79,9 +76,7 @@ public:
 
     void setContext(QQmlContext *context);
     void addMapping(QObject *mapping);
-
-
-
+    void insertMapping(unsigned insert, QObject *mapping);
 
 public slots:
     QList<QObject *> model()
@@ -90,32 +85,18 @@ public slots:
     }
     void removeMapping(int index);
 
-    void setDeviceMap(InputDeviceMapping *device_map);
-    bool collisionDetected(QString event, unsigned port);
-
-    void update();
-    void saveModel(unsigned port);
-
-
 signals:
     void itemAdded();
     void itemDeleted();
     void beforeItemAdded();
     void beforeItemDeleted();
 
-
-protected:
-    QHash<int, QByteArray> roleNames() const;
-
 private slots:
     void deleteAll();
 
 private:
-    QList<QObject *> m_list;
     QQmlContext *m_qml_context;
-
-    void populateModel(std::unordered_map<InputDeviceEvent *, retro_device_id> *map);
-
+    QList<QObject *> m_list;
 
 };
 
