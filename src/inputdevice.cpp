@@ -4,8 +4,9 @@
 
 
 InputDevice::InputDevice( InputDeviceMapping *mapping )
-    : m_mapping( mapping ),
-      ids_state() {
+    : m_mapping(mapping),
+      ids_state()
+{
 }
 
 InputDevice::~InputDevice() {

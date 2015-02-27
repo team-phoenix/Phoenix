@@ -63,9 +63,6 @@ int main( int argc, char *argv[] ) {
     PhoenixGlobals phxGlobals;
     phxGlobals.setOfflineStoragePath(engine.offlineStoragePath() + "/");
 
-    MappingModel mapping_model;
-
-    mapping_model.setContext(rctx);
     input_manager.setContext(rctx);
 
 
