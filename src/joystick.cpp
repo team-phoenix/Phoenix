@@ -16,6 +16,7 @@ Joystick::Joystick( InputDeviceMapping *mapping ) : InputDevice( mapping ) {
     device_attached = false;
     joystick = nullptr;
     controller = nullptr;
+    m_deadzone = 20000;
     m_mapping = reinterpret_cast<Mapping *>( InputDevice::m_mapping );
     Q_ASSERT( m_mapping != nullptr );
 
@@ -49,6 +50,16 @@ Joystick::~Joystick() {
 
     joystick = nullptr;
     controller = nullptr;
+}
+
+void Joystick::setDeadZone(int threashHold)
+{
+    m_deadzone = threashHold;
+}
+
+int Joystick::deadZone()
+{
+    return m_deadzone;
 }
 
 // static
@@ -182,12 +193,17 @@ bool Joystick::controllerAxisChanged( const SDL_Event *event ) {
     }
 
     const SDL_ControllerAxisEvent *caxis = &event->caxis;
-    auto ev = ControllerAxisEvent::fromSDLEvent( *caxis );
-    emit inputEventReceived( new ControllerAxisEvent(ev), caxis->value );
+    auto ev = ControllerAxisEvent::fromSDLEvent(*caxis);
+
+    if (caxis->value < 0 && caxis->value < -deadZone()) {
+        emit inputEventReceived( new ControllerAxisEvent(ev), caxis->value );
+    }
+   else if (caxis->value > 0 && caxis->value > deadZone()) {
+        emit inputEventReceived( new ControllerAxisEvent(ev), caxis->value );
+    }
 
     // make analog stick emulate dpad
     if( m_mapping->deviceType() == RETRO_DEVICE_JOYPAD ) {
-        static int16_t threshold = 25000; // arbitrary. TODO: make it configurable
         static const QMap<SDL_GameControllerAxis, QPair<unsigned, unsigned>> mapping {
             {
                 SDL_CONTROLLER_AXIS_LEFTX, {
@@ -205,12 +221,10 @@ bool Joystick::controllerAxisChanged( const SDL_Event *event ) {
         auto axis = static_cast<SDL_GameControllerAxis>( caxis->axis );
 
         if( mapping.contains( axis ) ) {
-            bool r = (caxis->value < -threshold);
 
-            //qDebug() << r << caxis->value;
             auto buttons_id = mapping.value(axis);
-            setState( buttons_id.first, ( caxis->value < -threshold ) ? true : false );
-            setState( buttons_id.second, ( caxis->value > threshold ) ? true : false );
+            setState( buttons_id.first, ( caxis->value < -deadZone()) ? true : false );
+            setState( buttons_id.second, ( caxis->value > deadZone()) ? true : false );
         }
     }
 
@@ -242,8 +256,8 @@ bool Joystick::handleSDLEvent( const SDL_Event *event ) {
             break;
 
 
-        //case SDL_JOYAXISMOTION:
-        //case SDL_JOYHATMOTION:
+        case SDL_JOYAXISMOTION:
+        case SDL_JOYHATMOTION:
         case SDL_CONTROLLERAXISMOTION:
             controllerAxisChanged(event);
             break;
