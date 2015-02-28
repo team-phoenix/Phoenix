@@ -14,6 +14,9 @@ class Joystick : public InputDevice {
     public:
         Joystick( InputDeviceMapping *mapping );
         virtual ~Joystick();
+        void setDeadZone(int threashHold);
+        int deadZone() const;
+
 
         // enumerate plugged-in devices
         static QVariantList enumerateDevices();
@@ -46,6 +49,7 @@ class Joystick : public InputDevice {
         std::shared_ptr<SDLEvents> events;
 
         Mapping *m_mapping;
+        int m_deadzone;
 
         bool handleSDLEvent( const SDL_Event *event );
         SDLEvents::EventCallback callback;

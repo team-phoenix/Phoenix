@@ -57,7 +57,7 @@ void Joystick::setDeadZone(int threashHold)
     m_deadzone = threashHold;
 }
 
-int Joystick::deadZone()
+int Joystick::deadZone() const
 {
     return m_deadzone;
 }
