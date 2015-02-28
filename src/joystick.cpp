@@ -157,13 +157,13 @@ bool Joystick::deviceRemoved( const SDL_Event *event ) {
 }
 
 bool Joystick::controllerButtonChanged( const SDL_Event *event ) {
-    if( !ControllerMatchEvent( event->cbutton ) ) {
+    if( !ControllerMatchEvent( event->cbutton ) && !JoystickMatchEvent( event->cbutton )) {
         return false;
     }
 
     const SDL_ControllerButtonEvent *cbutton = &event->cbutton;
     auto ev = ControllerButtonEvent::fromSDLEvent( *cbutton );
-    bool is_pressed = ( cbutton->type == SDL_CONTROLLERBUTTONDOWN ) ? true : false;
+    bool is_pressed = (cbutton->type == SDL_CONTROLLERBUTTONDOWN || cbutton->type == SDL_JOYBUTTONDOWN) ? true : false;
 
     emit inputEventReceived(new ControllerButtonEvent(ev), is_pressed );
 
@@ -177,7 +177,7 @@ bool Joystick::controllerButtonChanged( const SDL_Event *event ) {
 }
 
 bool Joystick::controllerAxisChanged( const SDL_Event *event ) {
-    if( !ControllerMatchEvent( event->caxis ) ) {
+    if( !ControllerMatchEvent( event->caxis ) && !JoystickMatchEvent(event->caxis)) {
         return false;
     }
 
@@ -205,32 +205,13 @@ bool Joystick::controllerAxisChanged( const SDL_Event *event ) {
         auto axis = static_cast<SDL_GameControllerAxis>( caxis->axis );
 
         if( mapping.contains( axis ) ) {
-            auto buttons_id = mapping.value( axis );
+            bool r = (caxis->value < -threshold);
+
+            //qDebug() << r << caxis->value;
+            auto buttons_id = mapping.value(axis);
             setState( buttons_id.first, ( caxis->value < -threshold ) ? true : false );
             setState( buttons_id.second, ( caxis->value > threshold ) ? true : false );
         }
-    }
-
-    return true;
-}
-
-bool Joystick::joystickButtonChanged( const SDL_Event *event ) {
-    if( !JoystickMatchEvent( event->cbutton ) ) {
-        return false;
-    }
-
-    const SDL_ControllerButtonEvent *cbutton = &event->cbutton;
-    auto ev = ControllerButtonEvent::fromSDLEvent( *cbutton );
-    bool is_pressed = ( cbutton->type == SDL_JOYBUTTONDOWN );
-    emit inputEventReceived(  new ControllerButtonEvent(ev), is_pressed );
-
-    auto retro_id = m_mapping->getMapping( &ev );
-
-
-    if( retro_id != ( unsigned )~0 ) {
-        //qCDebug(phxInput) << is_pressed << cbutton << retro_id;
-
-        setState( retro_id, is_pressed );
     }
 
     return true;
@@ -253,24 +234,18 @@ bool Joystick::handleSDLEvent( const SDL_Event *event ) {
             }
 
             break;
-
+        case SDL_JOYBUTTONDOWN:
+        case SDL_JOYBUTTONUP:
         case SDL_CONTROLLERBUTTONDOWN:
         case SDL_CONTROLLERBUTTONUP:
             controllerButtonChanged( event );
             break;
 
-        case SDL_JOYBUTTONDOWN:
-        case SDL_JOYBUTTONUP:
-            joystickButtonChanged(event);
-            qDebug() << "button pressed";
-            break;
 
+        //case SDL_JOYAXISMOTION:
+        //case SDL_JOYHATMOTION:
         case SDL_CONTROLLERAXISMOTION:
-            controllerAxisChanged( event );
-            break;
-
-        case SDL_JOYAXISMOTION:
-        case SDL_JOYHATMOTION:
+            controllerAxisChanged(event);
             break;
     }
 
