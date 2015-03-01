@@ -25,9 +25,10 @@
         <file>PhoenixWarningButton.qml</file>
         <file>InfoBar.qml</file>
         <file>PhoenixViewButtons.qml</file>
-        <file>GridImage.qml</file>
+        <file>GridItem.qml</file>
+		<file>GridHighlighter.qml</file>
         <file>TextGradient.qml</file>
-        <file>DynamicImage.qml</file>
+        <file>GridImage.qml</file>
         <file>MarqueeText.qml</file>
         <file>InputIndicator.qml</file>
     </qresource>

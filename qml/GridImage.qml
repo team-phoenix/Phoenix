@@ -1,147 +1,189 @@
 import QtQuick 2.4
+import QtQuick.Controls 1.2;
+import QtQuick.Controls.Styles 1.2;
 import QtGraphicalEffects 1.0
 
-Item  {
-    id: imageHighlight;
+Image {
+    id: image;
 
+    property bool locallyCache: true;
+    property real aspectRatio: -1;
+    property bool imageLoaded: false;
+    property real imageProgress: 1.0;
+    property bool itemDeleted: false;
+    property bool hovered: false;
+    property bool completelyLoaded: false;
 
-    property bool imageVisible: image.visible && image.status === Image.Ready;
-    property alias artworkImage: image;
+    source: !artwork ? "qrc:/assets/No-Art.png" : artwork;
+    fillMode: Image.PreserveAspectFit;
+    asynchronous: true;
 
-    RectangularGlow {
-        visible: index !== gridView.currentIndex && parent.imageVisible && !gridItem.itemDeleted;
-        anchors.fill: blackBorder;
-        glowRadius: 7;
-        spread: 0.1;
-        color: "#b0000000";
-        cornerRadius: 2;
+    sourceSize {
+        height: 500;
+        width: 500;
     }
 
+    anchors {
+        top: parent.top;
+        bottom: parent.bottom;
+        horizontalCenter: parent.horizontalCenter;
+    }
+
+    function properlyResizeImage(old_width)
+    {
+        // The point of this is to completely remove half-pixels from the images.
+        // Some artwork comes a height such as, 145.75; the same goes for the width.
+        // The code below rounds off these values and stretches the image to fit the
+        // integer height and width.
+        // The image's fidelity is still preserved, since the stretch is extremely minimal.
+
+        var new_w = old_width;
+
+        if (!(paintedWidth % 1 === 0.0)) {
+            new_w = Math.round(old_width);
+        }
+
+        if (new_w % 2 == 0)
+            new_w += 1;
+
+        // This makes the height and width always odd, and so the highlighter will always
+        // be centered perfectly. It's wonderful.
+
+        var new_h = new_w * image.aspectRatio;
+
+        if (!(new_h % 1 === 0.0)) {
+            new_h = Math.round(new_h);
+        }
+
+        if (new_h % 2 == 0)
+            new_h += 1;
+
+        image.fillMode = Image.Stretch;
+        image.height = new_h;
+        image.width = new_w;
+
+    }
+
+    onStatusChanged: {
+        if (status === Image.Error) {
+            source = "qrc:/assets/No-Art.png";
+            image.aspectRatio = -1.0;
+            completelyLoaded = false;
+        }
+
+        else if (status === Image.Ready) {
+            if (image.aspectRatio === -1)
+                image.aspectRatio = image.paintedHeight / image.paintedWidth;
+            properlyResizeImage(image.paintedHeight);
+            completelyLoaded = true;
+        }
+
+    }
+
+    Behavior on width {
+        PropertyAnimation {duration: 50;  easing.type: Easing.Linear;}
+    }
+
+    onWidthChanged: {
+        if (width === 0) {
+            if (gridView.titleToDelete !== "")
+                phoenixLibrary.deleteRow(gridView.titleToDelete);
+        }
+    }
 
     Rectangle {
-        id: blackBorder;
-        radius: 3;
+        id: topBorder;
         anchors {
-            fill: borderImage;
-            margins: -1;
+            top: parent.top;
+            left: parent.left;
+            right: parent.right;
         }
-        visible: parent.imageVisible && !gridItem.itemDeleted;
-        onHeightChanged: gridItem.paintedHeight = height;
-        onWidthChanged: gridItem.paintedWidth = width;
-        z: borderImage.z - 1;
+        height: 1;
+        color: "white";
+        opacity: 0.35;
+    }
+
+    Rectangle {
+        id: bottomBorder;
+        anchors {
+            bottom: parent.bottom;
+            left: parent.left;
+            right: parent.right;
+        }
+        height: 1;
+        color: "white";
+        opacity: 0.15;
+    }
+
+    Rectangle {
+        id: leftBorder;
+        anchors {
+            bottom: bottomBorder.top;
+            top: topBorder.bottom;
+            left: parent.left;
+        }
+
+        width: 1;
+        color: "white";
+        opacity: 0.20;
+    }
+
+    Rectangle {
+        id: rightBorder;
+        anchors {
+            bottom: bottomBorder.top;
+            top: topBorder.bottom;
+            right: parent.right;
+        }
+
+        width: 1;
+        color: "white";
+        opacity: 0.20;
+    }
+
+    RectangularGlow {
+        id: dropSource;
+        anchors.fill: customBorder;
+        glowRadius: 5;
+        spread: 0.3;
         color: "black";
+        z: customBorder.z;
+        cornerRadius: customBorder.radius + glowRadius;
     }
 
-    BorderImage {
-        z: image.z + 1;
-        id: borderImage;
-        visible: parent.imageVisible && !gridItem.itemDeleted;
-        source: "../assets/glow-mask.png"
-        width: height * image.aspectRatio;
-        height: image.paintedHeight;
-        anchors {
-            centerIn: image;
-            //horizontalCenter: image.horizontalCenter;
+
+    CustomBorder {
+        id: customBorder;
+        color: "black";
+        radius: 0;
+    }
+
+    MouseArea {
+        id: mouseArea;
+        propagateComposedEvents: true;
+        anchors.fill: parent;
+        hoverEnabled: true;
+        enabled: true;
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        onEntered: parent.hovered = true;
+        onExited: parent.hovered = false;
+
+        onDoubleClicked: {
+            root.playGame(title ,system, filename, phoenixLibrary.getSystem(system));
         }
 
+        onClicked: {
+            gridView.queuedIndex = index;
 
-        verticalTileMode: BorderImage.Stretch;
-        horizontalTileMode: BorderImage.Stretch;
-    }
-
-    property var loadingImage;
-    property var component;
-
-    function createLoadingImages()
-    {
-        component = Qt.createComponent("DynamicImage.qml");
-        if (component.status === Component.Ready)
-            finishCreation();
-        else
-            component.statusChanged.connect(finishCreation);
-    }
-
-    function finishCreation() {
-         if (component.status === Component.Ready) {
-             loadingImage = component.createObject(image, {"source": "../assets/No-Art.png"});
-             if (loadingImage === null) {
-                 // Error Handling
-                 console.log("Error creating image object");
-             }
-         }
-         else if (component.status === Component.Error) {
-             // Error Handling
-             console.log("Error loading component:", component.errorString());
-         }
-    }
-
-    DynamicImage {
-        id: image;
-
-
-        //verticalAlignment: Image.AlignBottom;
-        //horizontalAlignment: Image.AlignHCenter;
-
-        onProgressChanged: gridItem.imageProgress = image.progress;
-
-        /*onStatusChanged: {
-
-            if (status !== Image.Ready) {
-                gridItem.imageLoaded = true;
-                imageHighlight.createLoadingImages();
+            if (mouse.button == Qt.RightButton) {
+                if (gridView.showRightClickMenu)
+                    gridView.showRightClickMenu = false;
+                else
+                    gridView.showRightClickMenu = true;
             }
-
             else {
-                gridItem.imageLoaded = false;
-                if (imageHighlight.loadingImage !== null && imageHighlight.loadingImage !== undefined)
-                    imageHighlight.loadingImage.destroy();
+                gridView.shrink = true;
             }
-        }*/
-    }
-
-    Column {
-        id: textColumn;
-        anchors {
-            top: image.bottom;
-            topMargin: 5;
-            horizontalCenter: image.horizontalCenter;
-        }
-
-        spacing: 0;
-        //x: image.width - image.paintedWidth
-
-        width: parent.width;
-
-        MarqueeText {
-            id: titleLabel;
-            text: title;
-            anchors.horizontalCenter: parent.horizontalCenter;
-            width: parent.width;
-            textColor: "#f1f1f1";
-            interval: 100;
-            fontSize: 10;
-            running: index == gridView.currentIndex || image.hovered ? true : false;
-        }
-
-        Text {
-            id: systemLabel;
-            visible: gameGrid.showSystem;
-            renderType: Text.QtRendering;
-            anchors {
-                left: parent.left;
-                right: parent.right;
-            }
-
-            text: system;
-            color: "#f1f1f1";
-            font {
-                pixelSize: 10;
-                family: "Sans";
-            }
-
-            elide: Text.ElideRight;
-            horizontalAlignment: Text.AlignHCenter;
         }
     }
 }
-
