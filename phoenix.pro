@@ -3,7 +3,6 @@ TEMPLATE = app
 TARGET = phoenix
 INCLUDEPATH += ./include
 CONFIG += c++11
-
 QT += widgets core gui multimedia qml quick sql concurrent
 
 VERSION = 0.1
@@ -28,6 +27,18 @@ linux-g++ {
         QMAKE_CXXFLAGS_DEBUG += -fsanitize=undefined -fsanitize=address -fno-omit-frame-pointer
         QMAKE_LFLAGS_DEBUG += -fsanitize=undefined -fsanitize=address
     }
+
+    CONFIG(debug, debug|release)  {
+        depends.path = $$OUT_PWD/debug
+        depends.files += $${PWD}/databases/systemdatabase.db
+    }
+
+    CONFIG(release, debug|release) {
+        depends.path = $$OUT_PWD/release
+        depends.files += $${PWD}/databases/systemdatabase.db
+    }
+    INSTALLS += depends
+
 }
 
 macx {
@@ -47,15 +58,21 @@ win32 {
     DEFINES += SDL_WIN
     INCLUDEPATH += C:/SDL2/include
 
-    #CONFIG(debug) {
-    #    QMAKE_POST_LINK += $$QMAKE_COPY $${PWD}\\databases/systemdatabase.db $${OUT_PWD}\\debug $$escape_expand(\\n\\t)
-    #    QMAKE_POST_LINK += $$QMAKE_COPY C:/SDL2/lib/SDL2.dll $${OUT_PWD}\\debug $$escape_expand(\\n\\t)
-    #}
 
-    #CONFIG(release) {
-    #    QMAKE_POST_LINK += $$QMAKE_COPY $${PWD}\\databases/systemdatabase.db $${OUT_PWD}\\release $$escape_expand(\\n\\t)
-    #    QMAKE_POST_LINK += $$QMAKE_COPY C:/SDL2/lib/SDL2.dll $${OUT_PWD}\\release $$escape_expand(\\n\\t)
-    #}
+    CONFIG(debug, debug|release)  {
+        depends.path = $$OUT_PWD/debug
+        depends.files += C:/SDL2/bin/SDL2.dll \
+                            $${PWD}/databases/systemdatabase.db
+    }
+
+    CONFIG(release, debug|release) {
+        depends.path = $$OUT_PWD/release
+        depends.files += C:/SDL2/bin/SDL2.dll \
+                            $${PWD}/databases/systemdatabase.db
+    }
+    INSTALLS += depends
+
+
 }
 
 HEADERS += include/core.h                      \
