@@ -253,106 +253,79 @@ Rectangle {
             }
 
             Rectangle {
-                id: leftBorder;
                 anchors {
-                    right: parent.right;
                     top: parent.top;
                     bottom: parent.bottom;
+                    topMargin: 1;
+                    bottomMargin: 1;
+                    //left: parent.left;
+                    //leftMargin: 1;
+                    //right: parent.right;
+                    //rightMargin: 1;
+
                 }
-                width: 1;
-                color: "#0b0b0b"
-            }
+                x: root.consoleBarFocus ? parent.x + 1 : parent.x + parent.width;
 
-            Item {
-                id: accentBorder;
-                anchors {
-                    fill: parent;
-                    leftMargin: 2;
-                    rightMargin: 2;
+                Behavior on x {
+                    PropertyAnimation {
+                        duration: 100;
+                    }
                 }
 
-
-
-
-
-                Rectangle {
-                    id: leftAccent;
-
-                    anchors {
-                        left: parent.left;
-                        top: parent.top;
-                        bottom: parent.bottom;
-                        //topMargin: 2;
-                        //bottomMargin: 2;
-
-                    }
-                    width: 4;
-                    gradient: Gradient {
-                        GradientStop {position: 0.0; color: "#f06612";}
-                        GradientStop {position: 1.0; color: "#dc113b";}
-                    }
-
-                    //CustomBorder {
-                        //gradient: Gradient {
-                         //   GradientStop {position: 0.0; color: "#ff944a";}
-                        //    GradientStop {position: 1.0; color: "#ef516c";}
-                        //}
-                    //}
+                width: parent.width - 2;
+                gradient: Gradient {
+                    GradientStop {color: "#ee5e16"; position: 0.0}
+                    GradientStop {color: "#de1937"; position: 1.0}
                 }
 
                 Rectangle {
                     id: topAccent;
-                    visible: root.consoleBarFocus
                     anchors {
                         top: parent.top;
-                        left: leftAccent.right;
+                        left: parent.left;
                         right: parent.right;
                     }
-                    height: 4;
-                    gradient: Gradient {
-                        GradientStop {position: 0.0; color: "#ff710f";}
-                        GradientStop {position: 1.0; color: "#ff710f";}
+                    color: "white";
+                    opacity: 0.3;
+                    height: 1;
+                }
+
+                Rectangle {
+                    id: bottomAccent;
+                    anchors {
+                        bottom: parent.bottom;
+                        left: parent.left;
+                        right: parent.right;
                     }
+                    color: "white";
+                    opacity: 0.15;
+                    height: 1;
+                }
+
+                Rectangle {
+                    id: leftAccent;
+                    anchors {
+                        bottom: bottomAccent.top;
+                        top: topAccent.bottom;
+                        left: parent.left;
+                    }
+                    color: "white";
+                    opacity: 0.20;
+                    width: 1;
                 }
 
                 Rectangle {
                     id: rightAccent;
-                    visible: root.consoleBarFocus
                     anchors {
+                        bottom: bottomAccent.top;
                         top: topAccent.bottom;
                         right: parent.right;
-                        bottom: parent.bottom;
                     }
-                    width: 4;
-                    gradient: Gradient {
-                        GradientStop {position: 0.0; color: "#f06612";}
-                        GradientStop {position: 1.0; color: "#dc113b";}
-                    }
-
-                    //CustomBorder {
-                        //gradient: Gradient {
-                            //GradientStop {position: 0.0; color: "#ff944a";}
-                            //GradientStop {position: 1.0; color: "#ef516c";}
-                        //}
-                    //}
-                }
-
-                Rectangle {
-                    visible: root.consoleBarFocus
-                    anchors {
-                        bottom: parent.bottom;
-                        left: leftAccent.right;
-                        right: rightAccent.left;
-                    }
-                    height: 4;
-                    gradient: Gradient {
-                        GradientStop {position: 0.0; color: "#f0362b";}
-                        GradientStop {position: 1.0; color: "#ed2931";}
-                    }
-
+                    color: "white";
+                    opacity: 0.20;
+                    width: 1;
                 }
             }
-
 
         }
 
@@ -413,7 +386,6 @@ Rectangle {
                     width: item.width * 0.6;
                     height: 22//item.height;
                     text: modelData;
-                    textColor: "#f1f1f1";
                     enableGradient: index === listView.currentIndex;
                     elide: Text.ElideRight;
                     bold: index == listView.currentIndex//enableGradient;

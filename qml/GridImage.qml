@@ -174,6 +174,8 @@ Image {
 
         onClicked: {
             gridView.queuedIndex = index;
+            if (root.keyBoardFocus !== 2)
+                root.keyBoardFocus = 2;
 
             if (mouse.button == Qt.RightButton) {
                 if (gridView.showRightClickMenu)
