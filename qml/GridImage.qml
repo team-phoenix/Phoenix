@@ -184,7 +184,8 @@ Image {
                     gridView.showRightClickMenu = true;
             }
             else {
-                gridView.shrink = true;
+                if (index !== gridView.currentIndex)
+                    gridView.shrink = true;
             }
         }
     }
