@@ -56,7 +56,7 @@ win32 {
     LIBS += -lmingw32 -lSDL2main -lSDL2 -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -luuid
 
     DEFINES += SDL_WIN
-    INCLUDEPATH += C:/SDL2/include
+    INCLUDEPATH += C:/SDL2/include C:/msys64/mingw64/include/SDL2 C:/msys64/mingw32/include/SDL2
 
 
     CONFIG(debug, debug|release)  {
