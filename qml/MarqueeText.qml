@@ -2,21 +2,21 @@ import QtQuick 2.4
 
 Item {
     property string text: "Error!"
-    property int padding : 10
-    property int fontSize : 11
-    property int interval : 100
     property color textColor: "black"
-    property bool running: false
     property int textSeparation: 40
-    property int delta: 10
-    property int animationDuration: interval + 50
+    property int heightPadding : 10
+    property int fontSize : 11
+    property bool mousedOrSelected: false
+    property int animationInterval : 100
+    property int animationDelta: 10
+    property int animationDuration: animationInterval + 50
 
     // Will the rendered text fit completely inside its box?
-    property bool narrow: marqueeTextDummy.width < parent.width
+    property bool fitsInsideParent: marqueeTextDummy.width < parent.width
 
     // Range: 0 to parent.width
     // Does not apply to narrow text
-    property int displacement: 0
+    property int textDisplacement: 0
 
     // 123, 231, or 312
     // State represents the leftmost text
@@ -26,88 +26,152 @@ Item {
     property int state: 3
 
     width: parent.width
-    height: marqueeTextDummy.height + padding
+    height: marqueeTextDummy.height + heightPadding
     clip: true
 
     Timer {
-        id: timer
-        interval: parent.interval
+        id: animationTimer
+        interval: parent.animationInterval
         onTriggered: moveMarquee()
         repeat: true
 
         // Only scroll if this text is wider than its parent
-        running: narrow ? false : parent.running
+        running: fitsInsideParent ? false : parent.mousedOrSelected
     }
 
     function moveMarquee() {
 
         // No more ...
-        textFullSize()
+        makeTextNatural()
 
-        displacement += delta
+        textDisplacement += animationDelta
 
         switch( state ) {
         case 1:
+            marqueeTextOne.visible = false
+            marqueeTextTwo.visible = true
+            marqueeTextThree.visible = true
             marqueeTextOne.x = marqueeTextDummy.width
-            marqueeTextTwo.x = - displacement
-            marqueeTextThree.x = marqueeTextDummy.width - displacement + textSeparation
+            marqueeTextTwo.x = - textDisplacement
+            marqueeTextThree.x = marqueeTextDummy.width - textDisplacement + textSeparation
             break
         case 2:
+            marqueeTextTwo.visible = false
+            marqueeTextThree.visible = true
+            marqueeTextOne.visible = true
             marqueeTextTwo.x = marqueeTextDummy.width
-            marqueeTextThree.x = - displacement
-            marqueeTextOne.x = marqueeTextDummy.width - displacement + textSeparation
+            marqueeTextThree.x = - textDisplacement
+            marqueeTextOne.x = marqueeTextDummy.width - textDisplacement + textSeparation
             break
         case 3:
+            marqueeTextThree.visible = false
+            marqueeTextOne.visible = true
+            marqueeTextTwo.visible = true
             marqueeTextThree.x = marqueeTextDummy.width
-            marqueeTextOne.x = - displacement
-            marqueeTextTwo.x = marqueeTextDummy.width - displacement + textSeparation
+            marqueeTextOne.x = - textDisplacement
+            marqueeTextTwo.x = marqueeTextDummy.width - textDisplacement + textSeparation
             break
         default:
             break
         }
 
         // Time for a state change?
-        if( displacement > marqueeTextDummy.width + textSeparation ) {
+        if( textDisplacement > marqueeTextDummy.width + textSeparation ) {
             state = ( state % 3 ) + 1
-            displacement = 0
+            textDisplacement = 0
         }
 
     }
 
-    Component.onCompleted: recalculate()
+    Component.onCompleted: onMousedOrSelectedChangedHandler()
 
     // Wait for animation to finish before adding ...
+    // Start timer when mousedOrSelected is changed
+    // and its onChanged handler changes fitsInsideParent implicitly
     Timer {
         id: marqueeTimer
         interval: animationDuration
-        onTriggered: textClipped()
+        onTriggered: makeTextClipped()
         repeat: false
-        running: !narrow
+        running: !fitsInsideParent
     }
 
     // Make text width as wide as the text actually is
-    function textFullSize() {
+    function makeTextNatural() {
         marqueeTextOne.width = marqueeTextDummy.width
         marqueeTextTwo.width = marqueeTextDummy.width
         marqueeTextThree.width = marqueeTextDummy.width
     }
 
     // Make text width the width of the parent
-    function textClipped() {
+    function makeTextClipped() {
         marqueeTextOne.width = parent.width
         marqueeTextTwo.width = parent.width
         marqueeTextThree.width = parent.width
     }
 
-    function recalculate() {
-        if( narrow ) textFullSize()
+    onWidthChanged: {
+        widthChangedHandler()
+    }
 
-        // Resize center text when not moused over and only if wider
+    // Sometimes onWidthChanged is not fired
+    Timer {
+        interval: 1000
+        repeat: true
+        running: !mousedOrSelected
+        onTriggered: widthChangedHandler()
+    }
+
+    function widthChangedHandler() {
+        if( fitsInsideParent ) {
+            state = 1
+            marqueeTextOne.visible = false
+            marqueeTextTwo.visible = true
+            marqueeTextThree.visible = false
+            makeTextNatural()
+            marqueeTextOne.x = 0
+            state = 2
+            marqueeTextTwo.x = marqueeTextDummy.width
+            state = 3
+            marqueeTextThree.x = -marqueeTextDummy.width
+        }
+        // Reset to state 3
+        else {
+            state = 1
+            marqueeTextThree.visible = false
+            marqueeTextOne.visible = true
+            marqueeTextTwo.visible = false
+            makeTextClipped()
+            marqueeTextOne.x = 0
+            state = 2
+            marqueeTextTwo.x = marqueeTextDummy.width
+            state = 3
+            marqueeTextThree.x = marqueeTextDummy.width
+        }
+        textDisplacement = 0
+
+        // Can't hurt
+        onMousedOrSelectedChangedHandler()
+    }    
+
+    onMousedOrSelectedChanged: {
+        makeTextNatural()
+        onMousedOrSelectedChangedHandler()
+    }
+
+    // Deal with the transition invoked when the mouse is no longer
+    // over the item or the item is no longer selected
+    function onMousedOrSelectedChangedHandler() {
+
+        // Text only stays horizontally centered when it's its natural size
+        if( fitsInsideParent ) makeTextNatural()
+
+        // Resize center text when not moused over or selected and only if wider
         // than parent to parent's width so elipses will get drawn
-        else if ( !running ) {
+        else if ( !mousedOrSelected ) {
             marqueeTimer.restart()
             // Follow the shortest path back to left side
-            if( displacement > marqueeTextDummy.width / 2 ){
+            if( textDisplacement > marqueeTextDummy.width / 2 ){
                 switch( state ) {
                 case 1:
                     marqueeTextOne.x = marqueeTextDummy.width
@@ -127,7 +191,7 @@ Item {
                 default:
                     break
                 }
-                displacement = 0
+                textDisplacement = 0
                 state = ( state % 3 ) + 1
             }
             else {
@@ -150,49 +214,9 @@ Item {
                 default:
                     break
                 }
-                displacement = 0
+                textDisplacement = 0
             }
         }
-    }
-
-    // Sometimes onWidthChanged is not fired
-    function widthChangedHandler() {
-        if( narrow ) {
-            textFullSize()
-            state = 1
-            marqueeTextOne.x = 0
-            state = 2
-            marqueeTextTwo.x = marqueeTextDummy.width
-            state = 3
-            marqueeTextThree.x = -marqueeTextDummy.width
-        }
-        // Reset to state 3
-        else {
-            textClipped()
-            state = 1
-            marqueeTextOne.x = 0
-            state = 2
-            marqueeTextTwo.x = marqueeTextDummy.width
-            state = 3
-            marqueeTextThree.x = marqueeTextDummy.width
-        }
-        displacement = 0
-    }
-
-    Timer {
-        interval: 1000
-        repeat: false
-        running: !marqueeTimer.running
-        onTriggered: widthChangedHandler()
-    }
-
-    onWidthChanged: {
-        widthChangedHandler()
-    }
-
-    onRunningChanged: {
-        textFullSize()
-        recalculate()
     }
 
     Text {
@@ -202,7 +226,7 @@ Item {
         anchors {
             verticalCenter: parent.verticalCenter
             // Unlock the anchor if wider than the viewport so it'll stick to the left ( x = 0 )
-            horizontalCenter: narrow ? parent.horizontalCenter : undefined
+            horizontalCenter: fitsInsideParent ? parent.horizontalCenter : undefined
         }
         font {
             bold: true
@@ -212,7 +236,7 @@ Item {
         renderType: Text.QtRendering
 
         // Shouldn't be necessary, but won't work right without the check
-        elide: parent.running ? Text.ElideRight : Text.ElideRight
+        elide: parent.mousedOrSelected ? Text.ElideRight : Text.ElideRight
 
         Behavior on x {
             PropertyAnimation {
@@ -230,11 +254,11 @@ Item {
         color: parent.textColor
         text: parent.text
         x: marqueeTextDummy.width
-        visible: !narrow
+        visible: !fitsInsideParent
         anchors {
             verticalCenter: parent.verticalCenter
             // Unlock the anchor if wider than the viewport so it'll stick to the left ( x = 0 )
-            horizontalCenter: narrow ? parent.horizontalCenter : undefined
+            horizontalCenter: fitsInsideParent ? parent.horizontalCenter : undefined
         }
         font {
             bold: true
@@ -244,7 +268,7 @@ Item {
         renderType: Text.QtRendering
 
         // Shouldn't be necessary, but won't work right without the check
-        elide: parent.running ? Text.ElideRight : Text.ElideRight
+        elide: parent.mousedOrSelected ? Text.ElideRight : Text.ElideRight
 
         Behavior on x {
             PropertyAnimation {
@@ -262,11 +286,11 @@ Item {
         color: parent.textColor
         text: parent.text
         x: marqueeTextDummy.width
-        visible: !narrow
+        visible: !fitsInsideParent
         anchors {
             verticalCenter: parent.verticalCenter
             // Unlock the anchor if wider than the viewport so it'll stick to the left ( x = 0 )
-            horizontalCenter: narrow ? parent.horizontalCenter : undefined
+            horizontalCenter: fitsInsideParent ? parent.horizontalCenter : undefined
         }
         font {
             bold: true
@@ -276,7 +300,7 @@ Item {
         renderType: Text.QtRendering
 
         // Shouldn't be necessary, but won't work right without the check
-        elide: parent.running ? Text.ElideRight : Text.ElideRight
+        elide: parent.mousedOrSelected ? Text.ElideRight : Text.ElideRight
 
         Behavior on x {
             PropertyAnimation {

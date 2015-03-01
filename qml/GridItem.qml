@@ -45,9 +45,9 @@ Item  {
             anchors.horizontalCenter: parent.horizontalCenter;
             width: parent.width;
             textColor: "#f1f1f1";
-            interval: 100;
+            animationInterval: 100;
             fontSize: 10;
-            running: index == gridView.currentIndex || image.hovered ? true : false;
+            mousedOrSelected: index == gridView.currentIndex || image.hovered ? true : false;
         }
 
         Text {
