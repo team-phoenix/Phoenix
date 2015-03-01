@@ -252,7 +252,17 @@ Rectangle {
                 _rightMargin: -1;
             }
 
+            Desaturate {
+                    anchors.fill: source;
+                    visible: !coloredBar.visible;
+                    source: coloredBar;
+                    desaturation: 1.0
+                    cached: true;
+                }
+
             Rectangle {
+                id: coloredBar;
+                visible: root.consoleBarFocus;
                 anchors {
                     top: parent.top;
                     bottom: parent.bottom;
@@ -264,7 +274,7 @@ Rectangle {
                     //rightMargin: 1;
 
                 }
-                x: root.consoleBarFocus ? parent.x + 1 : parent.x + parent.width;
+                x: parent.x + 1;
 
                 Behavior on x {
                     PropertyAnimation {
@@ -397,13 +407,9 @@ Rectangle {
             MouseArea {
                 anchors.fill: parent;
                 onClicked: {
+                    if (root.keyBoardFocus === 2)
+                        root.keyBoardFocus = 1;
                     listView.currentIndex = index;
-                    //if (modelData === "All") {
-                    //    phoenixLibrary.model().setFilter("title LIKE ?", ['%%'])
-                    //}
-                    //else {
-                    //    phoenixLibrary.model().setFilter("system = ?", [modelData]);
-                    //}
                 }
             }
         }

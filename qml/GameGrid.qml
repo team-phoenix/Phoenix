@@ -136,7 +136,7 @@ Rectangle {
             currentIndex: 0;
 
             highlight: GridHighlighter {
-                visible: root.gridFocus;
+                //visible: root.gridFocus;
                 height: gridView.currentItem.height;
                 width: gridView.currentItem.width;
                 y: gridView.currentItem.y;

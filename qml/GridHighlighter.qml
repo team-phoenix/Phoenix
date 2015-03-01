@@ -29,6 +29,7 @@ Item {
                             anchors.fill: opacityMask;
                             source: opacityMask;
                             color: '#dc133a';
+                            visible: root.keyBoardFocus === 2 && parent.enableDropShadow;
                             horizontalOffset: 0
                             verticalOffset: 1
                             radius: 16
@@ -356,13 +357,20 @@ Item {
 
     OpacityMask {
         id: opacityMask;
-        visible: !highlighter.enableDropShadow;
+        visible: !parent.enableDropShadow && root.keyBoardFocus === 2;
         anchors {
             fill: highlighterSource;
             margins: -12;
         }
         source: highlighterSource;
         maskSource: maskSource;
+    }
+
+    Desaturate {
+        anchors.fill: source;
+        source: opacityMask;
+        desaturation: 1.0;
+        visible: root.keyBoardFocus !== 2;
     }
 
     RectangularGlow {
