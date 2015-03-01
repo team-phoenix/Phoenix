@@ -9,7 +9,6 @@
 
 #include "inputdevice.h"
 #include "inputdevicemapping.h"
-#include "mappingmodel.h"
 
 
 class InputManager : public QObject {

@@ -17,7 +17,6 @@
 #include "phoenixwindow.h"
 #include "phoenixlibrary.h"
 #include "cacheimage.h"
-#include "mappingmodel.h"
 #include "phoenixglobals.h"
 
 InputManager input_manager; // global
@@ -48,7 +47,6 @@ int main( int argc, char *argv[] ) {
     qmlRegisterType<CachedImage>( "phoenix.image", 1, 0, "CachedImage" );
     qmlRegisterType<VideoItem>( "phoenix.video", 1, 0, "VideoItem" );
     qmlRegisterType<GameLibraryModel>();
-    qmlRegisterType<MappingModel>();
     qmlRegisterType<PhoenixLibrary>( "phoenix.library", 1, 0, "PhoenixLibrary" );
     qmlRegisterType<InputDeviceMapping>();
     qmlRegisterType<InputDevice>();

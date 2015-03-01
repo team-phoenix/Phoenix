@@ -10,7 +10,6 @@
 #include "libretro_types.h"
 #include "inputdevice.h"
 #include "inputdeviceevent.h"
-#include "mappingmodel.h"
 
 
 // Class to map input from some device (eg keyboard, mouse, joystick)
