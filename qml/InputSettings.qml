@@ -127,11 +127,11 @@ Item {
 
                     delegate: PhoenixNormalButton {
                         property bool innerItem: false;
-                        property string type: listView.model[index]["type"];
+                        property string type: listView.model[index]["name"];
                         text: type == "GamePad" ? "GamePad " + index : type;
                         z: innerItem ? listView.z + 1 : listView.z;
                         radius: 0;
-                        implicitWidth: 70;
+                        implicitWidth: 200;
                         checkable: true;
                         checked: ListView.isCurrentItem;
                         exclusiveGroup: topButtonGroup;
