@@ -80,10 +80,6 @@ Image {
 
     }
 
-    Behavior on width {
-        PropertyAnimation {duration: 50;  easing.type: Easing.Linear;}
-    }
-
     onWidthChanged: {
         if (width === 0) {
             if (gridView.titleToDelete !== "")

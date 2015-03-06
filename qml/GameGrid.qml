@@ -109,17 +109,12 @@ Rectangle {
                 }
             }
 
+            Behavior on cellWidth {
+                PropertyAnimation {duration: 50;  easing.type: Easing.Linear;}
+            }
+
             Behavior on cellHeight {
-                PropertyAnimation {
-                    //id: resizeAnimation;
-                   // target: gridView;
-                    //properties: "cellWidth, cellHeight";
-                    easing {
-                        type: Easing.Linear;
-                    }
-                    //to: 100 * zoomFactor;
-                    duration: 50;
-                }
+                PropertyAnimation {duration: 50;  easing.type: Easing.Linear;}
             }
 
             anchors {
