@@ -5,10 +5,11 @@ Item  {
     id: gridItem;
     property bool imageVisible: image.visible && image.status === Image.Ready;
     property alias artworkImage: image;
+    property int margin: 50
 
     onWidthChanged: {
         if (image.completelyLoaded) {
-            image.properlyResizeImage(width * 0.5);
+            image.properlyResizeImage( width - margin );
         }
     }
 
@@ -16,8 +17,8 @@ Item  {
         id: image;
 
         anchors.centerIn: parent;
-        height: parent.height * 0.5;
-        width: parent.width * 0.5;
+        height: parent.height - margin;
+        width: parent.width - margin;
 
     }
 
