@@ -60,6 +60,7 @@ PhoenixWindow {
             if (root.loadCore(core)) {
                 if (root.loadGame(file_name)) {
                     infoBar.height = 0;
+                    root.saveDirectory = file_name;
                     windowStack.push({item: gameView, properties: {coreName: core, gameName: file_name, run: true}});
                     return true;
                 }

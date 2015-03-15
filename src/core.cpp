@@ -46,12 +46,14 @@ Core::Core() {
     right_channel = 0;
 
     is_dupe_frame = false;
+    m_sram = nullptr;
 
     Core::core = this;
 
 } // Core::Core()
 
-Core::~Core() {
+Core::~Core()
+{
 
 } // Core::~Core()
 
@@ -92,11 +94,11 @@ bool Core::saveGameState( QString path, QString name ) {
 
 bool Core::loadGameState( QString path, QString name ) {
     QFile file( path + "/" + name + "_STATE" + ".sav" );
-    file.open( QIODevice::ReadOnly );
+
 
     bool loaded = false;
 
-    if( file.isOpen() ) {
+    if(file.open( QIODevice::ReadOnly )) {
         QByteArray state = file.readAll();
         void *data = state.data();
         size_t size = static_cast<int>( state.size() );
@@ -192,6 +194,8 @@ bool Core::loadCore( const char *path ) {
         symbols->retro_set_input_poll( inputPollCallback );
         symbols->retro_set_input_state( inputStateCallback );
         symbols->retro_set_video_refresh( videoRefreshCallback );
+        //symbols->retro_get_memory_data(getMemoryData);
+        //symbols->retro_get_memory_size(getMemorySize);
         
         // Init the core
         symbols->retro_init();
@@ -253,11 +257,14 @@ bool Core::loadGame( const char *path ) {
     system_timing = system_av_info->timing;
     video_width = game_geometry.max_width;
     video_height = game_geometry.max_height;
+    m_sram = symbols->retro_get_memory_data(RETRO_MEMORY_SAVE_RAM);
+
     return true;
     
 } // Core::load_game()
 
 void Core::unload() {
+    saveRAM();
     symbols->retro_unload_game();
     symbols->retro_deinit();
     libretro_core->unload();
@@ -631,4 +638,30 @@ QDebug operator<<( QDebug debug, const Core::Variable &var ) {
                          arg( QStr( var.key() ) ).arg( QStr( var.value( "<not set>" ) ) ).
                          arg( QStr( var.description() ) ).arg( QStr( joinedchoices ) ) );
     return debug;
+}
+
+void Core::saveRAM()
+{
+    if (m_sram == nullptr)
+        return;
+
+    QFile file(save_directory + ".srm");
+    qDebug() << "Saving SRAM to: " << save_directory + ".srm";
+
+    if (file.open(QIODevice::WriteOnly)) {
+        char *data = static_cast<char *>(m_sram);
+        size_t size = symbols->retro_get_memory_size(RETRO_MEMORY_SAVE_RAM);
+        file.write(data, size);
+        file.close();
+    }
+}
+
+void Core::loadRAM() {
+    QFile file(save_directory + ".srm");
+    qDebug() << "Loading SRAM: " << save_directory + ".srm";
+    if (file.open(QIODevice::ReadOnly)) {
+        QByteArray data = file.readAll();
+        m_sram = symbols->retro_get_memory_data(RETRO_MEMORY_SAVE_RAM);
+        file.close();
+    }
 }

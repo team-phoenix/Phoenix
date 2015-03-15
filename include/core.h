@@ -253,7 +253,10 @@ class Core {
         // Timing
         bool is_dupe_frame;
 
-        // Misc
+        // Misc        
+        void * m_sram;
+        void saveRAM();
+        void loadRAM();
 
         // Callbacks
         static void audioSampleCallback( int16_t left, int16_t right );
@@ -263,7 +266,6 @@ class Core {
         static void logCallback( enum retro_log_level level, const char *fmt, ... );
         static int16_t inputStateCallback( unsigned port, unsigned device, unsigned index, unsigned id );
         static void videoRefreshCallback( const void *data, unsigned width, unsigned height, size_t pitch );
-
 };
 
 

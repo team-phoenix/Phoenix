@@ -89,13 +89,15 @@ void VideoItem::setVolume( qreal volume ) {
 
 void VideoItem::setSystemDirectory( QString systemDirectory ) {
     m_system_directory = systemDirectory;
-    core->setSystemDirectory( systemDirectory );
+    core->setSystemDirectory( m_system_directory );
     emit systemDirectoryChanged();
 }
 
 void VideoItem::setSaveDirectory( QString saveDirectory ) {
-    m_save_directory = saveDirectory;
-    core->setSaveDirectory( saveDirectory );
+    QFileInfo info(saveDirectory);
+
+    m_save_directory = saveDirectory.remove("." + info.suffix());
+    core->setSaveDirectory( m_save_directory );
     emit saveDirectoryChanged();
 
 }
