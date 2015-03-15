@@ -257,14 +257,15 @@ bool Core::loadGame( const char *path ) {
     system_timing = system_av_info->timing;
     video_width = game_geometry.max_width;
     video_height = game_geometry.max_height;
-    m_sram = symbols->retro_get_memory_data(RETRO_MEMORY_SAVE_RAM);
+
+    loadSRAM();
 
     return true;
     
 } // Core::load_game()
 
 void Core::unload() {
-    saveRAM();
+    saveSRAM();
     symbols->retro_unload_game();
     symbols->retro_deinit();
     libretro_core->unload();
@@ -640,7 +641,7 @@ QDebug operator<<( QDebug debug, const Core::Variable &var ) {
     return debug;
 }
 
-void Core::saveRAM()
+void Core::saveSRAM()
 {
     if (m_sram == nullptr)
         return;
@@ -656,12 +657,16 @@ void Core::saveRAM()
     }
 }
 
-void Core::loadRAM() {
+void Core::loadSRAM() {
+    m_sram = symbols->retro_get_memory_data(RETRO_MEMORY_SAVE_RAM);
+
     QFile file(save_directory + ".srm");
-    qDebug() << "Loading SRAM: " << save_directory + ".srm";
     if (file.open(QIODevice::ReadOnly)) {
         QByteArray data = file.readAll();
-        m_sram = symbols->retro_get_memory_data(RETRO_MEMORY_SAVE_RAM);
+        memcpy(m_sram, data.data(), data.size());
+
+        qDebug() << "Loading SRAM: " << save_directory + ".srm";
         file.close();
     }
+
 }

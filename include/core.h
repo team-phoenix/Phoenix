@@ -255,8 +255,8 @@ class Core {
 
         // Misc        
         void * m_sram;
-        void saveRAM();
-        void loadRAM();
+        void saveSRAM();
+        void loadSRAM();
 
         // Callbacks
         static void audioSampleCallback( int16_t left, int16_t right );
