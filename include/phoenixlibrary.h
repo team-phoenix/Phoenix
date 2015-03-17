@@ -13,6 +13,9 @@
 #include "coremodel.h"
 #include "systemdatabase.h"
 #include "networkqueue.h"
+#include "phoenixglobals.h"
+
+extern PhoenixGlobals phxGlobals;
 
 class PhoenixLibrary : public QObject {
         Q_OBJECT
@@ -137,7 +140,6 @@ class PhoenixLibrary : public QObject {
 
         void loadXml( QString file_path );
         QRegularExpressionMatch parseFilename( QString filename );
-        QByteArray generateSha1Sum( QString file );
         bool insertGame( QSqlQuery &q, QFileInfo path );
         QVector<int> scanFolder( QUrl folder_path );
         void importMetadata( QVector<int> games_id );

@@ -282,7 +282,7 @@ void PhoenixLibrary::importMetadata( QVector<int> games_id ) {
         setProgress( ( int )i / games_id.size() * 100);
         int id = q.value( 0 ).toInt();
         QString path( QDir( q.value( 1 ).toString() ).filePath( q.value( 2 ).toString() ) );
-        QByteArray hash = generateSha1Sum( path ); // TODO: CRC32
+        QByteArray hash = phxGlobals.getCheckSum(path, QCryptographicHash::Sha1 ); // TODO: CRC32
         QString title = q.value( 3 ).toString();
         QString system = q.value( 4 ).toString();
         //scanSystemDatabase( hash, title, system );
@@ -548,6 +548,17 @@ QVector<int> PhoenixLibrary::importDroppedFiles( QList<QUrl> url_list ) {
 
         QFileInfo info = QFileInfo( url_list[i].toLocalFile() );
 
+
+        QString lower_suffix = info.suffix().toLower();
+        if (lower_suffix == "bin") {
+            qDebug() << "Checking for bios";
+            QString lower_baseName = info.baseName().toLower();
+            if (phxGlobals.isBios(lower_baseName)) {
+                QFile::copy(info.absoluteFilePath(), phxGlobals.offlineStoragePath() + "Bios/" + lower_baseName + "." + lower_suffix);
+                continue;
+            }
+        }
+
         if( insertGame( q, info )      && q.lastInsertId().isValid() ) {
             inserted_games.append( q.lastInsertId().toInt() );
         } else {
@@ -592,21 +603,6 @@ void PhoenixLibrary::setImportUrls( bool importUrls ) {
     }
 
     m_import_urls = false;
-}
-
-QByteArray PhoenixLibrary::generateSha1Sum( QString file ) {
-    QFile game_file( file );
-
-    if( !game_file.open( QIODevice::ReadOnly ) ) {
-        return QByteArray( "" );
-    }
-
-    QCryptographicHash sha1_hash( QCryptographicHash::Sha1 );
-    sha1_hash.addData( &game_file );
-    QByteArray result = sha1_hash.result().toHex();
-
-    game_file.close();
-    return result;
 }
 
 void PhoenixLibrary::scanSystemDatabase( QByteArray hash, QString &name, QString &system ) {

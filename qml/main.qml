@@ -27,7 +27,7 @@ PhoenixWindow {
     property string borderColor: "#0b0b0b";
     property string flagValue: "";
     property bool gameShowing: false;
-    property string systemDirectory: "";
+    property string systemDirectory: phoenixglobals.offlineStoragePath() + "Bios";
     property string saveDirectory: "";
     property real volumeLevel: 1.0;
     property string prevView: "";
@@ -58,6 +58,16 @@ PhoenixWindow {
     {
         if (core !== "" && file_name !== "") {
             if (root.loadCore(core)) {
+                console.log("CRORE CORE CORE: " + core);
+                if (core.indexOf("mednafen_psx") !== -1)
+                {
+                    if (!phoenixglobals.checkPSXBios()) {
+                        root.infoBarText = "Bios files are not all there";
+                        return false;
+                    }
+
+                }
+
                 if (root.loadGame(file_name)) {
                     infoBar.height = 0;
                     root.saveDirectory = file_name;
