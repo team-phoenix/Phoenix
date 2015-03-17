@@ -64,6 +64,7 @@ bool LibraryDbManager::createSchema() {
     q.exec( QStringLiteral( "INSERT INTO " ) % table_version % QStringLiteral( " (version) VALUES (0)" ) );
     q.exec( QStringLiteral( "CREATE TABLE " ) % table_games % QStringLiteral( " (\n" ) %
             QStringLiteral( "   id INTEGER PRIMARY KEY AUTOINCREMENT,\n" ) %
+
             QStringLiteral( "   /* game info */" ) %
             QStringLiteral( "   title TEXT NOT NULL,\n" ) %
             QStringLiteral( "   is_favorite BOOLEAN,\n" ) %
@@ -72,12 +73,15 @@ bool LibraryDbManager::createSchema() {
             QStringLiteral( "   goodtools_code TEXT,\n" ) %
             QStringLiteral( "   time_played DATETIME,\n" ) %
             QStringLiteral( "   artwork TEXT,\n" ) %
+
             QStringLiteral( "   /* file info */" ) %
             QStringLiteral( "   directory TEXT,\n" ) %
             QStringLiteral( "   filename TEXT UNIQUE,\n" ) %
             QStringLiteral( "   sha1 BLOB\n" ) %
             QStringLiteral( "   crc32 BLOB\n" ) %
+            QStringLiteral( "   rom_count BOOLEAN,\n" ) %
             QStringLiteral( ")" ) );
+
     q.exec( QStringLiteral( "CREATE INDEX title_index ON " ) % table_games % QStringLiteral( " (title)" ) );
     q.exec( QStringLiteral( "CREATE INDEX favorite_index ON " ) % table_games % QStringLiteral( " (is_favorite)" ) );
     db.commit();
