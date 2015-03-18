@@ -7,6 +7,13 @@ ScrollView {
     property string frameColor: "#292727";
     property bool borderEnabled: true;
     property int handleHeight: 30;
+
+    Image {
+        source: "../assets/cartographer.png";
+        fillMode: Image.Tile;
+        anchors.fill: parent;
+    }
+
     style: ScrollViewStyle {
         id: scrollStyle;
         property int handleWidth: 12

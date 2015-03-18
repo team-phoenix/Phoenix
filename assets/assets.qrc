@@ -89,6 +89,7 @@
 	<file>big-icon-disabled.png</file>
 	<file>small-icon-disabled.png</file>
 	<file>search.png</file>
+	<file>cartographer.png</file>
     <!-- -->
     <file>gamecontrollerdb.txt</file>
 </qresource>
