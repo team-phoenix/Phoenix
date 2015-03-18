@@ -282,7 +282,7 @@ void PhoenixLibrary::importMetadata( QVector<int> games_id ) {
         setProgress( ( int )i / games_id.size() * 100);
         int id = q.value( 0 ).toInt();
         QString path( QDir( q.value( 1 ).toString() ).filePath( q.value( 2 ).toString() ) );
-        QByteArray hash = phxGlobals.getCheckSum(path, QCryptographicHash::Sha1 ); // TODO: CRC32
+        QByteArray hash = phoenixLibraryHelper.getCheckSum(path, QCryptographicHash::Sha1 ); // TODO: CRC32
         QString title = q.value( 3 ).toString();
         QString system = q.value( 4 ).toString();
         //scanSystemDatabase( hash, title, system );
@@ -548,20 +548,15 @@ QVector<int> PhoenixLibrary::importDroppedFiles( QList<QUrl> url_list ) {
 
         QFileInfo info = QFileInfo( url_list[i].toLocalFile() );
 
-
-        QString lower_suffix = info.suffix().toLower();
-        if (lower_suffix == "bin") {
-            qDebug() << "Checking for bios";
-            QString lower_baseName = info.baseName().toLower();
-            if (phxGlobals.isBios(lower_baseName)) {
-                QFile::copy(info.absoluteFilePath(), phxGlobals.offlineStoragePath() + "Bios/" + lower_baseName + "." + lower_suffix);
-                continue;
-            }
+        if (info.suffix().toLower() == "bin") {
+            phoenixLibraryHelper.checkForBios(info);
+            continue;
         }
 
-        if( insertGame( q, info )      && q.lastInsertId().isValid() ) {
+        if ( insertGame( q, info )      && q.lastInsertId().isValid() ) {
             inserted_games.append( q.lastInsertId().toInt() );
-        } else {
+        }
+        else {
             qCWarning( phxLibrary ) << "Unable to import game" << info.fileName()
                                     << "; error:" << q.lastError();
         }

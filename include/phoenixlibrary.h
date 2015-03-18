@@ -14,8 +14,10 @@
 #include "systemdatabase.h"
 #include "networkqueue.h"
 #include "phoenixglobals.h"
+#include "phoenixlibraryhelper.h"
 
 extern PhoenixGlobals phxGlobals;
+extern PhoenixLibraryHelper phoenixLibraryHelper;
 
 class PhoenixLibrary : public QObject {
         Q_OBJECT

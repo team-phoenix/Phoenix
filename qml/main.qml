@@ -27,7 +27,6 @@ PhoenixWindow {
     property string borderColor: "#0b0b0b";
     property string flagValue: "";
     property bool gameShowing: false;
-    property string systemDirectory: phoenixglobals.offlineStoragePath() + "Bios";
     property string saveDirectory: "";
     property real volumeLevel: 1.0;
     property string prevView: "";
@@ -43,8 +42,6 @@ PhoenixWindow {
     property bool gridFocus: keyBoardFocus === 2;
     property bool consoleBarFocus: keyBoardFocus === 1;
 
-    Component.onCompleted: phoenixLibrary.setCacheDirectory(phoenixglobals.offlineStoragePath())
-
     function playGame(title, system, filename, core)
     {
         if (root.gameAndCoreCheck(title, system, filename, core)) {
@@ -56,30 +53,16 @@ PhoenixWindow {
 
     function gameAndCoreCheck(title, system, file_name, core)
     {
-        if (core !== "" && file_name !== "") {
-            if (root.loadCore(core)) {
-                console.log("CRORE CORE CORE: " + core);
-                if (core.indexOf("mednafen_psx") !== -1)
-                {
-                    if (!phoenixglobals.checkPSXBios()) {
-                        root.infoBarText = "Bios files are not all there";
-                        return false;
-                    }
+        if (phoenixGlobals.validCore(core)) {
+            if (phoenixLibraryHelper.needsBios(core))
+                return false;
 
-                }
-
-                if (root.loadGame(file_name)) {
-                    infoBar.height = 0;
-                    root.saveDirectory = file_name;
-                    windowStack.push({item: gameView, properties: {coreName: core, gameName: file_name, run: true}});
-                    return true;
-                }
-                else
-                    root.infoBarText = title + " could not be loaded.";
-            }
-            else
-                root.infoBarText = system + " core could not be loaded.";
+            if (phoenixGlobals.validGame(file_name)) {
+                windowStack.push({item: gameView, properties: {coreName: core, gameName: file_name, run: true, replace: true}});
+                return true;
+             }
         }
+
         return false;
     }
 
@@ -544,6 +527,141 @@ PhoenixWindow {
         height: 62;
         //color: "#3b3b3b";
         fontSize: 14;
+    }
+
+    DropShadow {
+        anchors.fill: source;
+        source: biosWarning;
+        color: "black";
+        transparentBorder: true;
+        verticalOffset: 1;
+        horizontalOffset: 0;
+        radius: 4;
+        samples: radius * 2;
+        visible: biosWarning.visible;
+    }
+
+    Rectangle {
+        id: biosWarning;
+        visible: userNotifications.biosNotification !== "";
+        anchors {
+            top: headerBar.bottom;
+            horizontalCenter: parent.horizontalCenter;
+            topMargin: 12;
+        }
+        border {
+            width: 1;
+            color: "#a42d45";
+        }
+
+        MouseArea {
+            anchors.fill: parent;
+            onClicked: parent.height = (parent.height == 28) ? 300 : 28;
+        }
+
+        Behavior on height {
+            PropertyAnimation {
+                duration: 200;
+
+            }
+        }
+
+        width: 250;
+        height: 28;
+        radius: 8;
+        gradient: Gradient {
+            GradientStop {position: 0.0; color: "#db3e5b";}
+            GradientStop {position: 1.0; color: "#db2346";}
+        }
+
+        Column {
+            anchors {
+                top: parent.top;
+                topMargin: 28;
+                left: parent.left;
+                right: parent.right;
+                leftMargin: 16;
+                rightMargin: 16;
+            }
+
+            Rectangle {
+                color: "black";
+                opacity: 0.25;
+                anchors {
+                    left: parent.left;
+                    right: parent.right;
+                }
+                height: 1;
+            }
+            Rectangle {
+                color: "white";
+                opacity: 0.25;
+                anchors {
+                    left: parent.left;
+                    right: parent.right;
+                }
+                height: 1;
+            }
+        }
+
+        Rectangle {
+            anchors {
+                left: parent.left;
+                top: parent.top;
+                leftMargin: 6;
+                topMargin: 5;
+            }
+            height: 19;
+            width: height;
+            radius: width / 2;
+            color: "black";
+            opacity: 0.2;
+
+            CustomBorder {
+                color: "white";
+                opacity: 0.8;
+            }
+
+            MouseArea {
+                anchors.fill: parent;
+                onClicked: {
+                    userNotifications.biosNotification = "";
+                    biosWarning.visible = false;
+                }
+            }
+        }
+
+        Text {
+            text: userNotifications.biosNotification;
+            anchors {
+                top: parent.top;
+                topMargin: 7;
+                horizontalCenter: parent.horizontalCenter;
+            }
+
+
+            color: "#f1f1f1";
+            font {
+                family: "Sans";
+                bold: true;
+                pixelSize: 12;
+            }
+        }
+
+        Rectangle {
+            radius: parent.radius;
+            anchors {
+                fill: parent;
+                margins: 1;
+            }
+
+            color: "transparent";
+            border {
+                width: 1;
+                color: "white"
+            }
+            opacity: 0.3;
+        }
     }
 
     InfoBar {

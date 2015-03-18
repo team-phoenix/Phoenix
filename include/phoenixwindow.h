@@ -47,9 +47,6 @@ class PhoenixWindow : public QQuickWindow {
 
         void setFrameless( bool frameless );
 
-        static bool loadCore( QString core_path );
-        static bool loadGame( QString game_path );
-
     private slots:
 
     signals:

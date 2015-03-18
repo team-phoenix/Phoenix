@@ -104,6 +104,9 @@ HEADERS += include/core.h                      \
            include/networkqueue.h              \
            include/scraper.h                   \
            include/phoenixglobals.h            \
+           include/phoenixlibraryhelper.h      \
+           include/utilities.h                 \
+           include/usernotifications.h         \
 
 SOURCES += src/main.cpp                        \
            src/videoitem.cpp                   \
@@ -127,6 +130,10 @@ SOURCES += src/main.cpp                        \
            src/systemdatabase.cpp              \
            src/networkqueue.cpp                \
            src/scraper.cpp                     \
+           src/phoenixlibraryhelper.cpp        \
+           src/phoenixglobals.cpp              \
+           src/utilities.cpp                   \
+           src/usernotifications.cpp           \
 
 RESOURCES = qml/qml.qrc assets/assets.qrc
 

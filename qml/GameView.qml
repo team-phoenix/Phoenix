@@ -127,8 +127,7 @@ Rectangle {
         height: parent.height;
         width: stretchVideo ? parent.width : height * aspectRatio;
 
-        systemDirectory: root.systemDirectory;
-        saveDirectory: root.saveDirectory;
+        systemDirectory: phoenixGlobals.biosPath();
         libcore: gameView.coreName;
         game: gameView.gameName;
         run: gameView.run;
@@ -137,7 +136,6 @@ Rectangle {
         stretchVideo: root.stretchVideo;
 
         //property real ratio: width / height;
-        //onRatioChanged: console.log(ratio)
 
         onRunChanged: {
             if (run)

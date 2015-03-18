@@ -2,101 +2,47 @@
 #define PHOENIXGLOBALS_H
 
 #include <QObject>
-#include <QFile>
-#include <QDir>
-#include <QDirIterator>
-#include <QDebug>
-#include <QCryptographicHash>
 #include <QMap>
+#include <QFileInfo>
 
+#include "utilities.h"
+
+extern Utilities utilities;
 
 class PhoenixGlobals : public QObject {
     Q_OBJECT
 public:
-    explicit PhoenixGlobals(QObject *parent=0) : QObject(parent)
-    {
-    }
+    explicit PhoenixGlobals(QObject *parent=0);
+    ~PhoenixGlobals();
 
-    enum Bios {
-        PSX = 0,
-        SNES,
-    };
-
-    ~PhoenixGlobals()
-    {
-
-    }
-
-    void createFolder(const QString &path)
-    {
-        QDir dir(path);
-        if (!dir.exists())
-            dir.mkpath(".");
-    }
-
-    bool isBios(const QString &file)
-    {
-        return (
-                    // Check for psx bios files
-
-                    file == "scph5500"
-                 || file == "scph5501"
-                 || file == "scph5502"
-
-                    // Other bios files go here.
-               );
-    }
-
-
-    void setOfflineStoragePath(const QString &path)
-    {
-        m_offline_storage_path = path;
-        createFolder(path + "/Bios");
-        createFolder(path + "/Artwork");
-    }
-
-    QByteArray getCheckSum(const QString &file, QCryptographicHash::Algorithm algorithm)
-    {
-        QFile game_file( file );
-
-        if(!game_file.open(QIODevice::ReadOnly))
-            return QByteArray("");
-
-        QCryptographicHash sha1_hash(algorithm);
-        sha1_hash.addData( &game_file );
-        QByteArray result = sha1_hash.result().toHex();
-
-        game_file.close();
-        return result;
-    }
-
+    void setBiosPath(const QString &path);
+    void setArtworkPath(const QString &path);
+    void setOfflineStoragePath(const QString &path);
+    void setSavePath(const QString &path);
+    void setConfigPath(const QString &path);
+    void setSelectedGame(const QString &file);
+    void setSelectedCore(const QString &file);
 
 public slots:
-    QString offlineStoragePath()
-    {
-        return m_offline_storage_path;
-    }
+    QString offlineStoragePath() const;
+    QString biosPath() const;
+    QString artworkPath() const;
+    QString savePath() const;
+    QString configPath() const;
+    QFileInfo selectedGame() const;
+    QFileInfo selectedCore() const;
 
-    bool checkPSXBios()
-    {
-        if (QDir(offlineStoragePath() + "Bios").exists()) {
-            int result = 0;
-            QDirIterator iter(offlineStoragePath() + "/Bios", QDir::Files, QDirIterator::NoIteratorFlags);
-            while (iter.hasNext()) {
-                QFileInfo bios_file = QFileInfo(iter.next());
-                if (isBios(bios_file.baseName()))
-                    result++;
-                qDebug() << "found: " << bios_file.baseName();
-            }
-
-            return (result == 3);
-        }
-
-    }
+    bool validCore( QString core_path );
+    bool validGame( QString game_path );
 
 private:
     QString m_offline_storage_path;
-    QMap<PhoenixGlobals::Bios, QStringList> bios_map;
+    QString m_bios_path;
+    QString m_artwork_path;
+    QString m_save_path;
+    QString m_config_path;
+    QFileInfo m_selected_game;
+    QFileInfo m_selected_core;
 
 };
 

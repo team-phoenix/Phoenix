@@ -16,10 +16,18 @@
 #include "librarydbmanager.h"
 #include "phoenixwindow.h"
 #include "phoenixlibrary.h"
+#include "phoenixlibraryhelper.h"
 #include "cacheimage.h"
 #include "phoenixglobals.h"
+#include "utilities.h"
+#include "usernotifications.h"
 
-InputManager input_manager; // global
+// GLOBALS
+Utilities utilities;
+InputManager input_manager;
+PhoenixGlobals phxGlobals;
+PhoenixLibraryHelper phoenixLibraryHelper;
+UserNotifications userNotifications;
 
 int main( int argc, char *argv[] ) {
 #ifdef Q_OS_LINUX
@@ -58,13 +66,14 @@ int main( int argc, char *argv[] ) {
     // first, set the context properties
     QQmlContext *rctx = engine.rootContext();
 
-    PhoenixGlobals phxGlobals;
     phxGlobals.setOfflineStoragePath(engine.offlineStoragePath() + "/");
 
     input_manager.setContext(rctx);
 
 
-    rctx->setContextProperty("phoenixglobals", &phxGlobals);
+    rctx->setContextProperty("phoenixGlobals", &phxGlobals);
+    rctx->setContextProperty("phoenixLibraryHelper", &phoenixLibraryHelper);
+    rctx->setContextProperty("userNotifications", &userNotifications);
 
     // then, load qml and display the window
     engine.load( QUrl( "qrc:/qml/main.qml" ) );

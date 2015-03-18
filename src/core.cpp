@@ -4,9 +4,10 @@
 // Created: May 31, 2014
 
 #include "core.h"
-
+#include "phoenixglobals.h"
 
 extern InputManager input_manager;
+extern PhoenixGlobals phxGlobals;
 
 LibretroSymbols::LibretroSymbols() {
     retro_audio = nullptr;
@@ -50,6 +51,9 @@ Core::Core() {
 
     Core::core = this;
 
+    setSaveDirectory(phxGlobals.savePath());
+    setSystemDirectory(phxGlobals.biosPath());
+
 } // Core::Core()
 
 Core::~Core()
@@ -73,7 +77,7 @@ bool Core::saveGameState( QString path, QString name ) {
     bool loaded = false;
 
     if( symbols->retro_serialize( data, size ) ) {
-        QFile *file = new QFile( path + "/" + name + "_STATE.sav" );
+        QFile *file = new QFile(phxGlobals.savePath() + phxGlobals.selectedGame().baseName() + "_STATE.sav");
         qCDebug( phxCore ) << file->fileName();
 
         if( file->open( QIODevice::WriteOnly ) ) {
@@ -93,7 +97,7 @@ bool Core::saveGameState( QString path, QString name ) {
 } // Core::saveGameState(QString path, char *data, int size)
 
 bool Core::loadGameState( QString path, QString name ) {
-    QFile file( path + "/" + name + "_STATE" + ".sav" );
+    QFile file(phxGlobals.savePath() + phxGlobals.selectedGame().baseName() + "_STATE.sav");
 
 
     bool loaded = false;
@@ -220,6 +224,27 @@ bool Core::loadGame( const char *path ) {
     
     // full path needed, pass this file path to the core
 
+    QFileInfo info(path);
+
+    //QString file_name = info.baseName() + "." + info.suffix();
+    //qDebug() << "suffix: " << file_name;
+
+    /*if (info.suffix() == "cue") {
+        full_path_needed = false;
+        QFile cue_file(info.canonicalFilePath());
+        if (cue_file.open(QIODevice::Text | QIODevice::ReadOnly)) {
+            while (!cue_file.atEnd()) {
+                QString line = cue_file.readLine().toLower();
+                if (line.contains("file"))
+                    file_name = line.split(" ").at(1).remove('"');
+                qCDebug(phxLibrary) << line;
+            }
+            cue_file.close();
+        }
+    }*/
+
+    //info.setFile(info.canonicalPath() + file_name);
+
     if( full_path_needed ) {
         game_info.path = path;
         game_info.data = nullptr;
@@ -229,7 +254,9 @@ bool Core::loadGame( const char *path ) {
 
     else {
         // full path not needed, read the file to a buffer and pass that to the core
-        QFile game( path );
+
+
+        QFile game(info.canonicalFilePath());
         
         if( !game.open( QIODevice::ReadOnly ) ) {
             return false;
@@ -646,8 +673,8 @@ void Core::saveSRAM()
     if (m_sram == nullptr)
         return;
 
-    QFile file(save_directory + ".srm");
-    qDebug() << "Saving SRAM to: " << save_directory + ".srm";
+    QFile file(save_directory + phxGlobals.selectedGame().baseName() + ".srm");
+    qCDebug(phxCore) << "Saving SRAM to: " << file.fileName();
 
     if (file.open(QIODevice::WriteOnly)) {
         char *data = static_cast<char *>(m_sram);
@@ -660,12 +687,12 @@ void Core::saveSRAM()
 void Core::loadSRAM() {
     m_sram = symbols->retro_get_memory_data(RETRO_MEMORY_SAVE_RAM);
 
-    QFile file(save_directory + ".srm");
+    QFile file(save_directory + phxGlobals.selectedGame().baseName() + ".srm");
     if (file.open(QIODevice::ReadOnly)) {
         QByteArray data = file.readAll();
         memcpy(m_sram, data.data(), data.size());
 
-        qDebug() << "Loading SRAM: " << save_directory + ".srm";
+        qCDebug(phxCore) << "Loading SRAM from: " << file.fileName();
         file.close();
     }
 

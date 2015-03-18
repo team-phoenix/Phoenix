@@ -29,7 +29,6 @@ class VideoItem : public QQuickItem {
         Q_PROPERTY( bool run READ run WRITE setRun NOTIFY runChanged )
         Q_PROPERTY( bool setWindowed READ setWindowed WRITE setWindowed NOTIFY setWindowedChanged )
         Q_PROPERTY( QString systemDirectory READ systemDirectory WRITE setSystemDirectory NOTIFY systemDirectoryChanged )
-        Q_PROPERTY( QString saveDirectory READ saveDirectory  WRITE setSaveDirectory NOTIFY systemDirectoryChanged )
         Q_PROPERTY( int fps READ fps NOTIFY fpsChanged )
         Q_PROPERTY( qreal volume READ volume WRITE setVolume NOTIFY volumeChanged )
         Q_PROPERTY( int filtering READ filtering WRITE setFiltering NOTIFY filteringChanged )
@@ -48,7 +47,6 @@ class VideoItem : public QQuickItem {
         void setRun( bool run );
         void setWindowed( bool setWindowed );
         void setSystemDirectory( QString systemDirectory );
-        void setSaveDirectory( QString saveDirectory );
         void setTexture();
         void setVolume( qreal volume );
         void setFiltering( int filtering );
@@ -74,10 +72,6 @@ class VideoItem : public QQuickItem {
 
         QString systemDirectory() const {
             return m_system_directory;
-        }
-
-        QString saveDirectory() const {
-            return m_save_directory;
         }
 
         int fps() const {
@@ -170,7 +164,6 @@ class VideoItem : public QQuickItem {
         // Qml defined variables
         // [2]
         QString m_system_directory;
-        QString m_save_directory;
         QString m_libcore;
         QString m_game;
         bool m_set_windowed;

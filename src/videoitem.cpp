@@ -1,8 +1,9 @@
 
 #include "videoitem.h"
-
+#include "phoenixglobals.h"
 
 extern InputManager input_manager;
+extern PhoenixGlobals phxGlobals;
 
 VideoItem::VideoItem() {
     core = new Core();
@@ -93,15 +94,6 @@ void VideoItem::setSystemDirectory( QString systemDirectory ) {
     emit systemDirectoryChanged();
 }
 
-void VideoItem::setSaveDirectory( QString saveDirectory ) {
-    QFileInfo info(saveDirectory);
-
-    m_save_directory = saveDirectory.remove("." + info.suffix());
-    core->setSaveDirectory( m_save_directory );
-    emit saveDirectoryChanged();
-
-}
-
 void VideoItem::setAspectRatio( qreal aspectRatio ) {
     m_aspect_ratio = aspectRatio;
     emit aspectRatioChanged();
@@ -112,7 +104,7 @@ void VideoItem::saveGameState() {
     QFileInfo info( m_game );
 
     if( m_game != "" && m_libcore != "" ) {
-        core->saveGameState( m_save_directory, info.baseName() );
+        core->saveGameState(phxGlobals.savePath(), info.baseName() );
     }
 
 }
@@ -120,7 +112,7 @@ void VideoItem::saveGameState() {
 void VideoItem::loadGameState() {
     QFileInfo info( m_game );
 
-    if( core->loadGameState( m_save_directory, info.baseName() ) ) {
+    if( core->loadGameState(phxGlobals.savePath(), info.baseName() ) ) {
         qDebug() << "Save State loaded";
     }
 }
@@ -154,6 +146,7 @@ void VideoItem::setGame( QString game ) {
     if( !core->loadGame( game.toStdString().c_str() ) ) {
         qCCritical( phxVideo, "Couldn't load game !" );
         //        exit(EXIT_FAILURE);
+        return;
     }
 
     qCDebug( phxVideo, "Loaded game at %ix%i @ %.2ffps", core->getBaseWidth(),
