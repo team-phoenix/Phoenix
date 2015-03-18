@@ -23,12 +23,6 @@ Image {
         width: 500;
     }
 
-    anchors {
-        top: parent.top;
-        bottom: parent.bottom;
-        horizontalCenter: parent.horizontalCenter;
-    }
-
     function properlyResizeImage(old_width)
     {
         // The point of this is to completely remove half-pixels from the images.
@@ -140,6 +134,7 @@ Image {
     RectangularGlow {
         id: dropSource;
         anchors.fill: customBorder;
+        visible: gridView.currentIndex !== index;
         glowRadius: 5;
         spread: 0.3;
         color: "black";

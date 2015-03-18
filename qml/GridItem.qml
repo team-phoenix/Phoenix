@@ -15,8 +15,12 @@ Item  {
 
     GridImage {
         id: image;
+        anchors {
+            bottom: parent.bottom;
+            bottomMargin: 3;
+            horizontalCenter: parent.horizontalCenter;
+        }
 
-        anchors.centerIn: parent;
         height: parent.height - margin;
         width: parent.width - margin;
 

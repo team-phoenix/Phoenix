@@ -17,7 +17,7 @@ Item {
             opacityMask.visible = true;
         }
         else if (enableDropShadow) {
-            opacityMask.visible = false;
+            highlighterSource.visible = false;
             if (dropshadowObject === undefined) {
                 dropshadowObject = Qt.createQmlObject(
                     "
@@ -26,13 +26,13 @@ Item {
 
                         DropShadow {
                             id: dropSource;
-                            anchors.fill: opacityMask;
-                            source: opacityMask;
-                            color: '#dc133a';
+                            anchors.fill: highlighterSource;
+                            source: highlighterSource;
+                            color: 'black';
                             visible: root.keyBoardFocus === 2 && parent.enableDropShadow;
                             horizontalOffset: 0
                             verticalOffset: 1
-                            radius: 16
+                            radius: 8;
                             samples: radius * 2;
                             transparentBorder: true;
                         }", highlighter, "GridItemDropShadow");
@@ -53,166 +53,55 @@ Item {
     // The highlighter is only constructed once, and so the performance will be fine.
 
     Rectangle {
-        id: maskSource;
-        visible: false;
-        color: "transparent";
+        id: highlighterSource;
+        z: 1;
+        visible: root.keyBoardFocus === 2 && !parent.enableDropShadow;
+        width: gridView.currentItem.artworkImage.paintedWidth + 9;
+        height: gridView.currentItem.artworkImage.paintedHeight + 9;
         anchors {
-            fill: highlighterSource;
+            bottom: parent.bottom;
+            bottomMargin: -6;
+            horizontalCenter: parent.horizontalCenter;
         }
-        radius: highlighterSource.radius
-        border {
-            width: 6;
-            color: "black"
+
+        radius: 5;
+        color: "#f7b188";
+
+        Component.onCompleted: state = "grow";
+
+        Rectangle {
+            id: highlighterBorder;
+            anchors {
+                fill: parent;
+                topMargin: 1;
+            }
+            z: parent.z + 1;
+            color:  "#ffcc4d";
+            radius: parent.radius - 1;
+            gradient: Gradient {
+                GradientStop {color: "#f06413"; position: 0.0}
+                GradientStop {color: "#dc133a"; position: 1.0}
+            }
         }
 
         Rectangle {
             anchors {
-                fill: parent;
-                margins: parent.border.width - 4;
+                centerIn: parent;
+                verticalCenterOffset: 4;
             }
-            radius: parent.radius;
-            color: "transparent";
-            border {
-                width: 2;
-                color: "black"
+            z: parent.z + 1;
+            height: gridView.currentItem.artworkImage.paintedHeight;
+            width: gridView.currentItem.artworkImage.paintedWidth + 4;
+
+            radius: parent.radius * 0.4;
+            color: "white";
+            gradient: Gradient {
+                GradientStop {color: "black"; position: 0.0}
+                GradientStop {color: "black"; position: 0.99}
+                GradientStop {color: "white"; position: 1.0}
             }
-            Rectangle {
-                anchors {
-                    fill: parent;
-                    margins: 1;
-                }
-                radius: parent.radius;
-                color: "transparent";
-                border {
-                    width: 2;
-                    color: "black"
-                }
-                Rectangle {
-                    anchors {
-                        fill: parent;
-                        margins: 1;
-                    }
-                    radius: parent.radius;
-                    color: "transparent";
-                    border {
-                        width: 2;
-                        color: "black"
-                    }
-                    Rectangle {
-                        anchors {
-                            fill: parent;
-                            margins: 1;
-                        }
-                        radius: parent.radius;
-                        color: "transparent";
-                        border {
-                            width: 2;
-                            color: "black"
-                        }
-                        Rectangle {
-                            anchors {
-                                fill: parent;
-                                margins: 1;
-                            }
-                            radius: parent.radius;
-                            color: "transparent";
-                            border {
-                                width: 2;
-                                color: "black"
-                            }
-                            Rectangle {
-                                anchors {
-                                    fill: parent;
-                                    margins: 1;
-                                }
-                                radius: parent.radius;
-                                color: "transparent";
-                                border {
-                                    width: 2;
-                                    color: "black"
-                                }
-                                Rectangle {
-                                    anchors {
-                                        fill: parent;
-                                        margins: 1;
-                                    }
-                                    radius: parent.radius;
-                                    color: "transparent";
-                                    border {
-                                        width: 2;
-                                        color: "black"
-                                    }
-                                    Rectangle {
-                                        anchors {
-                                            fill: parent;
-                                            margins: 1;
-                                        }
-                                        radius: parent.radius;
-                                        color: "transparent";
-                                        border {
-                                            width: 2;
-                                            color: "black"
-                                        }
-                                        Rectangle {
-                                            anchors {
-                                                fill: parent;
-                                                margins: 1;
-                                            }
-                                            radius: parent.radius;
-                                            color: "transparent";
-                                            border {
-                                                width: 2;
-                                                color: "black"
-                                            }
-                                            Rectangle {
-                                                anchors {
-                                                    fill: parent;
-                                                    margins: 1;
-                                                }
-                                                radius: parent.radius;
-                                                color: "transparent";
-                                                border {
-                                                    width: 2;
-                                                    color: "black"
-                                                }
-                                                Rectangle {
-                                                    anchors {
-                                                        fill: parent;
-                                                        margins: 1;
-                                                    }
-                                                    radius: parent.radius;
-                                                    color: "transparent";
-                                                    border {
-                                                        width: 2;
-                                                        color: "black"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            opacity: 0.4;
         }
-    }
-
-    Rectangle {
-        id: highlighterSource;
-        z: 100;
-        visible: false;
-        width: gridView.currentItem.artworkImage.width + 12;
-        height: gridView.currentItem.artworkImage.height + 12;
-        anchors {
-            centerIn: highlighter;
-        }
-
-        radius: 12;
-        color: "#b0000000"
-
-        Component.onCompleted: state = "grow";
 
         states: [
            State {
@@ -233,8 +122,8 @@ Item {
                 PropertyChanges {
                     id: growAnimation;
                     target: highlighterSource;
-                    width: gridView.currentItem.artworkImage.width + 12;
-                    height: gridView.currentItem.artworkImage.height + 12;
+                    width: gridView.currentItem.artworkImage.paintedWidth + 19;
+                    height: gridView.currentItem.artworkImage.paintedHeight + 19;
 
                 }
             }
@@ -283,92 +172,11 @@ Item {
                 }
             }
         ]
-
-        Rectangle {
-            anchors {
-                fill: parent;
-                margins: 1;
-            }
-
-
-            radius: parent.radius - 1;
-
-            gradient: Gradient {
-                GradientStop {color: "#f06413"; position: 0.0}
-                GradientStop {color: "#dc133a"; position: 1.0}
-            }
-            smooth: true;
-
-            Rectangle {
-                color: "transparent";
-                anchors {
-                    fill: parent;
-                }
-                border {
-                    color: "white";
-                    width: 1;
-                }
-                opacity: 0.3;
-                radius: parent.radius;
-                smooth: true;
-            }
-
-            Rectangle {
-                id: outerInnerBorder;
-                anchors {
-                    fill: parent;
-                    margins: 9;
-                }
-
-                gradient: Gradient {
-                    GradientStop {color: "#f38a4d"; position: 0.0}
-                    GradientStop {color: "#e44d6a"; position: 1.0}
-                }
-
-
-                radius: parent.radius + 1;
-
-
-                Rectangle {
-                    id: innerBackground;
-                    radius: parent.radius;
-                    anchors {
-                        fill: parent;
-                        margins: 1;
-                    }
-
-                    gradient: Gradient {
-                        GradientStop {color: "#b44b0e"; position: 0.0}
-                        GradientStop {color: "#a50e2b"; position: 1.0}
-                    }
-
-                    Rectangle {
-                        anchors {
-                            fill: parent;
-                            margins: 2;
-                        }
-                        color: "black";
-                        radius: parent.radius;
-                    }
-                }
-            }
-        }
-    }
-
-    OpacityMask {
-        id: opacityMask;
-        visible: !parent.enableDropShadow && root.keyBoardFocus === 2;
-        anchors {
-            fill: highlighterSource;
-            margins: -12;
-        }
-        source: highlighterSource;
-        maskSource: maskSource;
     }
 
     Desaturate {
         anchors.fill: source;
-        source: opacityMask;
+        source: highlighterSource;
         desaturation: 1.0;
         visible: root.keyBoardFocus !== 2;
     }

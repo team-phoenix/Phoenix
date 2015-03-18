@@ -43,11 +43,6 @@ Rectangle {
     PhoenixScrollView {
         id: scrollView;
         focus: root.gridFocus;
-        onFocusChanged: {
-            //console.log(focus ? "grid has focus" : "grid lost focus");
-            //if (focus)
-                //scrollView.forceActiveFocus();
-        }
 
         anchors {
             fill: parent;
@@ -143,7 +138,6 @@ Rectangle {
                 height: gridView.cellHeight;
                 width: gridView.cellWidth;
                 z: index == gridView.currentIndex ? 2 : 0;
-
 
             }
         }
