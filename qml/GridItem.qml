@@ -31,7 +31,7 @@ Item  {
 
         anchors {
             top: image.bottom;
-            topMargin: (index == gridView.currentIndex) ? 20 : 5;
+            topMargin: (index == gridView.currentIndex) ? 20 : 8;
             horizontalCenter: image.horizontalCenter;
         }
 
@@ -42,7 +42,7 @@ Item  {
         }
 
         spacing: 0;
-        width: parent.width;
+        width: parent.width * 0.8;
 
         MarqueeText {
             id: titleLabel;
@@ -72,7 +72,7 @@ Item  {
             }
 
             elide: Text.ElideRight;
-            horizontalAlignment: Text.AlignHCenter;
+            horizontalAlignment: Text.AlignLeft;
         }
     }
 }
