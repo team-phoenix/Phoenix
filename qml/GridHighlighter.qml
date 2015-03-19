@@ -6,7 +6,7 @@ Item {
     id: highlighter;
     z: highlighterSource.z;
 
-    property bool enableDropShadow: true;
+    property bool enableDropShadow: false;
     property var dropshadowObject: undefined;
 
     function createDropShadow()

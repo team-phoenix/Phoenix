@@ -143,9 +143,30 @@ Rectangle {
 
         }
 
+        DropShadow {
+            anchors.fill: source;
+            source: blackShadow;
+            color: "white";
+            opacity: 0.3;
+            verticalOffset: 1;
+            horizontalOffset: 0;
+            radius: 1;
+            samples: radius * 2;
+        }
 
+        DropShadow {
+            id: blackShadow;
+            anchors.fill: source;
+            source: consoleText;
+            color: "black";
+            verticalOffset: 2;
+            horizontalOffset: 0;
+            radius: 1;
+            samples: radius * 2;
+        }
 
-        Row {
+        Text {
+            id: consoleText;
             anchors {
                 left: parent.left;
                 top: parent.top;
@@ -153,30 +174,17 @@ Rectangle {
                 leftMargin: 12;
                 horizontalCenter: parent.horizontalCenter;
             }
-
-
-            Text {
-                renderType: Text.QtRendering;
-                text: "CONSOLES";
-                color: "#68686b";
-                font {
-                    bold: true;
-                    family: "Sans";
-                    pixelSize: 11
-                }
+            renderType: Text.QtRendering;
+            text: "CONSOLES";
+            color: "#f1f1f1";
+            opacity: 0.2;
+            font {
+                bold: true;
+                family: "Sans";
+                pixelSize: 11
             }
-            /*Image {
-                y: 2;
-                source: "../assets/arrow-down-b.png";
-                fillMode: Image.PreserveAspectFit;
-                height: 14;
-                width: 20;
-                sourceSize {
-                    width: 25;
-                    height: 25;
-                }
-            }*/
         }
+
     }
 
     ListView {
@@ -300,7 +308,7 @@ Rectangle {
                     }
                 }
 
-                width: parent.width - 2;
+                width: 8;
                 gradient: Gradient {
                     GradientStop {color: "#ee5e16"; position: 0.0}
                     GradientStop {color: "#de1937"; position: 1.0}
@@ -417,16 +425,19 @@ Rectangle {
                     }
                 }
 
-                TextGradient {
+                Text {
                     id: consoleItem;
                     anchors.verticalCenter: parent.verticalCenter;
                     width: item.width * 0.6;
                     height: 22//item.height;
-                    enableGradient: false;
                     elide: Text.ElideRight;
-                    bold: index == listView.currentIndex//enableGradient;
-                    pointSize: 8;
+                    font {
+                        bold: index == listView.currentIndex//enableGradient;
+                        pointSize: 8;
+                    }
+                    verticalAlignment: Image.AlignVCenter;
                     text: system;
+                    color: "#f1f1f1";
 
                 }
             }
