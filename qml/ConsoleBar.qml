@@ -80,10 +80,9 @@ Rectangle {
         }
     }
 
-    Rectangle {
+    Item {
         id: consoleHeader;
         height: 36;
-        color: parent.color;
         z: listView.z + 1;
         anchors {
             top: parent.top;
@@ -205,6 +204,25 @@ Rectangle {
         highlightFollowsCurrentItem: true;
 
         property bool retractList: false;
+
+        model: ListModel {
+            ListElement {system: "Atari Lynx"; icon: "../assets/consoleicons/lynx.png";}
+            ListElement {system: "Arcade"; icon: "../assets/consoleicons/arcade.png";}
+            ListElement {system: "DOS"; icon: "../assets/consoleicons/dosbox.png";}
+            ListElement {system: "Nintendo"; icon: "../assets/consoleicons/nes.png";}
+            ListElement {system: "Super Nintendo"; icon: "../assets/consoleicons/snes.png";}
+            ListElement {system: "Game Boy"; icon: "../assets/consoleicons/gbc.png";}
+            ListElement {system: "Game Boy Advance"; icon: "../assets/consoleicons/gba.png";}
+            ListElement {system: "Nintendo DS"; icon: "../assets/consoleicons/nds.png";}
+            ListElement {system: "Sega Game Gear"; icon: "../assets/consoleicons/gamegear.png";}
+            ListElement {system: "Sega Master System"; icon: "../assets/consoleicons/sms.png";}
+            ListElement {system: "Sega Mega Drive"; icon: "../assets/consoleicons/megadrive.png";}
+            ListElement {system: "Sega CD"; icon: "../assets/consoleicons/sega-cd.png";}
+            ListElement {system: "Sega 32x"; icon: "../assets/consoleicons/sega32x.png";}
+            ListElement {system: "Sony PlayStation"; icon: "../assets/consoleicons/ps1.png";}
+            ListElement {system: "All"; icon: "";}
+        }
+
 
         Keys.forwardTo: headerBar.textField;
         Keys.priority: Keys.BeforeItem;
@@ -346,8 +364,6 @@ Rectangle {
             topMargin: 10;
         }
 
-        model: phoenixLibrary.systemsModel();
-
         onCurrentIndexChanged: {
             if (currentItem.text === "All") {
                 phoenixLibrary.model().setFilter("title LIKE ?", ['%%'])
@@ -368,7 +384,7 @@ Rectangle {
             //visible: !listView.retractList;
             height: 26;
             width: consoleBar.width;
-            property string text: modelData;
+            property string text: system;
             Row {
                 id: row;
                 anchors {
@@ -377,17 +393,28 @@ Rectangle {
                 }
                 spacing: 8;
 
-                Image {
-                    visible: false;
+                Item {
+                    height: 21;
+                    width: 21;
                     anchors.verticalCenter: parent.verticalCenter;
-                    source: phoenixLibrary.systemIcon(modelData);
-                    fillMode: Image.PreserveAspectFit;
-                    sourceSize {
-                        height: 24;
-                        width: 24;
+
+                    DropShadow {
+                        anchors.fill: source;
+                        source: iconImage;
+                        color: "white";
+                        opacity: 0.15;
+                        verticalOffset: 1;
+                        horizontalOffset: 0;
+                        radius: 1;
+                        samples: radius * 2;
                     }
-                    height: 20;
-                    width: 20;
+
+                    Image {
+                        id: iconImage;
+                        anchors.centerIn: parent;
+                        source: icon;
+                        fillMode: Image.PreserveAspectFit;
+                    }
                 }
 
                 TextGradient {
@@ -395,11 +422,11 @@ Rectangle {
                     anchors.verticalCenter: parent.verticalCenter;
                     width: item.width * 0.6;
                     height: 22//item.height;
-                    text: modelData;
-                    enableGradient: index === listView.currentIndex;
+                    enableGradient: false;
                     elide: Text.ElideRight;
                     bold: index == listView.currentIndex//enableGradient;
                     pointSize: 8;
+                    text: system;
 
                 }
             }

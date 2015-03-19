@@ -41,6 +41,9 @@
     <file>consoleicons/7800.png</file>
     <file>consoleicons/3do.png</file>
     <file>consoleicons/arcade.png</file>
+	<file>consoleicons/megadrive.png</file>
+	<file>consoleicons/sega-cd.png</file>
+	<file>consoleicons/sms.png</file>
     <!-- -->
     <file>cog-6x.png</file>
     <file>arrow-left-a.png</file>
@@ -90,6 +93,8 @@
 	<file>small-icon-disabled.png</file>
 	<file>search.png</file>
 	<file>cartographer.png</file>
+	<file>noise.png</file>
+	<file>cream_pixels.png</file>
     <!-- -->
     <file>gamecontrollerdb.txt</file>
 </qresource>
