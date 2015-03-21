@@ -1,7 +1,7 @@
 Phoenix
 =======
 
-A super-slick libretro client powered by Qt5. Currently under early development.
+A super-slick libretro frontend powered by Qt5. Currently under early development.
 
 <b>Phoenix is still under heavy development. Don't expect everything to work!<b>
 -----------
