@@ -4,7 +4,11 @@
 
 #include <QSqlDatabase>
 
-
+/* The LibraryDbManager is in charge of opening the sql database
+ * for the GameLibraryModel.
+ *
+ * This LibraryDbManager class also will generate the sql schema.
+ */
 
 class LibraryDbManager {
     public:

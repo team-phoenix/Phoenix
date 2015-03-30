@@ -3,7 +3,15 @@
 
 #include <QObject>
 
-// GLOBAL CLASS
+/* The UserNotifications is a global singleton class
+ * is, in effect, a way for a developer relay information from c++ to QML in a graphical manner.
+ *
+ * Each Q_PROPERTY will generate a different popup when called from QML.
+ *
+ * You want to tell the user that they are missing 3 bios files, use this class.
+ * You want to tell the user that they have disconnected their controller, use this class,
+ * and so on.
+ */
 
 class UserNotifications : public QObject
 {

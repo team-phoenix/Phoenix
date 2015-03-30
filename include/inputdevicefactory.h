@@ -8,6 +8,10 @@
 #include "joystick.h"
 #include "keyboard.h"
 
+/* This class is used to create a InputDevice from a InputDeviceMapping. This class is used from
+ * the InputDeviceManager, to create the input devices.
+ */
+
 
 class InputDeviceFactory {
     public:

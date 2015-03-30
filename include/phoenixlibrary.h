@@ -16,6 +16,11 @@
 #include "phoenixglobals.h"
 #include "phoenixlibraryhelper.h"
 
+/* The PhoenixLibrary class is a wrapper around the GameLibraryModel class.
+ * This class is exposed to QML and is used to help import, remove, or
+ * alter games in the GameLibraryModel.
+ */
+
 extern PhoenixGlobals phxGlobals;
 extern PhoenixLibraryHelper phoenixLibraryHelper;
 

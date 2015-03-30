@@ -12,8 +12,14 @@
 #include "inputdeviceevent.h"
 
 
-// Class to map input from some device (eg keyboard, mouse, joystick)
-// to retro_device_id events for the given retro_device_type.
+/* The InputDeviceMapping class is used to map input from some device (eg keyboard, mouse, joystick)
+ * to retro_device_id events for the given retro_device_type.
+ *
+ * There only exists one InputDeviceMapping per InputDevice. If you change the values in the internal map for this class,
+ * you then change what each button or keyboard press does in game.
+ *
+ * This class is used from the InputDeviceManager.
+ */
 
 typedef QMap<QString, retro_device_id> device_settings_mapping;
 typedef std::unordered_map<InputDeviceEvent *, retro_device_id> DeviceMap;

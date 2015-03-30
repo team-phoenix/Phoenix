@@ -12,7 +12,9 @@
 #include "inputdevice.h"
 
 
-// Class to start SDL's event loop, binding it to a different thread
+/* The SDLEvents class is sued to start SDL's event loop, binding it to a different thread,
+ * and setting up callbacks to the appropriate InputDevice.
+ */
 class SDLEvents : public QObject {
         Q_OBJECT
     public:

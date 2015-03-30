@@ -21,6 +21,18 @@
 #include "inputmanager.h"
 #include "keyboard.h"
 
+/* The Core class is a wrapper around any given libretro core.
+ * The general functionality for this class is to load the core into memory,
+ * connect to all of the core's callbacks, such as video and audio rendering,
+ * and generate frames of video and audio data in the raw memory format.
+ *
+ * The Core class is instantiated inside of the VideoItem class, which lives in the videoitem.cpp file.
+ * Currently this approach only supports loading a single core and game at any one time.
+ *
+ * Check out the static callbacks in order to see how data is passed from the core, to the screen.
+ *
+ */
+
 // Helper for resolving libretro methods
 #define resolved_sym( name ) symbols->name = ( decltype( symbols->name ) )libretro_core->resolve( #name );
 

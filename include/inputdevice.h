@@ -11,9 +11,14 @@
 #include "inputdeviceevent.h"
 #include "logging.h"
 
+/* The InputDevice is a baseclass of the Keyboard and Joystick class, and any other future devices.
+ * The InputDevice holds the controller mapping for button presses, and represents one and only one controller,
+ * or keyboard connected to the computer.
+ *
+ * This class is instantiated from the InputManager, that lives in the inputdevicemanager.cpp class.
+ */
 
 class InputDeviceMapping;
-
 
 class InputDevice : public QObject {
         Q_OBJECT

@@ -8,6 +8,11 @@
 #include "inputdevice.h"
 #include "inputdevicemapping.h"
 
+/* The Keyboard class is an InputDevice that represents one keyboard.
+ *
+ * This class could exist inside of the InputManager's InputDevice list as long as any
+ * keyboards are connected to the computer.
+ */
 
 class Keyboard : public InputDevice {
     public:

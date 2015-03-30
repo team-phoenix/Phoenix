@@ -8,6 +8,11 @@
 #include <QHash>
 #include <QDebug>
 
+/* This class is a base class for the JoystickEvents and the KeyboardEvents
+ *
+ * One InputDeviceEvent is generated per keyboard press or controller action.
+ */
+
 
 class InputDeviceEvent {
     public:

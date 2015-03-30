@@ -9,6 +9,11 @@
 #include "inputdevicemapping.h"
 #include "sdlevents.h"
 
+/* The Joystick class is an InputDevice that represents one controller or joystick.
+ *
+ * This class could exist inside of the InputManager's InputDevice list as long as any
+ * controllers or joysticks are connected to the computer.
+ */
 
 class Joystick : public InputDevice {
     public:

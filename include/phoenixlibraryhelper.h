@@ -5,12 +5,14 @@
 #include <QCryptographicHash>
 #include <QFileInfo>
 
-// GLOBAL CLASS
+/* The PhoenixLibraryHelper class is a global singleton class.
 
-// The purpose of this class is to provide necessary library operations on files, folders, and other types of I/O,
-// without needing to reside inside of the PhoenixLibrary class. This is because we may eventually want to add
-// in support for multiple libraries. Keeping these operations separate will decrease the code size.
-
+ * The purpose of this class is to provide necessary library operations on files, folders, and other types of I/O,
+ * without needing to reside inside of the PhoenixLibrary class. This is because we may eventually want to add
+ * in support for multiple libraries.
+ *
+ * Keeping these operations separate will decrease size of the PhoenixLibrary.
+ */
 
 class PhoenixLibraryHelper : public QObject
 {

@@ -5,6 +5,9 @@
 #include "joystick.h"
 #include "keyboard.h"
 
+/* The InputDeviceMappingFactory class is used to create a InputDeviceMapping
+ * based upon whatever type of device is being used.
+ */
 
 class InputDeviceMappingFactory {
     public:

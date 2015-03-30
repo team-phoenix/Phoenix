@@ -6,6 +6,9 @@
 
 #include "librarydbmanager.h"
 
+/* The GameLibraryModel class the library model that is used by the Table and Grid views.
+ */
+
 
 class GameLibraryModel: public QSqlTableModel {
         Q_OBJECT

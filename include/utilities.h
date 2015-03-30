@@ -3,6 +3,10 @@
 
 #include <QString>
 
+/* The Utilities class is a global singleton class.
+ * This class will probably be merged into the PhoenixGlobals class.
+ */
+
 class Utilities
 {
 public:

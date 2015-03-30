@@ -10,6 +10,18 @@
 #include "inputdevice.h"
 #include "inputdevicemapping.h"
 
+/* The InputManager class is a wrapper around a QList< InputDevice *ptr>.
+ *
+ * This class's job is to create the appropriate InputDeviceMappings,
+ * which as then used to create the necessary InputDevice's.
+ *
+ * This class is used by the InputSettings.qml file, to change the
+ * InputDeviceMapping of any given InputDevice.
+ *
+ * This class is also called by the Core class, specifically it is called inside of the input callback,
+ * in order to see which buttons of each device have been changed.
+ */
+
 
 class InputManager : public QObject {
     Q_OBJECT

@@ -6,6 +6,21 @@
 
 #include "logging.h"
 
+/* The PhoenixWindow class subclass of the QQuickWindow class.
+ *
+ * Under normal cases, a developer would just have the
+ * root window of their QML application be an ApplicationWindow,
+ * or even just a standard Window.
+ *
+ * These methods are fine for normal cases, but the default QQuickWindow class
+ * does not provide slots for changing things like the swap behavior of the window.
+ *
+ * If you want to remove native system border around Phoenix, that operation will be done through
+ * this class.
+ *
+ * This class is exposed to QML and is the root most window of Phoenix.
+ */
+
 class PhoenixWindow : public QQuickWindow {
         Q_OBJECT
         Q_PROPERTY( int swapInterval READ swapInterval WRITE setWinSwapInterval NOTIFY swapIntervalChanged )
@@ -15,23 +30,26 @@ class PhoenixWindow : public QQuickWindow {
     public:
         PhoenixWindow();
         ~PhoenixWindow();
-        void setWindowScreen( QScreen *screen );
+        void setWindowScreen(QScreen *screen);
         void setWinFormat();
 
-        QScreen *window_screen() {
+        QScreen *window_screen()
+        {
             return screen();
         }
 
-        int swapInterval() const {
+        int swapInterval() const
+        {
             return m_swap_interval;
         }
 
-        int swapBehavior() const {
+        int swapBehavior() const
+        {
             return m_swap_behavior;
         }
 
-
-        bool frameless() const {
+        bool frameless() const
+        {
             return m_frameless;
         }
 
@@ -41,8 +59,8 @@ class PhoenixWindow : public QQuickWindow {
         // These functions need to be set before the program starts and the program
         // needs to be reset completely for the changes to take effect.
         // [1]
-        void setWinSwapInterval( int interval );
-        void setWinSwapBehavior( int behavior );
+        void setWinSwapInterval(int interval);
+        void setWinSwapBehavior(int behavior);
         // ~[1]
 
         void setFrameless( bool frameless );
@@ -50,8 +68,8 @@ class PhoenixWindow : public QQuickWindow {
     private slots:
 
     signals:
-        void swapIntervalChanged( int );
-        void swapBehaviorChanged( int );
+        void swapIntervalChanged(int interval);
+        void swapBehaviorChanged(int behavior);
         void framelessChanged();
 
     private:
@@ -63,7 +81,7 @@ class PhoenixWindow : public QQuickWindow {
 
 #ifdef Q_OS_WIN32
         HWND windowHandle = nullptr;
-        void paintPicture( MSG *pMessage, long *result );
+        void paintPicture(MSG *pMessage, long *result);
 #endif
 
 

@@ -9,6 +9,11 @@
 
 extern Utilities utilities;
 
+/* The PhoenixGlobals class is a global singleton that is used to
+ * provide folder locations, and do other various operations that
+ * aren't specific to any class and need to be accessed from a multitude of places.
+ */
+
 class PhoenixGlobals : public QObject {
     Q_OBJECT
 public:

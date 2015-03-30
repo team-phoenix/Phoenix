@@ -8,8 +8,15 @@
 #include "logging.h"
 
 
-// Circular buffer holding audio data.
-// Should only be accessed by one consumer and one producer thread.
+/* This AudioBuffer class is a circular buffer that holds audio data.
+ * This class should only be accessed by one consumer and one producer thread.
+ *
+ * This AudioBuffer class is instantiated inside of the Audio class, which lives in audio.cpp.
+ * Before each write, the Audio class must fill up this temporary buffer so that we are writing an entire frame worth of audio data
+ * to the audio output.
+ *
+ * This class uses atomic types in order to be thread safe.
+ */
 class AudioBuffer {
 
         char *m_buffer;

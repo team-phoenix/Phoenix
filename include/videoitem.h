@@ -14,12 +14,28 @@
 #include <QSGTexture>
 #include <QEvent>
 #include <QSGSimpleTextureNode>
+
 #include "qdebug.h"
 #include "core.h"
 #include "audio.h"
 #include "keyboard.h"
 #include "logging.h"
 
+/* The VideoItem class is a subclass of the QQuickItem class.
+ *
+ * A QQuickItem is represented from QML, as the Item type.
+ *
+ * In a general sense, this class's main job is to make the libretro core
+ * show it's video frames to the screen.
+ *
+ * This class can be thought of as a QML Rectangle, that has its texture constantly changing.
+ *
+ * The VideoItem class also limits the frame rate of QML, if a game is supposed to
+ * be run at a lower frame rate than 60.
+ *
+ * This class is exposed to QML, as the VideoItem type, and is instantiated from inside of the
+ * GameView.qml file.
+ */
 
 class VideoItem : public QQuickItem {
         Q_OBJECT

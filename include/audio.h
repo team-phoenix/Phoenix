@@ -17,6 +17,14 @@
 #include "audiobuffer.h"
 #include "logging.h"
 
+/* The Audio class writes audio data to connected audio device.
+ * All of the audio functionality lives in side of this class.
+ * Any errors starting with "[phoenix.audio]" correspond to this class.
+ *
+ * The audio class is instantiated inside of the videoitem.cpp class.
+ * The Audio class uses the AudioBuffer class, which lives in the audiobuffer.cpp class, as a temporary audio buffer
+ * that can be written has a whole chunk to the audio output.
+ */
 
 class Audio : public QObject {
         Q_OBJECT
