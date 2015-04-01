@@ -38,7 +38,18 @@ Rectangle {
             resizeGrid = true;
     }
 
+    WelcomeView {
+        z: parent.z + 1;
+        opacity: gridView.count == 0 ? 1.0 : 0;
+        Behavior on opacity {
+            PropertyAnimation {duration: 200;}
+        }
 
+        anchors {
+            fill: parent;
+            margins: 24;
+        }
+    }
 
     PhoenixScrollView {
         id: scrollView;
@@ -91,18 +102,6 @@ Rectangle {
             property int queuedIndex: 0;
             property var moveCurrentDirection: -1;
             property bool showRightClickMenu: false;
-
-
-            Text {
-                visible: gridView.count == 0;
-                anchors.centerIn: parent;
-                text: "0 Games Were Found, (PLACE HOLDER)";
-                color: "#f1f1f1";
-                font {
-                    family: "Sans";
-                    pixelSize: 32;
-                }
-            }
 
             Behavior on cellWidth {
                 PropertyAnimation {duration: 50;  easing.type: Easing.Linear;}

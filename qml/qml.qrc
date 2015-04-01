@@ -26,10 +26,11 @@
         <file>InfoBar.qml</file>
         <file>PhoenixViewButtons.qml</file>
         <file>GridItem.qml</file>
-		<file>GridHighlighter.qml</file>
+        <file>GridHighlighter.qml</file>
         <file>TextGradient.qml</file>
         <file>GridImage.qml</file>
         <file>MarqueeText.qml</file>
         <file>InputIndicator.qml</file>
+        <file>WelcomeView.qml</file>
     </qresource>
 </RCC>
