@@ -77,9 +77,9 @@ bool LibraryDbManager::createSchema() {
             QStringLiteral( "   /* file info */" ) %
             QStringLiteral( "   directory TEXT,\n" ) %
             QStringLiteral( "   filename TEXT UNIQUE,\n" ) %
-            QStringLiteral( "   sha1 BLOB\n" ) %
-            QStringLiteral( "   crc32 BLOB\n" ) %
-            QStringLiteral( "   rom_count BOOLEAN,\n" ) %
+            QStringLiteral( "   sha1 BLOB,\n" ) %
+            QStringLiteral( "   crc32 BLOB,\n" ) %
+            QStringLiteral( "   rom_count BOOLEAN\n" ) %
             QStringLiteral( ")" ) );
 
     q.exec( QStringLiteral( "CREATE INDEX title_index ON " ) % table_games % QStringLiteral( " (title)" ) );
