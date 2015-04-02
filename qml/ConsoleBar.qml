@@ -80,7 +80,6 @@ Rectangle {
         }
     }
 
-
     Rectangle {
         id: sections;
         anchors {
@@ -102,19 +101,17 @@ Rectangle {
                 leftMargin: 16;
             }
             highlight: Item {
-                anchors.centerIn: sectionsListView.currentItem;
-                height: 21;
-                width: sectionsListView.currentItem.width + 4;
+                anchors {
+                    fill: sectionsListView.currentItem;
+                }
                 Rectangle {
-                    anchors {
-                        fill: parent;
-                    }
-
+                    anchors.centerIn: parent;
+                    height: 21;
+                    width: sectionsListView.currentItem.width;
                     gradient: Gradient {
                         GradientStop {position: 0.0; color: "transparent";}
                         GradientStop {position: 1.0; color: "#3b3a3a";}
                     }
-
                     radius: 6;
 
                     Rectangle {
@@ -124,7 +121,7 @@ Rectangle {
                            bottomMargin: 1;
                         }
 
-                        color: "#141414";
+                        color: "#1b1a1a";
                         radius: parent.radius;
 
                         Rectangle {
@@ -151,18 +148,24 @@ Rectangle {
                 ListElement {section: "Library"; modelType: "library";}
                 ListElement {section: "Collections"; modelType: "collections";}
             }
-            delegate: ShadowedText {
-                text: section;
-                anchors.verticalCenter: parent.verticalCenter;
-                pixelSize: 9;
-                height: 25;
+            delegate: Item {
+                anchors {
+                    top: parent.top;
+                    bottom: parent.bottom;
+                }
                 width: 80;
-                color: index == sectionsListView.currentIndex ? "#f1f1f1" : "#bfbfbf";
-                MouseArea {
-                    anchors.fill: parent;
-                    onClicked: {
-                        sectionsListView.currentIndex = index;
-                        consoleListView.model = (modelType == "library") ? consoleListView.consoleModel : undefined;
+
+                ShadowedText {
+                    text: section;
+                    anchors.centerIn: parent;
+                    pixelSize: 11;
+                    color: index == sectionsListView.currentIndex ? "#f1f1f1" : "#bfbfbf";
+                    MouseArea {
+                        anchors.fill: parent;
+                        onClicked: {
+                            sectionsListView.currentIndex = index;
+                            consoleListView.model = (modelType == "library") ? consoleListView.consoleModel : undefined;
+                        }
                     }
                 }
             }
