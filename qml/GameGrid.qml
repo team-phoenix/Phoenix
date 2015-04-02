@@ -93,6 +93,13 @@ Rectangle {
 
         }
 
+        MouseArea {
+            id: dismissalMouseArea;
+            anchors.fill: parent;
+            enabled: gridView.showRightClickMenu;
+            onClicked: gridView.showRightClickMenu = false;
+        }
+
         GridView {
             id: gridView;
 
@@ -102,6 +109,7 @@ Rectangle {
             property int queuedIndex: 0;
             property var moveCurrentDirection: -1;
             property bool showRightClickMenu: false;
+
 
             Behavior on cellWidth {
                 PropertyAnimation {duration: 50;  easing.type: Easing.Linear;}
