@@ -13,7 +13,7 @@ Audio::Audio( QObject *parent )
 {
 
     this->moveToThread( &thread );
-    connect( &thread, SIGNAL( started() ), SLOT( threadStarted() ) );
+    connect( &thread, &QThread::started, this, &Audio::threadStarted);
     thread.setObjectName( "phoenix-audio" );
 
     /*
@@ -27,10 +27,10 @@ Audio::Audio( QObject *parent )
     //connect(m_abuf, SIGNAL(hasPeriodSize()), this, SLOT(handleHasPeriodSize()));
 
     timer.moveToThread(&thread);
-    connect( &timer, &QTimer::timeout, this, &Audio::handlePeriodTimer );
+    connect(&timer, &QTimer::timeout, this, &Audio::handlePeriodTimer);
 
     // we need send this signal to ourselves
-    connect( this, &Audio::formatChanged, this, &Audio::handleFormatChanged );
+    connect(this, &Audio::formatChanged, this, &Audio::handleFormatChanged);
 }
 
 AudioBuffer *Audio::abuf() const
@@ -96,10 +96,10 @@ void Audio::handleFormatChanged()
 
     aout = new QAudioOutput(afmt_out);
     //    aout->moveToThread(&thread);
-    Q_CHECK_PTR( aout );
+    Q_CHECK_PTR(aout);
     aout->moveToThread(&thread);
 
-    connect( aout, QAudioOutput::stateChanged, this, Audio::stateChanged);
+    connect(aout, &QAudioOutput::stateChanged, this, &Audio::stateChanged);
     aio = aout->start();
 
     if( !isRunning ) {
