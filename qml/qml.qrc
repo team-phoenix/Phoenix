@@ -32,5 +32,6 @@
         <file>MarqueeText.qml</file>
         <file>InputIndicator.qml</file>
         <file>WelcomeView.qml</file>
+        <file>ShadowedText.qml</file>
     </qresource>
 </RCC>
