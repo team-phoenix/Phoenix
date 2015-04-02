@@ -8,6 +8,8 @@
 #include <QAudioOutput>
 #include <QDebug>
 
+#include <memory>
+
 /*
 #ifdef Q_OS_LINUX
 #include <soxr.h>
@@ -29,24 +31,22 @@
 class Audio : public QObject {
         Q_OBJECT
     public:
-        Audio( QObject * = 0 );
-        virtual ~Audio();
+        Audio(QObject* = 0);
+        ~Audio();
 
         void start();
-        void setFormat( QAudioFormat _afmt );
+        void setFormat(QAudioFormat _afmt);
 
-        AudioBuffer *abuf() const {
-            return m_abuf;
-        }
+        AudioBuffer *abuf() const;
 
     signals:
         void formatChanged();
 
     public slots:
-        void stateChanged( QAudio::State s );
+        void stateChanged(QAudio::State state);
 
-        void runChanged( bool isRunning );
-        void setVolume( qreal level );
+        void runChanged(bool isRunning);
+        void setVolume(qreal level);
 
     private slots:
         void threadStarted();
@@ -57,9 +57,15 @@ class Audio : public QObject {
         bool isRunning; // is core running
         QAudioFormat afmt_out;
         QAudioFormat afmt_in;
+
+        // We delete aout, use normal pointer.
         QAudioOutput *aout;
-        QIODevice *aio;
-        AudioBuffer *m_abuf;
+
+        // aio doesn't own the pointer, use normal pointer.
+        QIODevice* aio;
+
+        std::unique_ptr<AudioBuffer>m_abuf;
+
         QThread thread;
         QTimer timer;
         /*

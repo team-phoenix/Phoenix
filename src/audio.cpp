@@ -8,35 +8,43 @@ Audio::Audio( QObject *parent )
       isRunning( false ),
       aout( nullptr ),
       aio( nullptr ),
-      timer( this ) {
+      timer( this ),
+      m_abuf(new AudioBuffer)
+{
 
     this->moveToThread( &thread );
     connect( &thread, SIGNAL( started() ), SLOT( threadStarted() ) );
     thread.setObjectName( "phoenix-audio" );
+
     /*
     #ifdef Q_OS_LINUX
             soxr = nullptr;
             deviation = 0.005;
     #endif
             */
+    Q_CHECK_PTR(m_abuf);
 
-    m_abuf = new AudioBuffer();
-    Q_CHECK_PTR( m_abuf );
     //connect(m_abuf, SIGNAL(hasPeriodSize()), this, SLOT(handleHasPeriodSize()));
 
-    timer.moveToThread( &thread );
+    timer.moveToThread(&thread);
     connect( &timer, &QTimer::timeout, this, &Audio::handlePeriodTimer );
 
     // we need send this signal to ourselves
     connect( this, &Audio::formatChanged, this, &Audio::handleFormatChanged );
 }
 
-void Audio::start() {
-    thread.start( QThread::TimeCriticalPriority );
+AudioBuffer *Audio::abuf() const
+{
+    return m_abuf.get();
+}
+void Audio::start()
+{
+    thread.start(QThread::TimeCriticalPriority);
 }
 
 /* This needs to be called on the audio thread*/
-void Audio::setFormat( QAudioFormat _afmt ) {
+void Audio::setFormat(QAudioFormat _afmt)
+{
 
     /*
     #ifdef Q_OS_LINUX
@@ -79,17 +87,19 @@ void Audio::setFormat( QAudioFormat _afmt ) {
 
 }
 
-void Audio::handleFormatChanged() {
-    if( aout ) {
+void Audio::handleFormatChanged()
+{
+    if(aout) {
         aout->stop();
         delete aout;
     }
 
-    aout = new QAudioOutput( afmt_out );
+    aout = new QAudioOutput(afmt_out);
     //    aout->moveToThread(&thread);
     Q_CHECK_PTR( aout );
-    aout->moveToThread( &thread );
-    connect( aout, SIGNAL( stateChanged( QAudio::State ) ), SLOT( stateChanged( QAudio::State ) ) );
+    aout->moveToThread(&thread);
+
+    connect( aout, QAudioOutput::stateChanged, this, Audio::stateChanged);
     aio = aout->start();
 
     if( !isRunning ) {
@@ -101,24 +111,26 @@ void Audio::handleFormatChanged() {
 
 }
 
-void Audio::threadStarted() {
-    if( !afmt_in.isValid() ) {
+void Audio::threadStarted()
+{
+    if(!afmt_in.isValid()) {
         // we don't have a valid audio format yet...
-        qCDebug( phxAudio ) << "afmt is not valid";
+        qCDebug(phxAudio) << "afmt is not valid";
         return;
     }
 
     handleFormatChanged();
 }
 
-void Audio::handlePeriodTimer() {
-    Q_ASSERT( QThread::currentThread() == &thread );
+void Audio::handlePeriodTimer()
+{
+    Q_ASSERT(QThread::currentThread() == &thread);
 
-    if( !aio ) {
+    if(!aio) {
         static bool error_msg = true;
 
-        if( error_msg ) {
-            qCDebug( phxAudio ) << "Audio device was not found, stopping all audio writes.";
+        if(error_msg) {
+            qCDebug(phxAudio) << "Audio device was not found, stopping all audio writes.";
             error_msg = false;
         }
 
@@ -127,7 +139,7 @@ void Audio::handlePeriodTimer() {
 
     int toWrite = aout->bytesFree();
 
-    if( !toWrite ) {
+    if(!toWrite) {
         return;
     }
 
@@ -173,30 +185,32 @@ void Audio::handlePeriodTimer() {
 
     #else
     */
-    QVarLengthArray<char, 4096 * 4> tmpbuf( toWrite );
-    int read = m_abuf->read( tmpbuf.data(), toWrite );
-    int wrote = aio->write( tmpbuf.data(), read );
-    Q_UNUSED( wrote );
+
+    QVarLengthArray<char, 4096 * 4> tmpbuf(toWrite);
+    int read = m_abuf->read(tmpbuf.data(), toWrite);
+    int wrote = aio->write(tmpbuf.data(), read);
+    Q_UNUSED(wrote);
     //#endif
 
 
 }
 
-void Audio::runChanged( bool _isRunning ) {
+void Audio::runChanged(bool _isRunning) {
     isRunning = _isRunning;
 
-    if( !aout ) {
+    if(!aout) {
         return;
     }
 
-    if( !isRunning ) {
-        if( aout->state() != QAudio::SuspendedState ) {
+    if(!isRunning) {
+        if(aout->state() != QAudio::SuspendedState) {
             qCDebug( phxAudio ) << "Paused";
             aout->suspend();
             timer.stop();
         }
-    } else {
-        if( aout->state() != QAudio::ActiveState ) {
+    }
+    else {
+        if(aout->state() != QAudio::ActiveState) {
             qCDebug( phxAudio ) << "Started";
             aout->resume();
             timer.start();
@@ -204,33 +218,29 @@ void Audio::runChanged( bool _isRunning ) {
     }
 }
 
-void Audio::stateChanged( QAudio::State s ) {
-    if( s == QAudio::IdleState && aout->error() == QAudio::UnderrunError ) {
-        qCDebug( phxAudio ) << "Underrun";
+void Audio::stateChanged(QAudio::State s)
+{
+    if(s == QAudio::IdleState && aout->error() == QAudio::UnderrunError) {
+        qCDebug(phxAudio) << "Underrun";
         aio = aout->start();
     }
 
-    if( s != QAudio::IdleState && s != QAudio::ActiveState ) {
+    if(s != QAudio::IdleState && s != QAudio::ActiveState) {
         qCDebug( phxAudio ) << "State changed:" << s;
     }
 }
 
-void Audio::setVolume( qreal level ) {
-    if( aout ) {
+void Audio::setVolume(qreal level)
+{
+    if (aout) {
         aout->setVolume( level );
     }
 }
 
-Audio::~Audio() {
-    if( aout ) {
+Audio::~Audio()
+{
+    if(aout)
         delete aout;
-    }
-
-    if( aio ) {
+    if (aio)
         delete aio;
-    }
-
-    if( m_abuf ) {
-        delete m_abuf;
-    }
 }
