@@ -59,6 +59,12 @@ Rectangle {
             fill: parent;
         }
 
+        Image {
+            source: "../assets/cartographer.png";
+            fillMode: Image.Tile;
+            anchors.fill: parent;
+        }
+
         Keys.forwardTo: headerBar.textField;
         Keys.priority: Keys.BeforeItem;
         Keys.onPressed: {

@@ -8,12 +8,6 @@ ScrollView {
     property bool borderEnabled: true;
     property int handleHeight: 30;
 
-    Image {
-        source: "../assets/cartographer.png";
-        fillMode: Image.Tile;
-        anchors.fill: parent;
-    }
-
     style: ScrollViewStyle {
         id: scrollStyle;
         property int handleWidth: 12
@@ -30,19 +24,8 @@ ScrollView {
             }
         }
 
-        frame: Rectangle {
-            color: scrollView.frameColor;
+        frame: Item {
             //width: 0;
-            Rectangle {
-                visible: scrollView.borderEnabled;
-                anchors {
-                    top: parent.top;
-                    left: parent.left;
-                    right: parent.right;
-                }
-                height: 1;
-                color: "#1a1a1a";
-            }
         }
 
         handle: Rectangle {
