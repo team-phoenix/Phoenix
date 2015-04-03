@@ -66,8 +66,8 @@ m_consoles( QMap<PhoenixLibrary::Console, QString> {
     << platform_manager.desmume;
 
 
-    m_model = new GameLibraryModel( &dbm, this );
-    m_model->setEditStrategy( QSqlTableModel::OnManualSubmit );
+    m_model = std::unique_ptr<GameLibraryModel>(new GameLibraryModel(&dbm, this));
+    m_model->setEditStrategy(QSqlTableModel::OnManualSubmit);
     m_model->select();
 
     for( auto &core : libretro_cores_info ) {
@@ -125,23 +125,12 @@ m_consoles( QMap<PhoenixLibrary::Console, QString> {
         if( in_file.exists() ) {
             cores_for_console[cleaned_name].append( new CoreModel( this, display_name, core ) );
         }
-
     }
-
-    network_queue = new NetworkQueue();
-    network_queue->setGameModel( m_model );
-
-    connect(network_queue, &NetworkQueue::label, this, &PhoenixLibrary::setLabel, Qt::DirectConnection);
-    connect(network_queue, &NetworkQueue::progress, this, &PhoenixLibrary::setProgress, Qt::DirectConnection);
-
 }
 
-PhoenixLibrary::~PhoenixLibrary() {
-    if( m_model ) {
-        m_model->deleteLater();
-    }
+PhoenixLibrary::~PhoenixLibrary()
+{
 
-    delete network_queue;
 }
 
 
@@ -230,7 +219,6 @@ void PhoenixLibrary::startAsyncScan( QUrl path ) {
 
 
     connect( checksum_watcher.get(), &QFutureWatcher<void>::finished, this, [this] {
-        network_queue->start();
     } );
 
     // Request and update the artworks when the folder scan is finished
@@ -240,11 +228,6 @@ void PhoenixLibrary::startAsyncScan( QUrl path ) {
         QFuture<void> f = QtConcurrent::run( this, &PhoenixLibrary::importMetadata,
                                              inserted_games );
         checksum_watcher->setFuture( f );
-
-        //QMetaObject::invokeMethod(&network_queue, "start");
-        //network_queue.start();
-        //network_queue.waitForFinished();
-
 
     } );
     watcher->setFuture( fut );
@@ -301,12 +284,11 @@ void PhoenixLibrary::importMetadata( QVector<int> games_id ) {
         context.id = id;
         context.title = title;
         context.system = system;
-        network_queue->enqueueContext( context );
 
     }
 
     database.commit();
-    QMetaObject::invokeMethod( m_model, "submitAll" );
+    QMetaObject::invokeMethod( m_model.get(), "submitAll" );
 
     setLabel( "" );
 
@@ -380,9 +362,7 @@ QVector<int> PhoenixLibrary::scanFolder( QUrl folder_path ) {
 
     if( found_games ) {
         database.commit();
-        QMetaObject::invokeMethod( m_model, "submitAll" );
-
-        //QMetaObject::invokeMethod(m_model, "select");
+        QMetaObject::invokeMethod( m_model.get(), "submitAll" );
     }
 
     setLabel( "" );
@@ -401,7 +381,7 @@ void PhoenixLibrary::deleteRow( QString title ) {
 
     if( q.exec() ) {
         database.commit();
-        QMetaObject::invokeMethod( m_model, "submitAll" );
+        QMetaObject::invokeMethod( m_model.get(), "submitAll" );
     }
 
 
@@ -434,7 +414,7 @@ void PhoenixLibrary::resetAll() {
 
     if( q.exec() ) {
         database.commit();
-        QMetaObject::invokeMethod( m_model, "submitAll" );
+        QMetaObject::invokeMethod( m_model.get(), "submitAll" );
         setLabel( "Library Cleared" );
     } else {
         qCDebug( phxLibrary ) << "Error clearing library";
@@ -563,7 +543,7 @@ QVector<int> PhoenixLibrary::importDroppedFiles( QList<QUrl> url_list ) {
     }
 
     database.commit();
-    QMetaObject::invokeMethod( m_model, "submitAll" );
+    QMetaObject::invokeMethod( m_model.get(), "submitAll" );
 
     setLabel( "" );
     return inserted_games;
@@ -580,8 +560,6 @@ void PhoenixLibrary::setImportUrls( bool importUrls ) {
             auto checksum_watcher = std::make_shared<QFutureWatcher<void>>();
             connect( checksum_watcher.get(), &QFutureWatcher<void>::finished, this, [this] {
                 qCDebug( phxLibrary ) << "Running artwork fetch";
-                network_queue->start();
-
             } );
 
             // Request and update the artworks when the folder scan is finished
@@ -631,5 +609,4 @@ void PhoenixLibrary::scanSystemDatabase( QByteArray hash, QString &name, QString
 void PhoenixLibrary::setCacheDirectory(QString cache_dir)
 {
     m_cache_directory = cache_dir;
-    network_queue->setCacheDirectory(cache_dir);
 }
