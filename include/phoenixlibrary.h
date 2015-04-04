@@ -6,6 +6,8 @@
 #include <QVariantList>
 #include <QThread>
 
+#include <memory>
+
 #include "thegamesdb.h"
 #include "gamelibrarymodel.h"
 #include "librarydbmanager.h"
@@ -28,10 +30,8 @@ class PhoenixLibrary : public QObject {
         Q_OBJECT
         Q_PROPERTY( qreal progress READ progress WRITE setProgress NOTIFY progressChanged )
         Q_PROPERTY( QString label READ label WRITE setLabel NOTIFY labelChanged )
-        Q_PROPERTY( int count READ count NOTIFY countChanged )
-        Q_ENUMS( Console )
         Q_PROPERTY( bool importUrls READ importUrls WRITE setImportUrls NOTIFY importUrlsChanged )
-
+        Q_ENUMS( Console )
 
     public:
         PhoenixLibrary();
@@ -47,10 +47,6 @@ class PhoenixLibrary : public QObject {
 
         qreal progress() const {
             return m_progress;
-        }
-
-        int count() const {
-            return m_count;
         }
 
         bool importUrls() {
@@ -92,7 +88,7 @@ class PhoenixLibrary : public QObject {
         void startAsyncScan( QUrl path );
         void resetAll();
         GameLibraryModel *model() {
-            return m_model;
+            return m_model.get();
         }
         void deleteRow( QString title );
         QString getSystem( QString system );
@@ -105,7 +101,9 @@ class PhoenixLibrary : public QObject {
         QVector<int> importDroppedFiles( QList<QUrl> url_list );
         void setCacheDirectory(QString cache_dir);
 
-
+        // Collection Operations
+        bool addToCollection(QVariantList game_data);
+        bool removeFromCollection(QVariant data);
 
     signals:
         void labelChanged();
@@ -116,15 +114,12 @@ class PhoenixLibrary : public QObject {
         void rowAdded();
 
     private:
-        NetworkQueue *network_queue;
         LibraryDbManager dbm;
-        QThread *import_thread;
         //TheGamesDB scraper;
-        GameLibraryModel *m_model;
+        std::unique_ptr<GameLibraryModel> m_model;
         QString m_label;
         PlatformManager platform_manager;
         int m_progress;
-        int m_count;
         QList<QUrl> file_urls;
         bool m_import_urls;
 
@@ -145,12 +140,12 @@ class PhoenixLibrary : public QObject {
 
         QMap<QString, QVariantMap> core_for_extension;
 
-        void loadXml( QString file_path );
         QRegularExpressionMatch parseFilename( QString filename );
         bool insertGame( QSqlQuery &q, QFileInfo path );
         QVector<int> scanFolder( QUrl folder_path );
         void importMetadata( QVector<int> games_id );
         void scanSystemDatabase( QByteArray hash, QString &name, QString &system );
+        void saveCollection(QVariantList collections);
 };
 
 

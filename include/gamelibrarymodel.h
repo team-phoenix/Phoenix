@@ -3,6 +3,8 @@
 #define GAMELIBRARYMODEL_H
 
 #include <QSqlTableModel>
+#include <QSqlQuery>
+#include <QVariantList>
 
 #include "librarydbmanager.h"
 
@@ -33,9 +35,15 @@ class GameLibraryModel: public QSqlTableModel {
         //    return QSqlTableModel::removeRow(row, parent);
         //}
         virtual QVariant data( const QModelIndex &index, int role = Qt::DisplayRole ) const override;
-
+        QSqlQuery createQuery();
 
     public slots:
+        QSqlQuery executeQuery(QString query);
+        QSqlQuery executeQuery(QString query, QVariantList args);
+
+        bool submitQuery(QString query);
+        bool submitQuery(QString query, QVariantList args);
+
 
 #ifdef Q_OS_MACX
 #pragma clang diagnostic push
@@ -47,7 +55,8 @@ class GameLibraryModel: public QSqlTableModel {
 #pragma clang diagnostic pop
 #endif
 
-        virtual void sort( int column, Qt::SortOrder order ) override {
+        virtual void sort( int column, Qt::SortOrder order ) override
+        {
             QSqlTableModel::sort( column, order );
         }
         QVariantMap get( int index );

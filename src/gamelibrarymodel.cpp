@@ -1,6 +1,4 @@
 
-
-#include <QSqlQuery>
 #include <QSqlError>
 #include <QSqlRecord>
 
@@ -91,3 +89,69 @@ QVariantMap GameLibraryModel::get( int inx ) {
 
     return map;
 }
+
+QSqlQuery GameLibraryModel::createQuery()
+{
+    database().transaction();
+    return QSqlQuery(database());
+}
+
+QSqlQuery GameLibraryModel::executeQuery(QString query)
+{
+    database().transaction();
+    QSqlQuery q(database());
+
+    q.prepare(query);
+
+
+    bool result = q.exec();
+
+    if (!result) {
+        qCDebug(phxLibrary) << q.executedQuery() << ", error: " << q.lastError().text();
+        return q;
+    }
+
+    database().commit();
+    return q;
+}
+
+QSqlQuery GameLibraryModel::executeQuery(QString query, QVariantList args)
+{
+    database().transaction();
+
+    QSqlQuery q(database());
+
+    q.prepare(query);
+    for (auto &val : args)
+        q.addBindValue(val);
+
+
+    bool result = q.exec();
+
+    if (!result) {
+        qCDebug(phxLibrary) << q.lastQuery() << ", error: " << q.lastError().text();
+        return q;
+    }
+
+    database().commit();
+
+    return q;
+}
+
+bool GameLibraryModel::submitQuery(QString query)
+{
+    // -100 is chosen just to keep the query always true;
+    if (executeQuery(query).size() > -100)
+        return submitAll();
+    return false;
+}
+
+bool GameLibraryModel::submitQuery(QString query, QVariantList args)
+{
+    // -100 is chosen just to keep the query always true;
+
+    if (executeQuery(query, args).size() > -100)
+        return submitAll();
+    return false;
+}
+

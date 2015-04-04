@@ -9,9 +9,6 @@
 #include <QSqlError>
 #include <QApplication>
 #include <QCryptographicHash>
-#include <QApplication>
-
-#include <memory>
 
 #include "phoenixlibrary.h"
 #include "librarydbmanager.h"
@@ -144,36 +141,6 @@ void PhoenixLibrary::setProgress( int progress ) {
     emit progressChanged();
 }
 
-void PhoenixLibrary::loadXml( QString file_path ) {
-    QResource resource( file_path );
-    QFile in_file( resource.absoluteFilePath() );
-
-    if( in_file.open( QIODevice::ReadOnly | QIODevice::Text ) ) {
-        QXmlStreamReader reader;
-        reader.setDevice( &in_file );
-
-        while( !reader.isEndDocument() ) {
-            reader.readNext();
-            QString element = reader.name().toString();
-            qCDebug( phxLibrary ) << element;
-
-            if( element == "name" )
-
-            {
-                qCDebug( phxLibrary ) << reader.readElementText();
-            }
-        }
-
-        if( reader.hasError() ) {
-            qCDebug( phxLibrary ) << reader.errorString();
-        }
-
-        in_file.close();
-    } else {
-        qCDebug( phxLibrary ) << file_path << " was not opened";
-    }
-}
-
 QRegularExpressionMatch PhoenixLibrary::parseFilename( QString filename ) {
     static QRegularExpression re_title_region(
         R"(^(?<title>.*)( \((?<region>.+?)\)))",
@@ -249,15 +216,13 @@ void PhoenixLibrary::importMetadata( QVector<int> games_id ) {
         }
     }
 
-    QSqlDatabase database = dbm.handle();
+    QSqlDatabase database = model()->database();
     database.transaction();
 
-    QSqlQuery q( database );
+    QSqlQuery q = model()->executeQuery(QStringLiteral( "SELECT id, directory, filename, title, system FROM %1 WHERE id IN (%2)" )
+                                       .arg(LibraryDbManager::table_games).arg(what_games));
 
-    q.exec( QStringLiteral( "SELECT id, directory, filename, title, system FROM %1 WHERE id IN (%2)" )
-            .arg( LibraryDbManager::table_games ).arg( what_games ) );
-
-    if( !q.exec() ) {
+    if (!q.size() == -1) {
         qCWarning( phxLibrary ) << "Error while trying to find metadata for imported games";
     }
 
@@ -269,32 +234,18 @@ void PhoenixLibrary::importMetadata( QVector<int> games_id ) {
         QString title = q.value( 3 ).toString();
         QString system = q.value( 4 ).toString();
         //scanSystemDatabase( hash, title, system );
-        QSqlQuery qupdate( database );
-        qupdate.prepare( QStringLiteral( "UPDATE %1 SET title = ?, system = ?, sha1 = ? WHERE id = ?" )
-                         .arg( LibraryDbManager::table_games ) );
-
-        qupdate.addBindValue( title );
-        qupdate.addBindValue( system );
-        qupdate.addBindValue(hash);
-        qupdate.addBindValue( id );
-        qupdate.exec();
-
-        // call enqueueContext in its thread
-        Scraper::ScraperContext context;
-        context.id = id;
-        context.title = title;
-        context.system = system;
-
+        model()->executeQuery(QString( "UPDATE " + LibraryDbManager::table_games + " SET title = ?, system = ?, sha1 = ? WHERE id = ?" )
+                                       , QVariantList({title, system, hash, id}));
     }
 
     database.commit();
-    QMetaObject::invokeMethod( m_model.get(), "submitAll" );
+    QMetaObject::invokeMethod( model(), "submitAll" );
 
     setLabel( "" );
 
 }
 
-bool PhoenixLibrary::insertGame( QSqlQuery &q, QFileInfo path ) {
+bool PhoenixLibrary::insertGame(QSqlQuery &q, QFileInfo path ) {
     if( !core_for_extension.contains( path.suffix() ) ) {
         return false;    // not a known rom extension
     }
@@ -306,33 +257,19 @@ bool PhoenixLibrary::insertGame( QSqlQuery &q, QFileInfo path ) {
 
     QString title = m.captured( "title" );
 
+    q = model()->executeQuery(QString("INSERT INTO " + LibraryDbManager::table_games
+                              + " (title, system, time_played, region, directory, filename)"
+                              + " VALUES (?, ?, ?, ?, ?, ?)")
+                              , QVariantList({title, system, "00:00", m.captured("region"),
+                                             path.dir().path(),path.canonicalFilePath()})
+                              );
 
-    q.prepare( "INSERT INTO " % LibraryDbManager::table_games %
-               " (title, system, time_played, region, directory, filename)"
-               " VALUES (?, ?, ?, ?, ?, ?)" );
-    q.addBindValue( title );
-    q.addBindValue( system );
-    q.addBindValue( "00:00" );
-    q.addBindValue( m.captured( "region" ) );
-    q.addBindValue( path.dir().path() );
-    q.addBindValue( path.absoluteFilePath() );
-
-    bool result = q.exec();
-
-    if( result ) {
-        emit rowAdded();
-    }
-
-    return result;
+    return true;
 }
 
 QVector<int> PhoenixLibrary::scanFolder( QUrl folder_path ) {
-    QDirIterator dir_iter( folder_path.toLocalFile(), QDirIterator::Subdirectories );
-
-    QSqlDatabase database = dbm.handle();
-    database.transaction();
-
-    QSqlQuery q( database );
+    QDirIterator dir_iter(folder_path.toLocalFile(), QDirIterator::Subdirectories);
+    QSqlQuery q(model()->createQuery());
 
     setLabel( "Importing Games" );
     setProgress( 0 );
@@ -352,7 +289,7 @@ QVector<int> PhoenixLibrary::scanFolder( QUrl folder_path ) {
             continue;
         }
 
-        if( insertGame( q, info ) && q.lastInsertId().isValid() ) {
+        if( insertGame(q, info ) && q.lastInsertId().isValid() ) {
             inserted_games.append( q.lastInsertId().toInt() );
         } else {
             qCWarning( phxLibrary ) << "Unable to import game" << info.fileName()
@@ -361,60 +298,35 @@ QVector<int> PhoenixLibrary::scanFolder( QUrl folder_path ) {
     }
 
     if( found_games ) {
-        database.commit();
-        QMetaObject::invokeMethod( m_model.get(), "submitAll" );
+        model()->database().commit();
+        QMetaObject::invokeMethod(model(), "submitAll");
     }
 
     setLabel( "" );
     return inserted_games;
 }
 
-void PhoenixLibrary::deleteRow( QString title ) {
+void PhoenixLibrary::deleteRow(QString title)
+{
 
-    QSqlDatabase database = dbm.handle();
-    database.transaction();
+    bool result = model()->submitQuery(QString( "DELETE FROM "
+                                       + LibraryDbManager::table_games
+                                       + " WHERE title = ?")
+                                       , QVariantList({title}));
 
-    QSqlQuery q( database );
-
-    q.prepare( QStringLiteral( "DELETE FROM " ) % LibraryDbManager::table_games % QStringLiteral( " WHERE title = ?" ) );
-    q.addBindValue( title );
-
-    if( q.exec() ) {
-        database.commit();
-        QMetaObject::invokeMethod( m_model.get(), "submitAll" );
+    if (result) {
+        qCDebug( phxLibrary ) << "Error deleting entry " << title;
     }
 
-
-    else {
-        qCDebug( phxLibrary ) << "Error deleting entry: " << q.lastQuery();
-    }
-
-    /*
-    if (m_model->removeRow(index)) {
-        if (m_model->submitAll())
-            qCDebug(phxLibrary) << "submitAll: true";
-        else {
-            qCDebug(phxLibrary) << "Warning: " << m_model->lastError().text();
-        }
-    }
-    else {
-        m_model->revert();
-    }*/
 }
 
 void PhoenixLibrary::resetAll() {
-    QSqlDatabase database = dbm.handle();
-    database.transaction();
-
-    QSqlQuery q( database );
 
     setLabel( "Clearing Library" );
 
-    q.prepare( QStringLiteral( "DELETE FROM " ) % LibraryDbManager::table_games );
+    bool result = model()->submitQuery(QString("DELETE FROM " + LibraryDbManager::table_games));
 
-    if( q.exec() ) {
-        database.commit();
-        QMetaObject::invokeMethod( m_model.get(), "submitAll" );
+    if(result) {
         setLabel( "Library Cleared" );
     } else {
         qCDebug( phxLibrary ) << "Error clearing library";
@@ -424,21 +336,6 @@ void PhoenixLibrary::resetAll() {
     setLabel( "" );
 
 }
-
-/*GameData *PhoenixLibrary::asyncScrapeInfo(QString name, QString system)
-{
-    QFuture<GameData *> fut = QtConcurrent::run(this, &PhoenixLibrary::scrapeInfo, name, system);
-    if (fut.isFinished())
-        name = fut.result()->
-}
-
-GameData *PhoenixLibrary::scrapeInfo(QString name, QString system)
-{
-    scraper.setData(new GameData);
-    scraper.setGameName(name);
-    scraper.setGamePlatform(system);
-    scraper.start();
-}*/
 
 bool PhoenixLibrary::setPreferredCore( QString system, QString new_core ) {
     qCDebug( phxLibrary ) << "Changing: " << system << " with new value: " << new_core;
@@ -488,36 +385,64 @@ QList<QObject *> PhoenixLibrary::coresModel( QString system ) {
 QStringList PhoenixLibrary::systemsModel() {
     QStringList systems_list;
 
-    for( auto &system :  m_consoles ) {
-        systems_list.append( system );
+    for (auto &system :  m_consoles) {
+        systems_list.append(system);
     }
 
-    qCDebug( phxLibrary ) << systems_list;
+    qCDebug(phxLibrary) << systems_list;
     return systems_list;
 }
 
-QString PhoenixLibrary::systemIcon( QString system ) {
-    return icon_for_console.value( system, "" );
+bool PhoenixLibrary::addToCollection(QVariantList game_data)
+{
+    QSqlQuery query = model()->executeQuery(QString("SELECT collection FROM " + LibraryDbManager::table_games + " WHERE title = ?")
+                                            , QVariantList({game_data.at(1)}));
+    while (query.next()) {
+        qDebug() << "collection: " << query.value(0) << game_data.at(0);
+        if (query.value(0) == game_data.at(0))
+            return false;
+    }
+
+    return model()->submitQuery(QString("UPDATE " + LibraryDbManager::table_games + " SET collection = ? AND is_favorite = TRUE WHERE title = ?"), game_data);
 }
 
-QString PhoenixLibrary::showPath( int index, QString system ) {
-    if( index < cores_for_console[system].length() ) {
+void PhoenixLibrary::saveCollection(QVariantList collections)
+{
+    QSettings settings;
+    settings.beginGroup("collections");
+    for (QVariant &variant : collections)
+        settings.setValue("collections", variant);
+}
+
+bool PhoenixLibrary::removeFromCollection(QVariant title)
+{
+    return addToCollection(QVariantList({QString(""), title}));
+}
+
+QString PhoenixLibrary::systemIcon(QString system)
+{
+    return icon_for_console.value(system, "");
+}
+
+
+QString PhoenixLibrary::showPath(int index, QString system)
+{
+    if ( index < cores_for_console[system].length() ) {
         CoreModel *mod = static_cast<CoreModel *>( cores_for_console[system].at( index ) );
         return mod->corePath();
     }
 
-    return QString( "" );
+    return QString("");
 }
 
 void PhoenixLibrary::cacheUrls( QList<QUrl> list ) {
     file_urls = list;
 }
 
-QVector<int> PhoenixLibrary::importDroppedFiles( QList<QUrl> url_list ) {
-    QSqlDatabase database = dbm.handle();
-    database.transaction();
+QVector<int> PhoenixLibrary::importDroppedFiles(QList<QUrl> url_list)
+{
 
-    QSqlQuery q( database );
+    QSqlQuery query = model()->createQuery();;
 
     setLabel( "Importing Games" );
     setProgress( 0 );
@@ -533,23 +458,24 @@ QVector<int> PhoenixLibrary::importDroppedFiles( QList<QUrl> url_list ) {
             continue;
         }
 
-        if ( insertGame( q, info )      && q.lastInsertId().isValid() ) {
-            inserted_games.append( q.lastInsertId().toInt() );
+        if ( insertGame(query, info) && query.lastInsertId().isValid() ) {
+            inserted_games.append( query.lastInsertId().toInt() );
         }
         else {
-            qCWarning( phxLibrary ) << "Unable to import game" << info.fileName()
-                                    << "; error:" << q.lastError();
+            qCWarning(phxLibrary) << "Unable to import game" << info.fileName()
+                                    << "; error:" << query.lastError();
         }
     }
 
-    database.commit();
-    QMetaObject::invokeMethod( m_model.get(), "submitAll" );
+    model()->database().commit();
+    QMetaObject::invokeMethod(model(), "submitAll");
 
-    setLabel( "" );
+    setLabel("");
     return inserted_games;
 }
 
-void PhoenixLibrary::setImportUrls( bool importUrls ) {
+void PhoenixLibrary::setImportUrls(bool importUrls)
+{
     m_import_urls = importUrls;
     emit importUrlsChanged();
 
@@ -585,21 +511,21 @@ void PhoenixLibrary::scanSystemDatabase( QByteArray hash, QString &name, QString
     QSqlDatabase db = system_db.handle();
     db.transaction();
 
-    QSqlQuery q( db );
+    QSqlQuery query( db );
 
     // LIKE == case insensitive
-    q.prepare( "SELECT sha1, gamename FROM NOINTRO WHERE sha1 LIKE ?" );
-    q.addBindValue( hash.toHex() );
+    query.prepare( "SELECT sha1, gamename FROM NOINTRO WHERE sha1 LIKE ?" );
+    query.addBindValue( hash.toHex() );
 
 
-    if( !q.exec() ) {
-        qCDebug( phxLibrary ) << q.executedQuery() << q.lastError();
+    if( !query.exec() ) {
+        qCDebug( phxLibrary ) << query.executedQuery() << query.lastError();
     }
 
     QString game_name;
 
-    while( q.next() ) {
-        game_name = q.value( 1 ).toString();
+    while( query.next() ) {
+        game_name = query.value( 1 ).toString();
     }
 
     name = ( game_name == "" ) ? name : game_name;
