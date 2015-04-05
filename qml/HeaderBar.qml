@@ -23,11 +23,13 @@ Rectangle {
 
     property alias textField: searchBar;
 
+    // Hide the header bar after (interval) ms
     property Timer timer: Timer {
         interval: 1000;
         running: false;
 
         onTriggered: {
+            // TODO: Let the user configure this
             windowStack.currentItem.gameMouse.cursorShape = Qt.BlankCursor;
             headerBar.height = 0;
             if (volumeDropDown.visible) {
@@ -42,8 +44,9 @@ Rectangle {
         GradientStop {position: 1.0; color: "#1b1b1b";}
     }
 
+    // 4 thin borders that go around the edge of HeaderBar
     Column {
-        id: topBord;
+        id: topBorder;
         anchors {
             left: parent.left;
             right: parent.right;
@@ -71,7 +74,7 @@ Rectangle {
     }
 
     Row {
-        id: leftBord;
+        id: leftBorder;
         anchors {
             left: parent.left;
             top: parent.top;
@@ -101,10 +104,10 @@ Rectangle {
     }
 
     Row {
-        id: rightBord;
+        id: rightBorder;
         anchors {
             right: parent.right;
-            top: topBord.bottom;
+            top: topBorder.bottom;
             bottom: parent.bottom;
         }
 
@@ -130,7 +133,7 @@ Rectangle {
     }
 
     Column {
-        id: bottomBord;
+        id: bottomBorder;
         anchors {
             left: parent.left;
             right: parent.right;
@@ -160,19 +163,14 @@ Rectangle {
         }
     }
 
-    onHeightChanged: {
-        if (height == 0) {
-            visible = false;
-        }
-        else {
-            visible = true;
-        }
-    }
+    // TODO: Explain why this is done...?
+    onHeightChanged: visible = ( height != 0 );
 
     width: 300;
     height: 50;
     //color: headerColor;
 
+    // TODO: Explain what this is...?
     Rectangle {
         visible: volumeDropDown.visible;
         z: volumeDropDown.z + 1;
@@ -217,6 +215,7 @@ Rectangle {
         rotation: 45;
     }
 
+    // Floating volume dropdown, appears when volumeBtn is clicked
     Rectangle {
         id: volumeDropDown;
         gradient: Gradient {
@@ -362,6 +361,9 @@ Rectangle {
         }
     }
 
+    // A row of widgets that belong on the left
+    // In library view: Settings | Library view style (GameTable, GameGrid) | GameGrid grid size slider
+    // In game view: Play/Pause | Volume control
     Row {
         id: leftButtonRow;
         anchors {
@@ -644,6 +646,9 @@ Rectangle {
         }
     }
 
+    // Currently just the word "Phoenix", changes color on mouseover
+    // Horizontally centered
+    // TODO: Make into a Phoenix account info pane
     Item {
         anchors {
             top: parent.top;
@@ -780,6 +785,8 @@ Rectangle {
 
     }
 
+    // A row of widgets that belong on the right
+    // In game view: Save | Load | Favorite | Fullscreen
     Row {
         spacing: 10;
         anchors {
@@ -857,6 +864,7 @@ Rectangle {
         }
     }
 
+    // The search bar
     PhoenixTextField {
         id: searchBar;
 
