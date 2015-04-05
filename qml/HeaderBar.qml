@@ -596,38 +596,44 @@ Rectangle {
                         }*/
                     }
 
-                    groove: Rectangle {
-                        height: 5;
+                    groove: Row {
+                        height: 7;
                         width: zoomSlider.width;
-                        radius: 3;
-                        opacity: 0.8;
-                        color: "#1a1a1a";
-                        border {
-                            width: 1;
-                            color: "black";
-                        }
 
-                        /*Rectangle {
-                            color: "#f1f1f1";
-                            radius: parent.radius;
-                            anchors {
-                                top: parent.top;
-                                bottom: parent.bottom;
-                                left: parent.left;
-                                topMargin: 1;
-                                bottomMargin: 1;
-                                leftMargin: 1;
+                        Rectangle {
+                            height: parent.height;
+                            width: styleData.handlePosition;
+                            radius: 3;
+                            opacity: 0.8;
+                            color: "#404040";
+                            border {
+                                width: 1;
+                                color: "black";
                             }
-                            width: (zoomSlider.value >= 3.0) ? 10  * (zoomSlider.value * 2.0) : 6  * (zoomSlider.value * 2.0);
-                        }*/
-
-                        CustomBorder {
-                            gradient: Gradient {
-                                GradientStop {position: 0.0; color: "#1a1a1a";}
-                                GradientStop {position: 0.95; color: "#4a4a4a";}
+                            CustomBorder {
+                                gradient: Gradient {
+                                    GradientStop {position: 0.0; color: "#1a1a1a";}
+                                    GradientStop {position: 0.95; color: "#4a4a4a";}
+                                }
                             }
                         }
-
+                        Rectangle {
+                            height: parent.height;
+                            width: parent.width - styleData.handlePosition;
+                            radius: 3;
+                            opacity: 0.8;
+                            color: "#1a1a1a";
+                            border {
+                                width: 1;
+                                color: "black";
+                            }
+                            CustomBorder {
+                                gradient: Gradient {
+                                    GradientStop {position: 0.0; color: "#1a1a1a";}
+                                    GradientStop {position: 0.95; color: "#4a4a4a";}
+                                }
+                            }
+                        }
                     }
                 }
             }
