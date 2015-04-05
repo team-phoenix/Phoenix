@@ -529,71 +529,26 @@ Rectangle {
                 }
 
                 style: SliderStyle {
-                    //id: sliderStyle;
-
                     handle: Rectangle {
                         height: 15;
                         width: 15;
+                        radius: width * 0.5;
 
+                        gradient: Gradient {
+                            GradientStop{ position: 0.0; color: "#343434";}
+                            GradientStop{ position: 0.5; color: "#343433";}
+                            GradientStop{ position: 0.7; color: "#2c2d2c";}
+                            GradientStop{ position: 1.0; color: "#242424";}
 
-                            //id: zoomHandle;
+                        }
+
+                        CustomBorder {
+                            radius: parent.width / 2;
                             gradient: Gradient {
-                                GradientStop{ position: 0.0; color: "#343434";}
-                                GradientStop{ position: 0.5; color: "#343433";}
-                                GradientStop{ position: 0.7; color: "#2c2d2c";}
-                                GradientStop{ position: 1.0; color: "#242424";}
-
+                                GradientStop{ position: 0.0; color: "#595959";}
+                                GradientStop{ position: 1.0; color: "black";}
                             }
-
-                            radius: width * 0.5;
-
-                            CustomBorder {
-                                radius: parent.width / 2;
-                                gradient: Gradient {
-                                    GradientStop{ position: 0.0; color: "#595959";}
-                                    GradientStop{ position: 1.0; color: "black";}
-                                }
-                            }
-
-                            /*Rectangle {
-                                radius: width / 2;
-                                anchors {
-                                    centerIn: parent;
-                                }
-                                width: parent.width * 0.36;
-                                height: parent.height * 0.36;
-
-                                CustomBorder {
-                                    radius: parent.width / 2;
-                                    gradient: Gradient {
-                                        GradientStop{ position: 0.0; color: "black";}
-                                        GradientStop{ position: 1.0; color: "#595959";}
-                                    }
-
-                                }
-
-                                gradient: Gradient {
-                                    GradientStop{ position: 0.0; color: "#070707";}
-                                    GradientStop{ position: 1.0; color: "#222221";}
-                                }
-                            }*/
-
-                           //CustomBorder {
-                           //    color: "black"
-                            //}
-
-
-                        /*DropShadow {
-                            source: zoomHandle;
-                            anchors.fill: source;
-                            horizontalOffset: 0;
-                            verticalOffset: 1;
-                            color: "black";
-                            opacity: 1.0;
-                            radius: 2;
-                            samples: radius * 2;
-
-                        }*/
+                        }
                     }
 
                     groove: Row {
@@ -606,10 +561,12 @@ Rectangle {
                             radius: 3;
                             opacity: 0.8;
                             color: "#404040";
+
                             border {
                                 width: 1;
                                 color: "black";
                             }
+
                             CustomBorder {
                                 gradient: Gradient {
                                     GradientStop {position: 0.0; color: "#1a1a1a";}
@@ -617,16 +574,19 @@ Rectangle {
                                 }
                             }
                         }
+
                         Rectangle {
                             height: parent.height;
                             width: parent.width - styleData.handlePosition;
                             radius: 3;
                             opacity: 0.8;
                             color: "#1a1a1a";
+
                             border {
                                 width: 1;
                                 color: "black";
                             }
+
                             CustomBorder {
                                 gradient: Gradient {
                                     GradientStop {position: 0.0; color: "#1a1a1a";}
@@ -639,8 +599,6 @@ Rectangle {
             }
             Image {
                 source: root.itemInView === "grid" ? "../assets/big-icon.png" : "../assets/big-icon-disabled.png";
-                //height: 15;
-                //width: 15;
                 sourceSize {
                     height: 10;
                     width: 9;
