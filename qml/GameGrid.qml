@@ -59,7 +59,7 @@ Rectangle {
         property int minHeight: 20;
 
         // Compensate for the min height and the bottom margin
-        y: parent.height * gridView.visibleArea.yPosition * ( ( parent.height - minHeight - scrollBackground.bottomMargin + 4 ) / parent.height );
+        y: 2 + parent.height * gridView.visibleArea.yPosition * ( ( parent.height - minHeight - scrollBackground.bottomMargin + 4 ) / parent.height );
         z: parent.z + 2;
         height: Math.max( parent.height * gridView.visibleArea.heightRatio, minHeight );
         gradient: Gradient {
@@ -70,7 +70,7 @@ Rectangle {
         anchors {
             right: parent.right;
             left: scrollBackground.left;
-            margins: 1;
+            margins: 2;
         }
 
 
