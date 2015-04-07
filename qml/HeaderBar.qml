@@ -362,8 +362,8 @@ Rectangle {
     }
 
     // A row of widgets that belong on the left
-    // In library view: Settings | Library view style (GameTable, GameGrid) | GameGrid grid size slider
-    // In game view: Play/Pause | Volume control
+    // Library view: Settings | Library view style (GameTable, GameGrid) | GameGrid grid size slider
+    // Game view: Home | Play/Pause | Volume control
     Row {
         id: leftButtonRow;
         anchors {
@@ -373,6 +373,9 @@ Rectangle {
         }
         spacing: 15;
 
+        // A clickable image with dual roles
+        // Library view: Settings
+        // Game view: Home
         Image {
             id: settingsBtn;
             source: !root.gameShowing ? "../assets/cog-6x.png" : "../assets/GameView/home.png";
@@ -610,9 +613,9 @@ Rectangle {
         }
     }
 
-    // Currently just the word "Phoenix", changes color on mouseover
-    // Horizontally centered
-    // TODO: Make into a Phoenix account info pane
+    // Info widget that appears in the center
+    // Library view: Just the word "Phoenix"
+    // Game view: The current game (title, system)
     Item {
         anchors {
             top: parent.top;
@@ -750,7 +753,7 @@ Rectangle {
     }
 
     // A row of widgets that belong on the right
-    // In game view: Save | Load | Favorite | Fullscreen
+    // Game view: Save | Load | Favorite | Fullscreen
     Row {
         spacing: 10;
         anchors {
@@ -829,6 +832,7 @@ Rectangle {
     }
 
     // The search bar
+    // Belongs on the far right
     PhoenixTextField {
         id: searchBar;
 
