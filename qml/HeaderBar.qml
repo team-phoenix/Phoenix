@@ -6,6 +6,11 @@ import QtGraphicalEffects 1.0
 import Qt.labs.settings 1.0
 
 Rectangle {
+
+    // The HeaderBar is the horizontal bar at the top of the phoenix window.
+    // In this type, you'll find the search bar for filtering games, the settings button,
+    // and various other buttons.
+
     id: headerBar;
     property string headerColor: "#404040";
     property int fontSize: 13;

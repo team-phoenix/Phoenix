@@ -4,6 +4,16 @@ import QtQuick.Controls.Styles 1.1
 import QtGraphicalEffects 1.0
 
 Rectangle {
+
+    // The ConsoleBar is the vertical column on the left side of Phoenix.
+    // This component also includes the background color of the column.
+
+    // Inside of this component lives several ListView's for showing 'Collections'
+    // and the 'Library' information to the user. The user is also able to
+    // filter these sections from this component.
+
+    // Lastly, the progress bar that shows during game imports also lives in here.
+
     id: consoleBar;
     color: "#2b2b2b";
     height: 500;
@@ -12,6 +22,10 @@ Rectangle {
     property real progressValue: phoenixLibrary.progress;
     property string progressText: phoenixLibrary.label;
     property alias list: consoleListView;
+
+    // All of these 'xxxBord' types that are direct children of the ConsoleBar and are quick and simple
+    // hacks to get a black border around this area.
+    // I wouldn't call this a 'good' coding style to emulate... :X
 
     Row {
         id: rightBord;
@@ -597,6 +611,10 @@ Rectangle {
         }
 
         Column {
+
+            // This is the progress area that shows up when you import
+            // and scrape info for games.
+
             spacing: 4;
             anchors {
                 verticalCenterOffset: 0;
@@ -607,12 +625,13 @@ Rectangle {
                 //top: parent.top;
                 //topMargin: 15;
             //}
-            Label {
+            Text {
                 anchors.horizontalCenter: parent.horizontalCenter;
                 text: consoleBar.progressText;
                 font {
                     bold: true;
                     pixelSize: 14;
+                    family: "Sans";
                 }
 
                 color: "#f1f1f1";

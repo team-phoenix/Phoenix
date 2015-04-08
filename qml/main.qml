@@ -11,6 +11,10 @@ import phoenix.library 1.0
 import QtQuick.Window 2.0
 
 PhoenixWindow {
+
+      // The PhoenixWindow type is the window that Phoenix resides in.
+      // Read phoenixwindow.h to find more info about this class.
+
     id: root;
     width: Screen.width / 2;
     height: Screen.height / 2;
@@ -20,7 +24,6 @@ PhoenixWindow {
     frameless: false;
     title: "Phoenix";
 
-    property string infoBarText: "";
     property bool clear: false//(phoenixLibrary.count === 0);
     property string accentColor:"#e8433f";
     property int lastWindowStyle: Window.Windowed;
@@ -44,6 +47,8 @@ PhoenixWindow {
 
     function playGame(title, system, filename, core)
     {
+        // This function is used should be used to play a game.
+
         if (root.gameAndCoreCheck(title, system, filename, core)) {
             root.lastGameName = title;
             root.lastSystemName = system;
@@ -53,6 +58,14 @@ PhoenixWindow {
 
     function gameAndCoreCheck(title, system, file_name, core)
     {
+        // This function is used to call the gameAndCoreCheck(), that is
+        // a slot defined in the PhoenixWindow class. This function is used
+        // to see if the game and core loads properly, before actual game data is shown on
+        // the screen. This is to hopefully, reduce the change of segment faults, because of
+        // incompatible cores.
+
+        // Please call playGame(), instead of this calling this function directly.
+
         if (phoenixGlobals.validCore(core)) {
             if (phoenixLibraryHelper.needsBios(core))
                 return false;
@@ -84,6 +97,8 @@ PhoenixWindow {
 
 
     function swapScreenSize(){
+        // This function is used to set the PhoenixWindow's visibility and make sure
+        // that the proper visibility is set.
         if (root.visibility == Window.FullScreen)
             root.visibility = lastWindowStyle;
         else {
@@ -137,6 +152,9 @@ PhoenixWindow {
 
     Component {
         id: gameGrid;
+
+        // This is one of the components that the 'gameStack' is allowed to load.
+        // The GameGrid class lives in this component.
 
         Item {
             id: backdropGrid;
@@ -329,7 +347,12 @@ PhoenixWindow {
     }
 
     Component {
+
+        // This component is another one of the valid components that the 'gameStack'
+        // can load.
+
         id: gameTable;
+
         Item {
             id: backdropGrid;
             property string actionColor: "#e8433f";
@@ -499,6 +522,9 @@ PhoenixWindow {
     }
 
     Settings {
+
+        // This is the Settings type that is used to save and load U.I. information.
+
         id: settings;
         category: "UI";
         //property alias windowX: root.x;
@@ -542,6 +568,16 @@ PhoenixWindow {
     }
 
     Rectangle {
+
+        // This Rectangle is the warning that shows up whenever a game is launched
+        // and it contains missing bios files. This type is complete and so,
+        // can and should, be work on. Also, this type should be moved into it's own
+        // .qml file. Maybe even rename the 'id' value of this type, so that it can accept any
+        // type of warning.
+
+        // Use the userNotifications Q_PROPERTIES in order to set and show useful information
+        // to the user.
+
         id: biosWarning;
         visible: userNotifications.biosNotification !== "";
         anchors {
@@ -662,18 +698,6 @@ PhoenixWindow {
             }
             opacity: 0.3;
         }
-    }
-
-    InfoBar {
-        id: infoBar;
-        anchors {
-            left: parent.left;
-            right: parent.right;
-            top: headerBar.bottom;
-            leftMargin: 1;
-            rightMargin: 1;
-        }
-        z: headerBar.z + 1;
     }
 
     SettingsDropDown {

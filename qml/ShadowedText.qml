@@ -2,12 +2,18 @@ import QtQuick 2.3
 import QtGraphicalEffects 1.0
 
 Item {
+
+    // This component is just two dropshadows around some text.
+    // This is used in the ConsoleBar and is shown by the 'Library'
+    // and the 'Collections' text.
+
     id: shadowedText;
     height: label.height;
     width: label.width;
     property string text: "";
     property int pixelSize: 10;
     property color color: "#f1f1f1";
+
     DropShadow {
         anchors.fill: source;
         source: blackShadow;

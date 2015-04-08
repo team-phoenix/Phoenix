@@ -6,6 +6,9 @@ import QtQuick.Layouts 1.1
 Item {
     id: core;
 
+    // Same as the AudioSettings, CoreSettings holds the
+    // settings for changing the libretro cores.
+
     Column {
         anchors {
             fill: parent;

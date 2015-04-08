@@ -6,7 +6,13 @@ import QtQuick.Layouts 1.1
 Item {
     id: audio;
 
+    // This Component holds all of the data for showing the audio settings.
+
     Column {
+
+        // This Column holds the icon, setting title, and horizontal line that serves as
+        // a content separator.
+
         anchors {
             fill: parent;
             topMargin: 15;

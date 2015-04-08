@@ -9,6 +9,13 @@ import QtQuick.Window 2.0
 
 
 Rectangle {
+
+    // This qml component is another one of the components
+    // that are managed by the 'gameStack'.
+
+    // This component runs and shows the video frames from the libretro core onto
+    // the screen.
+
     id: gameView;
     width: 800;
     height: 600;

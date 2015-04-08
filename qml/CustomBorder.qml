@@ -3,6 +3,11 @@ import QtQuick 2.3
 Rectangle {
     id: customBorder;
 
+    // This is a quick and dirty trick to add a border around a component, excluding
+    // a qml Image.
+
+    // You will see this declared in multiple places around Phoenix.
+
     property bool shareMargin: true;
 
     property int _topMargin: 1;

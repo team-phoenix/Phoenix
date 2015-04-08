@@ -2,6 +2,11 @@ import QtQuick 2.3
 import QtGraphicalEffects 1.0
 
 Item {
+
+    // This component is the circle that shows in the 'centerish' of the screen.
+    // This is meant to show the user how many controllers are currently hooked
+    // up to Phoenix.
+
     id: inputIndicator;
     visible: false;
     property Timer timer: Timer {

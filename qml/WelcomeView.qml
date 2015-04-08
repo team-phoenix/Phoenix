@@ -4,6 +4,14 @@ import QtQuick.Layouts 1.1
 import QtQuick.Dialogs 1.2
 
 Rectangle {
+
+    // This is the drop area that Phoenix shows, in place of the grid,
+    // when there are 0 games selected for any console.
+
+    // This area informs the user that they can either drop games onto this screen,
+    // or they can click the 'browse' text in order to open up a dialog screen, in
+    // order to import games.
+
     color: "transparent";
     border {
         width: 1;
