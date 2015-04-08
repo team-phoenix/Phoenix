@@ -3,6 +3,12 @@ import QtQuick.Controls 1.2
 import QtGraphicalEffects 1.0
 
 Rectangle {
+
+    // The view buttons are the buttons in the top left side of the
+    // HeaderBar.
+
+    // These buttons allow you to change between the grid and table views.
+
     id: viewGroove;
     height:  50;
     width: 100;
