@@ -1,7 +1,5 @@
 
-
 #include "audio.h"
-
 
 Audio::Audio( QObject *parent )
     : QObject( parent ),
@@ -11,30 +9,28 @@ Audio::Audio( QObject *parent )
       audioTimer( this ),
       audioBuf( new AudioBuffer ) {
 
-    // All future calls done in the context of this new thread
-    this->moveToThread( &audioThread );
-    connect( &audioThread, &QThread::started, this, &Audio::slotThreadStarted );
-    audioThread.setObjectName( "phoenix-audio" );
-
     Q_CHECK_PTR( audioBuf );
 
-    audioTimer.moveToThread( &audioThread );
+    audioThread.setObjectName( "phoenix-audio" );
+
+    moveToThread( &audioThread );
+    connect( &audioThread, &QThread::started, this, &Audio::slotThreadStarted );
     connect( &audioTimer, &QTimer::timeout, this, &Audio::slotHandlePeriodTimer );
 
-    // We need send this signal to ourselves
+    // We need to send this signal to ourselves
     connect( this, &Audio::signalFormatChanged, this, &Audio::slotHandleFormatChanged );
 }
 
 AudioBuffer *Audio::getAudioBuf() const {
     return audioBuf.get();
 }
-void Audio::start() {
+void Audio::startAudioThread() {
     audioThread.start( QThread::TimeCriticalPriority );
 }
 
 void Audio::setInFormat( QAudioFormat newInFormat ) {
 
-    qCDebug( phxAudio, "setFormat(%iHz %ibits)", newInFormat.sampleRate(), newInFormat.sampleSize() );
+    qCDebug( phxAudio, "setInFormat(%iHz %ibits)", newInFormat.sampleRate(), newInFormat.sampleSize() );
 
     audioFormatOut = newInFormat;
 
@@ -67,7 +63,7 @@ void Audio::slotHandleFormatChanged() {
 void Audio::slotThreadStarted() {
     if( !audioFormatIn.isValid() ) {
         // We don't have a valid audio format yet...
-        qCDebug( phxAudio ) << "afmt is not valid";
+        qCDebug( phxAudio ) << "audioFormatIn is not valid";
         return;
     }
 
@@ -78,26 +74,33 @@ void Audio::slotHandlePeriodTimer() {
     Q_ASSERT( QThread::currentThread() == &audioThread );
 
     if( !audioOutIODev ) {
-        static bool error_msg = true;
+        static bool audioDevErrHandled = false;
 
-        if( error_msg ) {
+        if( !audioDevErrHandled ) {
             qCDebug( phxAudio ) << "Audio device was not found, stopping all audio writes.";
-            error_msg = false;
+            audioDevErrHandled = true;
         }
 
         return;
     }
 
-    int toWrite = audioOut->bytesFree();
+    // Nothing to write means the output buffer if full, a duplicate frame may occur
+    int outBytesToWrite = audioOut->bytesFree();
 
-    if( !toWrite ) {
+    if( !outBytesToWrite ) {
         return;
     }
 
-    QVarLengthArray<char, 4096 * 4> tmpbuf( toWrite );
-    int read = audioBuf->read( tmpbuf.data(), toWrite );
-    int wrote = audioOutIODev->write( tmpbuf.data(), read );
-    Q_UNUSED( wrote );
+    // Calculate DRC info
+
+    // 16-bit stereo PCM
+    // 4096 frames
+    // 8192 samples (interleaved)
+    // 16kb
+    QVarLengthArray<char, 4096 * 2 * 2> inData( outBytesToWrite );
+    int bytesRead = audioBuf->read( inData.data(), outBytesToWrite );
+    int bytesWritten = audioOutIODev->write( inData.data(), bytesRead );
+    Q_UNUSED( bytesWritten );
 
 }
 

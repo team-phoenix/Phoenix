@@ -17,7 +17,7 @@ VideoItem::VideoItem() {
 
     audio = new Audio();
     Q_CHECK_PTR( audio );
-    audio->start();
+    audio->startAudioThread();
     core->audio_buf = audio->getAudioBuf();
     m_volume = 1.0;
 

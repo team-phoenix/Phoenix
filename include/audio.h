@@ -28,9 +28,8 @@ class Audio : public QObject {
         Audio( QObject * = 0 );
         ~Audio();
 
-        void start();
+        void startAudioThread();
 
-        // This needs to be called on the audio thread
         void setInFormat( QAudioFormat newInFormat );
 
         AudioBuffer *getAudioBuf() const;
