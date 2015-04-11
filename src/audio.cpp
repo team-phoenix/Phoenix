@@ -8,6 +8,7 @@ Audio::Audio( QObject *parent )
       isCoreRunning( false ),
       audioOut( nullptr ),
       audioOutIODev( nullptr ),
+      audioTimer( this ),
       audioBuf( new AudioBuffer ) {
 
     // All future calls done in the context of this new thread
@@ -17,8 +18,7 @@ Audio::Audio( QObject *parent )
 
     Q_CHECK_PTR( audioBuf );
 
-    audioTimer = new QTimer( this );
-    // audioTimer.moveToThread( &audioThread );
+    audioTimer.moveToThread( &audioThread );
     connect( &audioTimer, &QTimer::timeout, this, &Audio::slotHandlePeriodTimer );
 
     // We need send this signal to ourselves

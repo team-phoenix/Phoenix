@@ -26,8 +26,8 @@ VideoItem::VideoItem() {
     fps_deviation = 0;
     fps_count = 0;
 
-    connect( this, SIGNAL( runChanged( bool ) ), audio, SLOT( runChanged( bool ) ) );
-    connect( this, SIGNAL( volumeChanged( qreal ) ), audio, SLOT( setVolume( qreal ) ) );
+    connect( this, SIGNAL( runChanged( bool ) ), audio, SLOT( slotRunChanged( bool ) ) );
+    connect( this, SIGNAL( volumeChanged( qreal ) ), audio, SLOT( slotSetVolume( qreal ) ) );
     connect( this, SIGNAL( windowChanged( QQuickWindow * ) ), this, SLOT( handleWindowChanged( QQuickWindow * ) ) );
 }
 
