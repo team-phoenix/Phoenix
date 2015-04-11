@@ -9,6 +9,8 @@ VERSION = 0.1
 
 DEFINES += '"PHOENIX_VERSION=\\"$$VERSION\\""'
 
+LIBS += -lsamplerate
+
 !macx {
     LIBS += -lSDL2
 }
@@ -19,7 +21,6 @@ else {
 linux-g++ {
     INCLUDEPATH += /usr/include/SDL2/
     QMAKE_CXXFLAGS_RELEASE = -D_FORTIFY_SOURCE=2
-    #LIBS += -lsoxr
 
     # GCC >= 4.9s
     system(g++ --version | grep -E -q -e '"4\.(9|[0-9]{2})"') {
