@@ -10,12 +10,6 @@
 
 #include <memory>
 
-/*
-#ifdef Q_OS_LINUX
-#include <soxr.h>
-#endif
-*/
-
 #include "audiobuffer.h"
 #include "logging.h"
 
@@ -31,50 +25,43 @@
 class Audio : public QObject {
         Q_OBJECT
     public:
-        Audio(QObject* = 0);
+        Audio( QObject * = 0 );
         ~Audio();
 
         void start();
-        void setFormat(QAudioFormat _afmt);
+        void setInFormat( QAudioFormat newInFormat );
 
-        AudioBuffer *abuf() const;
+        AudioBuffer *getAudioBuf() const;
 
     signals:
-        void formatChanged();
+        void signalFormatChanged();
 
     public slots:
-        void stateChanged(QAudio::State state);
+        void slotStateChanged( QAudio::State state );
 
-        void runChanged(bool isRunning);
-        void setVolume(qreal level);
+        void slotRunChanged( bool _isCoreRunning );
+        void slotSetVolume( qreal level );
 
     private slots:
-        void threadStarted();
-        void handleFormatChanged();
-        void handlePeriodTimer();
+        void slotThreadStarted();
+        void slotHandleFormatChanged();
+        void slotHandlePeriodTimer();
 
     private:
-        bool isRunning; // is core running
-        QAudioFormat afmt_out;
-        QAudioFormat afmt_in;
+        bool isCoreRunning;
+        QAudioFormat audioFormatOut;
+        QAudioFormat audioFormatIn;
 
         // We delete aout, use normal pointer.
-        QAudioOutput *aout;
+        QAudioOutput *audioOut;
 
         // aio doesn't own the pointer, use normal pointer.
-        QIODevice* aio;
+        QIODevice *audioOutIODev;
 
-        std::unique_ptr<AudioBuffer>m_abuf;
+        QThread audioThread;
+        QTimer audioTimer;
 
-        QThread thread;
-        QTimer timer;
-        /*
-        #ifdef Q_OS_LINUX
-            qreal deviation;
-            soxr_t soxr;
-            double soxr_io_ratio;
-        #endif
-            */
+        std::unique_ptr<AudioBuffer>audioBuf;
 
 };
 

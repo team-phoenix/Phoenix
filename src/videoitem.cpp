@@ -18,7 +18,7 @@ VideoItem::VideoItem() {
     audio = new Audio();
     Q_CHECK_PTR( audio );
     audio->start();
-    core->audio_buf = audio->abuf();
+    core->audio_buf = audio->getAudioBuf();
     m_volume = 1.0;
 
     connect( &fps_timer, SIGNAL( timeout() ), this, SLOT( updateFps() ) );
@@ -198,7 +198,7 @@ void VideoItem::updateAudioFormat() {
     format.setByteOrder( QAudioFormat::LittleEndian );
     format.setCodec( "audio/pcm" );
     // TODO test format
-    audio->setFormat( format );
+    audio->setInFormat( format );
 }
 
 void VideoItem::keyEvent( QKeyEvent *event ) {
