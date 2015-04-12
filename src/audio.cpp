@@ -34,6 +34,20 @@ void Audio::setInFormat( QAudioFormat newInFormat ) {
 
     qCDebug( phxAudio, "setInFormat(%iHz %ibits)", newInFormat.sampleRate(), newInFormat.sampleSize() );
 
+    QAudioDeviceInfo info( QAudioDeviceInfo::defaultOutputDevice() );
+
+    audioFormatIn = newInFormat;
+    audioFormatOut = info.nearestFormat( newInFormat ); // try using the nearest supported format
+
+    if( audioFormatOut.sampleRate() < audioFormatIn.sampleRate() ) {
+        // If that got us a format with a worse sample rate, use preferred format
+        audioFormatOut = info.preferredFormat();
+    }
+
+    qCDebug( phxAudio ) << audioFormatOut;
+    qCDebug( phxAudio, "Using nearest format supported by sound card: %iHz %ibits",
+             audioFormatOut.sampleRate(), audioFormatOut.sampleSize() );
+
     audioFormatOut = newInFormat;
 
     emit signalFormatChanged();
@@ -58,7 +72,7 @@ void Audio::slotHandleFormatChanged() {
     }
 
     audioOutIODev->moveToThread( &audioThread );
-    audioTimer.setInterval( audioFormatOut.durationForBytes( audioOut->periodSize() * 1.5 ) / 1000 );
+    audioTimer.setInterval( audioFormatOut.durationForBytes( audioOut->periodSize() ) / 1000 );
 
     if( resamplerState ) {
         src_delete( resamplerState );
@@ -100,31 +114,36 @@ void Audio::slotHandlePeriodTimer() {
     }
 
     // Nothing to write means the output buffer if full, a duplicate frame may occur
-    int outBytesToWrite = audioOut->bytesFree();
+    int audioOutBufBytesFree = audioOut->bytesFree();
 
-    if( !outBytesToWrite ) {
+    if( !audioOutBufBytesFree ) {
         return;
     }
 
     // Calculate DRC info
     qreal deviation = 0.005;
-    int outBufMidPoint = audioOut->bufferSize() / 2;
-    int drift = outBytesToWrite - outBufMidPoint;
-    qreal direction = ( qreal )drift / outBufMidPoint;
-    qreal adjust = 1.0 + deviation * -direction;
+    int audioOutBufMidPoint = audioOut->bufferSize() / 2;
+
+    // Positive if buffer is more than half-full, negative if less
+    int drift = audioOutBufBytesFree - audioOutBufMidPoint;
+    qreal direction = ( qreal )drift / audioOutBufMidPoint;
+    qreal pitchStretch = 1.0 + deviation * -direction;
 
     // Compute the exact number of bytes to read from the circular buffer to
     // produce toWrite bytes of output; Taking resampling and DRC into account
-    double outDRCRatio = sampleRateRatio * adjust;
+    double outDRCRatio = sampleRateRatio * pitchStretch;
     auto audioFormatDRC = audioFormatIn;
     audioFormatDRC.setSampleRate( audioFormatOut.sampleRate() * outDRCRatio );
-    bytesToRead = audioFormatDRC.bytesForDuration( audioFormatOut.durationForBytes( outBytesToWrite ) );
 
-    qCDebug( phxAudio ) << ( ( ( double )( audioOut->bufferSize() - outBytesToWrite ) / audioOut->bufferSize() ) * 100 ) << "% full ; DRC:" << adjust
-                        << ";" << bytesToRead << audioFormatIn.bytesForDuration( audioFormatOut.durationForBytes( outBytesToWrite ) );
+    // Take the delta between the output buffer's mid point and its current size from the input buffer,
+    // and resample it to slightly more or slightly less than the output sample rate
+    audioInBytesNeeded = audioFormatDRC.bytesForDuration( audioFormatOut.durationForBytes( drift ) );
+
+    qCDebug( phxAudio ) << ( ( ( double )( audioOut->bufferSize() - audioOutBufBytesFree ) / audioOut->bufferSize() ) * 100 ) << "% full ; DRC:" << pitchStretch
+                        << ";" << audioInBytesNeeded << audioFormatIn.bytesForDuration( audioFormatOut.durationForBytes( audioOutBufBytesFree ) );
 
     // Preform conversion
-    long framesConverted = src_callback_read( resamplerState, outDRCRatio, bytesToRead / 4,  convertedDataFloat );
+    long framesConverted = src_callback_read( resamplerState, outDRCRatio, audioInBytesNeeded / 4,  convertedDataFloat );
 
     // Convert float data back to shorts
     src_float_to_short_array( convertedDataFloat, convertedDataShort, 4096 );
@@ -137,8 +156,8 @@ void Audio::slotHandlePeriodTimer() {
     }
 
     // Send audio data to output device
-    int bytesWritten = audioOutIODev->write( ( char * )convertedDataShort, bytesToRead );
-    qCDebug( phxAudio ) << "Wrote " << bytesWritten << "bytes to output.";
+    int bytesWritten = audioOutIODev->write( ( char * )convertedDataShort, audioInBytesNeeded );
+    qCDebug( phxAudio ) << "Wrote" << bytesWritten << "bytes to output.";
     //Q_UNUSED( bytesWritten );
 
 }
@@ -149,11 +168,20 @@ long Audio::getAudioData( void *callbackData, float **outBuf ) {
     // 8192 samples (interleaved)
     // 16kb
 
-    int outSamplesToWrite = ( ( Audio * )callbackData )->bytesToRead / 2;
+    // Convert the first parameter to avoid having to typecast all the time
+    Audio *audioClass = ( ( Audio * )callbackData );
+
+    // Figure out how many samples we need to grab
+    int outSamplesToWrite = audioClass->audioInBytesNeeded / 2;
+
+    // Read frames from the audio buffer
     QVarLengthArray<short, 4096 * 2> inData( outSamplesToWrite );
-    int framesRead = ( ( Audio * )callbackData )->audioBuf->read( ( char * )inData.data(), outSamplesToWrite * 2 ) / 4 ;
-    qCDebug( phxAudio ) << "Read " << framesRead * 4 << "bytes from input.";
-    src_short_to_float_array( inData.data(), *outBuf, framesRead );
+    int framesRead = audioClass->audioBuf->read( ( char * )inData.data(), outSamplesToWrite * 2 ) / 4 ;
+    qCDebug( phxAudio ) << "Read" << framesRead * 4 << "bytes from input.";
+
+    // libsamplerate works in floats, must convert to floats for processing
+    src_short_to_float_array( inData.data(), audioClass->tempDataFloat, framesRead );
+    *outBuf = audioClass->tempDataFloat;
     return framesRead;
 }
 

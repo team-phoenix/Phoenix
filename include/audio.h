@@ -62,7 +62,8 @@ class Audio : public QObject {
         SRC_STATE *resamplerState;
 
         qreal sampleRateRatio;
-        int bytesToRead;
+        int audioInBytesNeeded;
+        float tempDataFloat[4096 * 2];
         float convertedDataFloat[4096 * 2];
         short convertedDataShort[4096 * 2];
 
