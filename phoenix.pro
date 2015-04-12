@@ -43,9 +43,9 @@ linux-g++ {
 }
 
 macx {
-    INCLUDEPATH += /Library/Frameworks/SDL2.framework/Headers
+    INCLUDEPATH += /Library/Frameworks/SDL2.framework/Headers /usr/local/include
     QMAKE_CXXFLAGS += -F/Library/Frameworks
-    QMAKE_LFLAGS += -F/Library/Frameworks
+    QMAKE_LFLAGS += -F/Library/Frameworks -L/usr/local/lib
 }
 
 win32 {

@@ -61,7 +61,7 @@ class Audio : public QObject {
         // Opaque pointer for libsamplerate
         SRC_STATE *resamplerState;
 
-        qreal sampleRateRatio;
+        double sampleRateRatio;
         int audioInBytesNeeded;
         float tempDataFloat[4096 * 2];
         float convertedDataFloat[4096 * 2];
