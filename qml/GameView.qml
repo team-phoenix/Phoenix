@@ -13,7 +13,7 @@ Rectangle {
     // This qml component is another one of the components
     // that are managed by the 'gameStack'.
 
-    // This component runs and shows the video frames from the libretro core onto
+    // This component isRunnings and shows the video frames from the libretro core onto
     // the screen.
 
     id: gameView;
@@ -22,7 +22,7 @@ Rectangle {
     visible: true;
     color: "black";
     property string stackName: "gameview";
-    property bool run: false;
+    property bool isRunning: false;
     property string gameName: "";
     property string coreName: "";
     property bool loadSaveState: false
@@ -137,7 +137,7 @@ Rectangle {
         systemDirectory: phoenixGlobals.biosPath();
         libcore: gameView.coreName;
         game: gameView.gameName;
-        run: gameView.run;
+        isRunning: gameView.isRunning;
         volume: root.volumeLevel;
         filtering: root.filtering;
         stretchVideo: root.stretchVideo;
@@ -145,7 +145,7 @@ Rectangle {
         //property real ratio: width / height;
 
         onRunChanged: {
-            if (run)
+            if (isRunning)
                 headerBar.playIcon = "/assets/GameView/pause.png";
             else
                 headerBar.playIcon = "/assets/GameView/play.png";

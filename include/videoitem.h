@@ -42,7 +42,7 @@ class VideoItem : public QQuickItem {
 
         Q_PROPERTY( QString libcore READ libcore WRITE setCore NOTIFY libcoreChanged )
         Q_PROPERTY( QString game READ game WRITE setGame NOTIFY gameChanged )
-        Q_PROPERTY( bool run READ run WRITE setRun NOTIFY runChanged )
+        Q_PROPERTY( bool isRunning READ isRunning WRITE setRun NOTIFY runChanged )
         Q_PROPERTY( bool setWindowed READ setWindowed WRITE setWindowed NOTIFY setWindowedChanged )
         Q_PROPERTY( QString systemDirectory READ systemDirectory WRITE setSystemDirectory NOTIFY systemDirectoryChanged )
         Q_PROPERTY( int fps READ fps NOTIFY fpsChanged )
@@ -60,7 +60,7 @@ class VideoItem : public QQuickItem {
         void initGL();
         void setCore( QString libcore );
         void setGame( QString game );
-        void setRun( bool run );
+        void setRun( bool isRunning );
         void setWindowed( bool setWindowed );
         void setSystemDirectory( QString systemDirectory );
         void setTexture();
@@ -78,7 +78,7 @@ class VideoItem : public QQuickItem {
             return m_game;
         }
 
-        bool run() const {
+        bool isRunning() const {
             return m_run;
         }
 

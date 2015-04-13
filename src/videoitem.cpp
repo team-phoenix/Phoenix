@@ -35,6 +35,8 @@ VideoItem::~VideoItem() {
     unload();
     delete core;
 
+    fps_timer.stop();
+
     if( texture ) {
         texture->deleteLater();
     }
@@ -285,7 +287,7 @@ QSGNode *VideoItem::updatePaintNode( QSGNode *old_node, UpdatePaintNodeData *pai
         setAspectRatio( core->getAspectRatio() );
     }
 
-    if( run() && !limitFps() ) {
+    if( isRunning() && !limitFps() ) {
         core->doFrame();
         fps_count++;
 

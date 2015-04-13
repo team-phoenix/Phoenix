@@ -56,7 +56,7 @@ void Audio::slotHandleFormatChanged() {
     }
 
     audioOutIODev->moveToThread( &audioThread );
-    audioTimer.setInterval( audioFormatOut.durationForBytes( audioOut->periodSize() * 1.5 ) / 1000 );
+    audioTimer.setInterval( audioFormatOut.durationForBytes( audioOut->periodSize() * 0.25 ) / 1000 );
 
 }
 

@@ -398,7 +398,7 @@ Rectangle {
 
                 onClicked:  {
                     if (root.itemInView === "game") {
-                        windowStack.currentItem.run = false;
+                        windowStack.currentItem.isRunning = false;
                         volumeDropDown.visible = false;
                         windowStack.push({item: homeScreen, replace: true})
                         headerBar.userText = "Phoenix";
@@ -438,10 +438,10 @@ Rectangle {
 
             onPressedChanged:  {
                 if (pressed) {
-                    if (windowStack.currentItem.run)
-                        windowStack.currentItem.run = false;
+                    if (windowStack.currentItem.isRunning)
+                        windowStack.currentItem.isRunning = false;
                     else
-                        windowStack.currentItem.run = true;
+                        windowStack.currentItem.isRunning = true;
                 }
             }
         }
