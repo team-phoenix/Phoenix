@@ -1,13 +1,13 @@
-// Phoenix
-// Core - A libretro core encapsulated in a C++ object
-// Author: team-phoenix
-// Created: May 31, 2014
-
 #include "core.h"
 #include "phoenixglobals.h"
 
 extern InputManager input_manager;
 extern PhoenixGlobals phxGlobals;
+
+//  ________________________
+// |                        |
+// |        Globals         |
+// |________________________|
 
 LibretroSymbols::LibretroSymbols() {
     retro_audio = nullptr;
@@ -16,13 +16,34 @@ LibretroSymbols::LibretroSymbols() {
     retro_keyboard_event = nullptr;
 }
 
+QDebug operator<<( QDebug debug, const Core::Variable &var ) {
+    // join a QVector of std::strings. (Really, C++ ?)
+    auto &choices = var.choices();
+    std::string joinedchoices;
+
+    foreach( auto &choice, choices ) {
+        joinedchoices.append( choice );
+
+        if( &choice != &choices.last() ) {
+            joinedchoices.append( ", " );
+        }
+    }
+
+    auto QStr = QString::fromStdString; // shorter alias
+
+    debug << qPrintable( QString( "Core::Variable(%1=%2, description=\"%3\", choices=[%4])" ).
+                         arg( QStr( var.key() ) ).arg( QStr( var.value( "<not set>" ) ) ).
+                         arg( QStr( var.description() ) ).arg( QStr( joinedchoices ) ) );
+    return debug;
+}
+
 //  ________________________
 // |                        |
 // |    Static variables    |
 // |________________________|
 
 
-// Must always point to the current Core
+// Must always point to the last Core instance used
 Core *Core::core = nullptr;
 
 //  ________________________
@@ -51,13 +72,12 @@ Core::Core() {
 
     Core::core = this;
 
-    setSaveDirectory(phxGlobals.savePath());
-    setSystemDirectory(phxGlobals.biosPath());
+    setSaveDirectory( phxGlobals.savePath() );
+    setSystemDirectory( phxGlobals.biosPath() );
 
 } // Core::Core()
 
-Core::~Core()
-{
+Core::~Core() {
 
 } // Core::~Core()
 
@@ -66,96 +86,10 @@ Core::~Core()
 // |     Public methods     |
 // |________________________|
 
-bool Core::saveGameState( QString path, QString name ) {
-    size_t size = core->getSymbols()->retro_serialize_size();
+//
+// Control methods
+//
 
-    if( !size ) {
-        return false;
-    }
-
-    char *data = new char[size];
-    bool loaded = false;
-
-    if( symbols->retro_serialize( data, size ) ) {
-        QFile *file = new QFile(phxGlobals.savePath() + phxGlobals.selectedGame().baseName() + "_STATE.sav");
-        qCDebug( phxCore ) << file->fileName();
-
-        if( file->open( QIODevice::WriteOnly ) ) {
-            file->write( QByteArray( static_cast<char *>( data ), static_cast<int>( size ) ) );
-            qCDebug( phxCore ) << "Save State wrote to " << file->fileName();
-            file->close();
-            loaded = true;
-        }
-
-        delete file;
-
-    }
-
-    delete[] data;
-    return loaded;
-
-} // Core::saveGameState(QString path, char *data, int size)
-
-bool Core::loadGameState( QString path, QString name ) {
-    QFile file(phxGlobals.savePath() + phxGlobals.selectedGame().baseName() + "_STATE.sav");
-
-
-    bool loaded = false;
-
-    if(file.open( QIODevice::ReadOnly )) {
-        QByteArray state = file.readAll();
-        void *data = state.data();
-        size_t size = static_cast<int>( state.size() );
-
-        file.close();
-
-        if( symbols->retro_unserialize( data, size ) ) {
-            qCDebug( phxCore ) << "Save State loaded";
-            loaded = true;
-        }
-    }
-
-    return loaded;
-
-} // Core::loadGameState(QString path)
-
-// Run core for one frame
-void Core::doFrame() {
-    // Update the static pointer
-    core = this;
-
-    // Tell the core to run a frame
-    symbols->retro_run();
-
-    if( symbols->retro_audio ) {
-        symbols->retro_audio();
-    }
-
-} // void doFrame()
-
-// Getters
-
-// System
-// [4]
-void Core::setSystemDirectory( QString system_dir ) {
-    system_directory = system_dir.toLocal8Bit();
-
-} // Core::setSystemDirectory(QString system_dir)
-
-void Core::setSaveDirectory( QString save_dir ) {
-    save_directory = save_dir.toLocal8Bit();
-
-} // Core::setSaveDirectory()
-
-//~[4]
-
-LibretroSymbols *Core::getSymbols() {
-    return symbols;
-
-} // LibretroSymbols *RasterWindow::getSymbols()
-
-// Load a libretro core at the given path
-// Returns: true if successful, false otherwise
 bool Core::loadCore( const char *path ) {
     libretro_core = new QLibrary( path );
     libretro_core->load();
@@ -190,7 +124,7 @@ bool Core::loadCore( const char *path ) {
         resolved_sym( retro_get_region );
         resolved_sym( retro_get_memory_data );
         resolved_sym( retro_get_memory_size );
-        
+
         // Set callbacks
         symbols->retro_set_environment( environmentCallback );
         symbols->retro_set_audio_sample( audioSampleCallback );
@@ -200,31 +134,29 @@ bool Core::loadCore( const char *path ) {
         symbols->retro_set_video_refresh( videoRefreshCallback );
         //symbols->retro_get_memory_data(getMemoryData);
         //symbols->retro_get_memory_size(getMemorySize);
-        
+
         // Init the core
         symbols->retro_init();
-        
+
         // Get some info about the game
         symbols->retro_get_system_info( system_info );
         full_path_needed = system_info->need_fullpath;
-        
+
         return true;
-        
+
     }
 
     return false;
-    
+
 } // Core::loadCore()
 
-// Load a game with the given path
-// Returns: true if the game was successfully loaded, false otherwise
 bool Core::loadGame( const char *path ) {
     // create a retro_game_info struct, load with data (created on stack)
     retro_game_info game_info;
-    
+
     // full path needed, pass this file path to the core
 
-    QFileInfo info(path);
+    QFileInfo info( path );
 
     //QString file_name = info.baseName() + "." + info.suffix();
     //qDebug() << "suffix: " << file_name;
@@ -256,24 +188,24 @@ bool Core::loadGame( const char *path ) {
         // full path not needed, read the file to a buffer and pass that to the core
 
 
-        QFile game(info.canonicalFilePath());
-        
+        QFile game( info.canonicalFilePath() );
+
         if( !game.open( QIODevice::ReadOnly ) ) {
             return false;
         }
 
         // read into memory
         game_data = game.readAll();
-        
+
         game_info.path = nullptr;
         game_info.data = game_data.data();
         game_info.size = game.size();
         game_info.meta = "";
-        
+
     }
-    
+
     bool ret = symbols->retro_load_game( &game_info );
-    
+
     // Get some info about the game
     if( !ret ) {
         return false;
@@ -288,8 +220,21 @@ bool Core::loadGame( const char *path ) {
     loadSRAM();
 
     return true;
-    
-} // Core::load_game()
+
+} // Core::loadGame()
+
+void Core::doFrame() {
+    // Update the static pointer
+    core = this;
+
+    // Tell the core to run a frame
+    symbols->retro_run();
+
+    if( symbols->retro_audio ) {
+        symbols->retro_audio();
+    }
+
+} // void doFrame()
 
 void Core::unload() {
     saveSRAM();
@@ -305,7 +250,127 @@ void Core::unload() {
     delete system_info;
     qCDebug( phxCore ) << "Finished unloading core";
 
-}
+} // Core::unload()
+
+//
+// Misc
+//
+
+LibretroSymbols *Core::getSymbols() {
+    return symbols;
+
+} // Core::getSymbols()
+
+
+bool Core::saveGameState( QString path, QString name ) {
+    size_t size = core->getSymbols()->retro_serialize_size();
+
+    if( !size ) {
+        return false;
+    }
+
+    char *data = new char[size];
+    bool loaded = false;
+
+    if( symbols->retro_serialize( data, size ) ) {
+        QFile *file = new QFile( phxGlobals.savePath() + phxGlobals.selectedGame().baseName() + "_STATE.sav" );
+        qCDebug( phxCore ) << file->fileName();
+
+        if( file->open( QIODevice::WriteOnly ) ) {
+            file->write( QByteArray( static_cast<char *>( data ), static_cast<int>( size ) ) );
+            qCDebug( phxCore ) << "Save State wrote to " << file->fileName();
+            file->close();
+            loaded = true;
+        }
+
+        delete file;
+
+    }
+
+    delete[] data;
+    return loaded;
+
+} // Core::saveGameState(QString path, char *data, int size)
+
+bool Core::loadGameState( QString path, QString name ) {
+    QFile file( phxGlobals.savePath() + phxGlobals.selectedGame().baseName() + "_STATE.sav" );
+
+    bool loaded = false;
+
+    if( file.open( QIODevice::ReadOnly ) ) {
+        QByteArray state = file.readAll();
+        void *data = state.data();
+        size_t size = static_cast<int>( state.size() );
+
+        file.close();
+
+        if( symbols->retro_unserialize( data, size ) ) {
+            qCDebug( phxCore ) << "Save State loaded";
+            loaded = true;
+        }
+    }
+
+    return loaded;
+
+} // Core::loadGameState(QString path)
+
+//
+// Video
+//
+
+//
+// Audio
+//
+
+//
+// System
+//
+
+void Core::setSystemDirectory( QString system_dir ) {
+    system_directory = system_dir.toLocal8Bit();
+
+} // Core::setSystemDirectory(QString system_dir)
+
+void Core::setSaveDirectory( QString save_dir ) {
+    save_directory = save_dir.toLocal8Bit();
+
+} // Core::setSaveDirectory()
+
+//  ________________________
+// |                        |
+// |    Private methods     |
+// |________________________|
+
+void Core::saveSRAM() {
+    if( m_sram == nullptr ) {
+        return;
+    }
+
+    QFile file( save_directory + phxGlobals.selectedGame().baseName() + ".srm" );
+    qCDebug( phxCore ) << "Saving SRAM to: " << file.fileName();
+
+    if( file.open( QIODevice::WriteOnly ) ) {
+        char *data = static_cast<char *>( m_sram );
+        size_t size = symbols->retro_get_memory_size( RETRO_MEMORY_SAVE_RAM );
+        file.write( data, size );
+        file.close();
+    }
+} // Core::saveSRAM()
+
+void Core::loadSRAM() {
+    m_sram = symbols->retro_get_memory_data( RETRO_MEMORY_SAVE_RAM );
+
+    QFile file( save_directory + phxGlobals.selectedGame().baseName() + ".srm" );
+
+    if( file.open( QIODevice::ReadOnly ) ) {
+        QByteArray data = file.readAll();
+        memcpy( m_sram, data.data(), data.size() );
+
+        qCDebug( phxCore ) << "Loading SRAM from: " << file.fileName();
+        file.close();
+    }
+
+} // Core::loadSRAM()
 
 //  ________________________
 // |                        |
@@ -562,7 +627,7 @@ int16_t Core::inputStateCallback( unsigned port, unsigned device, unsigned index
         return 0;
     }
 
-    InputDevice *deviceobj = input_manager.getDevice(port);
+    InputDevice *deviceobj = input_manager.getDevice( port );
 
     // make sure the InputDevice was configured
     // to map to the requested RETRO_DEVICE.
@@ -647,53 +712,3 @@ void Core::videoRefreshCallback( const void *data, unsigned width, unsigned heig
     
 } // Core::videoRefreshCallback()
 
-QDebug operator<<( QDebug debug, const Core::Variable &var ) {
-    // join a QVector of std::strings. (Really, C++ ?)
-    auto &choices = var.choices();
-    std::string joinedchoices;
-
-    foreach( auto &choice, choices ) {
-        joinedchoices.append( choice );
-
-        if( &choice != &choices.last() ) {
-            joinedchoices.append( ", " );
-        }
-    }
-
-    auto QStr = QString::fromStdString; // shorter alias
-
-    debug << qPrintable( QString( "Core::Variable(%1=%2, description=\"%3\", choices=[%4])" ).
-                         arg( QStr( var.key() ) ).arg( QStr( var.value( "<not set>" ) ) ).
-                         arg( QStr( var.description() ) ).arg( QStr( joinedchoices ) ) );
-    return debug;
-}
-
-void Core::saveSRAM()
-{
-    if (m_sram == nullptr)
-        return;
-
-    QFile file(save_directory + phxGlobals.selectedGame().baseName() + ".srm");
-    qCDebug(phxCore) << "Saving SRAM to: " << file.fileName();
-
-    if (file.open(QIODevice::WriteOnly)) {
-        char *data = static_cast<char *>(m_sram);
-        size_t size = symbols->retro_get_memory_size(RETRO_MEMORY_SAVE_RAM);
-        file.write(data, size);
-        file.close();
-    }
-}
-
-void Core::loadSRAM() {
-    m_sram = symbols->retro_get_memory_data(RETRO_MEMORY_SAVE_RAM);
-
-    QFile file(save_directory + phxGlobals.selectedGame().baseName() + ".srm");
-    if (file.open(QIODevice::ReadOnly)) {
-        QByteArray data = file.readAll();
-        memcpy(m_sram, data.data(), data.size());
-
-        qCDebug(phxCore) << "Loading SRAM from: " << file.fileName();
-        file.close();
-    }
-
-}

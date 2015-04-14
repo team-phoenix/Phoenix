@@ -1,8 +1,3 @@
-// Phoenix
-// Core - A libretro core encapsulated in a C++ object
-// Author: athairus
-// Created: May 31 2014
-
 #ifndef CORE_H
 #define CORE_H
 
@@ -77,90 +72,118 @@ struct LibretroSymbols {
     
 };
 
-class Core {
+class Core: QObject {
+        Q_OBJECT
 
     public:
-
-        // A pointer to the last instance of the class used
-        static Core *core;
 
         Core();
         ~Core();
 
-        // Misc
+        //
+        // Control methods
+        //
+
+        // Load a libretro core at the given path
+        // Returns: true if successful, false otherwise
+        bool loadCore( const char *path );
+
+        // Load a game with the given path
+        // Returns: true if the game was successfully loaded, false otherwise
+        bool loadGame( const char *path );
+
+        // Run core for one frame
         void doFrame();
+
+        // Unload
+        void unload();
+
+        //
+        // Misc
+        //
+
+        // A pointer to the last instance of the class used
+        static Core *core;
+
         LibretroSymbols *getSymbols();
         QByteArray getLibraryName() {
             return library_name;
-        };
-        AudioBuffer *audio_buf;
+        }
+
         bool saveGameState( QString save_path, QString game_name );
         bool loadGameState( QString save_path, QString game_name );
 
+        //
         // Video
+        //
+
         retro_hw_render_callback getHWData() const {
             return hw_callback;
-        };
+        }
         const void *getImageData() const {
             return video_data;
-        };
+        }
         unsigned getBaseWidth() const {
             return video_width;
-        };
+        }
         unsigned getBaseHeight() const {
             return video_height;
-        };
+        }
         unsigned getMaxWidth() const {
             return system_av_info->geometry.max_width;
-        };
+        }
         unsigned getMaxHeight() const {
             return system_av_info->geometry.max_height;
-        };
+        }
         size_t getPitch() const {
             return video_pitch;
-        };
+        }
         retro_pixel_format getPixelFormat() const {
             return pixel_format;
-        };
+        }
         const retro_system_info *getSystemInfo() const {
             return system_info;
-        };
+        }
         float getAspectRatio() const {
             if( system_av_info->geometry.aspect_ratio ) {
                 return system_av_info->geometry.aspect_ratio;
             }
 
             return ( float )system_av_info->geometry.base_width / system_av_info->geometry.base_height;
-        };
+        }
 
+        //
         // Audio
+        //
+
+        AudioBuffer *audio_buf;
         //const int16_t *getAudioData() const { return audio_data; };
         //size_t getAudioFrames() const { return audio_frames; };
         //int16_t getLeftChannel() const { return left_channel; };
         //int16_t getRightChannel() const { return right_channel; };
 
+        //
         // System
+        //
+
         void setSystemDirectory( QString system_directory );
         void setSaveDirectory( QString save_directory );
 
+        //
         // Timing
+        //
+
         double getFps() const {
             return system_av_info->timing.fps;
-        };
+        }
         double getSampleRate() const {
             return system_av_info->timing.sample_rate;
-        };
+        }
         bool isDupeFrame() const {
             return is_dupe_frame;
-        };
+        }
 
-        // Initilization methods
-        bool loadCore( const char *path );
-        bool loadGame( const char *path );
-
-        // Unload
-        void unload();
-
+        // Container class for a libretro core variable
         class Variable {
             public:
                 Variable() {}; // default constructor
@@ -225,7 +248,22 @@ class Core {
 
         };
 
+        // Mutexes to ensure different threads access critical pieces of data serially
+        QMutex audioMutex;
+        QMutex videoMutex;
+        QMutex inputMutex;
+
+    signals:
+    public slots:
+    private slots:
+
     private:
+
+        // A thread whose purpouse is to keep the emulation seperate from the main thread
+        QThread coreThread;
+
+        // A timer that will update the Core
+        QTimer coreTimer;
 
         // Handle to the libretro core
         QLibrary *libretro_core;
@@ -265,8 +303,8 @@ class Core {
         // Timing
         bool is_dupe_frame;
 
-        // Misc        
-        void * m_sram;
+        // Misc
+        void *m_sram;
         void saveSRAM();
         void loadSRAM();
 
@@ -280,7 +318,7 @@ class Core {
         static void videoRefreshCallback( const void *data, unsigned width, unsigned height, size_t pitch );
 };
 
-
-QDebug operator<<( QDebug, const Core::Variable & );
+// Do not scope this globally anymore, it is not thread-safe
+// QDebug operator<<( QDebug, const Core::Variable & );
 
 #endif
