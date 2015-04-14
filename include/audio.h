@@ -51,19 +51,13 @@ class Audio : public QObject {
         void slotHandlePeriodTimer();
 
     private:
-        // libsamplerate callback to fetch audio data for the library to convert
-        // Arguments: callbackData - User-defined pointer to a struct containing info it might need
-        //            outBuf - Pointer to array of floats where the data will go. Maximum number of
-        //                     frames it holds were provided to src_callback_read()
-        // Returns: Number of frames provided to converter
-        static long getAudioData( void *callbackData, float **outBuf );
-
         // Opaque pointer for libsamplerate
         SRC_STATE *resamplerState;
 
         double sampleRateRatio;
         int audioInBytesNeeded;
-        float tempDataFloat[4096 * 2];
+        float inputDataFloat[4096 * 2];
+        short tempDataShort[4096 * 2];
         float convertedDataFloat[4096 * 2];
         short convertedDataShort[4096 * 2];
 
