@@ -263,6 +263,9 @@ LibretroSymbols *Core::getSymbols() {
 
 
 bool Core::saveGameState( QString path, QString name ) {
+    Q_UNUSED( path );
+    Q_UNUSED( name );
+
     size_t size = core->getSymbols()->retro_serialize_size();
 
     if( !size ) {
@@ -293,6 +296,9 @@ bool Core::saveGameState( QString path, QString name ) {
 } // Core::saveGameState(QString path, char *data, int size)
 
 bool Core::loadGameState( QString path, QString name ) {
+    Q_UNUSED( path );
+    Q_UNUSED( name );
+
     QFile file( phxGlobals.savePath() + phxGlobals.selectedGame().baseName() + "_STATE.sav" );
 
     bool loaded = false;
