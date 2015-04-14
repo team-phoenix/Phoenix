@@ -72,8 +72,7 @@ struct LibretroSymbols {
     
 };
 
-class Core: QObject {
-        Q_OBJECT
+class Core {
 
     public:
 
@@ -248,22 +247,7 @@ class Core: QObject {
 
         };
 
-        // Mutexes to ensure different threads access critical pieces of data serially
-        QMutex audioMutex;
-        QMutex videoMutex;
-        QMutex inputMutex;
-
-    signals:
-    public slots:
-    private slots:
-
     private:
-
-        // A thread whose purpouse is to keep the emulation seperate from the main thread
-        QThread coreThread;
-
-        // A timer that will update the Core
-        QTimer coreTimer;
 
         // Handle to the libretro core
         QLibrary *libretro_core;
