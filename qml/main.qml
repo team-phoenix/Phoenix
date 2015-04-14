@@ -60,7 +60,7 @@ PhoenixWindow {
     {
         // This function is used to call the gameAndCoreCheck(), that is
         // a slot defined in the PhoenixWindow class. This function is used
-        // to see if the game and core loads properly, before actual game data is shown on
+        // to see if the  ?and core loads properly, before actual game data is shown on
         // the screen. This is to hopefully, reduce the change of segment faults, because of
         // incompatible cores.
 
@@ -71,7 +71,7 @@ PhoenixWindow {
                 return false;
 
             if (phoenixGlobals.validGame(file_name)) {
-                windowStack.push({item: gameView, properties: {coreName: core, gameName: file_name, run: true, replace: true}});
+                windowStack.push({item: gameView, properties: {coreName: core, gameName: file_name, isRunning: true, replace: true}});
                 return true;
              }
         }

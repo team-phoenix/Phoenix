@@ -31,6 +31,7 @@ SDLEvents::SDLEvents() {
 }
 
 SDLEvents::~SDLEvents() {
+    moveToThread( &thread );
     polltimer.stop();
     thread.quit();
     thread.wait();
