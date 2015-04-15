@@ -57,9 +57,9 @@ class Audio : public QObject {
         double sampleRateRatio;
         int audioInBytesNeeded;
         float inputDataFloat[4096 * 2];
-        short tempDataShort[4096 * 2];
-        float convertedDataFloat[4096 * 2];
-        short convertedDataShort[4096 * 2];
+        char inputDataChar[4096 * 4];
+        float *outputDataFloat;
+        short *outputDataShort;
 
         bool isCoreRunning;
         QAudioFormat audioFormatOut;

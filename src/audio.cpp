@@ -21,6 +21,9 @@ Audio::Audio( QObject *parent )
 
     // We need to send this signal to ourselves
     connect( this, &Audio::signalFormatChanged, this, &Audio::slotHandleFormatChanged );
+
+    outputDataFloat = nullptr;
+    outputDataShort = nullptr;
 }
 
 AudioBuffer *Audio::getAudioBuf() const {
@@ -44,12 +47,13 @@ void Audio::setInFormat( QAudioFormat newInFormat ) {
         audioFormatOut = info.preferredFormat();
     }
 
+    sampleRateRatio = ( double )audioFormatOut.sampleRate()  / audioFormatIn.sampleRate();
+
     qCDebug( phxAudio ) << "audioFormatIn" << audioFormatIn;
     qCDebug( phxAudio ) << "audioFormatOut" << audioFormatOut;
+    qCDebug( phxAudio ) << "sampleRateRatio" << sampleRateRatio;
     qCDebug( phxAudio, "Using nearest format supported by sound card: %iHz %ibits",
              audioFormatOut.sampleRate(), audioFormatOut.sampleSize() );
-
-    sampleRateRatio = ( double )audioFormatIn.sampleRate()  / audioFormatOut.sampleRate();
 
     emit signalFormatChanged();
 
@@ -73,7 +77,7 @@ void Audio::slotHandleFormatChanged() {
     }
 
     audioOutIODev->moveToThread( &audioThread );
-    qint64 durationInMs = audioFormatOut.durationForBytes( audioOut->periodSize() * 1.5 ) / 1000;
+    qint64 durationInMs = audioFormatOut.durationForBytes( audioOut->periodSize() * 1 ) / 1000;
     qCDebug( phxAudio ) << "Timer interval set to" << durationInMs << "ms, Period size" << audioOut->periodSize() << "bytes, buffer size" << audioOut->bufferSize() << "bytes";
     audioTimer.setInterval( durationInMs );
 
@@ -88,6 +92,21 @@ void Audio::slotHandleFormatChanged() {
         qCWarning( phxAudio ) << "libresample could not init: " << src_strerror( errorCode ) ;
     }
 
+    // Now that the IO devices are properly set up,
+    // allocate space for buffers that'll hold up to their hardware couterpart's size in data
+    auto outputDataSamples = audioOut->bufferSize() * 2;
+    qCDebug( phxAudio ) << "Allocated" << outputDataSamples << "for conversion.";
+
+    if( outputDataFloat ) {
+        delete outputDataFloat;
+    }
+
+    if( outputDataShort ) {
+        delete outputDataShort;
+    }
+
+    outputDataFloat = new float[outputDataSamples];
+    outputDataShort = new short[outputDataSamples];
 }
 
 void Audio::slotThreadStarted() {
@@ -119,12 +138,12 @@ void Audio::slotHandlePeriodTimer() {
     auto samplesPerFrame = 2;
 
     // Max number of bytes/frames we can write to the output
-    auto outputBytesToWrite = audioOut->bytesFree();
-    auto outputFramesToWrite = audioFormatOut.framesForBytes( outputBytesToWrite );
-    auto outputSamplesToWrite = outputFramesToWrite * samplesPerFrame;
+    auto outputBytesFree = audioOut->bytesFree();
+    auto outputFramesFree = audioFormatOut.framesForBytes( outputBytesFree );
+    // auto outputSamplesFree = outputFramesFree * samplesPerFrame;
 
     // If output buffer is somehow full despite DRC, empty it
-    if( !outputBytesToWrite ) {
+    if( !outputBytesFree ) {
         qWarning( phxAudio ) << "Output buffer full, resetting...";
         emit signalFormatChanged();
         return;
@@ -132,39 +151,32 @@ void Audio::slotHandlePeriodTimer() {
 
     double maxDeviation = 0.005;
     auto outputBufferMidPoint = audioOut->bufferSize() / 2;
-    auto distanceFromCenter = outputBytesToWrite - outputBufferMidPoint;
+    auto distanceFromCenter = outputBytesFree - outputBufferMidPoint;
     double direction = ( double )distanceFromCenter / outputBufferMidPoint;
     double adjust = 1.0 + maxDeviation * -direction;
 
     // Compute the exact number of bytes to read from the circular buffer to
-    // produce outputBytesToWrite bytes of output; Taking resampling and DRC into account
+    // produce outputBytesFree bytes of output; Taking resampling and DRC into account
     double adjustedSampleRateRatio = sampleRateRatio * adjust;
     auto audioFormatTemp = audioFormatIn;
     audioFormatTemp.setSampleRate( audioFormatOut.sampleRate() * adjustedSampleRateRatio );
-    auto inputBytesToRead = audioFormatTemp.bytesForDuration( audioFormatOut.durationForBytes( outputBytesToWrite ) );
-
-    // qCDebug( phxAudio ) << "Input is" << ( audioBuf->size() * 100 / audioFormatIn.bytesForFrames( 4096 ) ) << "% full, output is"
-    //                     << ( ( ( double )( audioOut->bufferSize() - outputBytesToWrite ) / audioOut->bufferSize() ) * 100 )  << "% full ; DRC:" << adjust
-    //                     << ";" << inputBytesToRead << audioFormatIn.bytesForDuration( audioFormatOut.durationForBytes( outputBytesToWrite ) ) << sampleRateRatio << adjustedSampleRateRatio;
+    auto inputBytesToRead = audioFormatTemp.bytesForDuration( audioFormatOut.durationForBytes( distanceFromCenter < 0 ? 0 : distanceFromCenter ) );
 
     // Read the input data
-    QVarLengthArray<char, 4096 * 4> inputDataChar( inputBytesToRead );
-    auto inputBytesRead = audioBuf->read( inputDataChar.data(), inputDataChar.size() );
+    auto inputBytesRead = audioBuf->read( inputDataChar, inputBytesToRead );
     auto inputFramesRead = audioFormatIn.framesForBytes( inputBytesRead );
     auto inputSamplesRead = inputFramesRead * samplesPerFrame;
 
     // libsamplerate works in floats, must convert to floats for processing
-    src_short_to_float_array( ( short * )inputDataChar.data(), inputDataFloat, inputSamplesRead );
+    src_short_to_float_array( ( short * )inputDataChar, inputDataFloat, inputSamplesRead );
 
     // Set up a struct containing parameters for the resampler
-    float *outputDataFloat = new float[outputSamplesToWrite];
     SRC_DATA srcData;
     srcData.data_in = inputDataFloat;
     srcData.data_out = outputDataFloat;
     srcData.end_of_input = 0;
     srcData.input_frames = inputFramesRead;
-    // Max size
-    srcData.output_frames = outputFramesToWrite;
+    srcData.output_frames = outputFramesFree; // Max size
     srcData.src_ratio = adjustedSampleRateRatio;
 
     // Perform resample
@@ -180,20 +192,21 @@ void Audio::slotHandlePeriodTimer() {
     auto outputSamplesConverted = outputFramesConverted * samplesPerFrame;
 
     // Convert float data back to shorts
-    short *outputDataShort = new short[outputSamplesConverted];
     src_float_to_short_array( outputDataFloat, outputDataShort, outputSamplesConverted );
 
     int outputBytesWritten = audioOutIODev->write( ( char * ) outputDataShort, outputBytesConverted );
     Q_UNUSED( outputBytesWritten );
 
-    // qCDebug( phxAudio ) << "\tInput: needed" << inputBytesToRead << "bytes, read" << inputBytesRead << "bytes";
-    // qCDebug( phxAudio ) << "\tOutput: needed" << outputBytesToWrite << "bytes, converted" << outputBytesConverted << "bytes, wrote" << outputBytesWritten << "bytes";
-    // qCDebug( phxAudio ) << "Input: needed" << audioFormatIn.framesForBytes( inputBytesToRead ) << "frames, read" << audioFormatIn.framesForBytes( inputBytesRead ) << "frames";
-    // qCDebug( phxAudio ) << "Output: needed" << audioFormatOut.framesForBytes( outputBytesToWrite ) << "frames, wrote" << audioFormatOut.framesForBytes( outputBytesWritten ) << "frames";
-
+    qCDebug( phxAudio ) << "Input is" << ( audioBuf->size() * 100 / audioFormatIn.bytesForFrames( 4096 ) ) << "% full, output is"
+                        << ( ( ( double )( audioOut->bufferSize() - outputBytesFree ) / audioOut->bufferSize() ) * 100 )  << "% full ; DRC:" << adjust
+                        << ";" << inputBytesToRead << audioFormatIn.bytesForDuration( audioFormatOut.durationForBytes( outputBytesFree ) ) << sampleRateRatio << adjustedSampleRateRatio;
+    qCDebug( phxAudio ) << "\tInput: needed" << inputBytesToRead << "bytes, read" << inputBytesRead << "bytes";
+    qCDebug( phxAudio ) << "\tOutput: needed" << distanceFromCenter << "bytes, wrote" << outputBytesWritten << "bytes";
+    /*
+    qCDebug( phxAudio ) << "Input: needed" << audioFormatIn.framesForBytes( inputBytesToRead ) << "frames, read" << audioFormatIn.framesForBytes( inputBytesRead ) << "frames";
+    qCDebug( phxAudio ) << "Output: needed" << audioFormatOut.framesForBytes( outputBytesToWrite ) << "frames, wrote" << audioFormatOut.framesForBytes( outputBytesWritten ) << "frames";
+    */
     // Cleanup
-    delete outputDataFloat;
-    delete outputDataShort;
 
 }
 
