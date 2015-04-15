@@ -127,17 +127,17 @@ void Audio::slotThreadStarted() {
 void Audio::slotHandlePeriodTimer() {
     Q_ASSERT( QThread::currentThread() == &audioThread );
 
-    // Handle the situation where there is no output to output to
+    // Handle the situation where there is no device to output to
     if( !audioOutIODev ) {
-        static bool audioDevErrHandled = false;
-
-        if( !audioDevErrHandled ) {
-            qCDebug( phxAudio ) << "Audio device was not found, attempting reset...";
-            emit signalFormatChanged();
-            audioDevErrHandled = true;
-        }
-
+        qCDebug( phxAudio ) << "Audio device was not found, attempting reset...";
+        emit signalFormatChanged();
         return;
+    }
+
+    // Handle the situation where there is an error opening the audio device
+    if( audioOut->error() == QAudio::OpenError ) {
+        qWarning( phxAudio ) << "QAudio::OpenError, attempting reset...";
+        emit signalFormatChanged();
     }
 
     auto samplesPerFrame = 2;
