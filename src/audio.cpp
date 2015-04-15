@@ -77,7 +77,12 @@ void Audio::slotHandleFormatChanged() {
     }
 
     audioOutIODev->moveToThread( &audioThread );
-    qint64 durationInMs = audioFormatOut.durationForBytes( audioOut->periodSize() * 1 ) / 1000;
+
+    // This is where the amount of time that passes between audio updates is set
+    // At timer intervals this low on most OSes the jitter is quite significant
+    // Try to grab data from the input buffer at least every frame
+    // qint64 durationInMs = audioFormatOut.durationForBytes( audioOut->periodSize() * 1.0 ) / 1000;
+    qint64 durationInMs = 16;
     qCDebug( phxAudio ) << "Timer interval set to" << durationInMs << "ms, Period size" << audioOut->periodSize() << "bytes, buffer size" << audioOut->bufferSize() << "bytes";
     audioTimer.setInterval( durationInMs );
 
@@ -149,14 +154,13 @@ void Audio::slotHandlePeriodTimer() {
         return;
     }
 
+    // Compute the exact number of bytes to read from the circular buffer to
+    // produce outputBytesFree bytes of output; Taking resampling and DRC into account
     double maxDeviation = 0.005;
     auto outputBufferMidPoint = audioOut->bufferSize() / 2;
     auto distanceFromCenter = outputBytesFree - outputBufferMidPoint;
     double direction = ( double )distanceFromCenter / outputBufferMidPoint;
-    double adjust = 1.0 + maxDeviation * -direction;
-
-    // Compute the exact number of bytes to read from the circular buffer to
-    // produce outputBytesFree bytes of output; Taking resampling and DRC into account
+    double adjust = 1.0 + maxDeviation * direction;
     double adjustedSampleRateRatio = sampleRateRatio * adjust;
     auto audioFormatTemp = audioFormatIn;
     audioFormatTemp.setSampleRate( audioFormatOut.sampleRate() * adjustedSampleRateRatio );
@@ -197,16 +201,15 @@ void Audio::slotHandlePeriodTimer() {
     int outputBytesWritten = audioOutIODev->write( ( char * ) outputDataShort, outputBytesConverted );
     Q_UNUSED( outputBytesWritten );
 
+    /*
     qCDebug( phxAudio ) << "Input is" << ( audioBuf->size() * 100 / audioFormatIn.bytesForFrames( 4096 ) ) << "% full, output is"
                         << ( ( ( double )( audioOut->bufferSize() - outputBytesFree ) / audioOut->bufferSize() ) * 100 )  << "% full ; DRC:" << adjust
                         << ";" << inputBytesToRead << audioFormatIn.bytesForDuration( audioFormatOut.durationForBytes( outputBytesFree ) ) << sampleRateRatio << adjustedSampleRateRatio;
     qCDebug( phxAudio ) << "\tInput: needed" << inputBytesToRead << "bytes, read" << inputBytesRead << "bytes";
     qCDebug( phxAudio ) << "\tOutput: needed" << distanceFromCenter << "bytes, wrote" << outputBytesWritten << "bytes";
-    /*
     qCDebug( phxAudio ) << "Input: needed" << audioFormatIn.framesForBytes( inputBytesToRead ) << "frames, read" << audioFormatIn.framesForBytes( inputBytesRead ) << "frames";
     qCDebug( phxAudio ) << "Output: needed" << audioFormatOut.framesForBytes( outputBytesToWrite ) << "frames, wrote" << audioFormatOut.framesForBytes( outputBytesWritten ) << "frames";
     */
-    // Cleanup
 
 }
 
