@@ -13,6 +13,8 @@
 #include "audiobuffer.h"
 #include "logging.h"
 
+#include "samplerate.h"
+
 /* The Audio class writes audio data to connected audio device.
  * All of the audio functionality lives in side of this class.
  * Any errors starting with "[phoenix.audio]" correspond to this class.
@@ -49,14 +51,24 @@ class Audio : public QObject {
         void slotHandlePeriodTimer();
 
     private:
+        // Opaque pointer for libsamplerate
+        SRC_STATE *resamplerState;
+
+        double sampleRateRatio;
+        int audioInBytesNeeded;
+        float inputDataFloat[4096 * 2];
+        char inputDataChar[4096 * 4];
+        float *outputDataFloat;
+        short *outputDataShort;
+
         bool isCoreRunning;
         QAudioFormat audioFormatOut;
         QAudioFormat audioFormatIn;
 
-        // We delete aout, use normal pointer.
+        // We delete aout; Use a normal pointer.
         QAudioOutput *audioOut;
 
-        // aio doesn't own the pointer, use normal pointer.
+        // aio doesn't own the pointer; Use a normal pointer.
         QIODevice *audioOutIODev;
 
         QThread audioThread;
