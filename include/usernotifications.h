@@ -13,41 +13,40 @@
  * and so on.
  */
 
-class UserNotifications : public QObject
-{
-    Q_OBJECT
-    Q_PROPERTY(QString biosNotification READ biosNotification WRITE setBiosNotification NOTIFY biosNotificationChanged)
-    Q_PROPERTY(QString coreNotification READ coreNotification WRITE setCoreNotification NOTIFY coreNotificationChanged)
-    Q_PROPERTY(QString gameNotification READ gameNotification WRITE setGameNotification NOTIFY gameNotificationChanged)
-    Q_PROPERTY(QString inputNotification READ inputNotification WRITE setInputNotification NOTIFY inputNotificationChanged)
+class UserNotifications : public QObject {
+        Q_OBJECT
+        Q_PROPERTY( QString biosNotification READ biosNotification WRITE setBiosNotification NOTIFY biosNotificationChanged )
+        Q_PROPERTY( QString coreNotification READ coreNotification WRITE setCoreNotification NOTIFY coreNotificationChanged )
+        Q_PROPERTY( QString gameNotification READ gameNotification WRITE setGameNotification NOTIFY gameNotificationChanged )
+        Q_PROPERTY( QString inputNotification READ inputNotification WRITE setInputNotification NOTIFY inputNotificationChanged )
 
-public:
-    explicit UserNotifications(QObject *parent = 0);
-    ~UserNotifications();
+    public:
+        explicit UserNotifications( QObject *parent = 0 );
+        ~UserNotifications();
 
-    QString biosNotification() const;
-    QString coreNotification() const;
-    QString gameNotification() const;
-    QString inputNotification() const;
+        QString biosNotification() const;
+        QString coreNotification() const;
+        QString gameNotification() const;
+        QString inputNotification() const;
 
-    void setBiosNotification(const QString note);
-    void setCoreNotification(const QString note);
-    void setGameNotification(const QString note);
-    void setInputNotification(const QString note);
+        void setBiosNotification( const QString note );
+        void setCoreNotification( const QString note );
+        void setGameNotification( const QString note );
+        void setInputNotification( const QString note );
 
-signals:
-    void biosNotificationChanged();
-    void coreNotificationChanged();
-    void gameNotificationChanged();
-    void inputNotificationChanged();
+    signals:
+        void biosNotificationChanged();
+        void coreNotificationChanged();
+        void gameNotificationChanged();
+        void inputNotificationChanged();
 
-public slots:
+    public slots:
 
-private:
-    QString m_bios_notification;
-    QString m_game_notification;
-    QString m_core_notification;
-    QString m_input_notification;
+    private:
+        QString m_bios_notification;
+        QString m_game_notification;
+        QString m_core_notification;
+        QString m_input_notification;
 };
 
 #endif // USERNOTIFICATIONS_H

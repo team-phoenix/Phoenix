@@ -90,24 +90,22 @@ QVariantMap GameLibraryModel::get( int inx ) {
     return map;
 }
 
-QSqlQuery GameLibraryModel::createQuery()
-{
+QSqlQuery GameLibraryModel::createQuery() {
     database().transaction();
-    return QSqlQuery(database());
+    return QSqlQuery( database() );
 }
 
-QSqlQuery GameLibraryModel::executeQuery(QString query)
-{
+QSqlQuery GameLibraryModel::executeQuery( QString query ) {
     database().transaction();
-    QSqlQuery q(database());
+    QSqlQuery q( database() );
 
-    q.prepare(query);
+    q.prepare( query );
 
 
     bool result = q.exec();
 
-    if (!result) {
-        qCDebug(phxLibrary) << q.executedQuery() << ", error: " << q.lastError().text();
+    if( !result ) {
+        qCDebug( phxLibrary ) << q.executedQuery() << ", error: " << q.lastError().text();
         return q;
     }
 
@@ -115,21 +113,22 @@ QSqlQuery GameLibraryModel::executeQuery(QString query)
     return q;
 }
 
-QSqlQuery GameLibraryModel::executeQuery(QString query, QVariantList args)
-{
+QSqlQuery GameLibraryModel::executeQuery( QString query, QVariantList args ) {
     database().transaction();
 
-    QSqlQuery q(database());
+    QSqlQuery q( database() );
 
-    q.prepare(query);
-    for (auto &val : args)
-        q.addBindValue(val);
+    q.prepare( query );
+
+    for( auto &val : args ) {
+        q.addBindValue( val );
+    }
 
 
     bool result = q.exec();
 
-    if (!result) {
-        qCDebug(phxLibrary) << q.lastQuery() << ", error: " << q.lastError().text();
+    if( !result ) {
+        qCDebug( phxLibrary ) << q.lastQuery() << ", error: " << q.lastError().text();
         return q;
     }
 
@@ -138,20 +137,22 @@ QSqlQuery GameLibraryModel::executeQuery(QString query, QVariantList args)
     return q;
 }
 
-bool GameLibraryModel::submitQuery(QString query)
-{
+bool GameLibraryModel::submitQuery( QString query ) {
     // -100 is chosen just to keep the query always true;
-    if (executeQuery(query).size() > -100)
+    if( executeQuery( query ).size() > -100 ) {
         return submitAll();
+    }
+
     return false;
 }
 
-bool GameLibraryModel::submitQuery(QString query, QVariantList args)
-{
+bool GameLibraryModel::submitQuery( QString query, QVariantList args ) {
     // -100 is chosen just to keep the query always true;
 
-    if (executeQuery(query, args).size() > -100)
+    if( executeQuery( query, args ).size() > -100 ) {
         return submitAll();
+    }
+
     return false;
 }
 

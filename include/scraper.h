@@ -70,14 +70,14 @@ class Scraper : public QObject {
 
 
     signals:
-        void dataReady(Scraper::ScraperData *data);
-        void progress(int val);
-        void label(QString text);
+        void dataReady( Scraper::ScraperData *data );
+        void progress( int val );
+        void label( QString text );
 
     public slots:
-        virtual void processRequest( QNetworkReply *reply);
-        virtual void getGameData( Scraper::ScraperContext context);
-        virtual void handleNetworkChanged(QNetworkAccessManager::NetworkAccessibility accessible);
+        virtual void processRequest( QNetworkReply *reply );
+        virtual void getGameData( Scraper::ScraperContext context );
+        virtual void handleNetworkChanged( QNetworkAccessManager::NetworkAccessibility accessible );
 
     private:
         QNetworkAccessManager *network_manager;

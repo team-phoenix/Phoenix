@@ -38,11 +38,11 @@ class GameLibraryModel: public QSqlTableModel {
         QSqlQuery createQuery();
 
     public slots:
-        QSqlQuery executeQuery(QString query);
-        QSqlQuery executeQuery(QString query, QVariantList args);
+        QSqlQuery executeQuery( QString query );
+        QSqlQuery executeQuery( QString query, QVariantList args );
 
-        bool submitQuery(QString query);
-        bool submitQuery(QString query, QVariantList args);
+        bool submitQuery( QString query );
+        bool submitQuery( QString query, QVariantList args );
 
 
 #ifdef Q_OS_MACX
@@ -55,8 +55,7 @@ class GameLibraryModel: public QSqlTableModel {
 #pragma clang diagnostic pop
 #endif
 
-        virtual void sort( int column, Qt::SortOrder order ) override
-        {
+        virtual void sort( int column, Qt::SortOrder order ) override {
             QSqlTableModel::sort( column, order );
         }
         QVariantMap get( int index );

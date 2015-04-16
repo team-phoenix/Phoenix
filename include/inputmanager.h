@@ -24,10 +24,10 @@
 
 
 class InputManager : public QObject {
-    Q_OBJECT
-    Q_PROPERTY(int count READ count NOTIFY countChanged)
-    Q_PROPERTY(bool attachDevices READ attachDevices WRITE setAttachDevices NOTIFY attachDevicesChanged)
-    Q_PROPERTY(bool findingDevices READ findingDevices WRITE setFindingDevices NOTIFY findingDevicesChanged)
+        Q_OBJECT
+        Q_PROPERTY( int count READ count NOTIFY countChanged )
+        Q_PROPERTY( bool attachDevices READ attachDevices WRITE setAttachDevices NOTIFY attachDevicesChanged )
+        Q_PROPERTY( bool findingDevices READ findingDevices WRITE setFindingDevices NOTIFY findingDevicesChanged )
 
     public:
         InputManager();
@@ -39,8 +39,8 @@ class InputManager : public QObject {
 
         bool attachDevices() const;
         bool findingDevices() const;
-        void setFindingDevices(bool findDevices);
-        void setAttachDevices(bool attachDevices);
+        void setFindingDevices( bool findDevices );
+        void setAttachDevices( bool attachDevices );
 
     public slots:
         void scanDevicesAsync();
@@ -50,18 +50,18 @@ class InputManager : public QObject {
 
         QVariantList enumerateDevices();
         // return empty mapping for device
-        InputDeviceMapping *mappingForDevice(QVariantMap device);
+        InputDeviceMapping *mappingForDevice( QVariantMap device );
 
         // load existing mapping for designated port from settings
-        InputDeviceMapping *mappingForPort(unsigned port);
+        InputDeviceMapping *mappingForPort( unsigned port );
 
-        InputDevice *getDevice(unsigned port) const;
+        InputDevice *getDevice( unsigned port ) const;
 
         void handleAttachDevices();
         void removeDevices();
-        QString variantToString(QVariant event);
-        bool swap(int index, int index_2);
-        void setContext(QQmlContext *context);
+        QString variantToString( QVariant event );
+        bool swap( int index, int index_2 );
+        void setContext( QQmlContext *context );
         void updateModel();
         int count();
 

@@ -92,14 +92,15 @@ class KeyboardKeyEvent : public InputDeviceEventHelper<InputDeviceButtonEvent, K
             const Qt::Key key = event().first;
             const Qt::KeyboardModifiers &mod = event().second;
 
-            if (key == Qt::Key_Shift)
+            if( key == Qt::Key_Shift ) {
                 return "Shift";
-            else if (key == Qt::Key_Control)
+            } else if( key == Qt::Key_Control ) {
                 return "Control";
-            else if (key == Qt::Key_Meta)
+            } else if( key == Qt::Key_Meta ) {
                 return "Meta";
-            else if (key == Qt::Key_Alt)
+            } else if( key == Qt::Key_Alt ) {
                 return "Alt";
+            }
 
             /* This doesn't work as expected. It returns "??".
             if (key == Qt::Key_Control || key == Qt::Key_Shift

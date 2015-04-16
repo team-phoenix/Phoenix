@@ -29,26 +29,26 @@ class NetworkQueue : public QObject {
         void setGameModel( GameLibraryModel *model );
         void setLibraryDatabase( LibraryDbManager &dbm );
         int requestCount();
-        void setCacheDirectory(QString cache_dir);
+        void setCacheDirectory( QString cache_dir );
 
 
     signals:
         void finished();
-        void progress(int val);
-        void label(QString text);
-        void requestArtwork(QUrl url, QString file_name, int id);
+        void progress( int val );
+        void label( QString text );
+        void requestArtwork( QUrl url, QString file_name, int id );
 
     public slots:
         void enqueueContext( Scraper::ScraperContext context );
         void enqueueData( int id, QString title, QString system );
         void progressRequests();
         void start();
-        void setProgress(int progress);
-        void setLabel(QString label);
+        void setProgress( int progress );
+        void setLabel( QString label );
 
     private slots:
         void appendToLibrary( Scraper::ScraperData *data );
-        void updateUrl(QString cached_url, int library_id);
+        void updateUrl( QString cached_url, int library_id );
 
     private:
         QThread network_thread;

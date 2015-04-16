@@ -67,8 +67,8 @@ static const QMap<QString, const device_settings_mapping *> settings_mappings {
 };
 
 class InputDeviceMapping : public QObject {
-    Q_OBJECT
-public:
+        Q_OBJECT
+    public:
         InputDeviceMapping();
         virtual ~InputDeviceMapping() { }
 
@@ -76,26 +76,23 @@ public:
 
         // takes a QSetting whose current group has been pre-set
         // by the caller to input/portX
-        virtual bool populateFromSettings(QSettings &settings);
+        virtual bool populateFromSettings( QSettings &settings );
 
         // populate a Mapping from a QVariantMap as returned
         // by InputDevice::enumerateDevices
-        virtual bool populateFromDict(QVariantMap deviceinfo);
+        virtual bool populateFromDict( QVariantMap deviceinfo );
 
-        virtual InputDeviceEvent *eventFromString(QString event) = 0;
+        virtual InputDeviceEvent *eventFromString( QString event ) = 0;
 
-        retro_device_type deviceType() const
-        {
+        retro_device_type deviceType() const {
             return device_type;
         }
 
-        void setDeviceType( retro_device_type type )
-        {
+        void setDeviceType( retro_device_type type ) {
             device_type = type;
         }
 
-        retro_device_id getMapping( InputDeviceEvent *ev, retro_device_id defaultV = ~0 ) const
-        {
+        retro_device_id getMapping( InputDeviceEvent *ev, retro_device_id defaultV = ~0 ) const {
             auto res = mapping.find( ev );
 
             if( res != mapping.end() ) {
@@ -105,28 +102,28 @@ public:
             return defaultV;
         }
 
-        void setMapping(const InputDeviceEvent *ev, const retro_device_id id, const unsigned port);
-        void setMapping(const InputDeviceEvent *ev, retro_device_id id);
+        void setMapping( const InputDeviceEvent *ev, const retro_device_id id, const unsigned port );
+        void setMapping( const InputDeviceEvent *ev, retro_device_id id );
 
         DeviceMap *mappings();
 
-public slots:
+    public slots:
         // wait for any input on the underlying device and maps
         // the input id to the given retro_device_id
         virtual QVariant setMappingOnInput( retro_device_id id, QJSValue cb ) = 0;
         virtual void cancelMappingOnInput( QVariant cancelInfo ) = 0;
         virtual QString getMappingByRetroId( QString retroId );
-        virtual bool remap(QVariant incoming_event, unsigned retroId, unsigned port);
+        virtual bool remap( QVariant incoming_event, unsigned retroId, unsigned port );
 
-protected:
+    protected:
         // Type of retro device mapped:
         // JOYPAD/MOUSE/KEYBOARD/LIGHTGUN/ANALOG/POINTER or subclass
         // see libretro.h
         retro_device_type device_type;
 
-signals:
+    signals:
 
-private:
+    private:
         DeviceMap mapping;
 
 };

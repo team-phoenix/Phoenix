@@ -16,7 +16,7 @@
 
 
 class CachedImage : public QObject {
-    Q_OBJECT
+        Q_OBJECT
     public:
         CachedImage();
         ~CachedImage();
@@ -37,13 +37,13 @@ class CachedImage : public QObject {
 
     public slots:
         void downloadFinished( QNetworkReply *reply );
-        void cacheImage(QUrl url,  QString file_alias, int library_id);
-        void returnCached(QUrl &imgUrl,  QString &file_alias, int library_id);
+        void cacheImage( QUrl url,  QString file_alias, int library_id );
+        void returnCached( QUrl &imgUrl,  QString &file_alias, int library_id );
 
     signals:
 
         void start();
-        void finished(QString cached_url, int library_id);
+        void finished( QString cached_url, int library_id );
 };
 
 #endif // CACHEIMAGE_H

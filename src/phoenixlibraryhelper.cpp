@@ -19,22 +19,22 @@ QMap<QString, QString> playstationBios {
 
 };
 
-PhoenixLibraryHelper::PhoenixLibraryHelper(QObject *parent) : QObject(parent)
-{
+PhoenixLibraryHelper::PhoenixLibraryHelper( QObject *parent ) : QObject( parent ) {
 
 }
 
-PhoenixLibraryHelper::~PhoenixLibraryHelper()
-{
+PhoenixLibraryHelper::~PhoenixLibraryHelper() {
 
 }
 
-bool PhoenixLibraryHelper::needsBios(const QString core)
-{
-    if (core.contains("mednafen_psx")) {
-        bool result = !foundBiosFiles(3, PhoenixLibraryHelper::PlayStation);
-        if (result)
-            userNotifications.setBiosNotification("Bios files are missing!");
+bool PhoenixLibraryHelper::needsBios( const QString core ) {
+    if( core.contains( "mednafen_psx" ) ) {
+        bool result = !foundBiosFiles( 3, PhoenixLibraryHelper::PlayStation );
+
+        if( result ) {
+            userNotifications.setBiosNotification( "Bios files are missing!" );
+        }
+
         qDebug() << "result from bios: " << result;
         return result;
     }
@@ -42,38 +42,39 @@ bool PhoenixLibraryHelper::needsBios(const QString core)
     return false;
 }
 
-bool PhoenixLibraryHelper::foundBiosFiles(unsigned bios_count, PhoenixLibraryHelper::BiosType type)
-{
+bool PhoenixLibraryHelper::foundBiosFiles( unsigned bios_count, PhoenixLibraryHelper::BiosType type ) {
     unsigned result = 0;
-    QDirIterator iter(phxGlobals.biosPath(), QStringList() << "*.bin", QDir::Files, QDirIterator::NoIteratorFlags);
+    QDirIterator iter( phxGlobals.biosPath(), QStringList() << "*.bin", QDir::Files, QDirIterator::NoIteratorFlags );
 
-    while (iter.hasNext()) {
-        QFileInfo bios_file = QFileInfo(iter.next());
-        QString hash = QString(getCheckSum(bios_file.canonicalFilePath(), QCryptographicHash::Md5));
+    while( iter.hasNext() ) {
+        QFileInfo bios_file = QFileInfo( iter.next() );
+        QString hash = QString( getCheckSum( bios_file.canonicalFilePath(), QCryptographicHash::Md5 ) );
 
-        switch(type) {
+        switch( type ) {
             case PhoenixLibraryHelper::PlayStation:
-                if (playstationBios.contains(hash)) {
+                if( playstationBios.contains( hash ) ) {
                     qDebug() << "found: " << bios_file.baseName() << result << bios_count;
                     result++;
                 }
+
                 break;
+
             default:
                 break;
         }
     }
 
-    return (result == bios_count);
+    return ( result == bios_count );
 }
 
-QByteArray PhoenixLibraryHelper::getCheckSum(const QString &file, QCryptographicHash::Algorithm algorithm)
-{
+QByteArray PhoenixLibraryHelper::getCheckSum( const QString &file, QCryptographicHash::Algorithm algorithm ) {
     QFile game_file( file );
 
-    if(!game_file.open(QIODevice::ReadOnly))
-        return QByteArray("");
+    if( !game_file.open( QIODevice::ReadOnly ) ) {
+        return QByteArray( "" );
+    }
 
-    QCryptographicHash sha1_hash(algorithm);
+    QCryptographicHash sha1_hash( algorithm );
     sha1_hash.addData( &game_file );
     QByteArray result = sha1_hash.result().toHex();
 
@@ -81,15 +82,16 @@ QByteArray PhoenixLibraryHelper::getCheckSum(const QString &file, QCryptographic
     return result;
 }
 
-bool PhoenixLibraryHelper::checkForBios(const QFileInfo &info)
-{
+bool PhoenixLibraryHelper::checkForBios( const QFileInfo &info ) {
     QString suffix = info.suffix().toLower();
     qDebug() << "Checking for bios";
-    QString hash = QString(getCheckSum(info.canonicalFilePath(), QCryptographicHash::Md5));
-    QString val = playstationBios.value(hash, "");
+    QString hash = QString( getCheckSum( info.canonicalFilePath(), QCryptographicHash::Md5 ) );
+    QString val = playstationBios.value( hash, "" );
     qDebug() << "bios value: " << val << hash;
-    if (val != "")
-        return QFile::copy(info.canonicalFilePath(), phxGlobals.biosPath() + val + "." + suffix);
+
+    if( val != "" ) {
+        return QFile::copy( info.canonicalFilePath(), phxGlobals.biosPath() + val + "." + suffix );
+    }
 
     return false;
 }

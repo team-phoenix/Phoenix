@@ -58,14 +58,14 @@ int main( int argc, char *argv[] ) {
     // first, set the context properties
     QQmlContext *rctx = engine.rootContext();
 
-    phxGlobals.setOfflineStoragePath(engine.offlineStoragePath() + "/");
+    phxGlobals.setOfflineStoragePath( engine.offlineStoragePath() + "/" );
 
-    input_manager.setContext(rctx);
+    input_manager.setContext( rctx );
 
 
-    rctx->setContextProperty("phoenixGlobals", &phxGlobals);
-    rctx->setContextProperty("phoenixLibraryHelper", &phoenixLibraryHelper);
-    rctx->setContextProperty("userNotifications", &userNotifications);
+    rctx->setContextProperty( "phoenixGlobals", &phxGlobals );
+    rctx->setContextProperty( "phoenixLibraryHelper", &phoenixLibraryHelper );
+    rctx->setContextProperty( "userNotifications", &userNotifications );
 
     // then, load qml and display the window
     engine.load( QUrl( "qrc:/qml/main.qml" ) );

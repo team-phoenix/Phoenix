@@ -14,25 +14,24 @@
  * Keeping these operations separate will decrease size of the PhoenixLibrary.
  */
 
-class PhoenixLibraryHelper : public QObject
-{
-    Q_OBJECT
-public:
-    explicit PhoenixLibraryHelper(QObject *parent = 0);
-    ~PhoenixLibraryHelper();
+class PhoenixLibraryHelper : public QObject {
+        Q_OBJECT
+    public:
+        explicit PhoenixLibraryHelper( QObject *parent = 0 );
+        ~PhoenixLibraryHelper();
 
-    enum BiosType {
-        PlayStation = 0,
-    };
+        enum BiosType {
+            PlayStation = 0,
+        };
 
-    QByteArray getCheckSum(const QString &file, QCryptographicHash::Algorithm algorithm);
-    bool checkForBios(const QFileInfo &file);
-    bool foundBiosFiles(unsigned bios_count, PhoenixLibraryHelper::BiosType type);
+        QByteArray getCheckSum( const QString &file, QCryptographicHash::Algorithm algorithm );
+        bool checkForBios( const QFileInfo &file );
+        bool foundBiosFiles( unsigned bios_count, PhoenixLibraryHelper::BiosType type );
 
-signals:
+    signals:
 
-public slots:
-    bool needsBios(const QString core);
+    public slots:
+        bool needsBios( const QString core );
 };
 
 #endif // PHOENIXLIBRARYHELPER_H

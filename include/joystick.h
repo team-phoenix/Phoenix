@@ -19,7 +19,7 @@ class Joystick : public InputDevice {
     public:
         Joystick( InputDeviceMapping *mapping );
         virtual ~Joystick();
-        void setDeadZone(int threashHold);
+        void setDeadZone( int threashHold );
         int deadZone() const;
 
 

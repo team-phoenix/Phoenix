@@ -11,8 +11,7 @@
 #include "inputdevicemappingfactory.h"
 
 
-InputManager::InputManager()
-{
+InputManager::InputManager() {
     top_window = nullptr;
     settings_window = nullptr;
     m_context = nullptr;
@@ -21,80 +20,76 @@ InputManager::InputManager()
 
 }
 
-InputManager::~InputManager()
-{
-    for(auto &device : devices) {
+InputManager::~InputManager() {
+    for( auto &device : devices ) {
         delete device;
     }
 
     devices.clear();
 }
 
-bool InputManager::findingDevices() const
-{
+bool InputManager::findingDevices() const {
     return m_finding_devices;
 }
 
-bool InputManager::attachDevices() const
-{
+bool InputManager::attachDevices() const {
     return m_attach_devices;
 }
 
-void InputManager::setFindingDevices(bool findingDevices)
-{
-    if (m_finding_devices == findingDevices)
+void InputManager::setFindingDevices( bool findingDevices ) {
+    if( m_finding_devices == findingDevices ) {
         return;
+    }
+
     m_finding_devices = findingDevices;
     emit findingDevicesChanged();
 }
 
-void InputManager::setAttachDevices(bool attachDevices)
-{
-    if (attachDevices == m_attach_devices)
+void InputManager::setAttachDevices( bool attachDevices ) {
+    if( attachDevices == m_attach_devices ) {
         return;
+    }
 
     m_attach_devices = attachDevices;
-    if (attachDevices)
+
+    if( attachDevices ) {
         handleAttachDevices();
-    else
+    } else {
         removeDevices();
+    }
+
     emit attachDevicesChanged();
 }
 
-int InputManager::count()
-{
+int InputManager::count() {
     return devices.length();
 }
 
-QVariantList InputManager::enumerateDevices()
-{
+QVariantList InputManager::enumerateDevices() {
     QVariantList devices;
     devices.append( Keyboard::enumerateDevices() );
     devices.append( Joystick::enumerateDevices() );
     return devices;
 }
 
-InputDeviceMapping *InputManager::mappingForDevice(QVariantMap device)
-{
+InputDeviceMapping *InputManager::mappingForDevice( QVariantMap device ) {
     Q_ASSERT( device.contains( "driver" ) );
     QString driverName = device.value( "driver" ).toString();
     return InputDeviceMappingFactory::createMapping( driverName );
 }
 
-void InputManager::append(InputDevice *device)
-{
+void InputManager::append( InputDevice *device ) {
     devices.push_back( device );
 }
 
-InputDevice *InputManager::getDevice(unsigned port) const
-{
+InputDevice *InputManager::getDevice( unsigned port ) const {
     //if (port >= devices.length()) {
     //   qCDebug(phxLibrary) << "Input device isnt connected: "  << devices.length();
     //    return nullptr;
     //}
     InputDevice *device = devices.at( port );
     // Don't allow QML to take ownership of our devices
-    QQmlEngine::setObjectOwnership(device, QQmlEngine::CppOwnership);
+    QQmlEngine::setObjectOwnership( device, QQmlEngine::CppOwnership );
     return device;
 }
 
@@ -116,7 +111,7 @@ void InputManager::scanKeyboard() {
         // TODO: move this to a separate func
         QSettings s;
         s.beginGroup( "input" );
-        s.beginGroup( QString( "port%1" ).arg(current_port));
+        s.beginGroup( QString( "port%1" ).arg( current_port ) );
         s.setValue( "input_driver", "qt_keyboard" );
         s.setValue( "device_type", "joypad" );
         s.setValue( "joypad_select", "Backspace" );
@@ -131,17 +126,16 @@ void InputManager::scanKeyboard() {
         s.setValue( "joypad_right", "Right" );
         s.setValue( "joypad_l", "t" );
         s.setValue( "joypad_r", "g" );
-        s.setValue("joypad_leftstick", "");
-        s.setValue("joypad_rightstick", "");
+        s.setValue( "joypad_leftstick", "" );
+        s.setValue( "joypad_rightstick", "" );
 
-        keyboard_mapping = mappingForPort(current_port);
+        keyboard_mapping = mappingForPort( current_port );
     }
 
-    devices.insert(current_port, InputDeviceFactory::createFromMapping(keyboard_mapping));
+    devices.insert( current_port, InputDeviceFactory::createFromMapping( keyboard_mapping ) );
 }
 
-void InputManager::scanJoysticks()
-{
+void InputManager::scanJoysticks() {
     qCDebug( phxInput ) << "Started controller scan.";
 
     int current_port = devices.length();
@@ -165,8 +159,8 @@ void InputManager::scanJoysticks()
             s.setValue( "joypad_down", "dpdown" );
             s.setValue( "joypad_left", "dpleft" );
             s.setValue( "joypad_right", "dpright" );
-            s.setValue("joypad_leftstick", "leftstick");
-            s.setValue("joypad_rightstick", "rightstick");
+            s.setValue( "joypad_leftstick", "leftstick" );
+            s.setValue( "joypad_rightstick", "rightstick" );
             s.setValue( "joypad_l", "leftshoulder" );
             s.setValue( "joypad_r", "rightshoulder" );
             s.setValue( "joypad_select", "back" );
@@ -175,7 +169,7 @@ void InputManager::scanJoysticks()
             sdl_mapping = mappingForPort( current_port );
         }
 
-        devices.insert(current_port, InputDeviceFactory::createFromMapping(sdl_mapping));
+        devices.insert( current_port, InputDeviceFactory::createFromMapping( sdl_mapping ) );
         current_port++;
     }
 
@@ -183,26 +177,24 @@ void InputManager::scanJoysticks()
 
     if( joysticks == 0 ) {
         message = "No controllers were found.";
-    }
-    else {
-        message = QString::number(joysticks) + " Controllers Found.";
+    } else {
+        message = QString::number( joysticks ) + " Controllers Found.";
     }
 
     qCDebug( phxInput ) << message;
     emit label( message );
 }
 
-void InputManager::scanDevices()
-{
-    setFindingDevices(true);
+void InputManager::scanDevices() {
+    setFindingDevices( true );
     scanKeyboard();
     scanJoysticks();
 
-    for(auto device : devices) {
-        device->moveToThread(this->thread());
+    for( auto device : devices ) {
+        device->moveToThread( this->thread() );
     }
 
-    setFindingDevices(false);
+    setFindingDevices( false );
     emit countChanged();
 
     // NOTES: some of the buttons in joystick.cpp line 216 aren't having proper values.
@@ -210,8 +202,7 @@ void InputManager::scanDevices()
 
 // load Mapping for a given port from the settings
 // TODO: move some of this logic to the InputDeviceMapping class
-InputDeviceMapping *InputManager::mappingForPort(unsigned port)
-{
+InputDeviceMapping *InputManager::mappingForPort( unsigned port ) {
     QSettings s;
     s.beginGroup( "input" );
     s.beginGroup( QString( "port%1" ).arg( port ) );
@@ -230,15 +221,15 @@ InputDeviceMapping *InputManager::mappingForPort(unsigned port)
     }
 
 
-    QQmlEngine::setObjectOwnership(mapping, QQmlEngine::CppOwnership);
+    QQmlEngine::setObjectOwnership( mapping, QQmlEngine::CppOwnership );
 
     return mapping;
 }
 
-void InputManager::handleAttachDevices()
-{
-    for(auto device : devices) {
+void InputManager::handleAttachDevices() {
+    for( auto device : devices ) {
         \
+
         if( device == nullptr ) {
             break;
         }
@@ -250,9 +241,8 @@ void InputManager::handleAttachDevices()
     }
 }
 
-void InputManager::removeDevices()
-{
-    for(auto *device : devices) {
+void InputManager::removeDevices() {
+    for( auto *device : devices ) {
 
         if( device == nullptr ) {
             break;
@@ -260,39 +250,39 @@ void InputManager::removeDevices()
 
 
 
-        if (top_window)
+        if( top_window ) {
             top_window->removeEventFilter( device );
+        }
 
-        if (settings_window)
+        if( settings_window ) {
             settings_window->removeEventFilter( device );
+        }
 
     }
 }
 
-QString InputManager::variantToString(QVariant event)
-{
-    return QString(*(event.value<InputDeviceEvent *>()));
+QString InputManager::variantToString( QVariant event ) {
+    return QString( *( event.value<InputDeviceEvent *>() ) );
 }
 
-bool InputManager::swap(int index, int index_2)
-{
-    qCDebug(phxInput) << index << " // " << index_2;
-    if (index < devices.length() && index_2 < devices.length() && index >=0 && index_2 >= 0 && index != index_2) {
-        devices.swap(index, index_2);
+bool InputManager::swap( int index, int index_2 ) {
+    qCDebug( phxInput ) << index << " // " << index_2;
+
+    if( index < devices.length() && index_2 < devices.length() && index >= 0 && index_2 >= 0 && index != index_2 ) {
+        devices.swap( index, index_2 );
         updateModel();
         return true;
     }
+
     return false;
 }
 
-void InputManager::setContext(QQmlContext *context)
-{
+void InputManager::setContext( QQmlContext *context ) {
     m_context = context;
     updateModel();
 }
 
-void InputManager::updateModel()
-{
-    m_context->setContextProperty( "inputmanager", this);
+void InputManager::updateModel() {
+    m_context->setContextProperty( "inputmanager", this );
     emit updateChanged();
 }

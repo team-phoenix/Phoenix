@@ -96,11 +96,11 @@ class PhoenixLibrary : public QObject {
         QString showPath( int index, QString system );
         void cacheUrls( QList<QUrl> list );
         QVector<int> importDroppedFiles( QList<QUrl> url_list );
-        void setCacheDirectory(QString cache_dir);
+        void setCacheDirectory( QString cache_dir );
 
         // Collection Operations
-        bool addToCollection(QVariantList game_data);
-        bool removeFromCollection(QVariant data);
+        bool addToCollection( QVariantList game_data );
+        bool removeFromCollection( QVariant data );
 
     signals:
         void labelChanged();
@@ -142,7 +142,7 @@ class PhoenixLibrary : public QObject {
         QVector<int> scanFolder( QUrl folder_path );
         void importMetadata( QVector<int> games_id );
         void scanSystemDatabase( QByteArray hash, QString &name, QString &system );
-        void saveCollection(QVariantList collections);
+        void saveCollection( QVariantList collections );
 };
 
 

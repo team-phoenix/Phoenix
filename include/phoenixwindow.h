@@ -30,26 +30,22 @@ class PhoenixWindow : public QQuickWindow {
     public:
         PhoenixWindow();
         ~PhoenixWindow();
-        void setWindowScreen(QScreen *screen);
+        void setWindowScreen( QScreen *screen );
         void setWinFormat();
 
-        QScreen *window_screen()
-        {
+        QScreen *window_screen() {
             return screen();
         }
 
-        int swapInterval() const
-        {
+        int swapInterval() const {
             return m_swap_interval;
         }
 
-        int swapBehavior() const
-        {
+        int swapBehavior() const {
             return m_swap_behavior;
         }
 
-        bool frameless() const
-        {
+        bool frameless() const {
             return m_frameless;
         }
 
@@ -59,8 +55,8 @@ class PhoenixWindow : public QQuickWindow {
         // These functions need to be set before the program starts and the program
         // needs to be reset completely for the changes to take effect.
         // [1]
-        void setWinSwapInterval(int interval);
-        void setWinSwapBehavior(int behavior);
+        void setWinSwapInterval( int interval );
+        void setWinSwapBehavior( int behavior );
         // ~[1]
 
         void setFrameless( bool frameless );
@@ -68,8 +64,8 @@ class PhoenixWindow : public QQuickWindow {
     private slots:
 
     signals:
-        void swapIntervalChanged(int interval);
-        void swapBehaviorChanged(int behavior);
+        void swapIntervalChanged( int interval );
+        void swapBehaviorChanged( int behavior );
         void framelessChanged();
 
     private:
@@ -81,7 +77,7 @@ class PhoenixWindow : public QQuickWindow {
 
 #ifdef Q_OS_WIN32
         HWND windowHandle = nullptr;
-        void paintPicture(MSG *pMessage, long *result);
+        void paintPicture( MSG *pMessage, long *result );
 #endif
 
 

@@ -52,13 +52,11 @@ Joystick::~Joystick() {
     controller = nullptr;
 }
 
-void Joystick::setDeadZone(int threashHold)
-{
+void Joystick::setDeadZone( int threashHold ) {
     m_deadzone = threashHold;
 }
 
-int Joystick::deadZone() const
-{
+int Joystick::deadZone() const {
     return m_deadzone;
 }
 
@@ -168,15 +166,15 @@ bool Joystick::deviceRemoved( const SDL_Event *event ) {
 }
 
 bool Joystick::controllerButtonChanged( const SDL_Event *event ) {
-    if( !ControllerMatchEvent( event->cbutton ) && !JoystickMatchEvent( event->cbutton )) {
+    if( !ControllerMatchEvent( event->cbutton ) && !JoystickMatchEvent( event->cbutton ) ) {
         return false;
     }
 
     const SDL_ControllerButtonEvent *cbutton = &event->cbutton;
     auto ev = ControllerButtonEvent::fromSDLEvent( *cbutton );
-    bool is_pressed = (cbutton->type == SDL_CONTROLLERBUTTONDOWN || cbutton->type == SDL_JOYBUTTONDOWN) ? true : false;
+    bool is_pressed = ( cbutton->type == SDL_CONTROLLERBUTTONDOWN || cbutton->type == SDL_JOYBUTTONDOWN ) ? true : false;
 
-    emit inputEventReceived(new ControllerButtonEvent(ev), is_pressed );
+    emit inputEventReceived( new ControllerButtonEvent( ev ), is_pressed );
 
     auto retro_id = m_mapping->getMapping( &ev );
 
@@ -188,18 +186,17 @@ bool Joystick::controllerButtonChanged( const SDL_Event *event ) {
 }
 
 bool Joystick::controllerAxisChanged( const SDL_Event *event ) {
-    if( !ControllerMatchEvent( event->caxis ) && !JoystickMatchEvent(event->caxis)) {
+    if( !ControllerMatchEvent( event->caxis ) && !JoystickMatchEvent( event->caxis ) ) {
         return false;
     }
 
     const SDL_ControllerAxisEvent *caxis = &event->caxis;
-    auto ev = ControllerAxisEvent::fromSDLEvent(*caxis);
+    auto ev = ControllerAxisEvent::fromSDLEvent( *caxis );
 
-    if (caxis->value < 0 && caxis->value < -deadZone()) {
-        emit inputEventReceived( new ControllerAxisEvent(ev), caxis->value );
-    }
-   else if (caxis->value > 0 && caxis->value > deadZone()) {
-        emit inputEventReceived( new ControllerAxisEvent(ev), caxis->value );
+    if( caxis->value < 0 && caxis->value < -deadZone() ) {
+        emit inputEventReceived( new ControllerAxisEvent( ev ), caxis->value );
+    } else if( caxis->value > 0 && caxis->value > deadZone() ) {
+        emit inputEventReceived( new ControllerAxisEvent( ev ), caxis->value );
     }
 
     // make analog stick emulate dpad
@@ -222,9 +219,9 @@ bool Joystick::controllerAxisChanged( const SDL_Event *event ) {
 
         if( mapping.contains( axis ) ) {
 
-            auto buttons_id = mapping.value(axis);
-            setState( buttons_id.first, ( caxis->value < -deadZone()) ? true : false );
-            setState( buttons_id.second, ( caxis->value > deadZone()) ? true : false );
+            auto buttons_id = mapping.value( axis );
+            setState( buttons_id.first, ( caxis->value < -deadZone() ) ? true : false );
+            setState( buttons_id.second, ( caxis->value > deadZone() ) ? true : false );
         }
     }
 
@@ -248,6 +245,7 @@ bool Joystick::handleSDLEvent( const SDL_Event *event ) {
             }
 
             break;
+
         case SDL_JOYBUTTONDOWN:
         case SDL_JOYBUTTONUP:
         case SDL_CONTROLLERBUTTONDOWN:
@@ -259,7 +257,7 @@ bool Joystick::handleSDLEvent( const SDL_Event *event ) {
         case SDL_JOYAXISMOTION:
         case SDL_JOYHATMOTION:
         case SDL_CONTROLLERAXISMOTION:
-            controllerAxisChanged(event);
+            controllerAxisChanged( event );
             break;
     }
 

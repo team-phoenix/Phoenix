@@ -4,21 +4,20 @@
 
 
 InputDevice::InputDevice( InputDeviceMapping *mapping )
-    : m_mapping(mapping),
-      ids_state()
-{
+    : m_mapping( mapping ),
+      ids_state() {
 }
 
 InputDevice::~InputDevice() {
-   // delete m_mapping;
+    // delete m_mapping;
 }
 
 void InputDevice::setDeviceName( const char *new_name ) {
     device_name = QString( new_name );
 }
 
-void InputDevice::deleteEventPtr(InputDeviceEvent *ev)
-{
-    if (ev)
+void InputDevice::deleteEventPtr( InputDeviceEvent *ev ) {
+    if( ev ) {
         delete ev;
+    }
 }
