@@ -4,6 +4,10 @@
 
 VideoItem::VideoItem() {
     core = new Core();
+    Q_CHECK_PTR( core );
+
+    audio = new Audio();
+    Q_CHECK_PTR( audio );
 
     texture = nullptr;
     m_libcore = "";
@@ -11,26 +15,23 @@ VideoItem::VideoItem() {
     m_filtering = 2;
     m_aspect_ratio = 0.0;
     m_fps = 0;
-
-    audio = new Audio();
-    Q_CHECK_PTR( audio );
     audio->startAudioThread();
     core->audio_buf = audio->getAudioBuf();
     m_volume = 1.0;
 
-    connect( &fps_timer, SIGNAL( timeout() ), this, SLOT( updateFps() ) );
+    connect( &fps_timer, &QTimer::timeout, this, &VideoItem::updateFps );
     frame_timer.invalidate();
     fps_deviation = 0;
     fps_count = 0;
 
-    connect( this, SIGNAL( runChanged( bool ) ), audio, SLOT( slotRunChanged( bool ) ) );
-    connect( this, SIGNAL( volumeChanged( qreal ) ), audio, SLOT( slotSetVolume( qreal ) ) );
-    connect( this, SIGNAL( windowChanged( QQuickWindow * ) ), this, SLOT( handleWindowChanged( QQuickWindow * ) ) );
+    connect( this, &VideoItem::runChanged, audio, &Audio::slotRunChanged );
+    connect( this, &VideoItem::volumeChanged, audio, &Audio::slotSetVolume );
+    connect( this, &VideoItem::windowChanged, this, &VideoItem::handleWindowChanged );
 }
 
 VideoItem::~VideoItem() {
-    unload();
     delete core;
+    delete audio;
 
     fps_timer.stop();
 
@@ -45,10 +46,10 @@ void VideoItem::handleWindowChanged( QQuickWindow *win ) {
         // Since this call is executed on the rendering thread it must be
         // a Qt::DirectConnection
         setFlag( QQuickItem::ItemHasContents, true );
-        connect( win, SIGNAL( frameSwapped() ), this, SLOT( update() ) );
-        connect( win, SIGNAL( widthChanged( int ) ), this, SLOT( handleGeometryChanged( int ) ) );
-        connect( win, SIGNAL( heightChanged( int ) ), this, SLOT( handleGeometryChanged( int ) ) );
-        connect( win, SIGNAL( sceneGraphInitialized() ), this, SLOT( handleSceneGraphInitialized() ) );
+        connect( win, &QQuickWindow::frameSwapped, this, &VideoItem::update );
+        connect( win, &QQuickWindow::widthChanged, this, &VideoItem::handleGeometryChanged );
+        connect( win, &QQuickWindow::heightChanged, this, &VideoItem::handleGeometryChanged );
+        connect( win, &QQuickWindow::sceneGraphInitialized, this, &VideoItem::handleSceneGraphInitialized );
 
         // If we allow QML to do the clearing, they would clear what we paint
         // and nothing would show.
@@ -103,7 +104,7 @@ void VideoItem::saveGameState() {
     QFileInfo info( m_game );
 
     if( m_game != "" && m_libcore != "" ) {
-        core->saveGameState(phxGlobals.savePath(), info.baseName() );
+        core->saveGameState( phxGlobals.savePath(), info.baseName() );
     }
 
 }
@@ -111,7 +112,7 @@ void VideoItem::saveGameState() {
 void VideoItem::loadGameState() {
     QFileInfo info( m_game );
 
-    if( core->loadGameState(phxGlobals.savePath(), info.baseName() ) ) {
+    if( core->loadGameState( phxGlobals.savePath(), info.baseName() ) ) {
         qDebug() << "Save State loaded";
     }
 }
@@ -222,9 +223,6 @@ void VideoItem::keyEvent( QKeyEvent *event ) {
     }
 }
 
-
-
-
 void VideoItem::setTexture() {
     QImage::Format frame_format = retroToQImageFormat( core->getPixelFormat() );
 
@@ -270,13 +268,6 @@ inline bool VideoItem::limitFps() {
     return false;
 }
 
-void VideoItem::cleanup() {
-    if( texture ) {
-        texture->deleteLater();
-        texture = nullptr;
-    }
-}
-
 QSGNode *VideoItem::updatePaintNode( QSGNode *old_node, UpdatePaintNodeData *paint_data ) {
     Q_UNUSED( paint_data )
 
@@ -307,9 +298,5 @@ QSGNode *VideoItem::updatePaintNode( QSGNode *old_node, UpdatePaintNodeData *pai
 
     return tex_node;
 
-}
-
-void VideoItem::unload() {
-    core->unload();
 }
 

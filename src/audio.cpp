@@ -26,6 +26,26 @@ Audio::Audio( QObject *parent )
     outputDataShort = nullptr;
 }
 
+Audio::~Audio() {
+    audioTimer.stop();
+
+    if( audioOut ) {
+        delete audioOut;
+    }
+
+    if( audioOutIODev ) {
+        delete audioOutIODev;
+    }
+
+    if( outputDataFloat ) {
+        delete outputDataFloat;
+    }
+
+    if( outputDataShort ) {
+        delete outputDataShort;
+    }
+}
+
 AudioBuffer *Audio::getAudioBuf() const {
     return audioBuf.get();
 }
@@ -252,16 +272,4 @@ void Audio::slotSetVolume( qreal level ) {
     }
 }
 
-Audio::~Audio() {
-    moveToThread( &audioThread );
 
-    audioTimer.stop();
-
-    if( audioOut ) {
-        delete audioOut;
-    }
-
-    if( audioOutIODev ) {
-        delete audioOutIODev;
-    }
-}

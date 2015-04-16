@@ -75,10 +75,19 @@ Core::Core() {
 } // Core::Core()
 
 Core::~Core() {
+    qCDebug( phxCore ) << "Began unloading core";
+    saveSRAM();
+    symbols->retro_unload_game();
+    symbols->retro_deinit();
+    libretro_core->unload();
+    game_data.clear();
+    library_name.clear();
+
+    delete libretro_core;
+    delete system_av_info;
     delete symbols;
     delete system_info;
-    delete system_av_info;
-    delete libretro_core;
+    qCDebug( phxCore ) << "Finished unloading core";
 
 } // Core::~Core()
 
@@ -236,22 +245,6 @@ void Core::doFrame() {
     }
 
 } // void doFrame()
-
-void Core::unload() {
-    saveSRAM();
-    symbols->retro_unload_game();
-    symbols->retro_deinit();
-    libretro_core->unload();
-    game_data.clear();
-    library_name.clear();
-
-    delete libretro_core;
-    delete system_av_info;
-    delete symbols;
-    delete system_info;
-    qCDebug( phxCore ) << "Finished unloading core";
-
-} // Core::unload()
 
 //
 // Misc

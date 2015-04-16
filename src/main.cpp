@@ -11,7 +11,6 @@
 #endif
 
 #include "videoitem.h"
-#include "core.h"
 #include "gamelibrarymodel.h"
 #include "librarydbmanager.h"
 #include "phoenixwindow.h"

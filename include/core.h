@@ -72,15 +72,51 @@ struct LibretroSymbols {
     
 };
 
-class Core {
+class Core: public QObject {
+        Q_OBJECT
 
     public:
 
         Core();
         ~Core();
 
+        //signals:
+
+
+        // public slots:
+
         //
-        // Control methods
+        // Control
+        //
+
+        bool slotLoadCore( const char *path );
+        bool slotLoadGame( const char *path );
+        void slotSetSystemDirectory( QString system_directory );
+        void slotSetSaveDirectory( QString save_directory );
+
+        void slotDoFrame();
+
+        //
+        // Audio
+        //
+
+        void setAudioBuf( AudioBuffer buf );
+
+        //
+        // Video
+        //
+
+        //
+        // Input
+        //
+
+        //
+        // Misc.
+        //
+
+
+        //
+        // Control
         //
 
         // Load a libretro core at the given path
@@ -93,9 +129,6 @@ class Core {
 
         // Run core for one frame
         void doFrame();
-
-        // Unload
-        void unload();
 
         //
         // Misc
@@ -248,7 +281,6 @@ class Core {
         };
 
     private:
-
         // Handle to the libretro core
         QLibrary *libretro_core;
         QByteArray library_name;
