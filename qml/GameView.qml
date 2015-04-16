@@ -105,8 +105,6 @@ Rectangle {
         hoverEnabled: true
         onMouseXChanged: timerEffects();
         onMouseYChanged: timerEffects();
-        onEntered: headerBar.timer.restart();
-        onExited: headerBar.timer.stop();
 
         onDoubleClicked: {
             root.swapScreenSize();
