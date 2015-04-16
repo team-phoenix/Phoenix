@@ -60,11 +60,11 @@ m_consoles( QMap<PhoenixLibrary::Console, QString> {
 
 
     excluded_consoles = QStringList() << platform_manager.nintendo_ds << platform_manager.mupen64plus << platform_manager.ppsspp
-    << platform_manager.desmume;
+                        << platform_manager.desmume;
 
 
-    m_model = std::unique_ptr<GameLibraryModel>(new GameLibraryModel(&dbm, this));
-    m_model->setEditStrategy(QSqlTableModel::OnManualSubmit);
+    m_model = std::unique_ptr<GameLibraryModel>( new GameLibraryModel( &dbm, this ) );
+    m_model->setEditStrategy( QSqlTableModel::OnManualSubmit );
     m_model->select();
 
     for( auto &core : libretro_cores_info ) {
@@ -125,8 +125,7 @@ m_consoles( QMap<PhoenixLibrary::Console, QString> {
     }
 }
 
-PhoenixLibrary::~PhoenixLibrary()
-{
+PhoenixLibrary::~PhoenixLibrary() {
 
 }
 
@@ -205,7 +204,7 @@ void PhoenixLibrary::importMetadata( QVector<int> games_id ) {
     what_games.reserve( games_id.size() * 4 );
 
     setLabel( "Retrieving Metadata & Art" );
-    setProgress(0);
+    setProgress( 0 );
 
     // build a comma separated string from roms id that were just inserted
     for( auto i = games_id.begin(); i != games_id.end(); ++i ) {
@@ -219,23 +218,23 @@ void PhoenixLibrary::importMetadata( QVector<int> games_id ) {
     QSqlDatabase database = model()->database();
     database.transaction();
 
-    QSqlQuery q = model()->executeQuery(QStringLiteral( "SELECT id, directory, filename, title, system FROM %1 WHERE id IN (%2)" )
-                                       .arg(LibraryDbManager::table_games).arg(what_games));
+    QSqlQuery q = model()->executeQuery( QStringLiteral( "SELECT id, directory, filename, title, system FROM %1 WHERE id IN (%2)" )
+                                         .arg( LibraryDbManager::table_games ).arg( what_games ) );
 
-    if (!q.size() == -1) {
+    if( q.size() == -1 ) {
         qCWarning( phxLibrary ) << "Error while trying to find metadata for imported games";
     }
 
     for( uint i = 0; q.next(); i++ ) {
-        setProgress( ( int )i / games_id.size() * 100);
+        setProgress( ( int )i / games_id.size() * 100 );
         int id = q.value( 0 ).toInt();
         QString path( QDir( q.value( 1 ).toString() ).filePath( q.value( 2 ).toString() ) );
-        QByteArray hash = phoenixLibraryHelper.getCheckSum(path, QCryptographicHash::Sha1 ); // TODO: CRC32
+        QByteArray hash = phoenixLibraryHelper.getCheckSum( path, QCryptographicHash::Sha1 ); // TODO: CRC32
         QString title = q.value( 3 ).toString();
         QString system = q.value( 4 ).toString();
         //scanSystemDatabase( hash, title, system );
-        model()->executeQuery(QString( "UPDATE " + LibraryDbManager::table_games + " SET title = ?, system = ?, sha1 = ? WHERE id = ?" )
-                                       , QVariantList({title, system, hash, id}));
+        model()->executeQuery( QString( "UPDATE " + LibraryDbManager::table_games + " SET title = ?, system = ?, sha1 = ? WHERE id = ?" )
+                               , QVariantList( {title, system, hash, id} ) );
     }
 
     database.commit();
@@ -245,7 +244,7 @@ void PhoenixLibrary::importMetadata( QVector<int> games_id ) {
 
 }
 
-bool PhoenixLibrary::insertGame(QSqlQuery &q, QFileInfo path ) {
+bool PhoenixLibrary::insertGame( QSqlQuery &q, QFileInfo path ) {
     if( !core_for_extension.contains( path.suffix() ) ) {
         return false;    // not a known rom extension
     }
@@ -257,19 +256,20 @@ bool PhoenixLibrary::insertGame(QSqlQuery &q, QFileInfo path ) {
 
     QString title = m.captured( "title" );
 
-    q = model()->executeQuery(QString("INSERT INTO " + LibraryDbManager::table_games
-                              + " (title, system, time_played, region, directory, filename)"
-                              + " VALUES (?, ?, ?, ?, ?, ?)")
-                              , QVariantList({title, system, "00:00", m.captured("region"),
-                                             path.dir().path(),path.canonicalFilePath()})
-                              );
+    q = model()->executeQuery( QString( "INSERT INTO " + LibraryDbManager::table_games
+                                        + " (title, system, time_played, region, directory, filename)"
+                                        + " VALUES (?, ?, ?, ?, ?, ?)" )
+                               , QVariantList( {title, system, "00:00", m.captured( "region" ),
+                                       path.dir().path(), path.canonicalFilePath()
+                                               } )
+                             );
 
     return true;
 }
 
 QVector<int> PhoenixLibrary::scanFolder( QUrl folder_path ) {
-    QDirIterator dir_iter(folder_path.toLocalFile(), QDirIterator::Subdirectories);
-    QSqlQuery q(model()->createQuery());
+    QDirIterator dir_iter( folder_path.toLocalFile(), QDirIterator::Subdirectories );
+    QSqlQuery q( model()->createQuery() );
 
     setLabel( "Importing Games" );
     setProgress( 0 );
@@ -289,7 +289,7 @@ QVector<int> PhoenixLibrary::scanFolder( QUrl folder_path ) {
             continue;
         }
 
-        if( insertGame(q, info ) && q.lastInsertId().isValid() ) {
+        if( insertGame( q, info ) && q.lastInsertId().isValid() ) {
             inserted_games.append( q.lastInsertId().toInt() );
         } else {
             qCWarning( phxLibrary ) << "Unable to import game" << info.fileName()
@@ -299,22 +299,21 @@ QVector<int> PhoenixLibrary::scanFolder( QUrl folder_path ) {
 
     if( found_games ) {
         model()->database().commit();
-        QMetaObject::invokeMethod(model(), "submitAll");
+        QMetaObject::invokeMethod( model(), "submitAll" );
     }
 
     setLabel( "" );
     return inserted_games;
 }
 
-void PhoenixLibrary::deleteRow(QString title)
-{
+void PhoenixLibrary::deleteRow( QString title ) {
 
-    bool result = model()->submitQuery(QString( "DELETE FROM "
-                                       + LibraryDbManager::table_games
-                                       + " WHERE title = ?")
-                                       , QVariantList({title}));
+    bool result = model()->submitQuery( QString( "DELETE FROM "
+                                        + LibraryDbManager::table_games
+                                        + " WHERE title = ?" )
+                                        , QVariantList( {title} ) );
 
-    if (result) {
+    if( result ) {
         qCDebug( phxLibrary ) << "Error deleting entry " << title;
     }
 
@@ -324,9 +323,9 @@ void PhoenixLibrary::resetAll() {
 
     setLabel( "Clearing Library" );
 
-    bool result = model()->submitQuery(QString("DELETE FROM " + LibraryDbManager::table_games));
+    bool result = model()->submitQuery( QString( "DELETE FROM " + LibraryDbManager::table_games ) );
 
-    if(result) {
+    if( result ) {
         setLabel( "Library Cleared" );
     } else {
         qCDebug( phxLibrary ) << "Error clearing library";
@@ -385,62 +384,61 @@ QList<QObject *> PhoenixLibrary::coresModel( QString system ) {
 QStringList PhoenixLibrary::systemsModel() {
     QStringList systems_list;
 
-    for (auto &system :  m_consoles) {
-        systems_list.append(system);
+    for( auto &system :  m_consoles ) {
+        systems_list.append( system );
     }
 
-    qCDebug(phxLibrary) << systems_list;
+    qCDebug( phxLibrary ) << systems_list;
     return systems_list;
 }
 
-bool PhoenixLibrary::addToCollection(QVariantList game_data)
-{
-    QSqlQuery query = model()->executeQuery(QString("SELECT collection FROM " + LibraryDbManager::table_games + " WHERE title = ?")
-                                            , QVariantList({game_data.at(1)}));
-    while (query.next()) {
-        qDebug() << "collection: " << query.value(0) << game_data.at(0);
-        if (query.value(0) == game_data.at(0))
+bool PhoenixLibrary::addToCollection( QVariantList game_data ) {
+    QSqlQuery query = model()->executeQuery( QString( "SELECT collection FROM " + LibraryDbManager::table_games + " WHERE title = ?" )
+                      , QVariantList( {game_data.at( 1 )} ) );
+
+    while( query.next() ) {
+        qDebug() << "collection: " << query.value( 0 ) << game_data.at( 0 );
+
+        if( query.value( 0 ) == game_data.at( 0 ) ) {
             return false;
+        }
     }
 
-    return model()->submitQuery(QString("UPDATE " + LibraryDbManager::table_games + " SET collection = ? AND is_favorite = TRUE WHERE title = ?"), game_data);
+    return model()->submitQuery( QString( "UPDATE " + LibraryDbManager::table_games + " SET collection = ? AND is_favorite = TRUE WHERE title = ?" ), game_data );
 }
 
-void PhoenixLibrary::saveCollection(QVariantList collections)
-{
+void PhoenixLibrary::saveCollection( QVariantList collections ) {
     QSettings settings;
-    settings.beginGroup("collections");
-    for (QVariant &variant : collections)
-        settings.setValue("collections", variant);
+    settings.beginGroup( "collections" );
+
+    for( QVariant &variant : collections ) {
+        settings.setValue( "collections", variant );
+    }
 }
 
-bool PhoenixLibrary::removeFromCollection(QVariant title)
-{
-    return addToCollection(QVariantList({QString(""), title}));
+bool PhoenixLibrary::removeFromCollection( QVariant title ) {
+    return addToCollection( QVariantList( {QString( "" ), title} ) );
 }
 
-QString PhoenixLibrary::systemIcon(QString system)
-{
-    return icon_for_console.value(system, "");
+QString PhoenixLibrary::systemIcon( QString system ) {
+    return icon_for_console.value( system, "" );
 }
 
 
-QString PhoenixLibrary::showPath(int index, QString system)
-{
-    if ( index < cores_for_console[system].length() ) {
+QString PhoenixLibrary::showPath( int index, QString system ) {
+    if( index < cores_for_console[system].length() ) {
         CoreModel *mod = static_cast<CoreModel *>( cores_for_console[system].at( index ) );
         return mod->corePath();
     }
 
-    return QString("");
+    return QString( "" );
 }
 
 void PhoenixLibrary::cacheUrls( QList<QUrl> list ) {
     file_urls = list;
 }
 
-QVector<int> PhoenixLibrary::importDroppedFiles(QList<QUrl> url_list)
-{
+QVector<int> PhoenixLibrary::importDroppedFiles( QList<QUrl> url_list ) {
 
     QSqlQuery query = model()->createQuery();;
 
@@ -453,29 +451,27 @@ QVector<int> PhoenixLibrary::importDroppedFiles(QList<QUrl> url_list)
 
         QFileInfo info = QFileInfo( url_list[i].toLocalFile() );
 
-        if (info.suffix().toLower() == "bin") {
-            phoenixLibraryHelper.checkForBios(info);
+        if( info.suffix().toLower() == "bin" ) {
+            phoenixLibraryHelper.checkForBios( info );
             continue;
         }
 
-        if ( insertGame(query, info) && query.lastInsertId().isValid() ) {
+        if( insertGame( query, info ) && query.lastInsertId().isValid() ) {
             inserted_games.append( query.lastInsertId().toInt() );
-        }
-        else {
-            qCWarning(phxLibrary) << "Unable to import game" << info.fileName()
+        } else {
+            qCWarning( phxLibrary ) << "Unable to import game" << info.fileName()
                                     << "; error:" << query.lastError();
         }
     }
 
     model()->database().commit();
-    QMetaObject::invokeMethod(model(), "submitAll");
+    QMetaObject::invokeMethod( model(), "submitAll" );
 
-    setLabel("");
+    setLabel( "" );
     return inserted_games;
 }
 
-void PhoenixLibrary::setImportUrls(bool importUrls)
-{
+void PhoenixLibrary::setImportUrls( bool importUrls ) {
     m_import_urls = importUrls;
     emit importUrlsChanged();
 
@@ -532,7 +528,6 @@ void PhoenixLibrary::scanSystemDatabase( QByteArray hash, QString &name, QString
 
 }
 
-void PhoenixLibrary::setCacheDirectory(QString cache_dir)
-{
+void PhoenixLibrary::setCacheDirectory( QString cache_dir ) {
     m_cache_directory = cache_dir;
 }
