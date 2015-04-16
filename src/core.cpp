@@ -9,13 +9,6 @@ extern PhoenixGlobals phxGlobals;
 // |        Globals         |
 // |________________________|
 
-LibretroSymbols::LibretroSymbols() {
-    retro_audio = nullptr;
-    retro_audio_set_state = nullptr;
-    retro_frame_time = nullptr;
-    retro_keyboard_event = nullptr;
-}
-
 QDebug operator<<( QDebug debug, const Core::Variable &var ) {
     // join a QVector of std::strings. (Really, C++ ?)
     auto &choices = var.choices();
@@ -50,6 +43,13 @@ Core *Core::core = nullptr;
 // |                        |
 // |      Constructors      |
 // |________________________|
+
+LibretroSymbols::LibretroSymbols() {
+    retro_audio = nullptr;
+    retro_audio_set_state = nullptr;
+    retro_frame_time = nullptr;
+    retro_keyboard_event = nullptr;
+}
 
 Core::Core() {
     libretro_core = nullptr;
