@@ -1,9 +1,6 @@
 #include "core.h"
 #include "phoenixglobals.h"
 
-extern InputManager input_manager;
-extern PhoenixGlobals phxGlobals;
-
 //  ________________________
 // |                        |
 // |        Globals         |
@@ -78,6 +75,10 @@ Core::Core() {
 } // Core::Core()
 
 Core::~Core() {
+    delete symbols;
+    delete system_info;
+    delete system_av_info;
+    delete libretro_core;
 
 } // Core::~Core()
 
@@ -132,8 +133,8 @@ bool Core::loadCore( const char *path ) {
         symbols->retro_set_input_poll( inputPollCallback );
         symbols->retro_set_input_state( inputStateCallback );
         symbols->retro_set_video_refresh( videoRefreshCallback );
-        //symbols->retro_get_memory_data(getMemoryData);
-        //symbols->retro_get_memory_size(getMemorySize);
+        //symbols->retro_get_memory_data( getMemoryData );
+        //symbols->retro_get_memory_size( getMemorySize );
 
         // Init the core
         symbols->retro_init();

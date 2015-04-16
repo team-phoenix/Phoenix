@@ -23,9 +23,6 @@
  * alter games in the GameLibraryModel.
  */
 
-extern PhoenixGlobals phxGlobals;
-extern PhoenixLibraryHelper phoenixLibraryHelper;
-
 class PhoenixLibrary : public QObject {
         Q_OBJECT
         Q_PROPERTY( qreal progress READ progress WRITE setProgress NOTIFY progressChanged )

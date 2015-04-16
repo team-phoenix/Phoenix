@@ -22,13 +22,6 @@
 #include "utilities.h"
 #include "usernotifications.h"
 
-// GLOBALS
-Utilities utilities;
-InputManager input_manager;
-PhoenixGlobals phxGlobals;
-PhoenixLibraryHelper phoenixLibraryHelper;
-UserNotifications userNotifications;
-
 int main( int argc, char *argv[] ) {
 #ifdef Q_OS_LINUX
     // When using QAudioOutput on linux/ALSA, we need to

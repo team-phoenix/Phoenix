@@ -2,9 +2,6 @@
 #include "videoitem.h"
 #include "phoenixglobals.h"
 
-extern InputManager input_manager;
-extern PhoenixGlobals phxGlobals;
-
 VideoItem::VideoItem() {
     core = new Core();
 

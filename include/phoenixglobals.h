@@ -5,9 +5,10 @@
 #include <QMap>
 #include <QFileInfo>
 
+#include "usernotifications.h"
 #include "utilities.h"
-
-extern Utilities utilities;
+#include "inputmanager.h"
+#include "phoenixlibraryhelper.h"
 
 /* The PhoenixGlobals class is a global singleton that is used to
  * provide folder locations, and do other various operations that
@@ -50,5 +51,11 @@ private:
     QFileInfo m_selected_core;
 
 };
+
+extern Utilities utilities;
+extern InputManager input_manager;
+extern PhoenixGlobals phxGlobals;
+extern PhoenixLibraryHelper phoenixLibraryHelper;
+extern UserNotifications userNotifications;
 
 #endif // PHOENIXGLOBALS_H

@@ -4,7 +4,13 @@
 #include <QLibrary>
 #include <QDebug>
 
-extern UserNotifications userNotifications;
+#include "utilities.h"
+
+Utilities utilities;
+InputManager input_manager;
+PhoenixGlobals phxGlobals;
+PhoenixLibraryHelper phoenixLibraryHelper;
+UserNotifications userNotifications;
 
 PhoenixGlobals::PhoenixGlobals(QObject *parent)
     : QObject(parent)

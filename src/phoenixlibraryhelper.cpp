@@ -10,9 +10,6 @@
 #include "phoenixglobals.h"
 #include "usernotifications.h"
 
-extern PhoenixGlobals phxGlobals;
-extern UserNotifications userNotifications;
-
 QMap<QString, QString> playstationBios {
 
     // MD5 checksums are used for psx.
