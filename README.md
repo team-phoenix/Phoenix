@@ -12,7 +12,7 @@ Building
 
 [![Build Status](https://secure.travis-ci.org/team-phoenix/Phoenix.png)](http://travis-ci.org/team-phoenix/Phoenix)
 
-Dependencies: SDL2 for input, libsamplerate for audio resampling, Qt5.4 for OpenGL and UI design. All of these should be available on your favorite package manager (OS X, linux), we recommend msys2 on Windows.
+Dependencies: SDL2 for input, libsamplerate for audio resampling, Qt 5.4+ for OpenGL and UI design. All of these should be available on your favorite package manager (OS X, linux), we recommend msys2 on Windows.
 
 1. Load the .pro file into Qt Creator. Compile. 
 2. Put libretro cores in the proper place, depending on your platform
