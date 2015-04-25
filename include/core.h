@@ -209,7 +209,7 @@ class Core: public QObject {
             return system_av_info->timing.fps;
         }
         double getSampleRate() const {
-            return system_av_info->timing.sample_rate;
+            return ( system_av_info->timing.sample_rate ) * ( 60.0 / ( system_av_info->timing.fps ) );
         }
         bool isDupeFrame() const {
             return is_dupe_frame;
@@ -218,7 +218,7 @@ class Core: public QObject {
         // Container class for a libretro core variable
         class Variable {
             public:
-                Variable() {}; // default constructor
+                Variable() {} // default constructor
 
                 Variable( const retro_variable *var ) {
                     m_key = var->key;
@@ -239,7 +239,7 @@ class Core: public QObject {
                         // unknown value
                     }
                 };
-                virtual ~Variable() {};
+                virtual ~Variable() {}
 
                 const std::string &key() const {
                     return m_key;
