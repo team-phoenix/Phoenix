@@ -226,7 +226,7 @@ Item {
         anchors {
             verticalCenter: parent.verticalCenter
             // Unlock the anchor if wider than the viewport so it'll stick to the left ( x = 0 )
-            left: fitsInsideParent ? parent.left : undefined
+            horizontalCenter: fitsInsideParent ? parent.horizontalCenter : undefined
         }
         font {
             bold: true
@@ -258,7 +258,7 @@ Item {
         anchors {
             verticalCenter: parent.verticalCenter
             // Unlock the anchor if wider than the viewport so it'll stick to the left ( x = 0 )
-            left: fitsInsideParent ? parent.left : undefined
+            horizontalCenter: fitsInsideParent ? parent.horizontalCenter : undefined
         }
         font {
             bold: true

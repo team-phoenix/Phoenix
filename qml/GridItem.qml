@@ -31,7 +31,7 @@ Item  {
 
         anchors {
             top: image.bottom;
-            topMargin: (index == gridView.currentIndex) ? 20 : 8;
+            topMargin: (index == gridView.currentIndex) ? 8 : 4;
             horizontalCenter: image.horizontalCenter;
         }
 
@@ -72,7 +72,7 @@ Item  {
             }
 
             elide: Text.ElideRight;
-            horizontalAlignment: Text.AlignLeft;
+            horizontalAlignment: Text.AlignHCenter;
         }
     }
 }
