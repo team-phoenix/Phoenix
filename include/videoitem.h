@@ -156,7 +156,7 @@ class VideoItem : public QQuickItem {
         // Video
         // [1]
         QSGTexture *texture;
-        Core *core;
+        Core core;
         int item_w;
         int item_h;
         qreal item_aspect; // item aspect ratio
@@ -183,8 +183,10 @@ class VideoItem : public QQuickItem {
 
         // Audio
         //[3]
-        Audio *audio;
         void updateAudioFormat();
+        Audio audio;
+        QThread audioThread;
+        QTimer audioTimer;
         //[3]
 
         void refreshItemGeometry(); // called every time the item's with/height/x/y change

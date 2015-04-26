@@ -6,18 +6,11 @@ Audio::Audio( QObject *parent )
       isCoreRunning( false ),
       audioOut( nullptr ),
       audioOutIODev( nullptr ),
-      audioTimer( this ),
       audioBuf( new AudioBuffer ) {
 
     Q_CHECK_PTR( audioBuf );
 
-    audioThread.setObjectName( "phoenix-audio" );
-
     resamplerState = nullptr;
-
-    this->moveToThread( &audioThread );
-    connect( &audioThread, &QThread::started, this, &Audio::slotThreadStarted );
-    connect( &audioTimer, &QTimer::timeout, this, &Audio::slotHandlePeriodTimer );
 
     // We need to send this signal to ourselves
     connect( this, &Audio::signalFormatChanged, this, &Audio::slotHandleFormatChanged );
@@ -27,8 +20,6 @@ Audio::Audio( QObject *parent )
 }
 
 Audio::~Audio() {
-    audioTimer.stop();
-
     if( audioOut ) {
         delete audioOut;
     }
@@ -48,9 +39,6 @@ Audio::~Audio() {
 
 AudioBuffer *Audio::getAudioBuf() const {
     return audioBuf.get();
-}
-void Audio::startAudioThread() {
-    audioThread.start( QThread::TimeCriticalPriority );
 }
 
 void Audio::setInFormat( QAudioFormat newInFormat ) {
@@ -87,7 +75,7 @@ void Audio::slotHandleFormatChanged() {
 
     audioOut = new QAudioOutput( audioFormatOut );
     Q_CHECK_PTR( audioOut );
-    audioOut->moveToThread( &audioThread );
+    //audioOut->moveToThread( &audioThread );
 
     connect( audioOut, &QAudioOutput::stateChanged, this, &Audio::slotStateChanged );
     audioOutIODev = audioOut->start();
@@ -96,7 +84,7 @@ void Audio::slotHandleFormatChanged() {
         audioOut->suspend();
     }
 
-    audioOutIODev->moveToThread( &audioThread );
+    //audioOutIODev->moveToThread( &audioThread );
 
     // This is where the amount of time that passes between audio updates is set
     // At timer intervals this low on most OSes the jitter is quite significant
@@ -104,7 +92,7 @@ void Audio::slotHandleFormatChanged() {
     // qint64 durationInMs = audioFormatOut.durationForBytes( audioOut->periodSize() * 1.0 ) / 1000;
     qint64 durationInMs = 16;
     qCDebug( phxAudio ) << "Timer interval set to" << durationInMs << "ms, Period size" << audioOut->periodSize() << "bytes, buffer size" << audioOut->bufferSize() << "bytes";
-    audioTimer.setInterval( durationInMs );
+
 
     if( resamplerState ) {
         src_delete( resamplerState );
@@ -145,7 +133,6 @@ void Audio::slotThreadStarted() {
 }
 
 void Audio::slotHandlePeriodTimer() {
-    Q_ASSERT( QThread::currentThread() == &audioThread );
 
     // Handle the situation where there is no device to output to
     if( !audioOutIODev ) {
@@ -245,13 +232,13 @@ void Audio::slotRunChanged( bool _isCoreRunning ) {
         if( audioOut->state() != QAudio::SuspendedState ) {
             qCDebug( phxAudio ) << "Paused";
             audioOut->suspend();
-            audioTimer.stop();
+            emit signalStopTimer();
         }
     } else {
         if( audioOut->state() != QAudio::ActiveState ) {
             qCDebug( phxAudio ) << "Started";
             audioOut->resume();
-            audioTimer.start();
+            emit signalStartTimer();
         }
     }
 }

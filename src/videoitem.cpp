@@ -3,11 +3,23 @@
 #include "phoenixglobals.h"
 
 VideoItem::VideoItem() {
-    core = new Core();
-    Q_CHECK_PTR( core );
 
-    audio = new Audio();
-    Q_CHECK_PTR( audio );
+    // Set up the audio output thread and its update timer
+    audioThread.setObjectName( "phoenix-audio" );
+    audio.moveToThread( &audioThread );
+    audioTimer.moveToThread( &audioThread );
+    audioTimer.setInterval( 16 );
+
+    connect( &audioThread, &QThread::started, &audio, &Audio::slotThreadStarted );
+    connect( &audioTimer, &QTimer::timeout, &audio, &Audio::slotHandlePeriodTimer );
+
+    connect( &audio, &Audio::signalStartTimer, &audioTimer, static_cast<void ( QTimer::* )( void )> ( &QTimer::start ) );
+    connect( &audio, &Audio::signalStopTimer, &audioTimer, &QTimer::stop );
+
+    audioThread.start();
+
+    // This operation is not thread-safe, but audioBuf never changes throughout the life of audio, so I suppose it doesn't matter?
+    core.audio_buf = audio.getAudioBuf();
 
     texture = nullptr;
     m_libcore = "";
@@ -15,8 +27,6 @@ VideoItem::VideoItem() {
     m_filtering = 2;
     m_aspect_ratio = 0.0;
     m_fps = 0;
-    audio->startAudioThread();
-    core->audio_buf = audio->getAudioBuf();
     m_volume = 1.0;
 
     connect( &fps_timer, &QTimer::timeout, this, &VideoItem::updateFps );
@@ -24,15 +34,14 @@ VideoItem::VideoItem() {
     fps_deviation = 0;
     fps_count = 0;
 
-    connect( this, &VideoItem::runChanged, audio, &Audio::slotRunChanged );
-    connect( this, &VideoItem::volumeChanged, audio, &Audio::slotSetVolume );
+    connect( this, &VideoItem::runChanged, &audio, &Audio::slotRunChanged );
+    connect( this, &VideoItem::volumeChanged, &audio, &Audio::slotSetVolume );
     connect( this, &VideoItem::windowChanged, this, &VideoItem::handleWindowChanged );
 }
 
 VideoItem::~VideoItem() {
-    delete core;
-    delete audio;
 
+    audioThread.exit();
     fps_timer.stop();
 
     if( texture ) {
@@ -90,7 +99,7 @@ void VideoItem::setVolume( qreal volume ) {
 
 void VideoItem::setSystemDirectory( QString systemDirectory ) {
     m_system_directory = systemDirectory;
-    core->setSystemDirectory( m_system_directory );
+    core.setSystemDirectory( m_system_directory );
     emit systemDirectoryChanged();
 }
 
@@ -104,7 +113,7 @@ void VideoItem::saveGameState() {
     QFileInfo info( m_game );
 
     if( m_game != "" && m_libcore != "" ) {
-        core->saveGameState( phxGlobals.savePath(), info.baseName() );
+        core.saveGameState( phxGlobals.savePath(), info.baseName() );
     }
 
 }
@@ -112,7 +121,7 @@ void VideoItem::saveGameState() {
 void VideoItem::loadGameState() {
     QFileInfo info( m_game );
 
-    if( core->loadGameState( phxGlobals.savePath(), info.baseName() ) ) {
+    if( core.loadGameState( phxGlobals.savePath(), info.baseName() ) ) {
         qDebug() << "Save State loaded";
     }
 }
@@ -124,12 +133,12 @@ void VideoItem::setCore( QString libcore ) {
 
     qCDebug( phxVideo ) << "Loading core:" << libcore;
 
-    if( !core->loadCore( libcore.toStdString().c_str() ) ) {
+    if( !core.loadCore( libcore.toStdString().c_str() ) ) {
         qCCritical( phxVideo, "Couldn't load core !" );
         //        exit(EXIT_FAILURE);
     }
 
-    const retro_system_info *i = core->getSystemInfo();
+    const retro_system_info *i = core.getSystemInfo();
     qCDebug( phxVideo ) << "Loaded core" << i->library_name << i->library_version;
     m_libcore = libcore;
     emit libcoreChanged( libcore );
@@ -143,14 +152,14 @@ void VideoItem::setGame( QString game ) {
     m_game = game;
     qCDebug( phxVideo ) << "Loading game:" << game;
 
-    if( !core->loadGame( game.toStdString().c_str() ) ) {
+    if( !core.loadGame( game.toStdString().c_str() ) ) {
         qCCritical( phxVideo, "Couldn't load game !" );
         //        exit(EXIT_FAILURE);
         return;
     }
 
-    qCDebug( phxVideo, "Loaded game at %ix%i @ %.2ffps", core->getBaseWidth(),
-             core->getBaseHeight(), core->getFps() );
+    qCDebug( phxVideo, "Loaded game at %ix%i @ %.2ffps", core.getBaseWidth(),
+             core.getBaseHeight(), core.getFps() );
     updateAudioFormat();
     emit gameChanged( game );
 }
@@ -192,13 +201,13 @@ QStringList VideoItem::getAudioDevices() {
 void VideoItem::updateAudioFormat() {
     QAudioFormat format;
     format.setSampleSize( 16 );
-    format.setSampleRate( core->getSampleRate() );
+    format.setSampleRate( core.getSampleRate() );
     format.setChannelCount( 2 );
     format.setSampleType( QAudioFormat::SignedInt );
     format.setByteOrder( QAudioFormat::LittleEndian );
     format.setCodec( "audio/pcm" );
     // TODO test format
-    audio->setInFormat( format );
+    audio.setInFormat( format );
 }
 
 void VideoItem::keyEvent( QKeyEvent *event ) {
@@ -224,23 +233,23 @@ void VideoItem::keyEvent( QKeyEvent *event ) {
 }
 
 void VideoItem::setTexture() {
-    QImage::Format frame_format = retroToQImageFormat( core->getPixelFormat() );
+    QImage::Format frame_format = retroToQImageFormat( core.getPixelFormat() );
 
     if( texture ) {
         texture->deleteLater();
     }
 
-    texture = window()->createTextureFromImage( QImage( ( const uchar * )core->getImageData(),
-              core->getBaseWidth(),
-              core->getBaseHeight(),
-              core->getPitch(),
+    texture = window()->createTextureFromImage( QImage( ( const uchar * )core.getImageData(),
+              core.getBaseWidth(),
+              core.getBaseHeight(),
+              core.getPitch(),
               frame_format ).mirrored()
               , QQuickWindow::TextureOwnsGLTexture );
 
 }
 
 inline bool VideoItem::limitFps() {
-    qreal target_fps_interval = round( 1000000.0 / core->getFps() ); // µsec
+    qreal target_fps_interval = round( 1000000.0 / core.getFps() ); // µsec
 
     if( !frame_timer.isValid() ) {
         frame_timer.start();
@@ -272,11 +281,11 @@ QSGNode *VideoItem::updatePaintNode( QSGNode *old_node, UpdatePaintNodeData *pai
     Q_UNUSED( paint_data )
 
     if( !aspectRatio() ) {
-        setAspectRatio( core->getAspectRatio() );
+        setAspectRatio( core.getAspectRatio() );
     }
 
     if( isRunning() && !limitFps() ) {
-        core->doFrame();
+        core.doFrame();
         fps_count++;
 
         // Sets texture from core->getImageData();

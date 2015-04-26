@@ -30,22 +30,19 @@ class Audio : public QObject {
         Audio( QObject * = 0 );
         ~Audio();
 
-        void startAudioThread();
-
         void setInFormat( QAudioFormat newInFormat );
 
         AudioBuffer *getAudioBuf() const;
 
     signals:
         void signalFormatChanged();
+        void signalStopTimer();
+        void signalStartTimer();
 
     public slots:
         void slotStateChanged( QAudio::State state );
-
         void slotRunChanged( bool _isCoreRunning );
         void slotSetVolume( qreal level );
-
-    private slots:
         void slotThreadStarted();
         void slotHandleFormatChanged();
         void slotHandlePeriodTimer();
@@ -70,9 +67,6 @@ class Audio : public QObject {
 
         // aio doesn't own the pointer; Use a normal pointer.
         QIODevice *audioOutIODev;
-
-        QThread audioThread;
-        QTimer audioTimer;
 
         std::unique_ptr<AudioBuffer>audioBuf;
 
