@@ -7,7 +7,7 @@ We've designed Phoenix with the hope that it'll be perfect for everyone, whether
 
 <b>Phoenix is still under early development. Don't expect everything to work!<b>
 
-![ScreenShot](https://raw.github.com/team-phoenix/Phoenix/master/assets/mockup.png)
+![ScreenShot](https://github.com/team-phoenix/Phoenix/raw/48bc06fcf996d3b9d9119a578a299f0bc033954d/assets/Phoenix.gif)
 
 -----------
 
