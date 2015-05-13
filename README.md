@@ -1,5 +1,6 @@
-Phoenix
+[Phoenix](http://phoenix.vg)
 =======
+
 
 A super-slick libretro frontend powered by Qt 5. Dead-simple to use, Phoenix features both a powerful library system to organize your classic game collection, along with a set of up-to-date emulators to play them right within the app!
 
