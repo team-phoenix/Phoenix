@@ -36,6 +36,7 @@ debug/
 .*.swp
 
 # Phoenix executable
-phoenix*
+phoenix.exe
+phoenix,
 object_script.phoenix.Debug
 object_script.phoenix.Release

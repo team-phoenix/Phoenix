@@ -140,3 +140,5 @@ RESOURCES = qml/qml.qrc assets/assets.qrc
 
 DISTFILES += \
     .astylerc
+
+RC_FILE += src/phoenix.rc
