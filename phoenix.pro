@@ -9,14 +9,7 @@ VERSION = 0.1
 
 DEFINES += '"PHOENIX_VERSION=\\"$$VERSION\\""'
 
-LIBS += -lsamplerate
-
-!macx {
-    LIBS += -lSDL2
-}
-else {
-    LIBS += -framework SDL2
-}
+LIBS += -lsamplerate -lSDL2
 
 linux-g++ {
     INCLUDEPATH += /usr/include/ /usr/include/SDL2
