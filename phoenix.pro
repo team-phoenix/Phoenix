@@ -12,17 +12,18 @@ DEFINES += '"PHOENIX_VERSION=\\"$$VERSION\\""'
 LIBS += -lsamplerate -lSDL2
 
 linux-g++ {
+
     INCLUDEPATH += /usr/include/ /usr/include/SDL2
     QMAKE_CXXFLAGS_RELEASE = -D_FORTIFY_SOURCE=2
 
     # GCC >= 4.9s
-    system(g++ --version | grep -E -q -e '"4\.(9|[0-9]{2})"') {
+    system( g++ --version | grep -E -q -e '"4\.(9|[0-9]{2})"' ) {
         QMAKE_CXXFLAGS += -fstack-protector-strong
         QMAKE_CXXFLAGS_DEBUG += -fsanitize=undefined -fsanitize=address -fno-omit-frame-pointer
         QMAKE_LFLAGS_DEBUG += -fsanitize=undefined -fsanitize=address
     }
 
-    CONFIG(debug, debug|release)  {
+    CONFIG( debug, debug|release )  {
         depends.path = $$OUT_PWD/debug
         depends.files += $${PWD}/databases/systemdatabase.db
     }
@@ -31,14 +32,27 @@ linux-g++ {
         depends.path = $$OUT_PWD/release
         depends.files += $${PWD}/databases/systemdatabase.db
     }
+
     INSTALLS += depends
 
 }
 
 macx {
-    INCLUDEPATH += /usr/local/include /usr/local/include/SDL2 # Homebrew (OS X)
-    INCLUDEPATH += /opt/local/include /opt/local/include/SDL2 # MacPorts (OS X)
-    QMAKE_LFLAGS += -L/usr/local/lib -L/opt/local/lib
+
+    # Homebrew (OS X)
+    exists( /usr/local/include ) {
+        INCLUDEPATH += /usr/local/include /usr/local/include/SDL2
+        QMAKE_LFLAGS += -L/usr/local/lib
+    }
+
+    # MacPorts (OS X)
+    exists( /opt/local/include ) {
+        INCLUDEPATH += /opt/local/include /opt/local/include/SDL2
+        QMAKE_LFLAGS += -L/opt/local/lib
+    }
+
+
+
 }
 
 win32 {
@@ -64,8 +78,8 @@ win32 {
         depends.files += C:/SDL2/bin/SDL2.dll \
                             $${PWD}/databases/systemdatabase.db
     }
-    INSTALLS += depends
 
+    INSTALLS += depends
 
 }
 
