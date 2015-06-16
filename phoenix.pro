@@ -19,7 +19,7 @@ else {
 }
 
 linux-g++ {
-    INCLUDEPATH += /usr/include/SDL2/
+    INCLUDEPATH += /usr/include/ /usr/include/SDL2
     QMAKE_CXXFLAGS_RELEASE = -D_FORTIFY_SOURCE=2
 
     # GCC >= 4.9s
@@ -43,9 +43,9 @@ linux-g++ {
 }
 
 macx {
-    INCLUDEPATH += /Library/Frameworks/SDL2.framework/Headers /usr/local/include
-    QMAKE_CXXFLAGS += -F/Library/Frameworks
-    QMAKE_LFLAGS += -F/Library/Frameworks -L/usr/local/lib
+    INCLUDEPATH += /usr/local/include /usr/local/include/SDL2 # Homebrew (OS X)
+    INCLUDEPATH += /opt/local/include /opt/local/include/SDL2 # MacPorts (OS X)
+    QMAKE_LFLAGS += -L/usr/local/lib -L/opt/local/lib
 }
 
 win32 {
