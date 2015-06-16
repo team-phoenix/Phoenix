@@ -127,7 +127,10 @@ Item {
                 ListElement {title: "Advanced"; useStack: true; iconSource: "";}
                 ListElement {title: "Video"; useStack: true; iconSource: "";}
                 ListElement {title: "Audio"; useStack: true; iconSource: "";}
-                ListElement {title: "Add Folder"; useStack: false; iconSource: "";}
+                ListElement {title: ""; useStack: true; iconSource: "";}
+                ListElement {title: "Add Folder..."; useStack: false; iconSource: "";}
+                ListElement {title: ""; useStack: true; iconSource: "";}
+                ListElement {title: "Close"; useStack: false; iconSource: "";}
             }
 
             FileDialog {
@@ -207,8 +210,10 @@ Item {
                                 settingsWindow.stack.push({item: listView.stacks[title], replace: true, immediate: true});
                                 settingsWindow.visible = true;
                             }
-                            if (title == "Add Folder")
+                            if (title == "Add Folder...")
                                 folderDialog.visible = true;
+                            if (title == "Close")
+                                close()
                         }
                     }
                 }
