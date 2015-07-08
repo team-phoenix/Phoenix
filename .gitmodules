@@ -1,0 +1,3 @@
+[submodule "phoenix-backend"]
+	path = phoenix-backend
+	url = https://github.com/team-phoenix/phoenix-backend
