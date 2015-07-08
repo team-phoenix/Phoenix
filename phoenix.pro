@@ -1,9 +1,9 @@
 TEMPLATE = subdirs
 
-SUBDIRS += phoenix-backend
+SUBDIRS += backend
 SUBDIRS += frontend
 
-phoenix-backend.file = phoenix-backend/phoenix-backend.pro
+backend.file = backend/backend.pro
 frontend.file = frontend/frontend.pro
 
 CONFIG += ordered

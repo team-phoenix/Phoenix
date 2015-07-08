@@ -5,9 +5,9 @@ QT += qml quick widgets concurrent sql multimedia
 CONFIG += c++11 lib_bundle
 
 #Inlcude backend path
-INCLUDEPATH += ../phoenix-backend ../phoenix-backend/input
+INCLUDEPATH += ../backend ../backend/input
 
-LIBS += -L../phoenix-backend -L../phoenix-backend/debug -L../phoenix-backend/release -lphoenix-backend
+LIBS += -L../backend -L../backend/debug -L../backend/release -lphoenix-backend
 LIBS += -lsamplerate
 
 win32 {
