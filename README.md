@@ -1,7 +1,7 @@
 Phoenix
 =======
 
-A super-slick libretro frontend powered by Qt5. Dead-simple to use, Phoenix features both a powerful library system to organize your classic game collection, along with a set of up-to-date emulators to play them right within the app!
+A super-slick libretro frontend powered by Qt 5. Dead-simple to use, Phoenix features both a powerful library system to organize your classic game collection, along with a set of up-to-date emulators to play them right within the app!
 
 We've designed Phoenix with the hope that it'll be perfect for everyone, whether you're someone who hardly plays videogames, a hardcore gamer, a speedrunner, or even a homebrew programmer!
 
