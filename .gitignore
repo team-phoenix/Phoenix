@@ -26,6 +26,8 @@ Makefile*
 release/
 debug/
 
+# OSX
+*.DS_Store
 
 # QtCreator
 
