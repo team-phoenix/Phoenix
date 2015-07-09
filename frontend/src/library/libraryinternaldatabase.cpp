@@ -26,7 +26,7 @@ QSqlDatabase &LibraryInternalDatabase::database() {
 }
 
 void LibraryInternalDatabase::open() {
-    db = QSqlDatabase::addDatabase( "QSQLITE", "LIBRARY" );
+    db = QSqlDatabase::addDatabase( QStringLiteral( "QSQLITE" ), QStringLiteral( "LIBRARY" ) );
 
     QString dataPathStr = QStandardPaths::writableLocation( QStandardPaths::GenericDataLocation );
     Q_ASSERT( !dataPathStr.isEmpty() );
@@ -96,8 +96,10 @@ bool LibraryInternalDatabase::loadFixtures() {
     qCDebug( phxLibrary, "Loading fixtures" );
     db.transaction();
     QSqlQuery q( db );
-    const QString command = QStringLiteral( "INSERT INTO " ) + tableName + QStringLiteral( " (title, system, time_played, artwork)" ) +
-                            QStringLiteral( " VALUES (\"somegame %2\", \"test\", \"0h 0m 0s\", \"qrc:/assets/No-Art.png\")" );
+    const QString command = QStringLiteral( "INSERT INTO " )
+                          + tableName
+                          + QStringLiteral( " (title, system, time_played, artwork)" )
+                          + QStringLiteral( " VALUES (\"somegame %2\", \"test\", \"0h 0m 0s\", \"qrc:/assets/No-Art.png\")" );
 
     for( int i = 0; i < 10000; i++ ) {
         q.exec( command.arg( i ) );
@@ -108,7 +110,9 @@ bool LibraryInternalDatabase::loadFixtures() {
 }
 
 int LibraryInternalDatabase::version() const {
-    QSqlQuery q( QStringLiteral( "SELECT version FROM " ) + tableVersion + QStringLiteral( " LIMIT 0,1" ), db );
+    QSqlQuery q( QStringLiteral( "SELECT version FROM " )
+                 + tableVersion
+                 + QStringLiteral( " LIMIT 0,1" ), db );
 
     if( !q.exec() ) {
         qCDebug( phxLibrary, "Error while retreiving db version: %s",

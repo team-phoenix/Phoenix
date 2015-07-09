@@ -20,6 +20,17 @@ Rectangle {
                 NumberAnimation { properties: "x,y,visible,width,height,opacity"; duration: 1000 }
             }
 
+
+        // Yes this isn't ideal, but it is a work around for the view resetting back to 0
+        // whenever a game is imported.
+        property real lastY: 0;
+        onContentYChanged: {
+            if (contentY == 0)
+                contentY = lastY
+            else
+                lastY = contentY;
+        }
+
         anchors {
             top: parent.top;
             topMargin: 24 * 3;

@@ -31,9 +31,9 @@ MetaDataDatabase::~MetaDataDatabase() {
 void MetaDataDatabase::open() {
     auto currentDir = QDir::current().path();
 
-    db = QSqlDatabase::addDatabase( "QSQLITE", "METADATA" );
+    db = QSqlDatabase::addDatabase( QStringLiteral( "QSQLITE" ), QStringLiteral( "METADATA" ) );
 
-    db.setDatabaseName( currentDir + QDir::separator() + "openvgdb.sqlite" );
+    db.setDatabaseName( currentDir + QDir::separator() + QStringLiteral( "openvgdb.sqlite" ) );
 
     if( !db.open() ) {
         qFatal( "Could not open database METADATA %s",
@@ -82,8 +82,9 @@ void MetaDataDatabase::getMetadata( GameMetaData metaData ) {
         return;
     }
 
-    static const QString romIDFetchStatement = QString( "SELECT romID FROM " + tableRoms
-            + " WHERE romHashSHA1 = ?" );
+    static const QString romIDFetchStatement = QStringLiteral( "SELECT romID FROM " )
+                                             + tableRoms
+                                             + QStringLiteral( " WHERE romHashSHA1 = ?" );
 
     sqlMutex.lock();
     QSqlQuery query( database() );
@@ -94,7 +95,7 @@ void MetaDataDatabase::getMetadata( GameMetaData metaData ) {
 
     if( !query.exec() ) {
         qCWarning( phxLibrary ) << "Metadata select error: "
-                                << qPrintable( query.lastError().text() ) << query.lastQuery();
+                                << query.lastError().text();
         return;
     }
 
@@ -111,16 +112,17 @@ void MetaDataDatabase::getMetadata( GameMetaData metaData ) {
 
         query.clear();
 
-        static const QString artworkFetchStatement = QString(
-                    "SELECT releaseCoverFront, releaseDescription, releaseDeveloper, releaseGenre "
-                    + QString( " FROM " ) + MetaDataDatabase::tableReleases + " WHERE romID = ?" );
+        static const QString artworkFetchStatement = QStringLiteral(
+                    "SELECT releaseCoverFront, releaseDescription, releaseDeveloper, releaseGenre ")
+                    + QStringLiteral( " FROM " ) + MetaDataDatabase::tableReleases
+                    + QStringLiteral(" WHERE romID = ?" );
 
         query.prepare( artworkFetchStatement );
         query.addBindValue( romID );
 
         if( !query.exec() ) {
             qCWarning( phxLibrary ) << "Metadata select error: "
-                                    << qPrintable( query.lastError().text() );
+                                    << query.lastError().text();
             return;
         }
 

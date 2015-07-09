@@ -34,13 +34,13 @@ LibraryModel::LibraryModel( LibraryInternalDatabase &db, QObject *parent )
     mMetaDataDatabse.moveToThread( &mGetMetadataThread );
 
     mRoleNames = QSqlTableModel::roleNames();
-    mRoleNames.insert( TitleRole, "title" );
-    mRoleNames.insert( SystemRole, "system" );
-    mRoleNames.insert( TimePlayedRole, "timePlayed" );
-    mRoleNames.insert( ArtworkRole, "artworkUrl" );
-    mRoleNames.insert( FileNameRole, "fileName" );
-    mRoleNames.insert( SystemPathRole, "systemPath" );
-    mRoleNames.insert( RowIDRole, "rowIndex" );
+    mRoleNames.insert( TitleRole, QByteArrayLiteral( "title" ) );
+    mRoleNames.insert( SystemRole, QByteArrayLiteral( "system" ) );
+    mRoleNames.insert( TimePlayedRole, QByteArrayLiteral( "timePlayed" ) );
+    mRoleNames.insert( ArtworkRole, QByteArrayLiteral( "artworkUrl" ) );
+    mRoleNames.insert( FileNameRole, QByteArrayLiteral( "fileName" ) );
+    mRoleNames.insert( SystemPathRole, QByteArrayLiteral(  "systemPath" ) );
+    mRoleNames.insert( RowIDRole, QByteArrayLiteral( "rowIndex" ) );
 
     setEditStrategy( QSqlTableModel::OnManualSubmit );
     setTable( LibraryInternalDatabase::tableName );
@@ -49,7 +49,7 @@ LibraryModel::LibraryModel( LibraryInternalDatabase &db, QObject *parent )
     connect( this, &LibraryModel::fileFound, this, &LibraryModel::handleFilesFound );
     connect( &mScanFilesThread, &QThread::started, this, &LibraryModel::findFiles, Qt::DirectConnection );
     connect( &mScanFilesThread, &QThread::started, this, [ this ] {
-        setMessage( "Importing Games..." );
+        setMessage( QStringLiteral( "Importing Games..." ) );
     } );
     connect( &mScanFilesThread, &QThread::finished, this, [ this ] {
 
@@ -57,26 +57,26 @@ LibraryModel::LibraryModel( LibraryInternalDatabase &db, QObject *parent )
         setCancelScan( false );
         mImportUrl.clear();
         setProgress( 0.0 );
-        setMessage( "Finished..." );
+        setMessage( QStringLiteral( "Finished..." ) );
 
     } );
 
     connect( this, &LibraryModel::cancelScanChanged, &mMetaDataDatabse, &MetaDataDatabase::setCancel );
 
     connect( &mGetMetadataThread, &QThread::started, this, [ this ] {
-        setMessage( "Scraping Artwork..." );
+        setMessage( QStringLiteral( "Scraping Artwork..." ) );
     } );
     connect( &mGetMetadataThread, &QThread::finished, this, [ this ] {
 
         qCDebug( phxLibrary ) << "mGetMetadataThread Stopped...";
         setProgress( 0.0 );
         setCancelScan( false );
-        setMessage( "Finished..." );
+        setMessage( QStringLiteral( "Finished..." ) );
 
     } );
 
     connect( &mMetaDataDatabse, &MetaDataDatabase::updateMetadata, this, &LibraryModel::setMetadata );
-    connect( this, &LibraryModel::calculateCheckSum, &mMetaDataDatabse, &MetaDataDatabase::getMetadata );
+    connect( this, &LibraryModel::signalFetchMetaData, &mMetaDataDatabse, &MetaDataDatabase::getMetadata );
 
 }
 
@@ -99,8 +99,8 @@ LibraryModel::~LibraryModel() {
     sync();
 
     QSettings settings;
-    settings.beginGroup( "Library" );
-    settings.setValue( "LastRowIndex", lastUpdatedRowID );
+    settings.beginGroup( QStringLiteral( "Library" ) );
+    settings.setValue( QStringLiteral( "LastRowIndex" ), lastUpdatedRowID );
 
 }
 
@@ -168,7 +168,7 @@ void LibraryModel::updateCount() {
 
     QSqlQuery query( database() );
 
-    query.exec( "SELECT Count(*) FROM " + LibraryInternalDatabase::tableName );
+    query.exec( QStringLiteral( "SELECT Count(*) FROM " ) + LibraryInternalDatabase::tableName );
 
     while( query.next() ) {
         qmlCount = query.value( 0 ).toInt();
@@ -224,16 +224,16 @@ void LibraryModel::updateUknownMetadata() {
     }
 
 
-    static const QString fetchCheckSumStatement = "SELECT filename, rowIndex FROM "
-            + LibraryInternalDatabase::tableName
-            + " WHERE artworkUrl = NULL";
+    static const QString fetchCheckSumStatement = QStringLiteral( "SELECT filename, rowIndex FROM " )
+                                                + LibraryInternalDatabase::tableName
+                                                + QStringLiteral( " WHERE artworkUrl = NULL" );
     database().transaction();
 
     QSqlQuery query( database() );
 
     if( !query.exec( fetchCheckSumStatement ) ) {
         qCWarning( phxLibrary ) << "startMetaDataScan() error: "
-                                << qPrintable( query.lastError().text() );
+                                << query.lastError().text();
         return;
     }
 
@@ -246,7 +246,7 @@ void LibraryModel::updateUknownMetadata() {
         metaData.rowIndex = query.value( 1 ).toInt();
         metaData.updated = false;
         metaData.progress = ( i / static_cast<qreal>( count() ) ) * 100.0;
-        emit calculateCheckSum( std::move( metaData ) );
+        emit signalFetchMetaData( std::move( metaData ) );
 
         ++i;
     }
@@ -259,16 +259,16 @@ void LibraryModel::updateUknownMetadata() {
 
 void LibraryModel::resumeMetadataScan() {
     QSettings settings;
-    settings.beginGroup( "Library" );
-    auto startingRow = settings.value( "LastRowIndex" );
+    settings.beginGroup( QStringLiteral( "Library" ) );
+    auto startingRow = settings.value( QStringLiteral( "LastRowIndex" ) );
 
     if( !startingRow.isValid() || startingRow.toInt() == -1 ) {
         return;
     }
 
-    static const QString countRows = QString( "SELECT COUNT(*) FROM "
-                                     + LibraryInternalDatabase::tableName
-                                     + " WHERE rowIndex > ?" );
+    static const QString countRows = QStringLiteral( "SELECT COUNT(*) FROM " )
+                                   + LibraryInternalDatabase::tableName
+                                   + QStringLiteral( " WHERE rowIndex > ?" );
     database().transaction();
 
     QSqlQuery query( database() );
@@ -278,7 +278,7 @@ void LibraryModel::resumeMetadataScan() {
 
     if( !query.exec() ) {
         qCWarning( phxLibrary ) << "startMetaDataScan() error: "
-                                << qPrintable( query.lastError().text() );
+                                << query.lastError().text();
         return;
     }
 
@@ -299,16 +299,16 @@ void LibraryModel::resumeMetadataScan() {
         qCDebug( phxLibrary ) << "mGetMetadataThread Starting...";
     }
 
-    static const QString resumeMetadataStatement =   QString( "SELECT filename, rowIndex FROM "
-            + LibraryInternalDatabase::tableName
-            + " WHERE rowIndex > ?" );
+    static const QString resumeMetadataStatement = QStringLiteral( "SELECT filename, rowIndex FROM " )
+                                                 + LibraryInternalDatabase::tableName
+                                                 + QStringLiteral( " WHERE rowIndex > ?" );
 
     query.prepare( resumeMetadataStatement );
     query.addBindValue( startingRow );
 
     if( !query.exec() ) {
         qCWarning( phxLibrary ) << "startMetaDataScan() error: "
-                                << qPrintable( query.lastError().text() );
+                                << query.lastError().text();
         return;
     }
 
@@ -322,7 +322,7 @@ void LibraryModel::resumeMetadataScan() {
         metaData.updated = false;
         metaData.progress = ( i / static_cast<qreal>( rowCount ) ) * 100.0;
 
-        emit calculateCheckSum( std::move( metaData ) );
+        emit signalFetchMetaData( std::move( metaData ) );
         ++i;
 
     }
@@ -342,14 +342,15 @@ void LibraryModel::startMetaDataScan() {
     }
 
 
-    static const QString fetchCheckSumStatement = "SELECT filename, rowIndex FROM " + LibraryInternalDatabase::tableName;
+    static const auto fetchCheckSumStatement = QStringLiteral( "SELECT filename, rowIndex FROM " )
+                                                + LibraryInternalDatabase::tableName;
     database().transaction();
 
     QSqlQuery query( database() );
 
     if( !query.exec( fetchCheckSumStatement ) ) {
         qCWarning( phxLibrary ) << "startMetaDataScan() error: "
-                                << qPrintable( query.lastError().text() );
+                                <<  query.lastError().text();
         return;
     }
 
@@ -362,7 +363,7 @@ void LibraryModel::startMetaDataScan() {
         metaData.rowIndex = query.value( 1 ).toInt();
         metaData.updated = false;
         metaData.progress = ( i / static_cast<qreal>( count() ) ) * 100.0;
-        emit calculateCheckSum( std::move( metaData ) );
+        emit signalFetchMetaData( std::move( metaData ) );
 
         ++i;
     }
@@ -388,9 +389,10 @@ void LibraryModel::setMetadata( const GameMetaData metaData ) {
         qDebug() << "cancel Scan";
     }
 
-    static const QString updateDataStatement( "UPDATE " + LibraryInternalDatabase::tableName
-            + " SET artworkUrl = ?, sha1 = ?"
-            +   " WHERE rowIndex = ? " );
+    static const auto updateDataStatement = QStringLiteral( "UPDATE " )
+                                             + LibraryInternalDatabase::tableName
+                                             + QStringLiteral( " SET artworkUrl = ?, sha1 = ?" )
+                                             + QStringLiteral( " WHERE rowIndex = ? " );
 
 
     if( metaData.updated ) {
@@ -435,8 +437,10 @@ void LibraryModel::setMetadata( const GameMetaData metaData ) {
 
 void LibraryModel::handleFilesFound( const GameImportData importData ) {
 
-    static const QString statement = "INSERT INTO " + LibraryInternalDatabase::tableName
-                                     + " (title, system, fileName, timePlayed) " + "VALUES (?,?,?,?)";
+    static const auto statement = QStringLiteral( "INSERT INTO " )
+                                + LibraryInternalDatabase::tableName
+                                + QStringLiteral( " (title, system, fileName, timePlayed) " )
+                                + QStringLiteral( "VALUES (?,?,?,?)" );
 
     if( cancelScan() ) {
         return;
@@ -494,14 +498,14 @@ bool LibraryModel::getCueFileInfo( QFileInfo &fileInfo ) {
         auto line = file.readLine();
         QList<QByteArray> splitLine = line.split( ' ' );
 
-        if( splitLine.first().toUpper() == QByteArrayLiteral( "FILE" ) ) {
+        if( splitLine.first().toUpper() == "FILE" ) {
             QString baseName;
 
             for( int i = 1; i < splitLine.size() - 1; ++i ) {
 
                 auto bytes = splitLine.at( i );
 
-                bytes = bytes.replace( QByteArrayLiteral( "\"" ), QByteArrayLiteral( "" ) );
+                bytes = bytes.replace( "\"", "" );
 
                 if( i == splitLine.size() - 2 ) {
                     baseName += bytes;
@@ -623,7 +627,7 @@ void LibraryModel::findFiles() {
         }
 
         GameImportData importData;
-        importData.timePlayed = "00:00";
+        importData.timePlayed = QStringLiteral( "00:00" );
         importData.title = title;
         importData.filePath = absoluteFilePath;
         importData.importProgress = ( ( i + 1 )
@@ -706,7 +710,11 @@ bool LibraryModel::remove( int row, int count ) {
 
     database().transaction();
     QSqlQuery query( database() );
-    query.prepare( "DELETE FROM " + LibraryInternalDatabase::tableName + " WHERE systemID = ?" );
+
+    query.prepare( QStringLiteral( "DELETE FROM " )
+                   + LibraryInternalDatabase::tableName
+                   + QStringLiteral( " WHERE systemID = ?" ) );
+
     query.addBindValue( row );
 
     if( !query.exec() ) {
@@ -750,12 +758,12 @@ void LibraryModel::clear() {
 
     QSqlQuery query( database() );
 
-    if( !query.exec( "DELETE FROM " + LibraryInternalDatabase::tableName ) ) {
+    if( !query.exec( QStringLiteral( "DELETE FROM " ) + LibraryInternalDatabase::tableName ) ) {
         qDebug() << "SQLITE Deletion Error: " << query.lastError().text();
         return;
     }
 
-    setMessage( "Library Synced..." );
+    setMessage( QStringLiteral( "Library Synced..." ) );
 
     sync();
 
