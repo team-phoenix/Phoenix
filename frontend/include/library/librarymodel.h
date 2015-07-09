@@ -135,7 +135,7 @@ namespace Library {
             void progressChanged();
             void fileFound( const GameImportData importData );
             void cancelScanChanged( const bool cancel );
-            void calculateCheckSum( GameMetaData metaData );
+            void signalFetchMetaData( GameMetaData metaData );
 
         private:
             // Normal Variables

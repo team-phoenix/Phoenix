@@ -37,47 +37,47 @@ namespace Library {
                 break;
 
             case Platforms::GB:
-                stringValue = "Game Boy";
+                stringValue = QStringLiteral( "Game Boy" );
                 break;
 
             case Platforms::GBC:
-                stringValue = "Game Boy Color";
+                stringValue = QStringLiteral( "Game Boy Color" );
                 break;
 
             case Platforms::GBA:
-                stringValue = "Game Boy Advance";
+                stringValue = QStringLiteral( "Game Boy Advance" );
                 break;
 
             case Platforms::NES:
-                stringValue = "Nintendo Entertainment System";
+                stringValue = QStringLiteral( "Nintendo Entertainment System" );
                 break;
 
             case Platforms::SNES:
-                stringValue = "Super Nintendo";
+                stringValue = QStringLiteral( "Super Nintendo" );
                 break;
 
             case Platforms::N64:
-                stringValue = "Nintendo 64";
+                stringValue = QStringLiteral( "Nintendo 64" );
                 break;
 
             case Platforms::PSX:
-                stringValue = "Sony PlayStation";
+                stringValue = QStringLiteral( "Sony PlayStation" );
                 break;
 
             case Platforms::GENESIS:
-                stringValue = "Sega Genesis";
+                stringValue = QStringLiteral( "Sega Genesis" );
                 break;
 
             case Platforms::LYNX:
-                stringValue = "Atari Lynx";
+                stringValue = QStringLiteral( "Atari Lynx" );
                 break;
 
             case Platforms::WII:
-                stringValue = "Nintendo Wii";
+                stringValue = QStringLiteral( "Nintendo Wii" );
                 break;
 
             case Platforms::GAMECUBE:
-                stringValue = "Nintendo Gamecube";
+                stringValue = QStringLiteral( "Nintendo Gamecube" );
                 break;
 
             default:
