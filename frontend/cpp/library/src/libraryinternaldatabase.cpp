@@ -80,7 +80,7 @@ bool LibraryInternalDatabase::createSchema() {
             QStringLiteral( "   /* file info */" ) +
             QStringLiteral( "   absolutePath TEXT,\n" ) +
             QStringLiteral( "   absoluteFilePath TEXT UNIQUE NOT NULL,\n" ) +
-            QStringLiteral( "   sha1 TEXT,\n" ) +
+            QStringLiteral( "   sha1 TEXT UNIQUE NOT NULL,\n" ) +
             QStringLiteral( "   crc32 TEXT\n" ) +
             QStringLiteral( ")" ) );
 

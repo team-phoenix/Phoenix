@@ -1,6 +1,6 @@
 TEMPLATE += app
 
-QT += qml quick widgets concurrent sql multimedia
+QT += qml quick widgets sql multimedia network
 
 CONFIG += c++11 lib_bundle
 
@@ -71,14 +71,16 @@ SOURCES += cpp/main.cpp \
            cpp/library/src/libraryinternaldatabase.cpp \
            cpp/library/src/platforms.cpp \
            cpp/library/src/metadatadatabase.cpp \
-           cpp/library/src/libraryworker.cpp
+           cpp/library/src/libraryworker.cpp \
+    cpp/library/include/imagecacher.cpp
 
 HEADERS += cpp/library/include/librarymodel.h \
            cpp/library/include/libraryinternaldatabase.h \
            cpp/library/include/libretro_cores_info_map.h \
            cpp/library/include/platforms.h \
            cpp/library/include/metadatadatabase.h \
-           cpp/library/include/libraryworker.h
+           cpp/library/include/libraryworker.h \
+    cpp/library/include/imagecacher.h
 
 
 # Will build the final executable in the main project directory.

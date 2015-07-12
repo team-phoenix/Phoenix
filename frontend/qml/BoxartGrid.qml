@@ -2,6 +2,8 @@ import QtQuick 2.3
 import QtQuick.Layouts 1.1
 import QtGraphicalEffects 1.0
 
+import vg.phoenix.cache 1.0
+
 Rectangle {
     id: boxartGridBackground;
     width: 100;
@@ -108,7 +110,7 @@ Rectangle {
 
 
                         asynchronous: true;
-                        source: artworkUrl;
+                        source: imageCacher.cachedUrl;
 
                         verticalAlignment: Image.AlignBottom;
 
@@ -118,6 +120,19 @@ Rectangle {
                         }
 
                         fillMode: Image.PreserveAspectFit;
+
+                        ImageCacher {
+                            id: imageCacher;
+
+                            imageUrl: artworkUrl;
+
+                            identifier: sha1;
+
+                            Component.onCompleted: {
+                                cache();
+                            }
+
+                        }
 
                     }
                 }

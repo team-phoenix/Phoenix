@@ -6,13 +6,14 @@
 #include "inputmanager.h"
 #include "librarymodel.h"
 #include "libraryworker.h"
+#include "imagecacher.h"
 
 #include <memory.h>
 
 void phoenixDebugMessageHandler( QtMsgType type, const QMessageLogContext &context, const QString &msg ) {
 
     // Change this QString to reflect the message you want to get a stack trace for
-    if( QString( msg ).contains( "Timers cannot be stopped from another thread" ) ) {
+    if( QString( msg ).contains( QStringLiteral( "Timers cannot be stopped from another thread" ) ) ) {
 
         int breakPointOnThisLine( 0 );
         Q_UNUSED( breakPointOnThisLine );
@@ -51,10 +52,10 @@ int main( int argc, char *argv[] ) {
 
     QApplication app( argc, argv );
 
-    QApplication::setApplicationDisplayName( "Phoenix" );
-    QApplication::setApplicationName( "Phoenix" );
-    QApplication::setApplicationVersion( "1.0" );
-    QApplication::setOrganizationDomain( "http://phoenix.vg/" );
+    QApplication::setApplicationDisplayName( QStringLiteral( "Phoenix" ) );
+    QApplication::setApplicationName( QStringLiteral( "Phoenix" ) );
+    QApplication::setApplicationVersion( QStringLiteral( "1.0" ) );
+    QApplication::setOrganizationDomain( QStringLiteral( "http://phoenix.vg/" ) );
 
     QQmlApplicationEngine engine;
 
@@ -67,6 +68,8 @@ int main( int argc, char *argv[] ) {
 
 
     qmlRegisterType<Library::LibraryModel>( "vg.phoenix.models", 1, 0, "LibraryModel" );
+    qmlRegisterType<Library::ImageCacher>( "vg.phoenix.cache", 1, 0, "ImageCacher" );
+
     qRegisterMetaType<Library::GameData>( "GameData" );
 
     engine.load( QUrl( QStringLiteral( "qrc:/main.qml" ) ) );

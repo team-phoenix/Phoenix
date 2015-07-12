@@ -222,6 +222,7 @@ void LibraryModel::pauseInsert() {
 void LibraryModel::cancelInsert() {
     if( mWorkerThread.isRunning() ) {
         mLibraryWorker.setInsertCancelled( true );
+        
     }
 }
 
