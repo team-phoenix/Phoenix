@@ -37,6 +37,8 @@ Rectangle {
 
     LibraryModel {
         id: libraryModel;
+
+        Component.onCompleted: libraryModel.startWorkerThread();
     }
 
     BoxartGrid {

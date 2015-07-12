@@ -23,7 +23,6 @@ MetaDataDatabase::~MetaDataDatabase() {
 }
 
 void MetaDataDatabase::close() {
-    qDebug() << "CLosing meta";
     db.close();
 }
 

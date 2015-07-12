@@ -29,7 +29,7 @@ namespace Library {
         QString description;
 
         bool updated = false;
-        bool start = false;
+        qint64 fileID;
     };
 
     class LibraryWorker : public QObject {
@@ -41,8 +41,15 @@ namespace Library {
 
             bool insertCancelled();
             bool insertPaused();
-
             bool isRunning();
+            bool resumeQuitScan();
+
+            QString resumeInsertID();
+            QString resumeDirectory();
+
+            void setResumeInsertID( const QString id );
+            void setResumeDirectory( const QString directory );
+            void setResumeQuitScan( const bool resume );
 
         signals:
             void started();
@@ -58,7 +65,10 @@ namespace Library {
             void setInsertPaused( const bool paused );
 
             void prepareMetadata( GameData &gameData );
-            void findGameFiles( const QUrl url );
+            void findGameFiles( const QString localUrl );
+
+            void eventLoopStarted();
+
 
         private slots:
             void prepareGameData( QQueue<QFileInfo> &queue );
@@ -69,9 +79,11 @@ namespace Library {
             QMutex mMutex;
             QStringList mFileFilters;
             QQueue<QFileInfo> mFileInfoQueue;
-            QQueue<QDirIterator> mDirectoryQueue;
             bool mRunning;
-            int mCurrentCount;
+            bool qmlResumeQuitScan;
+
+            QString mResumeInsertID;
+            QString mResumeDirectory;
 
             MetaDataDatabase mMetaDatabase;
 

@@ -70,7 +70,6 @@ namespace Library {
             bool insertPaused();
             bool insertCancelled();
 
-
             // QML Setters
             void setRecursiveScan( const bool scan );
             void setMessage( const QString message );
@@ -121,6 +120,11 @@ namespace Library {
 
             void closeWorkerThread();
 
+            void startWorkerThread()
+            {
+                mWorkerThread.start( QThread::HighPriority );
+            }
+
         private slots:
 
             // handleInsertGame runs on the main QML thread, and is
@@ -142,7 +146,7 @@ namespace Library {
             void insertCancelledChanged();
             void insertPausedChanged();
 
-            void insertGames( const QUrl url );
+            void insertGames( const QString url );
             void signalInsertCancelled( const bool cancel );
             void signalInsertPaused( const bool paused );
 
@@ -163,11 +167,10 @@ namespace Library {
             // user cancels and import, or the import finishes.
             QThread mWorkerThread;
 
-            QString mLastUpdatedIdentifier;
-
             bool mTransaction;
             bool qmlInsertPaused;
             bool qmlInsertCancelled;
+
 
             LibraryWorker mLibraryWorker;
             // Used to find metadata for any game.

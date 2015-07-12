@@ -39,8 +39,6 @@ LibraryModel::LibraryModel( LibraryInternalDatabase &db, QObject *parent )
       qmlProgress( 0.0 ) {
 
     mLibraryWorker.moveToThread( &mWorkerThread );
-    mWorkerThread.start( QThread::HighPriority );
-
 
     mRoleNames = QSqlTableModel::roleNames();
     mRoleNames.insert( TitleRole, QByteArrayLiteral( "title" ) );
@@ -77,9 +75,11 @@ LibraryModel::LibraryModel( LibraryInternalDatabase &db, QObject *parent )
 
 
     // Listen to the Worker Thread.
+    connect( &mWorkerThread, &QThread::started, &mLibraryWorker, &LibraryWorker::eventLoopStarted );
     connect( &mWorkerThread, &QThread::started, this, [ this ] {
         qCDebug( phxLibrary ) << "mWorkerThread Started...";
     } );
+
 
     connect( &mWorkerThread, &QThread::finished, this, [ this ] {
         qCDebug( phxLibrary ) << "mWorkerThread Stopped...";
@@ -90,6 +90,10 @@ LibraryModel::LibraryModel( LibraryInternalDatabase &db, QObject *parent )
 LibraryModel::~LibraryModel() {
 
     closeWorkerThread();
+
+    if ( progress() > 0.0 ) {
+        sync();
+    }
 
     delete libraryDb;
 
@@ -267,16 +271,12 @@ void LibraryModel::handleUpdateGame( const GameData metaData ) {
 
     auto roundedProgress = static_cast<int>( metaData.importProgress );
 
-    mLastUpdatedIdentifier = metaData.sha1;
-
     if( roundedProgress != previousProgress ) {
         previousProgress = roundedProgress;
         setProgress( roundedProgress );
 
         if( roundedProgress == 100 ) {
             previousProgress = 0;
-
-            mLastUpdatedIdentifier = "";
 
             setProgress( roundedProgress );
 
@@ -294,22 +294,24 @@ void LibraryModel::handleInsertGame( const GameData importData ) {
                                   + QStringLiteral( " (title, system, absoluteFilePath, timePlayed, sha1, artworkUrl) " )
                                   + QStringLiteral( "VALUES (?,?,?,?,?, ?)" );
 
-    if( importData.start ) {
+
+
+    if( importData.fileID == 0 ) {
+        //beginInsertRows( QModelIndex(), count(), count() );
         transaction();
         setMessage( QStringLiteral( "Importing Games..." ) );
     }
 
-    static quint8 count = 0;
-    count++;
 
-    if( count == 50 ) {
+    /*
+    if( importData.fileID % 50 == 0 ) {
         qDebug() << "force sync";
-        count = 0;
         sync();
         transaction();
     }
+    */
 
-    //beginInsertRows( QModelIndex(), count(), count() );
+    mLibraryWorker.setResumeInsertID( importData.filePath );
 
     QSqlQuery query( database() );
 
@@ -322,7 +324,7 @@ void LibraryModel::handleInsertGame( const GameData importData ) {
     query.addBindValue( importData.artworkUrl );
 
     if( !query.exec() ) {
-        qDebug() << query.lastError().text();
+        qDebug() << "SQL Insertion Error: " << query.lastError().text();
     }
 
     // Limit how many times the progress is updated, to reduce strain on the render thread.
@@ -334,14 +336,15 @@ void LibraryModel::handleInsertGame( const GameData importData ) {
 
     if( static_cast<int>( progress() ) == 100 ) {
 
+        mLibraryWorker.setResumeInsertID( "" );
+        mLibraryWorker.setResumeDirectory( "" );
+
         setProgress( 0.0 );
         setMessage( QStringLiteral( "Import Synced..." ) );
 
-        count = 0;
         sync();
 
         updateCount();
-
 
         //endInsertRows();
 
@@ -395,12 +398,13 @@ void LibraryModel::setMessage( const QString message ) {
 
 void LibraryModel::append( const QUrl url ) {
 
+    auto localUrl = url.toLocalFile();
     if( mLibraryWorker.isRunning() ) {
         qDebug() << "Scan in already running. returning...";
         return;
     }
 
-    emit insertGames( std::move( url ) );
+    emit insertGames( std::move( localUrl ) );
 
 }
 

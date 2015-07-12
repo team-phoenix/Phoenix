@@ -7,6 +7,8 @@
 #include <QDir>
 #include <QCryptographicHash>
 #include <QCoreApplication>
+#include <QSettings>
+#include <QMutexLocker>
 
 using namespace Library;
 
@@ -15,7 +17,7 @@ LibraryWorker::LibraryWorker( QObject *parent )
       mInsertCancelled( false ),
       mInsertPaused( false ),
       mRunning( false ),
-      mCurrentCount( 0 ) {
+      qmlResumeQuitScan( false ) {
 
     for( auto &extension : platformMap.keys() ) {
         mFileFilters.append( "*." + extension );
@@ -27,63 +29,113 @@ LibraryWorker::LibraryWorker( QObject *parent )
 
     connect( this, &LibraryWorker::finished, this, [ this ] {
         setIsRunning( false );
-        mCurrentCount = 0;
     } );
 
 }
 
 LibraryWorker::~LibraryWorker() {
+
+    if( !resumeQuitScan() ) {
+        setResumeDirectory( "" );
+        setResumeInsertID( "" );
+    }
+
+    QSettings settings;
+    settings.beginGroup( QStringLiteral( "Library" ) );
+    settings.setValue( QStringLiteral( "ResumeInsertID" ), resumeInsertID() );
+    settings.setValue( QStringLiteral( "ResumeDirectory" ), resumeDirectory() );
+
     mMetaDatabase.close();
 }
 
-bool LibraryWorker::isRunning() {
-    mMutex.lock();
-    bool running = mRunning;
-    mMutex.unlock();
+void LibraryWorker::eventLoopStarted() {
 
-    return running;
+    if( resumeQuitScan() ) {
+        QSettings settings;
+
+        settings.beginGroup( QStringLiteral( "Library" ) );
+        auto value = settings.value( QStringLiteral( "ResumeInsertID" ) );
+        auto lastUsedPath = settings.value( QStringLiteral( "ResumeDirectory" ) );
+
+        if( value.isValid() && lastUsedPath.isValid() ) {
+            setResumeInsertID( value.toString() );
+            setResumeDirectory( lastUsedPath.toString() );
+
+            if( !resumeInsertID().isEmpty() ) {
+                findGameFiles( resumeDirectory() );
+            }
+        }
+    }
+}
+
+bool LibraryWorker::resumeQuitScan() {
+    QMutexLocker locker( &mMutex );
+    return qmlResumeQuitScan;
+}
+
+void LibraryWorker::setResumeQuitScan( const bool resume ) {
+    QMutexLocker locker( &mMutex );
+    qmlResumeQuitScan = resume;
+}
+
+QString LibraryWorker::resumeDirectory() {
+    QMutexLocker locker( &mMutex );
+    return mResumeDirectory;;
+}
+
+void LibraryWorker::setResumeDirectory( const QString directory ) {
+    QMutexLocker locker( &mMutex );
+    mResumeDirectory = directory;
+}
+
+QString LibraryWorker::resumeInsertID() {
+    QMutexLocker locker( &mMutex );
+    return mResumeInsertID;
+}
+
+void LibraryWorker::setResumeInsertID( const QString id ) {
+    QMutexLocker locker( &mMutex );
+    mResumeInsertID = id;
+}
+
+bool LibraryWorker::isRunning() {
+    QMutexLocker locker( &mMutex );
+    return mRunning;
 }
 
 void LibraryWorker::setIsRunning( const bool running ) {
-    mMutex.lock();
+    QMutexLocker locker( &mMutex );
     mRunning = running;
-    mMutex.unlock();
 }
 
 
 bool LibraryWorker::insertCancelled() {
-    mMutex.lock();
-    bool cancel = mInsertCancelled;
-    mMutex.unlock();
-
-    return cancel;
+    QMutexLocker locker( &mMutex );
+    return mInsertCancelled;
 }
 
 bool LibraryWorker::insertPaused() {
-    mMutex.lock();
-    bool paused = mInsertPaused;
-    mMutex.unlock();
-
-    return paused;
+    QMutexLocker locker( &mMutex );
+    return mInsertPaused;
 }
 
 void LibraryWorker::setInsertCancelled( const bool cancelled ) {
-    mMutex.lock();
+    QMutexLocker locker( &mMutex );
+
+    if( cancelled ) {
+        //mResumeDirectory.clear();
+        //mResumeInsertID.clear();
+    }
+
     mInsertCancelled = cancelled;
-    mMutex.unlock();
 }
 
 void LibraryWorker::setInsertPaused( const bool paused ) {
-
-    mMutex.lock();
+    QMutexLocker locker( &mMutex );
     mInsertPaused = paused;
-    mMutex.unlock();
-
 }
 
-void LibraryWorker::findGameFiles( const QUrl url ) {
-
-    auto localUrl = url.toLocalFile();
+void LibraryWorker::findGameFiles( const QString localUrl ) {
 
     QDir urlDirectory( localUrl );
 
@@ -95,14 +147,36 @@ void LibraryWorker::findGameFiles( const QUrl url ) {
 
     QDirIterator dirIter( localUrl, mFileFilters, QDir::Files, QDirIterator::NoIteratorFlags );
 
+    if( resumeQuitScan() && !resumeInsertID().isEmpty() ) {
 
-    while( dirIter.hasNext() ) {
-        mFileInfoQueue.enqueue( std::move( QFileInfo( dirIter.next() ) ) );
+        bool insert = false;
+
+        while( dirIter.hasNext() ) {
+            auto dir = dirIter.next();
+
+            if( dir == resumeInsertID() ) {
+                insert = true;
+                dir = dirIter.next();
+            }
+
+            if( insert ) {
+                mFileInfoQueue.enqueue( std::move( QFileInfo( dir ) ) );
+            }
+        }
     }
 
+    else {
+        while( dirIter.hasNext() ) {
+            mFileInfoQueue.enqueue( std::move( QFileInfo( dirIter.next() ) ) );
+        }
+    }
 
-    qDebug() << mFileInfoQueue.size();
     emit started();
+
+    if( resumeDirectory().isEmpty() ) {
+        setResumeDirectory( localUrl );
+    }
+
     mMetaDatabase.open();
     prepareGameData( mFileInfoQueue );
     mMetaDatabase.close();
@@ -186,7 +260,7 @@ void LibraryWorker::prepareGameData( QQueue<QFileInfo> &queue ) {
         importData.sha1 = sha1;
         importData.importProgress = progress;
         importData.system = system;
-        importData.start = ( i == 1 );
+        importData.fileID = i - 1;
 
 
         // Find MetaData.
