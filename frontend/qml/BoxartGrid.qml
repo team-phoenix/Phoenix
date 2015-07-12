@@ -9,6 +9,7 @@ Rectangle {
 
     GridView {
         id: gridView;
+
         model: libraryModel;
 
         // The max height and width of the grid's cells. This can be tweaked
@@ -149,7 +150,7 @@ Rectangle {
                         top: platformText.bottom;
 
                     }
-                    text: fileName;
+                    text: sha1//absolutePath;
                     color: "black"//root.normalFontColor;
                     Layout.fillWidth: true;
                     elide: Text.ElideMiddle;

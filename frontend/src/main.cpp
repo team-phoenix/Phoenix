@@ -5,7 +5,8 @@
 #include "videoitem.h"
 #include "inputmanager.h"
 #include "librarymodel.h"
-#include "metadatadatabase.h"
+#include "libraryworker.h"
+
 #include <memory.h>
 
 void phoenixDebugMessageHandler( QtMsgType type, const QMessageLogContext &context, const QString &msg ) {
@@ -58,20 +59,15 @@ int main( int argc, char *argv[] ) {
     QQmlApplicationEngine engine;
 
     // Necessary to quit properly
-    QObject::connect( &engine, &QQmlApplicationEngine::quit, &app, &QApplication::quit );
-
-
-    Library::LibraryInternalDatabase db;
-    std::unique_ptr<Library::LibraryModel> model( new Library::LibraryModel( db ) );
-
-    engine.rootContext()->setContextProperty( "libraryModel", model.get() );
+    // QObject::connect( &engine, &QQmlApplicationEngine::quit, &app, &QApplication::quit );
 
     // Register my types!
     VideoItem::registerTypes();
     InputManager::registerTypes();
 
-    qRegisterMetaType<Library::LibraryModel::GameImportData>( "GameImportData" );
-    qRegisterMetaType<Library::GameMetaData>( "GameMetaData" );
+
+    qmlRegisterType<Library::LibraryModel>( "vg.phoenix.models", 1, 0, "LibraryModel" );
+    qRegisterMetaType<Library::GameData>( "GameData" );
 
     engine.load( QUrl( QStringLiteral( "qrc:/main.qml" ) ) );
 

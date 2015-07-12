@@ -70,13 +70,15 @@ SOURCES += src/main.cpp \
            src/library/librarymodel.cpp \
            src/library/libraryinternaldatabase.cpp \
            src/library/platforms.cpp \
-           src/library/metadatadatabase.cpp
+           src/library/metadatadatabase.cpp \
+           src/library/libraryworker.cpp
 
 HEADERS += include/library/librarymodel.h \
            include/library/libraryinternaldatabase.h \
            include/library/libretro_cores_info_map.h \
            include/library/platforms.h \
-           include/library/metadatadatabase.h
+           include/library/metadatadatabase.h \
+           include/library/libraryworker.h
 
 
 # Will build the final executable in the main project directory.

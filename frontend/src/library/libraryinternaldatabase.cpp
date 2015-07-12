@@ -78,11 +78,10 @@ bool LibraryInternalDatabase::createSchema() {
             QStringLiteral( "   artworkUrl TEXT,\n" ) +
 
             QStringLiteral( "   /* file info */" ) +
-            QStringLiteral( "   directory TEXT,\n" ) +
-            QStringLiteral( "   fileName TEXT UNIQUE NOT NULL,\n" ) +
+            QStringLiteral( "   absolutePath TEXT,\n" ) +
+            QStringLiteral( "   absoluteFilePath TEXT UNIQUE NOT NULL,\n" ) +
             QStringLiteral( "   sha1 TEXT,\n" ) +
-            QStringLiteral( "   crc32 TEXT,\n" ) +
-            QStringLiteral( "   rom_count BOOLEAN\n" ) +
+            QStringLiteral( "   crc32 TEXT\n" ) +
             QStringLiteral( ")" ) );
 
     q.exec( QStringLiteral( "CREATE INDEX title_index ON " ) + tableName + QStringLiteral( " (title)" ) );
@@ -97,9 +96,9 @@ bool LibraryInternalDatabase::loadFixtures() {
     db.transaction();
     QSqlQuery q( db );
     const QString command = QStringLiteral( "INSERT INTO " )
-                          + tableName
-                          + QStringLiteral( " (title, system, time_played, artwork)" )
-                          + QStringLiteral( " VALUES (\"somegame %2\", \"test\", \"0h 0m 0s\", \"qrc:/assets/No-Art.png\")" );
+                            + tableName
+                            + QStringLiteral( " (title, system, time_played, artwork)" )
+                            + QStringLiteral( " VALUES (\"somegame %2\", \"test\", \"0h 0m 0s\", \"qrc:/assets/No-Art.png\")" );
 
     for( int i = 0; i < 10000; i++ ) {
         q.exec( command.arg( i ) );

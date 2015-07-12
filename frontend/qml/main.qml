@@ -18,23 +18,6 @@ ApplicationWindow {
     minimumHeight: 480;
     minimumWidth: 640;
 
-    Component.onCompleted: {
-        libraryModel.resumeMetadataScan();
-    }
-
-    HeaderBar {
-        id: headerBar;
-        z: 100;
-        height: 36;
-        state: "SELECTION";
-
-        /*MouseArea {
-            anchors.fill: parent;
-            onClicked: headerBar.state = "PLAYING_GAME";
-        }
-        */
-    }
-
     RowLayout {
         id: gameSelectionPane;
         anchors {

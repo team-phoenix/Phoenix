@@ -12,7 +12,15 @@
 #include "libraryinternaldatabase.h"
 #include "libretro_cores_info_map.h"
 #include "platforms.h"
-#include "metadatadatabase.h"
+#include "libraryworker.h"
+
+
+/* Known Bugs:
+ *      1. Scanning metadata doesn't start it's scan at the first included row form an import.
+ *
+ *
+ *
+ */
 
 namespace Library {
 
@@ -24,23 +32,17 @@ namespace Library {
 
             Q_PROPERTY( qreal progress READ progress NOTIFY progressChanged )
             Q_PROPERTY( QString message READ message WRITE setMessage NOTIFY messageChanged )
+            Q_PROPERTY( bool insertPaused READ insertPaused )
+            Q_PROPERTY( bool insertCancelled READ insertCancelled )
 
-       public:
+        public:
 
             // GameImportData is used to import game files into the SQL database.
             // This is a a simple data grouping to simplify signals and slots
 
-            struct GameImportData {
-                qreal importProgress;
-                QString system;
-                QString timePlayed;
-                QString title;
-                QString filePath;
-            };
-
             using QSqlTableModel::setFilter;
 
-            explicit LibraryModel( LibraryInternalDatabase &db, QObject *parent = 0 );
+            explicit LibraryModel( QObject *parent = 0 );
 
             ~LibraryModel();
 
@@ -53,17 +55,21 @@ namespace Library {
                 FileNameRole,
                 SystemPathRole,
                 RowIDRole,
+                SHA1Role,
             };
 
             // Getters
             bool select();
-            bool cancelScan();
+            bool transaction();
 
             //  QML Getters
             int count() const;
             qreal progress() const;
             bool recursiveScan() const;
             QString message() const;
+            bool insertPaused();
+            bool insertCancelled();
+
 
             // QML Setters
             void setRecursiveScan( const bool scan );
@@ -78,7 +84,7 @@ namespace Library {
 
         public slots:
             // Removes 1 row from the SQL model.
-            bool remove( int row, int count = 1 );
+            // bool remove( int row, int count = 1 );
 
             // Starts the import progress. The url is a folder or
             // file that the user wants to import.
@@ -98,72 +104,75 @@ namespace Library {
                             , QVariantList params
                             , bool preserveCurrentFilter );
 
-            // Cancels the import progress if the mScanFilesThread is running.
-            void cancel();
 
             void sync();
 
-            void startMetaDataScan();
+            //void startMetaDataScan();
 
-            void updateUknownMetadata();
+            //void updateUknownMetadata();
 
-            void resumeMetadataScan();
+            //void resumeMetadataScan();
+
+            void pauseInsert();
+
+            void resumeInsert();
+
+            void cancelInsert();
+
+            void closeWorkerThread();
 
         private slots:
 
-            // handleFilesFound runs on the main QML thread, and is
+            // handleInsertGame runs on the main QML thread, and is
             // where the SQL query statement is created and executed.
-            void handleFilesFound( const GameImportData importData );
+            void handleInsertGame( const GameData importData );
 
-            // This function is connected to the mScanFilesThread.
+            // This function is connected to the mWorkerThread.
             // This iterates through the mImportUrl, if the url is
             // a folder, and emits the filesFound signal.
 
-            // findFiles is needed to run directly on the mScanFilesThread
-            // so make sure that this signal is connected with a Qt::DirectionConnection;
-            // this is because the LibraryModel is not moved into the mScanFilesThread,
-            // nor should it be.
-            void findFiles();
-
             // This needs to be run on the main thread.
-            void setMetadata( const GameMetaData metaData );
+            void handleUpdateGame( const GameData metaData );
 
         signals:
             void countChanged();
             void messageChanged();
             void recursiveScanChanged();
             void progressChanged();
-            void fileFound( const GameImportData importData );
-            void cancelScanChanged( const bool cancel );
-            void signalFetchMetaData( GameMetaData metaData );
+            void insertCancelledChanged();
+            void insertPausedChanged();
+
+            void insertGames( const QUrl url );
+            void signalInsertCancelled( const bool cancel );
+            void signalInsertPaused( const bool paused );
 
         private:
+
+            explicit LibraryModel( LibraryInternalDatabase &db, QObject *parent = 0 );
+            explicit LibraryModel( LibraryInternalDatabase *db, QObject *parent = 0 );
+
             // Normal Variables
             QStringList mFileFilter;
             QHash<int, QByteArray> mRoleNames;
             QVariantList params;
-            QMutex scanMutex;
-            // Used to find metadata for any game.
-            MetaDataDatabase mMetaDataDatabse;
-            int lastUpdatedRowID;
-
-            // Is true when the startMetaDataScan() function has started and
-            // is false when it's completeled. This is used to syncronize the
-            // setMetadata() function.
-            bool mMetaDataEmitted;
+            QMutex mMutex;
+            LibraryInternalDatabase *libraryDb;
 
             // This thread is started when a user wants to import
             // a games folder. Currently, the thread quits whenever the
             // user cancels and import, or the import finishes.
-            QThread mScanFilesThread;
+            QThread mWorkerThread;
 
-            // This thread is started when metadata, such as artwork, is being found for a game.
-            QThread mGetMetadataThread;
+            QString mLastUpdatedIdentifier;
 
-            // mImportUrl is the url of the folder or file that is
-            // being scanned and imported.
-            QUrl mImportUrl;
-            bool mCancelScan;
+            bool mTransaction;
+            bool qmlInsertPaused;
+            bool qmlInsertCancelled;
+
+            LibraryWorker mLibraryWorker;
+            // Used to find metadata for any game.
+            MetaDataDatabase mMetaDataDatabse;
+
 
             // QML Variables
             int qmlCount;
@@ -171,20 +180,12 @@ namespace Library {
             qreal qmlProgress;
             QString qmlMessage;
 
+
             // QML Setters
             void setProgress( const qreal progress );
 
             // Normal Setters
-            void setCancelScan( const bool scan );
-
-
-            // Helper Functions
-            void checkHeaderOffsets( const QFileInfo &fileInfo, QString &platform );
-            bool getCueFileInfo( QFileInfo &fileInfo );
-
-
     };
-
 
 }
 

@@ -16,6 +16,7 @@ Item {
     property int topPadding: 24;
     property int bottomPadding: -36;
 
+
     transitions: Transition {
         NumberAnimation { properties: "x"; easing.type: Easing.Linear; duration: 900 }
     }
@@ -113,8 +114,26 @@ Item {
                         }
 
                         text: qsTr("Cancel Import");
-                        onClicked: libraryModel.cancel();
+                        onClicked: {
+                            libraryModel.cancelInsert();
+                        }
                     }
+
+                    Button {
+                        anchors {
+                            verticalCenter: parent.verticalCenter;
+                        }
+
+                        text: qsTr("Pause Import");
+                        onClicked: {
+                            if ( libraryModel.insertPaused )
+                                libraryModel.resumeInsert();
+
+                            else
+                                libraryModel.pauseInsert();
+                        }
+                    }
+
 
                     Label {
                         anchors {
