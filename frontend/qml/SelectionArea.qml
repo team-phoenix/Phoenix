@@ -3,6 +3,8 @@ import QtQuick.Layouts 1.1
 import QtQuick.Controls 1.2
 import QtGraphicalEffects 1.0
 
+import vg.phoenix.models 1.0
+
 Item {
     width: 100
     height: 6
@@ -35,9 +37,15 @@ Item {
             ScrollView {
                 Layout.fillHeight: true;
                 Layout.fillWidth: true;
+
                 ListView {
+                    id: listView;
                     spacing: 0;
-                    model: ListModel {
+                    model: PlatformsModel {
+                        id: platformsModel;
+
+                    }
+                        /*ListModel {
                         ListElement { platform: "Nintendo Entertainment System"; }
                         ListElement { platform: "Super Nintendo"; }
                         ListElement { platform: "Sega Genesis"; }
@@ -59,14 +67,15 @@ Item {
                         ListElement { platform: "Nintendo Entertainment System"; }
                         ListElement { platform: "Nintendo Entertainment System"; }
 
-                    }
+                    }*/
 
-                    delegate: Item {
+                    delegate: Rectangle {
+                        color: "yellow";
                         height: 25;
                         Layout.fillWidth: true;
 
                         Text {
-                            text: platform;
+                            text: listView.model.get( index );
                             anchors {
                                 verticalCenter: parent.verticalCenter;
                                 left: parent.left;
@@ -78,7 +87,16 @@ Item {
                             }
 
                             color: root.normalFontColor;
+
+                            MouseArea {
+                                anchors.fill: parent;
+                                onClicked: {
+                                    //platformsModel.move( index, index + 1 );
+                                }
+                            }
                         }
+
+
                     }
                 }
             }

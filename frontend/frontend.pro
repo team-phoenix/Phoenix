@@ -64,24 +64,25 @@ linux {
 
 }
 
-INCLUDEPATH += cpp/library/include cpp/library/src
+INCLUDEPATH += cpp/library
 
 SOURCES += cpp/main.cpp \
-           cpp/library/src/librarymodel.cpp \
-           cpp/library/src/libraryinternaldatabase.cpp \
-           cpp/library/src/platforms.cpp \
-           cpp/library/src/metadatadatabase.cpp \
-           cpp/library/src/libraryworker.cpp \
-    cpp/library/include/imagecacher.cpp
+           cpp/library/librarymodel.cpp \
+           cpp/library/libraryinternaldatabase.cpp \
+           cpp/library/platforms.cpp \
+           cpp/library/metadatadatabase.cpp \
+           cpp/library/libraryworker.cpp \
+           cpp/library/imagecacher.cpp \
+           cpp/library/platformsmodel.cpp
 
-HEADERS += cpp/library/include/librarymodel.h \
-           cpp/library/include/libraryinternaldatabase.h \
-           cpp/library/include/libretro_cores_info_map.h \
-           cpp/library/include/platforms.h \
-           cpp/library/include/metadatadatabase.h \
-           cpp/library/include/libraryworker.h \
-    cpp/library/include/imagecacher.h
-
+HEADERS += cpp/library/librarymodel.h \
+           cpp/library/libraryinternaldatabase.h \
+           cpp/library/libretro_cores_info_map.h \
+           cpp/library/platforms.h \
+           cpp/library/metadatadatabase.h \
+           cpp/library/libraryworker.h \
+           cpp/library/imagecacher.h \
+           cpp/library/platformsmodel.h
 
 # Will build the final executable in the main project directory.
 TARGET = ../phoenix

@@ -7,6 +7,7 @@
 #include "librarymodel.h"
 #include "libraryworker.h"
 #include "imagecacher.h"
+#include "platformsmodel.h"
 
 #include <memory.h>
 
@@ -67,6 +68,7 @@ int main( int argc, char *argv[] ) {
     InputManager::registerTypes();
 
 
+    qmlRegisterType<Library::PlatformsModel>( "vg.phoenix.models", 1, 0, "PlatformsModel" );
     qmlRegisterType<Library::LibraryModel>( "vg.phoenix.models", 1, 0, "LibraryModel" );
     qmlRegisterType<Library::ImageCacher>( "vg.phoenix.cache", 1, 0, "ImageCacher" );
 

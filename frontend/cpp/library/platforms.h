@@ -11,6 +11,7 @@ namespace Library {
 
     enum class Platforms {
         Unknown = 0,
+
         GB = 1,
         GBC = 2,
 
@@ -33,29 +34,29 @@ namespace Library {
 
     // If ambiguous files extensions are used, use Platforms::Unknown.
     static const QHash<QString, QString> platformMap {
-        { QStringLiteral( "sfc" ) ,  platformToString( Platforms::SNES ) }, // BSNES
+        { QStringLiteral( "sfc" ), platformToString( Platforms::SNES ) }, // BSNES
         { QStringLiteral( "smc" ), platformToString( Platforms::SNES )   }, // BSNES
         { QStringLiteral( "bml" ), platformToString( Platforms::SNES )   }, // BSNES
 
-        { QStringLiteral( "nes") , platformToString( Platforms::NES )   },  // Nestopia
-        { QStringLiteral( "fds") , platformToString( Platforms::NES )   },  // Nestopia
-        { QStringLiteral( "unif") , platformToString( Platforms::NES )   }, // Fceumm
+        { QStringLiteral( "nes" ), platformToString( Platforms::NES )   }, // Nestopia
+        { QStringLiteral( "fds" ), platformToString( Platforms::NES )   }, // Nestopia
+        { QStringLiteral( "unif" ), platformToString( Platforms::NES )   }, // Fceumm
 
         // Don't use these until it's actually supported by the frontend.
-        //{ QStringLiteral( "n64") , platformToString( Platforms::N64 )   }, // Mupen64plus
-        //{ QStringLiteral( "z64") , platformToString( Platforms::N64 )  }, // Mupen64plus
-        //{ QStringLiteral( "v64") , platformToString( Platforms::N64 )   }, // Mupen64plus
+        //{ QStringLiteral( "n64" ), platformToString( Platforms::N64 )   }, // Mupen64plus
+        //{ QStringLiteral( "z64" ), platformToString( Platforms::N64 )  }, // Mupen64plus
+        //{ QStringLiteral( "v64" ), platformToString( Platforms::N64 )   }, // Mupen64plus
 
-        { QStringLiteral( "gba") , platformToString( Platforms::GBA )   }, // MGBA
-        { QStringLiteral( "agb") , platformToString( Platforms::GBA )  }, // MGBA
-        { QStringLiteral( "gbz") , platformToString( Platforms::GBA ) }, // MGBA
+        { QStringLiteral( "gba" ), platformToString( Platforms::GBA )   }, // MGBA
+        { QStringLiteral( "agb" ), platformToString( Platforms::GBA )  }, // MGBA
+        { QStringLiteral( "gbz" ), platformToString( Platforms::GBA ) }, // MGBA
 
-        { QStringLiteral( "ngp") , platformToString( Platforms::NEOGEO ) }, // Mednafen NGP
-        { QStringLiteral( "ngc") , platformToString( Platforms::NEOGEO ) }, // Mednafen NGP
+        { QStringLiteral( "ngp" ), platformToString( Platforms::NEOGEO ) }, // Mednafen NGP
+        { QStringLiteral( "ngc" ), platformToString( Platforms::NEOGEO ) }, // Mednafen NGP
 
-        { QStringLiteral( "lnx") , platformToString( Platforms::LYNX ) }, // Handy
+        { QStringLiteral( "lnx" ), platformToString( Platforms::LYNX ) }, // Handy
 
-        { QStringLiteral( "cue"), platformToString( Platforms::Unknown ) }, // Mednafen PSX, and others...
+        { QStringLiteral( "cue" ), platformToString( Platforms::Unknown ) }, // Mednafen PSX, and others...
 
     };
 
