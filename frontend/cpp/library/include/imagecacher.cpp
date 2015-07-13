@@ -18,23 +18,22 @@ ImageCacher::ImageCacher( QObject *parent )
 
 void ImageCacher::cache() {
 
-    if ( imageUrl().isEmpty() )
+    static const auto creation = ImageCacher::createCachePath();
+    Q_UNUSED( creation );
+
+    if( imageUrl().isEmpty() ) {
         return;
+    }
 
     auto urlString = imageUrl().toString();
     mImageType = QFileInfo( urlString ).suffix();
-
-    QDir cacheDir( cacheDirectory );
-
-    if( !cacheDir.exists() ) {
-        Q_ASSERT( cacheDir.mkpath( cacheDir.absolutePath() ) );
-    }
 
     auto cachedFile = cacheDirectory + QDir::separator() + identifier() + "." + mImageType;
 
     if( !QFile::exists( cachedFile ) && imageUrl().isValid() ) {
 
-        auto *reply = mNetworkManager.get( QNetworkRequest( imageUrl() ) );
+        QNetworkRequest request( imageUrl() );
+        auto *reply = mNetworkManager.get( request );
 
         reply->setProperty( "cachedAbsoluteFilePath", cachedFile );
 
@@ -42,6 +41,7 @@ void ImageCacher::cache() {
                  , this, SLOT( handleRequestError( QNetworkReply::NetworkError ) ) );
 
         connect( reply, &QNetworkReply::downloadProgress, this, &ImageCacher::handleRequestProgress );
+        connect( reply, &QNetworkReply::sslErrors, this, &ImageCacher::handleSSLErrors );
 
         return;
     }
@@ -77,6 +77,16 @@ void ImageCacher::setCachedUrl( const QUrl url ) {
     emit cachedUrlChanged();
 }
 
+bool ImageCacher::createCachePath() {
+    QDir cacheDir( cacheDirectory );
+
+    if( !cacheDir.exists() ) {
+        return cacheDir.mkpath( cacheDir.absolutePath() );
+    }
+
+    return true;
+}
+
 void ImageCacher::handleRequest( QNetworkReply *reply ) {
 
     if( !reply->error() ) {
@@ -100,7 +110,6 @@ void ImageCacher::handleRequest( QNetworkReply *reply ) {
 
     }
 
-
     reply->deleteLater();
 }
 
@@ -113,6 +122,12 @@ void ImageCacher::handleRequestError( QNetworkReply::NetworkError error ) {
 }
 
 void ImageCacher::handleRequestProgress( qint64 bytesRecieved, qint64 bytesTotal ) {
-    qCDebug( phxLibrary ) << "Downloading Image: "
-                          << ( bytesRecieved / static_cast<qreal>( bytesTotal ) ) * 100.0;
+    Q_UNUSED( bytesRecieved );
+    Q_UNUSED( bytesTotal );
+    //qCDebug( phxLibrary ) << "Downloading Image: "
+      //                    << ( bytesRecieved / static_cast<qreal>( bytesTotal ) ) * 100.0;
+}
+
+void ImageCacher::handleSSLErrors( const QList<QSslError> &errors ) {
+    Q_UNUSED( errors );
 }

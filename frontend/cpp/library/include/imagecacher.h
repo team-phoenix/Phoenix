@@ -9,14 +9,15 @@
 #include <QStandardPaths>
 #include <QDir>
 #include <QApplication>
+#include <QString>
 
 namespace  Library {
 
     static const QString cacheDirectory = QStandardPaths::writableLocation( QStandardPaths::CacheLocation )
-                                        + QDir::separator()
-                                        + QStringLiteral( "Phoenix" )
-                                        + QDir::separator()
-                                        + QStringLiteral( "Artwork" );
+                                          + QDir::separator()
+                                          + QStringLiteral( "Phoenix" )
+                                          + QDir::separator()
+                                          + QStringLiteral( "Artwork" );
 
     static const QString qmlFilePrefix = QStringLiteral( "file://" );
 
@@ -42,6 +43,8 @@ namespace  Library {
 
             void setCachedUrl( const QUrl url );
 
+            static bool createCachePath();
+
         private:
             QNetworkAccessManager mNetworkManager;
 
@@ -59,6 +62,7 @@ namespace  Library {
             void handleRequest( QNetworkReply *reply );
             void handleRequestError( QNetworkReply::NetworkError );
             void handleRequestProgress( qint64 bytesRecieved, qint64 bytesTotal );
+            void handleSSLErrors( const QList<QSslError> &errors );
 
         signals:
             void cachedUrlChanged();
