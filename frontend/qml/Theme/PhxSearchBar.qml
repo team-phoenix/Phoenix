@@ -2,6 +2,9 @@ import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Styles 1.2
 
+import vg.phoenix.themes 1.0
+import vg.phoenix.models 1.0
+
 TextField {
     id: searchBar;
     width: 225;
@@ -44,7 +47,8 @@ TextField {
         }
     }*/
 
-    textColor: root.normalFontColor;
+    textColor: PhxTheme.common.baseFontColor;
+
     style: TextFieldStyle {
         background: Rectangle {
             color: "red";
@@ -61,7 +65,7 @@ TextField {
         running: false;
         repeat: false;
         onTriggered: {
-            libraryModel.setFilter( "title LIKE ?", [ '%' + searchBar.text + '%' ], true );
+            libraryModel.setFilter( LibraryModel.TitleRole, [ '%' + searchBar.text + '%' ] );
         }
 
     }

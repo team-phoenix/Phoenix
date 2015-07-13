@@ -4,6 +4,7 @@ import QtGraphicalEffects 1.0
 import QtQuick.Controls 1.2
 
 import vg.phoenix.cache 1.0
+import vg.phoenix.themes 1.0
 
 Rectangle {
     id: boxartGridBackground;
@@ -145,7 +146,8 @@ Rectangle {
                     Text {
                         id: titleText;
                         text: rowIndex//title;
-                        color: "black"//root.normalFontColor;
+
+                        color: PhxTheme.common.baseFontColor;
                         Layout.fillWidth: true;
                         elide: Text.ElideRight;
                     }
@@ -158,7 +160,7 @@ Rectangle {
                         }
 
                         text: system;
-                        color: "black"//root.normalFontColor;
+                        color: PhxTheme.common.baseFontColor;
                         Layout.fillWidth: true;
                         elide: Text.ElideRight;
                     }
@@ -170,7 +172,7 @@ Rectangle {
 
                         }
                         text: sha1//absolutePath;
-                        color: "black"//root.normalFontColor;
+                        color: PhxTheme.common.baseFontColor;
                         Layout.fillWidth: true;
                         elide: Text.ElideMiddle;
                     }

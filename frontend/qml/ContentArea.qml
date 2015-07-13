@@ -3,7 +3,6 @@ import QtQuick.Layouts 1.1
 
 import vg.phoenix.models 1.0
 
-
 Rectangle {
     id: contentArea;
     height: 200;

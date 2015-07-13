@@ -4,6 +4,7 @@ import QtQuick.Controls 1.2
 import QtGraphicalEffects 1.0
 
 import vg.phoenix.models 1.0
+import vg.phoenix.themes 1.0
 
 Item {
     width: 100
@@ -32,6 +33,13 @@ Item {
                 height: 100;
                 Layout.fillWidth: true;
                 color: "orange";
+
+                Button {
+                    anchors.centerIn: parent;
+                    text: qsTr( "All" );
+                    onClicked: contentArea.contentLibraryModel.setFilter( "system LIKE ?", [ "%%" ], true );
+
+                }
             }
 
             ScrollView {
@@ -45,57 +53,65 @@ Item {
                         id: platformsModel;
 
                     }
-                        /*ListModel {
-                        ListElement { platform: "Nintendo Entertainment System"; }
-                        ListElement { platform: "Super Nintendo"; }
-                        ListElement { platform: "Sega Genesis"; }
-                        ListElement { platform: "Nintendo Entertainment System"; }
-                        ListElement { platform: "Nintendo Entertainment System"; }
-                        ListElement { platform: "Nintendo Entertainment System"; }
-                        ListElement { platform: "Nintendo Entertainment System"; }
-                        ListElement { platform: "Nintendo Entertainment System"; }
-                        ListElement { platform: "Nintendo Entertainment System"; }
-                        ListElement { platform: "Nintendo Entertainment System"; }
-                        ListElement { platform: "Nintendo Entertainment System"; }
-                        ListElement { platform: "Nintendo Entertainment System"; }
-                        ListElement { platform: "Nintendo Entertainment System"; }
-                        ListElement { platform: "Nintendo Entertainment System"; }
-                        ListElement { platform: "Nintendo Entertainment System"; }
-                        ListElement { platform: "Nintendo Entertainment System"; }
-                        ListElement { platform: "Nintendo Entertainment System"; }
-                        ListElement { platform: "Nintendo Entertainment System"; }
-                        ListElement { platform: "Nintendo Entertainment System"; }
-                        ListElement { platform: "Nintendo Entertainment System"; }
 
-                    }*/
+                    header: Rectangle {
+                        color: "lightblue";
+                        height: 36;
 
-                    delegate: Rectangle {
-                        color: "yellow";
-                        height: 25;
-                        Layout.fillWidth: true;
+                        anchors {
+                            left: parent.left;
+                            right: parent.right;
+                        }
 
                         Text {
+                            text: qsTr( "SYSTEMS" );
+                            anchors {
+                                verticalCenter: parent.verticalCenter;
+                                left: parent.left;
+                                leftMargin: 12;
+                            }
+
+                            font {
+                                pixelSize: PhxTheme.sectionArea.headerFontSize;
+                                bold: true;
+                            }
+
+                            color: PhxTheme.common.baseFontColor;
+                        }
+                    }
+
+                    delegate: Rectangle {
+                        color: index % 2 == 0 ? "yellow" : "lightgreen";
+                        height: 24;
+
+                        anchors {
+                            left: parent.left;
+                            right: parent.right;
+                        }
+
+                        Text {
+                            id: platformText;
                             text: listView.model.get( index );
                             anchors {
                                 verticalCenter: parent.verticalCenter;
                                 left: parent.left;
-                                leftMargin:  12;
+                                leftMargin:  24;
                             }
 
                             font {
-                                pixelSize: 12;
+                                pixelSize: PhxTheme.sectionArea.normalFontSize;
                             }
 
-                            color: root.normalFontColor;
+                            color: PhxTheme.common.baseFontColor;
 
-                            MouseArea {
-                                anchors.fill: parent;
-                                onClicked: {
-                                    //platformsModel.move( index, index + 1 );
-                                }
-                            }
                         }
 
+                        MouseArea {
+                            anchors.fill: parent;
+                            onClicked: {
+                                contentArea.contentLibraryModel.setFilter( LibraryModel.SystemRole, platformText.text );
+                            }
+                        }
 
                     }
                 }

@@ -13,8 +13,6 @@ ApplicationWindow {
     title: qsTr("Phoenix");
     color: "black";
 
-    property color normalFontColor: "black"//"#f1f1f1";
-
     minimumHeight: 480;
     minimumWidth: 640;
 
@@ -33,7 +31,7 @@ ApplicationWindow {
                 bottom: parent.bottom;
             }
 
-            width: 250;
+            width: 275;
             z: contentArea.z + 1;
         }
 

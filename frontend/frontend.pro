@@ -83,7 +83,6 @@ HEADERS += cpp/library/librarymodel.h \
            cpp/library/libraryworker.h \
            cpp/library/imagecacher.h \
            cpp/library/platformsmodel.h
-
 # Will build the final executable in the main project directory.
 TARGET = ../phoenix
 
@@ -99,3 +98,6 @@ macx {
 
         QMAKE_BUNDLE_DATA += depends
 }
+
+DISTFILES += \
+    qml/Theme/qmldir

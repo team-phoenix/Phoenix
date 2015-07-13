@@ -14,14 +14,6 @@
 #include "platforms.h"
 #include "libraryworker.h"
 
-
-/* Known Bugs:
- *      1. Scanning metadata doesn't start it's scan at the first included row form an import.
- *
- *
- *
- */
-
 namespace Library {
 
     class LibraryModel : public QSqlTableModel {
@@ -42,10 +34,6 @@ namespace Library {
 
             using QSqlTableModel::setFilter;
 
-            explicit LibraryModel( QObject *parent = 0 );
-
-            ~LibraryModel();
-
             // Model Roles
             enum GameRoles {
                 TitleRole = Qt::UserRole + 1,
@@ -57,6 +45,15 @@ namespace Library {
                 RowIDRole,
                 SHA1Role,
             };
+            Q_ENUMS( GameRoles );
+
+            static const QHash<GameRoles, QString> filterMap;
+
+            explicit LibraryModel( QObject *parent = 0 );
+
+            ~LibraryModel();
+
+
 
             // Getters
             bool select();
@@ -99,9 +96,7 @@ namespace Library {
 
             // Filters the SQL model based on a SQL query.
             // This is used to filter games in the BoxartGrid
-            void setFilter( QString filter
-                            , QVariantList params
-                            , bool preserveCurrentFilter );
+            void setFilter( GameRoles gameRole, const QString value );
 
 
             void sync();
@@ -120,8 +115,7 @@ namespace Library {
 
             void closeWorkerThread();
 
-            void startWorkerThread()
-            {
+            void startWorkerThread() {
                 mWorkerThread.start( QThread::HighPriority );
             }
 
@@ -158,9 +152,11 @@ namespace Library {
             // Normal Variables
             QStringList mFileFilter;
             QHash<int, QByteArray> mRoleNames;
-            QVariantList params;
+            QVariantList filterParameters;
             QMutex mMutex;
             LibraryInternalDatabase *libraryDb;
+            QHash<GameRoles, QString> filterParameterMap;
+
 
             // This thread is started when a user wants to import
             // a games folder. Currently, the thread quits whenever the
