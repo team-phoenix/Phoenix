@@ -30,9 +30,11 @@ void MetaDataDatabase::close() {
 void MetaDataDatabase::open() {
     auto currentDir = QDir::current().path();
 
-    db = QSqlDatabase::addDatabase( QStringLiteral( "QSQLITE" ), QStringLiteral( "METADATA" ) );
+    if ( !db.isValid() )  {
+        db = QSqlDatabase::addDatabase( QStringLiteral( "QSQLITE" ), QStringLiteral( "METADATA" ) );
 
-    db.setDatabaseName( currentDir + QDir::separator() + QStringLiteral( "openvgdb.sqlite" ) );
+        db.setDatabaseName( currentDir + QDir::separator() + QStringLiteral( "openvgdb.sqlite" ) );
+    }
 
     if( !db.open() ) {
         qFatal( "Could not open database METADATA %s",

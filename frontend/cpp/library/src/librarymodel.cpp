@@ -91,7 +91,7 @@ LibraryModel::~LibraryModel() {
 
     closeWorkerThread();
 
-    if ( progress() > 0.0 ) {
+    if( progress() > 0.0 ) {
         sync();
     }
 
@@ -296,6 +296,12 @@ void LibraryModel::handleInsertGame( const GameData importData ) {
                                   + QStringLiteral( "VALUES (?,?,?,?,?, ?)" );
 
 
+    if( insertCancelled() ) {
+        setProgress( 0.0 );
+        setMessage( "" );
+        database().rollback();
+        return;
+    }
 
     if( importData.fileID == 0 ) {
         //beginInsertRows( QModelIndex(), count(), count() );
@@ -400,6 +406,7 @@ void LibraryModel::setMessage( const QString message ) {
 void LibraryModel::append( const QUrl url ) {
 
     auto localUrl = url.toLocalFile();
+
     if( mLibraryWorker.isRunning() ) {
         qDebug() << "Scan in already running. returning...";
         return;

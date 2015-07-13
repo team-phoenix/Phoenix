@@ -29,6 +29,8 @@ LibraryWorker::LibraryWorker( QObject *parent )
 
     connect( this, &LibraryWorker::finished, this, [ this ] {
         setIsRunning( false );
+        mFileInfoQueue.clear();
+        setInsertCancelled( false );
     } );
 
 }
@@ -143,7 +145,6 @@ void LibraryWorker::findGameFiles( const QString localUrl ) {
         qCWarning( phxLibrary ) << localUrl << " does not exist!";
         return;
     }
-
 
     QDirIterator dirIter( localUrl, mFileFilters, QDir::Files, QDirIterator::NoIteratorFlags );
 
