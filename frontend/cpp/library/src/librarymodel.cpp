@@ -290,7 +290,7 @@ void LibraryModel::handleUpdateGame( const GameData metaData ) {
 
 void LibraryModel::handleInsertGame( const GameData importData ) {
 
-    static const auto statement = QStringLiteral( "INSERT INTO " )
+    static const auto statement = QStringLiteral( "INSERT OR IGNORE INTO " )
                                   + LibraryInternalDatabase::tableName
                                   + QStringLiteral( " (title, system, absoluteFilePath, timePlayed, sha1, artworkUrl) " )
                                   + QStringLiteral( "VALUES (?,?,?,?,?, ?)" );
