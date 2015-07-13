@@ -25,10 +25,12 @@ LibraryWorker::LibraryWorker( QObject *parent )
 
     connect( this, &LibraryWorker::started, this, [ this ] {
         setIsRunning( true );
+        mMetaDatabase.open();
     } );
 
     connect( this, &LibraryWorker::finished, this, [ this ] {
         setIsRunning( false );
+        mMetaDatabase.close();
         mFileInfoQueue.clear();
         setInsertCancelled( false );
     } );
@@ -178,9 +180,8 @@ void LibraryWorker::findGameFiles( const QString localUrl ) {
         setResumeDirectory( localUrl );
     }
 
-    mMetaDatabase.open();
+    emit started();
     prepareGameData( mFileInfoQueue );
-    mMetaDatabase.close();
     emit finished();
 
 }
