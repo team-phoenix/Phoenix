@@ -10,6 +10,8 @@ Rectangle {
     width: 200;
     color: "gray";
 
+    property alias contentLibraryModel: libraryModel;
+
     HeaderBar {
         id: headerBar;
         z: 100;

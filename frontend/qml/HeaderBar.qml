@@ -86,8 +86,6 @@ Item {
                 Layout.fillHeight: true;
                 Layout.fillWidth: true;
 
-
-
                 FileDialog {
                     id: fileDialog;
                     selectFolder: true;

@@ -5,6 +5,7 @@
 #include <QList>
 #include <QPair>
 #include <QString>
+#include <QObject>
 
 namespace Library {
 
