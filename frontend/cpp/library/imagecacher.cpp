@@ -89,7 +89,12 @@ void ImageCacher::handleRequest( QNetworkReply *reply ) {
             }
 
             else {
-                setCachedUrl( std::move( QUrl( qmlFilePrefix + reply->property( "cachedAbsoluteFilePath" ).toString() ) ) );
+#if defined(Q_OS_WIN)
+                QString separator = "/";
+#else
+                QString separator = "";
+#endif
+                setCachedUrl( std::move( QUrl( qmlFilePrefix + separator + reply->property( "cachedAbsoluteFilePath" ).toString() ) ) );
             }
 
             file.close();

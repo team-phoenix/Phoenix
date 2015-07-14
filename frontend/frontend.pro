@@ -20,17 +20,16 @@ win32 {
     DEFINES += SDL_WIN
     INCLUDEPATH += C:/SDL2/include C:/msys64/mingw64/include/SDL2 C:/msys64/mingw32/include/SDL2
 
-
     CONFIG(debug, debug|release)  {
-        depends.path = $$OUT_PWD/debug
-        depends.files += C:/SDL2/bin/SDL2.dll
+        depends.path = $$OUT_PWD
+        depends.files += C:/msys64/mingw64/bin/SDL2.dll
         depends.files += $${PWD}/metadata/openvgdb.sqlite
 
     }
 
     CONFIG(release, debug|release) {
-        depends.path = $$OUT_PWD/release
-        depends.files += C:/SDL2/bin/SDL2.dll
+        depends.path = $$OUT_PWD
+        depends.files += C:/msys64/mingw64/bin/SDL2.dll
         depends.files += $${PWD}/metadata/openvgdb.sqlite
     }
 
