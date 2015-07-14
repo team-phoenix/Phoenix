@@ -94,6 +94,8 @@ namespace Library {
             void checkHeaderOffsets( const QFileInfo &fileInfo, QString &platform );
             bool getCueFileInfo( QFileInfo &fileInfo );
             QString getCheckSum( const QString filePath );
+            bool isBios( const QString &hex, QString &biosName );
+            void cacheBiosFile( const QString &filePath, const QString &biosName );
     };
 
 }

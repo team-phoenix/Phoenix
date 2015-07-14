@@ -8,6 +8,7 @@
 #include "libraryworker.h"
 #include "imagecacher.h"
 #include "platformsmodel.h"
+#include "phxpaths.h"
 
 #include <memory.h>
 
@@ -57,6 +58,8 @@ int main( int argc, char *argv[] ) {
     QApplication::setApplicationName( QStringLiteral( "Phoenix" ) );
     QApplication::setApplicationVersion( QStringLiteral( "1.0" ) );
     QApplication::setOrganizationDomain( QStringLiteral( "http://phoenix.vg/" ) );
+
+    Library::PhxPaths::CreateAllPaths();
 
     QQmlApplicationEngine engine;
 

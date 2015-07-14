@@ -2,12 +2,14 @@
 #include "libraryworker.h"
 #include "logging.h"
 #include "platforms.h"
+#include "phxpaths.h"
 
 #include <QThread>
 #include <QDir>
 #include <QCryptographicHash>
 #include <QCoreApplication>
 #include <QSettings>
+#include <QStandardPaths>
 #include <QMutexLocker>
 
 using namespace Library;
@@ -205,7 +207,7 @@ void LibraryWorker::prepareGameData( QQueue<QFileInfo> &queue ) {
 
         auto fileInfo = queue.dequeue();
 
-        auto extension = fileInfo.suffix();
+        auto extension = fileInfo.suffix().toLower();
 
         // QFileInfo::baseName() seems to split the absoluteFilePath based on periods '.'
         // This causes issue with some game names that use periods.
@@ -222,6 +224,19 @@ void LibraryWorker::prepareGameData( QQueue<QFileInfo> &queue ) {
                                         << " is isn't a valid cue file. Skipping...";
                 return;
             }
+        }
+
+        else if( extension == QStringLiteral( "bin" ) ) {
+
+            auto sha1 = getCheckSum( fileInfo.canonicalFilePath() );
+
+            QString biosName;
+
+            if( isBios( sha1, biosName ) ) {
+                cacheBiosFile( fileInfo.canonicalFilePath(), biosName );
+            }
+
+            continue;
         }
 
         // ####################################################################
@@ -344,12 +359,37 @@ QString LibraryWorker::getCheckSum( const QString filePath ) {
 
         QCryptographicHash checkSum( QCryptographicHash::Sha1 );
         checkSum.addData( &file );
+
         hash = checkSum.result().toHex().toUpper();
 
         file.close();
     }
 
     return std::move( hash );
+}
+
+bool LibraryWorker::isBios( const QString &hex, QString &biosName ) {
+
+    // Sony PlayStation Bios Files
+    if( hex == QStringLiteral( "B05DEF971D8EC59F346F2D9AC21FB742E3EB6917" ) ) {
+        biosName = QStringLiteral( "scph5500.bin" );
+    } else if( hex == QStringLiteral( "0555C6FAE8906F3F09BAF5988F00E55F88E9F30B" ) ) {
+        biosName = QStringLiteral( "scph5501.bin" );
+    } else if( hex == QStringLiteral( "F6BC2D1F5EB6593DE7D089C425AC681D6FFFD3F0" ) ) {
+        biosName = QStringLiteral( "scph5502.bin" );
+    }
+
+    return !biosName.isEmpty();
+}
+
+void LibraryWorker::cacheBiosFile( const QString &filePath, const QString &biosName ) {
+
+    auto biosFile = PhxPaths::biosLocation() + biosName;
+
+    if( !QFile::exists( biosFile ) ) {
+        QFile::copy( filePath, biosFile );
+    }
+
 }
 
 bool LibraryWorker::getCueFileInfo( QFileInfo &fileInfo ) {

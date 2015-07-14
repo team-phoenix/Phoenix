@@ -1,5 +1,6 @@
 #include "imagecacher.h"
 #include "logging.h"
+#include "phxpaths.h"
 
 #include <QUrl>
 #include <QNetworkRequest>
@@ -18,9 +19,6 @@ ImageCacher::ImageCacher( QObject *parent )
 
 void ImageCacher::cache() {
 
-    static const auto creation = ImageCacher::createCachePath();
-    Q_UNUSED( creation );
-
     if( imageUrl().isEmpty() ) {
         return;
     }
@@ -28,7 +26,7 @@ void ImageCacher::cache() {
     auto urlString = imageUrl().toString();
     mImageType = QFileInfo( urlString ).suffix();
 
-    auto cachedFile = cacheDirectory + QDir::separator() + identifier() + "." + mImageType;
+    auto cachedFile = PhxPaths::artworkLocation() + identifier() + "." + mImageType;
 
     if( !QFile::exists( cachedFile ) && imageUrl().isValid() ) {
 
@@ -77,27 +75,17 @@ void ImageCacher::setCachedUrl( const QUrl url ) {
     emit cachedUrlChanged();
 }
 
-bool ImageCacher::createCachePath() {
-    QDir cacheDir( cacheDirectory );
-
-    if( !cacheDir.exists() ) {
-        return cacheDir.mkpath( cacheDir.absolutePath() );
-    }
-
-    return true;
-}
-
 void ImageCacher::handleRequest( QNetworkReply *reply ) {
 
     if( !reply->error() ) {
         auto imageBytes = reply->readAll();
 
-        QFile file( cacheDirectory + QDir::separator() + identifier() + "." + mImageType );
+        QFile file( PhxPaths::artworkLocation() + identifier() + "." + mImageType );
 
         if( file.open( QIODevice::WriteOnly ) ) {
 
             if( file.write( std::move( imageBytes ) ) == -1 ) {
-                qCWarning( phxLibrary ) << "Couldn't cache " << identifier() << "to" << cacheDirectory;
+                qCWarning( phxLibrary ) << "Couldn't cache " << identifier() << "to" << PhxPaths::artworkLocation();
             }
 
             else {

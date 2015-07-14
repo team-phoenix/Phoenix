@@ -10,6 +10,7 @@
 namespace Library {
 
     enum class Platforms {
+        Bios = -1,
         Unknown = 0,
 
         GB = 1,
@@ -58,8 +59,8 @@ namespace Library {
 
         { QStringLiteral( "cue" ), platformToString( Platforms::Unknown ) }, // Mednafen PSX, and others...
 
+        { QStringLiteral( "bin" ), platformToString( Platforms::Unknown ) }, // Needed for bios files
     };
-
 
     class BinaryHeaderOffset {
         public:
@@ -72,7 +73,7 @@ namespace Library {
     // These offset values are obtained book looking at rom hacking sources.
     // Just google something like 'Sega Genesis rom header' and you'll
     // find some good sources.
-    const QHash<QString, QList<BinaryHeaderOffset>> headerOffsets    {
+    const QHash<QString, QList<BinaryHeaderOffset>> headerOffsets {
         {
             QStringLiteral( "bin" ), {
                 BinaryHeaderOffset( 37664, 11 ),       // PlayStation Header

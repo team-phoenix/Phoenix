@@ -6,21 +6,12 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QObject>
-#include <QStandardPaths>
 #include <QDir>
-#include <QApplication>
 #include <QString>
 
 namespace  Library {
 
-    static const QString cacheDirectory = QStandardPaths::writableLocation( QStandardPaths::CacheLocation )
-                                          + QDir::separator()
-                                          + QStringLiteral( "Phoenix" )
-                                          + QDir::separator()
-                                          + QStringLiteral( "Artwork" );
-
     static const QString qmlFilePrefix = QStringLiteral( "file://" );
-
 
     class ImageCacher : public QObject {
             Q_OBJECT
@@ -28,7 +19,6 @@ namespace  Library {
             Q_PROPERTY( QUrl cachedUrl READ cachedUrl WRITE setCachedUrl NOTIFY cachedUrlChanged )
             Q_PROPERTY( QUrl imageUrl READ imageUrl WRITE setImageUrl NOTIFY imageUrlChanged )
             Q_PROPERTY( QString identifier READ identifier WRITE setIdentifier NOTIFY identifierChanged )
-
 
         public:
             explicit ImageCacher( QObject *parent = 0 );
@@ -42,8 +32,6 @@ namespace  Library {
             void setImageUrl( const QUrl url );
 
             void setCachedUrl( const QUrl url );
-
-            static bool createCachePath();
 
         private:
             QNetworkAccessManager mNetworkManager;

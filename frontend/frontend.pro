@@ -73,7 +73,8 @@ SOURCES += cpp/main.cpp \
            cpp/library/metadatadatabase.cpp \
            cpp/library/libraryworker.cpp \
            cpp/library/imagecacher.cpp \
-           cpp/library/platformsmodel.cpp
+           cpp/library/platformsmodel.cpp \
+           cpp/library/phxpaths.cpp
 
 HEADERS += cpp/library/librarymodel.h \
            cpp/library/libraryinternaldatabase.h \
@@ -82,7 +83,8 @@ HEADERS += cpp/library/librarymodel.h \
            cpp/library/metadatadatabase.h \
            cpp/library/libraryworker.h \
            cpp/library/imagecacher.h \
-           cpp/library/platformsmodel.h
+           cpp/library/platformsmodel.h \
+           cpp/library/phxpaths.h
 # Will build the final executable in the main project directory.
 TARGET = ../phoenix
 

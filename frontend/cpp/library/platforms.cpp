@@ -33,6 +33,7 @@ namespace Library {
         QString stringValue;
 
         switch( value ) {
+
             case Platforms::Unknown:
                 break;
 
