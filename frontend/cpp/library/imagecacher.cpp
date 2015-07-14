@@ -43,8 +43,12 @@ void ImageCacher::cache() {
 
         return;
     }
-
-    setCachedUrl( QUrl( qmlFilePrefix + cachedFile ) );
+#if defined(Q_OS_WIN)
+                QString separator = "/";
+#else
+                QString separator = "";
+#endif
+    setCachedUrl( QUrl( qmlFilePrefix + separator + cachedFile ) );
 
 }
 
