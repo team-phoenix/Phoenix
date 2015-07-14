@@ -15,7 +15,7 @@
 void phoenixDebugMessageHandler( QtMsgType type, const QMessageLogContext &context, const QString &msg ) {
 
     // Change this QString to reflect the message you want to get a stack trace for
-    if( QString( msg ).contains( QStringLiteral( "Timers cannot be stopped from another thread" ) ) ) {
+    if( QString( msg ).contains( QStringLiteral( "Metadata select error:" ) ) ) {
 
         int breakPointOnThisLine( 0 );
         Q_UNUSED( breakPointOnThisLine );
@@ -51,6 +51,8 @@ void phoenixDebugMessageHandler( QtMsgType type, const QMessageLogContext &conte
 
 
 int main( int argc, char *argv[] ) {
+
+    // qInstallMessageHandler( phoenixDebugMessageHandler );
 
     QApplication app( argc, argv );
 
