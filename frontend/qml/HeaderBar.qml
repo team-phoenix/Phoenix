@@ -59,11 +59,16 @@ Item {
         radius: 6;
     }
 
-    Rectangle {
-        id: headerBarBackground
-        anchors.fill: parent;
-        color: "white";
-        radius: 6;
+    OpacityMask {
+        anchors.fill: headerBarBackground;
+        source: headerBarSource;
+        maskSource: headerBarBackground;
+    }
+
+    Item {
+        id: headerBarSource;
+        anchors.fill: headerBarBackground;
+        visible: false;
 
         RowLayout {
             anchors.fill: parent;
@@ -73,6 +78,7 @@ Item {
                 color: "blue";
                 Layout.fillHeight: true;
                 width: 150;
+                clip: true;
 
                 Button {
                     anchors.centerIn: parent;
@@ -157,6 +163,15 @@ Item {
                 width: 42;
             }
         }
+
+    }
+
+    Rectangle {
+        id: headerBarBackground
+        anchors.fill: parent;
+        color: "white";
+        radius: 6;
+        visible: false;
     }
 
         /*
