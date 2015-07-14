@@ -47,13 +47,11 @@ namespace Library {
             };
             Q_ENUMS( GameRoles );
 
-            static const QHash<GameRoles, QString> filterMap;
+            static QHash<GameRoles, QString> filterMap;
 
             explicit LibraryModel( QObject *parent = 0 );
 
             ~LibraryModel();
-
-
 
             // Getters
             bool select();
@@ -96,8 +94,7 @@ namespace Library {
 
             // Filters the SQL model based on a SQL query.
             // This is used to filter games in the BoxartGrid
-            void setFilter( GameRoles gameRole, const QString value );
-
+            void setFilter( GameRoles gameRole, const QString filter, const QString value );
 
             void sync();
 

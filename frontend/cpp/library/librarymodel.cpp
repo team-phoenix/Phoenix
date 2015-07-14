@@ -17,7 +17,7 @@
 
 using namespace Library;
 
-const QHash<LibraryModel::GameRoles, QString> LibraryModel::filterMap {
+QHash<LibraryModel::GameRoles, QString> LibraryModel::filterMap {
     { LibraryModel::GameRoles::TitleRole , QStringLiteral( "title LIKE ?" ) },
     { LibraryModel::GameRoles::SystemRole, QStringLiteral( "system = ?" ) },
 };
@@ -138,7 +138,7 @@ bool LibraryModel::select() {
     qu.prepare( query );
 
 
-    for ( auto &role: filterParameterMap.keys() ) {
+    for( auto &role : filterParameterMap.keys() ) {
         qu.addBindValue( filterParameterMap.value( role ) );
     }
 
@@ -181,14 +181,20 @@ void LibraryModel::updateCount() {
     emit countChanged();
 }
 
-void LibraryModel::setFilter( GameRoles gameRole, const QString value ) {
-
+void LibraryModel::setFilter( LibraryModel::GameRoles gameRole, const QString filter, const QString value ) {
+    auto role = QString( mRoleNames.value( gameRole ) );
     filterParameterMap.insert( gameRole, value );
+    filterMap.insert( gameRole, role + " " + filter );
 
     QString newFilter;
-    for ( auto &key : filterParameterMap.keys() ) {
-        auto stringFilter = filterMap.value( key );
-        if ( newFilter.isEmpty() ) {
+
+    for( auto &key : filterParameterMap.keys() ) {
+        QString stringFilter;
+
+        stringFilter = filterMap.value( key );
+
+
+        if( newFilter.isEmpty() ) {
             newFilter += stringFilter;
         }
 
@@ -198,6 +204,7 @@ void LibraryModel::setFilter( GameRoles gameRole, const QString value ) {
     }
 
     QSqlTableModel::setFilter( newFilter );
+
 }
 
 

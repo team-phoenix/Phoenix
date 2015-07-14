@@ -37,7 +37,7 @@ Item {
                 Button {
                     anchors.centerIn: parent;
                     text: qsTr( "All" );
-                    onClicked: contentArea.contentLibraryModel.setFilter( "system LIKE ?", [ "%%" ], true );
+                    onClicked: contentArea.contentLibraryModel.setFilter(  LibraryModel.SystemRole, "LIKE ?", "%%" );
 
                 }
             }
@@ -109,7 +109,7 @@ Item {
                         MouseArea {
                             anchors.fill: parent;
                             onClicked: {
-                                contentArea.contentLibraryModel.setFilter( LibraryModel.SystemRole, platformText.text );
+                                contentArea.contentLibraryModel.setFilter( LibraryModel.SystemRole, "= ?", platformText.text );
                             }
                         }
 
