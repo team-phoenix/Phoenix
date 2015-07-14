@@ -74,6 +74,36 @@ void LibraryWorker::eventLoopStarted() {
     }
 }
 
+void LibraryWorker::handleDraggedUrls( QList<QUrl> urls ) {
+    mDraggedUrls = urls;
+}
+
+void LibraryWorker::handleDroppedUrls() {
+    for( auto &url : mDraggedUrls ) {
+        auto localUrl = url.toLocalFile();
+
+        if ( QDir( localUrl ).exists() ) {
+            findGameFiles( std::move( localUrl ) );
+
+        }
+        else {
+            qDebug() << localUrl << "Is a file";
+            mFileInfoQueue.enqueue( std::move( QFileInfo( localUrl ) ) );
+        }
+
+    }
+
+    emit started();
+    prepareGameData( mFileInfoQueue );
+    emit finished();
+}
+
+void LibraryWorker::handleContainsDrag( const bool contains ) {
+    if( !contains ) {
+        mDraggedUrls.clear();
+    }
+}
+
 bool LibraryWorker::resumeQuitScan() {
     QMutexLocker locker( &mMutex );
     return qmlResumeQuitScan;

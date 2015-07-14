@@ -23,6 +23,7 @@ namespace Library {
             static QString mSaveLocation;
             static QString mArtworkLocation;
 
+
     };
 
 }

@@ -69,6 +69,10 @@ namespace Library {
 
             void eventLoopStarted();
 
+            void handleDraggedUrls( QList<QUrl> urls );
+            void handleDroppedUrls();
+            void handleContainsDrag( const bool contains );
+
 
         private slots:
             void prepareGameData( QQueue<QFileInfo> &queue );
@@ -80,7 +84,10 @@ namespace Library {
             QStringList mFileFilters;
             QQueue<QFileInfo> mFileInfoQueue;
             bool mRunning;
+            bool mContainsDrag;
             bool qmlResumeQuitScan;
+
+            QList<QUrl> mDraggedUrls;
 
             QString mResumeInsertID;
             QString mResumeDirectory;

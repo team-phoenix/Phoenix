@@ -59,7 +59,11 @@ LibraryModel::LibraryModel( LibraryInternalDatabase &db, QObject *parent )
     setTable( LibraryInternalDatabase::tableName );
     select();
 
+
     // Connect Model to Worker.
+    connect( this, &LibraryModel::droppedUrls, &mLibraryWorker, &LibraryWorker::handleDroppedUrls );
+    connect( this, &LibraryModel::containsDrag, &mLibraryWorker, &LibraryWorker::handleContainsDrag );
+    connect( this, &LibraryModel::draggedUrls, &mLibraryWorker, &LibraryWorker::handleDraggedUrls );
     connect( this, &LibraryModel::insertGames, &mLibraryWorker, &LibraryWorker::findGameFiles );
     connect( this, &LibraryModel::signalInsertCancelled, &mLibraryWorker, &LibraryWorker::setInsertCancelled );
     connect( this, &LibraryModel::signalInsertPaused, &mLibraryWorker, &LibraryWorker::setInsertPaused );
@@ -219,6 +223,18 @@ void LibraryModel::sync() {
 
     mTransaction = false;
 
+}
+
+void LibraryModel::handleDraggedUrls( QList<QUrl> urls ) {
+    emit draggedUrls( std::move( urls ) );
+}
+
+void LibraryModel::handleContainsDrag( const bool contains ) {
+    emit containsDrag( std::move( contains ) );
+}
+
+void LibraryModel::handleDroppedUrls() {
+    emit droppedUrls();
 }
 
 void LibraryModel::resumeInsert() {

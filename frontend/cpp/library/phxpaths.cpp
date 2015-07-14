@@ -1,10 +1,8 @@
 #include "phxpaths.h"
 
+#include <QSettings>
+
 using namespace Library;
-
-PhxPaths::PhxPaths() {
-
-}
 
 QString PhxPaths::mArtworkLocation = QStringLiteral( "" );
 QString PhxPaths::mBiosLocation = QStringLiteral( "" );

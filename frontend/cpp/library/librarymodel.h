@@ -104,6 +104,12 @@ namespace Library {
 
             //void resumeMetadataScan();
 
+            //These signals are used to accept external drag and drop events.
+            void handleDraggedUrls( QList<QUrl> urls );
+            void handleContainsDrag( const bool contains );
+            void handleDroppedUrls();
+
+
             void pauseInsert();
 
             void resumeInsert();
@@ -136,6 +142,10 @@ namespace Library {
             void progressChanged();
             void insertCancelledChanged();
             void insertPausedChanged();
+
+            void draggedUrls( QList<QUrl> urls );
+            void containsDrag( const bool contains );
+            void droppedUrls();
 
             void insertGames( const QString url );
             void signalInsertCancelled( const bool cancel );
