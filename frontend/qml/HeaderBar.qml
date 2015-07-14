@@ -68,7 +68,8 @@ Item {
     Item {
         id: headerBarSource;
         anchors.fill: headerBarBackground;
-        visible: false;
+        visible: true;
+        z: parent.z + 1;
 
         RowLayout {
             anchors.fill: parent;

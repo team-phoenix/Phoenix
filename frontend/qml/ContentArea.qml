@@ -39,7 +39,27 @@ Rectangle {
     LibraryModel {
         id: libraryModel;
 
-        Component.onCompleted: libraryModel.startWorkerThread();
+        function dragEvent( drag ) {
+            if ( drag.hasUrls ) {
+                handleDraggedUrls( drag.urls );
+            }
+        }
+
+        function dropEvent( drop ) {
+            handleDroppedUrls();
+        }
+
+        function containsEvent() {
+            handleContainsDrag( rootDropArea.containsDrag );
+        }
+
+        Component.onCompleted: {
+            rootDropArea.onEntered.connect( dragEvent );
+            rootDropArea.onDropped.connect( dropEvent );
+            rootDropArea.onContainsDragChanged.connect( containsEvent );
+
+            libraryModel.startWorkerThread();
+        }
     }
 
     BoxartGrid {

@@ -16,6 +16,11 @@ ApplicationWindow {
     minimumHeight: 480;
     minimumWidth: 640;
 
+    DropArea {
+        id: rootDropArea;
+        anchors.fill: parent;
+    }
+
     RowLayout {
         id: gameSelectionPane;
         anchors {
