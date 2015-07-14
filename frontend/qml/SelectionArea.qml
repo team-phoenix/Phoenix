@@ -33,13 +33,6 @@ Item {
                 height: 100;
                 Layout.fillWidth: true;
                 color: "orange";
-
-                Button {
-                    anchors.centerIn: parent;
-                    text: qsTr( "All" );
-                    onClicked: contentArea.contentLibraryModel.setFilter(  LibraryModel.SystemRole, "LIKE ?", "%%" );
-
-                }
             }
 
             ScrollView {
@@ -77,6 +70,18 @@ Item {
                             }
 
                             color: PhxTheme.common.baseFontColor;
+                        }
+
+                        Button {
+                            anchors {
+                                verticalCenter: parent.verticalCenter;
+                                right: parent.right;
+                                rightMargin: 24;
+                            }
+
+                            text: qsTr( "All" );
+                            onClicked: contentArea.contentLibraryModel.setFilter(  LibraryModel.SystemRole, "LIKE ?", "%%" );
+
                         }
                     }
 
@@ -117,10 +122,43 @@ Item {
                 }
             }
 
-            Rectangle {
-                color: "purple";
+            ListView {
+                id: sectionAreaToolbar;
                 height: 62;
-                Layout.fillWidth: true;
+                anchors {
+                    left: parent.left;
+                    right: parent.right;
+                }
+
+                spacing: 0;
+
+                interactive: false;
+
+                orientation: ListView.Horizontal;
+
+                model: ListModel {
+                    ListElement { bgColor: "gray"; label: "Add"; }
+                    ListElement { bgColor: "darkgray"; label: "Favorites"; }
+                    ListElement { bgColor: "gray"; label: "Games"; }
+                    ListElement { bgColor: "darkgray"; label: "Settings"; }
+
+                }
+
+                delegate: Rectangle {
+                    height: parent.height;
+                    width: sectionAreaToolbar.width / sectionAreaToolbar.count;
+                    color: bgColor;
+
+                    Text {
+                        anchors.centerIn: parent;
+                        text: label;
+
+                        font {
+                            pixelSize: PhxTheme.sectionArea.normalFontSize;
+                        }
+                    }
+
+                }
             }
         }
     }

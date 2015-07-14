@@ -132,12 +132,11 @@ Item {
                         }
                     }
 
-
                     Label {
                         anchors {
                             verticalCenter: parent.verticalCenter;
                         }
-                        text: libraryModel.progress;
+                        text: libraryModel.progress + "%";
                         color: "white";
                     }
 
