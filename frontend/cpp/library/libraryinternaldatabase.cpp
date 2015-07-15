@@ -11,6 +11,8 @@ using namespace Library;
 const QString LibraryInternalDatabase::tableVersion = QStringLiteral( "schema_version" );
 const QString LibraryInternalDatabase::databaseName = QStringLiteral( "gamelibrary.sqlite" );
 const QString LibraryInternalDatabase::tableName = QStringLiteral( "games" );
+const QString LibraryInternalDatabase::tableCollectionMapping = QStringLiteral( "collectionMapping" );
+const QString LibraryInternalDatabase::tableCollections = QStringLiteral( "collections" );
 
 
 LibraryInternalDatabase::LibraryInternalDatabase() {
@@ -63,14 +65,13 @@ bool LibraryInternalDatabase::createSchema() {
     qCDebug( phxLibrary, "Initializing database schema" );
     db.transaction();
     QSqlQuery q( db );
-    q.exec( "CREATE TABLE " + tableVersion + " (version INTEGER NOT NULL)" );
-    q.exec( QStringLiteral( "INSERT INTO " ) + tableVersion + QStringLiteral( " (version) VALUES (0)" ) );
-    q.exec( QStringLiteral( "CREATE TABLE " ) + tableName + QStringLiteral( " (\n" ) +
+    q.exec( "CREATE TABLE " + LibraryInternalDatabase::tableVersion + " (version INTEGER NOT NULL)" );
+    q.exec( QStringLiteral( "INSERT INTO " ) + LibraryInternalDatabase::tableVersion + QStringLiteral( " (version) VALUES (0)" ) );
+    q.exec( QStringLiteral( "CREATE TABLE " ) + LibraryInternalDatabase::tableName + QStringLiteral( " (\n" ) +
             QStringLiteral( "   rowIndex INTEGER PRIMARY KEY AUTOINCREMENT,\n" ) +
 
-            QStringLiteral( "   /* game info */" ) +
+            QStringLiteral( "   \n/* game info */\n" ) +
             QStringLiteral( "   title TEXT NOT NULL,\n" ) +
-            QStringLiteral( "   isFavorite BOOLEAN,\n" ) +
             QStringLiteral( "   system TEXT,\n" ) +
             QStringLiteral( "   region TEXT,\n" ) +
             QStringLiteral( "   goodtoolsCode TEXT,\n" ) +
@@ -80,12 +81,35 @@ bool LibraryInternalDatabase::createSchema() {
             QStringLiteral( "   /* file info */" ) +
             QStringLiteral( "   absolutePath TEXT,\n" ) +
             QStringLiteral( "   absoluteFilePath TEXT UNIQUE NOT NULL,\n" ) +
-            QStringLiteral( "   sha1 TEXT UNIQUE NOT NULL,\n" ) +
-            QStringLiteral( "   crc32 TEXT\n" ) +
+            QStringLiteral( "   sha1 TEXT UNIQUE NOT NULL\n" ) +
             QStringLiteral( ")" ) );
 
-    q.exec( QStringLiteral( "CREATE INDEX title_index ON " ) + tableName + QStringLiteral( " (title)" ) );
-    q.exec( QStringLiteral( "CREATE INDEX favorite_index ON " ) + tableName + QStringLiteral( " (is_favorite)" ) );
+    q.exec( QStringLiteral( "CREATE INDEX title_index ON " ) + LibraryInternalDatabase::tableName + QStringLiteral( " (title)" ) );
+    q.exec( QStringLiteral( "CREATE INDEX favorite_index ON " ) + LibraryInternalDatabase::tableName + QStringLiteral( " (is_favorite)" ) );
+
+    /*
+    // Create Collections Mapping Table
+    q.exec( QStringLiteral( "CREATE TABLE " ) + LibraryInternalDatabase::tableCollectionMapping + QStringLiteral( "(\n" ) +
+            QStringLiteral( " collectionID INTEGER PRIMARY KEY AUTOINCREMENT,\n" ) +
+            QStringLiteral( " rowIndex TEXT,\n" ) +
+            QStringLiteral( " FOREIGN KEY (rowIndex) REFERENCES " ) + LibraryInternalDatabase::tableName +
+            QStringLiteral( "(rowIndex)\n" ) +
+            QStringLiteral( ")" ) );
+
+    q.exec( QStringLiteral( "INSERT INTO " ) + LibraryInternalDatabase::tableCollectionMapping + QStringLiteral( " (collectionID) VALUES (0)" ) );
+
+    */
+    // Create Collections Table
+    q.exec( QStringLiteral( "CREATE TABLE " ) + LibraryInternalDatabase::tableCollections + QStringLiteral( "(\n" ) +
+            QStringLiteral( " collectionID INTEGER PRIMARY KEY AUTOINCREMENT,\n" ) +
+            QStringLiteral( " collectionName TEXT UNIQUE,\n" ) +
+            QStringLiteral( " rowIndices INTEGER UNIQUE\n" )  +
+            QStringLiteral( ")" ) );
+
+    q.exec( QStringLiteral( "INSERT INTO " ) + LibraryInternalDatabase::tableCollections + QStringLiteral( " (collectionID, collectionName, rowIndices) VALUES (0, 'All', 'rowIndex > 0')" ) );
+
+    //SELECT rowIndex FROM games WHERE rowIndex IN (2, 3, 1)
+
     db.commit();
 
     return true;

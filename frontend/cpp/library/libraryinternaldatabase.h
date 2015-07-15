@@ -16,6 +16,8 @@ namespace Library {
             static const QString tableVersion;
             static const QString databaseName;
             static const QString tableName;
+            static const QString tableCollectionMapping;
+            static const QString tableCollections;
 
             LibraryInternalDatabase();
 
