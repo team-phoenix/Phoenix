@@ -36,92 +36,30 @@ Item {
 
             }
 
-            ScrollView {
+            StackView {
+                id: sectionsAreaStackView;
                 Layout.fillHeight: true;
                 Layout.fillWidth: true;
 
-                ListView {
-                    id: listView;
-                    spacing: 0;
-                    model: PlatformsModel {
-                        id: platformsModel;
+                initialItem: platformsView;
+
+                Component {
+                    id: platformsView;
+                    PlatformsView {
 
                     }
+                }
 
-                    header: Rectangle {
-                        color: "lightblue";
-                        height: 36;
+                Component {
+                    id: favoritesView;
 
-                        anchors {
-                            left: parent.left;
-                            right: parent.right;
-                        }
-
-                        Text {
-                            text: qsTr( "SYSTEMS" );
-                            anchors {
-                                verticalCenter: parent.verticalCenter;
-                                left: parent.left;
-                                leftMargin: 12;
-                            }
-
-                            font {
-                                pixelSize: PhxTheme.sectionArea.headerFontSize;
-                                bold: true;
-                            }
-
-                            color: PhxTheme.common.baseFontColor;
-                        }
-
-                        Button {
-                            anchors {
-                                verticalCenter: parent.verticalCenter;
-                                right: parent.right;
-                                rightMargin: 24;
-                            }
-
-                            text: qsTr( "All" );
-                            onClicked: contentArea.contentLibraryModel.setFilter(  LibraryModel.SystemRole, "LIKE ?", "%%" );
-
-                        }
-                    }
-
-                    delegate: Rectangle {
-                        color: index % 2 == 0 ? "yellow" : "lightgreen";
-                        height: 24;
-
-                        anchors {
-                            left: parent.left;
-                            right: parent.right;
-                        }
-
-                        Text {
-                            id: platformText;
-                            text: listView.model.get( index );
-                            anchors {
-                                verticalCenter: parent.verticalCenter;
-                                left: parent.left;
-                                leftMargin:  24;
-                            }
-
-                            font {
-                                pixelSize: PhxTheme.sectionArea.normalFontSize;
-                            }
-
-                            color: PhxTheme.common.baseFontColor;
-
-                        }
-
-                        MouseArea {
-                            anchors.fill: parent;
-                            onClicked: {
-                                contentArea.contentLibraryModel.setFilter( LibraryModel.SystemRole, "= ?", platformText.text );
-                            }
-                        }
+                    CollectionsView {
 
                     }
                 }
             }
+
+
 
             ListView {
                 id: sectionAreaToolbar;
@@ -156,6 +94,19 @@ Item {
 
                         font {
                             pixelSize: PhxTheme.sectionArea.normalFontSize;
+                        }
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent;
+                        onClicked: {
+                            if ( index == 1 ) {
+                                sectionsAreaStackView.push( { item: favoritesView, replace: true } );
+                            }
+
+                            else if ( index == 2 ) {
+                                sectionsAreaStackView.push( { item: platformsView, replace: true } );
+                            }
                         }
                     }
 

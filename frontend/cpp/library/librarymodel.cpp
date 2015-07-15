@@ -23,7 +23,7 @@ QHash<LibraryModel::GameRoles, QString> LibraryModel::filterMap {
 };
 
 LibraryModel::LibraryModel( QObject *parent )
-    : LibraryModel( libraryDb = new LibraryInternalDatabase, parent ) {
+    : LibraryModel( LibraryInternalDatabase::instance(), parent ) {
 
 }
 
@@ -102,8 +102,6 @@ LibraryModel::~LibraryModel() {
     if( progress() > 0.0 ) {
         sync();
     }
-
-    delete libraryDb;
 
 }
 

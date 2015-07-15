@@ -5,5 +5,7 @@
         <file>ContentArea.qml</file>
         <file>SelectionArea.qml</file>
         <file>HeaderBar.qml</file>
+        <file>PlatformsView.qml</file>
+        <file>CollectionsView.qml</file>
     </qresource>
 </RCC>

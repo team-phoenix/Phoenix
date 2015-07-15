@@ -161,7 +161,6 @@ namespace Library {
             QHash<int, QByteArray> mRoleNames;
             QVariantList filterParameters;
             QMutex mMutex;
-            LibraryInternalDatabase *libraryDb;
             QHash<GameRoles, QString> filterParameterMap;
 
 

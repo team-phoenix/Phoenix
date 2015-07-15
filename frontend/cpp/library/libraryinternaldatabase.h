@@ -13,20 +13,42 @@ namespace Library {
 
         public:
 
+            class LibraryDatabasePointer {
+                public:
+                    LibraryDatabasePointer( LibraryInternalDatabase *db )
+                        : mPtr( db ) {
+
+                    }
+
+                    LibraryInternalDatabase *get() {
+                        return mPtr;
+                    }
+
+                    ~LibraryDatabasePointer()  {
+                        mPtr->close();
+                        delete mPtr;
+                    }
+
+                private:
+                    LibraryInternalDatabase *mPtr;
+            };
+
             static const QString tableVersion;
             static const QString databaseName;
             static const QString tableName;
             static const QString tableCollectionMapping;
             static const QString tableCollections;
 
-            LibraryInternalDatabase();
 
-            ~LibraryInternalDatabase();
+            static LibraryInternalDatabase *instance();
 
             QSqlDatabase &database();
 
             // opens the internal QSqlDatabase.
             void open();
+
+            // closes the interal QSqlDatabase.
+            void close();
 
             // Returns the schema verison.
             int version() const;
@@ -37,6 +59,10 @@ namespace Library {
 
         private:
             QSqlDatabase db;
+
+            LibraryInternalDatabase();
+            LibraryInternalDatabase( LibraryInternalDatabase const & ) = delete;
+            LibraryInternalDatabase operator =( LibraryInternalDatabase const & ) = delete;
 
             // Creates the table.
             bool createSchema();

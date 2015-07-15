@@ -5,6 +5,7 @@
 #include <QApplication>
 #include <QDir>
 
+#include <memory>
 
 using namespace Library;
 
@@ -19,33 +20,39 @@ LibraryInternalDatabase::LibraryInternalDatabase() {
     open();
 }
 
-LibraryInternalDatabase::~LibraryInternalDatabase() {
-    db.close();
+LibraryInternalDatabase *LibraryInternalDatabase::instance() {
+    static LibraryDatabasePointer instance( new LibraryInternalDatabase );
+    return instance.get();
 }
 
 QSqlDatabase &LibraryInternalDatabase::database() {
     return db;
 }
+void LibraryInternalDatabase::close() {
+    db.close();
+}
 
 void LibraryInternalDatabase::open() {
-    db = QSqlDatabase::addDatabase( QStringLiteral( "QSQLITE" ), QStringLiteral( "LIBRARY" ) );
+    if( !db.isValid() ) {
+        db = QSqlDatabase::addDatabase( QStringLiteral( "QSQLITE" ), QStringLiteral( "LIBRARY" ) );
 
-    QString dataPathStr = QStandardPaths::writableLocation( QStandardPaths::GenericDataLocation );
-    Q_ASSERT( !dataPathStr.isEmpty() );
+        QString dataPathStr = QStandardPaths::writableLocation( QStandardPaths::GenericDataLocation );
+        Q_ASSERT( !dataPathStr.isEmpty() );
 
-    QDir dataPath( dataPathStr );
-    auto appname = QApplication::applicationName();
+        QDir dataPath( dataPathStr );
+        auto appname = QApplication::applicationName();
 
-    if( !dataPath.exists( appname ) ) {
-        dataPath.mkdir( appname ); // race...
+        if( !dataPath.exists( appname ) ) {
+            dataPath.mkdir( appname ); // race...
+        }
+
+        Q_ASSERT( dataPath.cd( appname ) );
+
+        mFilePath = dataPath.filePath( databaseName );
+
+        db.setDatabaseName( mFilePath );
+        qCDebug( phxLibrary, "Opening library database %s", qPrintable( db.databaseName() ) );
     }
-
-    Q_ASSERT( dataPath.cd( appname ) );
-
-    mFilePath = dataPath.filePath( databaseName );
-
-    db.setDatabaseName( mFilePath );
-    qCDebug( phxLibrary, "Opening library database %s", qPrintable( db.databaseName() ) );
 
     if( !db.open() ) {
         qFatal( "Could not open database %s: %s", qPrintable( mFilePath ),
