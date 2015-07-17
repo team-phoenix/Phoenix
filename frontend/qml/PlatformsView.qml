@@ -48,7 +48,7 @@ ScrollView {
                 }
 
                 text: qsTr( "All" );
-                onClicked: contentArea.contentLibraryModel.setFilter(  LibraryModel.SystemRole, "LIKE ?", "%%" );
+                onClicked: contentArea.contentLibraryModel.clearFilter( "games", "system" );
 
             }
         }
@@ -82,7 +82,7 @@ ScrollView {
             MouseArea {
                 anchors.fill: parent;
                 onClicked: {
-                    contentArea.contentLibraryModel.setFilter( LibraryModel.SystemRole, "= ?", platformText.text );
+                    contentArea.contentLibraryModel.setFilter( "games", "system", platformText.text );
                 }
             }
 

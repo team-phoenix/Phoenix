@@ -1,4 +1,5 @@
 #include "collectionsmodel.h"
+#include "logging.h"
 
 #include <QSqlError>
 #include <QSqlRecord>
@@ -19,9 +20,8 @@ CollectionsModel::CollectionsModel( LibraryInternalDatabase &db, QObject *parent
     : QSqlTableModel( parent, db.database() ) {
 
     mRoleNames =  QSqlTableModel::roleNames();
-    mRoleNames.insert( CollectionNameRole, QByteArrayLiteral( "collectionName" ) );
-    mRoleNames.insert( RowIndicesRole, QByteArrayLiteral( "rowIndices" ) );
     mRoleNames.insert( CollectionIDRole, QByteArrayLiteral( "collectionID" ) );
+    mRoleNames.insert( CollectionNameRole, QByteArrayLiteral( "collectionName" ) );
 
     setEditStrategy( QSqlTableModel::OnManualSubmit );
     setTable( LibraryInternalDatabase::tableCollections );
@@ -48,8 +48,43 @@ void CollectionsModel::sort( int column, Qt::SortOrder order ) {
     QSqlTableModel::sort( column, order );
 }
 
-void CollectionsModel::append( const QString name ) {
-    static const auto insertCollectionStatement = QStringLiteral( "" );
+void CollectionsModel::append( const QVariantMap dict ) {
+
+    static const auto insertCollectionStatement = QStringLiteral( "INSERT INTO " )
+            + LibraryInternalDatabase::tableCollections
+            + QStringLiteral( " (collectionID, collectionName) " )
+            + QStringLiteral( "VALUES (?,?)" );
+
+    if( dict.size() < 2 ) {
+        qCWarning( phxLibrary ) << "CollectionsModel::append() doesn't have enough values in the map.";
+        return;
+    }
+
+    database().transaction();
+
+    QSqlQuery query( database() );
+    query.prepare( insertCollectionStatement );
+    query.addBindValue( dict.value( "collectionID" ).toString() );
+    query.addBindValue( dict.value( "collectionName" ).toString() );
+
+
+    if( !query.exec() ) {
+        qCWarning( phxLibrary ) << "Sql Collection Insert Error: " << query.lastError().text();
+    }
+
+    if( submitAll() ) {
+        database().commit();
+    } else {
+        database().rollback();
+    }
+}
+
+void CollectionsModel::setFilter( const CollectionRoles role, const QVariant id ) {
+    //SELECT games.title, games.system, collections.collectionName, collections.collectionID FROM collections INNER JOIN games ON collections.collectionID  = 1
+
+    filterParameterMap.insert( role, id );
+
+    select();
 }
 
 QHash<int, QByteArray> CollectionsModel::roleNames() const {
@@ -57,7 +92,9 @@ QHash<int, QByteArray> CollectionsModel::roleNames() const {
 }
 
 bool CollectionsModel::select() {
-    const QString query = selectStatement();
+    const QString query = selectStatement().insert(7, "DISTINCT " );
+
+    qDebug() << query;
 
     if( query.isEmpty() ) {
         return false;
@@ -70,8 +107,8 @@ bool CollectionsModel::select() {
     QSqlQuery qu( database() );
     qu.prepare( query );
 
-    for( auto &val : params ) {
-        qu.addBindValue( val );
+    for( auto &role : filterParameterMap.keys() ) {
+        qu.addBindValue( filterParameterMap.value( role ) );
     }
 
     qu.exec();
@@ -86,4 +123,3 @@ bool CollectionsModel::select() {
     endResetModel();
     return true;
 }
-

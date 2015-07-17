@@ -49,7 +49,7 @@ ScrollView {
 
                 text: qsTr( "Add" );
                 onClicked: {
-
+                    collectionsModel.append( { "collectionID": 0, "collectionName": "Top 10" } );
                 }
             }
 
@@ -84,7 +84,8 @@ ScrollView {
             MouseArea {
                 anchors.fill: parent;
                 onClicked: {
-                    //contentArea.contentLibraryModel.setFilter( LibraryModel.SystemRole, "= ?", platformText.text );
+                    console.log( collectionID );
+                    contentArea.contentLibraryModel.setFilter( "collections", "collectionID", collectionID );
                 }
             }
 

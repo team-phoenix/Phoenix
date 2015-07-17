@@ -65,7 +65,7 @@ TextField {
         running: false;
         repeat: false;
         onTriggered: {
-            libraryModel.setFilter( LibraryModel.TitleRole, "LIKE ?", [ '%' + searchBar.text + '%' ] );
+            libraryModel.setFilter( "games", "title", '%' + searchBar.text + '%' );
         }
 
     }

@@ -17,11 +17,6 @@
 
 using namespace Library;
 
-QHash<LibraryModel::GameRoles, QString> LibraryModel::filterMap {
-    { LibraryModel::GameRoles::TitleRole , QStringLiteral( "title LIKE ?" ) },
-    { LibraryModel::GameRoles::SystemRole, QStringLiteral( "system = ?" ) },
-};
-
 LibraryModel::LibraryModel( QObject *parent )
     : LibraryModel( LibraryInternalDatabase::instance(), parent ) {
 
@@ -36,6 +31,7 @@ LibraryModel::LibraryModel( LibraryInternalDatabase &db, QObject *parent )
     : QSqlTableModel( parent, db.database() ),
       mWorkerThread( this ),
       mTransaction( false ),
+      mFilterCollection( false ),
       qmlInsertPaused( false ),
       qmlInsertCancelled( false ),
       qmlCount( 0 ),
@@ -99,10 +95,11 @@ LibraryModel::~LibraryModel() {
 
     closeWorkerThread();
 
-    if( progress() > 0.0 ) {
-        sync();
+    if ( submitAll() ) {
+        database().commit();
+    } else {
+        database().rollback();
     }
-
 }
 
 QVariant LibraryModel::data( const QModelIndex &index, int role ) const {
@@ -126,6 +123,7 @@ QHash<int, QByteArray> LibraryModel::roleNames() const {
 }
 
 bool LibraryModel::select() {
+
     const QString query = selectStatement();
 
     if( query.isEmpty() ) {
@@ -137,14 +135,16 @@ bool LibraryModel::select() {
     //    d->clearCache();
 
     QSqlQuery qu( database() );
-    qu.prepare( query );
 
+    qu.prepare( query );
 
     for( auto &role : filterParameterMap.keys() ) {
         qu.addBindValue( filterParameterMap.value( role ) );
     }
 
-    qu.exec();
+    if( !qu.exec() ) {
+        qCWarning( phxLibrary ) << "LibraryModel::select() error: " << qu.lastError().text();
+    }
 
     setQuery( qu );
 
@@ -183,40 +183,31 @@ void LibraryModel::updateCount() {
     emit countChanged();
 }
 
-void LibraryModel::setFilter( LibraryModel::GameRoles gameRole, const QString filter, const QString value ) {
-    auto role = QString( mRoleNames.value( gameRole ) );
-    filterParameterMap.insert( gameRole, value );
-    filterMap.insert( gameRole, role + " " + filter );
+void LibraryModel::setFilter( const QString table, const QString row, const QVariant value ) {
 
-    QString newFilter;
+    auto tableRow = table + QStringLiteral( "." ) + row;
 
-    for( auto &key : filterParameterMap.keys() ) {
-        QString stringFilter;
+    filterParameterMap.insert( tableRow, value );
 
-        stringFilter = filterMap.value( key );
+    QSqlTableModel::setFilter( createFilter() );
+}
 
+void LibraryModel::clearFilter( const QString table, const QString row ) {
+    auto tableRow = table + QStringLiteral( "." ) + row;
 
-        if( newFilter.isEmpty() ) {
-            newFilter += stringFilter;
-        }
-
-        else {
-            newFilter += " AND " + stringFilter;
-        }
+    if( filterParameterMap.remove( tableRow ) == 0 ) {
+        return;
     }
 
-    QSqlTableModel::setFilter( newFilter );
+    setFilter( createFilter() );
 
 }
 
-
 void LibraryModel::sync() {
-    if( submitAll() ) {
-        database().commit();
-    }
-
-    else {
+    if( !submitAll() ) {
         database().rollback();
+    } else {
+        database().commit();
     }
 
     mTransaction = false;
@@ -317,6 +308,34 @@ void LibraryModel::handleUpdateGame( const GameData metaData ) {
 
 }
 
+QString LibraryModel::selectStatement() const {
+    static const auto collectionFilterStatement = QStringLiteral( "SELECT " )
+            + LibraryInternalDatabase::tableName
+            + QStringLiteral( ".* FROM " )
+            + LibraryInternalDatabase::tableName
+            + QStringLiteral( " INNER JOIN " )
+            + LibraryInternalDatabase::tableCollectionMappings
+            + QStringLiteral( " ON " )
+            + LibraryInternalDatabase::tableName
+            + QStringLiteral( ".rowIndex = " )
+            + LibraryInternalDatabase::tableCollectionMappings
+            + QStringLiteral( ".rowIndex JOIN " )
+            + LibraryInternalDatabase::tableCollections
+            + QStringLiteral( " ON " )
+            + LibraryInternalDatabase::tableCollections
+            + QStringLiteral( ".collectionID = " )
+            + LibraryInternalDatabase::tableCollectionMappings
+            + QStringLiteral( ".collectionID" );
+
+    auto select = collectionFilterStatement + " WHERE " + filter();
+
+    if( !mFilterCollection ) {
+        return QSqlTableModel::selectStatement();
+    }
+
+    return select;
+}
+
 void LibraryModel::handleInsertGame( const GameData importData ) {
 
     static const auto statement = QStringLiteral( "INSERT OR IGNORE INTO " )
@@ -394,6 +413,32 @@ void LibraryModel::setProgress( const qreal progress ) {
 
     qmlProgress = progress;
     emit progressChanged();
+}
+
+QString LibraryModel::createFilter() {
+    QString newFilter;
+
+    for( auto &key : filterParameterMap.keys() ) {
+        mFilterCollection = key.contains( QStringLiteral( "collections" ) );
+        QString comparison;
+
+        if( key == LibraryInternalDatabase::tableName + QStringLiteral( ".title" ) ) {
+            comparison = QStringLiteral( "LIKE ?" );
+        } else if( key == LibraryInternalDatabase::tableCollections + QStringLiteral( ".collectionID" )
+                   || key == LibraryInternalDatabase::tableName + QStringLiteral( ".system" ) ) {
+            comparison = QStringLiteral( "= ?" );
+        }
+
+        if( newFilter.isEmpty() ) {
+            newFilter += key + QStringLiteral( " " ) + comparison;
+        }
+
+        else {
+            newFilter += QStringLiteral( " AND " ) + key + QStringLiteral( " " ) + comparison;
+        }
+    }
+
+    return std::move( newFilter );
 }
 
 int LibraryModel::count() const {

@@ -45,9 +45,6 @@ namespace Library {
                 RowIDRole,
                 SHA1Role,
             };
-            Q_ENUMS( GameRoles );
-
-            static QHash<GameRoles, QString> filterMap;
 
             explicit LibraryModel( QObject *parent = 0 );
 
@@ -77,6 +74,7 @@ namespace Library {
             QHash<int, QByteArray> roleNames() const;
 
         public slots:
+
             // Removes 1 row from the SQL model.
             // bool remove( int row, int count = 1 );
 
@@ -94,7 +92,10 @@ namespace Library {
 
             // Filters the SQL model based on a SQL query.
             // This is used to filter games in the BoxartGrid
-            void setFilter( GameRoles gameRole, const QString filter, const QString value );
+            void setFilter( const QString table, const QString row, const QVariant value );
+            void clearFilter( const QString table, const QString row );
+
+
 
             void sync();
 
@@ -151,6 +152,10 @@ namespace Library {
             void signalInsertCancelled( const bool cancel );
             void signalInsertPaused( const bool paused );
 
+        protected:
+
+            QString selectStatement() const;
+
         private:
 
             explicit LibraryModel( LibraryInternalDatabase &db, QObject *parent = 0 );
@@ -161,7 +166,7 @@ namespace Library {
             QHash<int, QByteArray> mRoleNames;
             QVariantList filterParameters;
             QMutex mMutex;
-            QHash<GameRoles, QString> filterParameterMap;
+            QHash<QString, QVariant> filterParameterMap;
 
 
             // This thread is started when a user wants to import
@@ -169,6 +174,7 @@ namespace Library {
             // user cancels and import, or the import finishes.
             QThread mWorkerThread;
 
+            bool mFilterCollection;
             bool mTransaction;
             bool qmlInsertPaused;
             bool qmlInsertCancelled;
@@ -177,7 +183,6 @@ namespace Library {
             LibraryWorker mLibraryWorker;
             // Used to find metadata for any game.
             MetaDataDatabase mMetaDataDatabse;
-
 
             // QML Variables
             int qmlCount;
@@ -189,7 +194,10 @@ namespace Library {
             // QML Setters
             void setProgress( const qreal progress );
 
+
             // Normal Setters
+
+            QString createFilter();
     };
 
 }

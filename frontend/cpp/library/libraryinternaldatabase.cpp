@@ -12,7 +12,7 @@ using namespace Library;
 const QString LibraryInternalDatabase::tableVersion = QStringLiteral( "schema_version" );
 const QString LibraryInternalDatabase::databaseName = QStringLiteral( "gamelibrary.sqlite" );
 const QString LibraryInternalDatabase::tableName = QStringLiteral( "games" );
-const QString LibraryInternalDatabase::tableCollectionMapping = QStringLiteral( "collectionMapping" );
+const QString LibraryInternalDatabase::tableCollectionMappings = QStringLiteral( "collectionMappings" );
 const QString LibraryInternalDatabase::tableCollections = QStringLiteral( "collections" );
 
 
@@ -94,28 +94,28 @@ bool LibraryInternalDatabase::createSchema() {
     q.exec( QStringLiteral( "CREATE INDEX title_index ON " ) + LibraryInternalDatabase::tableName + QStringLiteral( " (title)" ) );
     q.exec( QStringLiteral( "CREATE INDEX favorite_index ON " ) + LibraryInternalDatabase::tableName + QStringLiteral( " (is_favorite)" ) );
 
-    /*
+
     // Create Collections Mapping Table
-    q.exec( QStringLiteral( "CREATE TABLE " ) + LibraryInternalDatabase::tableCollectionMapping + QStringLiteral( "(\n" ) +
+   qDebug()<< q.exec( QStringLiteral( "CREATE TABLE " ) + LibraryInternalDatabase::tableCollections + QStringLiteral( "(\n" ) +
             QStringLiteral( " collectionID INTEGER PRIMARY KEY AUTOINCREMENT,\n" ) +
-            QStringLiteral( " rowIndex TEXT,\n" ) +
-            QStringLiteral( " FOREIGN KEY (rowIndex) REFERENCES " ) + LibraryInternalDatabase::tableName +
-            QStringLiteral( "(rowIndex)\n" ) +
+            QStringLiteral( " collectionName TEXT UNIQUE NOT NULL\n" ) +
             QStringLiteral( ")" ) );
 
-    q.exec( QStringLiteral( "INSERT INTO " ) + LibraryInternalDatabase::tableCollectionMapping + QStringLiteral( " (collectionID) VALUES (0)" ) );
+    //q.exec( QStringLiteral( "INSERT INTO " ) + LibraryInternalDatabase::tableCollectionMapping + QStringLiteral( " (collectionID) VALUES (0)" ) );
 
-    */
+
     // Create Collections Table
-    q.exec( QStringLiteral( "CREATE TABLE " ) + LibraryInternalDatabase::tableCollections + QStringLiteral( "(\n" ) +
-            QStringLiteral( " collectionID INTEGER PRIMARY KEY AUTOINCREMENT,\n" ) +
-            QStringLiteral( " collectionName TEXT UNIQUE,\n" ) +
-            QStringLiteral( " rowIndices INTEGER UNIQUE\n" )  +
-            QStringLiteral( ")" ) );
+    qDebug() << q.exec( QStringLiteral( "CREATE TABLE " ) + LibraryInternalDatabase::tableCollectionMappings + QStringLiteral( "(\n" ) +
+                        QStringLiteral( " rowID INTEGER PRIMARY KEY AUTOINCREMENT,\n" ) +
+                        QStringLiteral( " collectionID INTEGER,\n" ) +
+                        QStringLiteral( " rowIndex INTEGER,\n" )  +
+                        QStringLiteral( " FOREIGN KEY (collectionID) REFERENCES " ) + LibraryInternalDatabase::tableCollections +
+                        QStringLiteral( "(collectionID) ON DELETE CASCADE ON UPDATE CASCADE\n" ) +
+                        QStringLiteral( " FOREIGN KEY (rowIndex) REFERENCES " ) + LibraryInternalDatabase::tableName +
+                        QStringLiteral( "(rowIndex) ON DELETE CASCADE ON UPDATE CASCADE\n" ) +
+                        QStringLiteral( ")" ) );
 
-    q.exec( QStringLiteral( "INSERT INTO " ) + LibraryInternalDatabase::tableCollections + QStringLiteral( " (collectionID, collectionName, rowIndices) VALUES (0, 'All', 'rowIndex > 0')" ) );
-
-    //SELECT rowIndex FROM games WHERE rowIndex IN (2, 3, 1)
+    qDebug() << q.lastQuery() << q.lastError().text();
 
     db.commit();
 
