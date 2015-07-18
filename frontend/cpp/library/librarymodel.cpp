@@ -194,6 +194,7 @@ void LibraryModel::setFilter( const QString table, const QString row, const QVar
 
 void LibraryModel::clearFilter( const QString table, const QString row ) {
     auto tableRow = table + QStringLiteral( "." ) + row;
+    mFilterCollection = ( row != QStringLiteral( "collectionID" ) );
 
     if( filterParameterMap.remove( tableRow ) == 0 ) {
         return;

@@ -107,7 +107,7 @@ void CollectionsModel::remove( const QVariant id ) {
     query.prepare( removeStatement );
     query.addBindValue( id );
 
-    if ( !query.exec() ) {
+    if( !query.exec() ) {
         qCWarning( phxLibrary ) << "Collection Remove Error: " << query.lastError();
     }
 
@@ -135,8 +135,6 @@ QHash<int, QByteArray> CollectionsModel::roleNames() const {
 
 bool CollectionsModel::select() {
     const QString query = selectStatement();
-
-    qDebug() << query;
 
     if( query.isEmpty() ) {
         return false;

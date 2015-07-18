@@ -101,6 +101,7 @@ ScrollView {
             TextField {
                 id: platformText;
                 text: collectionName;
+                readOnly: true;
 
                 anchors {
                     verticalCenter: parent.verticalCenter;
@@ -139,17 +140,17 @@ ScrollView {
 
             MouseArea {
                 anchors.fill: parent;
-                enabled: platformText.state === "CACHED";
+                enabled: platformText.readOnly;
                 onClicked: {
 
                     console.log( collectionID );
-/*
+
                     if ( collectionID == 0 ) {
                         contentArea.contentLibraryModel.clearFilter( "collections", "collectionID" );
                     } else {
                         contentArea.contentLibraryModel.setFilter( "collections", "collectionID", collectionID );
                     }
-                    */
+
                 }
             }
 
