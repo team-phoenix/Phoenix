@@ -38,6 +38,7 @@ ApplicationWindow {
 
             width: 275;
             z: contentArea.z + 1;
+
         }
 
 

@@ -175,39 +175,5 @@ Item {
         visible: false;
     }
 
-        /*
-        Window {
-            id: dropDown;
-            height: 200;
-            width: 125;
-            x: root.x + dock.width + ( ( headerBar.anchors.leftMargin + systemDropDown.width ) / 2 - ( width / 3));
-            y: root.y + headerBar.anchors.topMargin + headerBar.height;
-            flags: Qt.Popup | Qt.FramelessWindowHint;
-
-            color: "transparent";
-
-            Rectangle {
-                anchors {
-                    fill: parent;
-                    topMargin: 13;
-                    bottomMargin: 25;
-                }
-                radius: 6;
-
-                Rectangle {
-                    rotation: 45;
-                    color: parent.color;
-                    anchors {
-                        top: parent.top;
-                        topMargin: -height / 2;
-                        horizontalCenter: parent.horizontalCenter;
-                    }
-                    height: 13;
-                    width: height;
-                }
-            }
-        }
-        */
-
 }
 

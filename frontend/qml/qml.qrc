@@ -7,5 +7,6 @@
         <file>HeaderBar.qml</file>
         <file>PlatformsView.qml</file>
         <file>CollectionsView.qml</file>
+        <file>DropdownMenu.qml</file>
     </qresource>
 </RCC>

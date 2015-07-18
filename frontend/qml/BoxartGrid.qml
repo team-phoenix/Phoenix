@@ -11,6 +11,19 @@ Rectangle {
     width: 100;
     height: 62;
 
+    DropdownMenu {
+        id: dropDownMenu;
+    }
+
+    MouseArea {
+        anchors.fill: parent;
+        propagateComposedEvents: true;
+        onClicked: {
+            console.log( parent.x)
+           // dropDownMenu.popup( mouse.x + boxartGrid.x, mouse.y );
+        }
+    }
+
     ScrollView {
         anchors.fill: parent;
 

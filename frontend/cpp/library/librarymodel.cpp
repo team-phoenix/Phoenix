@@ -139,6 +139,7 @@ bool LibraryModel::select() {
     qu.prepare( query );
 
     for( auto &role : filterParameterMap.keys() ) {
+
         qu.addBindValue( filterParameterMap.value( role ) );
     }
 
@@ -147,6 +148,8 @@ bool LibraryModel::select() {
     }
 
     setQuery( qu );
+
+    mFilterCollection = false;
 
     if( !qu.isActive() || lastError().isValid() ) {
         setTable( tableName() ); // resets the record & index
@@ -194,7 +197,6 @@ void LibraryModel::setFilter( const QString table, const QString row, const QVar
 
 void LibraryModel::clearFilter( const QString table, const QString row ) {
     auto tableRow = table + QStringLiteral( "." ) + row;
-    mFilterCollection = ( row != QStringLiteral( "collectionID" ) );
 
     if( filterParameterMap.remove( tableRow ) == 0 ) {
         return;
