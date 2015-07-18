@@ -11,8 +11,11 @@
 
 namespace  Library {
 
+#if defined(Q_OS_WIN)
+    static const QString qmlFilePrefix = QStringLiteral( "file:///" );
+#else
     static const QString qmlFilePrefix = QStringLiteral( "file://" );
-
+#endif
     class ImageCacher : public QObject {
             Q_OBJECT
 

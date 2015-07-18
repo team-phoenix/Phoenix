@@ -43,12 +43,7 @@ void ImageCacher::cache() {
 
         return;
     }
-#if defined(Q_OS_WIN)
-                QString separator = "/";
-#else
-                QString separator = "";
-#endif
-    setCachedUrl( QUrl( qmlFilePrefix + separator + cachedFile ) );
+    setCachedUrl( QUrl( qmlFilePrefix + cachedFile ) );
 
 }
 
@@ -93,12 +88,7 @@ void ImageCacher::handleRequest( QNetworkReply *reply ) {
             }
 
             else {
-#if defined(Q_OS_WIN)
-                QString separator = "/";
-#else
-                QString separator = "";
-#endif
-                setCachedUrl( std::move( QUrl( qmlFilePrefix + separator + reply->property( "cachedAbsoluteFilePath" ).toString() ) ) );
+                setCachedUrl( std::move( QUrl( qmlFilePrefix + reply->property( "cachedAbsoluteFilePath" ).toString() ) ) );
             }
 
             file.close();
