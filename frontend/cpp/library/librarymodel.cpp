@@ -96,7 +96,7 @@ LibraryModel::~LibraryModel() {
     closeWorkerThread();
 
     if ( submitAll() ) {
-        database().commit();
+       // database().commit();
     } else {
         database().rollback();
     }

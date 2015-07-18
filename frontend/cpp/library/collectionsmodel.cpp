@@ -64,23 +64,65 @@ void CollectionsModel::append( const QVariantMap dict ) {
 
     QSqlQuery query( database() );
     query.prepare( insertCollectionStatement );
-    query.addBindValue( dict.value( "collectionID" ).toString() );
-    query.addBindValue( dict.value( "collectionName" ).toString() );
+    query.addBindValue( dict.value( "collectionID" ) );
+    query.addBindValue( dict.value( "collectionName" ) );
 
+    qDebug() << "BINDING " << query.boundValues();
 
     if( !query.exec() ) {
         qCWarning( phxLibrary ) << "Sql Collection Insert Error: " << query.lastError().text();
     }
 
-    if( submitAll() ) {
-        database().commit();
-    } else {
+    sync();
+}
+
+void CollectionsModel::set( const QVariant id, const QString name ) {
+    static const auto updateStatement = QStringLiteral( "UPDATE " )
+                                        + LibraryInternalDatabase::tableCollections
+                                        + " SET collectionName = ? WHERE collectionID = ?";
+
+    database().transaction();
+
+    QSqlQuery query( database() );
+    query.prepare( updateStatement );
+    query.addBindValue( name );
+    query.addBindValue( id );
+
+    if( !query.exec() ) {
+        qCWarning( phxLibrary ) << "Collection Update Error: " << query.lastError().text();
+        return;
+    }
+
+    sync();
+
+}
+
+void CollectionsModel::remove( const QVariant id ) {
+    static const auto removeStatement = QStringLiteral( "DELETE FROM " )
+                                        + LibraryInternalDatabase::tableCollections
+                                        + QStringLiteral( " WHERE collectionID = ?" );
+    database().transaction();
+
+    QSqlQuery query( database() );
+    query.prepare( removeStatement );
+    query.addBindValue( id );
+
+    if ( !query.exec() ) {
+        qCWarning( phxLibrary ) << "Collection Remove Error: " << query.lastError();
+    }
+
+    sync();
+}
+
+void CollectionsModel::sync() {
+    if( !submitAll() ) {
         database().rollback();
+    } else {
+        database().commit();
     }
 }
 
 void CollectionsModel::setFilter( const CollectionRoles role, const QVariant id ) {
-    //SELECT games.title, games.system, collections.collectionName, collections.collectionID FROM collections INNER JOIN games ON collections.collectionID  = 1
 
     filterParameterMap.insert( role, id );
 
@@ -92,7 +134,7 @@ QHash<int, QByteArray> CollectionsModel::roleNames() const {
 }
 
 bool CollectionsModel::select() {
-    const QString query = selectStatement().insert(7, "DISTINCT " );
+    const QString query = selectStatement();
 
     qDebug() << query;
 

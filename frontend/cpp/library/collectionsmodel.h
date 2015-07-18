@@ -31,6 +31,11 @@ namespace Library {
 
         public slots:
             void append( const QVariantMap dict );
+            void set( const QVariant id, const QString name );
+            void remove( const QVariant id );
+
+            void sync();
+
             void setFilter( const CollectionRoles role, const QVariant id );
 
         private:

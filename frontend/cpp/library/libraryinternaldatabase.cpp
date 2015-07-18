@@ -101,12 +101,11 @@ bool LibraryInternalDatabase::createSchema() {
             QStringLiteral( " collectionName TEXT UNIQUE NOT NULL\n" ) +
             QStringLiteral( ")" ) );
 
-    //q.exec( QStringLiteral( "INSERT INTO " ) + LibraryInternalDatabase::tableCollectionMapping + QStringLiteral( " (collectionID) VALUES (0)" ) );
+
 
 
     // Create Collections Table
     qDebug() << q.exec( QStringLiteral( "CREATE TABLE " ) + LibraryInternalDatabase::tableCollectionMappings + QStringLiteral( "(\n" ) +
-                        QStringLiteral( " rowID INTEGER PRIMARY KEY AUTOINCREMENT,\n" ) +
                         QStringLiteral( " collectionID INTEGER,\n" ) +
                         QStringLiteral( " rowIndex INTEGER,\n" )  +
                         QStringLiteral( " FOREIGN KEY (collectionID) REFERENCES " ) + LibraryInternalDatabase::tableCollections +
@@ -115,6 +114,8 @@ bool LibraryInternalDatabase::createSchema() {
                         QStringLiteral( "(rowIndex) ON DELETE CASCADE ON UPDATE CASCADE\n" ) +
                         QStringLiteral( ")" ) );
 
+    q.exec( QStringLiteral( "INSERT INTO " ) + LibraryInternalDatabase::tableCollections
+            + QStringLiteral( " (collectionID, collectionName) VALUES (0, 'All')" ) );
     qDebug() << q.lastQuery() << q.lastError().text();
 
     db.commit();
