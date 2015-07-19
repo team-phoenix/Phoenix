@@ -57,9 +57,43 @@ Item {
 
                     }
                 }
+
+                delegate: StackViewDelegate {
+                        function transitionFinished(properties)
+                        {
+                            properties.exitItem.opacity = 1
+                            properties.exitItem.y = 0;
+                        }
+
+                        pushTransition: StackViewTransition {
+                            PropertyAnimation {
+                                target: enterItem
+                                property: "opacity"
+                                from: 0
+                                to: 1
+                            }
+                            PropertyAnimation {
+                                target: exitItem
+                                property: "opacity"
+                                from: 1
+                                to: 0
+                            }
+                            PropertyAnimation {
+                                target: enterItem
+                                property: "y"
+                                from: enterItem.height;
+                                to: 0;
+                            }
+
+                            PropertyAnimation {
+                                target: exitItem
+                                property: "y"
+                                from: exitItem.height;
+                                to: 0;
+                            }
+                        }
+                    }
             }
-
-
 
             ListView {
                 id: sectionAreaToolbar;
