@@ -59,6 +59,15 @@ Item {
                     }
                 }
 
+                Component {
+                    id: settingsView;
+
+
+                    SettingsView {
+
+                    }
+                }
+
                 delegate: StackViewDelegate {
                     function transitionFinished(properties)
                     {
@@ -140,20 +149,25 @@ Item {
                     MouseArea {
                         anchors.fill: parent;
                         onClicked: {
-                            if ( index == 0 ) {
+                            switch( index ) {
+                            case 0:
                                 fileDialog.open();
-                            }
-
-                            else if ( index == 1 ) {
+                                break;
+                            case 1:
                                 sectionsAreaStackView.push( { item: favoritesView, replace: true } );
+                                break;
+                            case 2:
+                                sectionsAreaStackView.push( { item: platformsView, replace: true } );
+                                break;
+                            case 3:
+                                sectionsAreaStackView.push( { item: settingsView, replace: true } );
+                                break;
+                            default:
+                                break;
                             }
 
-                            else if ( index == 2 ) {
-                                sectionsAreaStackView.push( { item: platformsView, replace: true } );
-                            }
                         }
                     }
-
                 }
             }
         }

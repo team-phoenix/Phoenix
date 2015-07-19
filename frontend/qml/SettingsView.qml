@@ -1,22 +1,25 @@
 import QtQuick 2.4
-import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
+import QtQuick.Controls 1.2
 
-import vg.phoenix.models 1.0
 import vg.phoenix.themes 1.0
 
 ScrollView {
+    width: 100;
+    height: 62;
 
     ListView {
         id: listView;
         spacing: 0;
-        model: PlatformsModel {
-            id: platformsModel;
-
+        model: ListModel {
+            id: settingsModel;
+            ListElement { section: "Input Controls"; }
+            ListElement { section: "Video Playback"; }
+            ListElement { section: "Audio Playback"; }
         }
 
         header: Rectangle {
-            color: "lightblue";
+            color: "lightyellow";
             height: 36;
 
             anchors {
@@ -25,7 +28,7 @@ ScrollView {
             }
 
             Text {
-                text: qsTr( "Systems" );
+                text: qsTr( "Settings" );
                 anchors {
                     verticalCenter: parent.verticalCenter;
                     left: parent.left;
@@ -39,22 +42,11 @@ ScrollView {
 
                 color: PhxTheme.common.baseFontColor;
             }
-
-            Button {
-                anchors {
-                    verticalCenter: parent.verticalCenter;
-                    right: parent.right;
-                    rightMargin: 24;
-                }
-
-                text: qsTr( "All" );
-                onClicked: contentArea.contentLibraryModel.clearFilter( "games", "system" );
-
-            }
         }
 
         delegate: Rectangle {
-            color: index % 2 == 0 ? "yellow" : "lightgreen";
+            id: listViewDelegate;
+            color: index % 2 == 0 ? "cyan" : "yellow";
             height: 24;
 
             anchors {
@@ -63,8 +55,9 @@ ScrollView {
             }
 
             Text {
-                id: platformText;
-                text: listView.model.get( index );
+                id: sectionText;
+                text: section;
+
                 anchors {
                     verticalCenter: parent.verticalCenter;
                     left: parent.left;
@@ -80,12 +73,24 @@ ScrollView {
             }
 
             MouseArea {
+                id: mouseArea;
                 anchors.fill: parent;
                 onClicked: {
-                    contentArea.contentLibraryModel.setFilter( "games", "system", platformText.text );
+                    switch ( index ) {
+                    case 0:
+                        contentArea.contentStackView.push( { item: contentArea.contentInputView, replace: true } );
+                        break;
+                    case 1:
+                        break;
+                    case 2:
+                        break;
+                    default:
+                        break;
+                    }
                 }
             }
 
         }
     }
 }
+

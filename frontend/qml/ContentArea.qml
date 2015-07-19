@@ -11,6 +11,8 @@ Rectangle {
     color: "gray";
 
     property alias contentLibraryModel: libraryModel;
+    property alias contentStackView: contentAreaStackView;
+    property alias contentInputView: inputView;
 
     HeaderBar {
         id: headerBar;
@@ -66,21 +68,9 @@ Rectangle {
     StackView {
         id: contentAreaStackView;
         initialItem: boxArtGridComponent;
+
         anchors {
             fill: parent;
-        }
-
-        property bool showDetailedView: false;
-        property var detailedView: undefined;
-        onShowDetailedViewChanged: {
-            if ( showDetailedView ) {
-                detailedView = detailGameViewComponent.createObject( contentAreaStackView );
-            }
-            else {
-                if ( detailedView !== undefined ) {
-                    detailedView.destroy();
-                }
-            }
         }
 
         delegate: StackViewDelegate {
@@ -104,26 +94,39 @@ Rectangle {
                 }
             }
         }
+    }
 
-        Component {
-            id: boxArtGridComponent;
+    Component {
+        id: boxArtGridComponent;
 
-            BoxartGridView {
-                id: boxartGrid;
+        BoxartGridView {
+            id: boxartGrid;
 
-                color: "gray";
-            }
-        }
+            color: "gray";
 
-        Component {
-            id: detailGameViewComponent;
+            objectName: "BoxartGridView";
 
-            DetailedGameView {
-
-            }
         }
     }
 
+    Component {
+        id: detailGameViewComponent;
+
+
+        DetailedGameView {
+
+        }
+    }
+
+    Component {
+        id: inputView;
+
+        InputView {
+
+            objectName: "InputView"
+
+        }
+    }
 
 
 }

@@ -96,8 +96,6 @@ ScrollView {
                 right: parent.right;
             }
 
-
-
             TextField {
                 id: platformText;
                 text: collectionName;

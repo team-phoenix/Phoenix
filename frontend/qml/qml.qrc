@@ -9,5 +9,8 @@
         <file>CollectionsView.qml</file>
         <file>DropdownMenu.qml</file>
         <file>DetailedGameView.qml</file>
+        <file>SettingsView.qml</file>
+        <file>InputView.qml</file>
+        <file>InputMappingColumn.qml</file>
     </qresource>
 </RCC>
