@@ -1,4 +1,5 @@
-import QtQuick 2.3
+import QtQuick 2.4
+import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
 
 import vg.phoenix.models 1.0
@@ -62,12 +63,67 @@ Rectangle {
         }
     }
 
-    BoxartGrid {
-        id: boxartGrid;
+    StackView {
+        id: contentAreaStackView;
+        initialItem: boxArtGridComponent;
         anchors {
             fill: parent;
         }
-        color: "gray";
+
+        property bool showDetailedView: false;
+        property var detailedView: undefined;
+        onShowDetailedViewChanged: {
+            if ( showDetailedView ) {
+                detailedView = detailGameViewComponent.createObject( contentAreaStackView );
+            }
+            else {
+                if ( detailedView !== undefined ) {
+                    detailedView.destroy();
+                }
+            }
+        }
+
+        delegate: StackViewDelegate {
+            function transitionFinished( properties )
+            {
+                properties.exitItem.opacity = 1;
+            }
+
+            pushTransition: StackViewTransition {
+                PropertyAnimation {
+                    target: enterItem;
+                    property: "opacity";
+                    from: 0;
+                    to: 1;
+                }
+                PropertyAnimation {
+                    target: exitItem;
+                    property: "opacity";
+                    from: 1;
+                    to: 0;
+                }
+            }
+        }
+
+        Component {
+            id: boxArtGridComponent;
+
+            BoxartGridView {
+                id: boxartGrid;
+
+                color: "gray";
+            }
+        }
+
+        Component {
+            id: detailGameViewComponent;
+
+            DetailedGameView {
+
+            }
+        }
     }
+
+
 
 }

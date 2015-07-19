@@ -13,6 +13,8 @@ TextField {
         pixelSize: 14;
     }
 
+    property color backgroundColor: "red";
+
     state: "EXPANDED";
 
     transitions: Transition {
@@ -51,7 +53,7 @@ TextField {
 
     style: TextFieldStyle {
         background: Rectangle {
-            color: "red";
+            color: control.backgroundColor;
             implicitHeight: control.height;
             implicitWidth: control.width;
         }

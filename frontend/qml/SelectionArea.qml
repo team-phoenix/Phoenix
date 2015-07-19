@@ -2,6 +2,7 @@ import QtQuick 2.3
 import QtQuick.Layouts 1.1
 import QtQuick.Controls 1.2
 import QtGraphicalEffects 1.0
+import QtQuick.Dialogs 1.2
 
 import vg.phoenix.models 1.0
 import vg.phoenix.themes 1.0
@@ -59,40 +60,40 @@ Item {
                 }
 
                 delegate: StackViewDelegate {
-                        function transitionFinished(properties)
-                        {
-                            properties.exitItem.opacity = 1
-                            properties.exitItem.y = 0;
+                    function transitionFinished(properties)
+                    {
+                        properties.exitItem.opacity = 1
+                        properties.exitItem.y = 0;
+                    }
+
+                    pushTransition: StackViewTransition {
+                        PropertyAnimation {
+                            target: enterItem
+                            property: "opacity"
+                            from: 0
+                            to: 1
+                        }
+                        PropertyAnimation {
+                            target: exitItem
+                            property: "opacity"
+                            from: 1
+                            to: 0
+                        }
+                        PropertyAnimation {
+                            target: enterItem
+                            property: "y"
+                            from: enterItem.height;
+                            to: 0;
                         }
 
-                        pushTransition: StackViewTransition {
-                            PropertyAnimation {
-                                target: enterItem
-                                property: "opacity"
-                                from: 0
-                                to: 1
-                            }
-                            PropertyAnimation {
-                                target: exitItem
-                                property: "opacity"
-                                from: 1
-                                to: 0
-                            }
-                            PropertyAnimation {
-                                target: enterItem
-                                property: "y"
-                                from: enterItem.height;
-                                to: 0;
-                            }
-
-                            PropertyAnimation {
-                                target: exitItem
-                                property: "y"
-                                from: exitItem.height;
-                                to: 0;
-                            }
+                        PropertyAnimation {
+                            target: exitItem
+                            property: "y"
+                            from: 0;
+                            to: exitItem.height;
                         }
                     }
+                }
             }
 
             ListView {
@@ -104,17 +105,22 @@ Item {
                 }
 
                 spacing: 0;
-
                 interactive: false;
-
                 orientation: ListView.Horizontal;
 
                 model: ListModel {
-                    ListElement { bgColor: "gray"; label: "Add"; }
+                    ListElement { bgColor: "gray"; label: "Add Games"; }
                     ListElement { bgColor: "darkgray"; label: "Favorites"; }
                     ListElement { bgColor: "gray"; label: "Games"; }
                     ListElement { bgColor: "darkgray"; label: "Settings"; }
+                }
 
+                FileDialog {
+                    id: fileDialog;
+                    selectFolder: true;
+                    onAccepted: {
+                        contentArea.contentLibraryModel.append( fileUrl );
+                    }
                 }
 
                 delegate: Rectangle {
@@ -134,7 +140,11 @@ Item {
                     MouseArea {
                         anchors.fill: parent;
                         onClicked: {
-                            if ( index == 1 ) {
+                            if ( index == 0 ) {
+                                fileDialog.open();
+                            }
+
+                            else if ( index == 1 ) {
                                 sectionsAreaStackView.push( { item: favoritesView, replace: true } );
                             }
 

@@ -125,6 +125,7 @@ ScrollView {
 
             Button {
                 visible: collectionID !== 0;
+                z: mouseArea.z + 1;
                 anchors {
                     right: parent.right;
                     verticalCenter: parent.verticalCenter;
@@ -139,6 +140,7 @@ ScrollView {
             }
 
             MouseArea {
+                id: mouseArea;
                 anchors.fill: parent;
                 enabled: platformText.readOnly;
                 onClicked: {

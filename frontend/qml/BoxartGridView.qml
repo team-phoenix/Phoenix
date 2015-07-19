@@ -15,14 +15,11 @@ Rectangle {
         id: dropDownMenu;
     }
 
+    /*
     MouseArea {
         anchors.fill: parent;
         propagateComposedEvents: true;
-        onClicked: {
-            console.log( parent.x)
-           // dropDownMenu.popup( mouse.x + boxartGrid.x, mouse.y );
-        }
-    }
+    }*/
 
     ScrollView {
         anchors.fill: parent;
@@ -100,6 +97,7 @@ Rectangle {
                         Layout.fillWidth: true;
 
                         DropShadow {
+                            visible: false;
                             anchors.fill: source;
                             source: gridItemImage;
                             verticalOffset: 1;
@@ -125,11 +123,8 @@ Rectangle {
                             }
 
                             height: parent.height;
-
-
                             asynchronous: true;
                             source: imageCacher.cachedUrl;
-
                             verticalAlignment: Image.AlignBottom;
 
                             sourceSize {
@@ -143,27 +138,23 @@ Rectangle {
                                 id: imageCacher;
 
                                 imageUrl: artworkUrl;
-
                                 identifier: sha1;
 
                                 Component.onCompleted: {
                                     cache();
                                 }
-
                             }
-
                         }
                     }
 
-
                     Text {
                         id: titleText;
-                        text: rowIndex//title;
-
+                        text: title;
                         color: PhxTheme.common.baseFontColor;
                         Layout.fillWidth: true;
                         elide: Text.ElideRight;
                     }
+                    /*
 
                     Text {
                         id: platformText;
@@ -177,7 +168,6 @@ Rectangle {
                         Layout.fillWidth: true;
                         elide: Text.ElideRight;
                     }
-
                     Text {
                         id: absPath;
                         anchors {
@@ -188,7 +178,7 @@ Rectangle {
                         color: PhxTheme.common.baseFontColor;
                         Layout.fillWidth: true;
                         elide: Text.ElideMiddle;
-                    }
+                    }*/
                 }
             }
         }

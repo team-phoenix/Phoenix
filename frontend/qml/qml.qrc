@@ -1,12 +1,13 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>BoxartGrid.qml</file>
+        <file>BoxartGridView.qml</file>
         <file>ContentArea.qml</file>
         <file>SelectionArea.qml</file>
         <file>HeaderBar.qml</file>
         <file>PlatformsView.qml</file>
         <file>CollectionsView.qml</file>
         <file>DropdownMenu.qml</file>
+        <file>DetailedGameView.qml</file>
     </qresource>
 </RCC>

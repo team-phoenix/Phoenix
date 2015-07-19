@@ -4,7 +4,8 @@ import QtGraphicalEffects 1.0
 import QtQuick.Window 2.0
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.1
-import QtQuick.Dialogs 1.2
+
+import vg.phoenix.themes 1.0
 
 Item {
     id: headerBar;
@@ -69,14 +70,13 @@ Item {
         id: headerBarSource;
         anchors.fill: headerBarBackground;
         visible: true;
-        z: parent.z + 1;
 
         RowLayout {
             anchors.fill: parent;
             spacing: 0;
 
             Rectangle {
-                color: "blue";
+                color: "transparent"//"blue";
                 Layout.fillHeight: true;
                 width: 150;
                 clip: true;
@@ -89,30 +89,33 @@ Item {
             }
 
             Rectangle {
-                color: "darkblue";
+                color: "transparent"//"darkblue";
                 Layout.fillHeight: true;
                 Layout.fillWidth: true;
-
-                FileDialog {
-                    id: fileDialog;
-                    selectFolder: true;
-                    onAccepted: {
-                        libraryModel.append( fileUrl );
-                    }
-                }
 
                 Row {
                     spacing: 12;
                     anchors.fill: parent;
+
+                    Button {
+                        anchors {
+                            verticalCenter: parent.verticalCenter;
+                        }
+                        z: 100;
+                        text: qsTr( "Grid" );
+                        onClicked: contentAreaStackView.push( { item: boxArtGridComponent, replace: true } )
+                    }
+
                     Button {
                         anchors {
                             verticalCenter: parent.verticalCenter;
                         }
 
-                        text: qsTr( "Add Folder" );
-                        onClicked: fileDialog.open();
+                        text: qsTr( "Details" );
+                        //onClicked: contentAreaStackView.showDetailedView = !contentAreaStackView.showDetailedView;
                     }
 
+                    /*
                     Button {
                         anchors {
                             verticalCenter: parent.verticalCenter;
@@ -138,7 +141,6 @@ Item {
                                 libraryModel.pauseInsert();
                         }
                     }
-
                     Label {
                         anchors {
                             verticalCenter: parent.verticalCenter;
@@ -146,25 +148,24 @@ Item {
                         text: libraryModel.progress + "%";
                         color: "white";
                     }
-
+*/
                     Label {
                         anchors {
                             verticalCenter: parent.verticalCenter;
                         }
                         text: libraryModel.message;
-                        color: "white";
+                        color: PhxTheme.common.baseFontColor;
                     }
                 }
             }
-
 
             PhxSearchBar {
                 id: searchBar;
                 Layout.fillHeight: true;
                 width: 42;
+                backgroundColor: "transparent";
             }
         }
-
     }
 
     Rectangle {
@@ -173,6 +174,39 @@ Item {
         color: "white";
         radius: 6;
         visible: false;
+
+        Rectangle {
+            anchors {
+                top: parent.top;
+                bottom: parent.bottom;
+                left: parent.left;
+            }
+
+            width: parent.width * ( libraryModel.progress / 100 );
+
+            Behavior on width {
+                PropertyAnimation {
+                    duration: 150;
+                    easing.type: Easing.Linear;
+                }
+            }
+
+            color: "cyan";
+            radius: parent.radius;
+
+            Rectangle {
+                color: parent.color;
+                radius: 0;
+                anchors {
+                    top: parent.top;
+                    bottom: parent.bottom;
+                    right: parent.right;
+                }
+
+                width: parent.width < parent.radius ? parent.width : parent.radius;
+
+            }
+        }
     }
 
 }
