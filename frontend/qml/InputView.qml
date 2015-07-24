@@ -1,13 +1,58 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
+import QtQuick.Controls.Styles 1.2
 
 import vg.phoenix.backend 1.0
 
 Rectangle {
+    id: inputView;
     width: 100
     height: 62
     color: "yellow";
+
+    property ListModel inputDevicesModel: ListModel {
+        ListElement { name: ""; port: 0  }
+
+        Component.onCompleted: {
+            clear();
+        }
+    }
+
+
+    ExclusiveGroup {
+        id: inputColumnGroup;
+    }
+
+    function handleDeviceAdded( device ) {
+        var port = device.port;
+        console.log( inputDevicesModel.count )
+
+        device.editMode = true;
+
+        console.log( device.port )
+        if ( device.port !== -1 )
+            inputDevicesModel.insert( port, { "name": device.name, "port": device.port } );
+
+    }
+
+
+    Component.onDestruction: {
+        /*
+        for ( var i = 0; i < root.inputManager.count; ++i ) {
+            console.log( root.inputManager.count )
+            //root.inputManager.get( i ).editMode = false;
+        }
+        */
+    }
+
+    Component.onCompleted: {
+        root.inputManager.deviceAdded.connect( handleDeviceAdded );
+        root.inputManager.emitConnectedDevices();
+
+    }
+
+    property var currentMapping: undefined;
 
     Rectangle {
         anchors {
@@ -22,6 +67,21 @@ Rectangle {
         }
 
         color: "pink";
+
+        ComboBox {
+            id: devicesCombobox;
+            model: inputView.inputDevicesModel;
+
+            textRole: "name";
+
+            onCurrentTextChanged: {
+                console.log( "currenttext: ",  currentText );
+                if ( root.inputManager.get( currentIndex ) !== null ) {
+                    currentMapping = root.inputManager.get( currentIndex ).mapping();
+                }
+            }
+
+        }
 
         RowLayout {
             anchors {
@@ -40,6 +100,14 @@ Rectangle {
                 }
 
                 headerText: qsTr( "Actions" );
+                exclusiveGroup: inputColumnGroup;
+                checked: false;
+
+                onExclusiveGroupChanged: {
+                    if ( exclusiveGroup ) {
+                        exclusiveGroup.bindCheckable( actionButtonColumn );
+                    }
+                }
 
                 model: ListModel {
                     ListElement { displayButton: "A"; key: "a"; value: InputDeviceEvent.A }
@@ -52,7 +120,15 @@ Rectangle {
             InputMappingColumn {
                 id: dpadButtonColumn;
                 width: 100;
-                headerText: qsTr( "Directional" );
+                headerText: qsTr( "Digital" );
+                exclusiveGroup: inputColumnGroup;
+                checked: false;
+
+                onExclusiveGroupChanged: {
+                    if ( exclusiveGroup ) {
+                        exclusiveGroup.bindCheckable( dpadButtonColumn );
+                    }
+                }
 
                 model: ListModel {
 
@@ -65,13 +141,21 @@ Rectangle {
 
             InputMappingColumn {
                 id: miscButtonColumn;
-                headerText: qsTr( "Misc." );
 
+                headerText: qsTr( "Misc." );
+                exclusiveGroup: inputColumnGroup;
+                checked: false;
+
+                onExclusiveGroupChanged: {
+                    if ( exclusiveGroup ) {
+                        exclusiveGroup.bindCheckable( miscButtonColumn );
+                    }
+                }
                 model: ListModel {
-                    ListElement { displayButton: "Left Stick"; key: "leftstick"; value: InputDeviceEvent.L3 }
-                    ListElement { displayButton: "Right Stick"; key: "rightstick"; value: InputDeviceEvent.R2 }
-                    ListElement { displayButton: "Left Shoulder"; key: "leftshoulder"; value: InputDeviceEvent.L }
-                    ListElement { displayButton: "Right Shoulder"; key: "rightshoulder"; value: InputDeviceEvent.R }
+                    ListElement { displayButton: "L3"; key: "leftstick"; value: InputDeviceEvent.L3 }
+                    ListElement { displayButton: "R3"; key: "rightstick"; value: InputDeviceEvent.R2 }
+                    ListElement { displayButton: "L"; key: "leftshoulder"; value: InputDeviceEvent.L }
+                    ListElement { displayButton: "R"; key: "rightshoulder"; value: InputDeviceEvent.R }
                     ListElement { displayButton: "Start"; key: "start"; value: InputDeviceEvent.Start }
                     ListElement { displayButton: "Select"; key: "back"; value: InputDeviceEvent.Select }
                 }
@@ -83,6 +167,14 @@ Rectangle {
 
                 anchors {
                     right: parent.right;
+                }
+                exclusiveGroup: inputColumnGroup;
+                checked: false;
+
+                onExclusiveGroupChanged: {
+                    if ( exclusiveGroup ) {
+                        exclusiveGroup.bindCheckable( analogColumn );
+                    }
                 }
 
                 model: ListModel {

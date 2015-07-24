@@ -5,15 +5,25 @@ import QtQuick.Layouts 1.1
 import vg.phoenix.backend 1.0
 
 ListView {
-    id: inputGridView;
+    id: inputMappingColumn;
 
     height: 300;
     width: 200;
 
     model: undefined;
 
+
+    property bool checked: false;
+    property ExclusiveGroup exclusiveGroup: null;
+
+    onCheckedChanged: {
+        if ( !checked ) {
+            root.inputManager.get( devicesCombobox.currentIndex ).editModeEvent.disconnect( inputMappingColumn.currentItem.handleEvent );
+        }
+    }
+
     orientation: ListView.Vertical;
-    spacing: 0;
+    spacing: 3;
 
     property string headerText: "";
 
@@ -25,25 +35,54 @@ ListView {
 
         Text {
             anchors.centerIn: parent;
-            text: inputGridView.headerText;
+            text: inputMappingColumn.headerText;
             font {
                 pixelSize: 13;
             }
         }
     }
 
-    delegate: Item {
-
+    delegate: Rectangle {
+        id: columnItem;
         height: 32;
-        width: parent.width;
+        width: 100;
+
+        color: "#82342e";
+        radius: 5;
+
+
+        property string text: inputView.currentMapping === undefined
+                              ? "" : inputView.currentMapping[ key ]//value;
+
+        function handleEvent( event, state, type ) {
+            if ( state ) {
+                root.inputManager.get( devicesCombobox.currentIndex ).setMappings( key, event, type );
+                inputView.currentMapping = root.inputManager.get( devicesCombobox.currentIndex ).mapping();
+            }
+
+        }
+
+        MouseArea {
+            anchors.fill: parent;
+            onClicked: {
+                inputMappingColumn.checked = true;
+                if ( index !== inputMappingColumn.currentIndex ) {
+                    root.inputManager.get( devicesCombobox.currentIndex ).editModeEvent.disconnect( inputMappingColumn.currentItem.handleEvent );
+                    inputMappingColumn.currentIndex = index;
+                    root.inputManager.get( devicesCombobox.currentIndex ).editModeEvent.connect( columnItem.handleEvent );
+                } else {
+                    root.inputManager.get( devicesCombobox.currentIndex ).editModeEvent.connect( columnItem.handleEvent );
+                }
+            }
+        }
 
         RowLayout {
             anchors.fill: parent;
             spacing: 12;
 
             Rectangle {
-
-                color: "blue";
+                radius: 5;
+                color: "transparent";
                 Layout.fillHeight: true;
                 width: displayText.width + 21;
 
@@ -65,20 +104,21 @@ ListView {
             Rectangle {
                 Layout.fillHeight: true;
                 Layout.fillWidth: true;
-                color: "green";
+                color: "#2e1510";
                 anchors {
                     verticalCenter: parent.verticalCenter;
                     right: parent.right;
                 }
 
                 Text {
+                    id: textField;
                     anchors {
                         verticalCenter: parent.verticalCenter;
                         right: parent.right;
                         rightMargin: 12;
                     }
 
-                    text: value;
+                    text: columnItem.text;
                     color: "white";
                 }
             }

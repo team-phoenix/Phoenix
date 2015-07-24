@@ -16,10 +16,16 @@ ApplicationWindow {
     minimumHeight: 480;
     minimumWidth: 640;
 
+    property InputManager inputManager: InputManager {
+
+    }
+
     DropArea {
         id: rootDropArea;
         anchors.fill: parent;
     }
+
+
 
     RowLayout {
         id: gameSelectionPane;

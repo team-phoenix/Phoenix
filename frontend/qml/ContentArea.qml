@@ -30,6 +30,13 @@ Rectangle {
             rightMargin: 12;
         }
 
+        /*
+        visible: {
+            if ( contentAreaStackView.currentItem !== null ) {
+                return contentAreaStackView.currentItem.objectName === "BoxartGridView";
+            }
+            return false;
+        }*/
 
 
         /*MouseArea {
@@ -67,7 +74,7 @@ Rectangle {
 
     StackView {
         id: contentAreaStackView;
-        initialItem: boxArtGridComponent;
+        initialItem: inputView;
 
         anchors {
             fill: parent;
