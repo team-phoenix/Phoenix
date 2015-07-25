@@ -25,8 +25,6 @@ ApplicationWindow {
         anchors.fill: parent;
     }
 
-
-
     RowLayout {
         id: gameSelectionPane;
         anchors {

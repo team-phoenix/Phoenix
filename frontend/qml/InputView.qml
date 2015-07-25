@@ -15,24 +15,20 @@ Rectangle {
         ListElement { name: ""; port: 0  }
 
         Component.onCompleted: {
-            clear();
+            //clear();
         }
     }
-
 
     ExclusiveGroup {
         id: inputColumnGroup;
     }
 
     function handleDeviceAdded( device ) {
-        var port = device.port;
-        console.log( inputDevicesModel.count )
 
         device.editMode = true;
 
-        console.log( device.port )
-        if ( device.port !== -1 )
-            inputDevicesModel.insert( port, { "name": device.name, "port": device.port } );
+        console.log( "name: " + device.name + " modelCount: " + devicesCombobox.count );
+        inputDevicesModel.append( { "name": device.name  } );
 
     }
 
@@ -76,8 +72,8 @@ Rectangle {
 
             onCurrentTextChanged: {
                 console.log( "currenttext: ",  currentText );
-                if ( root.inputManager.get( currentIndex ) !== null ) {
-                    currentMapping = root.inputManager.get( currentIndex ).mapping();
+                if ( root.inputManager.get( devicesCombobox.currentText ) !== null ) {
+                    currentMapping = root.inputManager.get( devicesCombobox.currentText ).mapping();
                 }
             }
 

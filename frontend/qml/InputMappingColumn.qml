@@ -18,7 +18,9 @@ ListView {
 
     onCheckedChanged: {
         if ( !checked ) {
-            root.inputManager.get( devicesCombobox.currentIndex ).editModeEvent.disconnect( inputMappingColumn.currentItem.handleEvent );
+            root.inputManager.get( devicesCombobox.currentText ).editModeEvent.disconnect( inputMappingColumn.currentItem.handleEvent );
+        } else {
+            inputMappingColumn.forceActiveFocus();
         }
     }
 
@@ -56,10 +58,19 @@ ListView {
 
         function handleEvent( event, state, type ) {
             if ( state ) {
-                root.inputManager.get( devicesCombobox.currentIndex ).setMappings( key, event, type );
-                inputView.currentMapping = root.inputManager.get( devicesCombobox.currentIndex ).mapping();
+                root.inputManager.get( devicesCombobox.currentText ).setMappings( key, event, type );
+                inputView.currentMapping = root.inputManager.get( devicesCombobox.currentText ).mapping();
             }
 
+        }
+
+        focus: checked;
+
+        Keys.onPressed: {
+            if ( devicesCombobox.currentText === "Keyboard" ) {
+                root.inputManager.get( devicesCombobox.currentText ).setMappings( key, event.key, InputDeviceEvent.ButtonEvent );
+                inputView.currentMapping = root.inputManager.get( devicesCombobox.currentText ).mapping();
+            }
         }
 
         MouseArea {
@@ -67,11 +78,11 @@ ListView {
             onClicked: {
                 inputMappingColumn.checked = true;
                 if ( index !== inputMappingColumn.currentIndex ) {
-                    root.inputManager.get( devicesCombobox.currentIndex ).editModeEvent.disconnect( inputMappingColumn.currentItem.handleEvent );
+                    root.inputManager.get( devicesCombobox.currentText ).editModeEvent.disconnect( inputMappingColumn.currentItem.handleEvent );
                     inputMappingColumn.currentIndex = index;
-                    root.inputManager.get( devicesCombobox.currentIndex ).editModeEvent.connect( columnItem.handleEvent );
+                    root.inputManager.get( devicesCombobox.currentText ).editModeEvent.connect( columnItem.handleEvent );
                 } else {
-                    root.inputManager.get( devicesCombobox.currentIndex ).editModeEvent.connect( columnItem.handleEvent );
+                    root.inputManager.get( devicesCombobox.currentText ).editModeEvent.connect( columnItem.handleEvent );
                 }
             }
         }
