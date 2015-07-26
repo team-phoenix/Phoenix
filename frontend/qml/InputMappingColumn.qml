@@ -57,21 +57,14 @@ ListView {
                               ? "" : inputView.currentMapping[ key ]//value;
 
         function handleEvent( event, state, type ) {
+            console.log( state )
             if ( state ) {
                 root.inputManager.get( devicesCombobox.currentText ).setMappings( key, event, type );
                 inputView.currentMapping = root.inputManager.get( devicesCombobox.currentText ).mapping();
             }
-
         }
 
         focus: checked;
-
-        Keys.onPressed: {
-            if ( devicesCombobox.currentText === "Keyboard" ) {
-                root.inputManager.get( devicesCombobox.currentText ).setMappings( key, event.key, InputDeviceEvent.ButtonEvent );
-                inputView.currentMapping = root.inputManager.get( devicesCombobox.currentText ).mapping();
-            }
-        }
 
         MouseArea {
             anchors.fill: parent;

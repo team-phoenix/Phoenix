@@ -30,8 +30,8 @@ LibraryModel::LibraryModel( LibraryInternalDatabase *db, QObject *parent )
 LibraryModel::LibraryModel( LibraryInternalDatabase &db, QObject *parent )
     : QSqlTableModel( parent, db.database() ),
       mWorkerThread( this ),
-      mTransaction( false ),
       mFilterCollection( false ),
+      mTransaction( false ),
       qmlInsertPaused( false ),
       qmlInsertCancelled( false ),
       qmlCount( 0 ),
