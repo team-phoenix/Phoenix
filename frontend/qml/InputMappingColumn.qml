@@ -12,6 +12,7 @@ ListView {
 
     model: undefined;
 
+    interactive: false;
 
     property bool checked: false;
     property ExclusiveGroup exclusiveGroup: null;

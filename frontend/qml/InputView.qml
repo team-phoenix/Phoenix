@@ -14,6 +14,23 @@ Rectangle {
     property ListModel inputDevicesModel: ListModel {
         ListElement { name: ""; port: 0  }
 
+        Component.onCompleted: {
+            clear()
+            root.inputManager.deviceAdded.connect( handleDeviceAdded );
+            root.inputManager.emitConnectedDevices();
+
+        }
+
+        Component.onDestruction: {
+            root.inputManager.deviceAdded.disconnect( handleDeviceAdded );
+            for ( var i = 0; i < root.inputManager.count; ++i ) {
+                if ( root.inputManager.at( i ) ) {
+                    root.inputManager.at( i ).editMode = false;
+                    root.inputManager.at( i ).editModeEvent.disconnect();
+                }
+            }
+        }
+
     }
 
     ExclusiveGroup {
@@ -24,33 +41,15 @@ Rectangle {
 
         device.editMode = true;
 
-        if ( inputDevicesModel.get( 0 ).name === "" ) {
+        if (  inputDevicesModel.count > 0 && inputDevicesModel.get( 0 ).name === "" ) {
             inputDevicesModel.set( 0, { "name": device.name } );
         } else {
             inputDevicesModel.append( { "name": device.name  } );
         }
 
-        console.log( "name: " + device.name + " modelCount: " + devicesCombobox.count );
-
     }
 
-
-    Component.onDestruction: {
-
-        for ( var i = 0; i < root.inputManager.count; ++i ) {
-            if ( root.inputManager.at( i ) ) {
-                root.inputManager.at( i ).editMode = false;
-            }
-        }
-
-    }
-
-    Component.onCompleted: {
-        root.inputManager.deviceAdded.connect( handleDeviceAdded );
-        root.inputManager.emitConnectedDevices();
-
-    }
-
+    // This is a QVariantMap that is used to hold the currently selected device's mapping.
     property var currentMapping: undefined;
 
     Rectangle {
