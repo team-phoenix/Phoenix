@@ -14,9 +14,6 @@ Rectangle {
     property ListModel inputDevicesModel: ListModel {
         ListElement { name: ""; port: 0  }
 
-        Component.onCompleted: {
-            //clear();
-        }
     }
 
     ExclusiveGroup {
@@ -27,8 +24,13 @@ Rectangle {
 
         device.editMode = true;
 
+        if ( inputDevicesModel.get( 0 ).name === "" ) {
+            inputDevicesModel.set( 0, { "name": device.name } );
+        } else {
+            inputDevicesModel.append( { "name": device.name  } );
+        }
+
         console.log( "name: " + device.name + " modelCount: " + devicesCombobox.count );
-        inputDevicesModel.append( { "name": device.name  } );
 
     }
 
@@ -80,106 +82,117 @@ Rectangle {
 
         }
 
-        RowLayout {
+        ScrollView {
             anchors {
-                fill: parent;
+                right: parent.right;
+                rightMargin: 12;
+                top: parent.top;
+                bottom: parent.bottom;
             }
 
-            spacing: 24;
+            width: 250;
 
-            InputMappingColumn {
-                id: actionButtonColumn;
+            ColumnLayout {
+                spacing: 0;
 
-                width: 75;
+                InputMappingColumn {
+                    id: actionButtonColumn;
 
-                anchors {
-                    left: parent.left;
-                }
+                    Layout.fillWidth: true;
 
-                headerText: qsTr( "Actions" );
-                exclusiveGroup: inputColumnGroup;
-                checked: false;
+                    height: 175;
 
-                onExclusiveGroupChanged: {
-                    if ( exclusiveGroup ) {
-                        exclusiveGroup.bindCheckable( actionButtonColumn );
+                    headerText: qsTr( "Actions" );
+                    exclusiveGroup: inputColumnGroup;
+                    checked: false;
+
+                    onExclusiveGroupChanged: {
+                        if ( exclusiveGroup ) {
+                            exclusiveGroup.bindCheckable( actionButtonColumn );
+                        }
+                    }
+
+                    model: ListModel {
+                        ListElement { displayButton: "A"; key: "a"; value: InputDeviceEvent.A }
+                        ListElement { displayButton: "B"; key: "b"; value: InputDeviceEvent.B }
+                        ListElement { displayButton: "X"; key: "x"; value: InputDeviceEvent.X }
+                        ListElement { displayButton: "Y"; key: "y"; value: InputDeviceEvent.Y }
                     }
                 }
 
-                model: ListModel {
-                    ListElement { displayButton: "A"; key: "a"; value: InputDeviceEvent.A }
-                    ListElement { displayButton: "B"; key: "b"; value: InputDeviceEvent.B }
-                    ListElement { displayButton: "X"; key: "x"; value: InputDeviceEvent.X }
-                    ListElement { displayButton: "Y"; key: "y"; value: InputDeviceEvent.Y }
-                }
-            }
+                InputMappingColumn {
+                    id: dpadButtonColumn;
+                    Layout.fillWidth: true;
+                    height: 175;
+                    headerText: qsTr( "Digital" );
+                    exclusiveGroup: inputColumnGroup;
+                    checked: false;
 
-            InputMappingColumn {
-                id: dpadButtonColumn;
-                width: 100;
-                headerText: qsTr( "Digital" );
-                exclusiveGroup: inputColumnGroup;
-                checked: false;
+                    onExclusiveGroupChanged: {
+                        if ( exclusiveGroup ) {
+                            exclusiveGroup.bindCheckable( dpadButtonColumn );
+                        }
+                    }
 
-                onExclusiveGroupChanged: {
-                    if ( exclusiveGroup ) {
-                        exclusiveGroup.bindCheckable( dpadButtonColumn );
+                    model: ListModel {
+                        ListElement { displayButton: "Up"; key: "dpup"; value: InputDeviceEvent.Up }
+                        ListElement { displayButton: "Left"; key: "dpleft"; value: InputDeviceEvent.Left }
+                        ListElement { displayButton: "Right"; key: "dpright"; value: InputDeviceEvent.Right }
+                        ListElement { displayButton: "Down"; key: "dpdown"; value: InputDeviceEvent.Down }
                     }
                 }
 
-                model: ListModel {
+                InputMappingColumn {
+                    id: miscButtonColumn;
 
-                    ListElement { displayButton: "Up"; key: "dpup"; value: InputDeviceEvent.Up }
-                    ListElement { displayButton: "Left"; key: "dpleft"; value: InputDeviceEvent.Left }
-                    ListElement { displayButton: "Right"; key: "dpright"; value: InputDeviceEvent.Right }
-                    ListElement { displayButton: "Down"; key: "dpdown"; value: InputDeviceEvent.Down }
-                }
-            }
+                    Layout.fillWidth: true;
 
-            InputMappingColumn {
-                id: miscButtonColumn;
+                    height: 250;
 
-                headerText: qsTr( "Misc." );
-                exclusiveGroup: inputColumnGroup;
-                checked: false;
+                    headerText: qsTr( "Misc." );
+                    exclusiveGroup: inputColumnGroup;
+                    checked: false;
 
-                onExclusiveGroupChanged: {
-                    if ( exclusiveGroup ) {
-                        exclusiveGroup.bindCheckable( miscButtonColumn );
+                    onExclusiveGroupChanged: {
+                        if ( exclusiveGroup ) {
+                            exclusiveGroup.bindCheckable( miscButtonColumn );
+                        }
                     }
-                }
-                model: ListModel {
-                    ListElement { displayButton: "L3"; key: "leftstick"; value: InputDeviceEvent.L3 }
-                    ListElement { displayButton: "R3"; key: "rightstick"; value: InputDeviceEvent.R2 }
-                    ListElement { displayButton: "L"; key: "leftshoulder"; value: InputDeviceEvent.L }
-                    ListElement { displayButton: "R"; key: "rightshoulder"; value: InputDeviceEvent.R }
-                    ListElement { displayButton: "Start"; key: "start"; value: InputDeviceEvent.Start }
-                    ListElement { displayButton: "Select"; key: "back"; value: InputDeviceEvent.Select }
-                }
-            }
-
-            InputMappingColumn {
-                id: analogColumn;
-                headerText: qsTr( "Analog" );
-
-                anchors {
-                    right: parent.right;
-                }
-                exclusiveGroup: inputColumnGroup;
-                checked: false;
-
-                onExclusiveGroupChanged: {
-                    if ( exclusiveGroup ) {
-                        exclusiveGroup.bindCheckable( analogColumn );
+                    model: ListModel {
+                        ListElement { displayButton: "L3"; key: "leftstick"; value: InputDeviceEvent.L3 }
+                        ListElement { displayButton: "R3"; key: "rightstick"; value: InputDeviceEvent.R2 }
+                        ListElement { displayButton: "L"; key: "leftshoulder"; value: InputDeviceEvent.L }
+                        ListElement { displayButton: "R"; key: "rightshoulder"; value: InputDeviceEvent.R }
+                        ListElement { displayButton: "Start"; key: "start"; value: InputDeviceEvent.Start }
+                        ListElement { displayButton: "Select"; key: "back"; value: InputDeviceEvent.Select }
                     }
                 }
 
-                model: ListModel {
-                    ListElement { displayButton: "Up"; key: "dpup"; value: InputDeviceEvent.Up }
-                    ListElement { displayButton: "Left"; key: "dpleft"; value: InputDeviceEvent.Left }
-                    ListElement { displayButton: "Right"; key: "dpright"; value: InputDeviceEvent.Right }
-                    ListElement { displayButton: "Down"; key: "dpdown"; value: InputDeviceEvent.Down }
+                /*
+                InputMappingColumn {
+                    id: analogColumn;
+                    headerText: qsTr( "Analog" );
+
+                    anchors {
+                        right: parent.right;
+                    }
+                    exclusiveGroup: inputColumnGroup;
+                    checked: false;
+
+                    onExclusiveGroupChanged: {
+                        if ( exclusiveGroup ) {
+                            exclusiveGroup.bindCheckable( analogColumn );
+                        }
+                    }
+
+                    model: ListModel {
+                        ListElement { displayButton: "Up"; key: "dpup"; value: InputDeviceEvent.Up }
+                        ListElement { displayButton: "Left"; key: "dpleft"; value: InputDeviceEvent.Left }
+                        ListElement { displayButton: "Right"; key: "dpright"; value: InputDeviceEvent.Right }
+                        ListElement { displayButton: "Down"; key: "dpdown"; value: InputDeviceEvent.Down }
+                    }
                 }
+                */
             }
         }
 

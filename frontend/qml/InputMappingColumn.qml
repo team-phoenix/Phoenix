@@ -58,6 +58,11 @@ ListView {
         height: 32;
         width: 100;
 
+        anchors {
+            left: parent.left;
+            right: parent.right;
+        }
+
         color: "#82342e";
         radius: 5;
 
