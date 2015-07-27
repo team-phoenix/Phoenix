@@ -54,13 +54,15 @@ ListView {
 
 
         property string text: inputView.currentMapping === undefined
-                              ? "" : inputView.currentMapping[ key ]//value;
+                              ? "None" : inputView.currentMapping[ key ]//value;
 
         function handleEvent( event, state, type ) {
-            console.log( state )
             if ( state ) {
-                root.inputManager.get( devicesCombobox.currentText ).setMappings( key, event, type );
-                inputView.currentMapping = root.inputManager.get( devicesCombobox.currentText ).mapping();
+                if ( root.inputManager.get( devicesCombobox.currentText ).setMappings( key, event, type ) ) {
+                    inputView.currentMapping = root.inputManager.get( devicesCombobox.currentText ).mapping();
+                } else {
+                    console.log( "Collsion QML Detected." );
+                }
             }
         }
 
