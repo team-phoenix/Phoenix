@@ -34,12 +34,13 @@ Rectangle {
 
 
     Component.onDestruction: {
-        /*
+
         for ( var i = 0; i < root.inputManager.count; ++i ) {
-            console.log( root.inputManager.count )
-            //root.inputManager.get( i ).editMode = false;
+            if ( root.inputManager.at( i ) ) {
+                root.inputManager.at( i ).editMode = false;
+            }
         }
-        */
+
     }
 
     Component.onCompleted: {
