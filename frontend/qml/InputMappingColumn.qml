@@ -44,6 +44,15 @@ ListView {
         }
     }
 
+    Timer {
+        id: mappingCollsionTimer;
+        interval: 400;
+        onTriggered: {
+            inputMappingColumn.currentItem.mappingCollisionDetected = false;
+        }
+    }
+
+
     delegate: Rectangle {
         id: columnItem;
         height: 32;
@@ -52,6 +61,7 @@ ListView {
         color: "#82342e";
         radius: 5;
 
+        property bool mappingCollisionDetected: false;
 
         property string text: inputView.currentMapping === undefined
                               ? "None" : inputView.currentMapping[ key ]//value;
@@ -61,6 +71,8 @@ ListView {
                 if ( root.inputManager.get( devicesCombobox.currentText ).setMappings( key, event, type ) ) {
                     inputView.currentMapping = root.inputManager.get( devicesCombobox.currentText ).mapping();
                 } else {
+                    mappingCollisionDetected = true;
+                    mappingCollsionTimer.start();
                     console.log( "Collsion QML Detected." );
                 }
             }
@@ -71,7 +83,10 @@ ListView {
         MouseArea {
             anchors.fill: parent;
             onClicked: {
+
+                mappingCollsionTimer.stop();
                 inputMappingColumn.checked = true;
+
                 if ( index !== inputMappingColumn.currentIndex ) {
                     root.inputManager.get( devicesCombobox.currentText ).editModeEvent.disconnect( inputMappingColumn.currentItem.handleEvent );
                     inputMappingColumn.currentIndex = index;
@@ -79,6 +94,7 @@ ListView {
                 } else {
                     root.inputManager.get( devicesCombobox.currentText ).editModeEvent.connect( columnItem.handleEvent );
                 }
+
             }
         }
 
@@ -110,7 +126,7 @@ ListView {
             Rectangle {
                 Layout.fillHeight: true;
                 Layout.fillWidth: true;
-                color: "#2e1510";
+                color: columnItem.mappingCollisionDetected ? "red" : "#2e1510";
                 anchors {
                     verticalCenter: parent.verticalCenter;
                     right: parent.right;
