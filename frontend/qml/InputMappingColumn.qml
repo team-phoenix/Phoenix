@@ -70,11 +70,13 @@ ListView {
         property bool mappingCollisionDetected: false;
 
         property string text: inputView.currentMapping === undefined
-                              ? "None" : inputView.currentMapping[ key ]//value;
+                              ? "None" : inputView.currentMapping[ key ];
 
         function handleEvent( event, state, type ) {
             if ( state ) {
                 if ( root.inputManager.get( devicesCombobox.currentText ).setMappings( key, event, type ) ) {
+                    inputMappingColumn.currentIndex = -1;
+                    root.inputManager.get( devicesCombobox.currentText ).editModeEvent.disconnect( handleEvent );
                     inputView.currentMapping = root.inputManager.get( devicesCombobox.currentText ).mapping();
                 } else {
                     mappingCollisionDetected = true;
@@ -89,12 +91,14 @@ ListView {
         MouseArea {
             anchors.fill: parent;
             onClicked: {
-
                 mappingCollsionTimer.stop();
+
                 inputMappingColumn.checked = true;
 
                 if ( index !== inputMappingColumn.currentIndex ) {
-                    root.inputManager.get( devicesCombobox.currentText ).editModeEvent.disconnect( inputMappingColumn.currentItem.handleEvent );
+                    if ( inputMappingColumn.currentIndex > -1 ) {
+                        root.inputManager.get( devicesCombobox.currentText ).editModeEvent.disconnect( inputMappingColumn.currentItem.handleEvent );
+                    }
                     inputMappingColumn.currentIndex = index;
                     root.inputManager.get( devicesCombobox.currentText ).editModeEvent.connect( columnItem.handleEvent );
                 } else {
@@ -136,6 +140,11 @@ ListView {
                 anchors {
                     verticalCenter: parent.verticalCenter;
                     right: parent.right;
+                }
+
+                border {
+                    color: "orange";
+                    width: checked && index == inputMappingColumn.currentIndex ? 6 : 0;
                 }
 
                 Text {

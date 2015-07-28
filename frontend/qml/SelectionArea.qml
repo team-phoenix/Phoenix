@@ -47,7 +47,7 @@ Item {
                 Component {
                     id: platformsView;
                     PlatformsView {
-
+                        objectName: "PlatformsView";
                     }
                 }
 
@@ -55,7 +55,7 @@ Item {
                     id: favoritesView;
 
                     CollectionsView {
-
+                        objectName: "CollectionsView";
                     }
                 }
 
@@ -64,7 +64,7 @@ Item {
 
 
                     SettingsView {
-
+                        objectName: "SettingsView";
                     }
                 }
 
@@ -154,13 +154,19 @@ Item {
                                 fileDialog.open();
                                 break;
                             case 1:
-                                sectionsAreaStackView.push( { item: favoritesView, replace: true } );
+                                if ( sectionsAreaStackView.currentItem.objectName !== "CollectionsView" ) {
+                                    sectionsAreaStackView.push( { item: favoritesView, replace: true } );
+                                }
                                 break;
                             case 2:
-                                sectionsAreaStackView.push( { item: platformsView, replace: true } );
+                                if ( sectionsAreaStackView.currentItem.objectName !== "PlatformsView" ) {
+                                    sectionsAreaStackView.push( { item: platformsView, replace: true } );
+                                }
                                 break;
                             case 3:
-                                sectionsAreaStackView.push( { item: settingsView, replace: true } );
+                                if ( sectionsAreaStackView.currentItem.objectName !== "SettingsView" ) {
+                                    sectionsAreaStackView.push( { item: settingsView, replace: true } );
+                                }
                                 break;
                             default:
                                 break;
