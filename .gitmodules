@@ -1,3 +1,4 @@
 [submodule "phoenix-backend"]
 	path = backend
 	url = https://github.com/team-phoenix/phoenix-backend
+	ignore = dirty
