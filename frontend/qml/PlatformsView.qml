@@ -16,7 +16,7 @@ ScrollView {
         }
 
         header: Rectangle {
-            color: "lightblue";
+            color: "transparent";
             height: 36;
 
             anchors {
@@ -33,7 +33,7 @@ ScrollView {
                 }
 
                 font {
-                    pixelSize: PhxTheme.sectionArea.headerFontSize;
+                    pixelSize: PhxTheme.selectionArea.headerFontSize;
                     bold: true;
                 }
 
@@ -48,14 +48,16 @@ ScrollView {
                 }
 
                 text: qsTr( "All" );
-                onClicked: contentArea.contentLibraryModel.clearFilter( "games", "system" );
+                onClicked: {
+                    listView.currentIndex = -1;
+                    contentArea.contentLibraryModel.clearFilter( "games", "system" );
+                }
 
             }
         }
 
-        delegate: Rectangle {
-            color: index % 2 == 0 ? "yellow" : "lightgreen";
-            height: 24;
+        delegate: Item {
+            height: 26;
 
             anchors {
                 left: parent.left;
@@ -72,16 +74,19 @@ ScrollView {
                 }
 
                 font {
-                    pixelSize: PhxTheme.sectionArea.normalFontSize;
+                    pixelSize: PhxTheme.selectionArea.basePixelSize;
+                    bold: true;
                 }
 
-                color: PhxTheme.common.baseFontColor;
+                color: index === listView.currentIndex
+                            ? PhxTheme.selectionArea.highlightFontColor : PhxTheme.selectionArea.baseFontColor;
 
             }
 
             MouseArea {
                 anchors.fill: parent;
                 onClicked: {
+                    listView.currentIndex = index;
                     contentArea.contentLibraryModel.setFilter( "games", "system", platformText.text );
                 }
             }

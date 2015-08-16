@@ -2,6 +2,7 @@ import QtQuick 2.4
 import QtQuick.Controls 1.3
 import QtQuick.Layouts 1.1
 import QtQuick.Window 2.0
+import QtGraphicalEffects 1.0
 
 import vg.phoenix.backend 1.0
 
@@ -17,46 +18,70 @@ ApplicationWindow {
     minimumWidth: 640;
 
     property InputManager inputManager: InputManager {
+        gamepadControlsFrontend: true;
 
     }
 
-    DropArea {
-        id: rootDropArea;
-        anchors.fill: parent;
+    StackView {
+        id: layoutStackView;
+        initialItem: mouseDrivenView;
     }
 
-    RowLayout {
-        id: gameSelectionPane;
+
+    Rectangle {
         anchors {
-            fill: parent;
-        }
-
-        spacing: 0;
-
-        SelectionArea {
-            id: selectionArea;
-            anchors {
-                top: parent.top;
-                bottom: parent.bottom;
-            }
-
-            width: 275;
-            z: contentArea.z + 1;
+            right: parent.right;
+            top: parent.top;
 
         }
+        height: 25;
+        width: 25;
+        color: "red"
 
-
-        ContentArea {
-            id: contentArea;
-            anchors {
-                top: parent.top;
-                bottom: parent.bottom;
+        MouseArea {
+            anchors.fill: parent;
+            onClicked: {
+                if ( layoutStackView.currentItem.objectName === "MouseDrivenView" ) {
+                    layoutStackView.push( { item: bigPictureView, replace: true } );
+                } else if ( layoutStackView.currentItem.objectName === "BigPictureView" ) {
+                    layoutStackView.push( { item: mouseDrivenView, replace: true } );
+                }
             }
-
-            Layout.fillWidth: true;
-
         }
     }
+
+    Component {
+        id: bigPictureView;
+
+        BigPictureView {
+            id: pictureView;
+            objectName: "BigPictureView";
+
+            Connections {
+                target: root.inputManager;
+                onDeviceAdded: {
+                    console.log( device.name );
+                    console.log( device.editMode )
+                    device.inputDeviceEvent.connect( pictureView.qmlInputDevice.insert );
+                }
+            }
+
+            Component.onCompleted: {
+                root.inputManager.emitConnectedDevices();
+            }
+        }
+    }
+
+    Component {
+        id: mouseDrivenView;
+
+        MouseDrivenView {
+
+            objectName: "MouseDrivenView";
+        }
+    }
+
+
 
 
 }

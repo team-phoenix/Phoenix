@@ -36,7 +36,7 @@ ScrollView {
                 }
 
                 font {
-                    pixelSize: PhxTheme.sectionArea.headerFontSize;
+                    pixelSize: PhxTheme.selectionArea.headerFontSize;
                     bold: true;
                 }
 
@@ -65,7 +65,7 @@ ScrollView {
                 }
 
                 font {
-                    pixelSize: PhxTheme.sectionArea.normalFontSize;
+                    pixelSize: PhxTheme.selectionArea.basePixelSize;
                 }
 
                 color: PhxTheme.common.baseFontColor;

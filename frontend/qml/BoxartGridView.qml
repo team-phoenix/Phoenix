@@ -31,7 +31,7 @@ Rectangle {
 
             // The max height and width of the grid's cells. This can be tweaked
             // to change the default size of the boxart.
-            property int maxCellHeight: 200;
+            property int maxCellHeight: 400;
             property bool clampEdges: parent.width >= maxCellHeight;
 
             displaced: Transition {
@@ -76,7 +76,7 @@ Rectangle {
                 height: gridView.cellHeight//gridView.clampEdges ? gridView.cellHeight : gridView.width * 0.75;
                 width: gridView.cellWidth;
 
-                color: "lightgray"
+                color: "transparent";//"lightgray"
 
                 ColumnLayout {
                     spacing: 6;
@@ -92,23 +92,26 @@ Rectangle {
 
                     Rectangle {
                         id: gridItemImageContainer;
-                        color: "white";
+                        color: gridItemImage.source === "" ? "white" : "transparent";
                         Layout.fillHeight: true;
                         Layout.fillWidth: true;
 
+
+
                         DropShadow {
-                            visible: false;
+                            visible: true;
                             anchors.fill: source;
                             source: gridItemImage;
-                            verticalOffset: 1;
+                            verticalOffset: 4;
                             horizontalOffset: 0;
-                            color: "#a0000000";
+                            color: "black";
                             transparentBorder: true;
                             samples: radius * 2;
-                            radius: 6;
+                            radius: 16;
                         }
 
                         Image {
+                            visible: true;
                             id: gridItemImage;
                             anchors {
                                 left: parent.left;
@@ -116,6 +119,7 @@ Rectangle {
                                 bottom: parent.bottom;
                             }
 
+                            fillMode: Image.PreserveAspectCrop;
                             onStatusChanged: {
                                 if ( status == Image.Null || status === Image.Error) {
                                     console.log("Error in " + source)
@@ -128,11 +132,16 @@ Rectangle {
                             verticalAlignment: Image.AlignBottom;
 
                             sourceSize {
-                                height: 300;
-                                width: 300;
+                                height: 400;
+                                width: 400;
                             }
 
-                            fillMode: Image.PreserveAspectFit;
+                            MouseArea {
+                                anchors.fill: parent;
+                                onClicked: {
+                                    mainBackgroundImage.source = parent.source;
+                                }
+                            }
 
                             ImageCacher {
                                 id: imageCacher;

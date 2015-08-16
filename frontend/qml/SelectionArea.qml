@@ -26,12 +26,22 @@ Item {
         id: selectionArea;
         anchors.fill: parent;
 
+        /*
+        gradient: Gradient {
+            GradientStop { position: 0.0; color: "#59070d"; }
+            GradientStop { position: 0.7; color: "#24000c"; }
+            GradientStop { position: 1.0; color: "#24000c"; }
+        }
+        */
+
+        color: "#241312";
+
         ColumnLayout {
             anchors.fill: parent;
             spacing: 0;
 
             Rectangle {
-                height: 100;
+                height: 0;
                 Layout.fillWidth: true;
                 color: "orange";
 
@@ -106,7 +116,7 @@ Item {
             }
 
             ListView {
-                id: sectionAreaToolbar;
+                id: selectionAreaToolbar;
                 height: 62;
                 anchors {
                     left: parent.left;
@@ -118,10 +128,10 @@ Item {
                 orientation: ListView.Horizontal;
 
                 model: ListModel {
-                    ListElement { bgColor: "gray"; label: "Add Games"; }
-                    ListElement { bgColor: "darkgray"; label: "Favorites"; }
-                    ListElement { bgColor: "gray"; label: "Games"; }
-                    ListElement { bgColor: "darkgray"; label: "Settings"; }
+                    ListElement { bgColor: "black"; label: "Add Games"; imageSource: ""; }
+                    ListElement { bgColor: "black"; label: "Favorites"; imageSource: "collections.svg"; }
+                    ListElement { bgColor: "black"; label: "Games"; imageSource: ""; }
+                    ListElement { bgColor: "black"; label: "Settings"; imageSource: "settings.svg"; }
                 }
 
                 FileDialog {
@@ -132,18 +142,44 @@ Item {
                     }
                 }
 
+                /*
+                header: Rectangle {
+                    width: selectionAreaToolbar.width;
+
+                    height: 2;
+                    color: "white";
+                    opacity: 0.15;
+                }
+                */
+
                 delegate: Rectangle {
                     height: parent.height;
-                    width: sectionAreaToolbar.width / sectionAreaToolbar.count;
-                    color: bgColor;
+                    width: selectionAreaToolbar.width / selectionAreaToolbar.count;
+                    color: "white" //bgColor;
+
+
+                    Image {
+                        sourceSize {
+                            height: 24;
+                            width: 24;
+                        }
+
+                        source: imageSource;
+                        anchors {
+                            centerIn: parent;
+                        }
+                    }
 
                     Text {
+                        visible: imageSource === "";
                         anchors.centerIn: parent;
                         text: label;
 
                         font {
-                            pixelSize: PhxTheme.sectionArea.normalFontSize;
+                            pixelSize: PhxTheme.selectionArea.basePixelSize;
                         }
+
+                        color: PhxTheme.common.baseFontColor;
                     }
 
                     MouseArea {

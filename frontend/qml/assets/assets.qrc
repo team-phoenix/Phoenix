@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="collections.svg">heart.svg</file>
+        <file alias="settings.svg">gear-b.svg</file>
+    </qresource>
+</RCC>

@@ -93,7 +93,9 @@ TARGET = ../phoenix
 include( ../common.pri )
 
 RESOURCES += qml/qml.qrc \
-             qml/Theme/theme.qrc
+             qml/Theme/theme.qrc \
+             qml/assets/assets.qrc \
+             qml/BigPicture/bigpicture.qrc
 
 macx {
         depends.files += $${PWD}/metadata/openvgdb.sqlite

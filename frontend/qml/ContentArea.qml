@@ -3,12 +3,13 @@ import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
 
 import vg.phoenix.models 1.0
+import vg.phoenix.themes 1.0
 
 Rectangle {
     id: contentArea;
     height: 200;
     width: 200;
-    color: "gray";
+    color: "#f1f1f1"// "gray";
 
     property alias contentLibraryModel: libraryModel;
     property alias contentStackView: contentAreaStackView;
@@ -74,7 +75,7 @@ Rectangle {
 
     StackView {
         id: contentAreaStackView;
-        initialItem: inputView;
+        initialItem: boxArtGridComponent;
 
         anchors {
             fill: parent;
@@ -109,7 +110,7 @@ Rectangle {
         BoxartGridView {
             id: boxartGrid;
 
-            color: "gray";
+            color: "transparent" //"gray";
 
             objectName: "BoxartGridView";
 
