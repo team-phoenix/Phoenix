@@ -60,7 +60,7 @@ int main( int argc, char *argv[] ) {
     QApplication::setApplicationDisplayName( QStringLiteral( "Phoenix" ) );
     QApplication::setApplicationName( QStringLiteral( "Phoenix" ) );
     QApplication::setApplicationVersion( QStringLiteral( "1.0" ) );
-    QApplication::setOrganizationDomain( QStringLiteral( "http://phoenix.vg/" ) );
+    QApplication::setOrganizationDomain( QStringLiteral( "phoenix.vg" ) );
 
     Library::PhxPaths::CreateAllPaths();
 
