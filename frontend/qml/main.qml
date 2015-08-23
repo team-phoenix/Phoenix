@@ -23,6 +23,7 @@ ApplicationWindow {
     }
 
     StackView {
+        anchors.fill: parent;
         id: layoutStackView;
         initialItem: mouseDrivenView;
     }
