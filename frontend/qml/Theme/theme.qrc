@@ -2,5 +2,7 @@
     <qresource prefix="/">
         <file>PhxSearchBar.qml</file>
         <file>PhxTheme.qml</file>
+        <file>PhxScrollView.qml</file>
+        <file>PhxComboBox.qml</file>
     </qresource>
 </RCC>

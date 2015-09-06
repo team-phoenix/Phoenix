@@ -10,11 +10,19 @@ QtObject {
         property int headerFontSize: 13;
         property color baseColor: "#2e0e19";
         property color baseFontColor: "#8a8889";
-        property color highlightFontColor: "#ec1a23";
+        property color highlightFontColor: "#d5d5d5";
     }
 
     property QtObject common: QtObject {
-        property color baseFontColor: "white";
+        property color baseFontColor: "#adadad";
+        property color highlighterFontColor: "#d5d5d5";
+        property color primaryBackgroundColor: "#282420";
+        property Gradient primaryButtonColor: Gradient {
+            GradientStop { position: 0.0; color: "#e97f54"; }
+            GradientStop { position: 0.3; color: "#d55b4a"; }
+            GradientStop { position: 1.0; color: "#bf333f"; }
+        }
+
     }
 
     property QtObject bigPictureView: QtObject {

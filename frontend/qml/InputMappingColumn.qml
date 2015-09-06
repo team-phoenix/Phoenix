@@ -1,8 +1,10 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.2
+import QtQuick.Controls.Styles 1.2
 import QtQuick.Layouts 1.1
 
 import vg.phoenix.backend 1.0
+import vg.phoenix.themes 1.0
 
 ListView {
     id: inputMappingColumn;
@@ -31,13 +33,17 @@ ListView {
     property string headerText: "";
 
     header: Rectangle {
-        color: "lightgray";
+        color: "transparent";
         height: 32;
 
         width: parent.width;
 
         Text {
-            anchors.centerIn: parent;
+            anchors {
+                left: parent.left;
+                verticalCenter: parent.verticalCenter;
+            }
+
             text: inputMappingColumn.headerText;
             font {
                 pixelSize: 13;
@@ -54,7 +60,7 @@ ListView {
     }
 
 
-    delegate: Rectangle {
+    delegate: Item {
         id: columnItem;
         height: 32;
         width: 100;
@@ -63,9 +69,6 @@ ListView {
             left: parent.left;
             right: parent.right;
         }
-
-        color: "#82342e";
-        radius: 5;
 
         property bool mappingCollisionDetected: false;
 
@@ -110,13 +113,14 @@ ListView {
 
         RowLayout {
             anchors.fill: parent;
-            spacing: 12;
+            spacing: 6;
 
             Rectangle {
                 radius: 5;
                 color: "transparent";
+
                 Layout.fillHeight: true;
-                width: displayText.width + 21;
+                Layout.fillWidth: true;
 
                 anchors {
                     verticalCenter: parent.verticalCenter;
@@ -126,38 +130,59 @@ ListView {
 
                 Text {
                     id: displayText;
-                    anchors.centerIn: parent;
-                    text: displayButton;
-                    color: "white";
-                }
-
-            }
-
-            Rectangle {
-                Layout.fillHeight: true;
-                Layout.fillWidth: true;
-                color: columnItem.mappingCollisionDetected ? "red" : "#2e1510";
-                anchors {
-                    verticalCenter: parent.verticalCenter;
-                    right: parent.right;
-                }
-
-                border {
-                    color: "orange";
-                    width: checked && index == inputMappingColumn.currentIndex ? 6 : 0;
-                }
-
-                Text {
-                    id: textField;
                     anchors {
                         verticalCenter: parent.verticalCenter;
                         right: parent.right;
-                        rightMargin: 12;
+                    }
+
+                    text: displayButton;
+                    color: "white";
+                }
+            }
+                //color: columnItem.mappingCollisionDetected ? "red" : "#2e1510";
+
+                TextField {
+                    id: textField;
+
+                    width: 100;
+
+                    anchors {
+                        verticalCenter: parent.verticalCenter;
+                        right: parent.right;
                     }
 
                     text: columnItem.text;
-                    color: "white";
-                }
+                    textColor: "white";
+
+                    style: TextFieldStyle {
+                        background: Item {
+                            implicitWidth: control.width;
+                            implicitHeight: control.height;
+
+
+                            Rectangle {
+                                id: mainBackground;
+                                radius: 3;
+                                anchors.fill: parent;
+                                color: "#282420";
+                                border {
+                                    width: 1;
+                                    color: "#0a0a0a";
+                                }
+                            }
+
+                            Rectangle {
+                                radius: mainBackground.radius;
+                                anchors {
+                                    fill: mainBackground;
+                                    bottomMargin: -1;
+                                }
+                                z: mainBackground.z - 1;
+                                color: "white";
+                                opacity: 0.1;
+                            }
+                        }
+                    }
             }
         }
     }

@@ -11,30 +11,39 @@ Item {
     width: 100
     height: 6
 
-    DropShadow {
-        anchors.fill: source;
-        source: selectionArea;
-        transparentBorder: true;
-        verticalOffset: 0;
-        horizontalOffset: 1;
-        color: "#b0000000";
-        radius: 8.0;
-        samples: radius * 2;
-    }
-
     Rectangle  {
         id: selectionArea;
         anchors.fill: parent;
 
-        /*
-        gradient: Gradient {
-            GradientStop { position: 0.0; color: "#59070d"; }
-            GradientStop { position: 0.7; color: "#24000c"; }
-            GradientStop { position: 1.0; color: "#24000c"; }
-        }
-        */
+        color: PhxTheme.common.primaryBackgroundColor;
 
-        color: "#241312";
+        Row {
+            anchors {
+                top: parent.top;
+                bottom: parent.bottom;
+                right: parent.right;
+            }
+
+            Rectangle {
+                anchors {
+                    top: parent.top;
+                    bottom: parent.bottom;
+                }
+                width: 2;
+                color: "black";
+                opacity: 0.2;
+            }
+
+            Rectangle {
+                anchors {
+                    top: parent.top;
+                    bottom: parent.bottom;
+                }
+                width: 1;
+                color: "white";
+                opacity: 0.05;
+            }
+        }
 
         ColumnLayout {
             anchors.fill: parent;
@@ -128,9 +137,9 @@ Item {
                 orientation: ListView.Horizontal;
 
                 model: ListModel {
-                    ListElement { bgColor: "black"; label: "Add Games"; imageSource: ""; }
+                    ListElement { bgColor: "black"; label: "Add Games"; imageSource: "add.svg"; }
                     ListElement { bgColor: "black"; label: "Favorites"; imageSource: "collections.svg"; }
-                    ListElement { bgColor: "black"; label: "Games"; imageSource: ""; }
+                    ListElement { bgColor: "black"; label: "Games"; imageSource: "games.png"; }
                     ListElement { bgColor: "black"; label: "Settings"; imageSource: "settings.svg"; }
                 }
 
@@ -152,11 +161,81 @@ Item {
                 }
                 */
 
-                delegate: Rectangle {
+                Column {
+                    anchors {
+                        top: parent.top;
+                        right: parent.right;
+                        left: parent.left;
+                        rightMargin: 3;
+                    }
+
+                    Rectangle {
+                        anchors {
+                            left: parent.left;
+                            right: parent.right;
+                        }
+                        height: 2;
+                        color: "black";
+                        opacity: 0.2;
+                    }
+
+                    Rectangle {
+                        anchors {
+                            left: parent.left;
+                            right: parent.right;
+                        }
+                        height: 1;
+                        color: "white";
+                        opacity: 0.1;
+                    }
+
+                }
+
+                delegate: Item {
                     height: parent.height;
                     width: selectionAreaToolbar.width / selectionAreaToolbar.count;
-                    color: "white" //bgColor;
 
+
+                    Row {
+                        anchors {
+                            right: parent.right;
+                            top: parent.top;
+                            bottom: parent.bottom;
+                            topMargin: 3;
+                            bottomMargin: 6;
+                        }
+                        visible: index < selectionAreaToolbar.count - 1;
+
+                        Rectangle {
+                            anchors {
+                                top: parent.top;
+                                bottom: parent.bottom;
+                            }
+                            width: 1;
+                            gradient: Gradient {
+                                GradientStop { position: 0.0; color: "black"; }
+                                GradientStop { position: 0.7; color: "black"; }
+                                GradientStop { position: 1.0; color: "transparent"; }
+                            }
+
+                            opacity: 0.2;
+                        }
+
+                        Rectangle {
+                            anchors {
+                                top: parent.top;
+                                bottom: parent.bottom;
+                            }
+                            width: 1;
+                            gradient: Gradient {
+                                GradientStop { position: 0.0; color: "white"; }
+                                GradientStop { position: 0.7; color: "white"; }
+                                GradientStop { position: 1.0; color: "transparent"; }
+                            }
+
+                            opacity: 0.10;
+                        }
+                    }
 
                     Image {
                         sourceSize {

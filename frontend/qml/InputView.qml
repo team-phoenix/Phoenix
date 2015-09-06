@@ -1,15 +1,15 @@
 import QtQuick 2.4
-import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.2
+import QtQuick.Controls 1.2
 
 import vg.phoenix.backend 1.0
+import vg.phoenix.themes 1.0
 
-Rectangle {
+Item {
     id: inputView;
     width: 100
     height: 62
-    color: "yellow";
 
     property ListModel inputDevicesModel: ListModel {
         ListElement { name: ""; port: 0  }
@@ -18,7 +18,6 @@ Rectangle {
             clear()
             root.inputManager.deviceAdded.connect( handleDeviceAdded );
             root.inputManager.emitConnectedDevices();
-
         }
 
         Component.onDestruction: {
@@ -52,7 +51,7 @@ Rectangle {
     // This is a QVariantMap that is used to hold the currently selected device's mapping.
     property var currentMapping: undefined;
 
-    Rectangle {
+    Item {
         anchors {
             left: parent.left;
             right: parent.right;
@@ -62,23 +61,6 @@ Rectangle {
             topMargin: 84;
             leftMargin: 56;
             rightMargin: 56;
-        }
-
-        color: "pink";
-
-        ComboBox {
-            id: devicesCombobox;
-            model: inputView.inputDevicesModel;
-
-            textRole: "name";
-
-            onCurrentTextChanged: {
-                console.log( "currenttext: ",  currentText );
-                if ( root.inputManager.get( devicesCombobox.currentText ) !== null ) {
-                    currentMapping = root.inputManager.get( devicesCombobox.currentText ).mapping();
-                }
-            }
-
         }
 
         ScrollView {
@@ -92,7 +74,21 @@ Rectangle {
             width: 250;
 
             ColumnLayout {
-                spacing: 0;
+                spacing: 6;
+
+                PhxComboBox {
+                    id: inputDeviceComboBox;
+                    anchors {
+                        right: parent.right;
+                    }
+                }
+
+                PhxComboBox {
+                    anchors {
+                        right: parent.right;
+                    }
+                    model: [ "Player 1" ];
+                }
 
                 InputMappingColumn {
                     id: actionButtonColumn;

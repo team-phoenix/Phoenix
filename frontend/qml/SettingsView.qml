@@ -1,6 +1,7 @@
 import QtQuick 2.4
 import QtQuick.Layouts 1.1
 import QtQuick.Controls 1.2
+import QtGraphicalEffects 1.0
 
 import vg.phoenix.themes 1.0
 
@@ -18,8 +19,66 @@ ScrollView {
             ListElement { section: "Audio Playback"; }
         }
 
-        header: Rectangle {
-            color: "lightyellow";
+        highlight: Item {
+            x: listView.currentItem.x;
+            y: listView.currentItem.y;
+            //width: listView.currentItem.width;
+            //height: listView.currentItem.height;
+            anchors.fill: listView.currentItem;
+            anchors.rightMargin: 3;
+
+            DropShadow {
+                id: dropShadow;
+                verticalOffset: 0;
+                horizontalOffset: 0;
+                radius: 16;
+                samples: radius * 2;
+                color: "red";
+                transparentBorder: true;
+                source: highlighterRectangle;
+                anchors.fill: source;
+            }
+
+            Rectangle {
+                id: highlighterRectangle;
+                anchors.fill: parent;
+                gradient: PhxTheme.common.primaryButtonColor;
+
+                Rectangle {
+                    anchors {
+                        left: parent.left;
+                        top: parent.top;
+                        right: parent.right;
+                    }
+                    height: 1;
+                    color: "white";
+                    opacity: 0.5;
+
+                }
+
+                Rectangle {
+                    anchors {
+                        left: parent.left;
+                        right: parent.right;
+                        bottom: parent.bottom;
+                    }
+                    height: 1;
+                    opacity: 0.2;
+
+
+                    RadialGradient {
+                        anchors.fill: parent
+                        gradient: Gradient {
+                            GradientStop { position: 0.0; color: "white" }
+                            GradientStop { position: 0.5; color: "black" }
+                        }
+
+                    }
+                }
+            }
+        }
+
+        header: Item {
             height: 36;
 
             anchors {
@@ -44,9 +103,8 @@ ScrollView {
             }
         }
 
-        delegate: Rectangle {
+        delegate: Item {
             id: listViewDelegate;
-            color: index % 2 == 0 ? "cyan" : "yellow";
             height: 24;
 
             anchors {
@@ -68,7 +126,7 @@ ScrollView {
                     pixelSize: PhxTheme.selectionArea.basePixelSize;
                 }
 
-                color: PhxTheme.common.baseFontColor;
+                color: index === listView.currentIndex ? PhxTheme.common.highlighterFontColor : PhxTheme.common.baseFontColor;
 
             }
 

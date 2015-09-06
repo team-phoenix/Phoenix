@@ -1,6 +1,11 @@
 <RCC>
     <qresource prefix="/">
-        <file alias="collections.svg">heart.svg</file>
-        <file alias="settings.svg">gear-b.svg</file>
+        <file>collections.svg</file>
+        <file>games.png</file>
+        <file>settings.svg</file>
+        <file>add.svg</file>
+        <file>search.svg</file>
+        <file>missingArtwork.png</file>
+        <file>playstationController.svg</file>
     </qresource>
 </RCC>
