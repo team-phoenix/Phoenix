@@ -9,8 +9,8 @@ QtObject {
         property int basePixelSize: 12;
         property int headerFontSize: 13;
         property color baseColor: "#2e0e19";
-        property color baseFontColor: "#8a8889";
-        property color highlightFontColor: "#d5d5d5";
+        property color baseFontColor: "#d5d5d5" // "#8a8889";
+        property color highlightFontColor: "#ffffff" // "#d5d5d5";
     }
 
     property QtObject common: QtObject {

@@ -11,51 +11,28 @@ Item {
     width: 100
     height: 6
 
+    DropShadow {
+        source: selectionArea
+        anchors.fill: source
+        transparentBorder: true
+        horizontalOffset: 8
+        radius: 32
+        samples: 32
+        opacity: 0.5
+    }
+
     Rectangle  {
         id: selectionArea;
         anchors.fill: parent;
 
         color: PhxTheme.common.primaryBackgroundColor;
 
-        Row {
-            anchors {
-                top: parent.top;
-                bottom: parent.bottom;
-                right: parent.right;
-            }
-
-            Rectangle {
-                anchors {
-                    top: parent.top;
-                    bottom: parent.bottom;
-                }
-                width: 2;
-                color: "black";
-                opacity: 0.2;
-            }
-
-            Rectangle {
-                anchors {
-                    top: parent.top;
-                    bottom: parent.bottom;
-                }
-                width: 1;
-                color: "white";
-                opacity: 0.05;
-            }
-        }
-
         ColumnLayout {
             anchors.fill: parent;
             spacing: 0;
 
-            Rectangle {
-                height: 0;
-                Layout.fillWidth: true;
-                color: "orange";
-
-            }
-
+            // The main attraction: a StackView that holds a list of something, whether that something is a type of
+            // console, settings category, or whatever else
             StackView {
                 id: sectionsAreaStackView;
                 Layout.fillHeight: true;
@@ -95,6 +72,7 @@ Item {
                     }
 
                     pushTransition: StackViewTransition {
+
                         PropertyAnimation {
                             target: enterItem
                             property: "opacity"
@@ -112,6 +90,7 @@ Item {
                             property: "y"
                             from: enterItem.height;
                             to: 0;
+                            easing.type: Easing.InOutExpo
                         }
 
                         PropertyAnimation {
@@ -119,11 +98,13 @@ Item {
                             property: "y"
                             from: 0;
                             to: exitItem.height;
+                            easing.type: Easing.InOutExpo
                         }
                     }
                 }
             }
 
+            // The buttons along the bottom that control the sectionsAreaStackView
             ListView {
                 id: selectionAreaToolbar;
                 height: 62;
