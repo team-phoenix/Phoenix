@@ -17,15 +17,18 @@ Rectangle {
         id: dropDownMenu;
     }
 
-    PhxScrollView {
+    Rectangle {
         id: scrollView;
         anchors {
             fill: parent;
             topMargin: 35;
         }
 
+        color: PhxTheme.common.primaryBackgroundColor;
+
+        // Top drop shadow
         Rectangle {
-            opacity: gridView.atYBeginning ? 0.0 : 0.3;
+            opacity: 0.3;
             z: 100;
             anchors {
                 top: parent.top;
@@ -46,8 +49,9 @@ Rectangle {
             }
         }
 
+        // Bottom drop shadow
         Rectangle {
-            opacity: gridView.atYEnd ? 0.0 : 0.3;
+            opacity: 0.3;
             z: 100;
             anchors {
                 bottom: parent.bottom;
@@ -68,7 +72,7 @@ Rectangle {
             }
         }
 
-        contentItem: GridView {
+        GridView {
             id: gridView;
 
             model: libraryModel;
@@ -78,9 +82,23 @@ Rectangle {
             property int maxCellHeight: 225;
             property bool clampEdges: parent.width >= maxCellHeight;
 
-            displaced: Transition {
-                    NumberAnimation { properties: "x,y,visible,width,height,opacity"; duration: 1000 }
+            property Transition transition: Transition {
+                NumberAnimation { properties: "x,y"; duration: 250 }
             }
+
+            property Transition transitionX: Transition {
+                NumberAnimation { properties: "x"; duration: 250 }
+            }
+
+
+            // add: transition
+            // addDisplaced: transition
+            // displaced: transition
+            // move: transition
+            // moveDisplaced: transition
+            // populate: transitionX
+            // remove: transition
+            // removeDisplaced: transition
 
             // Yes this isn't ideal, but it is a work around for the view resetting back to 0
             // whenever a game is imported.
@@ -112,15 +130,17 @@ Rectangle {
             cellHeight: clampEdges ? maxCellHeight : parent.width;
             cellWidth: cellHeight;
 
+            clip: true
             boundsBehavior: Flickable.StopAtBounds;
-            Component.onCompleted: libraryModel.updateCount();
+
+            Component.onCompleted: libraryModel.updateCount()
+
+            onCountChanged: { console.log( "count: " + count ) }
 
             delegate: Rectangle {
-                id: gridItem;
-                height: gridView.cellHeight//gridView.clampEdges ? gridView.cellHeight : gridView.width * 0.75;
-                width: gridView.cellWidth;
-
-                color: "transparent";//"lightgray"
+                id: gridItem
+                width: gridView.cellWidth; height: gridView.cellHeight
+                color: "transparent"
 
                 ColumnLayout {
                     spacing: 8;
