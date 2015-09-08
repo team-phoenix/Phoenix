@@ -180,8 +180,6 @@ Rectangle {
                                 bottom: parent.bottom;
                             }
 
-
-
                             Rectangle {
                                 id: imageTopAccent;
                                 y: gridItemImage.y + ( gridItemImage.height - gridItemImage.paintedHeight );
@@ -223,14 +221,20 @@ Rectangle {
 
                             fillMode: Image.PreserveAspectFit;
                             onStatusChanged: {
-                                if ( status == Image.Null || status === Image.Error) {
-                                    console.log("Error in " + source)
+                                if ( status == Image.Error ) {
+                                    console.log( "Error in " + source )
+                                    gridItemImage.source = "missingArtwork.png"
+                                }
+
+                                // This is not triggered when source is an empty string
+                                if ( status == Image.Null ) {
+                                    console.log( "No image available for " + title )
                                 }
                             }
 
                             height: parent.height;
                             asynchronous: true;
-                            source: imageCacher.cachedUrl;
+                            source: imageCacher.cachedUrl == "" ? "missingArtwork.png" : imageCacher.cachedUrl
                             verticalAlignment: Image.AlignBottom;
 
                             sourceSize {
@@ -247,10 +251,8 @@ Rectangle {
 
                             ImageCacher {
                                 id: imageCacher;
-
                                 imageUrl: artworkUrl;
                                 identifier: sha1;
-
 
                                 Component.onCompleted: {
                                     cache();
