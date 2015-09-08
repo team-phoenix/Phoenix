@@ -22,7 +22,7 @@ ScrollView {
             //width: listView.currentItem.width;
             //height: listView.currentItem.height;
             anchors.fill: listView.currentItem;
-            anchors.rightMargin: 1;
+            anchors.rightMargin: 3;
 
             DropShadow {
                 id: dropShadow;

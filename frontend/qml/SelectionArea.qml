@@ -11,21 +11,49 @@ Item {
     width: 100
     height: 6
 
-    DropShadow {
-        source: selectionArea
-        anchors.fill: source
-        transparentBorder: true
-        horizontalOffset: 8
-        radius: 32
-        samples: 32
-        opacity: 0.5
-    }
+//    DropShadow {
+//        source: selectionArea
+//        anchors.fill: source
+//        transparentBorder: true
+//        horizontalOffset: 8
+//        radius: 32
+//        samples: 32
+//        opacity: 0.5
+//    }
 
     Rectangle  {
         id: selectionArea;
         anchors.fill: parent;
 
         color: PhxTheme.common.primaryBackgroundColor;
+
+        Row {
+            anchors {
+                top: parent.top;
+                bottom: parent.bottom;
+                right: parent.right;
+            }
+
+            Rectangle {
+                anchors {
+                    top: parent.top;
+                    bottom: parent.bottom;
+                }
+                width: 2;
+                color: "black";
+                opacity: 0.2;
+            }
+
+            Rectangle {
+                anchors {
+                    top: parent.top;
+                    bottom: parent.bottom;
+                }
+                width: 1;
+                color: "white";
+                opacity: 0.05;
+            }
+        }
 
         ColumnLayout {
             anchors.fill: parent;
