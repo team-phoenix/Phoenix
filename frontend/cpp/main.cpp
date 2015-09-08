@@ -13,12 +13,18 @@
 
 #include <memory.h>
 
+// This is used to get the stack trace behind whatever debug message you want to diagnose
+// Simply change the message string below to whatever you want (partial string matching), set the breakpoint
+// and uncomment the first line in main()
 void phoenixDebugMessageHandler( QtMsgType type, const QMessageLogContext &context, const QString &msg ) {
 
     // Change this QString to reflect the message you want to get a stack trace for
-    if( QString( msg ).contains( QStringLiteral( "Metadata select error:" ) ) ) {
+    if( QString( msg ).contains( QStringLiteral( "YOUR MESSAGE HERE" ) ) ) {
 
+        // Put a breakpoint over this line...
         int breakPointOnThisLine( 0 );
+
+        // ...and not this one
         Q_UNUSED( breakPointOnThisLine );
 
     }
@@ -26,8 +32,14 @@ void phoenixDebugMessageHandler( QtMsgType type, const QMessageLogContext &conte
     QByteArray localMsg = msg.toLocal8Bit();
 
     switch( type ) {
+
         case QtDebugMsg:
             fprintf( stderr, "Debug: %s (%s:%u, %s)\n",
+                     localMsg.constData(), context.file, context.line, context.function );
+            break;
+
+        case QtInfoMsg:
+            fprintf( stderr, "Info: %s (%s:%u, %s)\n",
                      localMsg.constData(), context.file, context.line, context.function );
             break;
 
@@ -45,18 +57,23 @@ void phoenixDebugMessageHandler( QtMsgType type, const QMessageLogContext &conte
             fprintf( stderr, "Fatal: %s (%s:%u, %s)\n",
                      localMsg.constData(), context.file, context.line, context.function );
             abort();
+            break;
+
+        default:
+            break;
+
     }
 
 }
 
-
-
 int main( int argc, char *argv[] ) {
 
+    // Uncomment this to enable the message handler for debugging and stack tracing
     // qInstallMessageHandler( phoenixDebugMessageHandler );
 
     QApplication app( argc, argv );
 
+    // On Windows, the organization domain is used to set the registry key path... for some reason
     QApplication::setApplicationDisplayName( QStringLiteral( "Phoenix" ) );
     QApplication::setApplicationName( QStringLiteral( "Phoenix" ) );
     QApplication::setApplicationVersion( QStringLiteral( "1.0" ) );
