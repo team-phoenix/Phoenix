@@ -145,81 +145,41 @@ Rectangle {
                 ColumnLayout {
                     spacing: 8;
                     anchors {
-                        top: parent.top;
-                        bottom: parent.bottom;
-                        bottomMargin: 24;
-                        left: parent.left;
-                        right: parent.right;
-                        leftMargin: 24
-                        rightMargin: 24;
+                        top: parent.top; bottom: parent.bottom; left: parent.left; right: parent.right
+                        bottomMargin: 24; leftMargin: 24; rightMargin: 24
                     }
 
                     Rectangle {
-                        id: gridItemImageContainer;
-                        color: gridItemImage.source === "" ? "white" : "transparent";
-                        Layout.fillHeight: true;
-                        Layout.fillWidth: true;
+                        id: gridItemImageContainer
+                        color: "transparent"
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
 
                         RectangularGlow {
-                            anchors.bottom: gridItemImage.bottom;
-                            height: gridItemImage.paintedHeight;
-                            width: gridItemImage.paintedWidth;
-                            glowRadius: 9;
-                            spread: 0.2;
-                            color: "black";
-                            cornerRadius: glowRadius;
-                            opacity: 0.35;
+                            anchors.bottom: gridItemImage.bottom
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            height: gridItemImage.paintedHeight
+                            width: gridItemImage.paintedWidth
+                            glowRadius: 9
+                            spread: 0.2
+                            color: "black"
+                            cornerRadius: glowRadius
+                            opacity: 0.35
                         }
 
                         Image {
-                            id: gridItemImage;
-                            visible: true;
-                            anchors {
-                                left: parent.left;
-                                right: parent.right;
-                                bottom: parent.bottom;
-                            }
+                            id: gridItemImage
+                            visible: true
+                            height: parent.height
+                            asynchronous: true
+                            source: imageCacher.cachedUrl == "" ? "missingArtwork.png" : imageCacher.cachedUrl
+                            verticalAlignment: Image.AlignBottom
+                            fillMode: Image.PreserveAspectFit
 
-                            Rectangle {
-                                id: imageTopAccent;
-                                y: gridItemImage.y + ( gridItemImage.height - gridItemImage.paintedHeight );
-                                anchors {
-                                    left: parent.left;
-                                    right: parent.right;
-                                }
+                            sourceSize { width: 400; height: 400 }
 
-                                height: 1;
-                                opacity: 0.3;
-                                color: "white";
-                            }
+                            anchors { left: parent.left; right: parent.right; bottom: parent.bottom }
 
-                            Rectangle {
-                                id: imageTopLeft;
-                                anchors {
-                                    top: imageTopAccent.bottom;
-                                    left: parent.left;
-                                    bottom: parent.bottom;
-                                }
-
-                                width: 1;
-                                opacity: 0.10;
-                                color: "white";
-                            }
-
-                            Rectangle {
-                                id: imageTopRight;
-                                anchors {
-                                    top: imageTopAccent.bottom;
-                                    right: parent.right;
-                                    bottom: parent.bottom;
-                                }
-
-                                width: 1;
-                                opacity: 0.10;
-                                color: "white";
-                            }
-
-                            fillMode: Image.PreserveAspectFit;
                             onStatusChanged: {
                                 if ( status == Image.Error ) {
                                     console.log( "Error in " + source )
@@ -232,32 +192,50 @@ Rectangle {
                                 }
                             }
 
-                            height: parent.height;
-                            asynchronous: true;
-                            source: imageCacher.cachedUrl == "" ? "missingArtwork.png" : imageCacher.cachedUrl
-                            verticalAlignment: Image.AlignBottom;
-
-                            sourceSize {
-                                height: 400;
-                                width: 400;
-                            }
-
                             MouseArea {
-                                anchors.fill: parent;
-                                onClicked: {
-                                    gridView.currentIndex = index;
-                                }
+                                anchors.fill: parent
+                                onClicked: { gridView.currentIndex = index }
                             }
 
                             ImageCacher {
-                                id: imageCacher;
-                                imageUrl: artworkUrl;
-                                identifier: sha1;
+                                id: imageCacher
+                                imageUrl: artworkUrl
+                                identifier: sha1
 
-                                Component.onCompleted: {
-                                    cache();
-                                }
+                                Component.onCompleted: cache()
                             }
+
+                            // Decorations
+                            // Rectangle {
+                            //     id: imageTopAccent
+                            //     y: gridItemImage.y + ( gridItemImage.height - gridItemImage.paintedHeight )
+                            //     width: gridItemImage.paintedWidth + 2
+                            //     anchors.horizontalCenter: gridItemImage.horizontalCenter
+
+                            //     height: 1;
+                            //     opacity: 0.3
+                            //     color: "white"
+                            // }
+
+                            // Rectangle {
+                            //     id: imageTopLeft;
+                            //     anchors { top: imageTopAccent.bottom; bottom: parent.bottom }
+                            //     x: ( gridItemImage.width / 2 ) - ( gridItemImage.paintedWidth / 2 ) - 1
+
+                            //     width: 1
+                            //     opacity: 0.10
+                            //     color: "white"
+                            // }
+
+                            // Rectangle {
+                            //     id: imageTopRight;
+                            //     anchors { top: imageTopAccent.bottom; bottom: parent.bottom }
+                            //     x: ( gridItemImage.width / 2 ) + ( gridItemImage.paintedWidth / 2 )
+
+                            //     width: 1
+                            //     opacity: 0.10
+                            //     color: "white"
+                            // }
                         }
                     }
 
