@@ -5,41 +5,27 @@ import QtGraphicalEffects 1.0
 Item {
 
     DropArea {
-        id: rootDropArea;
-        anchors.fill: parent;
+        id: rootDropArea
+        anchors.fill: parent
     }
 
     RowLayout {
-        id: gameSelectionPane;
-        anchors {
-            fill: parent;
-        }
-
-        spacing: 0;
+        id: gameSelectionPane
+        anchors { fill: parent }
+        spacing: 0
 
         SelectionArea {
-            id: selectionArea;
-            anchors {
-                top: parent.top;
-                bottom: parent.bottom;
-            }
-
-            width: 275;
-            z: contentArea.z + 1;
-
+            id: selectionArea
+            anchors { top: parent.top; bottom: parent.bottom }
+            width: 275
+            z: contentArea.z + 1
         }
 
         ContentArea {
-            id: contentArea;
-            anchors {
-                top: parent.top;
-                bottom: parent.bottom;
-            }
-
-            Layout.fillWidth: true;
-
+            id: contentArea
+            anchors { top: parent.top; bottom: parent.bottom }
+            Layout.fillWidth: true
         }
     }
-
 }
 
