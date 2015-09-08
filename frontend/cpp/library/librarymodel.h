@@ -83,7 +83,7 @@ namespace Library {
             void append( const QUrl url );
 
             // clear removes every SQL row  in the database permanently.
-            void clear();
+            void clearDatabase();
 
             //  updateCount() reads the SQL database and updates the count()
             // function with how many entries are actually in the databaes.

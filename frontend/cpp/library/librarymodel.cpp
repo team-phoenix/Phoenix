@@ -245,7 +245,6 @@ void LibraryModel::pauseInsert() {
 void LibraryModel::cancelInsert() {
     if( mWorkerThread.isRunning() ) {
         mLibraryWorker.setInsertCancelled( true );
-        
     }
 }
 
@@ -493,7 +492,7 @@ void LibraryModel::append( const QUrl url ) {
 
 }
 
-void LibraryModel::clear() {
+void LibraryModel::clearDatabase() {
     if( mLibraryWorker.isRunning() ) {
         qCWarning( phxLibrary ) << "Cannot remove entries when scan is running.";
         return;
