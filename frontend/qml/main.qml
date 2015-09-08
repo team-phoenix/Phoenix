@@ -28,28 +28,28 @@ ApplicationWindow {
         initialItem: mouseDrivenView;
     }
 
+    // Debug button to switch between mouse driven and big picture modes
+//    Rectangle {
+//        anchors {
+//            right: parent.right;
+//            top: parent.top;
 
-    Rectangle {
-        anchors {
-            right: parent.right;
-            top: parent.top;
+//        }
+//        height: 25;
+//        width: 25;
+//        color: "red"
 
-        }
-        height: 25;
-        width: 25;
-        color: "red"
-
-        MouseArea {
-            anchors.fill: parent;
-            onClicked: {
-                if ( layoutStackView.currentItem.objectName === "MouseDrivenView" ) {
-                    layoutStackView.push( { item: bigPictureView, replace: true } );
-                } else if ( layoutStackView.currentItem.objectName === "BigPictureView" ) {
-                    layoutStackView.push( { item: mouseDrivenView, replace: true } );
-                }
-            }
-        }
-    }
+//        MouseArea {
+//            anchors.fill: parent;
+//            onClicked: {
+//                if ( layoutStackView.currentItem.objectName === "MouseDrivenView" ) {
+//                    layoutStackView.push( { item: bigPictureView, replace: true } );
+//                } else if ( layoutStackView.currentItem.objectName === "BigPictureView" ) {
+//                    layoutStackView.push( { item: mouseDrivenView, replace: true } );
+//                }
+//            }
+//        }
+//    }
 
     Component {
         id: bigPictureView;

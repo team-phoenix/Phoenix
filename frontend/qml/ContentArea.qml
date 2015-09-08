@@ -123,35 +123,33 @@ Rectangle {
             }
         }
 
-        Column {
-            anchors {
-                left: parent.left;
-                right: parent.right;
-                bottom: parent.bottom;
-            }
+//        Column {
+//            anchors {
+//                left: parent.left;
+//                right: parent.right;
+//                bottom: parent.bottom;
+//            }
 
-            Rectangle {
-                anchors {
-                    left: parent.left;
-                    right: parent.right;
-                }
-                height: 1;
-                color: "white";
-                opacity: 0.05;
-            }
+//            Rectangle {
+//                anchors {
+//                    left: parent.left;
+//                    right: parent.right;
+//                }
+//                height: 1;
+//                color: "white";
+//                opacity: 0.05;
+//            }
 
-            Rectangle {
-                anchors {
-                    left: parent.left;
-                    right: parent.right;
-                }
-                height: 2;
-                color: "black";
-                opacity: 0.2;
-            }
-
-
-        }
+//            Rectangle {
+//                anchors {
+//                    left: parent.left;
+//                    right: parent.right;
+//                }
+//                height: 2;
+//                color: "black";
+//                opacity: 0.2;
+//            }
+//        }
     }
 
     /*
