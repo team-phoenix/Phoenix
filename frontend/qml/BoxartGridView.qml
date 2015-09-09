@@ -21,14 +21,14 @@ Rectangle {
         id: scrollView;
         anchors {
             fill: parent;
-            topMargin: 35;
+            topMargin: headerArea.height;
         }
 
         color: PhxTheme.common.primaryBackgroundColor;
 
         // Top drop shadow
         Rectangle {
-            opacity: 0.3;
+            opacity: gridView.atYBeginning ? 0.0 : 0.3;
             z: 100;
             anchors {
                 top: parent.top;
@@ -51,7 +51,7 @@ Rectangle {
 
         // Bottom drop shadow
         Rectangle {
-            opacity: 0.3;
+            opacity: gridView.atYEnd ? 0.0 : 0.3;
             z: 100;
             anchors {
                 bottom: parent.bottom;
@@ -104,21 +104,24 @@ Rectangle {
             // whenever a game is imported.
             property real lastY: 0;
 
+/*
             onContentYChanged: {
                 if (contentY == 0) {
+                    console.log( contentY )
                     if ( Math.round( lastY ) !== 0.0 ) {
                         contentY = lastY;
                     }
                 }
                 else
                     lastY = contentY;
-            }
+            }*/
 
             anchors {
                 top: parent.top;
                 left: parent.left;
                 right: parent.right;
                 bottom: parent.bottom;
+                topMargin: 16;
 
                 leftMargin: gridView.clampEdges ? ( ( parent.width % cellWidth ) / 2 ) : 0;
                 rightMargin: leftMargin;
@@ -130,7 +133,7 @@ Rectangle {
             cellHeight: clampEdges ? maxCellHeight : parent.width;
             cellWidth: cellHeight;
 
-            clip: true
+            //clip: true
             boundsBehavior: Flickable.StopAtBounds;
 
             Component.onCompleted: libraryModel.updateCount()
@@ -143,29 +146,17 @@ Rectangle {
                 color: "transparent"
 
                 ColumnLayout {
-                    spacing: 8;
+                    spacing: 13;
                     anchors {
                         top: parent.top; bottom: parent.bottom; left: parent.left; right: parent.right
                         bottomMargin: 24; leftMargin: 24; rightMargin: 24
                     }
 
                     Rectangle {
-                        id: gridItemImageContainer
-                        color: "transparent"
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
-
-                        RectangularGlow {
-                            anchors.bottom: gridItemImage.bottom
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            height: gridItemImage.paintedHeight
-                            width: gridItemImage.paintedWidth
-                            glowRadius: 9
-                            spread: 0.2
-                            color: "black"
-                            cornerRadius: glowRadius
-                            opacity: 0.35
-                        }
+                        id: gridItemImageContainer;
+                        color: "transparent";
+                        Layout.fillHeight: true;
+                        Layout.fillWidth: true;
 
                         Image {
                             id: gridItemImage
@@ -190,6 +181,48 @@ Rectangle {
                                 if ( status == Image.Null ) {
                                     console.log( "No image available for " + title )
                                 }
+                            }
+
+                            RectangularGlow {
+                                anchors.fill: imageBackground;
+                                glowRadius: 9
+                                spread: 0.2
+                                color: index === gridView.currentIndex ? "red" : "black";
+                                cornerRadius: glowRadius
+                                opacity: 0.35
+                                z: imageBackground.z - 1;
+                            }
+
+                            Rectangle {
+                                id: imageBackground;
+                                anchors {
+                                    bottom: parent.bottom;
+                                    horizontalCenter: parent.horizontalCenter;
+                                    bottomMargin: -7;
+                                }
+                                z: parent.z - 1;
+                                height: parent.paintedHeight + 14;
+                                width: parent.paintedWidth + 14;
+                                color: "#464854";
+                                radius: 3;
+
+                                gradient: {
+                                    return index === gridView.currentIndex ? PhxTheme.common.primaryButtonColor : undefined;
+                                }
+
+                                Rectangle {
+                                    anchors {
+                                        fill: parent;
+                                        topMargin: -1;
+                                    }
+                                    z: parent.z - 1;
+                                    radius: parent.radius;
+                                    color: index === gridView.currentIndex  ? "#f6b7ae" : "#5e616a";
+                                }
+
+
+
+
                             }
 
                             MouseArea {

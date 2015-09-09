@@ -17,13 +17,16 @@ Rectangle {
     property alias contentStackView: contentAreaStackView;
     property alias contentInputView: inputView;
 
-    Item {
+    Rectangle {
         id: headerArea;
         anchors {
             top: parent.top;
             left: parent.left;
             right: parent.right;
         }
+
+        color: PhxTheme.common.primaryBackgroundColor;
+        z: 100;
 
         height: 35;
 
@@ -248,7 +251,7 @@ Rectangle {
         BoxartGridView {
             id: boxartGrid;
 
-            color: "transparent" //"gray";
+            color: "transparent";
 
             objectName: "BoxartGridView";
 

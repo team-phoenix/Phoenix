@@ -170,56 +170,71 @@ Item {
                 }
                 */
 
-                Column {
-                    anchors {
-                        top: parent.top;
-                        right: parent.right;
-                        left: parent.left;
-                    }
-
                     Rectangle {
                         anchors {
-                            left: parent.left;
+                            top: parent.top;
                             right: parent.right;
+                            left: parent.left;
+                            rightMargin: 2;
                         }
-                        height: 2;
+                        height: 3;
                         color: "black";
                         opacity: 0.2;
+
                     }
 
-                    Rectangle {
-                        anchors {
-                            left: parent.left;
-                            right: parent.right;
-                        }
-                        height: 1;
-                        color: "white";
-                        opacity: 0.1;
-                    }
 
-                }
+
 
                 delegate: Item {
                     height: parent.height;
                     width: selectionAreaToolbar.width / selectionAreaToolbar.count;
 
+                    Rectangle {
+                        id: topAccent;
+                        anchors {
+                            left: parent.left;
+                            right: parent.right;
+                            top: parent.top;
+                            rightMargin: 4;
+                            topMargin: 3;
+                        }
+                        height: 1;
+                        color: "white";
+                        opacity: 0.05;
+                    }
 
                     Row {
                         anchors {
                             right: parent.right;
-                            top: parent.top;
+                            top: topAccent.bottom;
                             bottom: parent.bottom;
-                            topMargin: 3;
                             bottomMargin: 6;
                         }
-                        visible: index < selectionAreaToolbar.count - 1;
 
                         Rectangle {
                             anchors {
                                 top: parent.top;
                                 bottom: parent.bottom;
+                                topMargin: 0;
                             }
                             width: 1;
+                            gradient: Gradient {
+                                GradientStop { position: 0.0; color: "white"; }
+                                GradientStop { position: 0.7; color: "white"; }
+                                GradientStop { position: 1.0; color: "transparent"; }
+                            }
+
+                            opacity: 0.03;
+                        }
+
+                        Rectangle {
+                            anchors {
+                                top: parent.top;
+                                bottom: parent.bottom;
+                                topMargin: -1;
+                            }
+                            width: 3;
                             gradient: Gradient {
                                 GradientStop { position: 0.0; color: "black"; }
                                 GradientStop { position: 0.7; color: "black"; }
@@ -230,9 +245,11 @@ Item {
                         }
 
                         Rectangle {
+
                             anchors {
                                 top: parent.top;
                                 bottom: parent.bottom;
+                                topMargin: -1;
                             }
                             width: 1;
                             gradient: Gradient {
@@ -241,7 +258,7 @@ Item {
                                 GradientStop { position: 1.0; color: "transparent"; }
                             }
 
-                            opacity: 0.10;
+                            opacity: 0.03;
                         }
                     }
 

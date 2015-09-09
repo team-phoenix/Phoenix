@@ -16,11 +16,16 @@ QtObject {
     property QtObject common: QtObject {
         property color baseFontColor: "#adadad";
         property color highlighterFontColor: "#d5d5d5";
-        property color primaryBackgroundColor: "#282420";
+        property color primaryBackgroundColor: "#202028";
         property Gradient primaryButtonColor: Gradient {
             GradientStop { position: 0.0; color: "#e97f54"; }
             GradientStop { position: 0.3; color: "#d55b4a"; }
             GradientStop { position: 1.0; color: "#bf333f"; }
+        }
+        property Gradient normalButtonColor: Gradient {
+            GradientStop { position: 0.0; color: "#616274"; }
+            //GradientStop { position: 0.0; color: "#616274"; }
+            GradientStop { position: 1.0; color: "#3e404d"; }
         }
 
     }

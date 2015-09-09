@@ -24,22 +24,10 @@ ScrollView {
             anchors.fill: listView.currentItem;
             anchors.rightMargin: 3;
 
-            DropShadow {
-                id: dropShadow;
-                verticalOffset: 0;
-                horizontalOffset: 0;
-                radius: 16;
-                samples: radius * 2;
-                color: "red";
-                transparentBorder: true;
-                source: highlighterRectangle;
-                anchors.fill: source;
-            }
-
             Rectangle {
                 id: highlighterRectangle;
                 anchors.fill: parent;
-                gradient: PhxTheme.common.primaryButtonColor;
+                gradient: PhxTheme.common.normalButtonColor;
 
                 Rectangle {
                     anchors {
@@ -49,8 +37,7 @@ ScrollView {
                     }
                     height: 1;
                     color: "white";
-                    opacity: 0.5;
-
+                    opacity: 0.3;
                 }
 
                 Rectangle {
@@ -60,17 +47,8 @@ ScrollView {
                         bottom: parent.bottom;
                     }
                     height: 1;
-                    opacity: 0.2;
-
-
-                    RadialGradient {
-                        anchors.fill: parent
-                        gradient: Gradient {
-                            GradientStop { position: 0.0; color: "white" }
-                            GradientStop { position: 0.5; color: "black" }
-                        }
-
-                    }
+                    opacity: 0.1;
+                    color: "white";
                 }
             }
         }
