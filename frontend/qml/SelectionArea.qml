@@ -296,16 +296,25 @@ Item {
                             case 1:
                                 if ( sectionsAreaStackView.currentItem.objectName !== "CollectionsView" ) {
                                     sectionsAreaStackView.push( { item: favoritesView, replace: true } );
+                                    if( contentArea.contentStackView.currentItem.objectName !== "BoxartGridView") {
+                                        contentArea.contentStackView.push( { item: contentArea.contentBoxartGrid, replace: true } );
+                                    }
                                 }
                                 break;
                             case 2:
                                 if ( sectionsAreaStackView.currentItem.objectName !== "PlatformsView" ) {
                                     sectionsAreaStackView.push( { item: platformsView, replace: true } );
+                                    if( contentArea.contentStackView.currentItem.objectName !== "BoxartGridView") {
+                                        contentArea.contentStackView.push( { item: contentArea.contentBoxartGrid, replace: true } );
+                                    }
                                 }
                                 break;
                             case 3:
                                 if ( sectionsAreaStackView.currentItem.objectName !== "SettingsView" ) {
                                     sectionsAreaStackView.push( { item: settingsView, replace: true } );
+                                    if( contentArea.contentStackView.currentItem.objectName !== "InputView") {
+                                        contentArea.contentStackView.push( { item: contentArea.contentInputView, replace: true } );
+                                    }
                                 }
                                 break;
                             default:

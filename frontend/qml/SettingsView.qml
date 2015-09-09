@@ -134,6 +134,7 @@ ScrollView {
                 id: mouseArea;
                 anchors.fill: parent;
                 onClicked: {
+                    listView.currentIndex = index
                     switch ( index ) {
                     case 0:
                         contentArea.contentStackView.push( { item: contentArea.contentInputView, replace: true } );

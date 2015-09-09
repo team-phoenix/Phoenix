@@ -15,6 +15,7 @@ Rectangle {
 
     property alias contentLibraryModel: libraryModel;
     property alias contentStackView: contentAreaStackView;
+    property alias contentBoxartGrid: boxArtGridComponent
     property alias contentInputView: inputView;
 
     property alias contentSlider: zoomSlider;
