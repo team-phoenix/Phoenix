@@ -8,9 +8,7 @@ Window {
     width: 125;
 
     flags: Qt.Popup | Qt.FramelessWindowHint;
-
     color: "transparent";
-
 
     function popup( x, y ) {
         dropDown.x = root.x + x -  ( dropDown.width / 2 );

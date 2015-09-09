@@ -17,7 +17,6 @@ Item {
     property int topPadding: 24;
     property int bottomPadding: -36;
 
-
     transitions: Transition {
         NumberAnimation { properties: "x"; easing.type: Easing.Linear; duration: 900 }
     }

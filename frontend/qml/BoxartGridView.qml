@@ -79,7 +79,7 @@ Rectangle {
 
             // The max height and width of the grid's cells. This can be tweaked
             // to change the default size of the boxart.
-            property int maxCellHeight: 225;
+            property int maxCellHeight: contentArea.contentSlider.maximumValue;
             property bool clampEdges: parent.width >= maxCellHeight;
 
             property Transition transition: Transition {
@@ -130,15 +130,16 @@ Rectangle {
             // If the grid's width is less than the maxCellWidth, get
             // the grid to scale the size of the grid items, so that the transition looks really
             // seamless.
-            cellHeight: clampEdges ? maxCellHeight : parent.width;
+            cellHeight: clampEdges ? contentArea.contentSlider.value : parent.width;
             cellWidth: cellHeight;
 
             //clip: true
             boundsBehavior: Flickable.StopAtBounds;
 
-            Component.onCompleted: libraryModel.updateCount()
-
-            onCountChanged: { console.log( "count: " + count ) }
+            Component.onCompleted: {
+                populate = transitionX;
+                libraryModel.updateCount();
+            }
 
             delegate: Rectangle {
                 id: gridItem
@@ -272,7 +273,7 @@ Rectangle {
                         }
                     }
 
-                    Text {
+                    Label {
                         id: titleText;
                         text: title;
                         color: index === gridView.currentIndex ? PhxTheme.common.highlighterFontColor : PhxTheme.common.baseFontColor;

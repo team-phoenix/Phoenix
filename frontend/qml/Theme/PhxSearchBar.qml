@@ -7,69 +7,41 @@ import vg.phoenix.models 1.0
 
 TextField {
     id: searchBar;
-    width: 225;
-    height: 50;
-    font {
-        pixelSize: 14;
-    }
 
-    property color backgroundColor: "red";
+    height: 25;
 
-    state: "EXPANDED";
-
-    transitions: Transition {
-        NumberAnimation { properties: "width"; duration: 300; }
-    }
-
-    states: [
-        State {
-            name: "ICON_ONLY";
-            PropertyChanges {
-                target: searchBar;
-                width: 42;
-            }
-        },
-        State {
-            name: "EXPANDED";
-            PropertyChanges {
-                target: searchBar;
-                width: 150;
-            }
-        }
-    ]
-
-    /*
-    MouseArea {
-        anchors.fill: parent;
-        onClicked: {
-            if ( parent.state === "ICON_ONLY" )
-                parent.state = "EXPANDED";
-            else
-                parent.state = "ICON_ONLY";
-        }
-    }*/
-
-    textColor: PhxTheme.common.baseFontColor;
+    placeholderText: "";
+    width: 200;
+    textColor: "white";
 
     style: TextFieldStyle {
-        background: Rectangle {
-            color: control.backgroundColor;
-            implicitHeight: control.height;
-            implicitWidth: control.width;
+        placeholderTextColor: PhxTheme.common.baseFontColor;
+        background: Item {
+            width: control.width;
+            height: control.height;
+
+            Rectangle {
+                anchors.fill: parent;
+                color: "#1a1b20";
+                radius: 3;
+                border {
+                    width: 1;
+                    color: "#111216";
+                }
+
+                Rectangle {
+                    z: parent.z - 1;
+                    radius: parent.radius;
+                    anchors {
+                        fill: parent;
+                        bottomMargin: -1;
+                    }
+                    color: "white";
+                    opacity: 0.1;
+
+                }
+            }
         }
     }
 
-    placeholderText: qsTr( "Search" );
-
-    Timer {
-        id: searchTimer;
-        interval: 300;
-        running: false;
-        repeat: false;
-        onTriggered: {
-            libraryModel.setFilter( "games", "title", '%' + searchBar.text + '%' );
-        }
-
-    }
-    onTextChanged: searchTimer.restart();
 }

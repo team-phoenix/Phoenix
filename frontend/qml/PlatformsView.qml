@@ -62,7 +62,7 @@ ScrollView {
                 right: parent.right;
             }
 
-            Text {
+            Label {
                 text: qsTr( "Systems" );
                 anchors {
                     verticalCenter: parent.verticalCenter;
@@ -72,7 +72,6 @@ ScrollView {
 
                 font {
                     pixelSize: PhxTheme.selectionArea.headerFontSize;
-                    bold: true;
                 }
 
                 color: PhxTheme.selectionArea.highlightFontColor;
@@ -105,7 +104,7 @@ ScrollView {
                 right: parent.right;
             }
 
-            Text {
+            Label {
                 id: platformText;
                 text: listView.model.get( index );
                 anchors {

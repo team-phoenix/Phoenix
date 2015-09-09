@@ -141,48 +141,15 @@ ListView {
             }
                 //color: columnItem.mappingCollisionDetected ? "red" : "#2e1510";
 
-                TextField {
-                    id: textField;
+            PhxSearchBar {
+                id: textField;
+                width: 100;
+                anchors {
+                    verticalCenter: parent.verticalCenter;
+                    right: parent.right;
+                }
 
-                    width: 100;
-
-                    anchors {
-                        verticalCenter: parent.verticalCenter;
-                        right: parent.right;
-                    }
-
-                    text: columnItem.text;
-                    textColor: "white";
-
-                    style: TextFieldStyle {
-                        background: Item {
-                            implicitWidth: control.width;
-                            implicitHeight: control.height;
-
-
-                            Rectangle {
-                                id: mainBackground;
-                                radius: 3;
-                                anchors.fill: parent;
-                                color: "#282420";
-                                border {
-                                    width: 1;
-                                    color: "#0a0a0a";
-                                }
-                            }
-
-                            Rectangle {
-                                radius: mainBackground.radius;
-                                anchors {
-                                    fill: mainBackground;
-                                    bottomMargin: -1;
-                                }
-                                z: mainBackground.z - 1;
-                                color: "white";
-                                opacity: 0.1;
-                            }
-                        }
-                    }
+                text: columnItem.text;
             }
         }
     }

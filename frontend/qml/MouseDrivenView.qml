@@ -17,7 +17,7 @@ Item {
         SelectionArea {
             id: selectionArea
             anchors { top: parent.top; bottom: parent.bottom }
-            width: 275
+            width: 250;
             z: contentArea.z + 1
         }
 

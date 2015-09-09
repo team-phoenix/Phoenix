@@ -7,7 +7,6 @@ import vg.phoenix.themes 1.0
 ComboBox {
     id: devicesCombobox;
     model: inputView.inputDevicesModel;
-
     textRole: "name";
 
     onCurrentTextChanged: {
@@ -24,28 +23,26 @@ ComboBox {
             implicitWidth: control.width;
             implicitHeight: control.height;
 
-
             Rectangle {
-                id: mainBackground;
-                radius: 3;
                 anchors.fill: parent;
-                color: "#282420";
+                color: "#1a1b20";
+                radius: 3;
                 border {
                     width: 1;
-                    color: "#0a0a0a";
+                    color: "#111216";
                 }
 
-            }
+                Rectangle {
+                    z: parent.z - 1;
+                    radius: parent.radius;
+                    anchors {
+                        fill: parent;
+                        bottomMargin: -1;
+                    }
+                    color: "white";
+                    opacity: 0.1;
 
-            Rectangle {
-                radius: mainBackground.radius;
-                anchors {
-                    fill: mainBackground;
-                    bottomMargin: -1;
                 }
-                z: mainBackground.z - 1;
-                color: "white";
-                opacity: 0.1;
             }
         }
 

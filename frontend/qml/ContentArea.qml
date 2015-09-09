@@ -17,6 +17,8 @@ Rectangle {
     property alias contentStackView: contentAreaStackView;
     property alias contentInputView: inputView;
 
+    property alias contentSlider: zoomSlider;
+
     Rectangle {
         id: headerArea;
         anchors {
@@ -28,13 +30,73 @@ Rectangle {
         color: PhxTheme.common.primaryBackgroundColor;
         z: 100;
 
-        height: 35;
+        height: 40;
+
+
+
+        PhxSearchBar {
+            id: searchBar;
+            anchors {
+                verticalCenter: parent.verticalCenter;
+                left: parent.left;
+                leftMargin: 6;
+            }
+
+            placeholderText: "Search..."
+            width: 200;
+            textColor: "white";
+
+            Timer {
+                id: searchTimer;
+                interval: 300;
+                running: false;
+                repeat: false;
+                onTriggered: {
+                    libraryModel.setFilter( "games", "title", '%' + searchBar.text + '%' );
+                }
+
+            }
+            onTextChanged: searchTimer.restart();
+
+        }
+
+        Column {
+
+            anchors {
+                bottom: parent.bottom;
+                left: parent.left;
+                right: parent.right;
+            }
+
+            Rectangle {
+                anchors {
+                    left: parent.left;
+                    right: parent.right;
+                }
+
+                height: 1;
+                color: "white";
+                opacity: 0.05;
+            }
+
+            Rectangle {
+                anchors {
+                    left: parent.left;
+                    right: parent.right;
+                }
+
+                height: 2;
+                color: "black";
+                opacity: 0.2;
+            }
+
+        }
 
         Row {
             anchors {
                 verticalCenter: parent.verticalCenter;
                 right: parent.right;
-                rightMargin: 100;
+                rightMargin: 12;
             }
 
             spacing: 12;
@@ -55,6 +117,7 @@ Rectangle {
             }
 
             Slider {
+                id: zoomSlider;
                 anchors {
                     verticalCenter: parent.verticalCenter;
                 }
@@ -63,48 +126,75 @@ Rectangle {
 
                 minimumValue: 200;
                 maximumValue: 400;
-                value: 200;
+                value: minimumValue;
                 stepSize: 50;
 
                 style: SliderStyle {
                     handle: Item {
-                        height: 13;
+                        height: 14;
                         width: height;
-
-                        DropShadow {
-                            source: handleRectangle;
-                            anchors.fill: source;
-                            verticalOffset: 0;
-                            horizontalOffset: 0;
-                            color: "red";
-                            transparentBorder: true;
-                            radius: 12;
-                            samples: radius * 2;
-                        }
 
                         Rectangle {
                             id: handleRectangle;
                             anchors.fill: parent;
                             radius: width / 2;
-                            color: "white";
+                            gradient: Gradient {
+                                GradientStop { position: 0.0; color: "#5f6273"; }
+                                GradientStop { position: 1.0; color: "#3a3d46"; }
+                            }
+
+                            DropShadow {
+                                source: innerHandleRectangle;
+                                anchors.fill: source;
+                                verticalOffset: 0;
+                                horizontalOffset: 0;
+                                color: "red";
+                                transparentBorder: true;
+                                radius: 16;
+                                samples: radius * 2;
+                            }
+
+                            Rectangle {
+                                id: innerHandleRectangle;
+                                anchors {
+                                    centerIn: parent;
+                                }
+                                height: 6;
+                                width: height;
+                                radius: height / 2;
+                                gradient: Gradient {
+                                    GradientStop { position: 0.0; color: "#ca728a"; }
+                                    GradientStop { position: 1.0; color: "#de8a8a"; }
+                                }
+
+                            }
                         }
                     }
 
-                    groove: Rectangle {
+                    groove: Item {
                         width: control.width;
-                        height: control.height * 0.3;
-                        radius: 3;
+                        height: control.height * 0.2;
 
                         Rectangle {
-                            anchors {
-                                top: parent.top;
-                                left: parent.left;
-                                bottom: parent.bottom;
+                            anchors.fill: parent;
+                            color: "#1a1b20";
+                            radius: 3;
+                            border {
+                                width: 1;
+                                color: "#111216";
                             }
 
-                            color: "red";
-                            width: styleData.handlePosition;
+                            Rectangle {
+                                z: parent.z - 1;
+                                radius: parent.radius;
+                                anchors {
+                                    fill: parent;
+                                    bottomMargin: -1;
+                                }
+                                color: "white";
+                                opacity: 0.1;
 
+                            }
                         }
                     }
                 }
@@ -171,7 +261,6 @@ Rectangle {
             leftMargin: 12;
             rightMargin: 12;
         }
-
 
         visible: {
             if ( contentAreaStackView.currentItem !== null ) {
