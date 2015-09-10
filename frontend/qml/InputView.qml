@@ -2,6 +2,7 @@ import QtQuick 2.4
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.2
 import QtQuick.Controls 1.2
+import QtGraphicalEffects 1.0
 
 import vg.phoenix.backend 1.0
 import vg.phoenix.themes 1.0
@@ -45,7 +46,6 @@ Item {
         } else {
             inputDevicesModel.append( { "name": device.name  } );
         }
-
     }
 
     // This is a QVariantMap that is used to hold the currently selected device's mapping.
@@ -63,7 +63,44 @@ Item {
             rightMargin: 56;
         }
 
+        DropShadow {
+            id: controllerShadow;
+            anchors.fill: source;
+            source: controllerImage;
+            verticalOffset: 1;
+            horizontalOffset: 0;
+            color: "black";
+            transparentBorder: true;
+            radius: 8;
+            samples: radius * 2;
+        }
+
+        Image {
+            id: controllerImage;
+            anchors {
+                bottom: parent.bottom;
+                bottomMargin: -100;
+                right: inputScrollView.left;
+                rightMargin: 24;
+                left: parent.left;
+                top: parent.top;
+                topMargin: 100;
+            }
+
+            height: 400;
+
+            source: "playstationController.svg";
+            fillMode: Image.PreserveAspectFit;
+
+            sourceSize {
+                width: 500;
+                height: 500;
+            }
+
+        }
+
         ScrollView {
+            id: inputScrollView;
             anchors {
                 right: parent.right;
                 rightMargin: 12;

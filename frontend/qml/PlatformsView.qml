@@ -7,6 +7,7 @@ import vg.phoenix.models 1.0
 import vg.phoenix.themes 1.0
 
 ScrollView {
+    id: platformsView;
 
     ListView {
         id: listView;
@@ -125,7 +126,12 @@ ScrollView {
             MouseArea {
                 anchors.fill: parent;
                 onClicked: {
+                    if ( contentArea.contentStackView.currentItem.objectName !== "PlatformsView" ) {
+                        contentArea.contentStackView.push( { item: contentArea.boxartGrid, replace: true } );
+                    }
+
                     listView.currentIndex = index;
+
                     contentArea.contentLibraryModel.setFilter( "games", "system", platformText.text );
                 }
             }

@@ -19,6 +19,8 @@ Rectangle {
 
     property alias contentSlider: zoomSlider;
 
+    property alias boxartGrid: boxArtGridComponent;
+
     Rectangle {
         id: headerArea;
         anchors {
