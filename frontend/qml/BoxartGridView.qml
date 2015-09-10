@@ -17,14 +17,15 @@ Rectangle {
         id: dropDownMenu;
     }
 
-    Rectangle {
+    PhxScrollView {
         id: scrollView;
         anchors {
             fill: parent;
             topMargin: headerArea.height;
         }
 
-        color: PhxTheme.common.primaryBackgroundColor;
+        // The default of 20 just isn't fast enough
+        __wheelAreaScrollSpeed: 100
 
         // Top drop shadow
         Rectangle {
@@ -72,7 +73,7 @@ Rectangle {
             }
         }
 
-        GridView {
+        contentItem: GridView {
             id: gridView;
 
             model: libraryModel;
@@ -90,6 +91,7 @@ Rectangle {
                 NumberAnimation { properties: "x"; duration: 250 }
             }
 
+            Behavior on contentY { SmoothedAnimation { duration: 250; } }
 
             // add: transition
             // addDisplaced: transition
