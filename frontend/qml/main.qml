@@ -23,8 +23,8 @@ ApplicationWindow {
     }
 
     StackView {
-        anchors.fill: parent;
         id: layoutStackView;
+        anchors.fill: parent;
         initialItem: mouseDrivenView;
     }
 
@@ -82,6 +82,13 @@ ApplicationWindow {
         }
     }
 
+    Component {
+        id: gameView;
+
+        VideoItem {
+            inputManager: root.inputManager;
+        }
+    }
 
 
 
