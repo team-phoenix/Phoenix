@@ -54,7 +54,6 @@ ScrollView {
                                                                     + listView.count } );
                     listView.currentIndex = listView.count - 1;
                     listView.currentItem.state = "ADDED";
-                    console.log( listView.currentItem.state)
                 }
             }
 
@@ -142,8 +141,6 @@ ScrollView {
                 anchors.fill: parent;
                 enabled: platformText.readOnly;
                 onClicked: {
-
-                    console.log( collectionID );
 
                     if ( collectionID == 0 ) {
                         contentArea.contentLibraryModel.clearFilter( "collections", "collectionID" );

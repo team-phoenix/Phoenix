@@ -86,7 +86,6 @@ Item {
                 Component {
                     id: settingsView;
 
-
                     SettingsView {
                         objectName: "SettingsView";
                     }

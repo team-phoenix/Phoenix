@@ -9,14 +9,15 @@ ScrollView {
     width: 100;
     height: 62;
 
+
     ListView {
         id: listView;
         spacing: 0;
         model: ListModel {
             id: settingsModel;
             ListElement { section: "Input Controls"; }
-            ListElement { section: "Video Playback"; }
-            ListElement { section: "Audio Playback"; }
+            //ListElement { section: "Video Playback"; }
+            //ListElement { section: "Audio Playback"; }
         }
 
         highlight: Item {
