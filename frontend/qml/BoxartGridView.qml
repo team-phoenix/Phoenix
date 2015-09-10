@@ -61,8 +61,14 @@ Rectangle {
                 leftMargin: gridView.clampEdges ? ( ( parent.width % cellWidth ) / 2 ) : 0;
                 rightMargin: leftMargin;
             }
-            model: libraryModel;
 
+            // If the grid's width is less than the maxCellWidth, get
+            // the grid to scale the size of the grid items, so that the transition looks really
+            // seamless.
+            cellHeight: clampEdges ? contentArea.contentSlider.value : parent.width;
+            cellWidth: cellHeight;
+
+            model: libraryModel;
 
             // The max height and width of the grid's cells. This can be tweaked
             // to change the default size of the boxart.
@@ -98,12 +104,6 @@ Rectangle {
                 else
                     lastY = contentY;
             }*/
-
-            // If the grid's width is less than the maxCellWidth, get
-            // the grid to scale the size of the grid items, so that the transition looks really
-            // seamless.
-            cellHeight: clampEdges ? contentArea.contentSlider.value : parent.width;
-            cellWidth: cellHeight;
 
             //clip: true
             boundsBehavior: Flickable.StopAtBounds;
@@ -251,7 +251,7 @@ Rectangle {
                         color: index === gridView.currentIndex ? PhxTheme.common.highlighterFontColor : PhxTheme.common.baseFontColor;
                         Layout.fillWidth: true;
                         elide: Text.ElideRight;
-                        font { pixelSize: gridItem.height * 0.05; }
+                        font { pixelSize: 10; }
                     }
 
                     /*Text {
