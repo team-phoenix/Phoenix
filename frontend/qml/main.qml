@@ -87,6 +87,7 @@ ApplicationWindow {
 
         VideoItem {
             inputManager: root.inputManager;
+
         }
     }
 

@@ -44,6 +44,7 @@ namespace Library {
                 SystemPathRole,
                 RowIDRole,
                 SHA1Role,
+                CoreFilePathRole,
             };
 
             explicit LibraryModel( QObject *parent = 0 );

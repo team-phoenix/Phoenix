@@ -9,6 +9,7 @@
 #include "imagecacher.h"
 #include "platformsmodel.h"
 #include "collectionsmodel.h"
+#include "platform.h"
 #include "phxpaths.h"
 
 #include <memory.h>
@@ -95,6 +96,7 @@ int main( int argc, char *argv[] ) {
     qmlRegisterType<Library::CollectionsModel>( "vg.phoenix.models", 1, 0, "CollectionsModel" );
     qmlRegisterType<Library::LibraryModel>( "vg.phoenix.models", 1, 0, "LibraryModel" );
     qmlRegisterType<Library::ImageCacher>( "vg.phoenix.cache", 1, 0, "ImageCacher" );
+    qmlRegisterType<Library::Platform>( "vg.phoenix.models", 1, 0, "Platform" );
 
     qRegisterMetaType<Library::GameData>( "GameData" );
 

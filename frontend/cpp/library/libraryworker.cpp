@@ -279,24 +279,32 @@ void LibraryWorker::prepareGameData( QQueue<QFileInfo> &queue ) {
         // Make copies of the fileInfo data before this point, unless you want the
         // cue file check to override them.
 
-        auto system = platformMap.value( extension, "" );
+        auto systemID = Platform::toPlatform( extension );
+
         auto sha1 = getCheckSum( fileInfo.canonicalFilePath() );
 
+        auto system = QString();
 
-        // System should only be empty on ambiguous files, such as ISO's and BINS.
-        if( system.isEmpty() ) {
+        // SystemID should only be INVALID on ambiguous files, such as ISO's and BINS.
+        if( systemID == Platform::Platform::UNKNOWN ) {
 
-            checkHeaderOffsets( fileInfo, system );
+            checkHeaderOffsets( fileInfo, systemID );
 
-            if( system.isEmpty() ) {
+            if( systemID == Platform::UNKNOWN ) {
+
                 qCWarning( phxLibrary ) << "The system is 'still' empty, for"
                                         << fileInfo.canonicalFilePath();
 
                 qCWarning( phxLibrary ) << "this means we need to add"
                                         << "in better header and offset checking.";
+                Q_ASSERT( false );
             }
         }
 
+        system = Platform::toString( systemID );
+        auto coreID = Platform::toCore( systemID );
+        auto coreName = Platform::toString( coreID, Platform::DisplayMode::Fancy );
+        auto coreFilePath = Platform::getCoreFilePath( coreID );
 
         auto progress = ( i / static_cast<qreal>( queueLength ) ) * 100.0;
 
@@ -308,7 +316,8 @@ void LibraryWorker::prepareGameData( QQueue<QFileInfo> &queue ) {
         importData.importProgress = progress;
         importData.system = system;
         importData.fileID = i - 1;
-
+        importData.coreName = coreName;
+        importData.coreFilePath = coreFilePath;
 
         // Find MetaData.
         prepareMetadata( importData );
@@ -464,7 +473,7 @@ bool LibraryWorker::getCueFileInfo( QFileInfo &fileInfo ) {
     return true;
 }
 
-void LibraryWorker::checkHeaderOffsets( const QFileInfo &fileInfo, QString &platform ) {
+void LibraryWorker::checkHeaderOffsets( const QFileInfo &fileInfo, Platform::Platforms &platform ) {
     QFile file( fileInfo.canonicalFilePath() );
 
     if( file.open( QIODevice::ReadOnly ) ) {
@@ -478,9 +487,9 @@ void LibraryWorker::checkHeaderOffsets( const QFileInfo &fileInfo, QString &plat
 
             auto bytes = file.read( header.length );
 
-            platform = platformForHeaderString( bytes.simplified().toHex() );
+            platform = Platform::checkHeaderString( bytes.simplified().toHex() );
 
-            if( !platform.isEmpty() ) {
+            if( platform != Platform::Platform::UNKNOWN ) {
                 break;
             }
 

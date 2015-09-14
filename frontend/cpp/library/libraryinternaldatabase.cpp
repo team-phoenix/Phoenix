@@ -84,6 +84,8 @@ bool LibraryInternalDatabase::createSchema() {
             QStringLiteral( "   goodtoolsCode TEXT,\n" ) +
             QStringLiteral( "   timePlayed DATETIME,\n" ) +
             QStringLiteral( "   artworkUrl TEXT,\n" ) +
+            QStringLiteral( "   coreFilePath TEXT,\n" ) +
+            QStringLiteral( "   description TEXT,\n" ) +
 
             QStringLiteral( "   /* file info */" ) +
             QStringLiteral( "   absolutePath TEXT,\n" ) +

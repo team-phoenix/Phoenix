@@ -195,11 +195,11 @@ Rectangle {
                                 anchors.fill: parent;
                                 onClicked: { gridView.currentIndex = index; }
                                 onDoubleClicked: {
-                                    console.log( absoluteFilePath );
-                                    console.log( systemPath );
-                                    //layoutStackView.push( { item: gameView, replace: true } );
-                                    //layoutStackView.currentItem.libretroCore = //"/usr/lib/libretro/snes9x_libretro.so";
-                                    //layoutStackView.currentItem.game = //"/home/lee/Documents/Super Mario World (USA).sfc";
+                                    //console.log( absoluteFilePath );
+                                    console.log( coreFilePath );
+                                    layoutStackView.push( { item: gameView, replace: true } );
+                                    layoutStackView.currentItem.libretroCore = coreFilePath;
+                                    layoutStackView.currentItem.game = absoluteFilePath;
                                 }
                             }
 

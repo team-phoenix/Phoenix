@@ -9,6 +9,7 @@
 #include <QDirIterator>
 
 #include "metadatadatabase.h"
+#include "platform.h"
 
 namespace Library {
 
@@ -27,6 +28,9 @@ namespace Library {
         QString releaseDate;
         QString genre;
         QString description;
+
+        QString coreName;
+        QString coreFilePath;
 
         bool updated = false;
         qint64 fileID;
@@ -98,7 +102,7 @@ namespace Library {
             void setIsRunning( const bool running );
 
             // Helper Functions
-            void checkHeaderOffsets( const QFileInfo &fileInfo, QString &platform );
+            void checkHeaderOffsets( const QFileInfo &fileInfo, Platform::Platforms &platform );
             bool getCueFileInfo( QFileInfo &fileInfo );
             QString getCheckSum( const QString filePath );
             bool isBios( const QString &hex, QString &biosName );

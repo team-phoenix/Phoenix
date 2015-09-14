@@ -1,5 +1,6 @@
 #include "librarymodel.h"
 #include "logging.h"
+#include "platform.h"
 
 #include <QSqlRecord>
 #include <QSqlField>
@@ -49,7 +50,7 @@ LibraryModel::LibraryModel( LibraryInternalDatabase &db, QObject *parent )
     mRoleNames.insert( SystemPathRole, QByteArrayLiteral( "systemPath" ) );
     mRoleNames.insert( RowIDRole, QByteArrayLiteral( "rowIndex" ) );
     mRoleNames.insert( SHA1Role, QByteArrayLiteral( "sha1" ) );
-
+    mRoleNames.insert( CoreFilePathRole, QByteArrayLiteral( "coreFilePath" ) );
 
     setEditStrategy( QSqlTableModel::OnManualSubmit );
     setTable( LibraryInternalDatabase::tableName );
@@ -342,8 +343,8 @@ void LibraryModel::handleInsertGame( const GameData importData ) {
 
     static const auto statement = QStringLiteral( "INSERT OR IGNORE INTO " )
                                   + LibraryInternalDatabase::tableName
-                                  + QStringLiteral( " (title, system, absoluteFilePath, timePlayed, sha1, artworkUrl) " )
-                                  + QStringLiteral( "VALUES (?,?,?,?,?, ?)" );
+                                  + QStringLiteral( " (title, system, absoluteFilePath, timePlayed, sha1, artworkUrl, coreFilePath) " )
+                                  + QStringLiteral( "VALUES (?,?,?,?,?,?,?)" );
 
 
     if( insertCancelled() ) {
@@ -379,6 +380,7 @@ void LibraryModel::handleInsertGame( const GameData importData ) {
     query.addBindValue( importData.timePlayed );
     query.addBindValue( importData.sha1 );
     query.addBindValue( importData.artworkUrl );
+    query.addBindValue( importData.coreFilePath );
 
     if( !query.exec() ) {
         qDebug() << "SQL Insertion Error: " << query.lastError().text();
