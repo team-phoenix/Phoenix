@@ -1,5 +1,5 @@
 #include "platformsmodel.h"
-#include "platforms.h"
+#include "platform.h"
 
 #include <QDebug>
 
@@ -8,15 +8,16 @@ using namespace Library;
 PlatformsModel::PlatformsModel( QObject *parent )
     : QAbstractListModel( parent ) {
 
-    for ( int i = 0; i < static_cast<int>( Platforms::MAX ); ++i ) {
-        auto platform = platformToString( static_cast<Platforms>( i ) );
+    mPlatformsList.append( QStringLiteral( "All" ) );
+
+    for ( int i = 0; i < static_cast<int>( Platform::Platforms::MAX ); ++i ) {
+        auto platform = Platform::toString( static_cast<Platform::Platforms>( i ) );
         if ( !platform.isEmpty() )
             mPlatformsList.append( platform );
     }
 
     // Just sort the list so it looks pretty. This shouldn't take that long. There aren't
     // that many platforms.
-    mPlatformsList.sort( Qt::CaseInsensitive );
 
 }
 

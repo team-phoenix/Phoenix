@@ -131,8 +131,11 @@ ScrollView {
                     }
 
                     listView.currentIndex = index;
-
-                    contentArea.contentLibraryModel.setFilter( "games", "system", platformText.text );
+                    if ( index === 0 ) {
+                        contentArea.contentLibraryModel.clearFilter( "games", "system" );
+                    } else {
+                        contentArea.contentLibraryModel.setFilter( "games", "system", platformText.text );
+                    }
                 }
             }
 
