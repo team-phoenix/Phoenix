@@ -44,26 +44,25 @@ ApplicationWindow {
                 PropertyAnimation {
                     target: exitItem; property: "opacity";
                     from: 1; to: 0;
-                    duration: 750;
+                    duration: 1000;
                 }
 
                 PropertyAnimation {
                     target: exitItem; property: "scale";
                     from: 1; to: 0.75;
-                    duration: 750;
+                    duration: 1000;
                     easing.type: Easing.InOutQuad;
                 }
 
                 PropertyAnimation {
                     target: enterItem; property: "opacity";
                     from: 0; to: 1;
-                    duration: 750;
-                    easing.type: Easing.InOutQuad;
+                    duration: 1000;
                 }
             }
         }
 
-        // Here we define the opposite transition
+        // Here we define the opposite (pop) transition
         Component {
             id: gameTransition;
             StackViewTransition {
@@ -72,13 +71,6 @@ ApplicationWindow {
                     from: 1; to: 0;
                     duration: 500;
                 }
-
-                // PropertyAnimation {
-                //     target: exitItem; property: "scale";
-                //     from: 1; to: 0.75;
-                //     duration: 250;
-                //     easing.type: Easing.InOutQuad;
-                // }
 
                 PropertyAnimation {
                     target: enterItem; property: "opacity";
@@ -97,7 +89,6 @@ ApplicationWindow {
         }
 
         delegate: StackViewDelegate {
-            // replaceTransition: opacityTransition;
             pushTransition: libraryTransition;
             popTransition: gameTransition;
         }
@@ -194,8 +185,6 @@ ApplicationWindow {
                 if( coreGamePair[0] !== "" ) {
                     videoItem.libretroCore = coreGamePair[ 0 ];
                     videoItem.game = coreGamePair[ 1 ];
-                    rootMouseArea.cursorShape = Qt.ArrowCursor;
-                    videoItemContainer.opacity = 1.0;
                 }
             }
 
@@ -241,6 +230,13 @@ ApplicationWindow {
 
                     onAspectRatioChanged: {
                         console.log( "Aspect ratio: " + aspectRatio );
+                    }
+
+                    onSignalRunChanged: {
+                        if( run === true ) {
+                            rootMouseArea.cursorShape = Qt.ArrowCursor;
+                            videoItemContainer.opacity = 1.0;
+                        }
                     }
 
                     rotation: 180;
