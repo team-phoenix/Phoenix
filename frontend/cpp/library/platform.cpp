@@ -101,7 +101,7 @@ Platform::AvailableCores Platform::toCore( const Platform::Platforms &platform )
         core = FCEUMM;
         break;
     case SNES:
-        core = SNES9X;
+        core = BSNES_BALANCED;
         break;
     case PSX:
         core = MEDNAFEN_PSX;
@@ -224,13 +224,13 @@ QString Platform::toString( const Platform::AvailableCores &core, const Platform
         coreName = isFancyMode ? QStringLiteral( "Snes9x" ) : QStringLiteral( "snes9x_libretro" );
         break;
     case BSNES_PERFORMANCE:
-        coreName = isFancyMode ? QStringLiteral( "bSNES Performance" ) : QStringLiteral( "bsnes_performance_libretro" );
+        coreName = isFancyMode ? QStringLiteral( "bsnes Performance" ) : QStringLiteral( "bsnes_performance_libretro" );
         break;
     case BSNES_BALANCED:
-        coreName = isFancyMode ? QStringLiteral( "bSNES Balanced" ) : QStringLiteral( "bsnes_balanced_libretro" );
+        coreName = isFancyMode ? QStringLiteral( "bsnes Balanced" ) : QStringLiteral( "bsnes_balanced_libretro" );
         break;
     case BSNES_ACCURACY:
-        coreName = isFancyMode ? QStringLiteral( "bSNES Accuracy" ) : QStringLiteral( "bsnes_accuracy_libretro" );
+        coreName = isFancyMode ? QStringLiteral( "bsnes Accuracy" ) : QStringLiteral( "bsnes_accuracy_libretro" );
         break;
     case GAMBATTE:
         coreName = isFancyMode ? QStringLiteral( "Gambatte" ) : QStringLiteral( "gambatte_libretro" );

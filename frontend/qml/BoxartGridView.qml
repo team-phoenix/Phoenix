@@ -195,11 +195,11 @@ Rectangle {
                                 anchors.fill: parent;
                                 onClicked: { gridView.currentIndex = index; }
                                 onDoubleClicked: {
-                                    //console.log( absoluteFilePath );
-                                    console.log( coreFilePath );
-                                    layoutStackView.push( { item: gameView, replace: true } );
-                                    layoutStackView.currentItem.libretroCore = coreFilePath;
-                                    layoutStackView.currentItem.game = absoluteFilePath;
+                                    layoutStackView.push( { item: gameView, replace: true,
+                                                            properties: {
+                                                                coreGamePair: [ coreFilePath, absoluteFilePath ]
+                                                            }
+                                                          } );
                                 }
                             }
 
