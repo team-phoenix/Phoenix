@@ -89,7 +89,7 @@ HEADERS += cpp/library/librarymodel.h \
            cpp/library/collectionsmodel.h \
            cpp/library/platform.h
 # Will build the final executable in the main project directory.
-TARGET = ../phoenix
+TARGET = ../Phoenix
 
 # Check if the config file exists
 include( ../common.pri )
@@ -104,6 +104,8 @@ macx {
         depends.path = Contents/MacOS
 
         QMAKE_BUNDLE_DATA += depends
+
+        QMAKE_MAC_SDK = macosx10.11
 }
 
 DISTFILES += \
