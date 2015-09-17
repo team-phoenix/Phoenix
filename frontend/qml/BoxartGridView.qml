@@ -195,11 +195,9 @@ Rectangle {
                                 anchors.fill: parent;
                                 onClicked: { gridView.currentIndex = index; }
                                 onDoubleClicked: {
-                                    layoutStackView.push( { item: gameView, replace: true,
-                                                            properties: {
-                                                                coreGamePair: [ coreFilePath, absoluteFilePath ]
-                                                            }
-                                                          } );
+                                    rootMouseArea.cursorShape = Qt.BusyCursor;
+                                    layoutStackView.get( 0 ).coreGamePair = [ coreFilePath, absoluteFilePath ];
+                                    layoutStackView.pop();
                                 }
                             }
 

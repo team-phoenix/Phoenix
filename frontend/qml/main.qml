@@ -5,6 +5,7 @@ import QtQuick.Window 2.2
 import QtGraphicalEffects 1.0
 
 import vg.phoenix.backend 1.0
+import vg.phoenix.themes 1.0
 
 ApplicationWindow {
     id: root;
@@ -18,28 +19,87 @@ ApplicationWindow {
     minimumHeight: 480;
     minimumWidth: 640;
 
-    property InputManager inputManager: InputManager {
-        gamepadControlsFrontend: true;
+    property InputManager inputManager: InputManager { gamepadControlsFrontend: true; }
 
+    MouseArea {
+        id: rootMouseArea;
+        anchors.fill: parent;
+        hoverEnabled: true;
+        propagateComposedEvents: true;
+        z: parent.z + 1;
     }
 
     StackView {
         id: layoutStackView;
         anchors.fill: parent;
-        initialItem: mouseDrivenView;
-        delegate: StackViewDelegate {
-            replaceTransition: StackViewTransition {
+        Component.onCompleted: {
+            push( gameView );
+            push( { item: mouseDrivenView, properties: { opacity: 0 } } );
+        }
+
+        // Here we define the (push) transition that occurs when going from GameView into the library
+        Component {
+            id: libraryTransition;
+            StackViewTransition {
+                PropertyAnimation {
+                    target: exitItem; property: "opacity";
+                    from: 1; to: 0;
+                    duration: 750;
+                }
+
+                PropertyAnimation {
+                    target: exitItem; property: "scale";
+                    from: 1; to: 0.75;
+                    duration: 750;
+                    easing.type: Easing.InOutQuad;
+                }
+
                 PropertyAnimation {
                     target: enterItem; property: "opacity";
                     from: 0; to: 1;
-                    duration: 500;
+                    duration: 750;
+                    easing.type: Easing.InOutQuad;
                 }
+            }
+        }
+
+        // Here we define the opposite transition
+        Component {
+            id: gameTransition;
+            StackViewTransition {
                 PropertyAnimation {
                     target: exitItem; property: "opacity";
                     from: 1; to: 0;
                     duration: 500;
                 }
+
+                // PropertyAnimation {
+                //     target: exitItem; property: "scale";
+                //     from: 1; to: 0.75;
+                //     duration: 250;
+                //     easing.type: Easing.InOutQuad;
+                // }
+
+                PropertyAnimation {
+                    target: enterItem; property: "opacity";
+                    from: 0; to: 1;
+                    duration: 2500;
+                    easing.type: Easing.InOutQuad;
+                }
+
+                PropertyAnimation {
+                    target: enterItem; property: "scale";
+                    from: 0.75; to: 1;
+                    duration: 2500;
+                    easing.type: Easing.InOutQuad;
+                }
             }
+        }
+
+        delegate: StackViewDelegate {
+            // replaceTransition: opacityTransition;
+            pushTransition: libraryTransition;
+            popTransition: gameTransition;
         }
     }
 
@@ -91,27 +151,51 @@ ApplicationWindow {
     Component {
         id: mouseDrivenView;
 
-        MouseDrivenView {
-
-            objectName: "MouseDrivenView";
-        }
+        MouseDrivenView { objectName: "MouseDrivenView"; }
     }
 
     Component {
         id: gameView;
 
         Rectangle {
-            id: videoItemContainer;
-            anchors.fill: parent;
             color: "black";
+
+            // A logo
+            // Only visible when a game is not running
+            Image {
+                id: phoenixLogo;
+                anchors.centerIn: parent;
+                width: 150;
+                height: width;
+                source: "phoenix.png";
+                opacity: 0.25;
+                enabled: videoItemContainer.opacity === 1.0 ? false : true;
+            }
+
+            // Glow effect for the logo
+            // Only visible when a game is not running
+            Glow {
+                anchors.fill: phoenixLogo;
+                source: phoenixLogo;
+                color: "#d55b4a";
+                radius: 8.0;
+                samples: 16;
+                enabled: videoItemContainer.opacity === 1.0 ? false : true;
+                SequentialAnimation on radius {
+                    loops: Animation.Infinite;
+                    PropertyAnimation { to: 16; duration: 2000; easing.type: Easing.InOutQuart; }
+                    PropertyAnimation { to: 8; duration: 2000; easing.type: Easing.InOutQuart; }
+                }
+            }
 
             // A small workaround to guarantee that the core and game are loaded in the correct order
             property var coreGamePair: [ "", "" ];
             onCoreGamePairChanged: {
-                console.log( "coreGamePair changed to: " + coreGamePair );
-                if( coreGamePair !== [ "", "" ] ) {
+                if( coreGamePair[0] !== "" ) {
                     videoItem.libretroCore = coreGamePair[ 0 ];
                     videoItem.game = coreGamePair[ 1 ];
+                    rootMouseArea.cursorShape = Qt.ArrowCursor;
+                    videoItemContainer.opacity = 1.0;
                 }
             }
 
@@ -119,9 +203,8 @@ ApplicationWindow {
             FastBlur {
                 id: blurEffect;
                 anchors.fill: parent;
-                source: videoItem;
+                source: videoItemContainer;
                 radius: 64;
-                rotation: 180;
             }
 
             // A toggle for the above blur effect... just in case this murders performance
@@ -135,38 +218,47 @@ ApplicationWindow {
 
             // VideoItem serves simultaneously as a video output QML item (consumer) and as a "controller" for the
             // underlying emulation
-            VideoItem {
-                id: videoItem;
+            Rectangle {
+                id: videoItemContainer;
                 anchors {
                     top: parent.top;
                     bottom: parent.bottom;
                     horizontalCenter: parent.horizontalCenter;
                 }
 
-                width: height * aspectRatio;
+                width: height * videoItem.aspectRatio;
 
-                onAspectRatioChanged: {
-                    console.log( "Aspect ratio: " + aspectRatio );
+                color: "black";
+                opacity: 0;
+
+                Behavior on opacity {
+                    NumberAnimation { duration: 250; }
                 }
 
-                rotation: 180;
-
-                inputManager: root.inputManager;
-
-                MouseArea {
+                VideoItem {
+                    id: videoItem;
                     anchors.fill: parent;
 
-                    onDoubleClicked: {
-                        if ( root.visibility === Window.FullScreen )
-                            root.visibility = Window.Windowed;
-                        else if ( root.visibility === Window.Windowed | Window.Maximized )
-                            root.visibility = Window.FullScreen;
+                    onAspectRatioChanged: {
+                        console.log( "Aspect ratio: " + aspectRatio );
+                    }
+
+                    rotation: 180;
+
+                    inputManager: root.inputManager;
+
+                    MouseArea {
+                        anchors.fill: parent;
+
+                        onDoubleClicked: {
+                            if ( root.visibility === Window.FullScreen )
+                                root.visibility = Window.Windowed;
+                            else if ( root.visibility === Window.Windowed | Window.Maximized )
+                                root.visibility = Window.FullScreen;
+                        }
                     }
                 }
             }
         }
     }
-
-
-
 }
