@@ -75,14 +75,14 @@ ApplicationWindow {
                 PropertyAnimation {
                     target: enterItem; property: "opacity";
                     from: 0; to: 1;
-                    duration: 2500;
+                    duration: 1000;
                     easing.type: Easing.InOutQuad;
                 }
 
                 PropertyAnimation {
                     target: enterItem; property: "scale";
                     from: 0.75; to: 1;
-                    duration: 2500;
+                    duration: 1000;
                     easing.type: Easing.InOutQuad;
                 }
             }
