@@ -144,7 +144,7 @@ Platform::Platforms Platform::toPlatform( const QString &extension ) {
                 || extension == QStringLiteral( "gbz" )  ) {
         platform = Platform::Platforms::GBA;
     } else if ( extension == QStringLiteral( "bin" ) ) {
-        platform == Platform::Platforms::BIOS;
+        platform = Platform::Platforms::BIOS;
     }
 
     Q_ASSERT( platform != Platform::Platforms::UNKNOWN );

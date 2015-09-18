@@ -1,9 +1,12 @@
 import QtQuick 2.5
+import QtQuick.Controls 1.4
+import QtQuick.Window 2.0
 import QtGraphicalEffects 1.0
 
 import vg.phoenix.backend 1.0
 
 Rectangle {
+    id: gameView;
     color: "black";
 
     // A logo
@@ -107,6 +110,153 @@ Rectangle {
                     else if ( root.visibility === Window.Windowed | Window.Maximized )
                         root.visibility = Window.FullScreen;
                 }
+            }
+        }
+    }
+
+    Component {
+        id: actionBarShadow;
+
+        DropShadow {
+            anchors.fill: source;
+            source: actionBar;
+            horizontalOffset: 0;
+            verticalOffset: 0;
+            radius: 8.0;
+            samples: radius * 2;
+            color: "black";
+            transparentBorder: true;
+        }
+    }
+
+    Rectangle {
+        id: actionBar;
+
+        gradient: Gradient {
+            GradientStop { position: 0.0; color: "#5f6273"; }
+            GradientStop { position: 1.0; color: "#3f3c47"; }
+        }
+
+        opacity: videoItemContainer.opacity;
+        height: 50;
+
+        property var dropShadow: null;
+
+        onOpacityChanged: {
+            if ( opacity === 1.0 ) {
+                actionBar.dropShadow = actionBarShadow.createObject( gameView );
+            } else if ( opacity === 0.0 ) {
+                if ( actionBar.dropShadow ) {
+                    actionBar.dropShadow.destroy();
+                }
+            }
+        }
+
+        anchors {
+            bottom: parent.bottom;
+            left: parent.left;
+            right: parent.right;
+            bottomMargin: 50;
+            leftMargin: 100;
+            rightMargin: 100;
+        }
+
+        Row {
+            anchors {
+                fill: parent;
+            }
+
+            spacing: 0;
+
+            Rectangle {
+                anchors {
+                    top: parent.top;
+                    bottom: parent.bottom;
+                }
+                width: height;
+                gradient: Gradient {
+                    GradientStop { position: 0.0; color: videoItem.running ? "#d66b59" : "#8fc661"; }
+                    GradientStop { position: 1.0; color: videoItem.running ? "#9a2954" : "#369657"; }
+                }
+
+                Rectangle {
+                    id: topBorder;
+                    anchors {
+                        top: parent.top;
+                        left: parent.left;
+                        right: parent.right;
+                    }
+                    height: 1;
+                    color: "white";
+                    opacity: 0.5;
+                }
+
+                Rectangle {
+                    id: bottomBorder;
+                    anchors {
+                        bottom: parent.bottom;
+                        left: parent.left;
+                        right: parent.right;
+                    }
+                    height: 1;
+                    color: "white";
+                    opacity: 0.05;
+
+                }
+
+                Rectangle {
+                    id: leftBorder;
+                    anchors {
+                        top: topBorder.bottom;
+                        left: parent.left;
+                        bottom: bottomBorder.top;
+                    }
+                    width: 1;
+                    color: "white";
+                    opacity: 0.1;
+                }
+
+                Rectangle {
+                    id: rightBorder;
+                    anchors {
+                        top: topBorder.bottom;
+                        right: parent.right;
+                        bottom: bottomBorder.top;
+                    }
+                    width: 1;
+                    color: "white";
+                    opacity: 0.1;
+                }
+
+                Label {
+                    anchors {
+                        centerIn: parent;
+                    }
+                    text: videoItem.running ? qsTr( "Pause" ) : qsTr( "Play" );
+                    color: "white";
+                }
+
+                MouseArea {
+                    anchors.fill: parent;
+                    onClicked: {
+                        if ( videoItem.running ) {
+                            videoItem.pause();
+                        } else {
+                            videoItem.resume();
+                        }
+                    }
+                }
+            }
+
+            Rectangle {
+                anchors {
+                    top: parent.top;
+                    bottom: parent.bottom;
+                }
+
+                width: 1;
+                color: "black";
+                opacity: 0.2;
             }
         }
     }
