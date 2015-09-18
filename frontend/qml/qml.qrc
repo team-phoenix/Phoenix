@@ -13,5 +13,6 @@
         <file>InputView.qml</file>
         <file>InputMappingColumn.qml</file>
         <file>MouseDrivenView.qml</file>
+        <file>GameView.qml</file>
     </qresource>
 </RCC>
