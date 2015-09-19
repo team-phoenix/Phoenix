@@ -123,42 +123,32 @@ Rectangle {
         }
     }
 
-    Component {
-        id: actionBarShadow;
+    DropShadow {
+        anchors.fill: source;
+        source: actionBar;
+        horizontalOffset: 0;
+        verticalOffset: 0;
+        radius: 8.0;
+        samples: radius * 2;
+        color: "black";
+        transparentBorder: true;
 
-        DropShadow {
-            anchors.fill: source;
-            source: actionBar;
-            horizontalOffset: 0;
-            verticalOffset: 0;
-            radius: 8.0;
-            samples: radius * 2;
-            color: "black";
-            transparentBorder: true;
-        }
+        opacity: actionBar.opacity;
     }
 
     Rectangle {
         id: actionBar;
+        height: 50;
 
         gradient: Gradient {
             GradientStop { position: 0.0; color: "#5f6273"; }
             GradientStop { position: 1.0; color: "#3f3c47"; }
         }
 
-        opacity: videoItemContainer.opacity;
-        height: 50;
+        opacity: 0.0;
 
-        property var dropShadow: null;
-
-        onOpacityChanged: {
-            if ( opacity === 1.0 ) {
-                actionBar.dropShadow = actionBarShadow.createObject( gameView );
-            } else if ( opacity === 0.0 ) {
-                if ( actionBar.dropShadow ) {
-                    actionBar.dropShadow.destroy();
-                }
-            }
+        Behavior on opacity {
+            PropertyAnimation { duration: 250; }
         }
 
         anchors {
@@ -285,14 +275,18 @@ Rectangle {
 
         onTriggered: {
             rootMouseArea.cursorShape = Qt.BlankCursor;
+            actionBar.opacity = 0.0;
         }
     }
 
     // This function will reset the timer when called (which is whenever the mouse is moved)
     function resetTimer() {
-        if( rootMouseArea.cursorShape !== Qt.ArrowCursor )
-            rootMouseArea.cursorShape = Qt.ArrowCursor;
-        if( gameView.running ) cursorTimer.restart();
+        if( gameView.running ) {
+            if( rootMouseArea.cursorShape !== Qt.ArrowCursor )
+                rootMouseArea.cursorShape = Qt.ArrowCursor;
+            cursorTimer.restart();
+            actionBar.opacity = 1.0;
+        }
     }
 
 }
