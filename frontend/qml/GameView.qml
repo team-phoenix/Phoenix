@@ -57,7 +57,6 @@ Rectangle {
     // A toggle for the above blur effect... just in case this murders performance
     MouseArea {
         anchors.fill: parent;
-        z: -1;
         onDoubleClicked: {
             if( blurEffect.visible ) blurEffect.visible = false;
             else if( !blurEffect.visible ) blurEffect.visible = true;
@@ -239,8 +238,6 @@ Rectangle {
 
                 MouseArea {
                     anchors.fill: parent;
-                    z: 1;
-                    preventStealing: true;
                     onClicked: {
                         if ( videoItem.running ) {
                             videoItem.pause();
