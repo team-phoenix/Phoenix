@@ -27,6 +27,7 @@ ApplicationWindow {
         hoverEnabled: true;
         propagateComposedEvents: true;
         z: parent.z + 1;
+        acceptedButtons: Qt.AllButtons;
     }
 
     StackView {

@@ -9,6 +9,9 @@ Rectangle {
     id: gameView;
     color: "black";
 
+    // Automatically set by VideoItem, true if a game is loaded and unpaused
+    property bool running: false;
+
     // A logo
     // Only visible when a game is not running
     Image {
@@ -91,9 +94,15 @@ Rectangle {
             }
 
             onSignalRunChanged: {
+                gameView.running = running;
                 if( run === true ) {
                     rootMouseArea.cursorShape = Qt.ArrowCursor;
+                    resetTimer();
                     videoItemContainer.opacity = 1.0;
+                } else {
+                    cursorTimer.stop();
+                    if( rootMouseArea.cursorShape !== Qt.ArrowCursor )
+                        rootMouseArea.cursorShape = Qt.ArrowCursor;
                 }
             }
 
@@ -260,4 +269,30 @@ Rectangle {
             }
         }
     }
+
+    // Use the main mouse area to monitor the mouse for movement
+    Connections {
+        target: rootMouseArea;
+        onPositionChanged: resetTimer();
+        onPressed: resetTimer();
+        onReleased: resetTimer();
+        onPressAndHold: resetTimer();
+    }
+
+    property Timer cursorTimer: Timer {
+        interval: 1000;
+        running: false;
+
+        onTriggered: {
+            rootMouseArea.cursorShape = Qt.BlankCursor;
+        }
+    }
+
+    // This function will reset the timer when called (which is whenever the mouse is moved)
+    function resetTimer() {
+        if( rootMouseArea.cursorShape !== Qt.ArrowCursor )
+            rootMouseArea.cursorShape = Qt.ArrowCursor;
+        if( gameView.running ) cursorTimer.restart();
+    }
+
 }
