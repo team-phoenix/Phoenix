@@ -57,6 +57,7 @@ Rectangle {
         radius: 64;
     }
 
+    /*
     // A toggle for the above blur effect... just in case this murders performance
     MouseArea {
         anchors.fill: parent;
@@ -65,6 +66,7 @@ Rectangle {
             else if( !blurEffect.visible ) blurEffect.visible = true;
         }
     }
+    */
 
     // VideoItem serves simultaneously as a video output QML item (consumer) and as a "controller" for the
     // underlying emulation
@@ -256,6 +258,34 @@ Rectangle {
                 width: 1;
                 color: "black";
                 opacity: 0.2;
+            }
+
+            Rectangle {
+                anchors {
+                    top: parent.top;
+                    bottom: parent.bottom;
+                }
+
+                color: "red";
+                width: height;
+
+                Label {
+                    anchors.centerIn: parent;
+                    color: "white";
+                    text: qsTr( "Blur" );
+                }
+
+                MouseArea {
+                    anchors.fill: parent;
+                    onClicked: {
+                        if( blurEffect.visible ) {
+                            blurEffect.visible = false;
+                        }
+                        else if( !blurEffect.visible ) {
+                            blurEffect.visible = true;
+                        }
+                    }
+                }
             }
         }
     }
