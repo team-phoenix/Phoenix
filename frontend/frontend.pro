@@ -10,13 +10,17 @@ INCLUDEPATH += ../externals/quazip/quazip
 # Inlcude backend path
 INCLUDEPATH += ../backend ../backend/input
 
-LIBS += -L../externals/quazip/quazip -lquazip
-LIBS += -L../backend -L../backend/debug -L../backend/release -lphoenix-backend
+LIBS += -L../externals/quazip/quazip -lQuazip
+LIBS += -L../backend -lphoenix-backend
 LIBS += -lsamplerate
 
 win32 {
     CONFIG -= windows
     QMAKE_LFLAGS += $$QMAKE_LFLAGS_WINDOWS
+
+    # Not sure why, but...
+    LIBS += -L../externals/quazip/quazip/debug -L../externals/quazip/quazip/release
+    LIBS += -L../backend/debug -L../backend/release
 
     LIBS += -LC:/SDL2/lib
     LIBS += -lmingw32 -lSDL2main -lSDL2 -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -luuid
