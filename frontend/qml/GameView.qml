@@ -16,6 +16,15 @@ Rectangle {
     property bool running: false;
     property alias loadedGame: videoItem.game;
 
+    // A small workaround to guarantee that the core and game are loaded in the correct order
+    property var coreGamePair: { "corePath": "", "gamePath": "" };
+    onCoreGamePairChanged: {
+        if( coreGamePair[ "corePath" ] !== "" && !gameView.running ) {
+            videoItem.libretroCore = coreGamePair[ "corePath" ];
+            videoItem.game = coreGamePair[ "gamePath" ];
+        }
+    }
+
     // A logo
     // Only visible when a game is not running
     Image {
@@ -41,15 +50,6 @@ Rectangle {
             loops: Animation.Infinite;
             PropertyAnimation { to: 16; duration: 2000; easing.type: Easing.InOutQuart; }
             PropertyAnimation { to: 8; duration: 2000; easing.type: Easing.InOutQuart; }
-        }
-    }
-
-    // A small workaround to guarantee that the core and game are loaded in the correct order
-    property var coreGamePair: [ "", "" ];
-    onCoreGamePairChanged: {
-        if( coreGamePair[0] !== "" && !gameView.running ) {
-            videoItem.libretroCore = coreGamePair[ 0 ];
-            videoItem.game = coreGamePair[ 1 ];
         }
     }
 

@@ -199,7 +199,7 @@ Rectangle {
                                         console.log("A Game is Suspended, deal with that first.");
                                     } else {
                                         rootMouseArea.cursorShape = Qt.BusyCursor;
-                                        layoutStackView.get( 0 ).coreGamePair = [ coreFilePath, absoluteFilePath ];
+                                        layoutStackView.get( 0 ).coreGamePair = { "corePath": coreFilePath, "gamePath": absoluteFilePath };
                                         layoutStackView.pop();
                                     }
 
