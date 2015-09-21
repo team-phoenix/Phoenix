@@ -56,6 +56,7 @@ Item {
         }
 
         ColumnLayout {
+            id: selectionColumnLayout;
             anchors.fill: parent;
             spacing: 0;
 
@@ -127,6 +128,86 @@ Item {
                             to: exitItem.height;
                             easing.type: Easing.InOutExpo
                         }
+                    }
+                }
+            }
+
+            Rectangle {
+                color: "yellow";
+                Layout.fillWidth: true;
+                height: 50;
+                z: selectionAreaToolbar.z + 1;
+
+                visible: root.gameViewObject !== null ? root.gameViewObject.running : false;
+
+                Label {
+                    anchors.centerIn: parent;
+                    color: "white";
+                    text: root.gameViewObject.loadedGame;
+                }
+
+                Row {
+
+                    anchors {
+                        top: parent.top;
+                        bottom: parent.bottom;
+                        right: parent.right;
+                        topMargin: 3;
+                        bottomMargin: 3;
+                    }
+
+                    Rectangle {
+                        anchors {
+                            top: parent.top;
+                            bottom: parent.bottom;
+                        }
+
+                        width: 50;
+
+                        radius: 6;
+                        color: "red";
+
+                        Label {
+                            anchors.centerIn: parent;
+                            text: "Play";
+                            width: parent.width;
+                            elide: Text.ElideRight;
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent;
+                            onClicked: {
+                                layoutStackView.pop();
+                            }
+                        }
+
+                    }
+
+                    Rectangle {
+                        anchors {
+                            top: parent.top;
+                            bottom: parent.bottom;
+                        }
+
+                        width: 50;
+
+                        radius: 6;
+                        color: "blue";
+
+                        Label {
+                            anchors.centerIn: parent;
+                            text: "Close";
+                            width: parent.width;
+                            elide: Text.ElideRight;
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent;
+                            onClicked: {
+                                layoutStackView.pop();
+                            }
+                        }
+
                     }
                 }
             }

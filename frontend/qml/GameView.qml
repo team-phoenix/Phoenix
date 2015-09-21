@@ -5,12 +5,16 @@ import QtGraphicalEffects 1.0
 
 import vg.phoenix.backend 1.0
 
+// Without deleting this component after every play session, we run the risk of a memory link from the core pointer not being cleared properly.
+// This issue needs to be fixed.
+
 Rectangle {
     id: gameView;
     color: "black";
 
     // Automatically set by VideoItem, true if a game is loaded and unpaused
     property bool running: false;
+    property alias loadedGame: videoItem.game;
 
     // A logo
     // Only visible when a game is not running
@@ -43,7 +47,7 @@ Rectangle {
     // A small workaround to guarantee that the core and game are loaded in the correct order
     property var coreGamePair: [ "", "" ];
     onCoreGamePairChanged: {
-        if( coreGamePair[0] !== "" ) {
+        if( coreGamePair[0] !== "" && !gameView.running ) {
             videoItem.libretroCore = coreGamePair[ 0 ];
             videoItem.game = coreGamePair[ 1 ];
         }
@@ -134,7 +138,6 @@ Rectangle {
         samples: radius * 2;
         color: "black";
         transparentBorder: true;
-
         opacity: actionBar.opacity;
     }
 
@@ -163,6 +166,7 @@ Rectangle {
         }
 
         Row {
+            id: mediaButtonsRow;
             anchors {
                 fill: parent;
             }
@@ -285,6 +289,30 @@ Rectangle {
                             blurEffect.visible = true;
                         }
                     }
+                }
+            }
+        }
+
+        Rectangle {
+            anchors {
+                top: parent.top;
+                bottom: parent.bottom;
+                right: parent.right;
+            }
+
+            color: "blue";
+            width: height;
+
+            Label {
+                anchors.centerIn: parent;
+                color: "white";
+                text: qsTr( "Power" );
+            }
+
+            MouseArea {
+                anchors.fill: parent;
+                onClicked: {
+                    layoutStackView.push( mouseDrivenView );
                 }
             }
         }

@@ -20,6 +20,7 @@ ApplicationWindow {
     minimumWidth: 640;
 
     property InputManager inputManager: InputManager { gamepadControlsFrontend: true; }
+    property var gameViewObject: null;
 
     MouseArea {
         id: rootMouseArea;
@@ -34,7 +35,7 @@ ApplicationWindow {
         id: layoutStackView;
         anchors.fill: parent;
         Component.onCompleted: {
-            push( gameView );
+            root.gameViewObject = push( { item: gameView } );
             push( { item: mouseDrivenView, properties: { opacity: 0 } } );
         }
 

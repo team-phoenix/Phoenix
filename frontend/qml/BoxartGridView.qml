@@ -195,9 +195,14 @@ Rectangle {
                                 anchors.fill: parent;
                                 onClicked: { gridView.currentIndex = index; }
                                 onDoubleClicked: {
-                                    rootMouseArea.cursorShape = Qt.BusyCursor;
-                                    layoutStackView.get( 0 ).coreGamePair = [ coreFilePath, absoluteFilePath ];
-                                    layoutStackView.pop();
+                                    if ( root.gameViewObject.loadedGame ) {
+                                        console.log("A Game is Suspended, deal with that first.");
+                                    } else {
+                                        rootMouseArea.cursorShape = Qt.BusyCursor;
+                                        layoutStackView.get( 0 ).coreGamePair = [ coreFilePath, absoluteFilePath ];
+                                        layoutStackView.pop();
+                                    }
+
                                 }
                             }
 
