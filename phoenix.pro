@@ -1,8 +1,13 @@
 TEMPLATE = subdirs
 
+# Externals
+SUBDIRS += externals/quazip/quazip
+
+# Our stuff
 SUBDIRS += backend
 SUBDIRS += frontend
 
+quazip.file = externals/quazip/quazip/quazip.pro
 backend.file = backend/backend.pro
 frontend.file = frontend/frontend.pro
 
