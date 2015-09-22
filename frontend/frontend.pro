@@ -71,6 +71,14 @@ linux {
 
 }
 
+macx {
+        depends.files += $${PWD}/metadata/openvgdb.sqlite
+        depends.path = Contents/MacOS
+        QMAKE_BUNDLE_DATA += depends
+        QMAKE_MAC_SDK = macosx10.11
+        ICON = ../phoenix.icns
+}
+
 INCLUDEPATH += cpp/library
 
 SOURCES += cpp/main.cpp \
@@ -106,15 +114,6 @@ RESOURCES += qml/qml.qrc \
              qml/Theme/theme.qrc \
              qml/assets/assets.qrc \
              qml/BigPicture/bigpicture.qrc
-
-macx {
-        depends.files += $${PWD}/metadata/openvgdb.sqlite
-        depends.path = Contents/MacOS
-
-        QMAKE_BUNDLE_DATA += depends
-
-        QMAKE_MAC_SDK = macosx10.11
-}
 
 DISTFILES += \
     qml/Theme/qmldir
