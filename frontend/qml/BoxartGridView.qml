@@ -201,7 +201,9 @@ Rectangle {
                                     }
 
                                     rootMouseArea.cursorShape = Qt.BusyCursor;
-                                    layoutStackView.get( 0 ).coreGamePair = { "corePath": coreFilePath, "gamePath": absoluteFilePath };
+                                    layoutStackView.get( 0 ).coreGamePair = { "corePath": coreFilePath
+                                                                            , "gamePath": absoluteFilePath
+                                                                            , "title": title };
                                     layoutStackView.pop();
                                 }
                             }

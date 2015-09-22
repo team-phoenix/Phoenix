@@ -134,16 +134,23 @@ Item {
             }
 
             Rectangle {
-                color: "yellow";
+                color: "orange";
                 Layout.fillWidth: true;
                 height: 50;
                 z: selectionAreaToolbar.z + 1;
                 visible: root.gameViewObject.videoRender.coreState === Core.STATEPAUSED;
 
                 Label {
-                    anchors.centerIn: parent;
-                    color: "white";
-                    text: root.gameViewObject.loadedGame;
+                    anchors {
+                        left: parent.left;
+                        leftMargin: 12;
+                        verticalCenter: parent.verticalCenter;
+                    }
+
+                    elide: Text.ElideRight;
+                    width: 100;
+
+                    text: root.gameViewObject.coreGamePair[ "title" ];
                 }
 
                 Row {
@@ -178,6 +185,7 @@ Item {
                             anchors.fill: parent;
                             onClicked: {
                                 layoutStackView.pop();
+                                root.gameViewObject.videoRender.resume();
                             }
                         }
                     }
@@ -204,7 +212,6 @@ Item {
                             anchors.fill: parent;
                             onClicked: {
                                 root.gameViewObject.videoRender.stop();
-                                console.log( "Make it close the game" );
                             }
                         }
 

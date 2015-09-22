@@ -19,7 +19,12 @@ Rectangle {
 
     // A small workaround to guarantee that the core and game are loaded in the correct order
     // Use a dictionary for this, so we don't have to be restricted to a specific array order.
-    property var coreGamePair: { "corePath": "", "gamePath": "" };
+    property var coreGamePair: {
+        "corePath": ""
+        , "gamePath": ""
+        , "title": ""
+    };
+
     onCoreGamePairChanged: {
         if( coreGamePair[ "corePath" ] !== "" && !gameView.running ) {
             videoItem.libretroCore = coreGamePair[ "corePath" ];
@@ -297,6 +302,29 @@ Rectangle {
                     }
                 }
             }
+
+            Rectangle {
+                anchors {
+                    top: parent.top;
+                    bottom: parent.bottom;
+                }
+
+                color: "yellow";
+                width: height;
+
+                Label {
+                    anchors.centerIn: parent;
+                    text: qsTr( "ShutDown" );
+                }
+
+                MouseArea {
+                    anchors.fill: parent;
+                    onClicked: {
+                        videoItem.stop();
+                        layoutStackView.push( mouseDrivenView );
+                    }
+                }
+            }
         }
 
         Rectangle {
@@ -312,7 +340,7 @@ Rectangle {
             Label {
                 anchors.centerIn: parent;
                 color: "white";
-                text: qsTr( "Power" );
+                text: qsTr( "Suspend" );
             }
 
             MouseArea {
