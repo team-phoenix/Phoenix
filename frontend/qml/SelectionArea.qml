@@ -134,7 +134,8 @@ Item {
             }
 
             Rectangle {
-                color: "orange";
+                property color defaultColor: "orange";
+                color: defaultColor;
                 Layout.fillWidth: true;
                 height: 50;
                 z: selectionAreaToolbar.z + 1;
@@ -153,6 +154,24 @@ Item {
                     text: root.gameViewObject.coreGamePair[ "title" ];
                 }
 
+                MouseArea {
+                    anchors.fill: parent;
+                    hoverEnabled: true;
+                    onClicked: {
+                        root.disableMouse();
+                        layoutStackView.pop();
+                    }
+                    cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor;
+                    onEntered: {
+                        parent.color = Qt.lighter( parent.defaultColor );
+                        rootMouseArea.cursorShape = Qt.PointingHandCursor;
+                    }
+                    onExited: {
+                        parent.color = parent.defaultColor;
+                        rootMouseArea.cursorShape = Qt.ArrowCursor;
+                    }
+                }
+
                 Row {
 
                     anchors {
@@ -161,33 +180,6 @@ Item {
                         right: parent.right;
                         topMargin: 3;
                         bottomMargin: 3;
-                    }
-
-                    Rectangle {
-                        anchors {
-                            top: parent.top;
-                            bottom: parent.bottom;
-                        }
-
-                        width: 50;
-
-                        radius: 6;
-                        color: "red";
-
-                        Label {
-                            anchors.centerIn: parent;
-                            text: "Play";
-                            width: parent.width;
-                            elide: Text.ElideRight;
-                        }
-
-                        MouseArea {
-                            anchors.fill: parent;
-                            onClicked: {
-                                layoutStackView.pop();
-                                root.gameViewObject.videoRender.resume();
-                            }
-                        }
                     }
 
                     Rectangle {

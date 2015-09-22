@@ -200,6 +200,12 @@ Rectangle {
                                         root.gameViewObject.videoRender.stop();
                                     }
 
+                                    // Prevent user from clicking on anything while the transition occurs
+                                    root.disableMouse();
+
+                                    // Don't check the mouse until the transition's done
+                                    rootMouseArea.hoverEnabled = false;
+
                                     rootMouseArea.cursorShape = Qt.BusyCursor;
                                     layoutStackView.get( 0 ).coreGamePair = { "corePath": coreFilePath
                                                                             , "gamePath": absoluteFilePath

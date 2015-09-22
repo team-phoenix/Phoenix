@@ -312,6 +312,7 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent;
                     onClicked: {
+                        actionBar.opacity = 0.0;
                         videoItem.stop();
                         layoutStackView.push( mouseDrivenView );
                     }
@@ -366,11 +367,16 @@ Rectangle {
 
     // This function will reset the timer when called (which is whenever the mouse is moved)
     function resetTimer() {
-        if( gameView.running ) {
+        if( gameView.running && rootMouseArea.hoverEnabled ) {
             if( rootMouseArea.cursorShape !== Qt.ArrowCursor )
                 rootMouseArea.cursorShape = Qt.ArrowCursor;
             cursorTimer.restart();
             actionBar.opacity = 1.0;
+        }
+
+        // Reset the timer without making the action bar visible if rootMouseArea isn't monitoring hovers
+        else if( gameView.running ) {
+            cursorTimer.restart();
         }
     }
 

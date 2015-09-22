@@ -22,10 +22,23 @@ ApplicationWindow {
     property InputManager inputManager: InputManager { gamepadControlsFrontend: true; }
     property var gameViewObject: null;
 
+    // Use when transitioning
+    function disableMouse() {
+        console.log( "disableMouse()" );
+        rootMouseArea.hoverEnabled = true;
+        rootMouseArea.propagateComposedEvents = false;
+    }
+
+    function enableMouse() {
+        console.log( "enableMouse()" );
+        rootMouseArea.hoverEnabled = false;
+        rootMouseArea.propagateComposedEvents = true;
+    }
+
     MouseArea {
         id: rootMouseArea;
         anchors.fill: parent;
-        hoverEnabled: true;
+        hoverEnabled: false;
         propagateComposedEvents: true;
         z: parent.z + 1;
         acceptedButtons: Qt.AllButtons;
@@ -35,6 +48,7 @@ ApplicationWindow {
         id: layoutStackView;
         anchors.fill: parent;
         Component.onCompleted: {
+            root.disableMouse();
             root.gameViewObject = push( { item: gameView } );
             push( { item: mouseDrivenView, properties: { opacity: 0 } } );
         }
@@ -91,6 +105,15 @@ ApplicationWindow {
         }
 
         delegate: StackViewDelegate {
+            function transitionFinished(){
+                root.enableMouse();
+
+                // Enable hover effects iff GameView is the current top of the stack
+                if( layoutStackView.depth === 1 ) {
+                    rootMouseArea.hoverEnabled = true;
+                }
+            }
+
             pushTransition: libraryTransition;
             popTransition: gameTransition;
         }
