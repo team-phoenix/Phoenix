@@ -10,7 +10,7 @@ INCLUDEPATH += ../externals/quazip/quazip
 # Inlcude backend path
 INCLUDEPATH += ../backend ../backend/input
 
-LIBS += -L../externals/quazip/quazip -lQuazip
+LIBS += -L../externals/quazip/quazip -lquazip
 LIBS += -L../backend -lphoenix-backend
 LIBS += -lsamplerate
 
