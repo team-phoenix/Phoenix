@@ -6,6 +6,7 @@ import QtQuick.Dialogs 1.2
 
 import vg.phoenix.models 1.0
 import vg.phoenix.themes 1.0
+import vg.phoenix.backend 1.0
 
 Item {
     width: 100
@@ -137,8 +138,7 @@ Item {
                 Layout.fillWidth: true;
                 height: 50;
                 z: selectionAreaToolbar.z + 1;
-
-                visible: root.gameViewObject !== null ? root.gameViewObject.running : false;
+                visible: root.gameViewObject.videoRender.coreState === Core.STATEPAUSED;
 
                 Label {
                     anchors.centerIn: parent;
@@ -180,7 +180,6 @@ Item {
                                 layoutStackView.pop();
                             }
                         }
-
                     }
 
                     Rectangle {
@@ -204,7 +203,8 @@ Item {
                         MouseArea {
                             anchors.fill: parent;
                             onClicked: {
-                                layoutStackView.pop();
+                                root.gameViewObject.videoRender.stop();
+                                console.log( "Make it close the game" );
                             }
                         }
 

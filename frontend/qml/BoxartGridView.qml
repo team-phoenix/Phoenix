@@ -7,6 +7,7 @@ import QtGraphicalEffects 1.0
 
 import vg.phoenix.cache 1.0
 import vg.phoenix.themes 1.0
+import vg.phoenix.backend 1.0
 
 Rectangle {
     id: boxartGridBackground;
@@ -195,14 +196,13 @@ Rectangle {
                                 anchors.fill: parent;
                                 onClicked: { gridView.currentIndex = index; }
                                 onDoubleClicked: {
-                                    if ( root.gameViewObject.loadedGame ) {
-                                        console.log("A Game is Suspended, deal with that first.");
-                                    } else {
-                                        rootMouseArea.cursorShape = Qt.BusyCursor;
-                                        layoutStackView.get( 0 ).coreGamePair = { "corePath": coreFilePath, "gamePath": absoluteFilePath };
-                                        layoutStackView.pop();
+                                    if ( root.gameViewObject.videoRender.coreState === Core.STATEPAUSED ) {
+                                        root.gameViewObject.videoRender.stop();
                                     }
 
+                                    rootMouseArea.cursorShape = Qt.BusyCursor;
+                                    layoutStackView.get( 0 ).coreGamePair = { "corePath": coreFilePath, "gamePath": absoluteFilePath };
+                                    layoutStackView.pop();
                                 }
                             }
 

@@ -15,8 +15,10 @@ Rectangle {
     // Automatically set by VideoItem, true if a game is loaded and unpaused
     property bool running: false;
     property alias loadedGame: videoItem.game;
+    property alias videoRender: videoItem;
 
     // A small workaround to guarantee that the core and game are loaded in the correct order
+    // Use a dictionary for this, so we don't have to be restricted to a specific array order.
     property var coreGamePair: { "corePath": "", "gamePath": "" };
     onCoreGamePairChanged: {
         if( coreGamePair[ "corePath" ] !== "" && !gameView.running ) {
@@ -97,6 +99,10 @@ Rectangle {
 
             onAspectRatioChanged: {
                 console.log( "Aspect ratio: " + aspectRatio );
+            }
+
+            onCoreStateChanged: {
+                console.log( "CORE STATE: " + coreState );
             }
 
             onSignalRunChanged: {
@@ -312,6 +318,7 @@ Rectangle {
             MouseArea {
                 anchors.fill: parent;
                 onClicked: {
+                    videoItem.pause();
                     layoutStackView.push( mouseDrivenView );
                 }
             }
