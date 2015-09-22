@@ -102,14 +102,6 @@ Rectangle {
             id: videoItem;
             anchors.fill: parent;
 
-            onAspectRatioChanged: {
-                console.log( "Aspect ratio: " + aspectRatio );
-            }
-
-            onCoreStateChanged: {
-                console.log( "CORE STATE: " + coreState );
-            }
-
             onSignalRunChanged: {
                 gameView.running = running;
                 if( run === true ) {
