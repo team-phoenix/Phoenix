@@ -6,6 +6,7 @@ import QtQuick.Dialogs 1.2
 
 import vg.phoenix.models 1.0
 import vg.phoenix.themes 1.0
+import vg.phoenix.backend 1.0
 
 Item {
     width: 100
@@ -56,6 +57,7 @@ Item {
         }
 
         ColumnLayout {
+            id: selectionColumnLayout;
             anchors.fill: parent;
             spacing: 0;
 
@@ -127,6 +129,84 @@ Item {
                             to: exitItem.height;
                             easing.type: Easing.InOutExpo
                         }
+                    }
+                }
+            }
+
+            Rectangle {
+                property color defaultColor: "orange";
+                color: defaultColor;
+                Layout.fillWidth: true;
+                height: 50;
+                z: selectionAreaToolbar.z + 1;
+                visible: root.gameViewObject.videoRender.coreState === Core.STATEPAUSED;
+
+                Label {
+                    anchors {
+                        left: parent.left;
+                        leftMargin: 12;
+                        verticalCenter: parent.verticalCenter;
+                    }
+
+                    elide: Text.ElideRight;
+                    width: 100;
+
+                    text: root.gameViewObject.coreGamePair[ "title" ];
+                }
+
+                MouseArea {
+                    anchors.fill: parent;
+                    hoverEnabled: true;
+                    onClicked: {
+                        root.disableMouse();
+                        layoutStackView.pop();
+                    }
+                    cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor;
+                    onEntered: {
+                        parent.color = Qt.lighter( parent.defaultColor );
+                        rootMouseArea.cursorShape = Qt.PointingHandCursor;
+                    }
+                    onExited: {
+                        parent.color = parent.defaultColor;
+                        rootMouseArea.cursorShape = Qt.ArrowCursor;
+                    }
+                }
+
+                Row {
+
+                    anchors {
+                        top: parent.top;
+                        bottom: parent.bottom;
+                        right: parent.right;
+                        topMargin: 3;
+                        bottomMargin: 3;
+                    }
+
+                    Rectangle {
+                        anchors {
+                            top: parent.top;
+                            bottom: parent.bottom;
+                        }
+
+                        width: 50;
+
+                        radius: 6;
+                        color: "blue";
+
+                        Label {
+                            anchors.centerIn: parent;
+                            text: "Close";
+                            width: parent.width;
+                            elide: Text.ElideRight;
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent;
+                            onClicked: {
+                                root.gameViewObject.videoRender.stop();
+                            }
+                        }
+
                     }
                 }
             }

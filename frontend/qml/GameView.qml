@@ -5,12 +5,32 @@ import QtGraphicalEffects 1.0
 
 import vg.phoenix.backend 1.0
 
+// Without deleting this component after every play session, we run the risk of a memory link from the core pointer not being cleared properly.
+// This issue needs to be fixed.
+
 Rectangle {
     id: gameView;
     color: "black";
 
     // Automatically set by VideoItem, true if a game is loaded and unpaused
     property bool running: false;
+    property alias loadedGame: videoItem.game;
+    property alias videoRender: videoItem;
+
+    // A small workaround to guarantee that the core and game are loaded in the correct order
+    // Use a dictionary for this, so we don't have to be restricted to a specific array order.
+    property var coreGamePair: {
+        "corePath": ""
+        , "gamePath": ""
+        , "title": ""
+    };
+
+    onCoreGamePairChanged: {
+        if( coreGamePair[ "corePath" ] !== "" && !gameView.running ) {
+            videoItem.libretroCore = coreGamePair[ "corePath" ];
+            videoItem.game = coreGamePair[ "gamePath" ];
+        }
+    }
 
     // A logo
     // Only visible when a game is not running
@@ -37,15 +57,6 @@ Rectangle {
             loops: Animation.Infinite;
             PropertyAnimation { to: 16; duration: 2000; easing.type: Easing.InOutQuart; }
             PropertyAnimation { to: 8; duration: 2000; easing.type: Easing.InOutQuart; }
-        }
-    }
-
-    // A small workaround to guarantee that the core and game are loaded in the correct order
-    property var coreGamePair: [ "", "" ];
-    onCoreGamePairChanged: {
-        if( coreGamePair[0] !== "" ) {
-            videoItem.libretroCore = coreGamePair[ 0 ];
-            videoItem.game = coreGamePair[ 1 ];
         }
     }
 
@@ -91,10 +102,6 @@ Rectangle {
             id: videoItem;
             anchors.fill: parent;
 
-            onAspectRatioChanged: {
-                console.log( "Aspect ratio: " + aspectRatio );
-            }
-
             onSignalRunChanged: {
                 gameView.running = running;
                 if( run === true ) {
@@ -134,7 +141,6 @@ Rectangle {
         samples: radius * 2;
         color: "black";
         transparentBorder: true;
-
         opacity: actionBar.opacity;
     }
 
@@ -163,6 +169,7 @@ Rectangle {
         }
 
         Row {
+            id: mediaButtonsRow;
             anchors {
                 fill: parent;
             }
@@ -287,6 +294,55 @@ Rectangle {
                     }
                 }
             }
+
+            Rectangle {
+                anchors {
+                    top: parent.top;
+                    bottom: parent.bottom;
+                }
+
+                color: "yellow";
+                width: height;
+
+                Label {
+                    anchors.centerIn: parent;
+                    text: qsTr( "ShutDown" );
+                }
+
+                MouseArea {
+                    anchors.fill: parent;
+                    onClicked: {
+                        actionBar.opacity = 0.0;
+                        videoItem.stop();
+                        layoutStackView.push( mouseDrivenView );
+                    }
+                }
+            }
+        }
+
+        Rectangle {
+            anchors {
+                top: parent.top;
+                bottom: parent.bottom;
+                right: parent.right;
+            }
+
+            color: "blue";
+            width: height;
+
+            Label {
+                anchors.centerIn: parent;
+                color: "white";
+                text: qsTr( "Suspend" );
+            }
+
+            MouseArea {
+                anchors.fill: parent;
+                onClicked: {
+                    videoItem.pause();
+                    layoutStackView.push( mouseDrivenView );
+                }
+            }
         }
     }
 
@@ -311,11 +367,16 @@ Rectangle {
 
     // This function will reset the timer when called (which is whenever the mouse is moved)
     function resetTimer() {
-        if( gameView.running ) {
+        if( gameView.running && rootMouseArea.hoverEnabled ) {
             if( rootMouseArea.cursorShape !== Qt.ArrowCursor )
                 rootMouseArea.cursorShape = Qt.ArrowCursor;
             cursorTimer.restart();
             actionBar.opacity = 1.0;
+        }
+
+        // Reset the timer without making the action bar visible if rootMouseArea isn't monitoring hovers
+        else if( gameView.running ) {
+            cursorTimer.restart();
         }
     }
 

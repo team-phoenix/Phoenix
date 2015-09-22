@@ -7,6 +7,7 @@ import QtGraphicalEffects 1.0
 
 import vg.phoenix.cache 1.0
 import vg.phoenix.themes 1.0
+import vg.phoenix.backend 1.0
 
 Rectangle {
     id: boxartGridBackground;
@@ -195,8 +196,20 @@ Rectangle {
                                 anchors.fill: parent;
                                 onClicked: { gridView.currentIndex = index; }
                                 onDoubleClicked: {
+                                    if ( root.gameViewObject.videoRender.coreState === Core.STATEPAUSED ) {
+                                        root.gameViewObject.videoRender.stop();
+                                    }
+
+                                    // Prevent user from clicking on anything while the transition occurs
+                                    root.disableMouse();
+
+                                    // Don't check the mouse until the transition's done
+                                    rootMouseArea.hoverEnabled = false;
+
                                     rootMouseArea.cursorShape = Qt.BusyCursor;
-                                    layoutStackView.get( 0 ).coreGamePair = [ coreFilePath, absoluteFilePath ];
+                                    layoutStackView.get( 0 ).coreGamePair = { "corePath": coreFilePath
+                                                                            , "gamePath": absoluteFilePath
+                                                                            , "title": title };
                                     layoutStackView.pop();
                                 }
                             }
