@@ -4,15 +4,23 @@ QT += qml quick widgets sql multimedia network
 
 CONFIG += c++11 lib_bundle
 
-#Inlcude backend path
+# Include externals
+INCLUDEPATH += ../externals/quazip/quazip
+
+# Inlcude backend path
 INCLUDEPATH += ../backend ../backend/input
 
-LIBS += -L../backend -L../backend/debug -L../backend/release -lphoenix-backend
+LIBS += -L../externals/quazip/quazip -lquazip
+LIBS += -L../backend -lphoenix-backend
 LIBS += -lsamplerate
 
 win32 {
     CONFIG -= windows
     QMAKE_LFLAGS += $$QMAKE_LFLAGS_WINDOWS
+
+    # Not sure why, but...
+    LIBS += -L../externals/quazip/quazip/debug -L../externals/quazip/quazip/release
+    LIBS += -L../backend/debug -L../backend/release
 
     LIBS += -LC:/SDL2/lib
     LIBS += -lmingw32 -lSDL2main -lSDL2 -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -luuid
@@ -63,6 +71,14 @@ linux {
 
 }
 
+macx {
+        depends.files += $${PWD}/metadata/openvgdb.sqlite
+        depends.path = Contents/MacOS
+        QMAKE_BUNDLE_DATA += depends
+        QMAKE_MAC_SDK = macosx10.11
+        ICON = ../phoenix.icns
+}
+
 INCLUDEPATH += cpp/library
 
 SOURCES += cpp/main.cpp \
@@ -98,15 +114,6 @@ RESOURCES += qml/qml.qrc \
              qml/Theme/theme.qrc \
              qml/assets/assets.qrc \
              qml/BigPicture/bigpicture.qrc
-
-macx {
-        depends.files += $${PWD}/metadata/openvgdb.sqlite
-        depends.path = Contents/MacOS
-
-        QMAKE_BUNDLE_DATA += depends
-
-        QMAKE_MAC_SDK = macosx10.11
-}
 
 DISTFILES += \
     qml/Theme/qmldir
