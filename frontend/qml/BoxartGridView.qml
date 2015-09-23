@@ -196,8 +196,10 @@ Rectangle {
                                 anchors.fill: parent;
                                 onClicked: { gridView.currentIndex = index; }
                                 onDoubleClicked: {
-                                    if ( root.gameViewObject.videoRender.coreState === Core.STATEPAUSED ) {
+                                    if ( root.gameViewObject.coreState === Core.STATEPAUSED ) {
+                                        console.log("Shutting down suspended game.");
                                         root.gameViewObject.videoRender.stop();
+                                        return;
                                     }
 
                                     // Prevent user from clicking on anything while the transition occurs
@@ -208,9 +210,12 @@ Rectangle {
 
                                     rootMouseArea.cursorShape = Qt.BusyCursor;
                                     console.log( coreFilePath + " " + absoluteFilePath );
+
                                     layoutStackView.get( 0 ).coreGamePair = { "corePath": coreFilePath
                                                                             , "gamePath": absoluteFilePath
                                                                             , "title": title };
+
+
                                     layoutStackView.pop();
                                 }
                             }

@@ -27,7 +27,15 @@ Rectangle {
     };
 
     onCoreGamePairChanged: {
-        if( coreGamePair[ "corePath" ] !== "" && !gameView.running ) {
+        console.log("corePath: " + gameView.coreGamePair[ "corePath"]  + " " + gameView.coreGamePair[ "gamePath" ] );
+
+        //for ( var i in coreGamePair) {
+          //  print( i + " value: " + coreGamePair[i])
+            // }
+
+        console.log( !videoItem.running)
+
+        if( coreGamePair[ "corePath" ] !== "" && videoItem.coreState === Core.STATEUNINITIALIZED ) {
             videoItem.libretroCore = coreGamePair[ "corePath" ];
             videoItem.game = coreGamePair[ "gamePath" ];
         }
