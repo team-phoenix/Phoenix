@@ -23,15 +23,11 @@ ApplicationWindow {
     property var gameViewObject: null;
 
     // Use when transitioning
-    function disableMouse() {
-        console.log( "disableMouse()" );
-        rootMouseArea.hoverEnabled = true;
+    function disableMouseClicks() {
         rootMouseArea.propagateComposedEvents = false;
     }
 
-    function enableMouse() {
-        console.log( "enableMouse()" );
-        rootMouseArea.hoverEnabled = false;
+    function enableMouseClicks() {
         rootMouseArea.propagateComposedEvents = true;
     }
 
@@ -47,8 +43,12 @@ ApplicationWindow {
     StackView {
         id: layoutStackView;
         anchors.fill: parent;
+
+        // Slightly counterintuitive, but necessary as a transition immediately occurs upon launch
+        property bool transitioning: true;
+
         Component.onCompleted: {
-            root.disableMouse();
+            root.disableMouseClicks();
             root.gameViewObject = push( { item: gameView } );
             push( { item: mouseDrivenView, properties: { opacity: 0 } } );
         }
@@ -57,6 +57,11 @@ ApplicationWindow {
         Component {
             id: libraryTransition;
             StackViewTransition {
+                PropertyAction {
+                    target: layoutStackView;
+                    property: "transitioning";
+                    value: true;
+                }
                 PropertyAnimation {
                     target: exitItem; property: "opacity";
                     from: 1; to: 0;
@@ -82,6 +87,12 @@ ApplicationWindow {
         Component {
             id: gameTransition;
             StackViewTransition {
+                PropertyAction {
+                    target: layoutStackView;
+                    property: "transitioning";
+                    value: true;
+                }
+
                 PropertyAnimation {
                     target: exitItem; property: "opacity";
                     from: 1; to: 0;
@@ -106,12 +117,13 @@ ApplicationWindow {
 
         delegate: StackViewDelegate {
             function transitionFinished(){
-                root.enableMouse();
+                root.enableMouseClicks();
 
-                // Enable hover effects iff GameView is the current top of the stack
+                // Enable hover events iff GameView is the current top of the stack
                 if( layoutStackView.depth === 1 ) {
                     rootMouseArea.hoverEnabled = true;
                 }
+                layoutStackView.transitioning = false;
             }
 
             pushTransition: libraryTransition;

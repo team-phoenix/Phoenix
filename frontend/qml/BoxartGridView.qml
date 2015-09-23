@@ -201,12 +201,13 @@ Rectangle {
                                     }
 
                                     // Prevent user from clicking on anything while the transition occurs
-                                    root.disableMouse();
+                                    root.disableMouseClicks();
 
                                     // Don't check the mouse until the transition's done
                                     rootMouseArea.hoverEnabled = false;
 
                                     rootMouseArea.cursorShape = Qt.BusyCursor;
+                                    console.log( coreFilePath + " " + absoluteFilePath );
                                     layoutStackView.get( 0 ).coreGamePair = { "corePath": coreFilePath
                                                                             , "gamePath": absoluteFilePath
                                                                             , "title": title };

@@ -158,7 +158,10 @@ Item {
                     anchors.fill: parent;
                     hoverEnabled: true;
                     onClicked: {
-                        root.disableMouse();
+                        // Prevent user from clicking on anything while the transition occurs
+                        root.disableMouseClicks();
+
+                        // Destroy the compenent this MouseArea lives in
                         layoutStackView.pop();
                     }
                     cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor;

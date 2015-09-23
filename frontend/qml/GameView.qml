@@ -13,7 +13,8 @@ Rectangle {
     color: "black";
 
     // Automatically set by VideoItem, true if a game is loaded and unpaused
-    property bool running: false;
+    property bool running: videoItem.running;
+    property alias coreState: videoItem.coreState;
     property alias loadedGame: videoItem.game;
     property alias videoRender: videoItem;
 
@@ -102,16 +103,30 @@ Rectangle {
             id: videoItem;
             anchors.fill: parent;
 
-            onSignalRunChanged: {
-                gameView.running = running;
-                if( run === true ) {
-                    rootMouseArea.cursorShape = Qt.ArrowCursor;
-                    resetTimer();
-                    videoItemContainer.opacity = 1.0;
-                } else {
-                    cursorTimer.stop();
-                    if( rootMouseArea.cursorShape !== Qt.ArrowCursor )
-                        rootMouseArea.cursorShape = Qt.ArrowCursor;
+            onCoreStateChanged: {
+                switch( coreState ) {
+                    case Core.STATEUNINITIALIZED:
+                        resetCursor();
+                        cursorTimer.stop();
+                        break;
+                    case Core.STATEREADY:
+                        rootMouseArea.cursorShape = Qt.BlankCursor;
+
+                        // Show the game content
+                        videoItemContainer.opacity = 1.0;
+                        break;
+                    case Core.STATEFINISHED:
+                        resetCursor();
+                        cursorTimer.stop();
+                        break;
+                    case Core.STATEERROR:
+                        break;
+                    case Core.STATEPAUSED:
+                        resetCursor();
+                        cursorTimer.stop();
+                        break;
+                    default:
+                        break;
                 }
             }
 
@@ -153,7 +168,9 @@ Rectangle {
             GradientStop { position: 1.0; color: "#3f3c47"; }
         }
 
-        opacity: 0.0;
+        // actionBar visible only when paused or mouse recently moved and only while not transitioning
+        opacity: ( ( ( gameView.coreState === Core.STATEPAUSED ) || ( cursorTimer.running ) )
+                    && ( !layoutStackView.transitioning ) ) ? 1.0 : 0.0;
 
         Behavior on opacity {
             PropertyAnimation { duration: 250; }
@@ -312,8 +329,9 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent;
                     onClicked: {
-                        actionBar.opacity = 0.0;
                         videoItem.stop();
+                        root.disableMouseClicks();
+                        rootMouseArea.hoverEnabled = false;
                         layoutStackView.push( mouseDrivenView );
                     }
                 }
@@ -340,6 +358,8 @@ Rectangle {
                 anchors.fill: parent;
                 onClicked: {
                     videoItem.pause();
+                    root.disableMouseClicks();
+                    rootMouseArea.hoverEnabled = false;
                     layoutStackView.push( mouseDrivenView );
                 }
             }
@@ -349,10 +369,10 @@ Rectangle {
     // Use the main mouse area to monitor the mouse for movement
     Connections {
         target: rootMouseArea;
-        onPositionChanged: resetTimer();
-        onPressed: resetTimer();
-        onReleased: resetTimer();
-        onPressAndHold: resetTimer();
+        onPositionChanged: mouseMoved();
+        onPressed: mouseMoved();
+        onReleased: mouseMoved();
+        onPressAndHold: mouseMoved();
     }
 
     property Timer cursorTimer: Timer {
@@ -361,23 +381,22 @@ Rectangle {
 
         onTriggered: {
             rootMouseArea.cursorShape = Qt.BlankCursor;
-            actionBar.opacity = 0.0;
         }
     }
 
     // This function will reset the timer when called (which is whenever the mouse is moved)
-    function resetTimer() {
-        if( gameView.running && rootMouseArea.hoverEnabled ) {
-            if( rootMouseArea.cursorShape !== Qt.ArrowCursor )
-                rootMouseArea.cursorShape = Qt.ArrowCursor;
-            cursorTimer.restart();
-            actionBar.opacity = 1.0;
-        }
+    function mouseMoved() {
 
-        // Reset the timer without making the action bar visible if rootMouseArea isn't monitoring hovers
-        else if( gameView.running ) {
+        // Reset the timer, show the mouse cursor and action bar (usually when mouse is moved)
+        if( gameView.running && rootMouseArea.hoverEnabled ) {
             cursorTimer.restart();
+            resetCursor();
         }
+    }
+
+    function resetCursor() {
+        if( rootMouseArea.cursorShape !== Qt.ArrowCursor )
+            rootMouseArea.cursorShape = Qt.ArrowCursor;
     }
 
 }
