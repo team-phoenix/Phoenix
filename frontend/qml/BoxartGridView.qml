@@ -199,7 +199,6 @@ Rectangle {
                                     if ( root.gameViewObject.coreState === Core.STATEPAUSED ) {
                                         console.log("Shutting down suspended game.");
                                         root.gameViewObject.videoRender.stop();
-                                        return;
                                     }
 
                                     // Prevent user from clicking on anything while the transition occurs
