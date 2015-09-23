@@ -340,6 +340,7 @@ Rectangle {
                         videoItem.stop();
                         root.disableMouseClicks();
                         rootMouseArea.hoverEnabled = false;
+                        resetCursor();
                         layoutStackView.push( mouseDrivenView );
                     }
                 }
@@ -368,6 +369,7 @@ Rectangle {
                     videoItem.pause();
                     root.disableMouseClicks();
                     rootMouseArea.hoverEnabled = false;
+                    resetCursor();
                     layoutStackView.push( mouseDrivenView );
                 }
             }
