@@ -163,33 +163,11 @@ Rectangle {
                                 z: parent.z - 1;
                                 height: parent.paintedHeight + 14;
                                 width: parent.paintedWidth + 14;
-                                color: "#464854";
-                                radius: 3;
+                                color: PhxTheme.common.boxartNormalBorderColor;
 
                                 gradient: {
                                     return index === gridView.currentIndex ? PhxTheme.common.primaryButtonColor : undefined;
                                 }
-
-                                Rectangle {
-                                    anchors {
-                                        fill: parent;
-                                        topMargin: -1;
-                                    }
-                                    z: parent.z - 1;
-                                    radius: parent.radius;
-                                    color: index === gridView.currentIndex  ? "#f6b7ae" : "#5e616a";
-                                }
-
-                            }
-
-                            RectangularGlow {
-                                anchors.fill: imageBackground;
-                                glowRadius: 9;
-                                spread: 0.2;
-                                color: index === gridView.currentIndex ? "red" : "black";
-                                cornerRadius: glowRadius;
-                                opacity: 0.35;
-                                z: imageBackground.z - 1;
                             }
 
                             MouseArea {

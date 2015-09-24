@@ -6,7 +6,7 @@ import vg.phoenix.themes 1.0
 
 ScrollView {
     width: 100
-    height: 62
+    height: 65
 
     ListView {
         id: listView;

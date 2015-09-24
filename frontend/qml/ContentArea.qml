@@ -30,7 +30,7 @@ Rectangle {
             right: parent.right;
         }
 
-        color: PhxTheme.common.primaryBackgroundColor;
+        color: PhxTheme.common.secondaryBackgroundColor;
         z: 100;
         height: 65;
 
@@ -109,42 +109,12 @@ Rectangle {
                 style: SliderStyle {
                     handle: Item {
                         height: 14;
-                        width: height;
+                        width: height/2;
 
                         Rectangle {
                             id: handleRectangle;
                             anchors.fill: parent;
-                            radius: width / 2;
-                            gradient: Gradient {
-                                GradientStop { position: 0.0; color: "#5f6273"; }
-                                GradientStop { position: 1.0; color: "#3a3d46"; }
-                            }
-
-                            DropShadow {
-                                source: innerHandleRectangle;
-                                anchors.fill: source;
-                                verticalOffset: 0;
-                                horizontalOffset: 0;
-                                color: "red";
-                                transparentBorder: true;
-                                radius: 16;
-                                samples: radius * 2;
-                            }
-
-                            Rectangle {
-                                id: innerHandleRectangle;
-                                anchors {
-                                    centerIn: parent;
-                                }
-                                height: 6;
-                                width: height;
-                                radius: height / 2;
-                                gradient: Gradient {
-                                    GradientStop { position: 0.0; color: "#ca728a"; }
-                                    GradientStop { position: 1.0; color: "#de8a8a"; }
-                                }
-
-                            }
+                            color: "white";
                         }
                     }
 
@@ -154,24 +124,8 @@ Rectangle {
 
                         Rectangle {
                             anchors.fill: parent;
-                            color: "#1a1b20";
-                            radius: 3;
-                            border {
-                                width: 1;
-                                color: "#111216";
-                            }
-
-                            Rectangle {
-                                z: parent.z - 1;
-                                radius: parent.radius;
-                                anchors {
-                                    fill: parent;
-                                    bottomMargin: -1;
-                                }
-                                color: "white";
-                                opacity: 0.1;
-
-                            }
+                            color: "#FFFFFF";
+                            opacity: .35;
                         }
                     }
                 }
@@ -317,7 +271,7 @@ Rectangle {
         BoxartGridView {
             id: boxartGrid;
 
-            color: "transparent";
+            color: PhxTheme.common.secondaryBackgroundColor;
 
             objectName: "BoxartGridView";
 

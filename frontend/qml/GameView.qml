@@ -10,7 +10,6 @@ import vg.phoenix.backend 1.0
 
 Rectangle {
     id: gameView;
-    color: "black";
 
     // Automatically set by VideoItem, true if a game is loaded and unpaused
     property bool running: videoItem.running;

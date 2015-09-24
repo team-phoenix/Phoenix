@@ -162,7 +162,7 @@ Item {
                 id: searchBar;
                 Layout.fillHeight: true;
                 width: 50;
-                backgroundColor: "transparent";
+                backgroundColor: PhxTheme.common.secondaryBackgroundColor;
             }
         }
     }
