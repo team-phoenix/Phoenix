@@ -14,5 +14,6 @@
         <file>InputMappingColumn.qml</file>
         <file>MouseDrivenView.qml</file>
         <file>GameView.qml</file>
+        <file>ActionBar.qml</file>
     </qresource>
 </RCC>
