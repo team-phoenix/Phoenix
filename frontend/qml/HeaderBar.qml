@@ -10,7 +10,7 @@ import vg.phoenix.themes 1.0
 Item {
     id: headerBar;
     width: 100
-    height: 62
+    height: 65
 
     property int leftPadding: 12;
     property int rightPadding: 12;
@@ -161,7 +161,7 @@ Item {
             PhxSearchBar {
                 id: searchBar;
                 Layout.fillHeight: true;
-                width: 42;
+                width: 50;
                 backgroundColor: "transparent";
             }
         }

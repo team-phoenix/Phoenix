@@ -32,19 +32,16 @@ Rectangle {
 
         color: PhxTheme.common.primaryBackgroundColor;
         z: 100;
-
-        height: 40;
-
-
+        height: 65;
 
         PhxSearchBar {
             id: searchBar;
             anchors {
                 verticalCenter: parent.verticalCenter;
                 left: parent.left;
-                leftMargin: 6;
+                leftMargin: 18;
             }
-
+            font.pixelSize: 14;
             placeholderText: "Search..."
             width: 200;
             textColor: "white";
@@ -70,36 +67,13 @@ Rectangle {
                 left: parent.left;
                 right: parent.right;
             }
-
-            Rectangle {
-                anchors {
-                    left: parent.left;
-                    right: parent.right;
-                }
-
-                height: 1;
-                color: "white";
-                opacity: 0.05;
-            }
-
-            Rectangle {
-                anchors {
-                    left: parent.left;
-                    right: parent.right;
-                }
-
-                height: 2;
-                color: "black";
-                opacity: 0.2;
-            }
-
         }
 
         Row {
             anchors {
                 verticalCenter: parent.verticalCenter;
                 right: parent.right;
-                rightMargin: 12;
+                rightMargin: 18;
             }
 
             spacing: 12;
@@ -111,7 +85,7 @@ Rectangle {
                     color: "white";
                 }
 
-                height: 7;
+                height: 10;
                 width: height;
 
                 anchors {
@@ -206,11 +180,11 @@ Rectangle {
             Rectangle {
                 color: "transparent";
                 border {
-                    width: 3;
+                    width: 2;
                     color: "white";
                 }
 
-                height: 10;
+                height: 15;
                 width: height;
 
                 anchors {

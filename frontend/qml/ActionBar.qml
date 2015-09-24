@@ -6,16 +6,10 @@ import QtGraphicalEffects 1.0
 import vg.phoenix.backend 1.0
 
 Rectangle {
-    height: 50;
-
-    gradient: Gradient {
-        GradientStop { position: 0.0; color: "#5f6273"; }
-        GradientStop { position: 1.0; color: "#3f3c47"; }
-    }
-
+    height: 65;
     // actionBar visible only when paused or mouse recently moved and only while not transitioning
     opacity: ( ( ( gameView.coreState === Core.STATEPAUSED ) || ( cursorTimer.running ) )
-                && ( !layoutStackView.transitioning ) ) ? 1.0 : 0.0;
+                && ( !layoutStackView.transitioning ) ) ? .35 : 0.0;
 
     Behavior on opacity {
         PropertyAnimation { duration: 250; }
@@ -36,10 +30,7 @@ Rectangle {
                 bottom: parent.bottom;
             }
             width: height;
-            gradient: Gradient {
-                GradientStop { position: 0.0; color: videoItem.running ? "#d66b59" : "#8fc661"; }
-                GradientStop { position: 1.0; color: videoItem.running ? "#9a2954" : "#369657"; }
-            }
+
 
             Rectangle {
                 id: topBorder;
@@ -95,7 +86,7 @@ Rectangle {
                     centerIn: parent;
                 }
                 text: videoItem.running ? qsTr( "Pause" ) : qsTr( "Play" );
-                color: "white";
+                color: "black";
             }
 
             MouseArea {
@@ -127,12 +118,12 @@ Rectangle {
                 bottom: parent.bottom;
             }
 
-            color: "red";
+            color: "#00000000"
             width: height;
 
             Label {
                 anchors.centerIn: parent;
-                color: "white";
+                color: "black";
                 text: qsTr( "Blur" );
             }
 
@@ -155,11 +146,13 @@ Rectangle {
                 bottom: parent.bottom;
             }
 
-            color: "yellow";
+            color: "#00000000"
+            radius: 0
             width: height;
 
             Label {
                 anchors.centerIn: parent;
+                color: "black";
                 text: qsTr( "ShutDown" );
             }
 
@@ -183,12 +176,12 @@ Rectangle {
             right: parent.right;
         }
 
-        color: "blue";
+        color: "#00000000"
         width: height;
 
         Label {
             anchors.centerIn: parent;
-            color: "white";
+            color: "black";
             text: qsTr( "Suspend" );
         }
 

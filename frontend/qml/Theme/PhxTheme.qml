@@ -7,7 +7,7 @@ QtObject {
 
     property QtObject selectionArea: QtObject {
         property int basePixelSize: 12;
-        property int headerFontSize: 13;
+        property int headerFontSize: 14;
         property color baseColor: "#2e0e19";
         property color baseFontColor: "#d5d5d5" // "#8a8889";
         property color highlightFontColor: "#ffffff" // "#d5d5d5";
@@ -17,6 +17,7 @@ QtObject {
         property color baseFontColor: "#adadad";
         property color highlighterFontColor: "#d5d5d5";
         property color primaryBackgroundColor: "#202028";
+
         property Gradient primaryButtonColor: Gradient {
             GradientStop { position: 0.0; color: "#e97f54"; }
             GradientStop { position: 0.3; color: "#d55b4a"; }
