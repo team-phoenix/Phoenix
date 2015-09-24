@@ -103,7 +103,8 @@ HEADERS += cpp/library/librarymodel.h \
            cpp/library/platformsmodel.h \
            cpp/library/phxpaths.h \
            cpp/library/collectionsmodel.h \
-           cpp/library/platform.h
+           cpp/library/platform.h \
+           cpp/library/coresinfomap.h
 # Will build the final executable in the main project directory.
 TARGET = ../Phoenix
 

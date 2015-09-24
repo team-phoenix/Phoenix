@@ -10,7 +10,7 @@
 #include <QThread>
 
 #include "libraryinternaldatabase.h"
-#include "libretro_cores_info_map.h"
+#include "coresinfomap.h"
 #include "platforms.h"
 #include "libraryworker.h"
 

@@ -7,8 +7,8 @@ import shlex
 from collections import OrderedDict
 import json
 import sys
+import os
 from datetime import datetime
-
 
 DIR_PREFIX = 'libretro-super-master/dist/info/'
 
@@ -106,13 +106,22 @@ for k, v in output['cores'].iteritems():
         ',\n'.join(['        { %s, %s }' % (cpprepr(k2), cpprepr(v2)) for k2, v2 in v.iteritems()])
     ))
 
-print("""
+fileString = """
 #include <QVariant>
 #include <QMap>
 
 // this file is machine generated, DO NOT EDIT
 // last generated at %s UTC
 
-const QMap<QString, QVariantMap> libretro_cores_info {
-%s
-};""" % (datetime.utcnow().replace(microsecond=0), ',\n'.join(initializer_list)))
+namespace Library {
+
+    const QMap<QString, QVariantMap> coresInfoMap {
+    %s
+    };
+
+}""" % (datetime.utcnow().replace(microsecond=0), ',\n'.join(initializer_list))
+
+os.chdir("../cpp/library")
+outputFile = "coresinfomap.h"
+with open( outputFile, "w") as file:
+    file.write( fileString )
