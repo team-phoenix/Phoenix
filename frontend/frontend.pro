@@ -12,7 +12,7 @@ INCLUDEPATH += ../backend ../backend/input
 
 LIBS += -L../externals/quazip/quazip -lquazip
 LIBS += -L../backend -lphoenix-backend
-LIBS += -lsamplerate
+LIBS += -lsamplerate -lz
 
 win32 {
     CONFIG -= windows
