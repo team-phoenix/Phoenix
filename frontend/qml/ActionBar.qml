@@ -4,12 +4,15 @@ import QtQuick.Window 2.0
 import QtGraphicalEffects 1.0
 
 import vg.phoenix.backend 1.0
+import vg.phoenix.themes 1.0
 
 Rectangle {
     height: 65;
+    color: Qt.rgba(0,0,0,0.35);
+
     // actionBar visible only when paused or mouse recently moved and only while not transitioning
     opacity: ( ( ( gameView.coreState === Core.STATEPAUSED ) || ( cursorTimer.running ) )
-                && ( !layoutStackView.transitioning ) ) ? .35 : 0.0;
+                && ( !layoutStackView.transitioning ) ) ? 1.0 : 0.0;
 
     Behavior on opacity {
         PropertyAnimation { duration: 250; }
@@ -31,55 +34,6 @@ Rectangle {
             }
             width: height;
 
-
-            Rectangle {
-                id: topBorder;
-                anchors {
-                    top: parent.top;
-                    left: parent.left;
-                    right: parent.right;
-                }
-                height: 1;
-                color: "white";
-                opacity: 0.5;
-            }
-
-            Rectangle {
-                id: bottomBorder;
-                anchors {
-                    bottom: parent.bottom;
-                    left: parent.left;
-                    right: parent.right;
-                }
-                height: 1;
-                color: "white";
-                opacity: 0.05;
-
-            }
-
-            Rectangle {
-                id: leftBorder;
-                anchors {
-                    top: topBorder.bottom;
-                    left: parent.left;
-                    bottom: bottomBorder.top;
-                }
-                width: 1;
-                color: "white";
-                opacity: 0.1;
-            }
-
-            Rectangle {
-                id: rightBorder;
-                anchors {
-                    top: topBorder.bottom;
-                    right: parent.right;
-                    bottom: bottomBorder.top;
-                }
-                width: 1;
-                color: "white";
-                opacity: 0.1;
-            }
 
             Label {
                 anchors {
@@ -107,23 +61,12 @@ Rectangle {
                 bottom: parent.bottom;
             }
 
-            width: 1;
-            color: "black";
-            opacity: 0.2;
-        }
-
-        Rectangle {
-            anchors {
-                top: parent.top;
-                bottom: parent.bottom;
-            }
-
             color: "#00000000"
             width: height;
 
             Label {
                 anchors.centerIn: parent;
-                color: "black";
+                color: PhxTheme.normalFontColor;
                 text: qsTr( "Blur" );
             }
 
@@ -152,7 +95,7 @@ Rectangle {
 
             Label {
                 anchors.centerIn: parent;
-                color: "black";
+                color: PhxTheme.normalFontColor;
                 text: qsTr( "ShutDown" );
             }
 
@@ -181,7 +124,7 @@ Rectangle {
 
         Label {
             anchors.centerIn: parent;
-            color: "black";
+            color: PhxTheme.normalFontColor;
             text: qsTr( "Suspend" );
         }
 
@@ -197,5 +140,3 @@ Rectangle {
         }
     }
 }
-
-

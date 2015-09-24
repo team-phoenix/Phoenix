@@ -16,10 +16,13 @@ QtObject {
     property QtObject common: QtObject {
         property color baseFontColor: "#ADADAD";
         property color highlighterFontColor: "#D5D5D5";
-        property color primaryBackgroundColor: "#171717";
-        property color secondaryBackgroundColor: "#0E0E0E";
+        property color primaryBackgroundColor: "#1F1F1F";
+        property color secondaryBackgroundColor: "#0A0A0A";
+
         property color boxartNormalBorderColor: "#0E0E0E";
         property color boxartSelectedBorderColor: "#FFFFFF";
+
+        property color gameViewBackgroundColor: "#1F1F1F";
 
         property Gradient primaryButtonColor: Gradient {
             GradientStop { position: 0.0; color: "#e97f54"; }
