@@ -3,7 +3,7 @@
 #include <QMap>
 
 // this file is machine generated, DO NOT EDIT
-// last generated at 2015-09-25 11:01:03 UTC
+// last generated at 2015-09-25 12:27:28 UTC
 
 namespace Library {
 
@@ -679,9 +679,6 @@ namespace Library {
         { "permissions", "" },
         { "display_version", "Git" },
         { "supports_no_game", false }
-    } },
-    { "example", {
-
     } },
     { "fb_alpha_cps1_libretro", {
         { "display_name", "CPS-1 (FB Alpha)" },

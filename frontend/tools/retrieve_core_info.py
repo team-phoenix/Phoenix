@@ -100,7 +100,8 @@ def cpprepr(s):
 # [1] Create coresInfoMap
 initializer_list = []
 for k, v in output['cores'].iteritems():
-
+    if k == 'example':
+        continue
     initializer_list.append("""    { %s, {
 %s
     } }""" % (
@@ -137,6 +138,8 @@ enumList = []
 count = 0
 whitespace = "            "
 for k, v in output['cores'].iteritems():
+    if k == 'example':
+        continue
     enumVal = "CORE_" + k.upper()
     tempStr = whitespace + enumVal + " = " + str(count) + ","
     count = count + 1

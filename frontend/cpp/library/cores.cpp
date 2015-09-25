@@ -2,7 +2,7 @@
 #include "cores.h"
 
 // this file is machine generated, DO NOT EDIT
-// last generated at 2015-09-25 11:01:03 UTC
+// last generated at 2015-09-25 12:27:28 UTC
 
 using namespace Library;
 
@@ -80,9 +80,6 @@ const QString Cores::toString( const LibretroCore &core ) {
 
     case CORE_EMUX_SMS_LIBRETRO:
         return QStringLiteral( "Emux Sms" );
-
-    case CORE_EXAMPLE:
-        return QStringLiteral( "Example" );
 
     case CORE_FB_ALPHA_CPS1_LIBRETRO:
         return QStringLiteral( "Fb Alpha Cps1" );
