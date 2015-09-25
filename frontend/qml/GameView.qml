@@ -20,26 +20,22 @@ Rectangle {
     property alias videoRender: videoItem;
 
     // A small workaround to guarantee that the core and game are loaded in the correct order
-    // Use a dictionary for this, so we don't have to be restricted to a specific array order.
     property var coreGamePair: {
         "corePath": ""
         , "gamePath": ""
         , "title": ""
     };
 
+    // Changing this property triggers essentially launches the given game with the given core immediately
     onCoreGamePairChanged: {
-        console.log("corePath: " + gameView.coreGamePair[ "corePath"]  + " " + gameView.coreGamePair[ "gamePath" ] );
 
-        //for ( var i in coreGamePair) {
-          //  print( i + " value: " + coreGamePair[i])
-            // }
-
-        console.log( !videoItem.running)
-
-        if( coreGamePair[ "corePath" ] !== "" && videoItem.coreState === Core.STATEUNINITIALIZED ) {
-            videoItem.libretroCore = coreGamePair[ "corePath" ];
-            videoItem.game = coreGamePair[ "gamePath" ];
+        if ( coreGamePair[ "corePath" ] !== "" ) {
+            console.log( "Attempting to load core: " + gameView.coreGamePair[ "corePath" ] );
+            console.log( "Attempting to load game: " + gameView.coreGamePair[ "gamePath" ] );
         }
+
+        videoItem.libretroCore = coreGamePair[ "corePath" ];
+        videoItem.game = coreGamePair[ "gamePath" ];
     }
 
     // A logo

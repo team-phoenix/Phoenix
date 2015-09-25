@@ -175,10 +175,6 @@ Rectangle {
                                 anchors.fill: parent;
                                 onClicked: { gridView.currentIndex = index; }
                                 onDoubleClicked: {
-                                    if ( root.gameViewObject.coreState === Core.STATEPAUSED ) {
-                                        console.log("Shutting down suspended game.");
-                                        root.gameViewObject.videoRender.stop();
-                                    }
 
                                     // Prevent user from clicking on anything while the transition occurs
                                     root.disableMouseClicks();
@@ -186,13 +182,13 @@ Rectangle {
                                     // Don't check the mouse until the transition's done
                                     rootMouseArea.hoverEnabled = false;
 
+                                    // Let the user know we're thinking!
                                     rootMouseArea.cursorShape = Qt.BusyCursor;
-                                    console.log( coreFilePath + " " + absoluteFilePath );
 
-                                    layoutStackView.get( 0 ).coreGamePair = { "corePath": coreFilePath
-                                                                            , "gamePath": absoluteFilePath
-                                                                            , "title": title };
-
+                                    // Do the assignment that triggers the game launch
+                                    root.gameViewObject.coreGamePair = { "corePath": coreFilePath
+                                                                       , "gamePath": absoluteFilePath
+                                                                       , "title": title };
 
                                     layoutStackView.pop();
                                 }

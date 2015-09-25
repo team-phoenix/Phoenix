@@ -14,6 +14,8 @@
 
 #include <memory.h>
 
+#include "JlCompress.h"
+
 // This is used to get the stack trace behind whatever debug message you want to diagnose
 // Simply change the message string below to whatever you want (partial string matching), set the breakpoint
 // and uncomment the first line in main()

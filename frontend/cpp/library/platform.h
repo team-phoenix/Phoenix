@@ -4,6 +4,7 @@
 #include <QString>
 #include <QDir>
 #include <QObject>
+#include <QHash>
 
 namespace Library {
 
@@ -58,6 +59,8 @@ namespace Library {
 
             MUPEN64PLUS,
 
+            MAX_CORE
+
         };
 
         enum DisplayMode {
@@ -87,6 +90,7 @@ namespace Library {
         QString qmlCoreName;
         QString qmlAbsoluteFilePath;
 
+        QStringList mExtensionsList;
 
     };
 
