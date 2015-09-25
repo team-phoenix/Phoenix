@@ -12,8 +12,6 @@ namespace Library {
         Q_OBJECT
     public:
 
-
-
         enum Platforms {
             BIOS = -1,
             UNKNOWN = 0,

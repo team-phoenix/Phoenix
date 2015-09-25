@@ -97,8 +97,10 @@ def cpprepr(s):
 
     return "".join(ret)
 
+# [1] Create coresInfoMap
 initializer_list = []
 for k, v in output['cores'].iteritems():
+
     initializer_list.append("""    { %s, {
 %s
     } }""" % (
@@ -125,3 +127,83 @@ os.chdir("../cpp/library")
 outputFile = "coresinfomap.h"
 with open( outputFile, "w") as file:
     file.write( fileString )
+    print("Created " + file.name )
+
+# ~[1]
+
+# [2] Create cores.h and cores.cpp files
+caseList = []
+enumList = []
+count = 0
+whitespace = "            "
+for k, v in output['cores'].iteritems():
+    enumVal = "CORE_" + k.upper()
+    tempStr = whitespace + enumVal + " = " + str(count) + ","
+    count = count + 1
+    enumList.append( tempStr )
+
+    splitName = k.replace('_libretro', '').lower().split("_")
+
+    caseList.append( '''
+    case %s:
+        return QStringLiteral( "%s" );''' % (enumVal
+                                             , ' '.join( splitName ).title()))
+
+enumList.append( whitespace + "CORE_MAX = " + str(count) + "," )
+
+enumFile = "cores.h"
+
+enumStr_cpp = '''
+#include "%s"
+
+// this file is machine generated, DO NOT EDIT
+// last generated at %s UTC
+
+using namespace Library;
+
+const QString Cores::toString( const LibretroCore &core ) {
+    switch ( core ) {
+    %s
+    default:
+        // This default case should never be called
+        break;
+    }
+    Q_ASSERT( false );
+    return QStringLiteral( "" );
+}''' % (enumFile, datetime.utcnow().replace(microsecond=0), '\n'.join(caseList))
+
+enumStr_header = '''
+#include <QObject>
+#include <QString>
+
+// this file is machine generated, DO NOT EDIT
+// last generated at %s UTC
+
+namespace Library {
+
+    class Cores : public QObject {
+        Q_OBJECT
+    public:
+        enum LibretroCore {
+            CORE_INVALID = -1,
+%s
+        };
+        Q_ENUMS( LibretroCore )
+
+        static const QString toString( const LibretroCore &core );
+    };
+
+}''' % ( datetime.utcnow().replace(microsecond=0), '\n'.join(enumList) )
+
+# write to cores.h
+with open( enumFile, "w" ) as file:
+    file.write( enumStr_header )
+    print("Created " + file.name )
+
+# write to cores.cpp
+with open( enumFile.replace('.h', '.cpp'), 'w') as file:
+    file.write( enumStr_cpp )
+    print("Created " + file.name )
+# ~[2]
+
+print( "done." )
