@@ -8,5 +8,8 @@
         <file>missingArtwork.png</file>
         <file>playstationController.svg</file>
         <file>phoenix.png</file>
+        <file>close.svg</file>
+        <file>play.svg</file>
+        <file>games.svg</file>
     </qresource>
 </RCC>

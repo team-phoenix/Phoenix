@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.5
 import QtQuick.Controls 1.2
 
 import vg.phoenix.models 1.0
@@ -16,7 +16,7 @@ ScrollView {
         }
 
         header: Rectangle {
-            color: "lightyellow";
+            color: "transparent";
             height: 36;
 
             anchors {
@@ -37,14 +37,14 @@ ScrollView {
                     bold: true;
                 }
 
-                color: PhxTheme.common.baseFontColor;
+                color: PhxTheme.selectionArea.highlightFontColor;
             }
 
             Button {
                 anchors {
                     verticalCenter: parent.verticalCenter;
                     right: parent.right;
-                    rightMargin: 24;
+                    rightMargin: 25;
                 }
 
                 text: qsTr( "Add" );
@@ -61,8 +61,8 @@ ScrollView {
 
         delegate: Rectangle {
             id: listViewDelegate;
-            color: index % 2 == 0 ? "orange" : "red";
-            height: 24;
+            color: "transparent";
+            height: 25;
 
             states: [
                 State {

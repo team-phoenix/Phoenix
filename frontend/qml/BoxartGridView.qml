@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.5
 import QtQuick.Layouts 1.1
 import QtGraphicalEffects 1.0
 import QtQuick.Controls 1.2
@@ -11,7 +11,8 @@ import vg.phoenix.backend 1.0
 
 Rectangle {
     id: boxartGridBackground;
-    width: 100; height: 62;
+    width: 100;
+    height: 62;
 
     DropdownMenu { id: dropDownMenu; }
 
@@ -59,7 +60,7 @@ Rectangle {
                 left: parent.left; right: parent.right;
 
                 topMargin: 16;
-                leftMargin: gridView.clampEdges ? ( ( parent.width % cellWidth ) / 2 ) : 0;
+                leftMargin: gridView.clampEdges ? ( ( parent.width % cellWidth ) / 24 ) : 0;
                 rightMargin: leftMargin;
             }
 
@@ -245,7 +246,7 @@ Rectangle {
                         color: index === gridView.currentIndex ? PhxTheme.common.highlighterFontColor : PhxTheme.common.baseFontColor;
                         Layout.fillWidth: true;
                         elide: Text.ElideRight;
-                        font { pixelSize: 10; }
+                        font { pixelSize: 11; }
                     }
 
                     /*Text {

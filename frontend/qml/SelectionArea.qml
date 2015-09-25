@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.5
 import QtQuick.Layouts 1.1
 import QtQuick.Controls 1.2
 import QtGraphicalEffects 1.0
@@ -113,87 +113,6 @@ Item {
                 }
             }
 
-            Rectangle {
-                property color defaultColor: "orange";
-                color: defaultColor;
-                Layout.fillWidth: true;
-                height: 50;
-                z: selectionAreaToolbar.z + 1;
-                visible: root.gameViewObject.videoRender.coreState === Core.STATEPAUSED;
-
-                Label {
-                    anchors {
-                        left: parent.left;
-                        leftMargin: 12;
-                        verticalCenter: parent.verticalCenter;
-                    }
-
-                    elide: Text.ElideRight;
-                    width: 100;
-
-                    text: root.gameViewObject.coreGamePair[ "title" ];
-                }
-
-                MouseArea {
-                    anchors.fill: parent;
-                    hoverEnabled: true;
-                    onClicked: {
-                        // Prevent user from clicking on anything while the transition occurs
-                        root.disableMouseClicks();
-
-                        // Destroy the compenent this MouseArea lives in
-                        layoutStackView.pop();
-                    }
-                    cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor;
-                    onEntered: {
-                        parent.color = Qt.lighter( parent.defaultColor );
-                        rootMouseArea.cursorShape = Qt.PointingHandCursor;
-                    }
-                    onExited: {
-                        parent.color = parent.defaultColor;
-                        rootMouseArea.cursorShape = Qt.ArrowCursor;
-                    }
-                }
-
-                Row {
-
-                    anchors {
-                        top: parent.top;
-                        bottom: parent.bottom;
-                        right: parent.right;
-                        topMargin: 3;
-                        bottomMargin: 3;
-                    }
-
-                    Rectangle {
-                        anchors {
-                            top: parent.top;
-                            bottom: parent.bottom;
-                        }
-
-                        width: 50;
-
-                        radius: 6;
-                        color: "blue";
-
-                        Label {
-                            anchors.centerIn: parent;
-                            text: "Close";
-                            width: parent.width;
-                            elide: Text.ElideRight;
-                        }
-
-                        MouseArea {
-                            anchors.fill: parent;
-                            onClicked: {
-                                root.gameViewObject.videoRender.stop();
-                            }
-                        }
-
-                    }
-                }
-            }
-
             // The buttons along the bottom that control the sectionsAreaStackView
             ListView {
                 id: selectionAreaToolbar;
@@ -208,10 +127,10 @@ Item {
                 orientation: ListView.Horizontal;
 
                 model: ListModel {
-                    ListElement { bgColor: "black"; label: "Add Games"; imageSource: "add.svg"; }
-                    ListElement { bgColor: "black"; label: "Favorites"; imageSource: "collections.svg"; }
-                    ListElement { bgColor: "black"; label: "Games"; imageSource: "games.png"; }
-                    ListElement { bgColor: "black"; label: "Settings"; imageSource: "settings.svg"; }
+                    ListElement { bgColor: "white"; label: "Add Games"; imageSource: "add.svg"; }
+                    ListElement { bgColor: "white"; label: "Favorites"; imageSource: "collections.svg"; }
+                    ListElement { bgColor: "white"; label: "Games"; imageSource: "games.png"; }
+                    ListElement { bgColor: "white"; label: "Settings"; imageSource: "settings.svg"; }
                 }
 
                 FileDialog {

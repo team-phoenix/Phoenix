@@ -1,4 +1,4 @@
-import QtQuick 2.4
+import QtQuick 2.5
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.2
 import QtQuick.Controls 1.2
@@ -6,11 +6,19 @@ import QtGraphicalEffects 1.0
 
 import vg.phoenix.backend 1.0
 import vg.phoenix.themes 1.0
+Rectangle {
+    anchors {
+        top: parent.top;
+        left: parent.left;
+        right: parent.right;
+    }
+    color: PhxTheme.common.secondaryBackgroundColor;
 
 Item {
     id: inputView;
     width: 100
     height: 62
+
 
     property ListModel inputDevicesModel: ListModel {
         ListElement { name: ""; port: 0  }
@@ -230,4 +238,4 @@ Item {
 
     }
 }
-
+}

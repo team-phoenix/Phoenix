@@ -11,7 +11,7 @@ Rectangle {
     id: contentArea;
     height: 200;
     width: 200;
-    color: PhxTheme.common.primaryBackgroundColor;
+    color: PhxTheme.common.secondaryBackgroundColor;
 
     property alias contentLibraryModel: libraryModel;
     property alias contentStackView: contentAreaStackView;

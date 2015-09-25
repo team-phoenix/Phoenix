@@ -7,9 +7,7 @@ import vg.phoenix.models 1.0
 
 TextField {
     id: searchBar;
-
     height: 35;
-
     placeholderText: "";
     width: 200;
     textColor: "white";
@@ -22,7 +20,7 @@ TextField {
 
             Rectangle {
                 anchors.fill: parent;
-                color: PhxTheme.common.primaryBackgroundColor;
+                color: PhxTheme.common.secondaryBackgroundColor;
                 Rectangle {
                     z: parent.z - 1;
                     radius: parent.radius;

@@ -1,4 +1,4 @@
-import QtQuick 2.4
+import QtQuick 2.5
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
 import QtGraphicalEffects 1.0
@@ -23,7 +23,6 @@ ScrollView {
             //width: listView.currentItem.width;
             //height: listView.currentItem.height;
             anchors.fill: listView.currentItem;
-
 
             Rectangle {
                 id: highlighterRectangle;
