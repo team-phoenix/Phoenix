@@ -32,14 +32,14 @@ Rectangle {
 
         color: PhxTheme.common.secondaryBackgroundColor;
         z: 100;
-        height: 65;
+        height: 95;
 
         PhxSearchBar {
             id: searchBar;
             anchors {
                 verticalCenter: parent.verticalCenter;
                 left: parent.left;
-                leftMargin: 18;
+                leftMargin: 35;
             }
             font.pixelSize: 14;
             placeholderText: "Search..."

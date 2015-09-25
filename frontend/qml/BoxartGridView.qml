@@ -60,7 +60,7 @@ Rectangle {
                 left: parent.left; right: parent.right;
 
                 topMargin: 16;
-                leftMargin: gridView.clampEdges ? ( ( parent.width % cellWidth ) / 24 ) : 0;
+                leftMargin: gridView.clampEdges ? ( ( parent.width % cellWidth ) / 6 ) : 0;
                 rightMargin: leftMargin;
             }
 

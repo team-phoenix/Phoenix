@@ -18,7 +18,7 @@ QtObject {
         property color highlighterFontColor: "#D5D5D5";
 
         property color primaryBackgroundColor: "#202028";
-        property color secondaryBackgroundColor: "#1a1a20";
+        property color secondaryBackgroundColor: "#19191F";
 
         property color highlightBackgroundColor: "#121216";
         property color highlightHoverBackgroundColor: "#18181d";
