@@ -206,7 +206,7 @@ Item {
                         MouseArea {
                             anchors.fill: parent;
                             onClicked: {
-                                root.gameViewObject.videoRender.stop();
+                                root.gameViewObject.videoRender.slotStop();
                             }
                         }
 

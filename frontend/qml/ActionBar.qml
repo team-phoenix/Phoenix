@@ -102,9 +102,9 @@ Rectangle {
                 anchors.fill: parent;
                 onClicked: {
                     if ( videoItem.running ) {
-                        videoItem.pause();
+                        videoItem.slotPause();
                     } else {
-                        videoItem.resume();
+                        videoItem.slotResume();
                     }
                 }
             }
@@ -166,7 +166,7 @@ Rectangle {
             MouseArea {
                 anchors.fill: parent;
                 onClicked: {
-                    videoItem.stop();
+                    videoItem.slotStop();
                     root.disableMouseClicks();
                     rootMouseArea.hoverEnabled = false;
                     resetCursor();
@@ -195,7 +195,7 @@ Rectangle {
         MouseArea {
             anchors.fill: parent;
             onClicked: {
-                videoItem.pause();
+                videoItem.slotPause();
                 root.disableMouseClicks();
                 rootMouseArea.hoverEnabled = false;
                 resetCursor();
