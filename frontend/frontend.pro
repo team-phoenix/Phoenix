@@ -14,6 +14,15 @@ LIBS += -L../externals/quazip/quazip -lquazip
 LIBS += -L../backend -lphoenix-backend
 LIBS += -lsamplerate -lz
 
+# Rebuild/relink if library code changes
+win32:CONFIG(debug, debug|release) {
+    TARGETDEPS += ../backend/debug/libphoenix-backend.a
+}
+win32:CONFIG(release, debug|release) {
+    TARGETDEPS += ../backend/release/libphoenix-backend.a
+}
+!win32:TARGETDEPS +=../backend/libphoenix-backend.a
+
 win32 {
     CONFIG -= windows
     QMAKE_LFLAGS += $$QMAKE_LFLAGS_WINDOWS
