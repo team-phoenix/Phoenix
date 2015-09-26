@@ -10,7 +10,6 @@
 #include <QThread>
 
 #include "libraryinternaldatabase.h"
-#include "coresinfomap.h"
 #include "platforms.h"
 #include "libraryworker.h"
 
