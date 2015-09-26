@@ -11,7 +11,7 @@ Rectangle {
     id: contentArea;
     height: 200;
     width: 200;
-    color: PhxTheme.common.secondaryBackgroundColor;
+    color: "transparent";
 
     property alias contentLibraryModel: libraryModel;
     property alias contentStackView: contentAreaStackView;
@@ -30,7 +30,7 @@ Rectangle {
             right: parent.right;
         }
 
-        color: PhxTheme.common.secondaryBackgroundColor;
+        color: "transparent";
         z: 100;
         height: 95;
 
@@ -271,7 +271,7 @@ Rectangle {
         BoxartGridView {
             id: boxartGrid;
 
-            color: PhxTheme.common.secondaryBackgroundColor;
+            color: "transparent";
 
             objectName: "BoxartGridView";
 

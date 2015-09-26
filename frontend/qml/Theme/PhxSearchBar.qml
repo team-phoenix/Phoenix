@@ -20,21 +20,10 @@ TextField {
 
             Rectangle {
                 anchors.fill: parent;
-                color: PhxTheme.common.secondaryBackgroundColor;
-                Rectangle {
-                    z: parent.z - 1;
-                    radius: parent.radius;
-                    anchors {
-                        fill: parent;
-                        bottomMargin: -2;
-                        topMargin: -2;
-                        leftMargin: -2;
-                        rightMargin: -2;
-                    }
-                    color: "#CCCCCC";
-                    opacity: 0.5;
-
-                }
+                color: "transparent";
+                border.width: 2;
+                border.color: "#FFFFFF";
+                opacity: .35;
             }
         }
     }

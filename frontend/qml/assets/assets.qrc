@@ -11,5 +11,6 @@
         <file>close.svg</file>
         <file>play.svg</file>
         <file>games.svg</file>
+        <file>bg.png</file>
     </qresource>
 </RCC>

@@ -19,6 +19,14 @@ Item {
 
     ColumnLayout {
         anchors.fill: parent;
+         Rectangle {
+            anchors.fill: parent;
+            color: PhxTheme.common.secondaryBackgroundColor;
+            Image {
+                fillMode: Image.Tile
+                source: "bg.png"
+            }
+         }
 
         RowLayout {
             id: gameSelectionPane;
@@ -27,23 +35,24 @@ Item {
             anchors.bottomMargin: root.gameViewObject.videoRender.coreState === Core.STATEPAUSED ? gameSuspendedSection.height : 0;
 
             SelectionArea {
-                id: selectionArea
+                id: selectionArea;
                 anchors { top: parent.top; bottom: parent.bottom }
                 width: 250;
-                z: contentArea.z + 1
+                z: contentArea.z + 1;
             }
 
             ContentArea {
-                id: contentArea
+                id: contentArea;
                 anchors { top: parent.top; bottom: parent.bottom }
-                Layout.fillWidth: true
+                Layout.fillWidth: true;
+
             }
         }
 
         // Suspended game section
         Rectangle {
             id: gameSuspendedSection;
-            color: PhxTheme.common.highlightBackgroundColor;
+            color: PhxTheme.common.suspendedGameBackgroundColor;
             Layout.fillWidth: true;
             height: 65;
             z: 100;
@@ -95,11 +104,11 @@ Item {
                     }
                     cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor;
                     onEntered: {
-                        parent.color = PhxTheme.common.highlightHoverBackgroundColor;
+                        parent.color = PhxTheme.common.suspendedGameHoverBackgroundColor;
                         rootMouseArea.cursorShape = Qt.PointingHandCursor;
                     }
                     onExited: {
-                        parent.color = PhxTheme.common.highlightBackgroundColor;
+                        parent.color = PhxTheme.common.suspendedGameBackgroundColor;
                         rootMouseArea.cursorShape = Qt.ArrowCursor;
                     }
                 }
