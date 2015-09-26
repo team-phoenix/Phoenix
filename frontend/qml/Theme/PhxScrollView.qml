@@ -5,13 +5,8 @@ import QtGraphicalEffects 1.0
 
 ScrollView {
     style: ScrollViewStyle {
-
-        scrollBarBackground: Item {
-            width: 12;
-        }
-
+        scrollBarBackground: Item { width: 12; }
         incrementControl: Item { }
-
         decrementControl: Item { }
 
         handle: Item {
@@ -32,7 +27,7 @@ ScrollView {
 
             Rectangle {
                 id: handleRectangle;
-                color: "#75FFFFFF";
+                color: "#30FFFFFF";
                 anchors.fill: parent;
             }
         }

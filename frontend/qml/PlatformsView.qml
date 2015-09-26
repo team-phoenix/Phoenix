@@ -96,8 +96,7 @@ ScrollView {
                     pixelSize: PhxTheme.selectionArea.basePixelSize;
                 }
 
-                color: index === listView.currentIndex
-                            ? PhxTheme.selectionArea.highlightFontColor : PhxTheme.selectionArea.baseFontColor;
+                color: index === listView.currentIndex ? PhxTheme.selectionArea.highlightFontColor : PhxTheme.selectionArea.baseFontColor;
 
             }
 
@@ -116,7 +115,6 @@ ScrollView {
                     }
                 }
             }
-
         }
     }
 }

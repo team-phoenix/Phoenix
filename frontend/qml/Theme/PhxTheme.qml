@@ -1,5 +1,4 @@
 import QtQuick 2.3
-
 pragma Singleton
 
 QtObject {
@@ -14,15 +13,15 @@ QtObject {
     }
 
     property QtObject common: QtObject {
-        property int menuWidth: 320;
+        property int menuWidth: 300;
         property color baseFontColor: "#ADADAD";
         property color highlighterFontColor: "#D5D5D5";
 
         property string backgroundImage: "bg.png";
 
         property color baseBackgroundColor: "#171717";
-        property color primaryBackgroundColor: "#00000000";
-        property color secondaryBackgroundColor: "#35000000";
+        property color primaryBackgroundColor: "#00FFFFFF";
+        property color secondaryBackgroundColor: "#00000000";
 
         property int suspendedGameFontSize: 13;
         property color suspendedGameBackgroundColor: "#55343C3F";
@@ -34,13 +33,10 @@ QtObject {
         property color gameViewBackgroundColor: "#1F1F1F";
 
         property color normalButtonColor: "#19FFFFFF";
-
     }
 
     property QtObject bigPictureView: QtObject {
         property color baseColor: "#1F1F1F";
         property color highlightColor: "blue";
     }
-
 }
-
