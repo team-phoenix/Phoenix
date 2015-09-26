@@ -9,7 +9,7 @@ TextField {
     id: searchBar;
     height: 35;
     placeholderText: "";
-    width: 200;
+    width: 250;
     textColor: "white";
 
     style: TextFieldStyle {

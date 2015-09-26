@@ -18,11 +18,11 @@ QtObject {
         property color baseFontColor: "#ADADAD";
         property color highlighterFontColor: "#D5D5D5";
 
-        property string backgroundImage: "";
+        property string backgroundImage: "bg.png";
 
         property color baseBackgroundColor: "#171717";
         property color primaryBackgroundColor: "#00000000";
-        property color secondaryBackgroundColor: "#75000000";
+        property color secondaryBackgroundColor: "#35000000";
 
         property int suspendedGameFontSize: 13;
         property color suspendedGameBackgroundColor: "#55343C3F";
@@ -33,11 +33,6 @@ QtObject {
 
         property color gameViewBackgroundColor: "#1F1F1F";
 
-        property Gradient primaryButtonColor: Gradient {
-            GradientStop { position: 0.0; color: "#75FFFFFF"; }
-            GradientStop { position: 0.5; color: "#20FFFFFF"; }
-            GradientStop { position: 1.0; color: "#00FFFFFF"; }
-        }
         property color normalButtonColor: "#19FFFFFF";
 
     }

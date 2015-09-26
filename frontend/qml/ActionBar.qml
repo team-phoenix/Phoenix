@@ -7,6 +7,7 @@ import vg.phoenix.backend 1.0
 import vg.phoenix.themes 1.0
 
 Rectangle {
+    width: 300;
     height: 65;
     color: Qt.rgba(0,0,0,0.35);
 
@@ -32,6 +33,7 @@ Rectangle {
                 top: parent.top;
                 bottom: parent.bottom;
             }
+
             width: height;
 
 

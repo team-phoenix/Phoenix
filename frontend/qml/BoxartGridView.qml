@@ -13,7 +13,7 @@ Rectangle {
     id: boxartGridBackground;
     width: 100;
     height: 62;
-
+    anchors.topMargin: -30;
     DropdownMenu { id: dropDownMenu; }
 
     PhxScrollView {
@@ -23,7 +23,7 @@ Rectangle {
         // The default of 20 just isn't fast enough
         __wheelAreaScrollSpeed: 100;
 
-        // Top drop shadow
+        /* Top drop shadow
         Rectangle {
             opacity: gridView.atYBeginning ? 0.0 : 0.3;
             z: 100;
@@ -51,16 +51,16 @@ Rectangle {
             }
 
             Behavior on opacity { PropertyAnimation { duration: 200; } }
-        }
+        }*/
 
         contentItem: GridView {
             id: gridView;
             anchors {
                 top: parent.top; bottom: parent.bottom;
                 left: parent.left; right: parent.right;
-
-                topMargin: 16;
-                leftMargin: gridView.clampEdges ? ( ( parent.width % cellWidth ) / 6 ) : 0;
+                topMargin: 0;
+                bottomMargin: 0;
+                leftMargin: gridView.clampEdges ? ( ( parent.width % cellWidth ) / 2 ) : 0;
                 rightMargin: leftMargin;
             }
 
@@ -152,25 +152,33 @@ Rectangle {
                                 if ( status == Image.Null ) {
                                     console.log( "No image available for " + title );
                                 }
+
                             }
 
                             Rectangle {
                                 id: imageBackground;
+                                antialiasing: true;
                                 anchors {
                                     bottom: parent.bottom;
                                     horizontalCenter: parent.horizontalCenter;
-                                    bottomMargin: -7;
                                 }
                                 z: parent.z - 1;
-                                height: parent.paintedHeight + 14;
-                                width: parent.paintedWidth + 14;
-                                color: PhxTheme.common.boxartNormalBorderColor;
+                                height: parent.paintedHeight ;
+                                width: parent.paintedWidth ;
+                                color: "transparent";
 
                                 gradient: {
                                     return index === gridView.currentIndex ? PhxTheme.common.primaryButtonColor : undefined;
                                 }
                             }
-
+                            RectangularGlow {
+                                anchors.fill: imageBackground;
+                                glowRadius: 5;
+                                spread: .2;
+                                color: "#75000000";
+                                cornerRadius: glowRadius;
+                                z: imageBackground.z - 1;
+                            }
                             MouseArea {
                                 anchors.fill: parent;
                                 onClicked: { gridView.currentIndex = index; }
@@ -198,52 +206,33 @@ Rectangle {
                                 id: imageCacher;
                                 imageUrl: artworkUrl;
                                 identifier: sha1;
-
                                 Component.onCompleted: cache();
                             }
 
-                            /*Decorations
-                            Rectangle {
-                                id: imageTopAccent
-                                y: gridItemImage.y + ( gridItemImage.height - gridItemImage.paintedHeight );
-                                width: gridItemImage.paintedWidth + 2;
-                                anchors.horizontalCenter: gridItemImage.horizontalCenter;
+                            // ToolTip Title
+                            ToolTipArea { text: title; tip {  x: 00; y: parent.width + 24; } }
 
+                            // Decorations
+                            Rectangle {
+                                id: imageTopAccent;
+                                y: gridItemImage.y + ( gridItemImage.height - gridItemImage.paintedHeight );
+                                width: gridItemImage.paintedWidth;
+                                anchors.horizontalCenter: gridItemImage.horizontalCenter;
                                 height: 1;
                                 opacity: 0.3;
                                 color: "white";
                             }
-
-                            Rectangle {
-                                id: imageTopLeft;
-                                anchors { top: imageTopAccent.bottom bottom: parent.bottom; }
-                                x: ( gridItemImage.width / 2 ) - ( gridItemImage.paintedWidth / 2 ) - 1;
-
-                                width: 1;
-                                opacity: 0.10;
-                                color: "white";
-                            }
-
-                            Rectangle {
-                                id: imageTopRight;
-                                anchors { top: imageTopAccent.bottom bottom: parent.bottom; }
-                                x: ( gridItemImage.width / 2 ) + ( gridItemImage.paintedWidth / 2 );
-
-                                width: 1;
-                                opacity: 0.10;
-                                color: "white";
-                            }*/
                         }
                     }
 
-                    Label {
+                    /*Label {
                         id: titleText;
                         text: title;
                         color: index === gridView.currentIndex ? PhxTheme.common.highlighterFontColor : PhxTheme.common.baseFontColor;
                         Layout.fillWidth: true;
                         elide: Text.ElideRight;
                         font { pixelSize: 11; }
-                    }
+                    } */
 
                     /*Text {
                         id: platformText;

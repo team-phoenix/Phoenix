@@ -4,45 +4,20 @@ import QtQuick.Controls.Styles 1.2
 import QtGraphicalEffects 1.0
 
 ScrollView {
-    width: 100
-    height: 62;
-
     style: ScrollViewStyle {
 
         scrollBarBackground: Item {
             width: 12;
-
-            Rectangle {
-                id: leftBorder;
-                anchors {
-                    left: parent.left;
-                    top: parent.top;
-                    bottom: parent.bottom;
-                }
-
-                width: 1;
-                color: "white";
-                opacity: 0.1;
-            }
-
-            Rectangle {
-                color: "black";
-                anchors.fill: parent;
-                opacity: 0.2;
-            }
         }
 
-        incrementControl: Item {
+        incrementControl: Item { }
 
-        }
-
-        decrementControl: Item {
-        }
+        decrementControl: Item { }
 
         handle: Item {
-            implicitWidth: 5;
+            implicitWidth: 8;
             implicitHeight: 30;
-            x: 4;
+            x: 0;
 
             DropShadow {
                 anchors.fill: source;
@@ -51,19 +26,15 @@ ScrollView {
                 horizontalOffset: 0;
                 radius: 8;
                 samples: radius * 2;
-                color: "red";
+                color: "black";
                 transparentBorder: true;
             }
 
             Rectangle {
                 id: handleRectangle;
-                color: "white";
-                radius: 4;
+                color: "#75FFFFFF";
                 anchors.fill: parent;
             }
         }
-
     }
-
 }
-

@@ -11,7 +11,7 @@ import vg.phoenix.themes 1.0
 
 Rectangle {
     id: gameView;
-    color: PhxTheme.common.gameViewBackgroundColor
+    color: PhxTheme.common.gameViewBackgroundColor;
 
     // Automatically set by VideoItem, true if a game is loaded and unpaused
     property bool running: videoItem.running;

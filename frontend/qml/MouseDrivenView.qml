@@ -29,7 +29,6 @@ Item {
          }
 
         RowLayout {
-
             id: gameSelectionPane;
             anchors { fill: parent }
             spacing: 0;
@@ -161,7 +160,6 @@ Item {
                             root.gameViewObject.videoItem.slotStop();
                         }
                     }
-
                 }
             }
         }

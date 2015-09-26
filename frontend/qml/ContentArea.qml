@@ -39,7 +39,7 @@ Rectangle {
             anchors {
                 verticalCenter: parent.verticalCenter;
                 left: parent.left;
-                leftMargin: 35;
+                leftMargin: 40;
             }
             font.pixelSize: 14;
             placeholderText: "Search..."
@@ -73,7 +73,7 @@ Rectangle {
             anchors {
                 verticalCenter: parent.verticalCenter;
                 right: parent.right;
-                rightMargin: 18;
+                rightMargin: 30;
             }
 
             spacing: 12;
@@ -95,12 +95,8 @@ Rectangle {
 
             Slider {
                 id: zoomSlider;
-                anchors {
-                    verticalCenter: parent.verticalCenter;
-                }
-
-                width: 150;
-
+                anchors { verticalCenter: parent.verticalCenter; }
+                width: 100;
                 minimumValue: 200;
                 maximumValue: 400;
                 value: minimumValue;
@@ -108,8 +104,8 @@ Rectangle {
 
                 style: SliderStyle {
                     handle: Item {
-                        height: 14;
-                        width: height/2;
+                        height: 15;
+                        width: 8;
 
                         Rectangle {
                             id: handleRectangle;
@@ -120,7 +116,7 @@ Rectangle {
 
                     groove: Item {
                         width: control.width;
-                        height: control.height * 0.2;
+                        height: 2;
 
                         Rectangle {
                             anchors.fill: parent;
@@ -132,6 +128,7 @@ Rectangle {
             }
 
             Rectangle {
+                anchors { verticalCenter: parent.verticalCenter; }
                 color: "transparent";
                 border {
                     width: 2;
@@ -141,9 +138,6 @@ Rectangle {
                 height: 15;
                 width: height;
 
-                anchors {
-                    verticalCenter: parent.verticalCenter;
-                }
             }
         }
 
@@ -267,33 +261,23 @@ Rectangle {
 
     Component {
         id: boxArtGridComponent;
-
         BoxartGridView {
             id: boxartGrid;
-
-            color: "transparent";
-
             objectName: "BoxartGridView";
-
+            color: "transparent";
         }
     }
 
     Component {
         id: detailGameViewComponent;
-
-
         DetailedGameView {
-
         }
     }
 
     Component {
         id: inputView;
-
         InputView {
-
             objectName: "InputView"
-
         }
     }
 
