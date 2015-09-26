@@ -1,7 +1,7 @@
 import QtQuick 2.5
 import QtQuick.Layouts 1.1
 import QtGraphicalEffects 1.0
-import QtQuick.Controls 1.2
+import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.2
 import QtGraphicalEffects 1.0
 
@@ -21,23 +21,24 @@ Item {
         anchors.fill: parent;
          Rectangle {
             anchors.fill: parent;
-            color: PhxTheme.common.secondaryBackgroundColor;
+            color: PhxTheme.common.baseBackgroundColor;
             Image {
-                fillMode: Image.Tile
-                source: "bg.png"
+                fillMode: Image.Tile;
+                source: PhxTheme.common.backgroundImage;
             }
          }
 
         RowLayout {
+
             id: gameSelectionPane;
             anchors { fill: parent }
             spacing: 0;
-            anchors.bottomMargin: root.gameViewObject.videoRender.coreState === Core.STATEPAUSED ? gameSuspendedSection.height : 0;
+            anchors.bottomMargin: root.gameViewObject.videoItem.coreState === Core.STATEPAUSED ? gameSuspendedSection.height : 0;
 
             SelectionArea {
                 id: selectionArea;
                 anchors { top: parent.top; bottom: parent.bottom }
-                width: 250;
+                width: PhxTheme.common.menuWidth;
                 z: contentArea.z + 1;
             }
 
@@ -45,7 +46,6 @@ Item {
                 id: contentArea;
                 anchors { top: parent.top; bottom: parent.bottom }
                 Layout.fillWidth: true;
-
             }
         }
 
@@ -55,15 +55,15 @@ Item {
             color: PhxTheme.common.suspendedGameBackgroundColor;
             Layout.fillWidth: true;
             height: 65;
-            z: 100;
+            z: 2;
             anchors { bottom: parent.bottom }
-            visible: root.gameViewObject.videoRender.coreState === Core.STATEPAUSED;
+            visible: root.gameViewObject.videoItem.coreState === Core.STATEPAUSED;
 
 
             Rectangle {
                 // visible: root.gameViewObject.videoRender.coreState === Core.STATEPAUSED;
                 anchors { top: parent.top; bottom: parent.bottom; }
-                width: 250;
+                width: PhxTheme.common.menuWidth;
                 color: "transparent";
 
                 Image {
@@ -86,12 +86,11 @@ Item {
                         verticalCenter: parent.verticalCenter;
                     }
                     elide: Text.ElideRight;
-                    width: 178;
+                    width: PhxTheme.common.menuWidth - 72;
                     text: root.gameViewObject.coreGamePair[ "title" ];
                     color: PhxTheme.normalFontColor;
-                    font.pixelSize: PhxTheme.selectionArea.headerFontSize;
+                    font.pixelSize: PhxTheme.common.suspendedGameFontSize;
                 }
-
                 MouseArea {
                     anchors.fill: parent;
                     hoverEnabled: true;
@@ -108,7 +107,7 @@ Item {
                         rootMouseArea.cursorShape = Qt.PointingHandCursor;
                     }
                     onExited: {
-                        parent.color = PhxTheme.common.suspendedGameBackgroundColor;
+                        parent.color = "transparent" // "PhxTheme.common.suspendedGameBackgroundColor";
                         rootMouseArea.cursorShape = Qt.ArrowCursor;
                     }
                 }
@@ -148,12 +147,18 @@ Item {
                         iconName: "Close";
                         iconSource: "close.svg";
                         style: ButtonStyle { background: Rectangle { color: "transparent"; } }
+                        onPressedChanged: {
+                            if( pressed ) {
+                                root.gameViewObject.videoItem.slotStop();
+                            }
+                        }
                     }
 
                     MouseArea {
                         anchors.fill: parent;
+                        hoverEnabled: true;
                         onClicked: {
-                            root.gameViewObject.videoRender.stop();
+                            root.gameViewObject.videoItem.slotStop();
                         }
                     }
 

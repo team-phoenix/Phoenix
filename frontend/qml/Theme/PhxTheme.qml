@@ -14,14 +14,19 @@ QtObject {
     }
 
     property QtObject common: QtObject {
+        property int menuWidth: 320;
         property color baseFontColor: "#ADADAD";
         property color highlighterFontColor: "#D5D5D5";
 
-        property color primaryBackgroundColor: "#20000000";
-        property color secondaryBackgroundColor: "#512020";
+        property string backgroundImage: "";
 
-        property color suspendedGameBackgroundColor: "#35000000";
-        property color suspendedGameHoverBackgroundColor: "#20000000";
+        property color baseBackgroundColor: "#171717";
+        property color primaryBackgroundColor: "#00000000";
+        property color secondaryBackgroundColor: "#75000000";
+
+        property int suspendedGameFontSize: 13;
+        property color suspendedGameBackgroundColor: "#55343C3F";
+        property color suspendedGameHoverBackgroundColor: "#25FFFFFF";
 
         property color boxartNormalBorderColor: "#20FFFFFF";
         property color boxartSelectedBorderColor: "#FFFFFF";
@@ -29,11 +34,11 @@ QtObject {
         property color gameViewBackgroundColor: "#1F1F1F";
 
         property Gradient primaryButtonColor: Gradient {
-            GradientStop { position: 0.0; color: "#E97F54"; }
-            GradientStop { position: 0.3; color: "#D55b4A"; }
-            GradientStop { position: 1.0; color: "#BF333F"; }
+            GradientStop { position: 0.0; color: "#75FFFFFF"; }
+            GradientStop { position: 0.5; color: "#20FFFFFF"; }
+            GradientStop { position: 1.0; color: "#00FFFFFF"; }
         }
-        property color normalButtonColor: "#20FFFFFF";
+        property color normalButtonColor: "#19FFFFFF";
 
     }
 

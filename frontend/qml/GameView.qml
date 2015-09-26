@@ -17,7 +17,7 @@ Rectangle {
     property bool running: videoItem.running;
     property alias coreState: videoItem.coreState;
     property alias loadedGame: videoItem.game;
-    property alias videoRender: videoItem;
+    property alias videoItem: videoItem;
 
     // A small workaround to guarantee that the core and game are loaded in the correct order
     property var coreGamePair: {
