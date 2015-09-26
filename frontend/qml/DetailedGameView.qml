@@ -1,6 +1,6 @@
 import QtQuick 2.5
 import QtGraphicalEffects 1.0
-import QtQuick.Layouts 1.1
+import QtQuick.Layouts 1.2
 
 Item {
     anchors.fill: parent;

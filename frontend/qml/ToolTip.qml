@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.5
 
 Rectangle {
     id:tooltip;
@@ -6,7 +6,7 @@ Rectangle {
     property int verticalPadding: 8;
     property int horizontalPadding: 8;
     color: "#75000000";
-    width: textContainer.width + horizontalPadding;
+    width: textContainer.width + horizontalPadding * 2;
     height: textContainer.height + verticalPadding * 2;
     z: 9999999999;
 

@@ -1,6 +1,6 @@
-import QtQuick 2.3
-import QtQuick.Controls 1.2
-import QtQuick.Controls.Styles 1.2
+import QtQuick 2.5
+import QtQuick.Controls 1.4
+import QtQuick.Controls.Styles 1.4
 
 import vg.phoenix.themes 1.0
 import vg.phoenix.models 1.0

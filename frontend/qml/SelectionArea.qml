@@ -1,7 +1,7 @@
 import QtQuick 2.5
-import QtQuick.Layouts 1.1
-import QtQuick.Controls 1.2
+import QtQuick.Controls 1.4
 import QtGraphicalEffects 1.0
+import QtQuick.Layouts 1.2
 import QtQuick.Dialogs 1.2
 
 import vg.phoenix.models 1.0

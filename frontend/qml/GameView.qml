@@ -1,7 +1,7 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.4
-import QtQuick.Window 2.0
 import QtGraphicalEffects 1.0
+import QtQuick.Window 2.0
 
 import vg.phoenix.backend 1.0
 import vg.phoenix.themes 1.0

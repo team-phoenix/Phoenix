@@ -5,29 +5,29 @@ QtObject {
     property color normalFontColor: "#F1F1F1";
 
     property QtObject selectionArea: QtObject {
-        property int basePixelSize: 12;
-        property int headerFontSize: 15;
-        property color baseColor: "#2E0E19";
-        property color baseFontColor: "#D5D5D5" // "#8A8889";
+        property int basePixelSize:        12;
+        property int headerFontSize:       15;
+        property color baseColor:          "#2E0E19";
+        property color baseFontColor:      "#D5D5D5" // "#8A8889";
         property color highlightFontColor: "#FFFFFF" // "#D5D5D5";
     }
 
     property QtObject common: QtObject {
-        property int menuWidth: 300;
-        property color baseFontColor: "#ADADAD";
+        property int menuWidth:               250;
+        property color baseFontColor:        "#ADADAD";
         property color highlighterFontColor: "#D5D5D5";
 
         property string backgroundImage: "bg.png";
 
-        property color baseBackgroundColor: "#171717";
-        property color primaryBackgroundColor: "#00FFFFFF";
+        property color baseBackgroundColor:      "#43060D";
+        property color primaryBackgroundColor:   "#50000000";
         property color secondaryBackgroundColor: "#00000000";
 
         property int suspendedGameFontSize: 13;
-        property color suspendedGameBackgroundColor: "#55343C3F";
+        property color suspendedGameBackgroundColor:      "#55343C3F";
         property color suspendedGameHoverBackgroundColor: "#25FFFFFF";
 
-        property color boxartNormalBorderColor: "#20FFFFFF";
+        property color boxartNormalBorderColor:   "#20FFFFFF";
         property color boxartSelectedBorderColor: "#FFFFFF";
 
         property color gameViewBackgroundColor: "#1F1F1F";

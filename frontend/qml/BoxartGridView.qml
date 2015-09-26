@@ -1,8 +1,7 @@
 import QtQuick 2.5
-import QtQuick.Layouts 1.1
-import QtGraphicalEffects 1.0
-import QtQuick.Controls 1.2
-import QtQuick.Controls.Styles 1.2
+import QtQuick.Controls 1.4
+import QtQuick.Controls.Styles 1.4
+import QtQuick.Layouts 1.2
 import QtGraphicalEffects 1.0
 
 import vg.phoenix.cache 1.0
@@ -152,7 +151,6 @@ Rectangle {
                                 if ( status == Image.Null ) {
                                     console.log( "No image available for " + title );
                                 }
-
                             }
 
                             Rectangle {
@@ -210,7 +208,7 @@ Rectangle {
                             }
 
                             // ToolTip Title
-                            ToolTipArea { text: title; tip {  x: 00; y: parent.width + 24; } }
+                            // ToolTipArea { text: title; tip {  x: 0; y: parent.width + 24; } }
 
                             // Decorations
                             Rectangle {
@@ -225,14 +223,15 @@ Rectangle {
                         }
                     }
 
-                    /*Label {
+                    // Games titles
+                    Label {
                         id: titleText;
                         text: title;
                         color: index === gridView.currentIndex ? PhxTheme.common.highlighterFontColor : PhxTheme.common.baseFontColor;
                         Layout.fillWidth: true;
                         elide: Text.ElideRight;
-                        font { pixelSize: 11; }
-                    } */
+                        font { pixelSize: 12; bold: true; }
+                    }
 
                     /*Text {
                         id: platformText;
