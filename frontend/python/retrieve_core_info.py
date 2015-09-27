@@ -15,7 +15,7 @@ def prettify(platform):
     elif "gamecube" in system:
         return "GameCube (Wii)"
     elif "game boy" in system:
-        return "GameBoy (Color)"
+        return "Game Boy (Color)"
     elif "sega 8/16" in system:
         return "Sega 8 & 16 Bit"
     elif "atari st/ste" in system:
