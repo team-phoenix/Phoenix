@@ -12,5 +12,8 @@
         <file>play.svg</file>
         <file>games.svg</file>
         <file>bg.png</file>
+        <file>suspend.svg</file>
+        <file>pause.svg</file>
+        <file>shutdown.svg</file>
     </qresource>
 </RCC>

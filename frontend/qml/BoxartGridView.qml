@@ -49,11 +49,18 @@ Rectangle {
             Behavior on opacity { PropertyAnimation { duration: 200; } }
         }*/
 
+        property int numItems: Math.floor( contentItem.width / contentArea.contentSlider.value );
+        property int addToMarginsTotal: contentItem.width % contentArea.contentSlider.value;
+        property int addToMargins: 0//addToMarginsTotal / numItems;
+        onAddToMarginsChanged: {
+            console.log( addToMargins );
+        }
+
         contentItem: GridView {
             id: gridView;
             anchors {
                 top: parent.top; bottom: parent.bottom; left: parent.left; right: parent.right;
-                leftMargin: searchBar.anchors.leftMargin + 5; rightMargin: leftMargin;
+                leftMargin: searchBar.anchors.leftMargin; rightMargin: leftMargin;
             }
 
             // If the grid's width is less than the maxCellWidth, get
@@ -107,8 +114,10 @@ Rectangle {
 
             delegate: Rectangle {
                 id: gridItem;
-                width: gridView.cellWidth; height: gridView.cellHeight;
+                width: gridView.cellWidth /*+ scrollView.addToMargins*/; height: gridView.cellHeight;
                 color: "transparent";
+                // border.color: "black";
+                // border.width: 1;
 
                 ColumnLayout {
                     spacing: 13;

@@ -157,25 +157,10 @@ Rectangle {
         }
     }
 
-    DropShadow {
-        anchors.fill: source;
-        source: actionBar;
-        horizontalOffset: 0;
-        verticalOffset: 0;
-        radius: 8.0;
-        samples: radius * 2;
-        color: "black";
-        transparentBorder: true;
-        opacity: actionBar.opacity;
-    }
-
     ActionBar {
         id: actionBar;
-        anchors {
-            bottom: parent.bottom;
-            left: parent.left;
-            right: parent.right;
-        }
+        width: 350 ;
+        anchors { bottom: parent.bottom; horizontalCenter: parent.horizontalCenter; }
     }
 
     // Use the main mouse area to monitor the mouse for movement
@@ -190,15 +175,11 @@ Rectangle {
     property Timer cursorTimer: Timer {
         interval: 1000;
         running: false;
-
-        onTriggered: {
-            rootMouseArea.cursorShape = Qt.BlankCursor;
-        }
+        onTriggered: { rootMouseArea.cursorShape = Qt.BlankCursor; }
     }
 
     // This function will reset the timer when called (which is whenever the mouse is moved)
     function mouseMoved() {
-
         // Reset the timer, show the mouse cursor and action bar (usually when mouse is moved)
         if( gameView.running && rootMouseArea.hoverEnabled ) {
             cursorTimer.restart();
@@ -207,8 +188,6 @@ Rectangle {
     }
 
     function resetCursor() {
-        if( rootMouseArea.cursorShape !== Qt.ArrowCursor )
-            rootMouseArea.cursorShape = Qt.ArrowCursor;
+        if( rootMouseArea.cursorShape !== Qt.ArrowCursor ) rootMouseArea.cursorShape = Qt.ArrowCursor;
     }
-
 }
