@@ -8,6 +8,30 @@ from datetime import datetime
 import json, sys, os, shlex, urllib2
 from sqldatabase import SqlDatabase
 
+def prettify(platform):
+    system = platform.lower()
+    if "colecovision" in system:
+        return "ColecoVision"
+    elif "gamecube" in system:
+        return "GameCube (Wii)"
+    elif "game boy" in system:
+        return "GameBoy (Color)"
+    elif "sega 8/16" in system:
+        return "Sega 8 & 16 Bit"
+    elif "atari st/ste" in system:
+        return "Atari ST"
+    elif "pc engine/pce" in system:
+        return "PC Engine"
+    elif "multi" in system:
+        return "Arcade"
+    elif "(various)" in system:
+        return platform.replace(" (various)", "").title()
+    elif "/ videopac+" in system:
+        return " & ".join(platform.split(" / "))
+    elif "saturn" == system:
+        return "Sega Saturn"
+    return platform
+
 DIR_PREFIX = 'libretro-super-master/dist/info/'
 
 res = urllib2.urlopen('https://github.com/libretro/libretro-super/archive/master.tar.gz')
@@ -104,7 +128,13 @@ for k, v in output['cores'].iteritems():
         ',\n'.join(['        { %s, %s }' % (cpprepr(k2), cpprepr(v2)) for k2, v2 in v.iteritems()])
     ))
 
-table = "systems"
+metadataTable = "coreMetadata"
+systemTable = "systems"
+defaultSystemTable = "defaultSystems"
+biosTable = "firmware"
+headerOffsetsTable = "headerOffsets"
+schemaVersion = 0
+
 dbFile = os.path.join(os.getcwd().replace("python", "database"), 'systems.db')
 
 if os.path.isfile( dbFile ):
@@ -112,25 +142,61 @@ if os.path.isfile( dbFile ):
 
 with SqlDatabase(dbFile, autoCommit=True) as db:
     
-    rows = ["systemname", "display_name", "supported_extensions"
-            , "display_version", "license"]
+    rowsDict = OrderedDict({"coreIndex": "INTEGER PRIMARY KEY AUTOINCREMENT"})
 
-    rowsDict = {}
+    rows = ["core", "supported_extensions", "display_version"
+            , "license", "authors", "manufacturer"]
+
     for i in rows:
         rowsDict[i] = "TEXT"
-    
-    db.createTable( "schema_version", {"version": "INTEGER NOT NULL"} )
-    db.execute( "schema_version", ["version"], [0])
-    db.createTable( "systems", rowsDict )
 
-    for v in output['cores'].values():
+
+    db.createTable( "schema_version", {"version": "INTEGER NOT NULL"} )
+    db.execute( "schema_version", ["version"], [schemaVersion])
+
+    db.createTable( metadataTable, rowsDict )
+    db.createTable(defaultSystemTable, {"systemIndex": 
+                                        "INTEGER PRIMARY KEY AUTOINCREMENT"
+                                        , "systemname": "TEXT"}, )
+    db.createTable(biosTable, {"biosFile": "TEXT", "sha1": "TEXT"})
+    db.createTable(headerOffsetsTable, {"offset": "TEXT NOT NULL"
+                                        , "lengthInBytes": "INTEGER NOT NULL"
+                                        , "result": "TEXT NOT NULL"})
+    
+    coresRows = ["systemname"]
+    coresRowsDict = OrderedDict({"coreIndex": "INTEGER PRIMARY KEY AUTOINCREMENT"})
+    
+    for row in coresRows:
+        coresRowsDict[row] = "TEXT"
+
+    db.createTable(systemTable, coresRowsDict )
+
+    for k, v in output['cores'].iteritems():
+
+        if "categories" not in v or v["categories"] != "Emulator":
+            continue
+
         values = []
+        coresTableRows = []
 
         for row in rows:
-            if row in v:
+    
+            if row is "core":
+                values.append(k)
+    
+            elif row in v:
                 values.append( v[row] )
-            else:
-                values.append(None)
 
-        db.execute( table, rows, values)
+        if "systemname" in v:
+            val = v["systemname"]
+            if val is "":
+                if "display_name" in v:
+                    val = v["display_name"]
+                    
+            val = prettify(val)
+            coresTableRows.append(val)
+        else: corseTableRows.append("")
+
+        db.execute(metadataTable, rows, values)
+        db.execute(systemTable, coresRows, coresTableRows)
 
