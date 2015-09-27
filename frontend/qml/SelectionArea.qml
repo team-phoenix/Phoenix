@@ -116,12 +116,8 @@ Item {
             // The buttons along the bottom that control the sectionsAreaStackView
             ListView {
                 id: selectionAreaToolbar;
-                height: 62;
-                anchors {
-                    left: parent.left;
-                    right: parent.right;
-                }
-
+                height: 65;
+                anchors { left: parent.left; right: parent.right; }
                 spacing: 0;
                 interactive: false;
                 orientation: ListView.Horizontal;
@@ -129,51 +125,28 @@ Item {
                 model: ListModel {
                     ListElement { bgColor: "white"; label: "Add Games"; imageSource: "add.svg"; }
                     ListElement { bgColor: "white"; label: "Favorites"; imageSource: "collections.svg"; }
-                    ListElement { bgColor: "white"; label: "Games"; imageSource: "games.png"; }
+                    ListElement { bgColor: "white"; label: "Games"; imageSource: "games.svg"; }
                     ListElement { bgColor: "white"; label: "Settings"; imageSource: "settings.svg"; }
                 }
 
                 FileDialog {
                     id: fileDialog;
                     selectFolder: true;
-                    onAccepted: {
-                        contentArea.contentLibraryModel.append( fileUrl );
-                    }
+                    onAccepted: { contentArea.contentLibraryModel.append( fileUrl ); }
                 }
-
-                /*
-                header: Rectangle {
-                    width: selectionAreaToolbar.width;
-
-                    height: 2;
-                    color: "white";
-                    opacity: 0.15;
-                }
-                */
 
 
                 delegate: Item {
                     height: parent.height;
                     width: selectionAreaToolbar.width / selectionAreaToolbar.count;
 
-                    Row {
-                        anchors {
-                            right: parent.right;
-                            bottom: parent.bottom;
-                            bottomMargin: 6;
-                        }
-                    }
+                    Row { anchors { right: parent.right; bottom: parent.bottom; bottomMargin: 6; } }
 
                     Image {
-                        sourceSize {
-                            height: 24;
-                            width: 24;
-                        }
-
+                        height: 24; width: height;
                         source: imageSource;
-                        anchors {
-                            centerIn: parent;
-                        }
+                        fillMode: Image.PreserveAspectFit;
+                        anchors { centerIn: parent; }
                     }
 
                     Text {
@@ -222,7 +195,6 @@ Item {
                             default:
                                 break;
                             }
-
                         }
                     }
                 }
@@ -230,4 +202,3 @@ Item {
         }
     }
 }
-

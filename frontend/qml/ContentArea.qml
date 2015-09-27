@@ -9,8 +9,6 @@ import vg.phoenix.themes 1.0
 
 Rectangle {
     id: contentArea;
-    height: 200;
-    width: 200;
     color: PhxTheme.common.secondaryBackgroundColor;
 
     property alias contentLibraryModel: libraryModel;
@@ -33,31 +31,39 @@ Rectangle {
         color: "transparent";
         z: 100;
         height: 95;
+        Rectangle {
+            anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 40; }
+            color: "transparent";
+            border.width: 2;
+            border.color: "#75FFFFFF";
+            width: 250;
+            height: 35;
 
-        PhxSearchBar {
-            id: searchBar;
-            anchors {
-                verticalCenter: parent.verticalCenter;
-                left: parent.left;
-                leftMargin: 40;
-            }
-            font.pixelSize: 14;
-            placeholderText: "Search..."
-            width: 200;
-            textColor: "white";
+            PhxSearchBar {
+                anchors { left: parent.left; leftMargin: 10; }
+                id: searchBar;
+                font.pixelSize: 14;
+                placeholderText: "";
+                width: parent.width - 50;
+                height: parent.height;
+                textColor: "#95FFFFFF";
 
-            Timer {
-                id: searchTimer;
-                interval: 300;
-                running: false;
-                repeat: false;
-                onTriggered: {
-                    libraryModel.setFilter( "games", "title", '%' + searchBar.text + '%' );
+                Timer {
+                    id: searchTimer;
+                    interval: 300;
+                    running: false;
+                    repeat: false;
+                    onTriggered: { libraryModel.setFilter( "games", "title", '%' + searchBar.text + '%' ); }
                 }
-
+                onTextChanged: searchTimer.restart();
             }
-            onTextChanged: searchTimer.restart();
-
+            Image {
+                anchors { right: parent.right; rightMargin: 5; verticalCenter: parent.verticalCenter; }
+                width: 20;
+                height: width;
+                fillMode: Image.PreserveAspectFit;
+                source: "search.svg"
+            }
         }
 
         Column {
@@ -75,7 +81,6 @@ Rectangle {
                 right: parent.right;
                 rightMargin: 30;
             }
-
             spacing: 12;
 
             Rectangle {
@@ -97,10 +102,13 @@ Rectangle {
                 id: zoomSlider;
                 anchors { verticalCenter: parent.verticalCenter; }
                 width: 100;
-                minimumValue: 200;
+                height: 30;
+                minimumValue: 150;
                 maximumValue: 400;
                 value: minimumValue;
-                stepSize: 50;
+                stepSize: 10;
+                activeFocusOnPress: true;
+                tickmarksEnabled: false;
 
                 style: SliderStyle {
                     handle: Item {
@@ -265,6 +273,7 @@ Rectangle {
             id: boxartGrid;
             objectName: "BoxartGridView";
             color: "transparent";
+            anchors { horizontalCenter: parent.horizontalCenter; verticalCenter: parent.verticalCenter; }
         }
     }
 

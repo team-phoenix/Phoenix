@@ -7,7 +7,6 @@ import vg.phoenix.backend 1.0
 import vg.phoenix.themes 1.0
 
 Rectangle {
-    width: 300;
     height: 65;
     color: Qt.rgba(0,0,0,0.35);
 
@@ -19,6 +18,16 @@ Rectangle {
         PropertyAnimation { duration: 250; }
     }
 
+    function resetWindowSize() {
+        root.minimumWidth = root.defaultMinWidth;
+        root.minimumHeight = root.defaultMinHeight;
+        if( root.height < root.defaultMinHeight ) {
+            root.height = root.defaultMinHeight;
+        }
+        if( root.width < root.defaultMinWidth ) {
+            root.width = root.defaultMinWidth;
+        }
+    }
 
     Row {
         id: mediaButtonsRow;
@@ -98,7 +107,7 @@ Rectangle {
             Label {
                 anchors.centerIn: parent;
                 color: PhxTheme.normalFontColor;
-                text: qsTr( "ShutDown" );
+                text: qsTr( "Shutdown" );
             }
 
             MouseArea {
@@ -108,6 +117,7 @@ Rectangle {
                     root.disableMouseClicks();
                     rootMouseArea.hoverEnabled = false;
                     resetCursor();
+                    resetWindowSize();
                     layoutStackView.push( mouseDrivenView );
                 }
             }
@@ -137,6 +147,7 @@ Rectangle {
                 root.disableMouseClicks();
                 rootMouseArea.hoverEnabled = false;
                 resetCursor();
+                resetWindowSize();
                 layoutStackView.push( mouseDrivenView );
             }
         }

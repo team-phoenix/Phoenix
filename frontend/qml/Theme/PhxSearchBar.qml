@@ -7,9 +7,7 @@ import vg.phoenix.models 1.0
 
 TextField {
     id: searchBar;
-    height: 35;
     placeholderText: "";
-    width: 250;
     textColor: "white";
 
     style: TextFieldStyle {
@@ -17,15 +15,6 @@ TextField {
         background: Item {
             width: control.width;
             height: control.height;
-
-            Rectangle {
-                anchors.fill: parent;
-                color: "transparent";
-                border.width: 2;
-                border.color: "#FFFFFF";
-                opacity: .35;
-            }
         }
     }
-
 }

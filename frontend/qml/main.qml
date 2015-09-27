@@ -16,8 +16,10 @@ ApplicationWindow {
     title: qsTr("Phoenix");
     color: "black";
 
-    minimumHeight: 480;
-    minimumWidth: 640;
+    property int defaultMinHeight: 540;
+    property int defaultMinWidth: 735;
+    minimumHeight: defaultMinHeight;
+    minimumWidth: defaultMinWidth;
 
     property InputManager inputManager: InputManager { gamepadControlsFrontend: true; }
     property var gameViewObject: null;
@@ -37,7 +39,7 @@ ApplicationWindow {
         hoverEnabled: false;
         propagateComposedEvents: true;
         z: parent.z + 1;
-        acceptedButtons: Qt.AllButtons;
+        acceptedButtons: Qt.NoButton;
     }
 
     StackView {

@@ -119,6 +119,11 @@ Rectangle {
 
                         // Show the game content
                         videoItemContainer.opacity = 1.0;
+
+                        // Let the window be resized even smaller than the default minimum size according to the aspect ratio
+                        root.minimumWidth = Math.min( root.defaultMinWidth, root.defaultMinWidth / aspectRatio / 2);
+                        root.minimumHeight = Math.min( root.defaultMinHeight, root.defaultMinHeight / aspectRatio / 2);
+
                         break;
                     case Core.STATEFINISHED:
                         resetCursor();
@@ -170,9 +175,6 @@ Rectangle {
             bottom: parent.bottom;
             left: parent.left;
             right: parent.right;
-            bottomMargin: 50;
-            leftMargin: 100;
-            rightMargin: 100;
         }
     }
 

@@ -53,7 +53,7 @@ Item {
             color: PhxTheme.common.suspendedGameBackgroundColor;
             Layout.fillWidth: true;
             height: 65;
-            z: 2;
+            z: parent.z + 1;
             anchors { bottom: parent.bottom }
             visible: root.gameViewObject.videoItem.coreState === Core.STATEPAUSED;
 

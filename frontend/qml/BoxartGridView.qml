@@ -10,9 +10,6 @@ import vg.phoenix.backend 1.0
 
 Rectangle {
     id: boxartGridBackground;
-    width: 100;
-    height: 62;
-    anchors.topMargin: -30;
     DropdownMenu { id: dropDownMenu; }
 
     PhxScrollView {
@@ -55,26 +52,21 @@ Rectangle {
         contentItem: GridView {
             id: gridView;
             anchors {
-                top: parent.top; bottom: parent.bottom;
-                left: parent.left; right: parent.right;
-                topMargin: 0;
-                bottomMargin: 0;
-                leftMargin: gridView.clampEdges ? ( ( parent.width % cellWidth ) / 2 ) : 0;
-                rightMargin: leftMargin;
+                top: parent.top; bottom: parent.bottom; left: parent.left; right: parent.right;
+                leftMargin: searchBar.anchors.leftMargin + 5; rightMargin: leftMargin;
             }
 
             // If the grid's width is less than the maxCellWidth, get
             // the grid to scale the size of the grid items, so that the transition looks really
             // seamless.
-            cellHeight: clampEdges ? contentArea.contentSlider.value : parent.width;
+            cellHeight: contentArea.contentSlider.value;
             cellWidth: cellHeight;
 
-            model: libraryModel;
+            Behavior on cellHeight {
+                NumberAnimation { duration: 200; }
+            }
 
-            // The max height and width of the grid's cells. This can be tweaked
-            // to change the default size of the boxart.
-            property int maxCellHeight: contentArea.contentSlider.maximumValue;
-            property bool clampEdges: parent.width >= maxCellHeight;
+            model: libraryModel;
 
             // Define some transition animations
             property Transition transition: Transition { NumberAnimation { properties: "x,y"; duration: 250; } }
@@ -111,6 +103,8 @@ Rectangle {
 
             Component.onCompleted: { populate: transitionX; libraryModel.updateCount(); }
 
+            property int itemMargin: 24;
+
             delegate: Rectangle {
                 id: gridItem;
                 width: gridView.cellWidth; height: gridView.cellHeight;
@@ -120,7 +114,7 @@ Rectangle {
                     spacing: 13;
                     anchors {
                         top: parent.top; bottom: parent.bottom; left: parent.left; right: parent.right;
-                        bottomMargin: 24; leftMargin: 24; rightMargin: 24;
+                        bottomMargin: gridView.itemMargin; leftMargin: gridView.itemMargin; rightMargin: gridView.itemMargin;
                     }
 
                     Rectangle {
@@ -172,8 +166,8 @@ Rectangle {
                             RectangularGlow {
                                 anchors.fill: imageBackground;
                                 glowRadius: 5;
-                                spread: .2;
-                                color: "#75000000";
+                                spread: .15;
+                                color: "#15000000";
                                 cornerRadius: glowRadius;
                                 z: imageBackground.z - 1;
                             }
