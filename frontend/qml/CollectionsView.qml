@@ -11,32 +11,17 @@ ScrollView {
     ListView {
         id: listView;
         spacing: 0;
-        model: CollectionsModel {
-            id: collectionsModel;
-        }
+        model: CollectionsModel { id: collectionsModel; }
 
         header: Rectangle {
+            anchors { left: parent.left; right: parent.right; }
             color: "transparent";
             height: 36;
 
-            anchors {
-                left: parent.left;
-                right: parent.right;
-            }
-
             Text {
                 text: qsTr( "Collections" );
-                anchors {
-                    verticalCenter: parent.verticalCenter;
-                    left: parent.left;
-                    leftMargin: 12;
-                }
-
-                font {
-                    pixelSize: PhxTheme.selectionArea.headerFontSize;
-                    bold: true;
-                }
-
+                anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 12; }
+                font { pixelSize: PhxTheme.selectionArea.headerFontSize; bold: true; }
                 color: PhxTheme.selectionArea.highlightFontColor;
             }
 
@@ -56,7 +41,6 @@ ScrollView {
                     listView.currentItem.state = "ADDED";
                 }
             }
-
         }
 
         delegate: Rectangle {
@@ -147,11 +131,8 @@ ScrollView {
                     } else {
                         contentArea.contentLibraryModel.setFilter( "collections", "collectionID", collectionID );
                     }
-
                 }
             }
-
         }
     }
 }
-

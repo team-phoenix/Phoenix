@@ -21,10 +21,7 @@ Item {
          Rectangle {
             anchors.fill: parent;
             color: PhxTheme.common.baseBackgroundColor;
-            Image {
-                fillMode: Image.Tile;
-                source: PhxTheme.common.backgroundImage;
-            }
+            Image { smooth: true; source: PhxTheme.common.backgroundImage; }
          }
 
         RowLayout {
@@ -57,88 +54,97 @@ Item {
             anchors { bottom: parent.bottom }
             visible: root.gameViewObject.videoItem.coreState === Core.STATEPAUSED;
 
+            Row {
+                anchors.fill: parent;
+                spacing: 0;
 
-            Rectangle {
-                // visible: root.gameViewObject.videoRender.coreState === Core.STATEPAUSED;
-                anchors { top: parent.top; bottom: parent.bottom; }
-                width: PhxTheme.common.menuWidth;
-                color: "transparent";
+                Rectangle {
+                    anchors { top: parent.top; bottom: parent.bottom; }
+                    width: PhxTheme.common.menuWidth;
+                    color: "transparent";
 
-                Image {
-                    id: gridItemImage;
-                    anchors { bottomMargin: 8; leftMargin: 8; left: parent.left; right: parent.right; bottom: parent.bottom; }
-                    visible: true;
-                    asynchronous: true;
+                    Image {
+                        id: gridItemImage;
+                        anchors { bottomMargin: 8; leftMargin: 8; left: parent.left; right: parent.right; bottom: parent.bottom; }
+                        visible: true;
+                        asynchronous: true;
+                        width: 48;
+                        height: 48;
+                        horizontalAlignment: Image.AlignLeft;
+                        source: "missingArtwork.png";
+                        sourceSize { width: 400; height: 400; }
+                        fillMode: Image.PreserveAspectFit;
+                    }
+
+                    Label {
+                        anchors { left: parent.left; leftMargin: 64; verticalCenter: parent.verticalCenter; }
+                        elide: Text.ElideRight;
+                        width: PhxTheme.common.menuWidth - 72;
+                        text: root.gameViewObject.coreGamePair[ "title" ];
+                        color: PhxTheme.normalFontColor;
+                        font.pixelSize: PhxTheme.common.suspendedGameFontSize;
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent;
+                        hoverEnabled: true;
+                        onClicked: {
+                            // Prevent user from clicking on anything while the transition occurs
+                            root.disableMouseClicks();
+
+                            // Destroy the compenent this MouseArea lives in
+                            layoutStackView.pop();
+                        }
+                        cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor;
+                        onEntered: {
+                            parent.color = PhxTheme.common.suspendedGameHoverBackgroundColor;
+                            rootMouseArea.cursorShape = Qt.PointingHandCursor;
+                        }
+                        onExited: {
+                            parent.color = "transparent" // "PhxTheme.common.suspendedGameBackgroundColor";
+                            rootMouseArea.cursorShape = Qt.ArrowCursor;
+                        }
+                    }
+                }
+
+                // Play button
+                Rectangle {
+                    anchors { top: parent.top; bottom: parent.bottom; }
+                    color: "transparent";
                     width: 48;
-                    height: 48;
-                    horizontalAlignment: Image.AlignLeft;
-                    source: "missingArtwork.png";
-                    sourceSize { width: 400; height: 400; }
-                    fillMode: Image.PreserveAspectFit;
-                }
+                    Button {
+                        anchors.centerIn: parent;
+                        width: parent.width;
+                        iconName: "Play";
+                        iconSource:  "play.svg";
+                        style: ButtonStyle { background: Rectangle { color: "transparent"; } }
+                        MouseArea {
+                            anchors.fill: parent;
+                            hoverEnabled: true;
+                            cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor;
+                            onClicked: {
+                                // Prevent user from clicking on anything while the transition occurs
+                                root.disableMouseClicks();
 
-                Label {
-                    anchors {
-                        left: parent.left;
-                        leftMargin: 64;
-                        verticalCenter: parent.verticalCenter;
-                    }
-                    elide: Text.ElideRight;
-                    width: PhxTheme.common.menuWidth - 72;
-                    text: root.gameViewObject.coreGamePair[ "title" ];
-                    color: PhxTheme.normalFontColor;
-                    font.pixelSize: PhxTheme.common.suspendedGameFontSize;
-                }
-                MouseArea {
-                    anchors.fill: parent;
-                    hoverEnabled: true;
-                    onClicked: {
-                        // Prevent user from clicking on anything while the transition occurs
-                        root.disableMouseClicks();
-
-                        // Destroy the compenent this MouseArea lives in
-                        layoutStackView.pop();
-                    }
-                    cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor;
-                    onEntered: {
-                        parent.color = PhxTheme.common.suspendedGameHoverBackgroundColor;
-                        rootMouseArea.cursorShape = Qt.PointingHandCursor;
-                    }
-                    onExited: {
-                        parent.color = "transparent" // "PhxTheme.common.suspendedGameBackgroundColor";
-                        rootMouseArea.cursorShape = Qt.ArrowCursor;
+                                // Destroy the compenent this MouseArea lives in
+                                layoutStackView.pop();
+                            }
+                            onEntered: { rootMouseArea.cursorShape = Qt.PointingHandCursor; }
+                            onExited: { rootMouseArea.cursorShape = Qt.ArrowCursor; }
+                        }
                     }
                 }
             }
 
-           /* Button {
-                 anchors { left: parent.left; leftMargin: 100; }
-                 height: width;
-                 width: parent.width;
-                 iconName: "Play";
-                 iconSource: "play.svg";
-                 style: ButtonStyle { background: Rectangle { color: "transparent"; } }
-             } // what happened to the rectangle?
-             */
-
-
             Row {
-
-                anchors {
-                    top: parent.top;
-                    bottom: parent.bottom;
-                    right: parent.right;
-                }
+                anchors { top: parent.top; bottom: parent.bottom; right: parent.right; }
 
                 Rectangle {
-                    anchors {
-                        top: parent.top;
-                        bottom: parent.bottom;
-                    }
-
+                    anchors { top: parent.top; bottom: parent.bottom; }
                     width: 50;
                     color: "transparent";
 
+                   // Close
                    Button {
                         anchors.centerIn: parent;
                         width: parent.width;
@@ -146,18 +152,16 @@ Item {
                         iconSource: "close.svg";
                         style: ButtonStyle { background: Rectangle { color: "transparent"; } }
                         onPressedChanged: {
-                            if( pressed ) {
-                                root.gameViewObject.videoItem.slotStop();
-                            }
+                            if( pressed ) { root.gameViewObject.videoItem.slotStop(); }
                         }
                     }
-
                     MouseArea {
                         anchors.fill: parent;
                         hoverEnabled: true;
-                        onClicked: {
-                            root.gameViewObject.videoItem.slotStop();
-                        }
+                        cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor;
+                        onEntered: { rootMouseArea.cursorShape = Qt.PointingHandCursor; }
+                        onExited: { rootMouseArea.cursorShape = Qt.ArrowCursor; }
+                        onClicked: { root.gameViewObject.videoItem.slotStop(); }
                     }
                 }
             }

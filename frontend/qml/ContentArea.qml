@@ -22,12 +22,7 @@ Rectangle {
 
     Rectangle {
         id: headerArea;
-        anchors {
-            top: parent.top;
-            left: parent.left;
-            right: parent.right;
-        }
-
+        anchors { top: parent.top; left: parent.left; right: parent.right;}
         color: "transparent";
         z: 100;
         height: 95;
@@ -67,35 +62,20 @@ Rectangle {
         }
 
         Column {
-
-            anchors {
-                bottom: parent.bottom;
-                left: parent.left;
-                right: parent.right;
-            }
+            anchors { bottom: parent.bottom; left: parent.left; right: parent.right; }
         }
 
         Row {
-            anchors {
-                verticalCenter: parent.verticalCenter;
-                right: parent.right;
-                rightMargin: 30;
+            anchors { verticalCenter: parent.verticalCenter; right: parent.right; rightMargin: 30;
             }
             spacing: 12;
 
             Rectangle {
+                anchors { verticalCenter: parent.verticalCenter; }
+                border { width: 2; color: "white"; }
                 color: "transparent";
-                border {
-                    width: 2;
-                    color: "white";
-                }
-
                 height: 10;
                 width: height;
-
-                anchors {
-                    verticalCenter: parent.verticalCenter;
-                }
             }
 
             Slider {
@@ -137,15 +117,10 @@ Rectangle {
 
             Rectangle {
                 anchors { verticalCenter: parent.verticalCenter; }
+                border { width: 2; color: "white"; }
                 color: "transparent";
-                border {
-                    width: 2;
-                    color: "white";
-                }
-
                 height: 15;
                 width: height;
-
             }
         }
 
@@ -240,9 +215,7 @@ Rectangle {
         id: contentAreaStackView;
         initialItem: boxArtGridComponent;
 
-        anchors {
-            fill: parent;
-        }
+        anchors.fill: parent;
 
         delegate: StackViewDelegate {
             function transitionFinished( properties )
@@ -273,22 +246,16 @@ Rectangle {
             id: boxartGrid;
             objectName: "BoxartGridView";
             color: "transparent";
-            anchors { horizontalCenter: parent.horizontalCenter; verticalCenter: parent.verticalCenter; }
         }
     }
 
     Component {
         id: detailGameViewComponent;
-        DetailedGameView {
-        }
+        DetailedGameView { }
     }
 
     Component {
         id: inputView;
-        InputView {
-            objectName: "InputView"
-        }
+        InputView { objectName: "InputView" }
     }
-
-
 }

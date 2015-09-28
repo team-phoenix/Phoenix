@@ -24,11 +24,11 @@ QtObject {
         property color secondaryBackgroundColor: "#00000000";
 
         property int suspendedGameFontSize: 13;
-        property color suspendedGameBackgroundColor:      "#55343C3F";
-        property color suspendedGameHoverBackgroundColor: "#25FFFFFF";
+        property color suspendedGameBackgroundColor:      "#25FFFFFF";
+        property color suspendedGameHoverBackgroundColor: "#15FFFFFF";
 
-        property color boxartNormalBorderColor:   "#20FFFFFF";
-        property color boxartSelectedBorderColor: "#FFFFFF";
+        property color boxartNormalBorderColor:   "#00FFFFFF";
+        property color boxartSelectedBorderColor: "#75FFFFFF";
 
         property color gameViewBackgroundColor: "#1F1F1F";
 

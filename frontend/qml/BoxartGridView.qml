@@ -110,7 +110,7 @@ Rectangle {
 
             Component.onCompleted: { populate: transitionX; libraryModel.updateCount(); }
 
-            property int itemMargin: 24;
+            property int itemMargin: 32;
 
             delegate: Rectangle {
                 id: gridItem;
@@ -123,7 +123,7 @@ Rectangle {
                     spacing: 13;
                     anchors {
                         top: parent.top; bottom: parent.bottom; left: parent.left; right: parent.right;
-                        bottomMargin: gridView.itemMargin; leftMargin: gridView.itemMargin; rightMargin: gridView.itemMargin;
+                        topMargin: gridView.itemMargin/2; bottomMargin: gridView.itemMargin/2; leftMargin: gridView.itemMargin; rightMargin: gridView.itemMargin;
                     }
 
                     Rectangle {
@@ -158,28 +158,25 @@ Rectangle {
 
                             Rectangle {
                                 id: imageBackground;
-                                antialiasing: true;
-                                anchors {
-                                    bottom: parent.bottom;
-                                    horizontalCenter: parent.horizontalCenter;
-                                }
-                                z: parent.z - 1;
-                                height: parent.paintedHeight ;
-                                width: parent.paintedWidth ;
+                                anchors { top: parent.top; topMargin: 1; bottom: parent.bottom; bottomMargin: -border.width; left: parent.left; leftMargin: -border.width; right: parent.right; rightMargin: -border.width; }
+                                z: gridItemImage.z - 1;
+                                height: parent.paintedHeight;
+                                width: parent.paintedWidth;
+                                border.color: index === gridView.currentIndex ? PhxTheme.common.boxartSelectedBorderColor : PhxTheme.common.boxartNormalBorderColor;
+                                border.width: 4;
                                 color: "transparent";
-
-                                gradient: {
-                                    return index === gridView.currentIndex ? PhxTheme.common.primaryButtonColor : undefined;
-                                }
+                                radius: 2;
                             }
+
                             RectangularGlow {
                                 anchors.fill: imageBackground;
-                                glowRadius: 5;
+                                glowRadius: 8;
                                 spread: .15;
-                                color: "#15000000";
+                                color: "#35000000";
                                 cornerRadius: glowRadius;
                                 z: imageBackground.z - 1;
                             }
+
                             MouseArea {
                                 anchors.fill: parent;
                                 onClicked: { gridView.currentIndex = index; }
@@ -216,13 +213,14 @@ Rectangle {
                             // Decorations
                             Rectangle {
                                 id: imageTopAccent;
+                                anchors.horizontalCenter: gridItemImage.horizontalCenter;
                                 y: gridItemImage.y + ( gridItemImage.height - gridItemImage.paintedHeight );
                                 width: gridItemImage.paintedWidth;
-                                anchors.horizontalCenter: gridItemImage.horizontalCenter;
                                 height: 1;
-                                opacity: 0.3;
+                                opacity: 0.35;
                                 color: "white";
                             }
+
                         }
                     }
 
@@ -230,7 +228,7 @@ Rectangle {
                     Label {
                         id: titleText;
                         text: title;
-                        color: index === gridView.currentIndex ? PhxTheme.common.highlighterFontColor : PhxTheme.common.baseFontColor;
+                        color: PhxTheme.common.highlighterFontColor;
                         Layout.fillWidth: true;
                         elide: Text.ElideRight;
                         font { pixelSize: 12; bold: true; }

@@ -27,7 +27,7 @@ Rectangle {
         id: mediaButtonsRow;
         anchors.fill: parent;
         spacing: 0;
-        Rectangle { anchors { top: parent.top; bottom: parent.bottom; } color: "transparent"; width: 13; } // DO NOT remove this
+        Rectangle { anchors { top: parent.top; bottom: parent.bottom; } color: "transparent"; width: 13; } // DO NOT remove this - Separator
 
         // Play - Pause
         Rectangle {
