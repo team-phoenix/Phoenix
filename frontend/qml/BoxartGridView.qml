@@ -158,10 +158,16 @@ Rectangle {
 
                             Rectangle {
                                 id: imageBackground;
-                                anchors { top: parent.top; topMargin: 1; bottom: parent.bottom; bottomMargin: -border.width; left: parent.left; leftMargin: -border.width; right: parent.right; rightMargin: -border.width; }
+                                anchors {
+                                    topMargin: -border.width;
+                                    bottom: parent.bottom; bottomMargin: -border.width;
+                                    leftMargin: -border.width;
+                                    rightMargin: -border.width;
+                                    horizontalCenter: parent.horizontalCenter;
+                                }
                                 z: gridItemImage.z - 1;
-                                height: parent.paintedHeight;
-                                width: parent.paintedWidth;
+                                height: parent.paintedHeight + border.width * 2;
+                                width: parent.paintedWidth + border.width * 2;
                                 border.color: index === gridView.currentIndex ? PhxTheme.common.boxartSelectedBorderColor : PhxTheme.common.boxartNormalBorderColor;
                                 border.width: 4;
                                 color: "transparent";
@@ -169,7 +175,10 @@ Rectangle {
                             }
 
                             RectangularGlow {
-                                anchors.fill: imageBackground;
+                                anchors.bottom: parent.bottom;
+                                anchors.horizontalCenter: parent.horizontalCenter;
+                                height: parent.paintedHeight;
+                                width: parent.paintedWidth;
                                 glowRadius: 8;
                                 spread: .15;
                                 color: "#35000000";
