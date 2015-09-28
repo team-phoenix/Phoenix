@@ -43,13 +43,11 @@ Item {
                 Layout.fillWidth: true;
             }
         }
-        Component {
-            id: gameSuspendedArea;
-            GameSuspendedArea {
-                objectName: "GameSuspendedArea";
-                color: "transparent";
-            }
-        }
 
+        GameSuspendedArea {
+            id: gameSuspendedArea;
+            objectName: "GameSuspendedArea";
+            visible: root.gameViewObject.videoItem.coreState === Core.STATEPAUSED;
+        }
     }
 }

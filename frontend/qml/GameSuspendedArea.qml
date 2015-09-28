@@ -12,12 +12,11 @@ import vg.phoenix.backend 1.0
 // Suspended game section
 Rectangle {
     id: gameSuspendedArea;
+    height: 65;
     color: PhxTheme.common.gameSuspendedBackgroundColor;
     Layout.fillWidth: true;
-    height: 65;
     z: parent.z + 1;
     anchors { bottom: parent.bottom }
-    visible: root.gameViewObject.videoItem.coreState === Core.STATEPAUSED;
 
     Row {
         anchors.fill: parent;
