@@ -4,20 +4,14 @@
 	 viewBox="0 0 32 32" style="enable-background:new 0 0 32 32;" xml:space="preserve">
 <style type="text/css">
 	.st0{display:none;}
-	.st1{display:inline;fill:#A84E4E;}
-	.st2{fill:#FFFFFF;}
-	.st3{display:inline;fill:#FFFFFF;}
+	.st1{display:inline;fill:none;stroke:#000000;stroke-width:2;stroke-miterlimit:10;}
+	.st2{fill:none;stroke:#FFFFFF;stroke-width:2;stroke-miterlimit:10;}
 </style>
-<g id="Capa_2" class="st0">
-	<rect x="6" y="5" class="st1" width="20" height="22"/>
-</g>
-<g id="Capa_3" class="st0">
-</g>
-<g id="Capa_4">
-	<rect x="7.8" y="7" class="st2" width="6.5" height="18"/>
-	<rect x="17.6" y="7" class="st2" width="6.5" height="18"/>
-</g>
 <g id="Capa_1_1_" class="st0">
-	<polygon id="XMLID_1_" class="st3" points="6,27 6,5 26,16 	"/>
+	<line id="XMLID_1_" class="st1" x1="8" y1="8" x2="24" y2="24"/>
+	<line id="XMLID_2_" class="st1" x1="24" y1="8" x2="8" y2="24"/>
+</g>
+<g id="Capa_2">
+	<line class="st2" x1="10" y1="20" x2="22" y2="20"/>
 </g>
 </svg>

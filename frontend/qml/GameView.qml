@@ -74,35 +74,16 @@ Rectangle {
         radius: 64;
     }
 
-    /*
-    // A toggle for the above blur effect... just in case this murders performance
-    MouseArea {
-        anchors.fill: parent;
-        onDoubleClicked: {
-            if( blurEffect.visible ) blurEffect.visible = false;
-            else if( !blurEffect.visible ) blurEffect.visible = true;
-        }
-    }
-    */
-
     // VideoItem serves simultaneously as a video output QML item (consumer) and as a "controller" for the
     // underlying emulation
     Rectangle {
         id: videoItemContainer;
-        anchors {
-            top: parent.top;
-            bottom: parent.bottom;
-            horizontalCenter: parent.horizontalCenter;
-        }
-
+        anchors { top: parent.top; bottom: parent.bottom; horizontalCenter: parent.horizontalCenter; }
         width: height * videoItem.aspectRatio;
-
         color: "black";
         opacity: 0;
 
-        Behavior on opacity {
-            NumberAnimation { duration: 250; }
-        }
+        Behavior on opacity { NumberAnimation { duration: 250; } }
 
         VideoItem {
             id: videoItem;
@@ -141,12 +122,10 @@ Rectangle {
             }
 
             rotation: 180;
-
             inputManager: root.inputManager;
 
             MouseArea {
                 anchors.fill: parent;
-
                 onDoubleClicked: {
                     if ( root.visibility === Window.FullScreen )
                         root.visibility = Window.Windowed;
@@ -159,7 +138,7 @@ Rectangle {
 
     ActionBar {
         id: actionBar;
-        width: 350 ;
+        width: 350;
         anchors { bottom: parent.bottom; horizontalCenter: parent.horizontalCenter; }
     }
 

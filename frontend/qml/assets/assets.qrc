@@ -1,7 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>collections.svg</file>
-        <file>games.png</file>
         <file>settings.svg</file>
         <file>add.svg</file>
         <file>search.svg</file>
@@ -15,5 +14,10 @@
         <file>suspend.svg</file>
         <file>pause.svg</file>
         <file>shutdown.svg</file>
+        <file>games.png</file>
+        <file>volume.svg</file>
+        <file>volumehalf.svg</file>
+        <file>volumemute.svg</file>
+        <file>minimize.svg</file>
     </qresource>
 </RCC>

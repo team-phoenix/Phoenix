@@ -8,8 +8,16 @@ import vg.phoenix.backend 1.0
 import vg.phoenix.themes 1.0
 
 Rectangle {
-    height: 55;
+    id: actionBar;
+    height: 50;
     color: Qt.rgba(0,0,0,0.75);
+
+    //  Volumen Icon changer
+    property string volumeIcon: {
+        if(volumeSlider.value <= 1.0 && volumeSlider.value > 0.5) { volumeIcon: "volume.svg"; }
+        if(volumeSlider.value <= 0.5 && volumeSlider.value > 0.0) { volumeIcon: "volumehalf.svg"; }
+        if(volumeSlider.value == 0)  { volumeIcon: "volumemute.svg"; }
+    }
 
     // actionBar visible only when paused or mouse recently moved and only while not transitioning
     opacity: ( ( ( gameView.coreState === Core.STATEPAUSED ) || ( cursorTimer.running ) )  && ( !layoutStackView.transitioning ) ) ? 1.0 : 0.0;
@@ -23,11 +31,12 @@ Rectangle {
         if( root.width < root.defaultMinWidth ) { root.width = root.defaultMinWidth; }
     }
 
+    // Left-Side
     Row {
         id: mediaButtonsRow;
         anchors.fill: parent;
         spacing: 0;
-        Rectangle { anchors { top: parent.top; bottom: parent.bottom; } color: "transparent"; width: 13; } // DO NOT remove this - Separator
+        Rectangle { anchors { top: parent.top; bottom: parent.bottom; } color: "transparent"; width: 10; } // DO NOT remove this - Separator
 
         // Play - Pause
         Rectangle {
@@ -54,30 +63,61 @@ Rectangle {
                 }
             }
         }
-        // Suspend
-        Rectangle {
-            anchors { top: parent.top; bottom: parent.bottom; }
-            color: "transparent"
-            width: 40;
-
-            Button {
-                anchors.centerIn: parent;
-                width: parent.width;
-                iconName: "Suspend";
-                iconSource: "suspend.svg";
-                style: ButtonStyle { background: Rectangle { color: "transparent"; } }
+        Row {
+            spacing: 0;
+            Rectangle {
+                anchors { top: parent.top; bottom: parent.bottom; }
+                width: 32;
+                color: "transparent"
+                Button {
+                    anchors.centerIn: parent;
+                    width: parent.width;
+                    iconName: "Volume";
+                    iconSource: actionBar.volumeIcon;
+                    style: ButtonStyle { background: Rectangle { color: "transparent"; } }
+                }
+                /* Notworking
+                MouseArea {
+                    anchors.fill: parent;
+                    hoverEnabled: true;
+                    onEntered: {
+                        volumeSlider.visible = !volumeSlider.visible;
+                    }
+                    onExited: {
+                        volumeSlider.opacity = !volumeSlider.visible;
+                    }
+                } */
             }
 
-            MouseArea {
-                anchors.fill: parent;
-                onClicked: {
-                    videoItem.slotPause();
-                    root.disableMouseClicks();
-                    rootMouseArea.hoverEnabled = false;
-                    resetCursor();
-                    resetWindowSize();
-                    layoutStackView.push( mouseDrivenView );
+            Slider {
+                id: volumeSlider;
+                anchors { verticalCenter: parent.verticalCenter; }
+                width: 55;
+                height: actionBar.height;
+                minimumValue: 0;
+                maximumValue: 1;
+                value: maximumValue;
+                stepSize: 0.01;
+                activeFocusOnPress: true;
+                tickmarksEnabled: false;
+                onValueChanged: { videoItem.signalSetVolume(value); }
+
+                style: SliderStyle {
+                    handle: Item {
+                        height: 14;
+                        width: 5;
+                        Rectangle { id: handleRectangle; anchors.fill: parent; color: "white"; }
+                    }
+
+                    groove: Item {
+                        width: control.width;
+                        height: 4;
+                        Rectangle { anchors.fill: parent; color: "#FFFFFF"; opacity: .35; }
+                    }
                 }
+            }
+            move: Transition {
+                NumberAnimation { properties: "y"; duration: 1000 }
             }
         }
 
@@ -120,33 +160,66 @@ Rectangle {
                 }
             }
         }
-
     }
 
-    // Shutdown - Close
-    Rectangle {
+    // Right-Side
+    Row {
+        spacing: 0;
         anchors { top: parent.top; bottom: parent.bottom; right: parent.right; }
-        color: "transparent"
-        width: height;
 
-        Button {
-            anchors.centerIn: parent;
-            width: parent.width;
-            iconName: "Shutdown";
-            iconSource: "shutdown.svg";
-            style: ButtonStyle { background: Rectangle { color: "transparent"; } }
-        }
+        // Suspend - Minimize
+        Rectangle {
+            anchors { top: parent.top; bottom: parent.bottom; }
+            color: "transparent"
+            width: 32;
 
-        MouseArea {
-            anchors.fill: parent;
-            onClicked: {
-                videoItem.slotStop();
-                root.disableMouseClicks();
-                rootMouseArea.hoverEnabled = false;
-                resetCursor();
-                resetWindowSize();
-                layoutStackView.push( mouseDrivenView );
+            Button {
+                anchors.centerIn: parent;
+                width: parent.width;
+                iconName: "Suspend";
+                iconSource: "minimize.svg";
+                style: ButtonStyle { background: Rectangle { color: "transparent"; } }
+            }
+
+            MouseArea {
+                anchors.fill: parent;
+                onClicked: {
+                    videoItem.slotPause();
+                    root.disableMouseClicks();
+                    rootMouseArea.hoverEnabled = false;
+                    resetCursor();
+                    resetWindowSize();
+                    layoutStackView.push( mouseDrivenView );
+                }
             }
         }
+
+        // Shutdown - Close
+        Rectangle {
+            anchors { top: parent.top; bottom: parent.bottom; }
+            color: "transparent"
+            width: 32;
+
+            Button {
+                anchors.centerIn: parent;
+                width: parent.width;
+                iconName: "Shutdown";
+                iconSource: "shutdown.svg";
+                style: ButtonStyle { background: Rectangle { color: "transparent"; } }
+            }
+
+            MouseArea {
+                anchors.fill: parent;
+                onClicked: {
+                    videoItem.slotStop();
+                    root.disableMouseClicks();
+                    rootMouseArea.hoverEnabled = false;
+                    resetCursor();
+                    resetWindowSize();
+                    layoutStackView.push( mouseDrivenView );
+                }
+            }
+        }
+        Rectangle { anchors { top: parent.top; bottom: parent.bottom; } color: "transparent"; width: 18; } // DO NOT remove this - Separator
     }
 }

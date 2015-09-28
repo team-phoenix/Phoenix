@@ -61,10 +61,6 @@ Rectangle {
             }
         }
 
-        Column {
-            anchors { bottom: parent.bottom; left: parent.left; right: parent.right; }
-        }
-
         Row {
             anchors { verticalCenter: parent.verticalCenter; right: parent.right; rightMargin: 30;
             }
@@ -92,8 +88,8 @@ Rectangle {
 
                 style: SliderStyle {
                     handle: Item {
-                        height: 15;
-                        width: 8;
+                        height: 14;
+                        width: 5;
 
                         Rectangle {
                             id: handleRectangle;
@@ -104,7 +100,7 @@ Rectangle {
 
                     groove: Item {
                         width: control.width;
-                        height: 2;
+                        height: 4;
 
                         Rectangle {
                             anchors.fill: parent;

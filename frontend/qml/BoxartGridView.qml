@@ -5,8 +5,8 @@ import QtQuick.Layouts 1.2
 import QtGraphicalEffects 1.0
 
 import vg.phoenix.cache 1.0
-import vg.phoenix.themes 1.0
 import vg.phoenix.backend 1.0
+import vg.phoenix.themes 1.0
 
 Rectangle {
     id: boxartGridBackground;
