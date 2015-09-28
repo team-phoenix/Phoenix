@@ -14,6 +14,9 @@
         <file>InputMappingColumn.qml</file>
         <file>MouseDrivenView.qml</file>
         <file>GameView.qml</file>
-        <file>ActionBar.qml</file>
+        <file>GameActionBar.qml</file>
+        <file>ToolTip.qml</file>
+        <file>ToolTipArea.qml</file>
+        <file>GameSuspendedArea.qml</file>
     </qresource>
 </RCC>

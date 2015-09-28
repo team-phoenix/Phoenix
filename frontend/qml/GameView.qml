@@ -1,22 +1,23 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.4
-import QtQuick.Window 2.0
 import QtGraphicalEffects 1.0
+import QtQuick.Window 2.0
 
 import vg.phoenix.backend 1.0
+import vg.phoenix.themes 1.0
 
 // Without deleting this component after every play session, we run the risk of a memory link from the core pointer not being cleared properly.
 // This issue needs to be fixed.
 
 Rectangle {
     id: gameView;
-    color: "black";
+    color: PhxTheme.common.gameViewBackgroundColor;
 
     // Automatically set by VideoItem, true if a game is loaded and unpaused
     property bool running: videoItem.running;
     property alias coreState: videoItem.coreState;
     property alias loadedGame: videoItem.game;
-    property alias videoRender: videoItem;
+    property alias videoItem: videoItem;
 
     // A small workaround to guarantee that the core and game are loaded in the correct order
     property var coreGamePair: {
@@ -73,35 +74,16 @@ Rectangle {
         radius: 64;
     }
 
-    /*
-    // A toggle for the above blur effect... just in case this murders performance
-    MouseArea {
-        anchors.fill: parent;
-        onDoubleClicked: {
-            if( blurEffect.visible ) blurEffect.visible = false;
-            else if( !blurEffect.visible ) blurEffect.visible = true;
-        }
-    }
-    */
-
     // VideoItem serves simultaneously as a video output QML item (consumer) and as a "controller" for the
     // underlying emulation
     Rectangle {
         id: videoItemContainer;
-        anchors {
-            top: parent.top;
-            bottom: parent.bottom;
-            horizontalCenter: parent.horizontalCenter;
-        }
-
+        anchors { top: parent.top; bottom: parent.bottom; horizontalCenter: parent.horizontalCenter; }
         width: height * videoItem.aspectRatio;
-
         color: "black";
         opacity: 0;
 
-        Behavior on opacity {
-            NumberAnimation { duration: 250; }
-        }
+        Behavior on opacity { NumberAnimation { duration: 250; } }
 
         VideoItem {
             id: videoItem;
@@ -118,6 +100,11 @@ Rectangle {
 
                         // Show the game content
                         videoItemContainer.opacity = 1.0;
+
+                        // Let the window be resized even smaller than the default minimum size according to the aspect ratio
+                        root.minimumWidth = Math.min( root.defaultMinWidth, root.defaultMinWidth / aspectRatio / 2);
+                        root.minimumHeight = Math.min( root.defaultMinHeight, root.defaultMinHeight / aspectRatio / 2);
+
                         break;
                     case Core.STATEFINISHED:
                         resetCursor();
@@ -135,12 +122,10 @@ Rectangle {
             }
 
             rotation: 180;
-
             inputManager: root.inputManager;
 
             MouseArea {
                 anchors.fill: parent;
-
                 onDoubleClicked: {
                     if ( root.visibility === Window.FullScreen )
                         root.visibility = Window.Windowed;
@@ -151,28 +136,10 @@ Rectangle {
         }
     }
 
-    DropShadow {
-        anchors.fill: source;
-        source: actionBar;
-        horizontalOffset: 0;
-        verticalOffset: 0;
-        radius: 8.0;
-        samples: radius * 2;
-        color: "black";
-        transparentBorder: true;
-        opacity: actionBar.opacity;
-    }
-
-    ActionBar {
-        id: actionBar;
-        anchors {
-            bottom: parent.bottom;
-            left: parent.left;
-            right: parent.right;
-            bottomMargin: 50;
-            leftMargin: 100;
-            rightMargin: 100;
-        }
+    GameActionBar {
+        id: gameActionBar;
+        width: 350;
+        anchors { bottom: parent.bottom; horizontalCenter: parent.horizontalCenter; }
     }
 
     // Use the main mouse area to monitor the mouse for movement
@@ -187,15 +154,11 @@ Rectangle {
     property Timer cursorTimer: Timer {
         interval: 1000;
         running: false;
-
-        onTriggered: {
-            rootMouseArea.cursorShape = Qt.BlankCursor;
-        }
+        onTriggered: { rootMouseArea.cursorShape = Qt.BlankCursor; }
     }
 
     // This function will reset the timer when called (which is whenever the mouse is moved)
     function mouseMoved() {
-
         // Reset the timer, show the mouse cursor and action bar (usually when mouse is moved)
         if( gameView.running && rootMouseArea.hoverEnabled ) {
             cursorTimer.restart();
@@ -204,8 +167,6 @@ Rectangle {
     }
 
     function resetCursor() {
-        if( rootMouseArea.cursorShape !== Qt.ArrowCursor )
-            rootMouseArea.cursorShape = Qt.ArrowCursor;
+        if( rootMouseArea.cursorShape !== Qt.ArrowCursor ) rootMouseArea.cursorShape = Qt.ArrowCursor;
     }
-
 }

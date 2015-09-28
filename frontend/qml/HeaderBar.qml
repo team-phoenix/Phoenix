@@ -1,16 +1,16 @@
-import QtQuick 2.3
-import QtQuick.Controls 1.2
+import QtQuick 2.5
+import QtQuick.Controls 1.4
+import QtQuick.Controls.Styles 1.4
 import QtGraphicalEffects 1.0
+import QtQuick.Layouts 1.2
 import QtQuick.Window 2.0
-import QtQuick.Layouts 1.1
-import QtQuick.Controls.Styles 1.1
 
 import vg.phoenix.themes 1.0
 
 Item {
     id: headerBar;
     width: 100
-    height: 62
+    height: 65
 
     property int leftPadding: 12;
     property int rightPadding: 12;
@@ -161,8 +161,8 @@ Item {
             PhxSearchBar {
                 id: searchBar;
                 Layout.fillHeight: true;
-                width: 42;
-                backgroundColor: "transparent";
+                width: 50;
+                backgroundColor: PhxTheme.common.secondaryBackgroundColor;
             }
         }
     }

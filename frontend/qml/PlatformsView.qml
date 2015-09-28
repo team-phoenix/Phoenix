@@ -1,4 +1,4 @@
-import QtQuick 2.4
+import QtQuick 2.5
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
 import QtGraphicalEffects 1.0
@@ -23,34 +23,11 @@ ScrollView {
             //width: listView.currentItem.width;
             //height: listView.currentItem.height;
             anchors.fill: listView.currentItem;
-            anchors.rightMargin: 3;
 
             Rectangle {
                 id: highlighterRectangle;
                 anchors.fill: parent;
-                gradient: PhxTheme.common.normalButtonColor;
-
-                Rectangle {
-                    anchors {
-                        left: parent.left;
-                        top: parent.top;
-                        right: parent.right;
-                    }
-                    height: 1;
-                    color: "white";
-                    opacity: 0.3;
-                }
-
-                Rectangle {
-                    anchors {
-                        left: parent.left;
-                        right: parent.right;
-                        bottom: parent.bottom;
-                    }
-                    height: 1;
-                    opacity: 0.1;
-                    color: "white";
-                }
+                color: PhxTheme.common.normalButtonColor;
             }
         }
 
@@ -65,6 +42,7 @@ ScrollView {
 
             Label {
                 text: qsTr( "Systems" );
+                font.bold: true;
                 anchors {
                     verticalCenter: parent.verticalCenter;
                     left: parent.left;
@@ -98,7 +76,7 @@ ScrollView {
         }
 
         delegate: Item {
-            height: 26;
+            height: 25;
 
             anchors {
                 left: parent.left;
@@ -118,8 +96,7 @@ ScrollView {
                     pixelSize: PhxTheme.selectionArea.basePixelSize;
                 }
 
-                color: index === listView.currentIndex
-                            ? PhxTheme.selectionArea.highlightFontColor : PhxTheme.selectionArea.baseFontColor;
+                color: index === listView.currentIndex ? PhxTheme.selectionArea.highlightFontColor : PhxTheme.selectionArea.baseFontColor;
 
             }
 
@@ -138,7 +115,6 @@ ScrollView {
                     }
                 }
             }
-
         }
     }
 }

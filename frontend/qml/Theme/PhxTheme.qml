@@ -1,39 +1,42 @@
 import QtQuick 2.3
-
 pragma Singleton
 
 QtObject {
-    property color normalFontColor: "#f1f1f1";
+    property color normalFontColor: "#F1F1F1";
 
     property QtObject selectionArea: QtObject {
-        property int basePixelSize: 12;
-        property int headerFontSize: 13;
-        property color baseColor: "#2e0e19";
-        property color baseFontColor: "#d5d5d5" // "#8a8889";
-        property color highlightFontColor: "#ffffff" // "#d5d5d5";
+        property int basePixelSize:        12;
+        property int headerFontSize:       15;
+        property color baseColor:          "#2E0E19";
+        property color baseFontColor:      "#D5D5D5" // "#8A8889";
+        property color highlightFontColor: "#FFFFFF" // "#D5D5D5";
     }
 
     property QtObject common: QtObject {
-        property color baseFontColor: "#adadad";
-        property color highlighterFontColor: "#d5d5d5";
-        property color primaryBackgroundColor: "#202028";
-        property Gradient primaryButtonColor: Gradient {
-            GradientStop { position: 0.0; color: "#e97f54"; }
-            GradientStop { position: 0.3; color: "#d55b4a"; }
-            GradientStop { position: 1.0; color: "#bf333f"; }
-        }
-        property Gradient normalButtonColor: Gradient {
-            GradientStop { position: 0.0; color: "#616274"; }
-            //GradientStop { position: 0.0; color: "#616274"; }
-            GradientStop { position: 1.0; color: "#3e404d"; }
-        }
+        property int menuWidth:               250;
+        property color baseFontColor:        "#ADADAD";
+        property color highlighterFontColor: "#D5D5D5";
 
+        property string backgroundImage: "bg.png";
+
+        property color baseBackgroundColor:      "#43060D";
+        property color primaryBackgroundColor:   "#50000000";
+        property color secondaryBackgroundColor: "#00000000";
+
+        property int suspendedGameFontSize: 13;
+        property color gameSuspendedBackgroundColor:      "#25FFFFFF";
+        property color gameSuspendedHoverBackgroundColor: "#15FFFFFF";
+
+        property color boxartNormalBorderColor:   "#00FFFFFF";
+        property color boxartSelectedBorderColor: "#75FFFFFF";
+
+        property color gameViewBackgroundColor: "black";
+
+        property color normalButtonColor: "#19FFFFFF";
     }
 
     property QtObject bigPictureView: QtObject {
-        property color baseColor: "#1f1f1f";
+        property color baseColor: "#1F1F1F";
         property color highlightColor: "blue";
     }
-
 }
-

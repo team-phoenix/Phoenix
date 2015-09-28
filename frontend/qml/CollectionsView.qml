@@ -1,50 +1,35 @@
-import QtQuick 2.3
-import QtQuick.Controls 1.2
+import QtQuick 2.5
+import QtQuick.Controls 1.4
 
 import vg.phoenix.models 1.0
 import vg.phoenix.themes 1.0
 
 ScrollView {
     width: 100
-    height: 62
+    height: 65
 
     ListView {
         id: listView;
         spacing: 0;
-        model: CollectionsModel {
-            id: collectionsModel;
-        }
+        model: CollectionsModel { id: collectionsModel; }
 
         header: Rectangle {
-            color: "lightyellow";
+            anchors { left: parent.left; right: parent.right; }
+            color: "transparent";
             height: 36;
-
-            anchors {
-                left: parent.left;
-                right: parent.right;
-            }
 
             Text {
                 text: qsTr( "Collections" );
-                anchors {
-                    verticalCenter: parent.verticalCenter;
-                    left: parent.left;
-                    leftMargin: 12;
-                }
-
-                font {
-                    pixelSize: PhxTheme.selectionArea.headerFontSize;
-                    bold: true;
-                }
-
-                color: PhxTheme.common.baseFontColor;
+                anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 12; }
+                font { pixelSize: PhxTheme.selectionArea.headerFontSize; bold: true; }
+                color: PhxTheme.selectionArea.highlightFontColor;
             }
 
             Button {
                 anchors {
                     verticalCenter: parent.verticalCenter;
                     right: parent.right;
-                    rightMargin: 24;
+                    rightMargin: 25;
                 }
 
                 text: qsTr( "Add" );
@@ -56,13 +41,12 @@ ScrollView {
                     listView.currentItem.state = "ADDED";
                 }
             }
-
         }
 
         delegate: Rectangle {
             id: listViewDelegate;
-            color: index % 2 == 0 ? "orange" : "red";
-            height: 24;
+            color: "transparent";
+            height: 25;
 
             states: [
                 State {
@@ -147,11 +131,8 @@ ScrollView {
                     } else {
                         contentArea.contentLibraryModel.setFilter( "collections", "collectionID", collectionID );
                     }
-
                 }
             }
-
         }
     }
 }
-

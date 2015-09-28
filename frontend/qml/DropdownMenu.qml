@@ -1,6 +1,5 @@
-import QtQuick 2.3
+import QtQuick 2.5
 import QtQuick.Window 2.0
-
 
 Window {
     id: dropDown;
@@ -37,4 +36,3 @@ Window {
         }
     }
 }
-

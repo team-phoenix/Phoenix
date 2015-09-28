@@ -1,8 +1,8 @@
-import QtQuick 2.4
-import QtQuick.Layouts 1.1
-import QtQuick.Controls.Styles 1.2
-import QtQuick.Controls 1.2
+import QtQuick 2.5
+import QtQuick.Controls 1.4
+import QtQuick.Controls.Styles 1.4
 import QtGraphicalEffects 1.0
+import QtQuick.Layouts 1.2
 
 import vg.phoenix.backend 1.0
 import vg.phoenix.themes 1.0
@@ -11,6 +11,7 @@ Item {
     id: inputView;
     width: 100
     height: 62
+
 
     property ListModel inputDevicesModel: ListModel {
         ListElement { name: ""; port: 0  }
@@ -230,4 +231,3 @@ Item {
 
     }
 }
-

@@ -1,5 +1,5 @@
-import QtQuick 2.4
-import QtQuick.Controls 1.3
+import QtQuick 2.5
+import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.1
 import QtQuick.Window 2.2
 import QtGraphicalEffects 1.0
@@ -16,8 +16,10 @@ ApplicationWindow {
     title: qsTr("Phoenix");
     color: "black";
 
-    minimumHeight: 480;
-    minimumWidth: 640;
+    property int defaultMinHeight: 540;
+    property int defaultMinWidth: 735;
+    minimumHeight: defaultMinHeight;
+    minimumWidth: defaultMinWidth;
 
     property InputManager inputManager: InputManager { gamepadControlsFrontend: true; }
     property var gameViewObject: null;
@@ -37,7 +39,7 @@ ApplicationWindow {
         hoverEnabled: false;
         propagateComposedEvents: true;
         z: parent.z + 1;
-        acceptedButtons: Qt.AllButtons;
+        acceptedButtons: Qt.NoButton;
     }
 
     StackView {
@@ -132,27 +134,26 @@ ApplicationWindow {
     }
 
     // Debug button to switch between mouse driven and big picture modes
-//    Rectangle {
-//        anchors {
-//            right: parent.right;
-//            top: parent.top;
+    /* Rectangle {
+        anchors {
+            right: parent.right;
+            top: parent.top;
+        }
+        height: 25;
+        width: 25;
+        color: "red"
 
-//        }
-//        height: 25;
-//        width: 25;
-//        color: "red"
-
-//        MouseArea {
-//            anchors.fill: parent;
-//            onClicked: {
-//                if ( layoutStackView.currentItem.objectName === "MouseDrivenView" ) {
-//                    layoutStackView.push( { item: bigPictureView, replace: true } );
-//                } else if ( layoutStackView.currentItem.objectName === "BigPictureView" ) {
-//                    layoutStackView.push( { item: mouseDrivenView, replace: true } );
-//                }
-//            }
-//        }
-//    }
+        MouseArea {
+            anchors.fill: parent;
+            onClicked: {
+                if ( layoutStackView.currentItem.objectName === "MouseDrivenView" ) {
+                    layoutStackView.push( { item: bigPictureView, replace: true } );
+                } else if ( layoutStackView.currentItem.objectName === "BigPictureView" ) {
+                    layoutStackView.push( { item: mouseDrivenView, replace: true } );
+                }
+            }
+        }
+    } */
 
     Component {
         id: bigPictureView;
