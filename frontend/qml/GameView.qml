@@ -136,8 +136,8 @@ Rectangle {
         }
     }
 
-    ActionBar {
-        id: actionBar;
+    GameActionBar {
+        id: gameActionBar;
         width: 350;
         anchors { bottom: parent.bottom; horizontalCenter: parent.horizontalCenter; }
     }
