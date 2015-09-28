@@ -37,6 +37,10 @@ debug/
 
 .*.swp
 
+# Python
+*.pyc
+*.py~
+
 # Phoenix executable
 phoenix.exe
 phoenix

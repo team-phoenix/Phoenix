@@ -17,3 +17,4 @@ notifications:
     channels:
       - "chat.freenode.net#phoenix-dev"
     use_notice: true
+    skip_join: true
