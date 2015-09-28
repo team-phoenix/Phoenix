@@ -10,7 +10,6 @@ import vg.phoenix.themes 1.0
 import vg.phoenix.backend 1.0
 
 Item {
-
     DropArea {
         id: rootDropArea;
         anchors.fill: parent;
@@ -18,11 +17,11 @@ Item {
 
     ColumnLayout {
         anchors.fill: parent;
-         Rectangle {
+        Rectangle {
             anchors.fill: parent;
             color: PhxTheme.common.baseBackgroundColor;
-            Image { smooth: true; source: PhxTheme.common.backgroundImage; }
-         }
+            Image { smooth: true; source: PhxTheme.common.backgroundImage; fillMode: Image.PreserveAspectCrop; }
+        }
 
         RowLayout {
             id: gameSelectionPane;

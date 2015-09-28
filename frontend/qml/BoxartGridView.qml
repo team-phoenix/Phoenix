@@ -156,6 +156,7 @@ Rectangle {
                                 }
                             }
 
+                            // BoxArt Border
                             Rectangle {
                                 id: imageBackground;
                                 anchors {
@@ -169,9 +170,9 @@ Rectangle {
                                 height: parent.paintedHeight + border.width * 2;
                                 width: parent.paintedWidth + border.width * 2;
                                 border.color: index === gridView.currentIndex ? PhxTheme.common.boxartSelectedBorderColor : PhxTheme.common.boxartNormalBorderColor;
-                                border.width: 4;
+                                border.width: 2 + (contentArea.contentSlider.value/50);
                                 color: "transparent";
-                                radius: 2;
+                                radius: 1;
                             }
 
                             RectangularGlow {
@@ -179,7 +180,7 @@ Rectangle {
                                 anchors.horizontalCenter: parent.horizontalCenter;
                                 height: parent.paintedHeight;
                                 width: parent.paintedWidth;
-                                glowRadius: 8;
+                                glowRadius: 8 + (contentArea.contentSlider.value/50);
                                 spread: .15;
                                 color: "#35000000";
                                 cornerRadius: glowRadius;
@@ -240,7 +241,7 @@ Rectangle {
                         color: PhxTheme.common.highlighterFontColor;
                         Layout.fillWidth: true;
                         elide: Text.ElideRight;
-                        font { pixelSize: 12; bold: true; }
+                        font { pixelSize: 10 + (contentArea.contentSlider.value / 100); bold: true; }
                     }
 
                     /*Text {
