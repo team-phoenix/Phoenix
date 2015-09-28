@@ -1,4 +1,4 @@
-[submodule "phoenix-backend"]
+[submodule "backend"]
 	path = backend
 	url = https://github.com/team-phoenix/phoenix-backend
 	branch = master
