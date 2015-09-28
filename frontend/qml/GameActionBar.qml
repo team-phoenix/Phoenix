@@ -104,14 +104,14 @@ Rectangle {
 
                 style: SliderStyle {
                     handle: Item {
-                        height: 14;
-                        width: 5;
+                        height: 12;
+                        width: 4;
                         Rectangle { id: handleRectangle; anchors.fill: parent; color: "white"; }
                     }
 
                     groove: Item {
                         width: control.width;
-                        height: 4;
+                        height: 2;
                         Rectangle { anchors.fill: parent; color: "#FFFFFF"; opacity: .35; }
                     }
                 }

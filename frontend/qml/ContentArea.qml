@@ -29,13 +29,13 @@ Rectangle {
         Rectangle {
             anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 40; }
             color: "transparent";
-            border.width: 2;
+            border.width: 1;
             border.color: "#75FFFFFF";
             width: 250;
-            height: 35;
+            height: 30;
 
             PhxSearchBar {
-                anchors { left: parent.left; leftMargin: 10; }
+                anchors { left: parent.left; leftMargin: 0; }
                 id: searchBar;
                 font.pixelSize: 14;
                 placeholderText: "";
@@ -68,9 +68,9 @@ Rectangle {
 
             Rectangle {
                 anchors { verticalCenter: parent.verticalCenter; }
-                border { width: 2; color: "white"; }
+                border { width: 1; color: "white"; }
                 color: "transparent";
-                height: 10;
+                height: 8;
                 width: height;
             }
 
@@ -79,7 +79,7 @@ Rectangle {
                 anchors { verticalCenter: parent.verticalCenter; }
                 width: 100;
                 height: 30;
-                minimumValue: 150;
+                minimumValue: 200;
                 maximumValue: 400;
                 value: minimumValue;
                 stepSize: 10;
@@ -88,8 +88,8 @@ Rectangle {
 
                 style: SliderStyle {
                     handle: Item {
-                        height: 14;
-                        width: 5;
+                        height: 12;
+                        width: 4;
 
                         Rectangle {
                             id: handleRectangle;
@@ -100,7 +100,7 @@ Rectangle {
 
                     groove: Item {
                         width: control.width;
-                        height: 4;
+                        height: 2;
 
                         Rectangle {
                             anchors.fill: parent;
@@ -115,7 +115,7 @@ Rectangle {
                 anchors { verticalCenter: parent.verticalCenter; }
                 border { width: 2; color: "white"; }
                 color: "transparent";
-                height: 15;
+                height: 12;
                 width: height;
             }
         }
