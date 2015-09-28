@@ -30,7 +30,7 @@ QtObject {
         property color boxartNormalBorderColor:   "#00FFFFFF";
         property color boxartSelectedBorderColor: "#75FFFFFF";
 
-        property color gameViewBackgroundColor: "#1F1F1F";
+        property color gameViewBackgroundColor: "black";
 
         property color normalButtonColor: "#19FFFFFF";
     }
