@@ -230,7 +230,6 @@ Rectangle {
                                 opacity: 0.35;
                                 color: "white";
                             }
-
                         }
                     }
 
@@ -241,7 +240,7 @@ Rectangle {
                         color: PhxTheme.common.highlighterFontColor;
                         Layout.fillWidth: true;
                         elide: Text.ElideRight;
-                        font { pixelSize: 10 + (contentArea.contentSlider.value / 100); bold: true; }
+                        font { pixelSize: 9 + (contentArea.contentSlider.value / 100); bold: true; }
                     }
 
                     /*Text {
