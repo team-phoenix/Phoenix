@@ -222,7 +222,7 @@ Rectangle {
                         color: PhxTheme.common.highlighterFontColor;
                         fontSize: PhxTheme.common.baseFontSize;
                         running: index === gridView.currentIndex || gridItemMouseArea.containsMouse;
-
+                        pixelsPerFrame: contentArea.contentSlider.value / 100;
                     }
 
                     // For debugging the above MarqueeText

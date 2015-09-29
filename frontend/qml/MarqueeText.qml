@@ -20,7 +20,7 @@ Item {
     property color color: "white";
     property int spacing: 20;
     property bool running: false;
-    property double pixelsPerFrame: 2;
+    property double pixelsPerFrame: 1;
 
     property bool finishedAnimating: true;
 
