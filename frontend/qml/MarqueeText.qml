@@ -17,7 +17,7 @@ Item {
     property string text: "Error!";
     property int fontSize: PhxTheme.common.baseFontSize;
     property color color: "white";
-    property int spacing: 50;
+    property int spacing: 20;
     property bool running: false;
     property bool finishedAnimating: true;
 

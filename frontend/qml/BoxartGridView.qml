@@ -218,6 +218,7 @@ Rectangle {
                         Layout.fillWidth: true;
                         height: 20;
                         text: title;
+                        spacing: contentArea.contentSlider.value / 10;
                         color: PhxTheme.common.highlighterFontColor;
                         fontSize: PhxTheme.common.baseFontSize;
                         running: index === gridView.currentIndex || gridItemMouseArea.containsMouse;
