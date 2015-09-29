@@ -33,7 +33,7 @@ Item {
     onNeedsMarqueeAtAllChanged: {
         if( needsMarqueeAtAll ) {
             if( running ) {
-                animationRemainingTime = animationDuration * ( ( text2.x - spacing ) / textWidth );
+                animationRemainingTime = animationDuration * ( text2.x / ( textWidth + spacing ) );
                 if( state === "idle" ) state = "fullLoop";
                 else if( state === "resetLeft" || state === "resetRight" ) state = "partialLoop";
             }
@@ -53,19 +53,19 @@ Item {
         if( needsMarqueeAtAll ) {
             finishedAnimating = false;
             if( running ) {
-                animationRemainingTime = animationDuration * ( ( text2.x - spacing ) / textWidth );
+                animationRemainingTime = animationDuration * ( text2.x / ( textWidth + spacing ) );
                 state = ( state === "idle" ? "fullLoop" : "partialLoop" );
             }
             else {
                 // If text2 is more than halfway through its journey, just finish it
-                if( text2.x < textWidth / 2 ) {
-                    animationRemainingTime = animationDuration * ( ( text2.x - spacing ) / textWidth );
+                if( text2.x < ( textWidth + spacing ) / 2 ) {
+                    animationRemainingTime = animationDuration * ( text2.x / ( textWidth + spacing ) );
                     state = "resetLeft";
                 }
 
                 // Otherwise, retreat!
                 else {
-                    animationElapsedTime = animationDuration * ( 1.0 - ( ( text2.x - spacing ) / textWidth ) );
+                    animationElapsedTime = animationDuration * ( 1.0 - ( text2.x / ( textWidth + spacing ) ) );
                     state = "resetRight";
                 }
             }
@@ -136,8 +136,8 @@ Item {
             to: "resetLeft";
             SequentialAnimation {
                 ParallelAnimation {
-                    PropertyAnimation { target: text1; duration: animationRemainingTime < 0 ? 0 : animationRemainingTime; property: "x"; to: -textWidth - spacing; }
-                    PropertyAnimation { target: text2; duration: animationRemainingTime < 0 ? 0 : animationRemainingTime; property: "x"; to: 0; }
+                    PropertyAnimation { target: text1; easing.type: Easing.OutQuad; duration: animationRemainingTime < 0 ? 0 : animationRemainingTime; property: "x"; to: -textWidth - spacing; }
+                    PropertyAnimation { target: text2; easing.type: Easing.OutQuad; duration: animationRemainingTime < 0 ? 0 : animationRemainingTime; property: "x"; to: 0; }
                 }
                 PropertyAction { target: text1; property: "x"; value: 0; }
                 PropertyAction { target: text2; property: "x"; value: textWidth + spacing; }
@@ -150,8 +150,8 @@ Item {
             to: "resetRight";
             SequentialAnimation {
                 ParallelAnimation {
-                    PropertyAnimation { target: text1; duration: animationElapsedTime < 0 ? 0 : animationElapsedTime; property: "x"; to: 0; }
-                    PropertyAnimation { target: text2; duration: animationElapsedTime < 0 ? 0 : animationElapsedTime; property: "x"; to: textWidth + spacing; }
+                    PropertyAnimation { target: text1; easing.type: Easing.OutQuad; duration: animationElapsedTime < 0 ? 0 : animationElapsedTime; property: "x"; to: 0; }
+                    PropertyAnimation { target: text2; easing.type: Easing.OutQuad; duration: animationElapsedTime < 0 ? 0 : animationElapsedTime; property: "x"; to: textWidth + spacing; }
                 }
                 PropertyAction { target: marqueeTextRoot; property: "finishedAnimating"; value: true; }
             }
