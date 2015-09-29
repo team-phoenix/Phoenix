@@ -79,10 +79,10 @@ Rectangle {
                 anchors { verticalCenter: parent.verticalCenter; }
                 width: 100;
                 height: 30;
-                minimumValue: 200;
-                maximumValue: 400;
-                value: minimumValue;
-                stepSize: 10;
+                minimumValue: 100;
+                maximumValue: 500;
+                value: 200;
+                stepSize: 50;
                 activeFocusOnPress: true;
                 tickmarksEnabled: false;
 

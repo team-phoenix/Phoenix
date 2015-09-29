@@ -12,6 +12,7 @@ Rectangle {
     id: boxartGridBackground;
     DropdownMenu { id: dropDownMenu; }
 
+    // @disable-check M300
     PhxScrollView {
         id: scrollView;
         anchors { fill: parent; topMargin: headerArea.height; }
@@ -19,41 +20,18 @@ Rectangle {
         // The default of 20 just isn't fast enough
         __wheelAreaScrollSpeed: 100;
 
-        /* Top drop shadow
-        Rectangle {
-            opacity: gridView.atYBeginning ? 0.0 : 0.3;
-            z: 100;
-            anchors { top: parent.top; left: parent.left; right: parent.right; }
+        // How much do you add to each grid entry's width so that the sum of the widths of the items in a row match the
+        // GridView's width?
+        // Don't use these two properties, they just create binding loops...
+        // property int numItems: Math.floor( contentItem.width / contentArea.contentSlider.value );
+        // property int addToMarginsTotal: contentItem.width % contentArea.contentSlider.value;
+        property double addToMargins: 0
 
-            height: 25
-            gradient: Gradient {
-                GradientStop { position: 0.0; color: "black" }
-                GradientStop { position: 1.0; color: "transparent" }
-            }
-
-            Behavior on opacity { PropertyAnimation { duration: 200 } }
-        }
-
-        // Bottom drop shadow
-        Rectangle {
-            opacity: gridView.atYEnd ? 0.0 : 0.3;
-            z: 100;
-            anchors { bottom: parent.bottom; left: parent.left; right: parent.right; }
-
-            height: 25;
-            gradient: Gradient {
-                GradientStop { position: 0.0; color: "transparent"; }
-                GradientStop { position: 1.0; color: "black"; }
-            }
-
-            Behavior on opacity { PropertyAnimation { duration: 200; } }
-        }*/
-
-        property int numItems: Math.floor( contentItem.width / contentArea.contentSlider.value );
-        property int addToMarginsTotal: contentItem.width % contentArea.contentSlider.value;
-        property int addToMargins: 0//addToMarginsTotal / numItems;
-        onAddToMarginsChanged: {
-            console.log( addToMargins );
+        Component.onCompleted: {
+            addToMargins = Qt.binding( function() {
+                return contentItem.width % contentArea.contentSlider.value
+                        / Math.floor( contentItem.width / contentArea.contentSlider.value );
+            });
         }
 
         contentItem: GridView {
@@ -63,21 +41,28 @@ Rectangle {
                 leftMargin: searchBar.anchors.leftMargin; rightMargin: leftMargin;
             }
 
+            // Our own custom model, defined in librarymodel.cpp
+            model: libraryModel;
+
             // If the grid's width is less than the maxCellWidth, get
             // the grid to scale the size of the grid items, so that the transition looks really
             // seamless.
+            cellWidth: cellHeight + scrollView.addToMargins;
             cellHeight: contentArea.contentSlider.value;
-            cellWidth: cellHeight;
 
-            Behavior on cellHeight {
-                NumberAnimation { duration: 200; }
-            }
+            // Smoothly animate the cells getting resized by the slider
+            Behavior on cellHeight { NumberAnimation { duration: 200; } }
+            // Behavior on cellWidth { NumberAnimation { duration: 200; } } // FIXME: This looks too awkward to keep (try moving the slider)
 
-            model: libraryModel;
+            // Minimum amount of spacing between grid entries
+            property int itemMargin: 16;
+
+            // FIXME: Initial transition, when set, results in all the items being cramped into the top left corner
+            // Is the model working properly?
 
             // Define some transition animations
-            property Transition transition: Transition { NumberAnimation { properties: "x,y"; duration: 250; } }
-            property Transition transitionX: Transition { NumberAnimation { properties: "x"; duration: 250; } }
+            // property Transition transition: Transition { NumberAnimation { properties: "x,y"; duration: 250; } }
+            // property Transition transitionX: Transition { NumberAnimation { properties: "x"; duration: 250; } }
 
             // add: transition;
             // addDisplaced: transition;
@@ -90,6 +75,7 @@ Rectangle {
 
             // Behavior on contentY { SmoothedAnimation { duration: 250; } }
 
+            // FIXME: Doesn't do anything useful if BoxartGridView gets destroyed and reinstantiated over and over
             // Yes this isn't ideal, but it is a work around for the view resetting back to 0
             // whenever a game is imported.
             /*property real lastY: 0;
@@ -105,16 +91,14 @@ Rectangle {
                     lastY = contentY;
             }*/
 
-            //clip: true
             boundsBehavior: Flickable.StopAtBounds;
 
-            Component.onCompleted: { populate: transitionX; libraryModel.updateCount(); }
-
-            property int itemMargin: 32;
+            Component.onCompleted: { libraryModel.updateCount(); }
 
             delegate: Rectangle {
                 id: gridItem;
-                width: gridView.cellWidth /*+ scrollView.addToMargins*/; height: gridView.cellHeight;
+                width: gridView.cellWidth - scrollView.addToMargins; height: gridView.cellHeight;
+                anchors.rightMargin: scrollView.addToMargins;
                 color: "transparent";
                 // border.color: "black";
                 // border.width: 1;
@@ -123,8 +107,11 @@ Rectangle {
                     spacing: 13;
                     anchors {
                         top: parent.top; bottom: parent.bottom; left: parent.left; right: parent.right;
-                        topMargin: gridView.itemMargin/2; bottomMargin: gridView.itemMargin/2; leftMargin: gridView.itemMargin; rightMargin: gridView.itemMargin;
+                        topMargin: gridView.itemMargin / 2; bottomMargin: gridView.itemMargin / 2;
+                        leftMargin: gridView.itemMargin; rightMargin: gridView.itemMargin;
                     }
+
+                    property alias gridItemMouseArea: gridItemMouseArea;
 
                     Rectangle {
                         id: gridItemImageContainer;
@@ -188,7 +175,9 @@ Rectangle {
                             }
 
                             MouseArea {
+                                id: gridItemMouseArea;
                                 anchors.fill: parent;
+                                hoverEnabled: true;
                                 onClicked: { gridView.currentIndex = index; }
                                 onDoubleClicked: {
 
@@ -220,28 +209,18 @@ Rectangle {
                             // ToolTip Title
                             // ToolTipArea { text: title; tip {  x: 0; y: parent.width + 24; } }
 
-                            // Decorations
-                            Rectangle {
-                                id: imageTopAccent;
-                                anchors.horizontalCenter: gridItemImage.horizontalCenter;
-                                y: gridItemImage.y + ( gridItemImage.height - gridItemImage.paintedHeight );
-                                width: gridItemImage.paintedWidth;
-                                height: 1;
-                                opacity: 0.35;
-                                color: "white";
-                            }
-
                         }
                     }
 
-                    // Games titles
-                    Label {
+                    // A label for the game's title
+                    MarqueeText {
                         id: titleText;
+                        Layout.fillWidth: true;
+                        height: 20;
                         text: title;
                         color: PhxTheme.common.highlighterFontColor;
-                        Layout.fillWidth: true;
-                        elide: Text.ElideRight;
-                        font { pixelSize: 10 + (contentArea.contentSlider.value / 100); bold: true; }
+                        fontSize: PhxTheme.common.baseFontSize;
+                        running: index === gridView.currentIndex || gridItemMouseArea.containsMouse;
                     }
 
                     /*Text {

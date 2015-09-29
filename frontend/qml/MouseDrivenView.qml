@@ -20,25 +20,25 @@ Item {
         Rectangle {
             anchors.fill: parent;
             color: PhxTheme.common.baseBackgroundColor;
-            Image { smooth: true; source: PhxTheme.common.backgroundImage; fillMode: Image.PreserveAspectCrop; }
-        }
+            Image { smooth: true; source: PhxTheme.common.backgroundImage; anchors.fill: parent; fillMode: Image.PreserveAspectCrop; }
+         }
 
         RowLayout {
             id: gameSelectionPane;
-            anchors { fill: parent }
+            anchors { fill: parent; }
             spacing: 0;
             anchors.bottomMargin: root.gameViewObject.videoItem.coreState === Core.STATEPAUSED ? gameSuspendedArea.height : 0;
 
             SelectionArea {
                 id: selectionArea;
-                anchors { top: parent.top; bottom: parent.bottom }
+                anchors { top: parent.top; bottom: parent.bottom; }
                 width: PhxTheme.common.menuWidth;
                 z: contentArea.z + 1;
             }
 
             ContentArea {
                 id: contentArea;
-                anchors { top: parent.top; bottom: parent.bottom }
+                anchors { top: parent.top; bottom: parent.bottom; }
                 Layout.fillWidth: true;
             }
         }

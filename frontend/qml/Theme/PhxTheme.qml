@@ -13,6 +13,7 @@ QtObject {
     }
 
     property QtObject common: QtObject {
+        property int baseFontSize:           12;
         property int menuWidth:               250;
         property color baseFontColor:        "#ADADAD";
         property color highlighterFontColor: "#D5D5D5";
