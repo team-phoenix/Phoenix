@@ -103,6 +103,31 @@ Rectangle {
                 // border.color: "black";
                 // border.width: 1;
 
+                MouseArea {
+                    id: gridItemMouseArea;
+                    anchors.fill: parent;
+                    hoverEnabled: true;
+                    onClicked: { gridView.currentIndex = index; }
+                    onDoubleClicked: {
+
+                        // Prevent user from clicking on anything while the transition occurs
+                        root.disableMouseClicks();
+
+                        // Don't check the mouse until the transition's done
+                        rootMouseArea.hoverEnabled = false;
+
+                        // Let the user know we're thinking!
+                        rootMouseArea.cursorShape = Qt.BusyCursor;
+
+                        // Do the assignment that triggers the game launch
+                        root.gameViewObject.coreGamePair = { "corePath": coreFilePath
+                                                           , "gamePath": absoluteFilePath
+                                                           , "title": title };
+
+                        layoutStackView.pop();
+                    }
+                }
+
                 ColumnLayout {
                     spacing: 13;
                     anchors {
@@ -172,31 +197,6 @@ Rectangle {
                                 color: "#35000000";
                                 cornerRadius: glowRadius;
                                 z: imageBackground.z - 1;
-                            }
-
-                            MouseArea {
-                                id: gridItemMouseArea;
-                                anchors.fill: parent;
-                                hoverEnabled: true;
-                                onClicked: { gridView.currentIndex = index; }
-                                onDoubleClicked: {
-
-                                    // Prevent user from clicking on anything while the transition occurs
-                                    root.disableMouseClicks();
-
-                                    // Don't check the mouse until the transition's done
-                                    rootMouseArea.hoverEnabled = false;
-
-                                    // Let the user know we're thinking!
-                                    rootMouseArea.cursorShape = Qt.BusyCursor;
-
-                                    // Do the assignment that triggers the game launch
-                                    root.gameViewObject.coreGamePair = { "corePath": coreFilePath
-                                                                       , "gamePath": absoluteFilePath
-                                                                       , "title": title };
-
-                                    layoutStackView.pop();
-                                }
                             }
 
                             ImageCacher {
