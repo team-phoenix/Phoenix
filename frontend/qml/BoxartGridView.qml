@@ -221,6 +221,7 @@ Rectangle {
                         color: PhxTheme.common.highlighterFontColor;
                         fontSize: PhxTheme.common.baseFontSize;
                         running: index === gridView.currentIndex || gridItemMouseArea.containsMouse;
+
                     }
 
                     /*Text {

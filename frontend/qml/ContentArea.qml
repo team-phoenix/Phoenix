@@ -1,8 +1,9 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
-import QtGraphicalEffects 1.0
 import QtQuick.Layouts 1.2
+import QtQuick.Window 2.0
+import QtGraphicalEffects 1.0
 
 import vg.phoenix.models 1.0
 import vg.phoenix.themes 1.0
@@ -15,10 +16,15 @@ Rectangle {
     property alias contentStackView: contentAreaStackView;
     property alias contentBoxartGrid: boxArtGridComponent
     property alias contentInputView: inputView;
-
     property alias contentSlider: zoomSlider;
-
     property alias boxartGrid: boxArtGridComponent;
+
+    property string screenIcon: {
+        if ( root.visibility === Window.FullScreen )
+            screenIcon: "window.svg";
+        else if ( root.visibility === Window.Windowed | Window.Maximized )
+            screenIcon: "fullscreen.svg";
+    }
 
     Rectangle {
         id: headerArea;
@@ -30,7 +36,7 @@ Rectangle {
             anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 40; }
             color: "transparent";
             border.width: 1;
-            border.color: "#75FFFFFF";
+            border.color: "#95FFFFFF";
             width: 250;
             height: 30;
 
@@ -52,12 +58,14 @@ Rectangle {
                 }
                 onTextChanged: searchTimer.restart();
             }
-            Image {
+
+            Button {
                 anchors { right: parent.right; rightMargin: 5; verticalCenter: parent.verticalCenter; }
                 width: 20;
                 height: width;
-                fillMode: Image.PreserveAspectFit;
-                source: "search.svg"
+                iconSource: searchBar.text === "" ? "search.svg" : "del.svg"
+                style: ButtonStyle { background: Rectangle { color: "transparent"; } }
+                onClicked: searchBar.text = "";
             }
         }
 
@@ -117,6 +125,27 @@ Rectangle {
                 color: "transparent";
                 height: 12;
                 width: height;
+            }
+
+            // Fullscreen
+            Rectangle {
+                anchors { top: parent.top; bottom: parent.bottom; }
+                color: "transparent";
+                width: 40;
+
+                Button {
+                    anchors.centerIn: parent;
+                    width: parent.width;
+                    iconName: screenIcon;
+                    iconSource: screenIcon;
+                    style: ButtonStyle { background: Rectangle { color: "transparent"; } }
+                    onClicked: {
+                            if ( root.visibility === Window.FullScreen )
+                                root.visibility = Window.Windowed;
+                            else if ( root.visibility === Window.Windowed | Window.Maximized )
+                                root.visibility = Window.FullScreen;
+                    }
+                }
             }
         }
 

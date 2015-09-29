@@ -19,5 +19,8 @@
         <file>volumehalf.svg</file>
         <file>volumemute.svg</file>
         <file>minimize.svg</file>
+        <file>fullscreen.svg</file>
+        <file>del.svg</file>
+        <file>window.svg</file>
     </qresource>
 </RCC>
