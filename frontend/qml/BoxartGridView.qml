@@ -225,6 +225,16 @@ Rectangle {
 
                     }
 
+                    // For debugging the above MarqueeText
+                    // Text {
+                    //     text: titleText.state;
+                    //     anchors.top: titleText.bottom;
+                    //     color: "red";
+                    //     Layout.fillWidth: true;
+                    //     horizontalAlignment: Text.AlignHCenter;
+                    //     elide: Text.ElideRight;
+                    // }
+
                     /*Text {
                         id: platformText;
                         anchors {

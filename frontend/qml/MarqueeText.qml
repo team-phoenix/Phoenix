@@ -14,62 +14,72 @@ Item {
 
     state: "idle";
 
+    // Feel free to change these
     property string text: "Error!";
     property int fontSize: PhxTheme.common.baseFontSize;
     property color color: "white";
     property int spacing: 20;
     property bool running: false;
+    property double pixelsPerFrame: 2;
+
     property bool finishedAnimating: true;
 
-    property double pixelsPerFrame: 2;
-    property double animationDuration: 1 / pixelsPerFrame * 1000 * ( textWidth / 60 );
+    // Updated on demand, not via a property binding
+    property double animationDuration: 0;
     property double animationElapsedTime: 0;
     property double animationRemainingTime: 0;
 
     property double textWidth: text2.contentWidth;
     property bool needsMarqueeAtAll: textWidth > width;
 
+    // Fully re-evaluate everything once we've finished loading
+    Component.onCompleted: handleSituationChanged();
+
     // Handle the changing width of this Item affecting the need to have the marquee text scroll at all
-    onNeedsMarqueeAtAllChanged: {
-        if( needsMarqueeAtAll ) {
-            if( running ) {
-                animationRemainingTime = animationDuration * ( text2.x / ( textWidth + spacing ) );
-                if( state === "idle" ) state = "fullLoop";
-                else if( state === "resetLeft" || state === "resetRight" ) state = "partialLoop";
-            }
-        }
-        else {
-            state = "idle";
-            text1.x = 0;
-            text2.x = Qt.binding( function() {
-                return parent.width + spacing;
-            } );
-        }
-    }
+    onNeedsMarqueeAtAllChanged: handleSituationChanged();
 
     // Handle the situation when the marquee text loses focus and needs to reset back to its elided position
     // ...or gains focus and needs to have its animation begin
-    onRunningChanged: {
-        if( needsMarqueeAtAll ) {
-            finishedAnimating = false;
-            if( running ) {
-                animationRemainingTime = animationDuration * ( text2.x / ( textWidth + spacing ) );
-                state = ( state === "idle" ? "fullLoop" : "partialLoop" );
-            }
-            else {
-                // If text2 is more than halfway through its journey, just finish it
-                if( text2.x < ( textWidth + spacing ) / 2 ) {
-                    animationRemainingTime = animationDuration * ( text2.x / ( textWidth + spacing ) );
-                    state = "resetLeft";
-                }
+    onRunningChanged: handleSituationChanged();
 
-                // Otherwise, retreat!
-                else {
-                    animationElapsedTime = animationDuration * ( 1.0 - ( text2.x / ( textWidth + spacing ) ) );
-                    state = "resetRight";
-                }
-            }
-        }
+    // Deal with either needsMarqueeAtAll or running having changed
+    function handleSituationChanged() {
+        if( needsMarqueeAtAll ) beginAnimation();
+        else endAnimation();
+    }
+
+    // Trigger a state change to begin animation
+    function beginAnimation() {
+        finishedAnimating = false;
+        animationDuration = 1 / pixelsPerFrame * 1000 * ( textWidth / 60 );
+        animationElapsedTime = animationDuration * ( 1.0 - ( text2.x / ( textWidth + spacing ) ) );
+        animationRemainingTime = animationDuration * ( text2.x / ( textWidth + spacing ) );
+
+        // We need to begin animating:
+        if( running )
+            state = ( state === "idle" ? "fullLoop" : "partialLoop" );
+
+        // We need to stop animating:
+
+        // If text2 is more than halfway through its journey, just finish it
+        else if( text2.x < ( textWidth + spacing ) / 2 )
+                state = "resetLeft";
+
+        // Otherwise, retreat!
+        else
+            state = "resetRight";
+
+    }
+
+    // Restore the default position and bindings for the text
+    // State change to idle implicitly stops any running animation
+    function endAnimation() {
+        finishedAnimating = true;
+        state = "idle";
+        text1.x = 0;
+        text2.x = Qt.binding( function() {
+            return needsMarqueeAtAll ? textWidth + spacing : parent.width + spacing;
+        } );
     }
 
     states: [
@@ -160,9 +170,10 @@ Item {
     ]
 
     // This one's always visible
-    Label {
+    Text {
         id: text1;
         width: parent.width;
+        x: 0;
 
         elide: running || !finishedAnimating ? Text.ElideNone : Text.ElideRight;
         horizontalAlignment: needsMarqueeAtAll ? undefined : Text.AlignHCenter;
@@ -175,12 +186,12 @@ Item {
     // This text is only visible when animating
     // Since its elide property is never changed, its contentWidth never changes either, making it perfect for getting
     // the true width of the text (textWidth) at any given time
-    Label {
+    Text {
         id: text2;
         width: parent.width;
 
         // Stay out of the way unless needed
-        x: needsMarqueeAtAll ? textWidth + spacing : parent.width;
+        x: needsMarqueeAtAll ? textWidth + spacing : parent.width + spacing;
 
         text: parent.text;
         color: parent.color;
