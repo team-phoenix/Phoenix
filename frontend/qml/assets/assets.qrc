@@ -22,5 +22,6 @@
         <file>fullscreen.svg</file>
         <file>del.svg</file>
         <file>window.svg</file>
+        <file>bg.svg</file>
     </qresource>
 </RCC>

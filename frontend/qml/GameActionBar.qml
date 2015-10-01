@@ -10,7 +10,9 @@ import vg.phoenix.themes 1.0
 Rectangle {
     id: gameActionBar;
     height: 50;
-    color: Qt.rgba(0,0,0,0.75);
+    color: Qt.rgba(0,0,0,0.65);
+    // radius: height/2;
+    // Image {  smooth: true; source: "bg.svg"; anchors.fill: parent; fillMode: Image.TileHorizontally; verticalAlignment: Image.AlignLeft; }
 
     //  Volumen Icon changer
     property string volumeIcon: {
