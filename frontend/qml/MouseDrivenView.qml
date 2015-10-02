@@ -4,7 +4,6 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.1
 import QtGraphicalEffects 1.0
 
-import vg.phoenix.cache 1.0
 import vg.phoenix.models 1.0
 import vg.phoenix.themes 1.0
 import vg.phoenix.backend 1.0
@@ -18,10 +17,17 @@ Item {
     ColumnLayout {
         anchors.fill: parent;
         Rectangle {
+            id: backgroundBlur;
             anchors.fill: parent;
             color: PhxTheme.common.baseBackgroundColor;
             Image { smooth: true; source: PhxTheme.common.backgroundImage; anchors.fill: parent; fillMode: Image.PreserveAspectCrop; }
          }
+        /* FastBlur {
+            id: blurEffect;
+            anchors.fill: parent;
+            source: backgroundBlur;
+            radius: 1;
+         } */
 
         RowLayout {
             id: gameSelectionPane;

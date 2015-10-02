@@ -20,9 +20,9 @@ QtObject {
 
         property string backgroundImage: "bg.png";
 
-        property color baseBackgroundColor:      "#cc0000";
-        property color primaryBackgroundColor:   "#70000000";
-        property color secondaryBackgroundColor: "#40000000";
+        property color baseBackgroundColor:      "#BC1300";
+        property color primaryBackgroundColor:   "#75000000";
+        property color secondaryBackgroundColor: "#10000000";
 
         property int suspendedGameFontSize: 13;
         property color gameSuspendedBackgroundColor:      "#05FFFFFF";

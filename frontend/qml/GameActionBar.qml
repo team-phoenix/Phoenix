@@ -14,6 +14,8 @@ Rectangle {
     // radius: height/2;
     // Image {  smooth: true; source: "bg.svg"; anchors.fill: parent; fillMode: Image.TileHorizontally; verticalAlignment: Image.AlignLeft; }
 
+    property int volumeValue: 1;
+
     //  Volumen Icon changer
     property string volumeIcon: {
         if(volumeSlider.value <= 1.0 && volumeSlider.value > 0.5) { volumeIcon: "volume.svg"; }
@@ -29,8 +31,8 @@ Rectangle {
     function resetWindowSize() {
         root.minimumWidth = root.defaultMinWidth;
         root.minimumHeight = root.defaultMinHeight;
-        if( root.height < root.defaultMinHeight ) { root.height = root.defaultMinHeight; }
-        if( root.width < root.defaultMinWidth ) { root.width = root.defaultMinWidth; }
+        if(root.height < root.defaultMinHeight) { root.height = root.defaultMinHeight; }
+        if(root.width < root.defaultMinWidth) { root.width = root.defaultMinWidth; }
     }
 
     // Left-Side
@@ -57,20 +59,21 @@ Rectangle {
             MouseArea {
                 anchors.fill: parent;
                 onClicked: {
-                    if ( videoItem.running ) {
-                        videoItem.slotPause();
-                    } else {
-                        videoItem.slotResume();
-                    }
+                    if (videoItem.running) { videoItem.slotPause(); }
+                    else { videoItem.slotResume(); }
                 }
             }
         }
+
         Row {
             spacing: 0;
+
             Rectangle {
+                id: volIcon;
                 anchors { top: parent.top; bottom: parent.bottom; }
                 width: 32;
                 color: "transparent"
+
                 Button {
                     anchors.centerIn: parent;
                     width: parent.width;
@@ -78,6 +81,16 @@ Rectangle {
                     iconSource: gameActionBar.volumeIcon;
                     style: ButtonStyle { background: Rectangle { color: "transparent"; } }
                 }
+
+                MouseArea{
+                    anchors.fill: parent;
+                    hoverEnabled: true;
+                    onClicked: {
+                        if (volumeValue == 1) { volumeValue = 0; }
+                        else { volumeValue = 1; }
+                    }
+                }
+
                 /* Notworking
                 MouseArea {
                     anchors.fill: parent;
@@ -98,7 +111,7 @@ Rectangle {
                 height: gameActionBar.height;
                 minimumValue: 0;
                 maximumValue: 1;
-                value: maximumValue;
+                value: volumeValue;
                 stepSize: 0.01;
                 activeFocusOnPress: true;
                 tickmarksEnabled: false;
@@ -118,9 +131,7 @@ Rectangle {
                     }
                 }
             }
-            move: Transition {
-                NumberAnimation { properties: "y"; duration: 1000 }
-            }
+            move: Transition { NumberAnimation { properties: "y"; duration: 1000 } }
         }
 
         /*/ Settings
@@ -153,12 +164,8 @@ Rectangle {
             MouseArea {
                 anchors.fill: parent;
                 onClicked: {
-                    if( blurEffect.visible ) {
-                        blurEffect.visible = false;
-                    }
-                    else if( !blurEffect.visible ) {
-                        blurEffect.visible = true;
-                    }
+                    if( blurEffect.visible ) { blurEffect.visible = false; }
+                    else if( !blurEffect.visible ) { blurEffect.visible = true; }
                 }
             }
         }
