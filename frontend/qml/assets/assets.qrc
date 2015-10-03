@@ -4,7 +4,6 @@
         <file>settings.svg</file>
         <file>add.svg</file>
         <file>search.svg</file>
-        <file>missingArtwork.png</file>
         <file>playstationController.svg</file>
         <file>phoenix.png</file>
         <file>close.svg</file>
@@ -23,5 +22,6 @@
         <file>del.svg</file>
         <file>window.svg</file>
         <file>bg.svg</file>
+        <file>noartwork.png</file>
     </qresource>
 </RCC>

@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 32 32" style="enable-background:new 0 0 32 32;" xml:space="preserve">
+	 viewBox="-12 14 24 24" style="enable-background:new -12 14 24 24;" xml:space="preserve">
 <style type="text/css">
-	.st0{fill:#FFFFFF;}
+	.st0{display:none;}
+	.st1{display:inline;fill:#FFFFFF;}
+	.st2{fill:#FFFFFF;}
 </style>
-<path id="XMLID_6_" class="st0" d="M28,18v-4h-3.2c-0.2-1-0.6-1.9-1.2-2.8l2.3-2.3l-2.8-2.8l-2.3,2.3C19.9,7.9,19,7.5,18,7.2V4h-4
-	v3.2c-1,0.2-1.9,0.6-2.8,1.2L8.9,6.1L6.1,8.9l2.3,2.3C7.9,12.1,7.5,13,7.2,14H4v4h3.2c0.2,1,0.6,1.9,1.2,2.8l-2.3,2.3l2.8,2.8
-	l2.3-2.3c0.8,0.5,1.8,0.9,2.8,1.2V28h4v-3.2c1-0.2,1.9-0.6,2.8-1.2l2.3,2.3l2.8-2.8l-2.3-2.3c0.5-0.8,0.9-1.8,1.2-2.8H28z M16,21
-	c-2.8,0-5-2.2-5-5s2.2-5,5-5s5,2.2,5,5S18.8,21,16,21z"/>
+<g id="Capa_2" class="st0">
+	<polygon class="st1" points="2,30 -2,30 -2,26 -4,26 -4,30 -8,30 -8,32 -4,32 -4,36 -2,36 -2,32 2,32 	"/>
+</g>
+<path id="XMLID_6_" class="st2" d="M10,27.7v-3.3H7.3c-0.2-0.8-0.5-1.6-1-2.3l1.9-1.9l-2.3-2.3L4,19.7c-0.7-0.4-1.5-0.8-2.3-1V16
+	h-3.3v2.7c-0.8,0.2-1.6,0.5-2.3,1l-1.9-1.9l-2.3,2.3l1.9,1.9c-0.4,0.8-0.8,1.5-1,2.3H-10v3.3h2.7c0.2,0.8,0.5,1.6,1,2.3l-1.9,1.9
+	l2.3,2.3l1.9-1.9c0.7,0.4,1.5,0.8,2.3,1V36h3.3v-2.7c0.8-0.2,1.6-0.5,2.3-1l1.9,1.9l2.3-2.3L6.3,30c0.4-0.7,0.7-1.5,1-2.3H10z
+	 M0,30.2c-2.3,0-4.2-1.8-4.2-4.2s1.8-4.2,4.2-4.2s4.2,1.8,4.2,4.2S2.3,30.2,0,30.2z"/>
 </svg>

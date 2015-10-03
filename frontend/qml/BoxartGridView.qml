@@ -147,19 +147,18 @@ Rectangle {
                         Image {
                             id: gridItemImage;
                             height: parent.height;
-                            anchors { left: parent.left; right: parent.right; bottom: parent.bottom; }
+                            anchors { top: parent.top; left: parent.left; right: parent.right; bottom: parent.bottom; leftMargin: -1; }
                             visible: true;
                             asynchronous: true;
-
-                            source: imageCacher.cachedUrl == "" ? "missingArtwork.png" : imageCacher.cachedUrl;
-                            sourceSize { width: 400; height: 400; }
+                            source: imageCacher.cachedUrl == "" ? "noartwork.png" : imageCacher.cachedUrl;
+                            sourceSize { width: 450; height: 450; }
                             verticalAlignment: Image.AlignBottom;
                             fillMode: Image.PreserveAspectFit;
 
                             onStatusChanged: {
                                 if ( status == Image.Error ) {
                                     console.log( "Error in " + source );
-                                    gridItemImage.source = "missingArtwork.png";
+                                    gridItemImage.source = "noartwork.png";
                                 }
 
                                 // This is not triggered when source is an empty string
@@ -168,16 +167,11 @@ Rectangle {
                                 }
                             }
 
-                            // BoxArt Border
+                            // BoxArt Outer Border
                             Rectangle {
+                                anchors.verticalCenter: parent.verticalCenter;
+                                anchors.horizontalCenter: parent.horizontalCenter;
                                 id: imageBackground;
-                                anchors {
-                                    topMargin: -border.width;
-                                    bottom: parent.bottom; bottomMargin: -border.width;
-                                    leftMargin: -border.width;
-                                    rightMargin: -border.width;
-                                    horizontalCenter: parent.horizontalCenter;
-                                }
                                 z: gridItemImage.z - 1;
                                 height: parent.paintedHeight + border.width * 2;
                                 width: parent.paintedWidth + border.width * 2;
@@ -187,14 +181,15 @@ Rectangle {
                                 radius: 1;
                             }
 
+                            // BoxArt Shadow
                             RectangularGlow {
                                 anchors.bottom: parent.bottom;
                                 anchors.horizontalCenter: parent.horizontalCenter;
                                 height: parent.paintedHeight;
                                 width: parent.paintedWidth;
-                                glowRadius: 8 + (contentArea.contentSlider.value/50);
-                                spread: .15;
-                                color: "#35000000";
+                                glowRadius: 1+(contentArea.contentSlider.value/50);
+                                spread: .1;
+                                color: "#50000000";
                                 cornerRadius: glowRadius;
                                 z: imageBackground.z - 1;
                             }

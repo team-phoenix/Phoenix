@@ -123,10 +123,11 @@ Item {
                 orientation: ListView.Horizontal;
 
                 model: ListModel {
-                    ListElement { bgColor: "white"; label: "Add Games"; imageSource: "add.svg"; }
-                    ListElement { bgColor: "white"; label: "Favorites"; imageSource: "collections.svg"; }
+
                     ListElement { bgColor: "white"; label: "Games"; imageSource: "games.svg"; }
+                    ListElement { bgColor: "white"; label: "Favorites"; imageSource: "collections.svg"; }
                     ListElement { bgColor: "white"; label: "Settings"; imageSource: "settings.svg"; }
+                    ListElement { bgColor: "white"; label: "Add Games"; imageSource: "add.svg"; }
                 }
 
                 FileDialog {
@@ -167,8 +168,14 @@ Item {
                         onClicked: {
                             switch( index ) {
                             case 0:
-                                fileDialog.open();
+                                if ( sectionsAreaStackView.currentItem.objectName !== "PlatformsView" ) {
+                                    sectionsAreaStackView.push( { item: platformsView, replace: true } );
+                                    if( contentArea.contentStackView.currentItem.objectName !== "BoxartGridView") {
+                                        contentArea.contentStackView.push( { item: contentArea.contentBoxartGrid, replace: true } );
+                                    }
+                                }
                                 break;
+
                             case 1:
                                 if ( sectionsAreaStackView.currentItem.objectName !== "CollectionsView" ) {
                                     sectionsAreaStackView.push( { item: favoritesView, replace: true } );
@@ -177,15 +184,8 @@ Item {
                                     }
                                 }
                                 break;
-                            case 2:
-                                if ( sectionsAreaStackView.currentItem.objectName !== "PlatformsView" ) {
-                                    sectionsAreaStackView.push( { item: platformsView, replace: true } );
-                                    if( contentArea.contentStackView.currentItem.objectName !== "BoxartGridView") {
-                                        contentArea.contentStackView.push( { item: contentArea.contentBoxartGrid, replace: true } );
-                                    }
-                                }
-                                break;
-                            case 3:
+
+                            case 2:                                
                                 if ( sectionsAreaStackView.currentItem.objectName !== "SettingsView" ) {
                                     sectionsAreaStackView.push( { item: settingsView, replace: true } );
                                     if( contentArea.contentStackView.currentItem.objectName !== "InputView") {
@@ -193,6 +193,11 @@ Item {
                                     }
                                 }
                                 break;
+
+                            case 3:
+                                fileDialog.open();
+                                break;
+
                             default:
                                 break;
                             }

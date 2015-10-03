@@ -92,7 +92,7 @@ Rectangle {
                 width: 100;
                 height: 30;
                 minimumValue: 150;
-                maximumValue: 500;
+                maximumValue: 450;
                 value: 150;
                 stepSize: 50;
                 activeFocusOnPress: true;
