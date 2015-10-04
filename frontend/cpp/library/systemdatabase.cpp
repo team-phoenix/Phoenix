@@ -4,6 +4,7 @@
 #include <QDir>
 #include <QStandardPaths>
 #include <QApplication>
+#include <QSqlError>
 
 using namespace Library;
 
@@ -43,7 +44,7 @@ void SystemDatabase::open()
 
     db.setDatabaseName( filePath );
     if ( !db.open() ) {
-        qCDebug( "Could not open database SYSTEMS %s", qPrintable( db.lastError().driverText() ) );
+        qCDebug( phxLibrary ) << "Could not open database SYSTEMS " << qPrintable( db.lastError().driverText() );
         return;
     }
     qCDebug( phxLibrary, "Opening library database %s", qPrintable( db.databaseName() ) );
