@@ -69,18 +69,25 @@ linux {
     DEST_FOLDER = .local/share/Phoenix/
     OPENVGDB_SOURCE = $${PWD}/metadata/openvgdb.sqlite
 
-    DIR_CREATED = $$system(mkdir $$DEST_FOLDER)
+    DIR_CREATED = $$system(mkdir $HOME/$$DEST_FOLDER)
     CP_SYS_DB = $$system(cp $${PWD}/database/systems.db $HOME/$$DEST_FOLDER/systems.db)
     CP_VG_DB = $$system(cp $$OPENVGDB_SOURCE $HOME/$$DEST_FOLDER/openvgdb.sqlite)
 }
 
 macx {
-        depends.files += $${PWD}/metadata/openvgdb.sqlite
-        depends.files += $${PWD}/database/systems.db
-        depends.path = Contents/MacOS
-        QMAKE_BUNDLE_DATA += depends
-        QMAKE_MAC_SDK = macosx10.11
-        ICON = ../phoenix.icns
+    DEST_FOLDER = .local/share/Phoenix/
+    OPENVGDB_SOURCE = $${PWD}/metadata/openvgdb.sqlite
+
+    DIR_CREATED = $$system(mkdir $HOME/$$DEST_FOLDER)
+    CP_SYS_DB = $$system(cp $${PWD}/database/systems.db $HOME/$$DEST_FOLDER/systems.db)
+    CP_VG_DB = $$system(cp $$OPENVGDB_SOURCE $HOME/$$DEST_FOLDER/openvgdb.sqlite)
+
+    #depends.files += $${PWD}/metadata/openvgdb.sqlite
+    #depends.files += $${PWD}/database/systems.db
+    #depends.path = Contents/MacOS
+    #QMAKE_BUNDLE_DATA += depends
+    QMAKE_MAC_SDK = macosx10.11
+    ICON = ../phoenix.icns
 }
 
 INCLUDEPATH += cpp/library

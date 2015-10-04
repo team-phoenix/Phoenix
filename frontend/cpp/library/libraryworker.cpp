@@ -315,7 +315,7 @@ void LibraryWorker::prepareMetadata( GameData &gameData ) {
 
     if( !query.exec() ) {
         qCWarning( phxLibrary ) << "Metadata fetch romID error: "
-                                << query.lastError().text();
+                                << query.lastError().text() << query.executedQuery();
         return;
     }
 

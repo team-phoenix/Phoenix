@@ -17,10 +17,9 @@ const QString MetaDataDatabase::tableRegions = QStringLiteral( "REGIONS" );
 
 void MetaDataDatabase::open() {
 
-    auto currentDir = QDir::current().path();
-
     auto db = QSqlDatabase::addDatabase( QStringLiteral( "QSQLITE" ), QStringLiteral( "METADATA" ) );
 
+    //#######################
     QString dataPathStr = QStandardPaths::writableLocation( QStandardPaths::GenericDataLocation );
     Q_ASSERT( !dataPathStr.isEmpty() );
 
@@ -33,7 +32,11 @@ void MetaDataDatabase::open() {
 
     Q_ASSERT( dataPath.cd( appname ) );
 
-    db.setDatabaseName( currentDir + QDir::separator() + QStringLiteral( "openvgdb.sqlite" ) );
+    auto databaseName = QStringLiteral( "openvgdb.sqlite" );
+    auto filePath = dataPath.filePath( databaseName );
+
+    db.setDatabaseName( filePath );
+    //#######################
 
     if( !db.open() ) {
         qFatal( "Could not open database METADATA %s",
