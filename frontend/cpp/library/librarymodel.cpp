@@ -343,13 +343,13 @@ void LibraryModel::handleInsertGame( const GameData importData ) {
 
     static const auto statement = QStringLiteral( "INSERT OR IGNORE INTO " )
                                   + LibraryInternalDatabase::tableName
-                                  + QStringLiteral( " (title, system, absoluteFilePath, timePlayed, sha1, artworkUrl, coreFilePath) " )
-                                  + QStringLiteral( "VALUES (?,?,?,?,?,?,?)" );
+                                  + QStringLiteral( " (title, system, absoluteFilePath, timePlayed, sha1, artworkUrl) " )
+                                  + QStringLiteral( "VALUES (?,?,?,?,?,?)" );
 
 
     if( insertCancelled() ) {
         setProgress( 0.0 );
-        setMessage( "" );
+        setMessage( QStringLiteral( "" ) );
         database().rollback();
         return;
     }
@@ -380,7 +380,6 @@ void LibraryModel::handleInsertGame( const GameData importData ) {
     query.addBindValue( importData.timePlayed );
     query.addBindValue( importData.sha1 );
     query.addBindValue( importData.artworkUrl );
-    query.addBindValue( importData.coreFilePath );
 
     if( !query.exec() ) {
         qDebug() << "SQL Insertion Error: " << query.lastError().text();

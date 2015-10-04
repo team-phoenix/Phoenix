@@ -6,6 +6,8 @@
 #include <QStringList>
 #include <QVariantMap>
 
+#include "systemdatabase.h"
+
 namespace Library {
 
     class PlatformsModel : public QAbstractListModel {
@@ -44,6 +46,7 @@ namespace Library {
 
         private:
             QStringList mPlatformsList;
+            QString mFilePath;
     };
 
 }

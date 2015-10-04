@@ -33,17 +33,13 @@ namespace Library {
             static const QString tableReleases;
             static const QString tableRegions;
 
-            MetaDataDatabase();
 
-            ~MetaDataDatabase();
+            static QSqlDatabase database();
 
-            QSqlDatabase &database();
-
-            void open();
-            void close();
+            static void open();
 
         private:
-            QSqlDatabase db;
+            MetaDataDatabase();
 
     };
 

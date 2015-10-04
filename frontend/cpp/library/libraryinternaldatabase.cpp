@@ -98,7 +98,7 @@ bool LibraryInternalDatabase::createSchema() {
 
 
     // Create Collections Mapping Table
-   qDebug()<< q.exec( QStringLiteral( "CREATE TABLE " ) + LibraryInternalDatabase::tableCollections + QStringLiteral( "(\n" ) +
+    q.exec( QStringLiteral( "CREATE TABLE " ) + LibraryInternalDatabase::tableCollections + QStringLiteral( "(\n" ) +
             QStringLiteral( " collectionID INTEGER PRIMARY KEY AUTOINCREMENT,\n" ) +
             QStringLiteral( " collectionName TEXT UNIQUE NOT NULL\n" ) +
             QStringLiteral( ")" ) );
@@ -107,7 +107,7 @@ bool LibraryInternalDatabase::createSchema() {
 
 
     // Create Collections Table
-    qDebug() << q.exec( QStringLiteral( "CREATE TABLE " ) + LibraryInternalDatabase::tableCollectionMappings + QStringLiteral( "(\n" ) +
+    q.exec( QStringLiteral( "CREATE TABLE " ) + LibraryInternalDatabase::tableCollectionMappings + QStringLiteral( "(\n" ) +
                         QStringLiteral( " collectionID INTEGER,\n" ) +
                         QStringLiteral( " rowIndex INTEGER,\n" )  +
                         QStringLiteral( " FOREIGN KEY (collectionID) REFERENCES " ) + LibraryInternalDatabase::tableCollections +
@@ -118,7 +118,6 @@ bool LibraryInternalDatabase::createSchema() {
 
     q.exec( QStringLiteral( "INSERT INTO " ) + LibraryInternalDatabase::tableCollections
             + QStringLiteral( " (collectionID, collectionName) VALUES (0, 'All')" ) );
-    qDebug() << q.lastQuery() << q.lastError().text();
 
     db.commit();
 

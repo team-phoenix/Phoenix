@@ -11,10 +11,11 @@
 #include "collectionsmodel.h"
 #include "platform.h"
 #include "phxpaths.h"
+#include "systemdatabase.h"
+#include "metadatadatabase.h"
 
 #include <memory.h>
 
-#include "JlCompress.h"
 
 // This is used to get the stack trace behind whatever debug message you want to diagnose
 // Simply change the message string below to whatever you want (partial string matching), set the breakpoint
@@ -82,6 +83,11 @@ int main( int argc, char *argv[] ) {
     QApplication::setApplicationVersion( QStringLiteral( "1.0" ) );
     QApplication::setOrganizationDomain( QStringLiteral( "phoenix.vg" ) );
 
+    // Open connections to the SQL databases.
+    Library::SystemDatabase::open();
+    Library::MetaDataDatabase::open();
+
+    // Create the folders used by Phoenix.
     Library::PhxPaths::CreateAllPaths();
 
     QQmlApplicationEngine engine;

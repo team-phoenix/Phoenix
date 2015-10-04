@@ -10,6 +10,7 @@
 
 #include "metadatadatabase.h"
 #include "platform.h"
+#include "systemdatabase.h"
 
 namespace Library {
 
@@ -29,11 +30,20 @@ namespace Library {
         QString genre;
         QString description;
 
-        QString coreName;
-        QString coreFilePath;
-
         bool updated = false;
         qint64 fileID;
+    };
+
+    struct HeaderData {
+        QString result;
+        QString systemIndex;
+        qint64 seekPosition;
+        qint64 byteLength;
+    };
+
+    struct CueData {
+        QString system;
+        QString sha1;
     };
 
     class LibraryWorker : public QObject {
@@ -96,17 +106,21 @@ namespace Library {
             QString mResumeInsertID;
             QString mResumeDirectory;
 
-            MetaDataDatabase mMetaDatabase;
-
             // Setters
             void setIsRunning( const bool running );
 
             // Helper Functions
             void checkHeaderOffsets( const QFileInfo &fileInfo, Platform::Platforms &platform );
-            bool getCueFileInfo( QFileInfo &fileInfo );
-            QString getCheckSum( const QString filePath );
-            bool isBios( const QString &hex, QString &biosName );
+            QStringList getCueFileInfo( const QFileInfo &fileInfo );
+            QString getCheckSum( const QString &filePath );
+            bool checkForBios( const QString &filePath, const QString &checkSum, QSqlQuery &query );
+
             void cacheBiosFile( const QString &filePath, const QString &biosName );
+            QStringList getAvailableSystems( const QString &extension, QSqlQuery &query );
+            QList<HeaderData> getPossibleHeaders( const QStringList &possibleSystems, QSqlQuery &query );
+            QString getRealSystem( const QList<HeaderData> &possibleHeaders, const QString &gameFilePath, QSqlQuery &query );
+            CueData getCueData( const QStringList &possibleSystems, const QFileInfo &fileInfo, QSqlQuery &query );
+
     };
 
 }

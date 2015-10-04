@@ -41,13 +41,14 @@ win32 {
         depends.path = $$OUT_PWD
         depends.files += C:/msys64/mingw64/bin/SDL2.dll
         depends.files += $${PWD}/metadata/openvgdb.sqlite
-
+        depends.files += $${PWD}/database/systems.db
     }
 
     CONFIG(release, debug|release) {
         depends.path = $$OUT_PWD
         depends.files += C:/msys64/mingw64/bin/SDL2.dll
         depends.files += $${PWD}/metadata/openvgdb.sqlite
+        depends.files += $${PWD}/database/systems.db
     }
 
     INSTALLS += depends
@@ -65,23 +66,17 @@ else {
 
 linux {
 
-    CONFIG( debug, debug|release )  {
-        depends.path = $$OUT_PWD/debug
-        depends.files += $${PWD}/metadata/openvgdb.sqlite
-    }
+    DEST_FOLDER = .local/share/Phoenix/
+    OPENVGDB_SOURCE = $${PWD}/metadata/openvgdb.sqlite
 
-
-    CONFIG(release, debug|release) {
-        depends.path = $$OUT_PWD/release
-        depends.files += $${PWD}/metadata/openvgdb.sqlite
-    }
-
-    INSTALLS += depends
-
+    DIR_CREATED = $$system(mkdir $$DEST_FOLDER)
+    CP_SYS_DB = $$system(cp $${PWD}/database/systems.db $HOME/$$DEST_FOLDER/systems.db)
+    CP_VG_DB = $$system(cp $$OPENVGDB_SOURCE $HOME/$$DEST_FOLDER/openvgdb.sqlite)
 }
 
 macx {
         depends.files += $${PWD}/metadata/openvgdb.sqlite
+        depends.files += $${PWD}/database/systems.db
         depends.path = Contents/MacOS
         QMAKE_BUNDLE_DATA += depends
         QMAKE_MAC_SDK = macosx10.11
@@ -100,7 +95,8 @@ SOURCES += cpp/main.cpp \
            cpp/library/platformsmodel.cpp \
            cpp/library/phxpaths.cpp \
            cpp/library/collectionsmodel.cpp \
-           cpp/library/platform.cpp
+           cpp/library/platform.cpp \
+    cpp/library/systemdatabase.cpp
 
 HEADERS += cpp/library/librarymodel.h \
            cpp/library/libraryinternaldatabase.h \
@@ -112,7 +108,8 @@ HEADERS += cpp/library/librarymodel.h \
            cpp/library/platformsmodel.h \
            cpp/library/phxpaths.h \
            cpp/library/collectionsmodel.h \
-           cpp/library/platform.h
+           cpp/library/platform.h \
+    cpp/library/systemdatabase.h
 
 # Will build the final executable in the main project directory.
 TARGET = ../Phoenix

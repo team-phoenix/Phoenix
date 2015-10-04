@@ -179,10 +179,7 @@ namespace Library {
             bool qmlInsertPaused;
             bool qmlInsertCancelled;
 
-
             LibraryWorker mLibraryWorker;
-            // Used to find metadata for any game.
-            MetaDataDatabase mMetaDataDatabse;
 
             // QML Variables
             int qmlCount;
