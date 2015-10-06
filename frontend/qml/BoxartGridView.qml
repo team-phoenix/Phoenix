@@ -167,10 +167,9 @@ Rectangle {
                                 }
                             }
 
-                            // BoxArt Outer Border
+                            // BoxArt: Outer Border
                             Rectangle {
-                                anchors.verticalCenter: parent.verticalCenter;
-                                anchors.horizontalCenter: parent.horizontalCenter;
+                                anchors { bottom: parent.bottom; topMargin: -border.width; bottomMargin: -border.width; leftMargin: -border.width; rightMargin: -border.width; horizontalCenter: parent.horizontalCenter; }
                                 id: imageBackground;
                                 z: gridItemImage.z - 1;
                                 height: parent.paintedHeight + border.width * 2;
@@ -178,7 +177,7 @@ Rectangle {
                                 border.color: index === gridView.currentIndex ? PhxTheme.common.boxartSelectedBorderColor : PhxTheme.common.boxartNormalBorderColor;
                                 border.width: 2 + (contentArea.contentSlider.value/50);
                                 color: "transparent";
-                                radius: 1;
+                                radius: 3;
                             }
 
                             // BoxArt Shadow

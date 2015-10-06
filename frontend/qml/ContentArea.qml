@@ -74,8 +74,7 @@ Rectangle {
         }
 
         Row {
-            anchors { verticalCenter: parent.verticalCenter; right: parent.right; rightMargin: 30;
-            }
+            anchors { verticalCenter: parent.verticalCenter; right: parent.right; rightMargin: 30; }
             spacing: 12;
 
             Rectangle {
