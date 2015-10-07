@@ -25,10 +25,7 @@
         <file>systems/nes.svg</file>
         <file>add2.svg</file>
         <file>bg0.png</file>
-        <file>bg1.png</file>
-        <file>bg2.png</file>
-        <file>bg3.png</file>
-        <file>bg4.png</file>
         <file>bg5.png</file>
+        <file>bg1-4.png</file>
     </qresource>
 </RCC>

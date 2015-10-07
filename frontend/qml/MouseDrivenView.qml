@@ -21,10 +21,7 @@ Item {
             anchors.fill: parent;
             color: PhxTheme.common.baseBackgroundColor;
             Image { smooth: true; source: "bg5.png"; anchors.fill: parent; fillMode: Image.Tile; }
-            Image { smooth: true; source: "bg4.png"; anchors.fill: parent; fillMode: Image.PreserveAspectCrop; }
-            Image { smooth: true; source: "bg3.png"; anchors.fill: parent; fillMode: Image.PreserveAspectCrop; }
-            Image { smooth: true; source: "bg2.png"; anchors.fill: parent; fillMode: Image.PreserveAspectCrop; }
-            Image { smooth: true; source: "bg1.png"; anchors.fill: parent; fillMode: Image.PreserveAspectCrop; }
+            Image { smooth: true; source: "bg1-4.png"; anchors.fill: parent; fillMode: Image.PreserveAspectCrop; }
             Image { smooth: true; source: "bg0.png"; anchors.fill: parent; fillMode: Image.Tile; }
          }
          /* FastBlur {
