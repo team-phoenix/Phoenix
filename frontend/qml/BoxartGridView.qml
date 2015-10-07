@@ -25,7 +25,7 @@ Rectangle {
         // Don't use these two properties, they just create binding loops...
         // property int numItems: Math.floor( contentItem.width / contentArea.contentSlider.value );
         // property int addToMarginsTotal: contentItem.width % contentArea.contentSlider.value;
-        property double addToMargins: 0
+        property double addToMargins: 0;
 
         Component.onCompleted: {
             addToMargins = Qt.binding( function() {
@@ -73,23 +73,21 @@ Rectangle {
             // remove: transition;
             // removeDisplaced: transition;
 
-            // Behavior on contentY { SmoothedAnimation { duration: 250; } }
+            Behavior on contentY { SmoothedAnimation { duration: 250; } }
 
-            // FIXME: Doesn't do anything useful if BoxartGridView gets destroyed and reinstantiated over and over
-            // Yes this isn't ideal, but it is a work around for the view resetting back to 0
-            // whenever a game is imported.
-            /*property real lastY: 0;
+            // A work around for the view resetting back to 0 whenever a game is imported
+            property real lastY: 0;
 
             onContentYChanged: {
                 if (contentY == 0) {
-                    console.log( contentY );
+                    // console.log( contentY );
                     if ( Math.round( lastY ) !== 0.0 ) {
                         contentY = lastY;
                     }
                 }
                 else
                     lastY = contentY;
-            }*/
+            }
 
             boundsBehavior: Flickable.StopAtBounds;
 
