@@ -1,5 +1,6 @@
 #include "libraryinternaldatabase.h"
 #include "logging.h"
+#include "phxpaths.h"
 
 #include <QStandardPaths>
 #include <QApplication>
@@ -36,17 +37,10 @@ void LibraryInternalDatabase::open() {
     if( !db.isValid() ) {
         db = QSqlDatabase::addDatabase( QStringLiteral( "QSQLITE" ), QStringLiteral( "LIBRARY" ) );
 
-        QString dataPathStr = QStandardPaths::writableLocation( QStandardPaths::GenericDataLocation );
+        QString dataPathStr = PhxPaths::path( PhxPaths::DatabasesLocation );
         Q_ASSERT( !dataPathStr.isEmpty() );
 
         QDir dataPath( dataPathStr );
-        auto appname = QApplication::applicationName();
-
-        if( !dataPath.exists( appname ) ) {
-            dataPath.mkdir( appname ); // race...
-        }
-
-        Q_ASSERT( dataPath.cd( appname ) );
 
         mFilePath = dataPath.filePath( databaseName );
 

@@ -13,9 +13,10 @@
 #include "phxpaths.h"
 #include "systemdatabase.h"
 #include "metadatadatabase.h"
+#include "gamelauncher.h"
 
 #include <memory.h>
-
+#include <QStringBuilder>
 
 // This is used to get the stack trace behind whatever debug message you want to diagnose
 // Simply change the message string below to whatever you want (partial string matching), set the breakpoint
@@ -83,12 +84,14 @@ int main( int argc, char *argv[] ) {
     QApplication::setApplicationVersion( QStringLiteral( "1.0" ) );
     QApplication::setOrganizationDomain( QStringLiteral( "phoenix.vg" ) );
 
+    // Create the folders used by Phoenix.
+    Library::PhxPaths::createAllPaths();
+
     // Open connections to the SQL databases.
     Library::SystemDatabase::open();
     Library::MetaDataDatabase::open();
 
-    // Create the folders used by Phoenix.
-    Library::PhxPaths::CreateAllPaths();
+
 
     QQmlApplicationEngine engine;
 
@@ -100,11 +103,13 @@ int main( int argc, char *argv[] ) {
     InputManager::registerTypes();
 
     qmlRegisterSingletonType( QUrl( "qrc:/PhxTheme.qml" ), "vg.phoenix.themes", 1, 0, "PhxTheme" );
+
     qmlRegisterType<Library::PlatformsModel>( "vg.phoenix.models", 1, 0, "PlatformsModel" );
     qmlRegisterType<Library::CollectionsModel>( "vg.phoenix.models", 1, 0, "CollectionsModel" );
     qmlRegisterType<Library::LibraryModel>( "vg.phoenix.models", 1, 0, "LibraryModel" );
     qmlRegisterType<Library::ImageCacher>( "vg.phoenix.cache", 1, 0, "ImageCacher" );
     qmlRegisterType<Library::Platform>( "vg.phoenix.models", 1, 0, "Platform" );
+    qmlRegisterType<GameLauncher>( "vg.phoenix.launcher", 1, 0, "GameLauncher" );
 
     qRegisterMetaType<Library::GameData>( "GameData" );
 

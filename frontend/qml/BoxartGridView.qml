@@ -119,12 +119,21 @@ Rectangle {
                         // Let the user know we're thinking!
                         rootMouseArea.cursorShape = Qt.BusyCursor;
 
-                        // Do the assignment that triggers the game launch
-                        root.gameViewObject.coreGamePair = { "corePath": coreFilePath
-                                                           , "gamePath": absoluteFilePath
-                                                           , "title": title };
+                        var core = coreFilePath;
+                        if ( core === "" ) {
+                            core = gameLauncher.getDefaultCore( system )
+                        }
 
-                        layoutStackView.pop();
+                        if ( gameLauncher.verifyGame( core, absoluteFilePath ) ) {
+                            // Do the assignment that triggers the game launch
+                            root.gameViewObject.coreGamePair = { "corePath": core
+                                                               , "gamePath": absoluteFilePath
+                                                               , "title": title };
+
+                            layoutStackView.pop();
+                        }
+
+
                     }
                 }
 

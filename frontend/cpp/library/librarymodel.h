@@ -123,6 +123,7 @@ namespace Library {
                 mWorkerThread.start( QThread::HighPriority );
             }
 
+
         private slots:
 
             // handleInsertGame runs on the main QML thread, and is

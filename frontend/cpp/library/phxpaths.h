@@ -8,13 +8,29 @@ namespace Library {
 
     class PhxPaths {
         public:
+
+            enum Locations {
+                ExecutableLocation,
+                SaveLocation,
+                ArtworkLocation,
+                LibLocation,
+                ShareLocation,
+                BiosLocation,
+                DatabasesLocation,
+            };
+            Q_ENUMS( Locations )
+
+            static QString path( const Locations location );
+
             static QString biosLocation();
-
             static QString saveLocation();
-
             static QString artworkLocation();
+            static QString binLocation();
+            static QString libLocation();
+            static QString shareLocation();
 
-            static void CreateAllPaths();
+            static void createAllPaths();
+
 
         private:
             PhxPaths();
@@ -22,8 +38,10 @@ namespace Library {
             static QString mBiosLocation;
             static QString mSaveLocation;
             static QString mArtworkLocation;
-
-
+            static QString mBinLocation;
+            static QString mLibLocation;
+            static QString mShareLocation;
+            static QString mDatabaseLocation;
     };
 
 }

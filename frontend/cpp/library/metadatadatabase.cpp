@@ -1,5 +1,6 @@
 #include "metadatadatabase.h"
 #include "logging.h"
+#include "phxpaths.h"
 
 #include <QCryptographicHash>
 #include <QFile>
@@ -20,17 +21,10 @@ void MetaDataDatabase::open() {
     auto db = QSqlDatabase::addDatabase( QStringLiteral( "QSQLITE" ), QStringLiteral( "METADATA" ) );
 
     //#######################
-    QString dataPathStr = QStandardPaths::writableLocation( QStandardPaths::GenericDataLocation );
+    QString dataPathStr = PhxPaths::path( PhxPaths::DatabasesLocation );
     Q_ASSERT( !dataPathStr.isEmpty() );
 
     QDir dataPath( dataPathStr );
-    auto appname = QApplication::applicationName();
-
-    if( !dataPath.exists( appname ) ) {
-        dataPath.mkdir( appname ); // race...
-    }
-
-    Q_ASSERT( dataPath.cd( appname ) );
 
     auto databaseName = QStringLiteral( "openvgdb.sqlite" );
     auto filePath = dataPath.filePath( databaseName );

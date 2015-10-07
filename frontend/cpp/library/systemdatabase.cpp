@@ -1,5 +1,6 @@
 #include "systemdatabase.h"
 #include "logging.h"
+#include "phxpaths.h"
 
 #include <QDir>
 #include <QStandardPaths>
@@ -27,17 +28,10 @@ void SystemDatabase::open()
 {
     auto db = QSqlDatabase::addDatabase( QStringLiteral( "QSQLITE" ), QStringLiteral( "SYSTEMS" ) );
 
-    QString dataPathStr = QStandardPaths::writableLocation( QStandardPaths::GenericDataLocation );
+    QString dataPathStr = PhxPaths::path( PhxPaths::DatabasesLocation );
     Q_ASSERT( !dataPathStr.isEmpty() );
 
     QDir dataPath( dataPathStr );
-    auto appname = QApplication::applicationName();
-
-    if( !dataPath.exists( appname ) ) {
-        dataPath.mkdir( appname ); // race...
-    }
-
-    Q_ASSERT( dataPath.cd( appname ) );
 
     auto databaseName = QStringLiteral("systems.db");
     auto filePath = dataPath.filePath( databaseName );
