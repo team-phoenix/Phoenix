@@ -32,6 +32,9 @@ const QString GameLauncher::getDefaultCore( const QString system ) {
 #if defined( Q_OS_LINUX )
     defaultCore = QStringLiteral( "/usr/lib/libretro/" ) % defaultCore % QStringLiteral( ".so" );
 #endif
+#if defined( Q_OS_WIN )
+    defaultCore = QStringLiteral( "C:\\Program Files\\Libretro\\Cores\\" ) % defaultCore % QStringLiteral( ".dll" );
+#endif
 
     return std::move( defaultCore );
 }

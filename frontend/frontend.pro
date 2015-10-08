@@ -83,7 +83,7 @@ SOURCES += cpp/main.cpp \
 
 HEADERS += cpp/library/librarymodel.h \
            cpp/library/libraryinternaldatabase.h \
-my loh           cpp/library/platforms.h \
+           cpp/library/platforms.h \
            cpp/library/metadatadatabase.h \
            cpp/library/libraryworker.h \
            cpp/library/imagecacher.h \

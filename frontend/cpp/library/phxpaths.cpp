@@ -82,8 +82,8 @@ void PhxPaths::createAllPaths() {
         PhxPaths::mShareLocation = QStringLiteral( "/usr/local/share/Phoenix" );
 
     } else {
-        PhxPaths::mLibLocation = PhxPaths::mBinLocation % QDir::separator() % QStringLiteral( "lib" );
-        PhxPaths::mShareLocation = PhxPaths::mBinLocation % QDir::separator() % QStringLiteral( "share" );
+        PhxPaths::mLibLocation = PhxPaths::mBinLocation % QDir::separator() % QStringLiteral( "../lib" );
+        PhxPaths::mShareLocation = PhxPaths::mBinLocation % QDir::separator() % QStringLiteral( "../share" );
     }
 
     PhxPaths::mBiosLocation = PhxPaths::mShareLocation % QDir::separator() % QStringLiteral( "bios" ) % QDir::separator();
