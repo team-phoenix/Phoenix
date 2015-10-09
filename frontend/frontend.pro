@@ -2,7 +2,11 @@ TEMPLATE += app
 
 QT += qml quick widgets sql multimedia network
 
-CONFIG += c++11 lib_bundle
+CONFIG += c++11 lib_bundle phxportable
+
+phxportable {
+    DEFINES += PHX_PORTABLE
+}
 
 # Include externals
 INCLUDEPATH += ../externals/quazip/quazip
@@ -13,6 +17,7 @@ INCLUDEPATH += ../backend ../backend/input
 LIBS += -L../externals/quazip/quazip -lquazip
 LIBS += -L../backend -lphoenix-backend
 LIBS += -lsamplerate -lz
+
 
 # Rebuild/relink if library code changes
 win32:CONFIG(debug, debug|release) {
@@ -37,20 +42,6 @@ win32 {
     DEFINES += SDL_WIN
     INCLUDEPATH += C:/SDL2/include C:/msys64/mingw64/include/SDL2 C:/msys64/mingw32/include/SDL2
 
-    CONFIG(debug, debug|release)  {
-        depends.path = $$OUT_PWD
-        depends.files += C:/msys64/mingw64/bin/SDL2.dll
-        depends.files += $${PWD}/metadata/openvgdb.sqlite
-        depends.files += $${PWD}/database/systems.db
-    }
-
-    CONFIG(release, debug|release) {
-        depends.path = $$OUT_PWD
-        depends.files += C:/msys64/mingw64/bin/SDL2.dll
-        depends.files += $${PWD}/metadata/openvgdb.sqlite
-        depends.files += $${PWD}/database/systems.db
-    }
-
     INSTALLS += depends
     RC_FILE = ../phoenix.rc
 }
@@ -63,7 +54,6 @@ else {
     QMAKE_CXXFLAGS +=
     QMAKE_LFLAGS += -L/usr/local/lib -L/opt/local/lib
 }
-
 
 INCLUDEPATH += cpp/library
 
@@ -79,7 +69,7 @@ SOURCES += cpp/main.cpp \
            cpp/library/collectionsmodel.cpp \
            cpp/library/platform.cpp \
            cpp/library/systemdatabase.cpp \
-    cpp/library/gamelauncher.cpp
+           cpp/library/gamelauncher.cpp
 
 HEADERS += cpp/library/librarymodel.h \
            cpp/library/libraryinternaldatabase.h \
@@ -92,7 +82,7 @@ HEADERS += cpp/library/librarymodel.h \
            cpp/library/collectionsmodel.h \
            cpp/library/platform.h \
            cpp/library/systemdatabase.h \
-    cpp/library/gamelauncher.h
+           cpp/library/gamelauncher.h
 
 # Will build the final executable in the main project directory.
 TARGET = ../Phoenix
@@ -107,3 +97,40 @@ RESOURCES += qml/qml.qrc \
 
 DISTFILES += \
     qml/Theme/qmldir
+
+# Move files into build directories.
+win32|linux {
+    SHARE_FOLDER = $$replace( OUT_PWD, frontend, share )
+    DATABASE_DEST_FOLDER = $$system_path( $$SHARE_FOLDER/databases )
+
+    SOURCE_FOLDER = $${PWD}/databases
+    OPENVGDB_SOURCE = $$PWD/databases/openvgdb.sqlite
+
+    !exists( $$DATABASE_DEST_FOLDER ) {
+        SOURCE_CREATED = $$system( mkdir $$SHARE_FOLDER )
+        DIR_CREATED = $$system( mkdir $$DATABASE_DEST_FOLDER )
+    }
+
+}
+
+win32 {
+    CP_SYS_DB = $$system( copy /y $$SOURCE_FOLDER\systems.db $$DATABASE_DEST_FOLDER\systems.db )
+    CP_VG_DB = $$system( copy /y $$OPENVGDB_SOURCE $$DATABASE_DEST_FOLDER\openvgdb.sqlite )
+
+    SDL_DLL = $$replace( OUT_PWD, frontend, )SDL2.dll
+    CP_SDL_DLL = $$system( copy /y C:/msys64/mingw64/bin/SDL2.dll, $$SDL_DLL )
+}
+
+linux {
+    CP_SYS_DB = $$system(cp -rf $$SOURCE_FOLDER/systems.db $$DATABASE_DEST_FOLDER/systems.db)
+    CP_VG_DB = $$system(cp -rf $$OPENVGDB_SOURCE $$DATABASE_DEST_FOLDER/openvgdb.sqlite)
+}
+
+macx {
+    depends.files += $${PWD}/databases/openvgdb.sqlite
+    depends.files += $${PWD}/databases/systems.db
+    depends.path = Contents/MacOS
+    QMAKE_BUNDLE_DATA += depends
+    QMAKE_MAC_SDK = macosx10.11
+    ICON = ../phoenix.icns
+}

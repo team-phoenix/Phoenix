@@ -91,8 +91,6 @@ int main( int argc, char *argv[] ) {
     Library::SystemDatabase::open();
     Library::MetaDataDatabase::open();
 
-
-
     QQmlApplicationEngine engine;
 
     // Necessary to quit properly

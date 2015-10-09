@@ -77,21 +77,18 @@ void PhxPaths::createAllPaths() {
 
     PhxPaths::mBinLocation = QDir::currentPath();
 
-    if ( QStringLiteral( "/usr/local/bin/Phoenix" ) == PhxPaths::mBinLocation ) {
-        PhxPaths::mLibLocation = QStringLiteral( "/usr/local/lib/Phoenix" );
-        PhxPaths::mShareLocation = QStringLiteral( "/usr/local/share/Phoenix" );
-
-    } else {
-        PhxPaths::mLibLocation = PhxPaths::mBinLocation % QDir::separator() % QStringLiteral( "../lib" );
-        PhxPaths::mShareLocation = PhxPaths::mBinLocation % QDir::separator() % QStringLiteral( "../share" );
-    }
+#if defined( PHX_PORTABLE )
+    PhxPaths::mLibLocation = PhxPaths::mBinLocation % QDir::separator() % QStringLiteral( "lib" );
+    PhxPaths::mShareLocation = PhxPaths::mBinLocation % QDir::separator() % QStringLiteral( "share" );
+#elif defined( PHX_INSTALLED )
+    PhxPaths::mLibLocation = QStringLiteral( "/usr/local/lib/Phoenix" );
+    PhxPaths::mShareLocation = QStringLiteral( "/usr/local/share/Phoenix" );
+#endif
 
     PhxPaths::mBiosLocation = PhxPaths::mShareLocation % QDir::separator() % QStringLiteral( "bios" ) % QDir::separator();
     PhxPaths::mSaveLocation = PhxPaths::mShareLocation % QDir::separator() % QStringLiteral( "saves" ) % QDir::separator();
     PhxPaths::mArtworkLocation = PhxPaths::mShareLocation % QDir::separator() % QStringLiteral( "artwork" ) % QDir::separator();
     PhxPaths::mDatabaseLocation = PhxPaths::mShareLocation % QDir::separator() % QStringLiteral( "databases" ) % QDir::separator();
-
-    qDebug() << PhxPaths::libLocation() << PhxPaths::shareLocation();
 
     QDir biosDir( PhxPaths::mBiosLocation );
     QDir saveDir( PhxPaths::mSaveLocation );
