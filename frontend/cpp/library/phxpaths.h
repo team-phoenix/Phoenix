@@ -39,8 +39,8 @@ namespace Library {
             static QString mSaveLocation;
             static QString mArtworkLocation;
             static QString mBinLocation;
-            static QString mLibLocation;
-            static QString mShareLocation;
+            static QString mCoreLocation;
+            static QString mResourceLocation;
             static QString mDatabaseLocation;
     };
 

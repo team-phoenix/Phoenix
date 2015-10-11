@@ -7,16 +7,14 @@ SUBDIRS += externals/quazip/quazip
 SUBDIRS += backend
 SUBDIRS += frontend
 
-quazip.file = externals/quazip/quazip/quazip.pro
-backend.file = backend/backend.pro
-frontend.file = frontend/frontend.pro
+quazip.subdir = externals/quazip/quazip
+backend.subdir = backend
+frontend.subdir = frontend
 
-CONFIG += ordered
+frontend.depends = backend quazip
 
-# Additional import path used to resolve QML modules in Qt Creator's code model
-QML_IMPORT_PATH =
-
-# Default rules for deployment.
-include(common.pri)
-
-
+# Make portable target available at the topmost Makefile
+portable.CONFIG += recursive
+portable.recurse = $$SUBDIRS
+portable.recursive_target = install-portable
+QMAKE_EXTRA_TARGETS += portable

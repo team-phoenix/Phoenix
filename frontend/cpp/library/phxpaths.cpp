@@ -11,34 +11,42 @@ QString PhxPaths::mBiosLocation = QStringLiteral( "" );
 QString PhxPaths::mSaveLocation = QStringLiteral( "" );
 
 QString PhxPaths::mBinLocation = QStringLiteral( "" );
-QString PhxPaths::mLibLocation = QStringLiteral( "" );
-QString PhxPaths::mShareLocation = QStringLiteral( "" );
+QString PhxPaths::mCoreLocation = QStringLiteral( "" );
+QString PhxPaths::mResourceLocation = QStringLiteral( "" );
 QString PhxPaths::mDatabaseLocation = QStringLiteral( "" );
 
 QString PhxPaths::path( const Locations location ) {
     QString p;
+
     switch( location ) {
         case Locations::ArtworkLocation:
             p = PhxPaths::mArtworkLocation;
             break;
+
         case Locations::DatabasesLocation:
             p = PhxPaths::mDatabaseLocation;
             break;
+
         case Locations::BiosLocation:
             p = PhxPaths::mBiosLocation;
             break;
+
         case Locations::ExecutableLocation:
             p = PhxPaths::mBinLocation;
             break;
+
         case Locations::LibLocation:
-            p = PhxPaths::mLibLocation;
+            p = PhxPaths::mCoreLocation;
             break;
+
         case Locations::SaveLocation:
             p = PhxPaths::mSaveLocation;
             break;
+
         case Locations::ShareLocation:
-            p = PhxPaths::mShareLocation;
+            p = PhxPaths::mResourceLocation;
             break;
+
         default:
             break;
     }
@@ -58,19 +66,16 @@ QString PhxPaths::artworkLocation() {
     return mArtworkLocation;
 }
 
-QString PhxPaths::binLocation()
-{
+QString PhxPaths::binLocation() {
     return mBinLocation;
 }
 
-QString PhxPaths::libLocation()
-{
-    return mLibLocation;
+QString PhxPaths::libLocation() {
+    return mCoreLocation;
 }
 
-QString PhxPaths::shareLocation()
-{
-    return mShareLocation;
+QString PhxPaths::shareLocation() {
+    return mResourceLocation;
 }
 
 void PhxPaths::createAllPaths() {
@@ -78,17 +83,27 @@ void PhxPaths::createAllPaths() {
     PhxPaths::mBinLocation = QDir::currentPath();
 
 #if defined( PHX_PORTABLE )
-    PhxPaths::mLibLocation = PhxPaths::mBinLocation % QDir::separator() % QStringLiteral( "lib" );
-    PhxPaths::mShareLocation = PhxPaths::mBinLocation % QDir::separator() % QStringLiteral( "share" );
+    PhxPaths::mCoreLocation = PhxPaths::mBinLocation % QDir::separator() % QStringLiteral( "lib" );
+    PhxPaths::mResourceLocation = PhxPaths::mBinLocation % QDir::separator() % QStringLiteral( "resources" );
+
 #elif defined( PHX_INSTALLED )
-    PhxPaths::mLibLocation = QStringLiteral( "/usr/local/lib/Phoenix" );
-    PhxPaths::mShareLocation = QStringLiteral( "/usr/local/share/Phoenix" );
+#ifdef Q_OS_WIN32
+    PhxPaths::mCoreLocation = QStringLiteral( "C:/Program Files/Libretro/Cores" );
+#endif
+#ifdef Q_OS_MACX
+    PhxPaths::mCoreLocation = QStringLiteral( "/usr/local/lib/libretro" );
 #endif
 
-    PhxPaths::mBiosLocation = PhxPaths::mShareLocation % QDir::separator() % QStringLiteral( "bios" ) % QDir::separator();
-    PhxPaths::mSaveLocation = PhxPaths::mShareLocation % QDir::separator() % QStringLiteral( "saves" ) % QDir::separator();
-    PhxPaths::mArtworkLocation = PhxPaths::mShareLocation % QDir::separator() % QStringLiteral( "artwork" ) % QDir::separator();
-    PhxPaths::mDatabaseLocation = PhxPaths::mShareLocation % QDir::separator() % QStringLiteral( "databases" ) % QDir::separator();
+#ifdef Q_OS_LINUX
+    PhxPaths::mCoreLocation = QStringLiteral( "/usr/lib/libretro" );
+    PhxPaths::mResourceLocation = QStringLiteral( "/usr/local/share/Phoenix" );
+#endif
+#endif
+
+    PhxPaths::mBiosLocation = PhxPaths::mResourceLocation % QDir::separator() % QStringLiteral( "bios" ) % QDir::separator();
+    PhxPaths::mSaveLocation = PhxPaths::mResourceLocation % QDir::separator() % QStringLiteral( "saves" ) % QDir::separator();
+    PhxPaths::mArtworkLocation = PhxPaths::mResourceLocation % QDir::separator() % QStringLiteral( "artwork" ) % QDir::separator();
+    PhxPaths::mDatabaseLocation = PhxPaths::mResourceLocation % QDir::separator() % QStringLiteral( "databases" ) % QDir::separator();
 
     QDir biosDir( PhxPaths::mBiosLocation );
     QDir saveDir( PhxPaths::mSaveLocation );
@@ -107,7 +122,7 @@ void PhxPaths::createAllPaths() {
         artworkDir.mkpath( PhxPaths::mArtworkLocation );
     }
 
-    if ( !databaseDir.exists() ) {
+    if( !databaseDir.exists() ) {
         databaseDir.mkpath( PhxPaths::mDatabaseLocation );
     }
 

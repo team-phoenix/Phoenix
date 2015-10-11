@@ -33,7 +33,7 @@ void SystemDatabase::open()
 
     QDir dataPath( dataPathStr );
 
-    auto databaseName = QStringLiteral("systems.db");
+    auto databaseName = QStringLiteral("systems.sqlite");
     auto filePath = dataPath.filePath( databaseName );
 
     db.setDatabaseName( filePath );
