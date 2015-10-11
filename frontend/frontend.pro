@@ -1,14 +1,14 @@
-##
-## Targets
-##
+# Targets
 
-
+##
 ## Phoenix executable (default target)
+##
 
 TARGET = Phoenix
 
-
+##
 ## Common
+##
 
 # Get the source and target's path
 # On Windows, the DOS qmake paths must be converted to Unix paths as the GNU coreutils we'll be using expect that
@@ -49,8 +49,9 @@ target.path = "$$PREFIX"
 unix: !macx: target.path = "$$PREFIX/bin"
 INSTALLS += target
 
-
+##
 ## Make sure that the portable file gets made in the build folder
+##
 
 PORTABLE_FILENAME = PHOENIX-PORTABLE
 
@@ -64,39 +65,41 @@ portablefile.extra = rm -f \"$$PREFIX/$$PORTABLE_FILENAME\"
 # Make qmake aware that this target exists
 QMAKE_EXTRA_TARGETS += portablefile
 
-
+##
 ## Portable distribution: Copy just the files needed for a portable build to the given prefix so it can be archived
 ## and distributed
+##
 
-install-portable.depends = first portablefile
+portable.depends = first portablefile
 
 # Make qmake aware that this target exists
-QMAKE_EXTRA_TARGETS += install-portable
-export( install-portable )
-
-!macx {
-    # Phoenix executable and the file that sets it to portable mode
-    install-portable.commands += mkdir -p \"$$PREFIX/\" &\
-                                 cp \"$$TARGET_PATH/$$TARGET\" \"$$PREFIX/$$TARGET\" &\
-                                 cp \"$$TARGET_PATH/$$PORTABLE_FILENAME\" \"$$PREFIX/$$PORTABLE_FILENAME\" &\
-
-    # Windows dependencies
-    win32: install-portable.commands += cp \"/mingw64/bin/SDL2.dll\" \"$$TARGET_PATH/\" &\
-
-    # Metadata databases
-    install-portable.commands += mkdir -p \"$$PREFIX/metadata/\" &\
-                                 cp \"$$TARGET_PATH/metadata/openvgdb.sqlite\" \"$$PREFIX/metadata/openvgdb.sqlite\" &\
-                                 cp \"$$TARGET_PATH/metadata/systems.sqlite\" \"$$PREFIX/metadata/systems.sqlite\"
-}
+QMAKE_EXTRA_TARGETS += portable
 
 # On OS X, just copy the whole .app folder to the prefix
 macx {
-    install-portable.commands = mkdir -p \"$$PREFIX/\" &\
-                                cp -r \"$$TARGET_APP\" \"$$PREFIX/\"
+    portable.commands += mkdir -p \"$$PREFIX/\" &\
+                         cp -R \"$$TARGET_APP\" \"$$PREFIX/\"
 }
 
+# Everywhere else, copy the structure verbatim into the prefix
+!macx {
+    # Phoenix executable and the file that sets it to portable mode
+    portable.commands += mkdir -p \"$$PREFIX/\" &\
+                         cp \"$$TARGET_PATH/$$TARGET\" \"$$PREFIX/$$TARGET\" &\
+                         cp \"$$TARGET_PATH/$$PORTABLE_FILENAME\" \"$$PREFIX/$$PORTABLE_FILENAME\" &\
 
+    # Windows dependencies
+    win32: portable.commands += cp \"/mingw64/bin/SDL2.dll\" \"$$TARGET_PATH/\" &\
+
+    # Metadata databases
+    portable.commands += mkdir -p \"$$PREFIX/metadata/\" &\
+                         cp \"$$TARGET_PATH/metadata/openvgdb.sqlite\" \"$$PREFIX/metadata/openvgdb.sqlite\" &\
+                         cp \"$$TARGET_PATH/metadata/systems.sqlite\" \"$$PREFIX/metadata/systems.sqlite\"
+}
+
+##
 ## Windows dependencies
+##
 
 win32 {
     windep.depends += "C:\msys64\mingw64\bin\SDL2.dll"
@@ -114,8 +117,9 @@ win32 {
     QMAKE_EXTRA_TARGETS += windep
 }
 
-
+##
 ## Metadata database targets
+##
 
 # Ideally these files should come from the build folder, however, qmake will not generate rules for them if they don't
 # already exist
@@ -138,17 +142,22 @@ INSTALLS += metadb
 # Make qmake aware that this target exists
 QMAKE_EXTRA_TARGETS += metadb
 
+##
 ## On OS X, ignore all of the above when it comes to make install and just copy the whole .app folder verbatim
+##
 
 macx {
     macxinstall.path = "$$PREFIX/"
-    macxinstall.extra = cp -r \"$$TARGET_APP\" \"$$PREFIX/\" &\
+    macxinstall.extra = cp -R \"$$TARGET_APP\" \"$$PREFIX/\" &\
                         rm -f \"$$TARGET_PATH/$$PORTABLE_FILENAME\"
 
     # Note the lack of +
     INSTALLS = macxinstall
 }
-# Debugging info
+
+##
+## Debugging info
+##
 
 # win32 {
 #     !build_pass: message( PWD: $$PWD )

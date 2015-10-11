@@ -7,14 +7,11 @@ SUBDIRS += externals/quazip/quazip
 SUBDIRS += backend
 SUBDIRS += frontend
 
-quazip.subdir = externals/quazip/quazip
-backend.subdir = backend
-frontend.subdir = frontend
-
-frontend.depends = backend quazip
+# Ensure that frontend is built last
+frontend.depends = backend externals/quazip/quazip
 
 # Make portable target available at the topmost Makefile
 portable.CONFIG += recursive
 portable.recurse = $$SUBDIRS
-portable.recursive_target = install-portable
+portable.recurse_target = portable
 QMAKE_EXTRA_TARGETS += portable
