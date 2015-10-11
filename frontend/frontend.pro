@@ -24,7 +24,7 @@ win32 {
         TARGET_PATH = $$system( cygpath -u \"$$OUT_PWD/release\" )
     }
 
-    isEmpty( PREFIX ) { PREFIX = $$system( cygpath -u \"$$OUT_PWD\..\Phoenix\" ) }
+    isEmpty( PREFIX ) { PREFIX = $$system( cygpath -u \"$$OUT_PWD\..\Phoenix-dist\" ) }
     else { PREFIX = $$system( cygpath -u \"$$PREFIX\" ) }
     PREFIX_WIN = $$system( cygpath -w \"$$PREFIX\" )
 }
@@ -36,7 +36,7 @@ win32 {
     # On OS X, write directly to within the .app folder as that's where the executable lives
     macx: TARGET_APP = "$$sprintf( "%1/%2.app", $$OUT_PWD, $$TARGET )"
     macx: TARGET_PATH = "$$TARGET_APP/Contents/MacOS"
-    isEmpty( PREFIX ) { PREFIX = $$OUT_PWD/../Phoenix }
+    isEmpty( PREFIX ) { PREFIX = $$OUT_PWD/../Phoenix-dist }
 }
 
 # Force the Phoenix binary to be relinked if the backend code has changed
