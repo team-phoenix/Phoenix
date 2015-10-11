@@ -78,23 +78,23 @@ QMAKE_EXTRA_TARGETS += portable
 # On OS X, just copy the whole .app folder to the prefix
 macx {
     portable.commands += mkdir -p \"$$PREFIX/\" &\
-                         cp -R \"$$TARGET_APP\" \"$$PREFIX/\"
+                         cp -R -f \"$$TARGET_APP\" \"$$PREFIX/\"
 }
 
 # Everywhere else, copy the structure verbatim into the prefix
 !macx {
     # Phoenix executable and the file that sets it to portable mode
     portable.commands += mkdir -p \"$$PREFIX/\" &\
-                         cp \"$$TARGET_PATH/$$TARGET\" \"$$PREFIX/$$TARGET\" &\
-                         cp \"$$TARGET_PATH/$$PORTABLE_FILENAME\" \"$$PREFIX/$$PORTABLE_FILENAME\" &\
+                         cp -f \"$$TARGET_PATH/$$TARGET\" \"$$PREFIX/$$TARGET\" &\
+                         cp -f \"$$TARGET_PATH/$$PORTABLE_FILENAME\" \"$$PREFIX/$$PORTABLE_FILENAME\" &\
 
     # Windows dependencies
     win32: portable.commands += cp \"/mingw64/bin/SDL2.dll\" \"$$TARGET_PATH/\" &\
 
     # Metadata databases
     portable.commands += mkdir -p \"$$PREFIX/metadata/\" &\
-                         cp \"$$TARGET_PATH/metadata/openvgdb.sqlite\" \"$$PREFIX/metadata/openvgdb.sqlite\" &\
-                         cp \"$$TARGET_PATH/metadata/systems.sqlite\" \"$$PREFIX/metadata/systems.sqlite\"
+                         cp -f \"$$TARGET_PATH/metadata/openvgdb.sqlite\" \"$$PREFIX/metadata/openvgdb.sqlite\" &\
+                         cp -f \"$$TARGET_PATH/metadata/systems.sqlite\" \"$$PREFIX/metadata/systems.sqlite\"
 }
 
 ##
@@ -128,8 +128,8 @@ metadb.depends += "$$PWD/metadata/openvgdb.sqlite" \
 
 # For the default target (...and anything that depends on it)
 metadb.commands += mkdir -p \"$$TARGET_PATH/metadata/\" &\
-                   cp \"$$SOURCE_PATH/metadata/openvgdb.sqlite\" \"$$TARGET_PATH/metadata/openvgdb.sqlite\" &\
-                   cp \"$$SOURCE_PATH/metadata/systems.sqlite\" \"$$TARGET_PATH/metadata/systems.sqlite\"
+                   cp -f \"$$SOURCE_PATH/metadata/openvgdb.sqlite\" \"$$TARGET_PATH/metadata/openvgdb.sqlite\" &\
+                   cp -f \"$$SOURCE_PATH/metadata/systems.sqlite\" \"$$TARGET_PATH/metadata/systems.sqlite\"
 POST_TARGETDEPS += metadb
 
 # For make install
