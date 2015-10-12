@@ -56,14 +56,14 @@ void PhxPaths::createAllPaths() {
     bool portableMode = file.exists();
 
     if( portableMode ) {
-        qCDebug( phxLibrary ) << "Portable mode" << portableFilename;
+        qCDebug( phxLibrary ) << "Portable mode";
         PhxPaths::mCoreLocation = PhxPaths::mBinLocation % sep % QStringLiteral( "cores" );
         PhxPaths::mResourceLocation = PhxPaths::mBinLocation;
         PhxPaths::mUserDataLocation = PhxPaths::mBinLocation % sep % QStringLiteral( "userdata" );
     }
 
     else {
-        qCDebug( phxLibrary ) << "Installed mode" << portableFilename;
+        qCDebug( phxLibrary ) << "Installed mode";
 #ifdef Q_OS_WIN32
         PhxPaths::mCoreLocation = QStringLiteral( "C:/Program Files/Libretro/Cores" );
         PhxPaths::mResourceLocation = PhxPaths::mBinLocation;
