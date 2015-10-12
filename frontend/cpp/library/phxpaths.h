@@ -3,13 +3,17 @@
 
 #include <QtCore>
 #include <QtWidgets>
+#include <QtQml>
 
 #include "logging.h"
 
 namespace Library {
 
-    class PhxPaths {
+    class PhxPaths: public QObject {
+        Q_OBJECT
+
         public:
+            explicit PhxPaths( QObject *parent = 0 );
             static QString biosLocation();
             static QString saveLocation();
             static QString artworkLocation();
@@ -19,10 +23,18 @@ namespace Library {
             static QString userDataLocation();
             static QString metadataLocation();
 
+            Q_INVOKABLE QString qmlBiosLocation();
+            Q_INVOKABLE QString qmlSaveLocation();
+            Q_INVOKABLE QString qmlArtworkLocation();
+            Q_INVOKABLE QString qmlBinLocation();
+            Q_INVOKABLE QString qmlCoreLocation();
+            Q_INVOKABLE QString qmlResourceLocation();
+            Q_INVOKABLE QString qmlUserDataLocation();
+            Q_INVOKABLE QString qmlMetadataLocation();
+
             static void createAllPaths();
 
         private:
-            PhxPaths();
 
             static QString mBiosLocation;
             static QString mSaveLocation;
@@ -35,5 +47,7 @@ namespace Library {
     };
 
 }
+
+QObject *PhxPathsSingletonProviderCallback( QQmlEngine *engine, QJSEngine *scriptEngine );
 
 #endif // PHXPATHS_H

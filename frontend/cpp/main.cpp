@@ -107,6 +107,7 @@ int main( int argc, char *argv[] ) {
     qmlRegisterType<Library::LibraryModel>( "vg.phoenix.models", 1, 0, "LibraryModel" );
     qmlRegisterType<Library::ImageCacher>( "vg.phoenix.cache", 1, 0, "ImageCacher" );
     qmlRegisterType<Library::Platform>( "vg.phoenix.models", 1, 0, "Platform" );
+    qmlRegisterSingletonType<Library::PhxPaths>( "vg.phoenix.paths", 1, 0, "PhxPaths", PhxPathsSingletonProviderCallback );
     qmlRegisterType<GameLauncher>( "vg.phoenix.launcher", 1, 0, "GameLauncher" );
 
     qRegisterMetaType<Library::GameData>( "GameData" );

@@ -7,6 +7,7 @@ import QtGraphicalEffects 1.0
 import vg.phoenix.backend 1.0
 import vg.phoenix.themes 1.0
 import vg.phoenix.launcher 1.0
+import vg.phoenix.paths 1.0
 
 ApplicationWindow {
     id: root;
@@ -26,7 +27,10 @@ ApplicationWindow {
         id: gameLauncher;
     }
 
-    property InputManager inputManager: InputManager { gamepadControlsFrontend: true; }
+    property InputManager inputManager: InputManager {
+        controllerDBFile: PhxPaths.qmlUserDataLocation() + "/gamecontrollerdb.txt";
+        gamepadControlsFrontend: true;
+    }
     property var gameViewObject: null;
 
     // Use when transitioning

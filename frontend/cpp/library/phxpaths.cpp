@@ -11,6 +11,10 @@ QString PhxPaths::mResourceLocation = QStringLiteral( "" );
 QString PhxPaths::mUserDataLocation = QStringLiteral( "" );
 QString PhxPaths::mMetadataLocation = QStringLiteral( "" );
 
+PhxPaths::PhxPaths( QObject *parent ): QObject( parent ) {
+    setObjectName( "PhxPaths" );
+}
+
 QString PhxPaths::biosLocation() {
     return mBiosLocation;
 }
@@ -41,6 +45,38 @@ QString PhxPaths::userDataLocation() {
 
 QString PhxPaths::metadataLocation() {
     return mMetadataLocation;
+}
+
+QString PhxPaths::qmlBiosLocation() {
+    return PhxPaths::biosLocation();
+}
+
+QString PhxPaths::qmlSaveLocation() {
+    return PhxPaths::saveLocation();
+}
+
+QString PhxPaths::qmlArtworkLocation() {
+    return PhxPaths::artworkLocation();
+}
+
+QString PhxPaths::qmlBinLocation() {
+    return PhxPaths::binLocation();
+}
+
+QString PhxPaths::qmlCoreLocation() {
+    return PhxPaths::coreLocation();
+}
+
+QString PhxPaths::qmlResourceLocation() {
+    return PhxPaths::resourceLocation();
+}
+
+QString PhxPaths::qmlUserDataLocation() {
+    return PhxPaths::userDataLocation();
+}
+
+QString PhxPaths::qmlMetadataLocation() {
+    return PhxPaths::metadataLocation();
 }
 
 void PhxPaths::createAllPaths() {
@@ -113,4 +149,14 @@ void PhxPaths::createAllPaths() {
         databaseDir.mkpath( PhxPaths::mMetadataLocation );
     }
 
+}
+
+// Instantiate PhxPaths for QML use as a singleton object
+// FIXME: Need to destroy it somehow?
+QObject *PhxPathsSingletonProviderCallback( QQmlEngine *engine, QJSEngine *scriptEngine ) {
+    Q_UNUSED( scriptEngine )
+
+    Library::PhxPaths *phxPaths = new Library::PhxPaths( engine );
+
+    return phxPaths;
 }
