@@ -64,6 +64,7 @@ void PhxPaths::createAllPaths() {
 
     else {
         qCDebug( phxLibrary ) << "Installed mode";
+
 #ifdef Q_OS_WIN32
         PhxPaths::mCoreLocation = QStringLiteral( "C:/Program Files/Libretro/Cores" );
         PhxPaths::mResourceLocation = PhxPaths::mBinLocation;
@@ -75,9 +76,10 @@ void PhxPaths::createAllPaths() {
 
 #ifdef Q_OS_LINUX
         PhxPaths::mCoreLocation = QStringLiteral( "/usr/lib/libretro" );
-        PhxPaths::mResourceLocation = QStringLiteral( "/usr/local/share/Phoenix" );
+        PhxPaths::mResourceLocation = PhxPaths::mBinLocation % sep % QStringLiteral( ".." ) % sep % QStringLiteral( "share/Phoenix" );
 #endif
-        PhxPaths::mUserDataLocation = QStandardPaths::writableLocation( QStandardPaths::GenericDataLocation ) % QApplication::applicationName();
+
+        PhxPaths::mUserDataLocation = QStandardPaths::writableLocation( QStandardPaths::AppLocalDataLocation ) % QApplication::applicationName();
     }
 
     PhxPaths::mBiosLocation = PhxPaths::mResourceLocation % sep % QStringLiteral( "bios" ) % sep;
