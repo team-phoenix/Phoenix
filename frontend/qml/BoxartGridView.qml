@@ -73,7 +73,7 @@ Rectangle {
             // remove: transition;
             // removeDisplaced: transition;
 
-            Behavior on contentY { SmoothedAnimation { duration: 250; } }
+            // Behavior on contentY { SmoothedAnimation { duration: 250; } }
 
             // A work around for the view resetting back to 0 whenever a game is imported
             property real lastY: 0;
