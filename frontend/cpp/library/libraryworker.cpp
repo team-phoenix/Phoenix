@@ -1,16 +1,4 @@
-
 #include "libraryworker.h"
-#include "logging.h"
-#include "platforms.h"
-#include "phxpaths.h"
-
-#include <QThread>
-#include <QDir>
-#include <QCryptographicHash>
-#include <QCoreApplication>
-#include <QSettings>
-#include <QStandardPaths>
-#include <QMutexLocker>
 
 using namespace Library;
 
@@ -79,11 +67,10 @@ void LibraryWorker::handleDroppedUrls() {
     for( auto &url : mDraggedUrls ) {
         auto localUrl = url.toLocalFile();
 
-        if ( QDir( localUrl ).exists() ) {
+        if( QDir( localUrl ).exists() ) {
             findGameFiles( std::move( localUrl ) );
 
-        }
-        else {
+        } else {
             qDebug() << localUrl << "Is a file";
             mFileInfoQueue.enqueue( std::move( QFileInfo( localUrl ) ) );
         }
@@ -244,7 +231,7 @@ void LibraryWorker::prepareGameData( QQueue<QFileInfo> &queue ) {
         // QFileInfo::baseName() seems to split the absoluteFilePath based on periods '.'
         // This causes issue with some game names that use periods.
         gameTitle =  fileInfo.absoluteFilePath().remove(
-                          fileInfo.canonicalPath() ).remove( 0, 1 ).remove( QStringLiteral( "." ) + gameExtension );
+                         fileInfo.canonicalPath() ).remove( 0, 1 ).remove( QStringLiteral( "." ) + gameExtension );
 
 
         auto query = QSqlQuery( SystemDatabase::database() );
@@ -253,30 +240,32 @@ void LibraryWorker::prepareGameData( QQueue<QFileInfo> &queue ) {
 
         auto possibleSystemsList = getAvailableSystems( gameExtension, query );
 
-        if ( QStringLiteral( "cue" ) == gameExtension ) {
+        if( QStringLiteral( "cue" ) == gameExtension ) {
             CueData cueData = getCueData( possibleSystemsList, fileInfo, query );
             gameSystem = cueData.system;
             gameSha1 = cueData.sha1;
-        } else if ( QStringLiteral( "bin" ) == gameExtension ) {
+        } else if( QStringLiteral( "bin" ) == gameExtension ) {
             auto hash = getCheckSum( fileInfo.canonicalFilePath() );
-            if ( checkForBios( fileInfo.canonicalFilePath(), hash, query ) ) {
+
+            if( checkForBios( fileInfo.canonicalFilePath(), hash, query ) ) {
                 continue;
             }
 
             gameSha1 = hash;
 
         } else {
-            if ( possibleSystemsList.size() == 1 ) {
+            if( possibleSystemsList.size() == 1 ) {
                 gameSystem = possibleSystemsList.at( 0 );
             } else {
                 auto possibleHeaders = getPossibleHeaders( possibleSystemsList, query );
                 gameSystem = getRealSystem( possibleHeaders, fileInfo.canonicalFilePath(), query );
             }
+
             gameSha1 = getCheckSum( fileInfo.canonicalFilePath() );
         }
 
-        if ( gameSystem.isEmpty() ) {
-            qCDebug(phxLibrary)  << "The system could not be found, The database needs to be updated for " << fileInfo.canonicalFilePath();
+        if( gameSystem.isEmpty() ) {
+            qCDebug( phxLibrary )  << "The system could not be found, The database needs to be updated for " << fileInfo.canonicalFilePath();
             continue;
         }
 
@@ -334,8 +323,8 @@ void LibraryWorker::prepareMetadata( GameData &gameData ) {
 
         static const QString artworkFetchStatement = QStringLiteral(
                     "SELECT releaseCoverFront, releaseDescription, releaseDeveloper, releaseGenre, releaseDate, regionLocalizedID " )
-                    + QStringLiteral( " FROM " ) + MetaDataDatabase::tableReleases
-                    + QStringLiteral( " WHERE romID = ?" );
+                + QStringLiteral( " FROM " ) + MetaDataDatabase::tableReleases
+                + QStringLiteral( " WHERE romID = ?" );
 
         query.prepare( artworkFetchStatement );
         query.addBindValue( romID );
@@ -386,9 +375,10 @@ bool LibraryWorker::checkForBios( const QString &filePath, const QString &checkS
 
     Q_ASSERT( query.exec() );
 
-    if ( query.first() ) {
-        auto biosName = query.value(0).toString();
-        if ( !biosName.isEmpty() ) {
+    if( query.first() ) {
+        auto biosName = query.value( 0 ).toString();
+
+        if( !biosName.isEmpty() ) {
             cacheBiosFile( filePath, biosName );
             return true;
         }
@@ -407,8 +397,7 @@ void LibraryWorker::cacheBiosFile( const QString &filePath, const QString &biosN
 
 }
 
-QStringList LibraryWorker::getAvailableSystems(const QString &extension, QSqlQuery &query )
-{
+QStringList LibraryWorker::getAvailableSystems( const QString &extension, QSqlQuery &query ) {
     query.prepare( QStringLiteral( "SELECT DISTINCT systemMap.systemname FROM systemMap" )
                    + QStringLiteral( " INNER JOIN extensions ON systemMap.systemIndex=extensions.systemIndex" )
                    + QStringLiteral( " WHERE extensions.extension = ?" ) );
@@ -416,9 +405,10 @@ QStringList LibraryWorker::getAvailableSystems(const QString &extension, QSqlQue
     query.addBindValue( extension );
 
     QStringList systemsList;
-    if ( query.exec() ) {
+
+    if( query.exec() ) {
         while( query.next() ) {
-            systemsList.append( query.value(0).toString() );
+            systemsList.append( query.value( 0 ).toString() );
         }
     }
 
@@ -429,10 +419,10 @@ QList<HeaderData> LibraryWorker::getPossibleHeaders( const QStringList &possible
 
     QList<HeaderData> headerDataList;
 
-    for ( auto &system : possibleSystems ) {
+    for( auto &system : possibleSystems ) {
 
         query.clear();
-        query.prepare( QStringLiteral( "SELECT DISTINCT systemHeaderOffsets.byteLength, ")
+        query.prepare( QStringLiteral( "SELECT DISTINCT systemHeaderOffsets.byteLength, " )
                        + QStringLiteral( "systemHeaderOffsets.seekIndex, systemHeaderOffsets.result, systemHeaderOffsets.systemIndex " )
                        + QStringLiteral( "FROM systemHeaderOffsets INNER JOIN  systemMap ON " )
                        + QStringLiteral( "systemMap.systemIndex=systemHeaderOffsets.systemIndex " )
@@ -441,13 +431,13 @@ QList<HeaderData> LibraryWorker::getPossibleHeaders( const QStringList &possible
 
         Q_ASSERT( query.exec() );
 
-        while ( query.next() ) {
+        while( query.next() ) {
 
             HeaderData headerData;
-            headerData.byteLength = query.value(0).toInt();
-            headerData.seekPosition = query.value(1).toInt();
-            headerData.result = query.value(2).toString();
-            headerData.systemIndex = query.value(3).toString();
+            headerData.byteLength = query.value( 0 ).toInt();
+            headerData.seekPosition = query.value( 1 ).toInt();
+            headerData.result = query.value( 2 ).toString();
+            headerData.systemIndex = query.value( 3 ).toString();
 
             headerDataList.append( std::move( headerData ) );
         }
@@ -456,30 +446,29 @@ QList<HeaderData> LibraryWorker::getPossibleHeaders( const QStringList &possible
     return std::move( headerDataList );
 }
 
-QString LibraryWorker::getRealSystem(const QList<HeaderData> &possibleHeaders, const QString &gameFilePath, QSqlQuery &query)
-{
+QString LibraryWorker::getRealSystem( const QList<HeaderData> &possibleHeaders, const QString &gameFilePath, QSqlQuery &query ) {
     QFile gameFile( gameFilePath );
 
     Q_ASSERT( gameFile.open( QIODevice::ReadOnly ) );
 
     QString realSystem;
 
-    for ( auto &headerData : possibleHeaders ) {
+    for( auto &headerData : possibleHeaders ) {
         if( !gameFile.seek( headerData.seekPosition ) ) {
-            qCWarning(phxLibrary ) << "Could not put " << gameFile.fileName() << "'s seek at " << headerData.seekPosition;
+            qCWarning( phxLibrary ) << "Could not put " << gameFile.fileName() << "'s seek at " << headerData.seekPosition;
             continue;
         }
 
         auto bytes = QString( gameFile.read( headerData.byteLength ).simplified().toHex() );
 
-        if ( bytes == headerData.result ) {
+        if( bytes == headerData.result ) {
             query.prepare( QStringLiteral( "SELECT systemname FROM systemMap WHERE systemIndex = ?" ) );
             query.addBindValue( headerData.systemIndex );
 
             Q_ASSERT( query.exec() );
 
             query.first();
-            realSystem = query.value(0).toString();
+            realSystem = query.value( 0 ).toString();
             break;
         }
 
@@ -488,14 +477,13 @@ QString LibraryWorker::getRealSystem(const QList<HeaderData> &possibleHeaders, c
     return std::move( realSystem );
 }
 
-CueData LibraryWorker::getCueData( const QStringList &possibleSystems, const QFileInfo &fileInfo, QSqlQuery &query )
-{
+CueData LibraryWorker::getCueData( const QStringList &possibleSystems, const QFileInfo &fileInfo, QSqlQuery &query ) {
     auto possibleHeaders = getPossibleHeaders( possibleSystems, query );
 
     QString firstCueBinaryFile;
     QStringList cueFileList = getCueFileInfo( fileInfo );
 
-    if ( !cueFileList.isEmpty() ) {
+    if( !cueFileList.isEmpty() ) {
         firstCueBinaryFile = cueFileList.first();
     }
 
@@ -519,24 +507,26 @@ QStringList LibraryWorker::getCueFileInfo( const QFileInfo &fileInfo ) {
 
         QString obtainedTitle;
         bool eatChars = false;
-        for ( auto &subStr : line ) {
-            if ( subStr == '"' ) {
-                if ( eatChars ) {
+
+        for( auto &subStr : line ) {
+            if( subStr == '"' ) {
+                if( eatChars ) {
                     eatChars = false;
                 } else {
                     eatChars = true;
-                    if ( obtainedTitle.isEmpty() ) {
+
+                    if( obtainedTitle.isEmpty() ) {
                         continue;
                     }
                 }
             }
 
-            if ( eatChars ) {
+            if( eatChars ) {
                 obtainedTitle.append( subStr );
             }
         }
 
-        if ( !obtainedTitle.isEmpty() ) {
+        if( !obtainedTitle.isEmpty() ) {
             binFiles.append( fileInfo.canonicalPath() + QDir::separator() + obtainedTitle );
         }
 

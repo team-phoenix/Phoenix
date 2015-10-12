@@ -1,17 +1,13 @@
 #ifndef LIBRARYMODEL_H
 #define LIBRARYMODEL_H
 
-#include <QSqlTableModel>
-#include <QVariant>
-#include <QHash>
-#include <QUrl>
-#include <QMutex>
-#include <QFileInfo>
-#include <QThread>
+#include <QtCore>
+#include <QtSql>
 
 #include "libraryinternaldatabase.h"
 #include "platforms.h"
 #include "libraryworker.h"
+#include "logging.h"
 
 namespace Library {
 

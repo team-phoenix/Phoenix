@@ -1,11 +1,4 @@
 #include "imagecacher.h"
-#include "logging.h"
-#include "phxpaths.h"
-
-#include <QUrl>
-#include <QNetworkRequest>
-#include <QFile>
-#include <QFileInfo>
 
 using namespace Library;
 
@@ -43,6 +36,7 @@ void ImageCacher::cache() {
 
         return;
     }
+
     setCachedUrl( QUrl( qmlFilePrefix + cachedFile ) );
 
 }
@@ -112,7 +106,7 @@ void ImageCacher::handleRequestProgress( qint64 bytesRecieved, qint64 bytesTotal
     Q_UNUSED( bytesRecieved );
     Q_UNUSED( bytesTotal );
     //qCDebug( phxLibrary ) << "Downloading Image: "
-      //                    << ( bytesRecieved / static_cast<qreal>( bytesTotal ) ) * 100.0;
+    //                    << ( bytesRecieved / static_cast<qreal>( bytesTotal ) ) * 100.0;
 }
 
 void ImageCacher::handleSSLErrors( const QList<QSslError> &errors ) {

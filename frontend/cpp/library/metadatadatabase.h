@@ -1,11 +1,11 @@
 #ifndef METADATADATABASE_H
 #define METADATADATABASE_H
 
-#include <QSqlDatabase>
-#include <QSqlError>
-#include <QDebug>
-#include <QSqlQuery>
-#include <QString>
+#include <QtCore>
+#include <QtSql>
+
+#include "phxpaths.h"
+#include "logging.h"
 
 namespace Library {
 

@@ -1,8 +1,4 @@
 #include "collectionsmodel.h"
-#include "logging.h"
-
-#include <QSqlError>
-#include <QSqlRecord>
 
 using namespace Library;
 

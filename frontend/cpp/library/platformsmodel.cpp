@@ -1,10 +1,4 @@
 #include "platformsmodel.h"
-#include "platform.h"
-#include "logging.h"
-
-#include <QDebug>
-#include <QSqlQuery>
-#include <QSqlDatabase>
 
 using namespace Library;
 
@@ -12,13 +6,15 @@ PlatformsModel::PlatformsModel( QObject *parent )
     : QAbstractListModel( parent ) {
 
     auto query = QSqlQuery( SystemDatabase::database() );
-    if ( query.exec( QStringLiteral( "SELECT systemname FROM systemMap" ) ) ) {
 
-       mPlatformsList.append( QStringLiteral( "All" ) );
-       while ( query.next() ) {
-           auto core = query.value(0).toString();
+    if( query.exec( QStringLiteral( "SELECT systemname FROM systemMap" ) ) ) {
+
+        mPlatformsList.append( QStringLiteral( "All" ) );
+
+        while( query.next() ) {
+            auto core = query.value( 0 ).toString();
             mPlatformsList.append( std::move( core ) );
-       }
+        }
     }
 
     // Just sort the list so it looks pretty. This shouldn't take that long. There aren't

@@ -1,13 +1,4 @@
 #include "metadatadatabase.h"
-#include "logging.h"
-#include "phxpaths.h"
-
-#include <QCryptographicHash>
-#include <QFile>
-#include <QThread>
-#include <QApplication>
-#include <QDir>
-#include <QStandardPaths>
 
 using namespace Library;
 
@@ -21,7 +12,7 @@ void MetaDataDatabase::open() {
     auto db = QSqlDatabase::addDatabase( QStringLiteral( "QSQLITE" ), QStringLiteral( "METADATA" ) );
 
     //#######################
-    QString dataPathStr = PhxPaths::path( PhxPaths::DatabasesLocation );
+    QString dataPathStr = PhxPaths::metadataLocation();
     Q_ASSERT( !dataPathStr.isEmpty() );
 
     QDir dataPath( dataPathStr );

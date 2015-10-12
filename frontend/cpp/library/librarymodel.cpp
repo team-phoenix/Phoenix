@@ -1,20 +1,4 @@
 #include "librarymodel.h"
-#include "logging.h"
-#include "platform.h"
-
-#include <QSqlRecord>
-#include <QSqlField>
-#include <QDebug>
-#include <QSqlError>
-#include <QSqlQuery>
-#include <QSqlResult>
-#include <QVariant>
-#include <QFile>
-#include <QDir>
-#include <QMutexLocker>
-#include <QCryptographicHash>
-#include <QCoreApplication>
-#include <QSettings>
 
 using namespace Library;
 
@@ -96,8 +80,8 @@ LibraryModel::~LibraryModel() {
 
     closeWorkerThread();
 
-    if ( submitAll() ) {
-       // database().commit();
+    if( submitAll() ) {
+        // database().commit();
     } else {
         database().rollback();
     }

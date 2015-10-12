@@ -1,12 +1,12 @@
 #ifndef PLATFORMSMODEL_H
 #define PLATFORMSMODEL_H
 
-#include <QObject>
-#include <QAbstractListModel>
-#include <QStringList>
-#include <QVariantMap>
+#include <QtCore>
+#include <QtSql>
 
 #include "systemdatabase.h"
+#include "platform.h"
+#include "logging.h"
 
 namespace Library {
 

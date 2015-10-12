@@ -1,18 +1,22 @@
 #ifndef GAMELAUNCHER_H
 #define GAMELAUNCHER_H
 
-#include <QObject>
+#include <QtCore>
+#include <QtSql>
 
-class GameLauncher : public QObject
-{
-    Q_OBJECT
-public:
-    explicit GameLauncher(QObject *parent = 0);
+#include "systemdatabase.h"
+#include "logging.h"
+#include "phxpaths.h"
 
-public slots:
-    const QString getDefaultCore( const QString system );
+class GameLauncher : public QObject {
+        Q_OBJECT
+    public:
+        explicit GameLauncher( QObject *parent = 0 );
 
-    bool verifyGame( const QString system, const QString rom );
+    public slots:
+        const QString getDefaultCore( const QString system );
+
+        bool verifyGame( const QString system, const QString rom );
 
 };
 

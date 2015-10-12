@@ -1,12 +1,4 @@
 #include "libraryinternaldatabase.h"
-#include "logging.h"
-#include "phxpaths.h"
-
-#include <QStandardPaths>
-#include <QApplication>
-#include <QDir>
-
-#include <memory>
 
 using namespace Library;
 
@@ -37,7 +29,7 @@ void LibraryInternalDatabase::open() {
     if( !db.isValid() ) {
         db = QSqlDatabase::addDatabase( QStringLiteral( "QSQLITE" ), QStringLiteral( "LIBRARY" ) );
 
-        QString dataPathStr = PhxPaths::path( PhxPaths::DatabasesLocation );
+        QString dataPathStr = PhxPaths::userDataLocation();
         Q_ASSERT( !dataPathStr.isEmpty() );
 
         QDir dataPath( dataPathStr );
@@ -102,13 +94,13 @@ bool LibraryInternalDatabase::createSchema() {
 
     // Create Collections Table
     q.exec( QStringLiteral( "CREATE TABLE " ) + LibraryInternalDatabase::tableCollectionMappings + QStringLiteral( "(\n" ) +
-                        QStringLiteral( " collectionID INTEGER,\n" ) +
-                        QStringLiteral( " rowIndex INTEGER,\n" )  +
-                        QStringLiteral( " FOREIGN KEY (collectionID) REFERENCES " ) + LibraryInternalDatabase::tableCollections +
-                        QStringLiteral( "(collectionID) ON DELETE CASCADE ON UPDATE CASCADE\n" ) +
-                        QStringLiteral( " FOREIGN KEY (rowIndex) REFERENCES " ) + LibraryInternalDatabase::tableName +
-                        QStringLiteral( "(rowIndex) ON DELETE CASCADE ON UPDATE CASCADE\n" ) +
-                        QStringLiteral( ")" ) );
+            QStringLiteral( " collectionID INTEGER,\n" ) +
+            QStringLiteral( " rowIndex INTEGER,\n" )  +
+            QStringLiteral( " FOREIGN KEY (collectionID) REFERENCES " ) + LibraryInternalDatabase::tableCollections +
+            QStringLiteral( "(collectionID) ON DELETE CASCADE ON UPDATE CASCADE\n" ) +
+            QStringLiteral( " FOREIGN KEY (rowIndex) REFERENCES " ) + LibraryInternalDatabase::tableName +
+            QStringLiteral( "(rowIndex) ON DELETE CASCADE ON UPDATE CASCADE\n" ) +
+            QStringLiteral( ")" ) );
 
     q.exec( QStringLiteral( "INSERT INTO " ) + LibraryInternalDatabase::tableCollections
             + QStringLiteral( " (collectionID, collectionName) VALUES (0, 'All')" ) );

@@ -1,16 +1,15 @@
 #ifndef LIBRARYWORKER_H
 #define LIBRARYWORKER_H
 
-#include <QObject>
-#include <QMutex>
-#include <QFileInfo>
-#include <QUrl>
-#include <QQueue>
-#include <QDirIterator>
+#include <QtCore>
+#include <QtSql>
 
+#include "phxpaths.h"
 #include "metadatadatabase.h"
 #include "platform.h"
+#include "platforms.h"
 #include "systemdatabase.h"
+#include "logging.h"
 
 namespace Library {
 

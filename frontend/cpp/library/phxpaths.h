@@ -1,36 +1,25 @@
 #ifndef PHXPATHS_H
 #define PHXPATHS_H
 
-#include <QStandardPaths>
-#include <QDir>
+#include <QtCore>
+#include <QtWidgets>
+
+#include "logging.h"
 
 namespace Library {
 
     class PhxPaths {
         public:
-
-            enum Locations {
-                ExecutableLocation,
-                SaveLocation,
-                ArtworkLocation,
-                LibLocation,
-                ShareLocation,
-                BiosLocation,
-                DatabasesLocation,
-            };
-            Q_ENUMS( Locations )
-
-            static QString path( const Locations location );
-
             static QString biosLocation();
             static QString saveLocation();
             static QString artworkLocation();
             static QString binLocation();
-            static QString libLocation();
-            static QString shareLocation();
+            static QString coreLocation();
+            static QString resourceLocation();
+            static QString userDataLocation();
+            static QString metadataLocation();
 
             static void createAllPaths();
-
 
         private:
             PhxPaths();
@@ -41,7 +30,8 @@ namespace Library {
             static QString mBinLocation;
             static QString mCoreLocation;
             static QString mResourceLocation;
-            static QString mDatabaseLocation;
+            static QString mUserDataLocation;
+            static QString mMetadataLocation;
     };
 
 }

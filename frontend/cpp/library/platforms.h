@@ -1,11 +1,7 @@
 #ifndef PLATFORMS
 #define PLATFORMS
 
-#include <QHash>
-#include <QList>
-#include <QPair>
-#include <QString>
-#include <QObject>
+#include <QtCore>
 
 namespace Library {
 
