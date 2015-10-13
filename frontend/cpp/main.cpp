@@ -94,7 +94,7 @@ int main( int argc, char *argv[] ) {
     QQmlApplicationEngine engine;
 
     // Necessary to quit properly
-    // QObject::connect( &engine, &QQmlApplicationEngine::quit, &app, &QApplication::quit );
+    QObject::connect( &engine, &QQmlApplicationEngine::quit, &app, &QApplication::quit );
 
     // Register my types!
     VideoItem::registerTypes();
@@ -113,6 +113,19 @@ int main( int argc, char *argv[] ) {
     qRegisterMetaType<Library::GameData>( "GameData" );
 
     engine.load( QUrl( QStringLiteral( "qrc:/main.qml" ) ) );
+
+    // Ensure custom controller DB file exists
+    QFile gameControllerDBFileSrc( Library::PhxPaths::binLocation() % QStringLiteral( "/userdata/gamecontrollerdb.txt" ) );
+    QFile gameControllerDBFileDest( Library::PhxPaths::userDataLocation() % '/' % QStringLiteral( "gamecontrollerdb.txt" ) );
+
+    gameControllerDBFileSrc.copy( gameControllerDBFileDest.fileName() );
+
+    // Set InputManager's custom controller DB file
+    QQmlProperty prop( engine.rootObjects().first(), "inputManager.controllerDBFile" );
+    Q_ASSERT( prop.isValid() );
+    QString path = Library::PhxPaths::userDataLocation() % QStringLiteral( "/gamecontrollerdb.txt" );
+    QVariant pathVar( path );
+    prop.write( pathVar );
 
     return app.exec();
 

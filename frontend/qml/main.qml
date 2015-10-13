@@ -28,7 +28,7 @@ ApplicationWindow {
     }
 
     property InputManager inputManager: InputManager {
-        controllerDBFile: PhxPaths.qmlUserDataLocation() + "/gamecontrollerdb.txt";
+        id: inputManager;
         gamepadControlsFrontend: true;
     }
     property var gameViewObject: null;

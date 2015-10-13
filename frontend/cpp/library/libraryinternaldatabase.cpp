@@ -8,7 +8,6 @@ const QString LibraryInternalDatabase::tableName = QStringLiteral( "games" );
 const QString LibraryInternalDatabase::tableCollectionMappings = QStringLiteral( "collectionMappings" );
 const QString LibraryInternalDatabase::tableCollections = QStringLiteral( "collections" );
 
-
 LibraryInternalDatabase::LibraryInternalDatabase() {
     open();
 }
@@ -44,12 +43,6 @@ void LibraryInternalDatabase::open() {
         qFatal( "Could not open database %s: %s", qPrintable( mFilePath ),
                 qPrintable( db.lastError().driverText() ) );
     }
-
-    // TODO: Find a better place for this
-    QFile gameControllerDBFileSrc( PhxPaths::binLocation() % QStringLiteral( "/userdata/gamecontrollerdb.txt" ) );
-    QFile gameControllerDBFileDest( PhxPaths::userDataLocation() % '/' % QStringLiteral( "gamecontrollerdb.txt" ) );
-
-    gameControllerDBFileSrc.copy( gameControllerDBFileDest.fileName() );
 
     if( !db.tables().contains( tableVersion ) ) {
         // must initialize db
