@@ -83,19 +83,16 @@ void PhxPaths::createAllPaths() {
 
     PhxPaths::mBinLocation = QCoreApplication::applicationDirPath();
 
-    // Forward slash works on all platforms, Qt APIs convert if on Windows automatically
-    QString sep = QStringLiteral( "/" );
-
     // Determine whether or not we're portable
-    QString portableFilename = PhxPaths::mBinLocation % sep % "PHOENIX-PORTABLE";
+    QString portableFilename = PhxPaths::mBinLocation % '/' % "PHOENIX-PORTABLE";
     QFile file( portableFilename );
     bool portableMode = file.exists();
 
     if( portableMode ) {
         qCDebug( phxLibrary ) << "Portable mode";
-        PhxPaths::mCoreLocation = PhxPaths::mBinLocation % sep % QStringLiteral( "cores" );
+        PhxPaths::mCoreLocation = PhxPaths::mBinLocation % '/' % QStringLiteral( "cores" );
         PhxPaths::mResourceLocation = PhxPaths::mBinLocation;
-        PhxPaths::mUserDataLocation = PhxPaths::mBinLocation % sep % QStringLiteral( "userdata" );
+        PhxPaths::mUserDataLocation = PhxPaths::mBinLocation % '/' % QStringLiteral( "userdata" );
     }
 
     else {
@@ -104,26 +101,26 @@ void PhxPaths::createAllPaths() {
 #ifdef Q_OS_WIN32
         PhxPaths::mCoreLocation = QStringLiteral( "C:/Program Files/Libretro/Cores" );
         PhxPaths::mResourceLocation = PhxPaths::mBinLocation;
-        PhxPaths::mUserDataLocation = QStandardPaths::writableLocation( QStandardPaths::AppLocalDataLocation ) % QApplication::applicationName();
+        PhxPaths::mUserDataLocation = QStandardPaths::writableLocation( QStandardPaths::AppLocalDataLocation ) % '/' % QApplication::applicationName();
 #endif
 #ifdef Q_OS_MACX
         PhxPaths::mCoreLocation = QStringLiteral( "/usr/local/lib/libretro" );
         PhxPaths::mResourceLocation = PhxPaths::mBinLocation;
-        PhxPaths::mUserDataLocation = QStandardPaths::writableLocation( QStandardPaths::AppLocalDataLocation ) % QApplication::applicationName();
+        PhxPaths::mUserDataLocation = QStandardPaths::writableLocation( QStandardPaths::AppLocalDataLocation );
 #endif
 
 #ifdef Q_OS_LINUX
         PhxPaths::mCoreLocation = QStringLiteral( "/usr/lib/libretro" );
-        PhxPaths::mResourceLocation = PhxPaths::mBinLocation % sep % QStringLiteral( ".." ) % sep % QStringLiteral( "share/phoenix" );
-        PhxPaths::mUserDataLocation = QStandardPaths::writableLocation( QStandardPaths::AppLocalDataLocation ) % QApplication::applicationName().toLower();
+        PhxPaths::mResourceLocation = PhxPaths::mBinLocation % '/' % QStringLiteral( ".." ) % '/' % QStringLiteral( "share/phoenix" );
+        PhxPaths::mUserDataLocation = QStandardPaths::writableLocation( QStandardPaths::AppLocalDataLocation ) % '/' % QApplication::applicationName().toLower();
 #endif
 
     }
 
-    PhxPaths::mBiosLocation = PhxPaths::mResourceLocation % sep % QStringLiteral( "bios" ) % sep;
-    PhxPaths::mSaveLocation = PhxPaths::mUserDataLocation % sep % QStringLiteral( "saves" ) % sep;
-    PhxPaths::mArtworkLocation = PhxPaths::mResourceLocation % sep % QStringLiteral( "artwork" ) % sep;
-    PhxPaths::mMetadataLocation = PhxPaths::mResourceLocation % sep % QStringLiteral( "metadata" ) % sep;
+    PhxPaths::mBiosLocation = PhxPaths::mResourceLocation % '/' % QStringLiteral( "bios" ) % '/';
+    PhxPaths::mSaveLocation = PhxPaths::mUserDataLocation % '/' % QStringLiteral( "saves" ) % '/';
+    PhxPaths::mArtworkLocation = PhxPaths::mResourceLocation % '/' % QStringLiteral( "artwork" ) % '/';
+    PhxPaths::mMetadataLocation = PhxPaths::mResourceLocation % '/' % QStringLiteral( "metadata" ) % '/';
 
     QDir coreDir( PhxPaths::mCoreLocation );
     QDir biosDir( PhxPaths::mBiosLocation );

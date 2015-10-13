@@ -160,7 +160,7 @@ customcontrollerdb.commands += mkdir -p \"$$TARGET_PATH/userdata/\" &\
 POST_TARGETDEPS += customcontrollerdb
 
 # Make qmake aware that this target exists
-QMAKE_EXTRA_TARGETS += metadb
+QMAKE_EXTRA_TARGETS += customcontrollerdb
 
 ##
 ## On OS X, ignore all of the above when it comes to make install and just copy the whole .app folder verbatim
