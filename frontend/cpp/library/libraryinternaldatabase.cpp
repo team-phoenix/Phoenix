@@ -45,6 +45,12 @@ void LibraryInternalDatabase::open() {
                 qPrintable( db.lastError().driverText() ) );
     }
 
+    // TODO: Find a better place for this
+    QFile gameControllerDBFileSrc( PhxPaths::binLocation() % QStringLiteral( "/userdata/gamecontrollerdb.txt" ) );
+    QFile gameControllerDBFileDest( PhxPaths::userDataLocation() % '/' % QStringLiteral( "gamecontrollerdb.txt" ) );
+
+    gameControllerDBFileSrc.copy( gameControllerDBFileDest.fileName() );
+
     if( !db.tables().contains( tableVersion ) ) {
         // must initialize db
         createSchema();

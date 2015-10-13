@@ -94,7 +94,11 @@ macx {
     # Metadata databases
     portable.commands += mkdir -p \"$$PREFIX/metadata/\" &\
                          cp -f \"$$TARGET_PATH/metadata/openvgdb.sqlite\" \"$$PREFIX/metadata/openvgdb.sqlite\" &\
-                         cp -f \"$$TARGET_PATH/metadata/systems.sqlite\" \"$$PREFIX/metadata/systems.sqlite\"
+                         cp -f \"$$TARGET_PATH/metadata/systems.sqlite\" \"$$PREFIX/metadata/systems.sqlite\" &\
+
+    # Controller DB file
+    portable.commands += mkdir -p \"$$PREFIX/userdata/\" &\
+                         cp -f \"$$TARGET_PATH/userdata/gamecontrollerdb.txt\" \"$$PREFIX/userdata/gamecontrollerdb.txt\"
 }
 
 ##
@@ -138,6 +142,22 @@ metadb.files += "$$PWD/metadata/openvgdb.sqlite" \
 metadb.path = "$$PREFIX/metadata"
 unix: metadb.path = "$$PREFIX/share/phoenix/metadata"
 INSTALLS += metadb
+
+# Make qmake aware that this target exists
+QMAKE_EXTRA_TARGETS += metadb
+
+##
+## Custom controller database
+##
+
+# Ideally these files should come from the build folder, however, qmake will not generate rules for them if they don't
+# already exist
+customcontrollerdb.depends += "$$PWD/userdata/gamecontrollerdb.txt"
+
+# For the default target (...and anything that depends on it)
+customcontrollerdb.commands += mkdir -p \"$$TARGET_PATH/userdata/\" &\
+                   cp -f \"$$SOURCE_PATH/userdata/gamecontrollerdb.txt\" \"$$TARGET_PATH/userdata/gamecontrollerdb.txt\"
+POST_TARGETDEPS += customcontrollerdb
 
 # Make qmake aware that this target exists
 QMAKE_EXTRA_TARGETS += metadb

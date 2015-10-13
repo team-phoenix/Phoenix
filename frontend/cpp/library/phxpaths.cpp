@@ -104,18 +104,20 @@ void PhxPaths::createAllPaths() {
 #ifdef Q_OS_WIN32
         PhxPaths::mCoreLocation = QStringLiteral( "C:/Program Files/Libretro/Cores" );
         PhxPaths::mResourceLocation = PhxPaths::mBinLocation;
+        PhxPaths::mUserDataLocation = QStandardPaths::writableLocation( QStandardPaths::AppLocalDataLocation ) % QApplication::applicationName();
 #endif
 #ifdef Q_OS_MACX
         PhxPaths::mCoreLocation = QStringLiteral( "/usr/local/lib/libretro" );
         PhxPaths::mResourceLocation = PhxPaths::mBinLocation;
+        PhxPaths::mUserDataLocation = QStandardPaths::writableLocation( QStandardPaths::AppLocalDataLocation ) % QApplication::applicationName();
 #endif
 
 #ifdef Q_OS_LINUX
         PhxPaths::mCoreLocation = QStringLiteral( "/usr/lib/libretro" );
-        PhxPaths::mResourceLocation = PhxPaths::mBinLocation % sep % QStringLiteral( ".." ) % sep % QStringLiteral( "share/Phoenix" );
+        PhxPaths::mResourceLocation = PhxPaths::mBinLocation % sep % QStringLiteral( ".." ) % sep % QStringLiteral( "share/phoenix" );
+        PhxPaths::mUserDataLocation = QStandardPaths::writableLocation( QStandardPaths::AppLocalDataLocation ) % QApplication::applicationName().toLower();
 #endif
 
-        PhxPaths::mUserDataLocation = QStandardPaths::writableLocation( QStandardPaths::AppLocalDataLocation ) % QApplication::applicationName();
     }
 
     PhxPaths::mBiosLocation = PhxPaths::mResourceLocation % sep % QStringLiteral( "bios" ) % sep;
