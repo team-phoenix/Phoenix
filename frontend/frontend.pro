@@ -24,7 +24,7 @@ win32 {
         TARGET_PATH = $$system( cygpath -u \"$$OUT_PWD/release\" )
     }
 
-    isEmpty( PREFIX ) { PREFIX = $$system( cygpath -u \"$$OUT_PWD\..\Phoenix-dist\" ) }
+    isEmpty( PREFIX ) { PREFIX = $$system( cygpath -u \"$$OUT_PWD\..\dist\" ) }
     else { PREFIX = $$system( cygpath -u \"$$PREFIX\" ) }
     PREFIX_WIN = $$system( cygpath -w \"$$PREFIX\" )
 }
@@ -36,7 +36,8 @@ win32 {
     # On OS X, write directly to within the .app folder as that's where the executable lives
     macx: TARGET_APP = "$$sprintf( "%1/%2.app", $$OUT_PWD, $$TARGET )"
     macx: TARGET_PATH = "$$TARGET_APP/Contents/MacOS"
-    isEmpty( PREFIX ) { PREFIX = $$OUT_PWD/../Phoenix-dist }
+    isEmpty( PREFIX ) { PREFIX = $$OUT_PWD/../dist }
+    macx: PREFIX_PATH = "$$sprintf( "%1/%2.app", $$PREFIX, $$TARGET )/Contents/MacOS"
 }
 
 # Force the Phoenix binary to be relinked if the backend code has changed
@@ -77,28 +78,24 @@ QMAKE_EXTRA_TARGETS += portable
 
 # On OS X, just copy the whole .app folder to the prefix
 macx {
-    portable.commands += mkdir -p \"$$PREFIX/\" &\
-                         cp -R -f \"$$TARGET_APP\" \"$$PREFIX/\"
+    portable.commands += mkdir -p \"$$PREFIX/\" &&\
+                         cp -R -f \"$$TARGET_APP\" \"$$PREFIX\"
 }
 
 # Everywhere else, copy the structure verbatim into the prefix
 !macx {
     # Phoenix executable and the file that sets it to portable mode
-    portable.commands += mkdir -p \"$$PREFIX/\" &\
-                         cp -f \"$$TARGET_PATH/$$TARGET\" \"$$PREFIX/$$TARGET\" &\
-                         cp -f \"$$TARGET_PATH/$$PORTABLE_FILENAME\" \"$$PREFIX/$$PORTABLE_FILENAME\" &\
+    portable.commands += mkdir -p \"$$PREFIX/\" &&\
+                         cp -f \"$$TARGET_PATH/$$TARGET\" \"$$PREFIX/$$TARGET\" &&\
+                         cp -f \"$$TARGET_PATH/$$PORTABLE_FILENAME\" \"$$PREFIX/$$PORTABLE_FILENAME\" &&\
 
     # Windows dependencies
-    win32: portable.commands += cp \"/mingw64/bin/SDL2.dll\" \"$$TARGET_PATH/\" &\
+    win32: portable.commands += cp \"/mingw64/bin/SDL2.dll\" \"$$TARGET_PATH/\" &&\
 
     # Metadata databases
-    portable.commands += mkdir -p \"$$PREFIX/metadata/\" &\
-                         cp -f \"$$TARGET_PATH/metadata/openvgdb.sqlite\" \"$$PREFIX/metadata/openvgdb.sqlite\" &\
-                         cp -f \"$$TARGET_PATH/metadata/systems.sqlite\" \"$$PREFIX/metadata/systems.sqlite\" &\
-
-    # Controller DB file
-    portable.commands += mkdir -p \"$$PREFIX/userdata/\" &\
-                         cp -f \"$$TARGET_PATH/userdata/gamecontrollerdb.txt\" \"$$PREFIX/userdata/gamecontrollerdb.txt\"
+    portable.commands += mkdir -p \"$$PREFIX/Metadata/\" &&\
+                         cp -f \"$$TARGET_PATH/metadata/openvgdb.sqlite\" \"$$PREFIX/Metadata/openvgdb.sqlite\" &&\
+                         cp -f \"$$TARGET_PATH/metadata/systems.sqlite\" \"$$PREFIX/Metadata/systems.sqlite\" &&\
 }
 
 ##
@@ -131,36 +128,20 @@ metadb.depends += "$$PWD/metadata/openvgdb.sqlite" \
                   "$$PWD/metadata/systems.sqlite"
 
 # For the default target (...and anything that depends on it)
-metadb.commands += mkdir -p \"$$TARGET_PATH/metadata/\" &\
-                   cp -f \"$$SOURCE_PATH/metadata/openvgdb.sqlite\" \"$$TARGET_PATH/metadata/openvgdb.sqlite\" &\
-                   cp -f \"$$SOURCE_PATH/metadata/systems.sqlite\" \"$$TARGET_PATH/metadata/systems.sqlite\"
+metadb.commands += mkdir -p \"$$TARGET_PATH/Metadata/\" &&\
+                   cp -f \"$$SOURCE_PATH/metadata/openvgdb.sqlite\" \"$$TARGET_PATH/Metadata/openvgdb.sqlite\" &&\
+                   cp -f \"$$SOURCE_PATH/metadata/systems.sqlite\" \"$$TARGET_PATH/Metadata/systems.sqlite\"
 POST_TARGETDEPS += metadb
 
 # For make install
 metadb.files += "$$PWD/metadata/openvgdb.sqlite" \
                 "$$PWD/metadata/systems.sqlite"
-metadb.path = "$$PREFIX/metadata"
-unix: metadb.path = "$$PREFIX/share/phoenix/metadata"
+metadb.path = "$$PREFIX/Metadata"
+unix: metadb.path = "$$PREFIX/share/phoenix/Metadata"
 INSTALLS += metadb
 
 # Make qmake aware that this target exists
 QMAKE_EXTRA_TARGETS += metadb
-
-##
-## Custom controller database
-##
-
-# Ideally these files should come from the build folder, however, qmake will not generate rules for them if they don't
-# already exist
-customcontrollerdb.depends += "$$PWD/userdata/gamecontrollerdb.txt"
-
-# For the default target (...and anything that depends on it)
-customcontrollerdb.commands += mkdir -p \"$$TARGET_PATH/userdata/\" &\
-                   cp -f \"$$SOURCE_PATH/userdata/gamecontrollerdb.txt\" \"$$TARGET_PATH/userdata/gamecontrollerdb.txt\"
-POST_TARGETDEPS += customcontrollerdb
-
-# Make qmake aware that this target exists
-QMAKE_EXTRA_TARGETS += customcontrollerdb
 
 ##
 ## On OS X, ignore all of the above when it comes to make install and just copy the whole .app folder verbatim
@@ -168,8 +149,9 @@ QMAKE_EXTRA_TARGETS += customcontrollerdb
 
 macx {
     macxinstall.path = "$$PREFIX/"
-    macxinstall.extra = cp -R \"$$TARGET_APP\" \"$$PREFIX/\" &\
-                        rm -f \"$$TARGET_PATH/$$PORTABLE_FILENAME\"
+    macxinstall.extra = mkdir -p \"$$PREFIX\" &&\
+                        cp -R \"$$TARGET_APP\" \"$$PREFIX\" &&\
+                        rm -f \"$$PREFIX_PATH/$$PORTABLE_FILENAME\"
 
     # Note the lack of +
     INSTALLS = macxinstall

@@ -2,9 +2,10 @@
 
 using namespace Library;
 
+bool PhxPaths::mPortableMode = false;
 QString PhxPaths::mBiosLocation = QStringLiteral( "" );
 QString PhxPaths::mSaveLocation = QStringLiteral( "" );
-QString PhxPaths::mArtworkLocation = QStringLiteral( "" );
+QString PhxPaths::mCoverArtCacheLocation = QStringLiteral( "" );
 QString PhxPaths::mBinLocation = QStringLiteral( "" );
 QString PhxPaths::mCoreLocation = QStringLiteral( "" );
 QString PhxPaths::mResourceLocation = QStringLiteral( "" );
@@ -15,6 +16,10 @@ PhxPaths::PhxPaths( QObject *parent ): QObject( parent ) {
     setObjectName( "PhxPaths" );
 }
 
+bool PhxPaths::portableMode() {
+    return mPortableMode;
+}
+
 QString PhxPaths::biosLocation() {
     return mBiosLocation;
 }
@@ -23,8 +28,8 @@ QString PhxPaths::saveLocation() {
     return mSaveLocation;
 }
 
-QString PhxPaths::artworkLocation() {
-    return mArtworkLocation;
+QString PhxPaths::coverArtCacheLocation() {
+    return mCoverArtCacheLocation;
 }
 
 QString PhxPaths::binLocation() {
@@ -47,6 +52,10 @@ QString PhxPaths::metadataLocation() {
     return mMetadataLocation;
 }
 
+bool PhxPaths::qmlPortableMode() {
+    return portableMode();
+}
+
 QString PhxPaths::qmlBiosLocation() {
     return PhxPaths::biosLocation();
 }
@@ -55,8 +64,8 @@ QString PhxPaths::qmlSaveLocation() {
     return PhxPaths::saveLocation();
 }
 
-QString PhxPaths::qmlArtworkLocation() {
-    return PhxPaths::artworkLocation();
+QString PhxPaths::qmlCoverArtCacheLocation() {
+    return PhxPaths::coverArtCacheLocation();
 }
 
 QString PhxPaths::qmlBinLocation() {
@@ -86,66 +95,76 @@ void PhxPaths::createAllPaths() {
     // Determine whether or not we're portable
     QString portableFilename = PhxPaths::mBinLocation % '/' % "PHOENIX-PORTABLE";
     QFile file( portableFilename );
-    bool portableMode = file.exists();
+    mPortableMode = file.exists();
 
-    if( portableMode ) {
+    if( mPortableMode ) {
         qCDebug( phxLibrary ) << "Portable mode";
-        PhxPaths::mCoreLocation = PhxPaths::mBinLocation % '/' % QStringLiteral( "cores" );
         PhxPaths::mResourceLocation = PhxPaths::mBinLocation;
-        PhxPaths::mUserDataLocation = PhxPaths::mBinLocation % '/' % QStringLiteral( "userdata" );
+        PhxPaths::mCoreLocation = PhxPaths::mResourceLocation % '/' % QStringLiteral( "Cores" );
+        PhxPaths::mMetadataLocation = PhxPaths::mResourceLocation % '/' % QStringLiteral( "Metadata" ) % '/';
+
+        PhxPaths::mUserDataLocation = PhxPaths::mBinLocation % '/' % QStringLiteral( "User Data" );
+        PhxPaths::mCoverArtCacheLocation = PhxPaths::mUserDataLocation % '/' % QStringLiteral( "Cover Art Cache" );
+
+        // Create a game folder if one does not exist
+        QDir gameDir( PhxPaths::mUserDataLocation % '/' % QStringLiteral( "Games" ) );
+
+        if( !gameDir.exists() ) {
+            gameDir.mkpath( gameDir.path() );
+        }
     }
 
     else {
         qCDebug( phxLibrary ) << "Installed mode";
 
 #ifdef Q_OS_WIN32
-        PhxPaths::mCoreLocation = QStringLiteral( "C:/Program Files/Libretro/Cores" );
         PhxPaths::mResourceLocation = PhxPaths::mBinLocation;
+        // TODO: Make this work on all languages
+        PhxPaths::mCoreLocation = QStringLiteral( "C:/Program Files/Libretro/Cores" );
+        PhxPaths::mMetadataLocation = PhxPaths::mResourceLocation % '/' % QStringLiteral( "Metadata" ) % '/';
+
         PhxPaths::mUserDataLocation = QStandardPaths::writableLocation( QStandardPaths::AppLocalDataLocation ) % '/' % QApplication::applicationName();
 #endif
 #ifdef Q_OS_MACX
-        PhxPaths::mCoreLocation = QStringLiteral( "/usr/local/lib/libretro" );
         PhxPaths::mResourceLocation = PhxPaths::mBinLocation;
+        PhxPaths::mCoreLocation = QStringLiteral( "/usr/local/lib/libretro" );
+        PhxPaths::mMetadataLocation = PhxPaths::mResourceLocation % '/' % QStringLiteral( "Metadata" ) % '/';
+
         PhxPaths::mUserDataLocation = QStandardPaths::writableLocation( QStandardPaths::AppLocalDataLocation );
 #endif
 
 #ifdef Q_OS_LINUX
-        PhxPaths::mCoreLocation = QStringLiteral( "/usr/lib/libretro" );
         PhxPaths::mResourceLocation = PhxPaths::mBinLocation % '/' % QStringLiteral( ".." ) % '/' % QStringLiteral( "share/phoenix" );
-        PhxPaths::mUserDataLocation = QStandardPaths::writableLocation( QStandardPaths::AppLocalDataLocation ) % '/' % QApplication::applicationName().toLower();
+        PhxPaths::mCoreLocation = QStringLiteral( "/usr/lib/libretro" );
+        PhxPaths::mMetadataLocation = PhxPaths::mResourceLocation % '/' % QStringLiteral( "Metadata" ) % '/';
+
+        PhxPaths::mUserDataLocation = QStandardPaths::writableLocation( QStandardPaths::AppLocalDataLocation );
 #endif
 
     }
 
-    PhxPaths::mBiosLocation = PhxPaths::mResourceLocation % '/' % QStringLiteral( "bios" ) % '/';
-    PhxPaths::mSaveLocation = PhxPaths::mUserDataLocation % '/' % QStringLiteral( "saves" ) % '/';
-    PhxPaths::mArtworkLocation = PhxPaths::mResourceLocation % '/' % QStringLiteral( "artwork" ) % '/';
-    PhxPaths::mMetadataLocation = PhxPaths::mResourceLocation % '/' % QStringLiteral( "metadata" ) % '/';
+    PhxPaths::mSaveLocation = PhxPaths::mUserDataLocation % '/' % QStringLiteral( "Saves" ) % '/';
+    PhxPaths::mBiosLocation = PhxPaths::mUserDataLocation % '/' % QStringLiteral( "BIOS" ) % '/';
 
-    QDir coreDir( PhxPaths::mCoreLocation );
-    QDir biosDir( PhxPaths::mBiosLocation );
+    QDir userDir( PhxPaths::mUserDataLocation );
     QDir saveDir( PhxPaths::mSaveLocation );
-    QDir artworkDir( PhxPaths::mArtworkLocation );
-    QDir databaseDir( PhxPaths::mMetadataLocation );
+    QDir biosDir( PhxPaths::mBiosLocation );
+    QDir coverArtCacheDir( PhxPaths::mCoverArtCacheLocation );
 
-    if( !coreDir.exists() ) {
-        coreDir.mkpath( PhxPaths::mCoreLocation );
-    }
-
-    if( !biosDir.exists() ) {
-        biosDir.mkpath( PhxPaths::mBiosLocation );
+    if( !userDir.exists() ) {
+        userDir.mkpath( userDir.path() );
     }
 
     if( !saveDir.exists() ) {
-        saveDir.mkpath( PhxPaths::mSaveLocation );
+        saveDir.mkpath( saveDir.path() );
     }
 
-    if( !artworkDir.exists() ) {
-        artworkDir.mkpath( PhxPaths::mArtworkLocation );
+    if( !biosDir.exists() ) {
+        biosDir.mkpath( biosDir.path() );
     }
 
-    if( !databaseDir.exists() ) {
-        databaseDir.mkpath( PhxPaths::mMetadataLocation );
+    if( !coverArtCacheDir.exists() ) {
+        coverArtCacheDir.mkpath( coverArtCacheDir.path() );
     }
 
 }

@@ -7,6 +7,9 @@ SUBDIRS += externals/quazip/quazip
 SUBDIRS += backend
 SUBDIRS += frontend
 
+# We'll always be 64-bit
+CONFIG += x86_64
+
 # Ensure that frontend is built last
 frontend.depends = backend externals/quazip/quazip
 

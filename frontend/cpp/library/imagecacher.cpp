@@ -19,7 +19,7 @@ void ImageCacher::cache() {
     auto urlString = imageUrl().toString();
     mImageType = QFileInfo( urlString ).suffix();
 
-    auto cachedFile = PhxPaths::artworkLocation() + identifier() + "." + mImageType;
+    QString cachedFile = PhxPaths::coverArtCacheLocation() % '/' % identifier() % '.' % mImageType;
 
     if( !QFile::exists( cachedFile ) && imageUrl().isValid() ) {
 
@@ -73,12 +73,12 @@ void ImageCacher::handleRequest( QNetworkReply *reply ) {
     if( !reply->error() ) {
         auto imageBytes = reply->readAll();
 
-        QFile file( PhxPaths::artworkLocation() + identifier() + "." + mImageType );
+        QFile file( PhxPaths::coverArtCacheLocation() + identifier() + "." + mImageType );
 
         if( file.open( QIODevice::WriteOnly ) ) {
 
             if( file.write( std::move( imageBytes ) ) == -1 ) {
-                qCWarning( phxLibrary ) << "Couldn't cache " << identifier() << "to" << PhxPaths::artworkLocation();
+                qCWarning( phxLibrary ) << "Couldn't cache " << identifier() << "to" << PhxPaths::coverArtCacheLocation();
             }
 
             else {

@@ -73,6 +73,9 @@ void phoenixDebugMessageHandler( QtMsgType type, const QMessageLogContext &conte
 
 int main( int argc, char *argv[] ) {
 
+    // Init controller db file for backend
+    Q_INIT_RESOURCE( controllerdb );
+
     // Uncomment this to enable the message handler for debugging and stack tracing
     // qInstallMessageHandler( phoenixDebugMessageHandler );
 
@@ -115,10 +118,14 @@ int main( int argc, char *argv[] ) {
     engine.load( QUrl( QStringLiteral( "qrc:/main.qml" ) ) );
 
     // Ensure custom controller DB file exists
-    QFile gameControllerDBFileSrc( Library::PhxPaths::binLocation() % QStringLiteral( "/userdata/gamecontrollerdb.txt" ) );
-    QFile gameControllerDBFileDest( Library::PhxPaths::userDataLocation() % '/' % QStringLiteral( "gamecontrollerdb.txt" ) );
+    QFile gameControllerDBFile( Library::PhxPaths::userDataLocation() % '/' % QStringLiteral( "gamecontrollerdb.txt" ) );
 
-    gameControllerDBFileSrc.copy( gameControllerDBFileDest.fileName() );
+    if( !gameControllerDBFile.exists() ) {
+        gameControllerDBFile.open( QIODevice::ReadWrite );
+        QTextStream stream( &gameControllerDBFile );
+        stream << "# Insert your custom definitions here" << endl;
+        gameControllerDBFile.close();
+    }
 
     // Set InputManager's custom controller DB file
     QQmlProperty prop( engine.rootObjects().first(), "inputManager.controllerDBFile" );
