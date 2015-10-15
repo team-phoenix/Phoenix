@@ -1,4 +1,9 @@
 #include "libraryworker.h"
+#include "JlCompress.h"
+
+#include "archievefileinfo.h"
+#include "cuefileinfo.h"
+#include "biosfileinfo.h"
 
 using namespace Library;
 
@@ -8,10 +13,6 @@ LibraryWorker::LibraryWorker( QObject *parent )
       mInsertPaused( false ),
       mRunning( false ),
       qmlResumeQuitScan( false ) {
-
-    for( auto &extension : platformMap.keys() ) {
-        mFileFilters.append( "*." + extension );
-    }
 
     connect( this, &LibraryWorker::started, this, [ this ] {
         setIsRunning( true );
@@ -53,7 +54,7 @@ void LibraryWorker::eventLoopStarted() {
             setResumeDirectory( lastUsedPath.toString() );
 
             if( !resumeInsertID().isEmpty() ) {
-                findGameFiles( resumeDirectory() );
+                findGameFiles( resumeDirectory(), true );
             }
         }
     }
@@ -64,15 +65,13 @@ void LibraryWorker::handleDraggedUrls( QList<QUrl> urls ) {
 }
 
 void LibraryWorker::handleDroppedUrls() {
+
     for( auto &url : mDraggedUrls ) {
+
         auto localUrl = url.toLocalFile();
 
-        if( QDir( localUrl ).exists() ) {
-            findGameFiles( std::move( localUrl ) );
-
-        } else {
-            qDebug() << localUrl << "Is a file";
-            mFileInfoQueue.enqueue( std::move( QFileInfo( localUrl ) ) );
+        if ( !findGameFiles( localUrl, false ) ) {
+            enqueueFiles( localUrl );
         }
 
     }
@@ -128,7 +127,6 @@ void LibraryWorker::setIsRunning( const bool running ) {
     mRunning = running;
 }
 
-
 bool LibraryWorker::insertCancelled() {
     QMutexLocker locker( &mMutex );
     return mInsertCancelled;
@@ -155,38 +153,39 @@ void LibraryWorker::setInsertPaused( const bool paused ) {
     mInsertPaused = paused;
 }
 
-void LibraryWorker::findGameFiles( const QString localUrl ) {
+bool LibraryWorker::findGameFiles( const QString localUrl, bool autoStart = true ) {
 
     QDir urlDirectory( localUrl );
 
     if( !urlDirectory.exists() ) {
         qCWarning( phxLibrary ) << localUrl << " does not exist!";
-        return;
+        return false;
     }
 
-    QDirIterator dirIter( localUrl, mFileFilters, QDir::Files, QDirIterator::NoIteratorFlags );
+    QDirIterator dirIter( localUrl, GameFileInfo::gameFilter(), QDir::Files, QDirIterator::NoIteratorFlags );
 
     if( resumeQuitScan() && !resumeInsertID().isEmpty() ) {
 
         bool insert = false;
 
         while( dirIter.hasNext() ) {
-            auto dir = dirIter.next();
+            auto localFile = dirIter.next();
 
-            if( dir == resumeInsertID() ) {
+            if( localFile == resumeInsertID() ) {
                 insert = true;
-                dir = dirIter.next();
+                localFile = dirIter.next();
             }
 
             if( insert ) {
-                mFileInfoQueue.enqueue( std::move( QFileInfo( dir ) ) );
+                enqueueFiles( localFile );
             }
         }
     }
 
     else {
         while( dirIter.hasNext() ) {
-            mFileInfoQueue.enqueue( std::move( QFileInfo( dirIter.next() ) ) );
+            auto localFile = dirIter.next();
+            enqueueFiles( localFile );
         }
     }
 
@@ -194,13 +193,17 @@ void LibraryWorker::findGameFiles( const QString localUrl ) {
         setResumeDirectory( localUrl );
     }
 
-    emit started();
-    prepareGameData( mFileInfoQueue );
-    emit finished();
+    if ( autoStart ) {
+        emit started();
+        prepareGameData( mFileInfoQueue );
+        emit finished();
+    }
+
+    return true;
 
 }
 
-void LibraryWorker::prepareGameData( QQueue<QFileInfo> &queue ) {
+void LibraryWorker::prepareGameData( QQueue<GameFileInfo> &queue ) {
 
     int i = 0;
     int queueLength = queue.size();
@@ -217,27 +220,9 @@ void LibraryWorker::prepareGameData( QQueue<QFileInfo> &queue ) {
             }
         }
 
-        QFileInfo fileInfo = queue.dequeue();
 
-        QString gameFilePath;
-        QString gameExtension;
-        QString gameTitle;
-        QString gameSystem;
-        QString gameSha1;
-
-        gameFilePath = fileInfo.canonicalFilePath();
-        gameExtension = fileInfo.suffix().toLower();
-
-        // QFileInfo::baseName() seems to split the absoluteFilePath based on periods '.'
-        // This causes issue with some game names that use periods.
-        gameTitle =  fileInfo.absoluteFilePath().remove(
-                         fileInfo.canonicalPath() ).remove( 0, 1 ).remove( QStringLiteral( "." ) + gameExtension );
-
-
+        /*
         auto query = QSqlQuery( SystemDatabase::database() );
-
-        GameData importData;
-
         auto possibleSystemsList = getAvailableSystems( gameExtension, query );
 
         if( QStringLiteral( "cue" ) == gameExtension ) {
@@ -266,17 +251,21 @@ void LibraryWorker::prepareGameData( QQueue<QFileInfo> &queue ) {
 
         if( gameSystem.isEmpty() ) {
             qCDebug( phxLibrary )  << "The system could not be found, The database needs to be updated for " << fileInfo.canonicalFilePath();
-            continue;
         }
+        */
 
-        qDebug() << "GAME: " << gameSystem << gameTitle;
+        GameFileInfo gameInfo = queue.dequeue();
 
-        importData.timePlayed = QStringLiteral( "00:00" );
-        importData.title = gameTitle;
-        importData.filePath = fileInfo.canonicalFilePath();
-        importData.sha1 = gameSha1;
+        GameData importData;
+
+        qDebug() << "ImportData: " << gameInfo.system() << gameInfo.fullFilePath();
+
         importData.importProgress = ( i / static_cast<qreal>( queueLength ) ) * 100.0;
-        importData.system = gameSystem;
+        importData.timePlayed = gameInfo.timePlayed();
+        importData.title = gameInfo.title();
+        importData.filePath = gameInfo.fullFilePath();
+        importData.sha1 = gameInfo.sha1CheckSum();
+        importData.system = gameInfo.system();
         importData.fileID = i - 1;
 
         // Find MetaData.
@@ -349,216 +338,44 @@ void LibraryWorker::prepareMetadata( GameData &gameData ) {
 
 }
 
-QString LibraryWorker::getCheckSum( const QString &filePath ) {
-    QString hash;
-    QFile file( filePath );
+void LibraryWorker::enqueueFiles( QString &filePath ) {
 
-    if( file.open( QIODevice::ReadOnly ) ) {
+    auto fileInfo = GameFileInfo( filePath );
 
-        QCryptographicHash checkSum( QCryptographicHash::Sha1 );
-        checkSum.addData( &file );
+    switch( fileInfo.fileType() ) {
+    case GameFileInfo::FileType::GameFile:
+        mFileInfoQueue.enqueue( std::move( fileInfo ) );
+        break;
+    case GameFileInfo::FileType::ZipFile: {
+        auto zipFileInfo = static_cast<ArchieveFileInfo>( fileInfo );
 
-        hash = checkSum.result().toHex().toUpper();
-
-        file.close();
-    }
-
-    return std::move( hash );
-}
-
-bool LibraryWorker::checkForBios( const QString &filePath, const QString &checkSum, QSqlQuery &query ) {
-
-    static const QString statement = QStringLiteral( "SELECT biosFile FROM firmware WHERE sha1 = ?" );
-
-    query.prepare( statement );
-    query.addBindValue( checkSum );
-
-    Q_ASSERT( query.exec() );
-
-    if( query.first() ) {
-        auto biosName = query.value( 0 ).toString();
-
-        if( !biosName.isEmpty() ) {
-            cacheBiosFile( filePath, biosName );
-            return true;
-        }
-    }
-
-    return false;
-}
-
-void LibraryWorker::cacheBiosFile( const QString &filePath, const QString &biosName ) {
-
-    auto biosFile = PhxPaths::biosLocation() + biosName;
-
-    if( !QFile::exists( biosFile ) ) {
-        QFile::copy( filePath, biosFile );
-    }
-
-}
-
-QStringList LibraryWorker::getAvailableSystems( const QString &extension, QSqlQuery &query ) {
-    query.prepare( QStringLiteral( "SELECT DISTINCT systemMap.systemname FROM systemMap" )
-                   + QStringLiteral( " INNER JOIN extensions ON systemMap.systemIndex=extensions.systemIndex" )
-                   + QStringLiteral( " WHERE extensions.extension = ?" ) );
-
-    query.addBindValue( extension );
-
-    QStringList systemsList;
-
-    if( query.exec() ) {
-        while( query.next() ) {
-            systemsList.append( query.value( 0 ).toString() );
-        }
-    }
-
-    return std::move( systemsList );
-}
-
-QList<HeaderData> LibraryWorker::getPossibleHeaders( const QStringList &possibleSystems, QSqlQuery &query ) {
-
-    QList<HeaderData> headerDataList;
-
-    for( auto &system : possibleSystems ) {
-
-        query.clear();
-        query.prepare( QStringLiteral( "SELECT DISTINCT systemHeaderOffsets.byteLength, " )
-                       + QStringLiteral( "systemHeaderOffsets.seekIndex, systemHeaderOffsets.result, systemHeaderOffsets.systemIndex " )
-                       + QStringLiteral( "FROM systemHeaderOffsets INNER JOIN  systemMap ON " )
-                       + QStringLiteral( "systemMap.systemIndex=systemHeaderOffsets.systemIndex " )
-                       + QStringLiteral( "WHERE systemMap.systemname = ?" ) );
-        query.addBindValue( system );
-
-        Q_ASSERT( query.exec() );
-
-        while( query.next() ) {
-
-            HeaderData headerData;
-            headerData.byteLength = query.value( 0 ).toInt();
-            headerData.seekPosition = query.value( 1 ).toInt();
-            headerData.result = query.value( 2 ).toString();
-            headerData.systemIndex = query.value( 3 ).toString();
-
-            headerDataList.append( std::move( headerData ) );
-        }
-    }
-
-    return std::move( headerDataList );
-}
-
-QString LibraryWorker::getRealSystem( const QList<HeaderData> &possibleHeaders, const QString &gameFilePath, QSqlQuery &query ) {
-    QFile gameFile( gameFilePath );
-
-    Q_ASSERT( gameFile.open( QIODevice::ReadOnly ) );
-
-    QString realSystem;
-
-    for( auto &headerData : possibleHeaders ) {
-        if( !gameFile.seek( headerData.seekPosition ) ) {
-            qCWarning( phxLibrary ) << "Could not put " << gameFile.fileName() << "'s seek at " << headerData.seekPosition;
-            continue;
-        }
-
-        auto bytes = QString( gameFile.read( headerData.byteLength ).simplified().toHex() );
-
-        if( bytes == headerData.result ) {
-            query.prepare( QStringLiteral( "SELECT systemname FROM systemMap WHERE systemIndex = ?" ) );
-            query.addBindValue( headerData.systemIndex );
-
-            Q_ASSERT( query.exec() );
-
-            query.first();
-            realSystem = query.value( 0 ).toString();
-            break;
-        }
-
-    }
-
-    return std::move( realSystem );
-}
-
-CueData LibraryWorker::getCueData( const QStringList &possibleSystems, const QFileInfo &fileInfo, QSqlQuery &query ) {
-    auto possibleHeaders = getPossibleHeaders( possibleSystems, query );
-
-    QString firstCueBinaryFile;
-    QStringList cueFileList = getCueFileInfo( fileInfo );
-
-    if( !cueFileList.isEmpty() ) {
-        firstCueBinaryFile = cueFileList.first();
-    }
-
-    CueData cueData;
-    cueData.system = getRealSystem( possibleHeaders, firstCueBinaryFile, query );
-    cueData.sha1 = getCheckSum( firstCueBinaryFile );
-
-    return std::move( cueData );
-}
-
-QStringList LibraryWorker::getCueFileInfo( const QFileInfo &fileInfo ) {
-    QFile file( fileInfo.canonicalFilePath() );
-    QStringList binFiles;
-
-    if( !file.open( QIODevice::ReadOnly ) ) {
-        return binFiles;
-    }
-
-    while( !file.atEnd() ) {
-        auto line = file.readLine();
-
-        QString obtainedTitle;
-        bool eatChars = false;
-
-        for( auto &subStr : line ) {
-            if( subStr == '"' ) {
-                if( eatChars ) {
-                    eatChars = false;
-                } else {
-                    eatChars = true;
-
-                    if( obtainedTitle.isEmpty() ) {
-                        continue;
-                    }
-                }
-            }
-
-            if( eatChars ) {
-                obtainedTitle.append( subStr );
+        for ( auto hasNext = zipFileInfo.firstFile(); hasNext; hasNext = zipFileInfo.nextFile() ) {
+            if ( zipFileInfo.isValid() ) {
+                mFileInfoQueue.enqueue( std::move( zipFileInfo ) );
             }
         }
 
-        if( !obtainedTitle.isEmpty() ) {
-            binFiles.append( fileInfo.canonicalPath() + QDir::separator() + obtainedTitle );
-        }
+        break;
 
     }
+    case GameFileInfo::FileType::CueFile: {
+        auto cueFileInfo = static_cast<CueFileInfo>( fileInfo );
 
-    file.close();
-
-    return binFiles;
-}
-
-void LibraryWorker::checkHeaderOffsets( const QFileInfo &fileInfo, Platform::Platforms &platform ) {
-    QFile file( fileInfo.canonicalFilePath() );
-
-    if( file.open( QIODevice::ReadOnly ) ) {
-
-        auto headers = headerOffsets.value( fileInfo.suffix() );
-
-        for( auto &header : headers ) {
-            if( !file.seek( header.offset ) ) {
-                continue;
-            }
-
-            auto bytes = file.read( header.length );
-
-            platform = Platform::checkHeaderString( bytes.simplified().toHex() );
-
-            if( platform != Platform::Platform::UNKNOWN ) {
-                break;
-            }
-
+        if ( cueFileInfo.isValid() ) {
+            qDebug() << "Cue File (Valid): " << cueFileInfo.fullFilePath() <<  cueFileInfo.system() << cueFileInfo.sha1CheckSum();
+            mFileInfoQueue.enqueue( std::move( cueFileInfo ) );
+        } else {
+            qDebug() << "Cue File (Invalid): " << cueFileInfo.fullFilePath();
         }
-
-        file.close();
+        break;
     }
+    case GameFileInfo::FileType::BiosFile: {
+        auto biosFileInfo = static_cast<BiosFileInfo>( fileInfo );
+        biosFileInfo.cache( PhxPaths::biosLocation() );
+        break;
+    }
+    default:
+        break;
+    }
+
 }

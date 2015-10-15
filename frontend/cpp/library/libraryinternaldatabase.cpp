@@ -71,10 +71,11 @@ bool LibraryInternalDatabase::createSchema() {
             QStringLiteral( "   artworkUrl TEXT,\n" ) +
             QStringLiteral( "   coreFilePath TEXT,\n" ) +
             QStringLiteral( "   description TEXT,\n" ) +
+            QStringLiteral( "   zipIndex INTEGER,\n" ) +
 
             QStringLiteral( "   /* file info */" ) +
             QStringLiteral( "   absolutePath TEXT,\n" ) +
-            QStringLiteral( "   absoluteFilePath TEXT UNIQUE NOT NULL,\n" ) +
+            QStringLiteral( "   absoluteFilePath TEXT NOT NULL,\n" ) +
             QStringLiteral( "   sha1 TEXT UNIQUE NOT NULL\n" ) +
             QStringLiteral( ")" ) );
 

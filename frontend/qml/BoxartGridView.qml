@@ -110,24 +110,29 @@ Rectangle {
                     onClicked: { gridView.currentIndex = index; }
                     onDoubleClicked: {
 
-                        // Prevent user from clicking on anything while the transition occurs
-                        root.disableMouseClicks();
 
-                        // Don't check the mouse until the transition's done
-                        rootMouseArea.hoverEnabled = false;
-
-                        // Let the user know we're thinking!
-                        rootMouseArea.cursorShape = Qt.BusyCursor;
 
                         var core = coreFilePath;
                         if ( core === "" ) {
                             core = gameLauncher.getDefaultCore( system )
                         }
 
-                        if ( gameLauncher.verifyGame( core, absoluteFilePath ) ) {
+                        var game = gameLauncher.trimmedGame( absoluteFilePath );
+
+                        if ( gameLauncher.verify( core, game ) ) {
+
+                            // Prevent user from clicking on anything while the transition occurs
+                            root.disableMouseClicks();
+
+                            // Don't check the mouse until the transition's done
+                            rootMouseArea.hoverEnabled = false;
+
+                            // Let the user know we're thinking!
+                            rootMouseArea.cursorShape = Qt.BusyCursor;
+
                             // Do the assignment that triggers the game launch
                             root.gameViewObject.coreGamePair = { "corePath": core
-                                                               , "gamePath": absoluteFilePath
+                                                               , "gamePath": game
                                                                , "title": title };
 
                             layoutStackView.pop();
