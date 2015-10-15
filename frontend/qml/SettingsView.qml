@@ -10,7 +10,6 @@ ScrollView {
     width: 100;
     height: 62;
 
-
     ListView {
         id: listView;
         spacing: 0;
@@ -24,67 +23,41 @@ ScrollView {
         highlight: Item {
             x: listView.currentItem.x;
             y: listView.currentItem.y;
-            //width: listView.currentItem.width;
-            //height: listView.currentItem.height;
             anchors.fill: listView.currentItem;
 
             Rectangle {
                 id: highlighterRectangle;
-                anchors.fill: parent;
-                color: PhxTheme.common.normalButtonColor;
+                anchors { left: parent.left; top: parent.top; bottom: parent.bottom; }
+                width: 5;
+                height: 35;
+                color: PhxTheme.common.baseBackgroundColor;
+                opacity: .5;
             }
         }
 
         header: Item {
-            height: 36;
-
-            anchors {
-                left: parent.left;
-                right: parent.right;
-            }
+            height: 70;
+            anchors { left: parent.left; right: parent.right; }
 
             Text {
                 text: qsTr( "Settings" );
-                anchors {
-                    verticalCenter: parent.verticalCenter;
-                    left: parent.left;
-                    leftMargin: 12;
-                }
-
-                font {
-                    pixelSize: PhxTheme.selectionArea.headerFontSize;
-                    bold: true;
-                }
-
+                anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 17; }
+                font { pointSize: PhxTheme.selectionArea.headerFontSize; }
                 color: PhxTheme.selectionArea.highlightFontColor;
             }
         }
 
         delegate: Item {
             id: listViewDelegate;
-            height: 25;
-
-            anchors {
-                left: parent.left;
-                right: parent.right;
-            }
+            height: 35;
+            anchors { left: parent.left; right: parent.right; }
 
             Text {
                 id: sectionText;
                 text: section;
-
-                anchors {
-                    verticalCenter: parent.verticalCenter;
-                    left: parent.left;
-                    leftMargin:  24;
-                }
-
-                font {
-                    pixelSize: PhxTheme.selectionArea.basePixelSize;
-                }
-
-                color: index === listView.currentIndex ? PhxTheme.common.highlighterFontColor : PhxTheme.common.baseFontColor;
-
+                anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin:  45; }
+                font { pointSize: PhxTheme.selectionArea.basePixelSize; }
+                color: index === listView.currentIndex ? PhxTheme.common.baseBackgroundColor : PhxTheme.selectionArea.baseFontColor;
             }
 
             MouseArea {

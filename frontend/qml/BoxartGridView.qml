@@ -25,7 +25,7 @@ Rectangle {
         // Don't use these two properties, they just create binding loops...
         // property int numItems: Math.floor( contentItem.width / contentArea.contentSlider.value );
         // property int addToMarginsTotal: contentItem.width % contentArea.contentSlider.value;
-        property double addToMargins: 0
+        property double addToMargins: 0;
 
         Component.onCompleted: {
             addToMargins = Qt.binding( function() {
@@ -75,21 +75,19 @@ Rectangle {
 
             // Behavior on contentY { SmoothedAnimation { duration: 250; } }
 
-            // FIXME: Doesn't do anything useful if BoxartGridView gets destroyed and reinstantiated over and over
-            // Yes this isn't ideal, but it is a work around for the view resetting back to 0
-            // whenever a game is imported.
-            /*property real lastY: 0;
+            // A work around for the view resetting back to 0 whenever a game is imported
+            property real lastY: 0;
 
             onContentYChanged: {
                 if (contentY == 0) {
-                    console.log( contentY );
+                    // console.log( contentY );
                     if ( Math.round( lastY ) !== 0.0 ) {
                         contentY = lastY;
                     }
                 }
                 else
                     lastY = contentY;
-            }*/
+            }
 
             boundsBehavior: Flickable.StopAtBounds;
 
@@ -161,19 +159,18 @@ Rectangle {
                         Image {
                             id: gridItemImage;
                             height: parent.height;
-                            anchors { left: parent.left; right: parent.right; bottom: parent.bottom; }
+                            anchors { top: parent.top; left: parent.left; right: parent.right; bottom: parent.bottom; leftMargin: -1; }
                             visible: true;
                             asynchronous: true;
-
-                            source: imageCacher.cachedUrl == "" ? "missingArtwork.png" : imageCacher.cachedUrl;
-                            sourceSize { width: 400; height: 400; }
+                            source: imageCacher.cachedUrl == "" ? "noartwork.png" : imageCacher.cachedUrl;
+                            sourceSize { width: 450; height: 450; }
                             verticalAlignment: Image.AlignBottom;
                             fillMode: Image.PreserveAspectFit;
 
                             onStatusChanged: {
                                 if ( status == Image.Error ) {
                                     console.log( "Error in " + source );
-                                    gridItemImage.source = "missingArtwork.png";
+                                    gridItemImage.source = "noartwork.png";
                                 }
 
                                 // This is not triggered when source is an empty string
@@ -182,33 +179,28 @@ Rectangle {
                                 }
                             }
 
-                            // BoxArt Border
+                            // BoxArt: Outer Border
                             Rectangle {
+                                anchors { bottom: parent.bottom; topMargin: -border.width; bottomMargin: -border.width; leftMargin: -border.width; rightMargin: -border.width; horizontalCenter: parent.horizontalCenter; }
                                 id: imageBackground;
-                                anchors {
-                                    topMargin: -border.width;
-                                    bottom: parent.bottom; bottomMargin: -border.width;
-                                    leftMargin: -border.width;
-                                    rightMargin: -border.width;
-                                    horizontalCenter: parent.horizontalCenter;
-                                }
                                 z: gridItemImage.z - 1;
                                 height: parent.paintedHeight + border.width * 2;
                                 width: parent.paintedWidth + border.width * 2;
                                 border.color: index === gridView.currentIndex ? PhxTheme.common.boxartSelectedBorderColor : PhxTheme.common.boxartNormalBorderColor;
                                 border.width: 2 + (contentArea.contentSlider.value/50);
                                 color: "transparent";
-                                radius: 1;
+                                radius: 3;
                             }
 
+                            // BoxArt Shadow
                             RectangularGlow {
                                 anchors.bottom: parent.bottom;
                                 anchors.horizontalCenter: parent.horizontalCenter;
                                 height: parent.paintedHeight;
                                 width: parent.paintedWidth;
-                                glowRadius: 8 + (contentArea.contentSlider.value/50);
-                                spread: .15;
-                                color: "#35000000";
+                                glowRadius: 1+(contentArea.contentSlider.value/50);
+                                spread: .1;
+                                color: "#50000000";
                                 cornerRadius: glowRadius;
                                 z: imageBackground.z - 1;
                             }
@@ -277,4 +269,3 @@ Rectangle {
         }
     }
 }
-

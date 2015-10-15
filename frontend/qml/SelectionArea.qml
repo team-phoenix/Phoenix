@@ -25,15 +25,10 @@ Item {
     Rectangle  {
         id: selectionArea;
         anchors.fill: parent;
-
         color: PhxTheme.common.primaryBackgroundColor;
 
         Row {
-            anchors {
-                top: parent.top;
-                bottom: parent.bottom;
-                right: parent.right;
-            }
+            anchors { top: parent.top; bottom: parent.bottom; right: parent.right; }
         }
 
         ColumnLayout {
@@ -47,53 +42,44 @@ Item {
                 id: sectionsAreaStackView;
                 Layout.fillHeight: true;
                 Layout.fillWidth: true;
-
                 initialItem: platformsView;
 
                 Component {
                     id: platformsView;
-                    PlatformsView {
-                        objectName: "PlatformsView";
-                    }
+                    PlatformsView { objectName: "PlatformsView"; }
                 }
 
                 Component {
                     id: favoritesView;
-
-                    CollectionsView {
-                        objectName: "CollectionsView";
-                    }
+                    CollectionsView { objectName: "CollectionsView"; }
                 }
 
                 Component {
                     id: settingsView;
-
-                    SettingsView {
-                        objectName: "SettingsView";
-                    }
+                    SettingsView { objectName: "SettingsView"; }
                 }
 
                 delegate: StackViewDelegate {
-                    function transitionFinished(properties)
-                    {
+                    function transitionFinished(properties) {
                         properties.exitItem.opacity = 1
                         properties.exitItem.y = 0;
                     }
 
                     pushTransition: StackViewTransition {
-
                         PropertyAnimation {
                             target: enterItem
                             property: "opacity"
                             from: 0
                             to: 1
                         }
+
                         PropertyAnimation {
                             target: exitItem
                             property: "opacity"
                             from: 1
                             to: 0
                         }
+
                         PropertyAnimation {
                             target: enterItem
                             property: "y"
@@ -123,10 +109,10 @@ Item {
                 orientation: ListView.Horizontal;
 
                 model: ListModel {
-                    ListElement { bgColor: "white"; label: "Add Games"; imageSource: "add.svg"; }
-                    ListElement { bgColor: "white"; label: "Favorites"; imageSource: "collections.svg"; }
                     ListElement { bgColor: "white"; label: "Games"; imageSource: "games.svg"; }
+                    ListElement { bgColor: "white"; label: "Favorites"; imageSource: "collections.svg"; }
                     ListElement { bgColor: "white"; label: "Settings"; imageSource: "settings.svg"; }
+                    ListElement { bgColor: "white"; label: "Add Games"; imageSource: "add.svg"; }
                 }
 
                 FileDialog {
@@ -134,7 +120,6 @@ Item {
                     selectFolder: true;
                     onAccepted: { contentArea.contentLibraryModel.append( fileUrl ); }
                 }
-
 
                 delegate: Item {
                     height: parent.height;
@@ -154,12 +139,8 @@ Item {
                         visible: imageSource === "";
                         anchors.centerIn: parent;
                         text: label;
-
-                        font {
-                            pixelSize: PhxTheme.selectionArea.basePixelSize;
-                        }
-
                         color: PhxTheme.common.baseFontColor;
+                        font { pointSize: PhxTheme.selectionArea.basePixelSize; }
                     }
 
                     MouseArea {
@@ -167,8 +148,14 @@ Item {
                         onClicked: {
                             switch( index ) {
                             case 0:
-                                fileDialog.open();
+                                if ( sectionsAreaStackView.currentItem.objectName !== "PlatformsView" ) {
+                                    sectionsAreaStackView.push( { item: platformsView, replace: true } );
+                                    if( contentArea.contentStackView.currentItem.objectName !== "BoxartGridView") {
+                                        contentArea.contentStackView.push( { item: contentArea.contentBoxartGrid, replace: true } );
+                                    }
+                                }
                                 break;
+
                             case 1:
                                 if ( sectionsAreaStackView.currentItem.objectName !== "CollectionsView" ) {
                                     sectionsAreaStackView.push( { item: favoritesView, replace: true } );
@@ -177,15 +164,8 @@ Item {
                                     }
                                 }
                                 break;
-                            case 2:
-                                if ( sectionsAreaStackView.currentItem.objectName !== "PlatformsView" ) {
-                                    sectionsAreaStackView.push( { item: platformsView, replace: true } );
-                                    if( contentArea.contentStackView.currentItem.objectName !== "BoxartGridView") {
-                                        contentArea.contentStackView.push( { item: contentArea.contentBoxartGrid, replace: true } );
-                                    }
-                                }
-                                break;
-                            case 3:
+
+                            case 2:                                
                                 if ( sectionsAreaStackView.currentItem.objectName !== "SettingsView" ) {
                                     sectionsAreaStackView.push( { item: settingsView, replace: true } );
                                     if( contentArea.contentStackView.currentItem.objectName !== "InputView") {
@@ -193,6 +173,11 @@ Item {
                                     }
                                 }
                                 break;
+
+                            case 3:
+                                fileDialog.open();
+                                break;
+
                             default:
                                 break;
                             }

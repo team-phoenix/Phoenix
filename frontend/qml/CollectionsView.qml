@@ -1,5 +1,6 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.4
+import QtQuick.Controls.Styles 1.4
 
 import vg.phoenix.models 1.0
 import vg.phoenix.themes 1.0
@@ -16,23 +17,24 @@ ScrollView {
         header: Rectangle {
             anchors { left: parent.left; right: parent.right; }
             color: "transparent";
-            height: 36;
+            height: 70;
 
             Text {
                 text: qsTr( "Collections" );
-                anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 12; }
-                font { pixelSize: PhxTheme.selectionArea.headerFontSize; bold: true; }
+                anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 17; }
+                font { pointSize: PhxTheme.selectionArea.headerFontSize; }
                 color: PhxTheme.selectionArea.highlightFontColor;
             }
 
             Button {
-                anchors {
-                    verticalCenter: parent.verticalCenter;
-                    right: parent.right;
-                    rightMargin: 25;
-                }
+                anchors { verticalCenter: parent.verticalCenter; right: parent.right; rightMargin: 17; }
+                // text: qsTr( "Add" );
+                anchors.centerIn: parent;
+                width: parent.width;
+                iconName: "Add Collection";
+                iconSource:  "add2.svg";
+                style: ButtonStyle { background: Rectangle { color: "transparent"; } }
 
-                text: qsTr( "Add" );
                 onClicked: {
                     collectionsModel.append( { "collectionID": listView.count
                                                 , "collectionName": "New Collection "
@@ -45,6 +47,7 @@ ScrollView {
 
         delegate: Rectangle {
             id: listViewDelegate;
+            anchors { left: parent.left; right: parent.right; }
             color: "transparent";
             height: 25;
 
@@ -74,21 +77,11 @@ ScrollView {
                 }
             }
 
-            anchors {
-                left: parent.left;
-                right: parent.right;
-            }
-
             TextField {
                 id: platformText;
                 text: collectionName;
                 readOnly: true;
-
-                anchors {
-                    verticalCenter: parent.verticalCenter;
-                    left: parent.left;
-                    leftMargin:  24;
-                }
+                anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin:  24; }
 
                 onAccepted: {
                     collectionsModel.set( collectionID, platformText.text );
@@ -96,10 +89,7 @@ ScrollView {
                     focus = false;
                 }
 
-                font {
-                    pixelSize: PhxTheme.selectionArea.basePixelSize;
-                }
-
+                font { pointSize: PhxTheme.selectionArea.basePixelSize; }
                 textColor: PhxTheme.common.baseFontColor;
 
             }
@@ -107,12 +97,7 @@ ScrollView {
             Button {
                 visible: collectionID !== 0;
                 z: mouseArea.z + 1;
-                anchors {
-                    right: parent.right;
-                    verticalCenter: parent.verticalCenter;
-                    rightMargin: 12;
-                }
-
+                anchors { right: parent.right; verticalCenter: parent.verticalCenter; rightMargin: 12; }
                 text: "Remove";
 
                 onClicked: {

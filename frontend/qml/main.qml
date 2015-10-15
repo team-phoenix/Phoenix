@@ -19,7 +19,7 @@ ApplicationWindow {
     color: "black";
 
     property int defaultMinHeight: 540;
-    property int defaultMinWidth: 735;
+    property int defaultMinWidth: 800;
     minimumHeight: defaultMinHeight;
     minimumWidth: defaultMinWidth;
 
@@ -34,13 +34,8 @@ ApplicationWindow {
     property var gameViewObject: null;
 
     // Use when transitioning
-    function disableMouseClicks() {
-        rootMouseArea.propagateComposedEvents = false;
-    }
-
-    function enableMouseClicks() {
-        rootMouseArea.propagateComposedEvents = true;
-    }
+    function disableMouseClicks() { rootMouseArea.propagateComposedEvents = false; }
+    function enableMouseClicks()  { rootMouseArea.propagateComposedEvents = true; }
 
     MouseArea {
         id: rootMouseArea;
@@ -131,9 +126,7 @@ ApplicationWindow {
                 root.enableMouseClicks();
 
                 // Enable hover events iff GameView is the current top of the stack
-                if( layoutStackView.depth === 1 ) {
-                    rootMouseArea.hoverEnabled = true;
-                }
+                if( layoutStackView.depth === 1 ) { rootMouseArea.hoverEnabled = true; }
                 layoutStackView.transitioning = false;
             }
 
@@ -180,23 +173,17 @@ ApplicationWindow {
                 }
             }
 
-            Component.onCompleted: {
-                root.inputManager.emitConnectedDevices();
-            }
+            Component.onCompleted: { root.inputManager.emitConnectedDevices(); }
         }
     }
 
     Component {
         id: mouseDrivenView;
-
         MouseDrivenView { objectName: "MouseDrivenView"; }
     }
 
     Component {
         id: gameView;
-
-        GameView {
-
-        }
+        GameView { }
     }
 }

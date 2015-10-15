@@ -23,6 +23,7 @@ Rectangle {
         spacing: 0;
 
         Rectangle {
+            id: gameSuspendedSec;
             anchors { top: parent.top; bottom: parent.bottom; }
             width: PhxTheme.common.menuWidth;
             color: "transparent";
@@ -35,7 +36,7 @@ Rectangle {
                 width: 48;
                 height: 48;
                 horizontalAlignment: Image.AlignLeft;
-                source: "missingArtwork.png";
+                source: "noartwork.png";
                 sourceSize { width: 400; height: 400; }
                 fillMode: Image.PreserveAspectFit;
             }

@@ -20,10 +20,8 @@ Rectangle {
     property alias boxartGrid: boxArtGridComponent;
 
     property string screenIcon: {
-        if ( root.visibility === Window.FullScreen )
-            screenIcon: "window.svg";
-        else if ( root.visibility === Window.Windowed | Window.Maximized )
-            screenIcon: "fullscreen.svg";
+        if ( root.visibility === Window.FullScreen ) screenIcon: "window.svg";
+        else if ( root.visibility === Window.Windowed | Window.Maximized ) screenIcon: "fullscreen.svg";
     }
 
     Rectangle {
@@ -32,22 +30,25 @@ Rectangle {
         color: "transparent";
         z: 100;
         height: 95;
+        opacity: .75;
+
         Rectangle {
-            anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 40; }
+            anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 35; }
             color: "transparent";
             border.width: 1;
-            border.color: "#95FFFFFF";
+            border.color: "#FFFFFF";
             width: 250;
+            radius: height/2;
             height: 30;
 
             PhxSearchBar {
-                anchors { left: parent.left; leftMargin: 0; }
+                anchors { left: parent.left; leftMargin: 10; }
                 id: searchBar;
                 font.pixelSize: 14;
                 placeholderText: "";
                 width: parent.width - 50;
                 height: parent.height;
-                textColor: "#95FFFFFF";
+                textColor: "#FFFFFF";
 
                 Timer {
                     id: searchTimer;
@@ -60,18 +61,18 @@ Rectangle {
             }
 
             Button {
-                anchors { right: parent.right; rightMargin: 5; verticalCenter: parent.verticalCenter; }
+                anchors { right: parent.right; rightMargin: searchBar.anchors.leftMargin; verticalCenter: parent.verticalCenter; }
                 width: 20;
                 height: width;
-                iconSource: searchBar.text === "" ? "search.svg" : "del.svg"
+                smooth: true;
+                iconSource: searchBar.text === "" ? "search.svg" : "del.svg";
                 style: ButtonStyle { background: Rectangle { color: "transparent"; } }
                 onClicked: searchBar.text = "";
             }
         }
 
         Row {
-            anchors { verticalCenter: parent.verticalCenter; right: parent.right; rightMargin: 30;
-            }
+            anchors { verticalCenter: parent.verticalCenter; right: parent.right; rightMargin: 30; }
             spacing: 12;
 
             Rectangle {
@@ -87,8 +88,8 @@ Rectangle {
                 anchors { verticalCenter: parent.verticalCenter; }
                 width: 100;
                 height: 30;
-                minimumValue: 100;
-                maximumValue: 500;
+                minimumValue: 150;
+                maximumValue: 450;
                 value: 150;
                 stepSize: 50;
                 activeFocusOnPress: true;
@@ -96,8 +97,8 @@ Rectangle {
 
                 style: SliderStyle {
                     handle: Item {
-                        height: 12;
-                        width: 4;
+                        height: 10;
+                        width: 6;
 
                         Rectangle {
                             id: handleRectangle;
@@ -108,7 +109,7 @@ Rectangle {
 
                     groove: Item {
                         width: control.width;
-                        height: 2;
+                        height: 1.5;
 
                         Rectangle {
                             anchors.fill: parent;
@@ -121,7 +122,7 @@ Rectangle {
 
             Rectangle {
                 anchors { verticalCenter: parent.verticalCenter; }
-                border { width: 2; color: "white"; }
+                border { width: 1; color: "white"; }
                 color: "transparent";
                 height: 12;
                 width: height;
