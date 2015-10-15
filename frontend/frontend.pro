@@ -243,14 +243,12 @@ SOURCES += cpp/main.cpp \
 
 HEADERS += cpp/library/librarymodel.h \
            cpp/library/libraryinternaldatabase.h \
-           cpp/library/platforms.h \
            cpp/library/metadatadatabase.h \
            cpp/library/libraryworker.h \
            cpp/library/imagecacher.h \
            cpp/library/platformsmodel.h \
            cpp/library/phxpaths.h \
            cpp/library/collectionsmodel.h \
-           cpp/library/platform.h \
            cpp/library/systemdatabase.h \
            cpp/library/gamelauncher.h
 
