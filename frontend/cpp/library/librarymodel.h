@@ -1,8 +1,7 @@
 #ifndef LIBRARYMODEL_H
 #define LIBRARYMODEL_H
 
-#include <QtCore>
-#include <QtSql>
+#include "frontendcommon.h"
 
 #include "libraryinternaldatabase.h"
 #include "platforms.h"

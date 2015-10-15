@@ -1,10 +1,7 @@
 #ifndef LIBRARYINTERNALDATABASE_H
 #define LIBRARYINTERNALDATABASE_H
 
-#include <QtCore>
-#include <QtSql>
-
-#include <memory>
+#include "frontendcommon.h"
 
 #include "logging.h"
 #include "phxpaths.h"

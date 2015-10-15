@@ -1,8 +1,7 @@
 #ifndef SYSTEMDATABASE_H
 #define SYSTEMDATABASE_H
 
-#include <QtCore>
-#include <QtSql>
+#include "frontendcommon.h"
 
 #include "phxpaths.h"
 #include "logging.h"

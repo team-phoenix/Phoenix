@@ -1,8 +1,7 @@
 #ifndef COLLECTIONSMODEL_H
 #define COLLECTIONSMODEL_H
 
-#include <QtCore>
-#include <QtSql>
+#include "frontendcommon.h"
 
 #include "libraryinternaldatabase.h"
 #include "collectionsmodel.h"

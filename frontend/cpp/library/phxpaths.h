@@ -1,9 +1,7 @@
 #ifndef PHXPATHS_H
 #define PHXPATHS_H
 
-#include <QtCore>
-#include <QtWidgets>
-#include <QtQml>
+#include "frontendcommon.h"
 
 #include "logging.h"
 

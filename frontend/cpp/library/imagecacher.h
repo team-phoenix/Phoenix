@@ -1,8 +1,7 @@
 #ifndef IMAGECACHER_H
 #define IMAGECACHER_H
 
-#include <QtCore>
-#include <QtNetwork>
+#include "frontendcommon.h"
 
 #include "logging.h"
 #include "phxpaths.h"

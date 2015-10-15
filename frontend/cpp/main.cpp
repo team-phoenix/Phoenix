@@ -1,6 +1,4 @@
-#include <QApplication>
-#include <QQmlApplicationEngine>
-#include <QQmlContext>
+#include "frontendcommon.h"
 
 #include "videoitem.h"
 #include "inputmanager.h"
@@ -14,9 +12,6 @@
 #include "systemdatabase.h"
 #include "metadatadatabase.h"
 #include "gamelauncher.h"
-
-#include <memory.h>
-#include <QStringBuilder>
 
 // This is used to get the stack trace behind whatever debug message you want to diagnose
 // Simply change the message string below to whatever you want (partial string matching), set the breakpoint

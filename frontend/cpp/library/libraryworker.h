@@ -1,8 +1,7 @@
 #ifndef LIBRARYWORKER_H
 #define LIBRARYWORKER_H
 
-#include <QtCore>
-#include <QtSql>
+#include "frontendcommon.h"
 
 #include "phxpaths.h"
 #include "metadatadatabase.h"

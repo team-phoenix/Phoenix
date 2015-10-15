@@ -181,7 +181,7 @@ TEMPLATE += app
 
 QT += qml quick widgets sql multimedia network
 
-CONFIG += c++11 lib_bundle
+CONFIG += c++11
 
 # Include externals
 INCLUDEPATH += ../externals/quazip/quazip
@@ -225,7 +225,7 @@ unix {
     QMAKE_LFLAGS += -L/usr/local/lib -L/opt/local/lib
 }
 
-INCLUDEPATH += cpp/library
+INCLUDEPATH += cpp/library cpp
 
 SOURCES += cpp/main.cpp \
            cpp/library/librarymodel.cpp \
@@ -253,6 +253,8 @@ HEADERS += cpp/library/librarymodel.h \
            cpp/library/platform.h \
            cpp/library/systemdatabase.h \
            cpp/library/gamelauncher.h
+
+PRECOMPILED_HEADER = cpp/frontendcommon.h
 
 RESOURCES += qml/qml.qrc \
              qml/Theme/theme.qrc \

@@ -1,8 +1,7 @@
 #ifndef METADATADATABASE_H
 #define METADATADATABASE_H
 
-#include <QtCore>
-#include <QtSql>
+#include "frontendcommon.h"
 
 #include "phxpaths.h"
 #include "logging.h"

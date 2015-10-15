@@ -1,8 +1,7 @@
 #ifndef PLATFORMSMODEL_H
 #define PLATFORMSMODEL_H
 
-#include <QtCore>
-#include <QtSql>
+#include "frontendcommon.h"
 
 #include "systemdatabase.h"
 #include "platform.h"

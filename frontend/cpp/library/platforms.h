@@ -1,7 +1,7 @@
 #ifndef PLATFORMS
 #define PLATFORMS
 
-#include <QtCore>
+#include "frontendcommon.h"
 
 namespace Library {
 

@@ -73,7 +73,7 @@ void ImageCacher::handleRequest( QNetworkReply *reply ) {
     if( !reply->error() ) {
         auto imageBytes = reply->readAll();
 
-        QFile file( PhxPaths::coverArtCacheLocation() + identifier() + "." + mImageType );
+        QFile file( PhxPaths::coverArtCacheLocation() + '/' + identifier() + "." + mImageType );
 
         if( file.open( QIODevice::WriteOnly ) ) {
 

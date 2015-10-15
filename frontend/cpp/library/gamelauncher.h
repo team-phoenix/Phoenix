@@ -1,8 +1,7 @@
 #ifndef GAMELAUNCHER_H
 #define GAMELAUNCHER_H
 
-#include <QtCore>
-#include <QtSql>
+#include "frontendcommon.h"
 
 #include "systemdatabase.h"
 #include "logging.h"

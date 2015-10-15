@@ -1,8 +1,7 @@
 #ifndef PLATFORM_H
 #define PLATFORM_H
 
-#include <QtCore>
-#include <QtWidgets>
+#include "frontendcommon.h"
 
 namespace Library {
 
