@@ -100,11 +100,18 @@ void PhxPaths::createAllPaths() {
     if( mPortableMode ) {
         qCDebug( phxLibrary ) << "Portable mode";
         PhxPaths::mResourceLocation = PhxPaths::mBinLocation;
-        PhxPaths::mCoreLocation = PhxPaths::mResourceLocation % '/' % QStringLiteral( "Cores" );
-        PhxPaths::mMetadataLocation = PhxPaths::mResourceLocation % '/' % QStringLiteral( "Metadata" ) % '/';
+        PhxPaths::mCoreLocation = PhxPaths::mBinLocation % '/' % QStringLiteral( "Cores" );
+        PhxPaths::mMetadataLocation = PhxPaths::mBinLocation % '/' % QStringLiteral( "Metadata" ) % '/';
 
         PhxPaths::mUserDataLocation = PhxPaths::mBinLocation % '/' % QStringLiteral( "User Data" );
         PhxPaths::mCoverArtCacheLocation = PhxPaths::mUserDataLocation % '/' % QStringLiteral( "Cover Art Cache" );
+
+        // Create a core and game folder if they do not exist
+        QDir coreDir( PhxPaths::mUserDataLocation % '/' % QStringLiteral( "Cores" ) );
+
+        if( !coreDir.exists() ) {
+            coreDir.mkpath( coreDir.path() );
+        }
 
         // Create a game folder if one does not exist
         QDir gameDir( PhxPaths::mUserDataLocation % '/' % QStringLiteral( "Games" ) );
