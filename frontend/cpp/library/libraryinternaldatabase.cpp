@@ -54,8 +54,10 @@ void LibraryInternalDatabase::open() {
 }
 
 bool LibraryInternalDatabase::createSchema() {
+
     qCDebug( phxLibrary, "Initializing database schema" );
     db.transaction();
+
     QSqlQuery q( db );
     q.exec( "CREATE TABLE " + LibraryInternalDatabase::tableVersion + " (version INTEGER NOT NULL)" );
     q.exec( QStringLiteral( "INSERT INTO " ) + LibraryInternalDatabase::tableVersion + QStringLiteral( " (version) VALUES (0)" ) );
@@ -70,12 +72,11 @@ bool LibraryInternalDatabase::createSchema() {
             QStringLiteral( "   timePlayed DATETIME,\n" ) +
             QStringLiteral( "   artworkUrl TEXT,\n" ) +
             QStringLiteral( "   coreFilePath TEXT,\n" ) +
-            QStringLiteral( "   description TEXT,\n" ) +
 
             QStringLiteral( "   /* file info */" ) +
             QStringLiteral( "   absolutePath TEXT,\n" ) +
-            QStringLiteral( "   absoluteFilePath TEXT UNIQUE NOT NULL,\n" ) +
-            QStringLiteral( "   sha1 TEXT UNIQUE NOT NULL\n" ) +
+            QStringLiteral( "   absoluteFilePath TEXT NOT NULL,\n" ) +
+            QStringLiteral( "   sha1 TEXT\n" ) +
             QStringLiteral( ")" ) );
 
     q.exec( QStringLiteral( "CREATE INDEX title_index ON " ) + LibraryInternalDatabase::tableName + QStringLiteral( " (title)" ) );

@@ -6,6 +6,9 @@
 #include "systemdatabase.h"
 #include "logging.h"
 #include "phxpaths.h"
+#include "archievefileinfo.h"
+#include "JlCompress.h"
+#include "QFileInfo"
 
 class GameLauncher : public QObject {
         Q_OBJECT
@@ -15,7 +18,13 @@ class GameLauncher : public QObject {
     public slots:
         const QString getDefaultCore( const QString system );
 
-        bool verifyGame( const QString system, const QString rom );
+        bool verify( const QString system, QString rom );
+
+        QString trimmedGame( QString game );
+
+
+    private:
+
 
 };
 

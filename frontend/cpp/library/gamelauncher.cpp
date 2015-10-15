@@ -36,19 +36,37 @@ const QString GameLauncher::getDefaultCore( const QString system ) {
     return std::move( defaultCore );
 }
 
-bool GameLauncher::verifyGame( const QString system, const QString rom ) {
-    bool stuffWorks = false;
-    stuffWorks = QFile::exists( system );
+bool GameLauncher::verify( const QString system, QString rom ) {
 
-    if( !stuffWorks ) {
+    bool coreExists = QFile::exists( system );
+    if( !coreExists ) {
         qCWarning( phxLibrary ) << system << " does not exist. Launch will fail...";
     }
 
-    stuffWorks = QFile::exists( rom );
-
-    if( !stuffWorks ) {
+    bool gameExists = QFile::exists( rom );
+    if( !gameExists ) {
         qCWarning( phxLibrary ) << rom << " does not exist. Launch will fail...";
     }
 
-    return stuffWorks;
+    return coreExists && gameExists;
+}
+
+QString GameLauncher::trimmedGame(QString game) {
+
+    if ( game.startsWith( QStringLiteral( "file://" ) ) ) {
+        game.remove( QStringLiteral( "file://" ) );
+    } else if ( game.startsWith( QStringLiteral( "cue://" ) ) ) {
+        game.remove( QStringLiteral( "cue://" ) );
+    } else if ( game.startsWith( QStringLiteral( "zip://" ) ) ) {
+        game.remove( QStringLiteral( "zip://" ) );
+        auto nameList = game.split( Library::ArchieveFileInfo::delimiter() );
+
+        auto baseDestName = nameList.at( 1 );
+
+        game = QFileInfo( nameList.at( 0 ) ).canonicalPath() + "/" + baseDestName;
+        JlCompress::extractFile( nameList.first(), nameList.at( 1 ), game );
+
+    }
+
+    return game;
 }

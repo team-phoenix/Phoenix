@@ -263,18 +263,15 @@ void LibraryModel::handleUpdateGame( const GameData metaData ) {
                                             + QStringLiteral( " SET artworkUrl = ?" )
                                             + QStringLiteral( " WHERE sha1 = ? " );
 
-    if( metaData.updated ) {
+    QSqlQuery query( database() );
 
-        QSqlQuery query( database() );
+    query.prepare( updateDataStatement );
 
-        query.prepare( updateDataStatement );
+    query.addBindValue( metaData.artworkUrl );
+    query.addBindValue( metaData.sha1 );
 
-        query.addBindValue( metaData.artworkUrl );
-        query.addBindValue( metaData.sha1 );
-
-        if( !query.exec() ) {
-            qCWarning( phxLibrary ) << "Sql Update Error: " << query.lastError().text();
-        }
+    if( !query.exec() ) {
+        qCWarning( phxLibrary ) << "Sql Update Error: " << query.lastError().text();
     }
 
     auto roundedProgress = static_cast<int>( metaData.importProgress );
@@ -325,7 +322,7 @@ QString LibraryModel::selectStatement() const {
 
 void LibraryModel::handleInsertGame( const GameData importData ) {
 
-    static const auto statement = QStringLiteral( "INSERT OR IGNORE INTO " )
+    static const auto statement = QStringLiteral( "INSERT INTO " )
                                   + LibraryInternalDatabase::tableName
                                   + QStringLiteral( " (title, system, absoluteFilePath, timePlayed, sha1, artworkUrl) " )
                                   + QStringLiteral( "VALUES (?,?,?,?,?,?)" );
@@ -344,7 +341,6 @@ void LibraryModel::handleInsertGame( const GameData importData ) {
         setMessage( QStringLiteral( "Importing Games..." ) );
     }
 
-
     /*
     if( importData.fileID % 50 == 0 ) {
         qDebug() << "force sync";
@@ -352,6 +348,7 @@ void LibraryModel::handleInsertGame( const GameData importData ) {
         transaction();
     }
     */
+
 
     mLibraryWorker.setResumeInsertID( importData.filePath );
 
@@ -366,7 +363,7 @@ void LibraryModel::handleInsertGame( const GameData importData ) {
     query.addBindValue( importData.artworkUrl );
 
     if( !query.exec() ) {
-        qDebug() << "SQL Insertion Error: " << query.lastError().text();
+        qDebug() << "SQL Insertion Error: " << query.lastError().text() << query.lastQuery() << query.boundValues();
     }
 
     // Limit how many times the progress is updated, to reduce strain on the render thread.
@@ -473,7 +470,8 @@ void LibraryModel::append( const QUrl url ) {
         return;
     }
 
-    emit insertGames( std::move( localUrl ) );
+    bool autoStart = true;
+    emit insertGames( std::move( localUrl ), autoStart );
 
 }
 
