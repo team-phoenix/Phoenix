@@ -228,29 +228,33 @@ INCLUDEPATH += cpp/library
 SOURCES += cpp/main.cpp \
            cpp/library/librarymodel.cpp \
            cpp/library/libraryinternaldatabase.cpp \
-           cpp/library/platforms.cpp \
            cpp/library/metadatadatabase.cpp \
            cpp/library/libraryworker.cpp \
            cpp/library/imagecacher.cpp \
            cpp/library/platformsmodel.cpp \
            cpp/library/phxpaths.cpp \
            cpp/library/collectionsmodel.cpp \
-           cpp/library/platform.cpp \
            cpp/library/systemdatabase.cpp \
-           cpp/library/gamelauncher.cpp
+           cpp/library/gamelauncher.cpp \
+    cpp/library/gamefileinfo.cpp \
+    cpp/library/archievefileinfo.cpp \
+    cpp/library/cuefileinfo.cpp \
+    cpp/library/biosfileinfo.cpp
 
 HEADERS += cpp/library/librarymodel.h \
            cpp/library/libraryinternaldatabase.h \
-           cpp/library/platforms.h \
            cpp/library/metadatadatabase.h \
            cpp/library/libraryworker.h \
            cpp/library/imagecacher.h \
            cpp/library/platformsmodel.h \
            cpp/library/phxpaths.h \
            cpp/library/collectionsmodel.h \
-           cpp/library/platform.h \
            cpp/library/systemdatabase.h \
-           cpp/library/gamelauncher.h
+           cpp/library/gamelauncher.h \
+    cpp/library/gamefileinfo.h \
+    cpp/library/archievefileinfo.h \
+    cpp/library/cuefileinfo.h \
+    cpp/library/biosfileinfo.h
 
 RESOURCES += qml/qml.qrc \
              qml/Theme/theme.qrc \

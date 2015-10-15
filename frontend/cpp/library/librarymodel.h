@@ -5,7 +5,6 @@
 #include <QtSql>
 
 #include "libraryinternaldatabase.h"
-#include "platforms.h"
 #include "libraryworker.h"
 #include "logging.h"
 
@@ -145,7 +144,7 @@ namespace Library {
             void containsDrag( const bool contains );
             void droppedUrls();
 
-            void insertGames( const QString url );
+            void insertGames( const QString url, bool autoStart );
             void signalInsertCancelled( const bool cancel );
             void signalInsertPaused( const bool paused );
 

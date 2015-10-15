@@ -353,6 +353,7 @@ void LibraryModel::handleInsertGame( const GameData importData ) {
     }
     */
 
+
     mLibraryWorker.setResumeInsertID( importData.filePath );
 
     QSqlQuery query( database() );
@@ -473,7 +474,8 @@ void LibraryModel::append( const QUrl url ) {
         return;
     }
 
-    emit insertGames( std::move( localUrl ) );
+    bool autoStart = true;
+    emit insertGames( std::move( localUrl ), autoStart );
 
 }
 

@@ -5,7 +5,6 @@
 #include <QtSql>
 
 #include "systemdatabase.h"
-#include "platform.h"
 #include "logging.h"
 
 namespace Library {

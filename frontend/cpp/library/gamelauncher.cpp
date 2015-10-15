@@ -36,19 +36,17 @@ const QString GameLauncher::getDefaultCore( const QString system ) {
     return std::move( defaultCore );
 }
 
-bool GameLauncher::verifyGame( const QString system, const QString rom ) {
-    bool stuffWorks = false;
-    stuffWorks = QFile::exists( system );
+bool GameLauncher::verify( const QString system, QString rom ) {
 
-    if( !stuffWorks ) {
+    bool coreExists = QFile::exists( system );
+    if( !coreExists ) {
         qCWarning( phxLibrary ) << system << " does not exist. Launch will fail...";
     }
 
-    stuffWorks = QFile::exists( rom );
-
-    if( !stuffWorks ) {
+    bool gameExists = QFile::exists( rom );
+    if( !gameExists ) {
         qCWarning( phxLibrary ) << rom << " does not exist. Launch will fail...";
     }
 
-    return stuffWorks;
+    return coreExists && gameExists;
 }
