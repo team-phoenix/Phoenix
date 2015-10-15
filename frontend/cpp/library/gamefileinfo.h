@@ -28,6 +28,8 @@ namespace Library {
         QString title() const;
         QString fullFilePath() const;
         QString timePlayed() const;
+        QString crc32Checksum() const;
+        QString artworkUrl() const;
 
         enum FileType {
             UnsupportedFile = -1,
@@ -45,12 +47,17 @@ namespace Library {
 
         void cache( const QString &location );
 
+        static QString getRealSystem( const QList<HeaderData> &possibleHeaders, const QString &localFile );
+        void prepareMetadata();
+
     protected:
         FileType mFileType;
         QString mSystem;
         QString mSha1Sum;
         QString mTitle;
         QString mFullFilePath;
+        QString mCrc32Checksum;
+        QString mArtworkUrl;
         QSqlQuery mQuery;
 
         QStringList getAvailableSystems( const QString &extension );
@@ -59,6 +66,8 @@ namespace Library {
         void update( const QString &extension );
 
         bool isBios( QString &biosName );
+
+        void fillMetadata( int romID, QSqlQuery &query );
 
 
     private:

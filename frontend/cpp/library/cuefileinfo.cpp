@@ -17,9 +17,6 @@ CueFileInfo::CueFileInfo(GameFileInfo &gameInfo)
 
 }
 
-CueFileInfo::~CueFileInfo() {
-}
-
 bool CueFileInfo::isValid() {
 
     auto gameFiles = files();

@@ -13,8 +13,6 @@ namespace Library {
         CueFileInfo( const QString &file );
         CueFileInfo( GameFileInfo &gameInfo );
         
-        ~CueFileInfo();
-
         bool isValid();
 
     private:

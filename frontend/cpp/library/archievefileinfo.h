@@ -14,11 +14,13 @@ namespace Library {
         ArchieveFileInfo( const QString &file );
         ArchieveFileInfo( GameFileInfo &gameInfo );
 
-        ~ArchieveFileInfo();
-
         bool firstFile();
         bool nextFile();
         bool isValid() const;
+        bool open( QuaZip::Mode mode );
+
+
+        void close();
 
         QString nextFileName() const;
         static QString delimiter();
@@ -30,6 +32,7 @@ namespace Library {
          bool mIsValid;
 
          void update();
+
 
     };
 

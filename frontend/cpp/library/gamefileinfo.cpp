@@ -1,6 +1,7 @@
 #include "gamefileinfo.h"
 #include "JlCompress.h"
 #include "systemdatabase.h"
+#include "metadatadatabase.h"
 
 #include <QtCore>
 
@@ -62,6 +63,16 @@ QString GameFileInfo::timePlayed() const
     return mTimePlayed;
 }
 
+QString GameFileInfo::crc32Checksum() const
+{
+    return mCrc32Checksum;
+}
+
+QString GameFileInfo::artworkUrl() const
+{
+    return mArtworkUrl;
+}
+
 GameFileInfo::FileType GameFileInfo::fileType() const
 {
     return mFileType;
@@ -104,8 +115,6 @@ QStringList GameFileInfo::getAvailableSystems(const QString &extension) {
 QString GameFileInfo::getRealSystem( const QList<GameFileInfo::HeaderData> &possibleHeaders ) {
     QFile gameFile( canonicalFilePath() );
 
-    qDebug() << canonicalFilePath() << mTitle;
-
     Q_ASSERT( gameFile.open( QIODevice::ReadOnly ) );
 
     QString realSystem;
@@ -146,7 +155,103 @@ void GameFileInfo::cache( const QString &location ) {
 
 }
 
-QList<GameFileInfo::HeaderData> GameFileInfo::getPossibleHeaders(const QStringList &possibleSystems) {
+QString GameFileInfo::getRealSystem(const QList<GameFileInfo::HeaderData> &possibleHeaders, const QString &localFile ) {
+    QFile gameFile( localFile );
+
+    Q_ASSERT( gameFile.open( QIODevice::ReadOnly ) );
+
+    QString realSystem;
+
+    auto query = QSqlQuery( SystemDatabase::database() );
+
+    for( auto &headerData : possibleHeaders ) {
+
+        if( !gameFile.seek( headerData.seekPosition ) ) {
+            qCWarning( phxLibrary ) << "Could not put " << gameFile.fileName() << "'s seek at " << headerData.seekPosition;
+            continue;
+        }
+
+        auto bytes = QString( gameFile.read( headerData.byteLength ).simplified().toHex() );
+
+        if( bytes == headerData.result ) {
+
+            query.prepare( QStringLiteral( "SELECT systemname FROM systemMap WHERE systemIndex = ?" ) );
+            query.addBindValue( headerData.systemIndex );
+
+            Q_ASSERT( query.exec() );
+
+            query.first();
+            realSystem = query.value( 0 ).toString();
+            break;
+        }
+
+    }
+
+    return std::move( realSystem );
+}
+
+void GameFileInfo::prepareMetadata() {
+
+    static const QString statement = QStringLiteral( "SELECT romID FROM " )
+            + MetaDataDatabase::tableRoms
+            + QStringLiteral( " WHERE romHashSHA1 = ?" );
+
+    static const auto zipStatement = QStringLiteral( "SELECT romID FROM " )
+                                  + MetaDataDatabase::tableRoms
+                                  + QStringLiteral( " WHERE romHashCRC = ?" );
+
+    QSqlQuery query( MetaDataDatabase::database() );
+
+    if ( fileType() == FileType::ZipFile ) {
+        query.prepare( zipStatement );
+        query.addBindValue( mCrc32Checksum );
+    } else if ( fileType() == FileType::GameFile ) {
+        query.prepare( statement );
+        query.addBindValue( mSha1Sum );
+    }
+
+    if( !query.exec() ) {
+        qCWarning( phxLibrary ) << "Metadata fetch romID error: "
+                                << query.lastError().text() << query.executedQuery();
+        return;
+    }
+
+    // Get all of the rowID's to lookup in the RELEASES table.
+    if( query.first() ) {
+        fillMetadata( query.value( 0 ).toInt(), query );
+    }
+
+}
+
+void GameFileInfo::fillMetadata( int romID, QSqlQuery &query ) {
+
+    if( romID > -1 ) {
+
+        static const auto statement = QStringLiteral( "SELECT RELEASES.releaseCoverFront, SYSTEMS.systemName FROM ROMs INNER JOIN SYSTEMS ON SYSTEMS.systemID = ROMs.systemID INNER JOIN RELEASES ON RELEASES.romID = ROMs.romID WHERE ROMs.romID = ?" );
+
+        query.prepare( statement );
+        query.addBindValue( romID );
+
+        if( !query.exec() ) {
+
+            qCWarning( phxLibrary ) << "Metadata fetch artwork error: "
+                                    << query.lastError().text() << query.isActive() << query.isValid();
+            return;
+        }
+
+        if( query.first() ) {
+
+            mArtworkUrl = query.value( 0 ).toString();
+
+            if ( mSystem.isEmpty() ) {
+                mSystem = query.value( 1 ).toString();
+            }
+
+        }
+    }
+}
+
+QList<GameFileInfo::HeaderData> GameFileInfo::getPossibleHeaders( const QStringList &possibleSystems ) {
 
     QList<HeaderData> headerDataList;
 

@@ -1,5 +1,6 @@
 #include "archievefileinfo.h"
 #include "systemdatabase.h"
+#include "metadatadatabase.h"
 #include "quazip.h"
 
 #include <QSqlQuery>
@@ -8,15 +9,10 @@ using namespace Library;
 
 ArchieveFileInfo::ArchieveFileInfo(const QString &file)
     : GameFileInfo( file ),
-      mZipFile( new QuaZip( file ) ),
+      mZipFile( nullptr ),
       mIsValid( true ) {
 
     mFileType = FileType::ZipFile;
-
-    if ( !mZipFile->open( QuaZip::mdUnzip ) ) {
-        qCWarning( phxLibrary ) << "Couldn't open " << canonicalFilePath()
-                                << ", errors: " << mZipFile->getZipError();
-    }
 
 }
 
@@ -24,11 +20,6 @@ ArchieveFileInfo::ArchieveFileInfo(GameFileInfo &gameInfo)
     : ArchieveFileInfo( gameInfo.canonicalFilePath() )
 {
 
-}
-
-ArchieveFileInfo::~ArchieveFileInfo() {
-    mZipFile->close();
-    delete mZipFile;
 }
 
 bool ArchieveFileInfo::firstFile()
@@ -55,6 +46,19 @@ bool ArchieveFileInfo::isValid() const
     return mIsValid;
 }
 
+bool ArchieveFileInfo::open( QuaZip::Mode mode ) {
+    if ( !mZipFile ) {
+        mZipFile = new QuaZip( canonicalFilePath() );
+    }
+    return mZipFile->open( mode );
+}
+
+void ArchieveFileInfo::close()
+{
+    mZipFile->close();
+    delete mZipFile;
+}
+
 QString ArchieveFileInfo::nextFileName() const
 {
     return mZipFile->getCurrentFileName();
@@ -66,10 +70,26 @@ QString ArchieveFileInfo::delimiter()
 }
 
 void ArchieveFileInfo::update() {
-    GameFileInfo::update( QFileInfo( nextFileName() ).suffix() );
 
-    mIsValid = !mSystem.isEmpty() && !nextFileName().isEmpty();
+    QuaZipFileInfo zipFileInfo;
+    if ( mZipFile->getCurrentFileInfo( &zipFileInfo ) ) {
+        mCrc32Checksum = QString::number( zipFileInfo.crc, 16 ).toUpper();
+    }
+
+    auto fileInfo = QFileInfo( nextFileName() );
+
+    auto possibleSystemsList = getAvailableSystems( fileInfo.suffix() );
+
+    //if ( possibleSystemsList.isEmpty() )
+    mIsValid = !possibleSystemsList.isEmpty();
+
+    if ( possibleSystemsList.size() == 1 ) {
+        mSystem = possibleSystemsList.at( 0 );
+    }
+
     mTitle = nextFileName().left( nextFileName().lastIndexOf( '.' ) );
     mFullFilePath = QStringLiteral( "zip://" ) + canonicalFilePath()
             + ArchieveFileInfo::delimiter() + nextFileName();
+
 }
+

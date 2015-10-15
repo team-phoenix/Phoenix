@@ -220,46 +220,14 @@ void LibraryWorker::prepareGameData( QQueue<GameFileInfo> &queue ) {
             }
         }
 
-
-        /*
-        auto query = QSqlQuery( SystemDatabase::database() );
-        auto possibleSystemsList = getAvailableSystems( gameExtension, query );
-
-        if( QStringLiteral( "cue" ) == gameExtension ) {
-            CueData cueData = getCueData( possibleSystemsList, fileInfo, query );
-            gameSystem = cueData.system;
-            gameSha1 = cueData.sha1;
-        } else if( QStringLiteral( "bin" ) == gameExtension ) {
-            auto hash = getCheckSum( fileInfo.canonicalFilePath() );
-
-            if( checkForBios( fileInfo.canonicalFilePath(), hash, query ) ) {
-                continue;
-            }
-
-            gameSha1 = hash;
-
-        } else {
-            if( possibleSystemsList.size() == 1 ) {
-                gameSystem = possibleSystemsList.at( 0 );
-            } else {
-                auto possibleHeaders = getPossibleHeaders( possibleSystemsList, query );
-                gameSystem = getRealSystem( possibleHeaders, fileInfo.canonicalFilePath(), query );
-            }
-
-            gameSha1 = getCheckSum( fileInfo.canonicalFilePath() );
-        }
-
-        if( gameSystem.isEmpty() ) {
-            qCDebug( phxLibrary )  << "The system could not be found, The database needs to be updated for " << fileInfo.canonicalFilePath();
-        }
-        */
-
         GameFileInfo gameInfo = queue.dequeue();
 
+        // Find MetaData.
+        gameInfo.prepareMetadata();
+
+        qDebug() << "ImportData: " << gameInfo.system() << gameInfo.fullFilePath() << gameInfo.artworkUrl();
+
         GameData importData;
-
-        qDebug() << "ImportData: " << gameInfo.system() << gameInfo.fullFilePath();
-
         importData.importProgress = ( i / static_cast<qreal>( queueLength ) ) * 100.0;
         importData.timePlayed = gameInfo.timePlayed();
         importData.title = gameInfo.title();
@@ -267,73 +235,11 @@ void LibraryWorker::prepareGameData( QQueue<GameFileInfo> &queue ) {
         importData.sha1 = gameInfo.sha1CheckSum();
         importData.system = gameInfo.system();
         importData.fileID = i - 1;
-
-        // Find MetaData.
-        prepareMetadata( importData );
+        importData.artworkUrl = gameInfo.artworkUrl();
 
         // Goodbyte data! Make us proud.
         emit insertGameData( std::move( importData ) );
 
-
-    }
-
-}
-
-void LibraryWorker::prepareMetadata( GameData &gameData ) {
-
-
-    static const QString romIDFetchStatement = QStringLiteral( "SELECT romID FROM " )
-            + MetaDataDatabase::tableRoms
-            + QStringLiteral( " WHERE romHashSHA1 = ?" );
-
-    QSqlQuery query( MetaDataDatabase::database() );
-
-    query.prepare( romIDFetchStatement );
-    query.addBindValue( gameData.sha1 );
-
-    if( !query.exec() ) {
-        qCWarning( phxLibrary ) << "Metadata fetch romID error: "
-                                << query.lastError().text() << query.executedQuery();
-        return;
-    }
-
-    // Get all of the rowID's to lookup in the RELEASES table.
-    auto romID = -1;
-
-    if( query.first() ) {
-        romID = query.value( 0 ).toInt();
-    }
-
-    gameData.updated = ( romID != -1 );
-
-    if( gameData.updated ) {
-
-        query.clear();
-
-        static const QString artworkFetchStatement = QStringLiteral(
-                    "SELECT releaseCoverFront, releaseDescription, releaseDeveloper, releaseGenre, releaseDate, regionLocalizedID " )
-                + QStringLiteral( " FROM " ) + MetaDataDatabase::tableReleases
-                + QStringLiteral( " WHERE romID = ?" );
-
-        query.prepare( artworkFetchStatement );
-        query.addBindValue( romID );
-
-        if( !query.exec() ) {
-            qCWarning( phxLibrary ) << "Metadata fetch artwork error: "
-                                    << query.lastError().text();
-            return;
-        }
-
-        if( query.first() ) {
-
-            gameData.artworkUrl = query.value( 0 ).toString();
-            gameData.description = query.value( 1 ).toString();
-            gameData.developer = query.value( 2 ).toString();
-            gameData.genre = query.value( 3 ).toString();
-            gameData.releaseDate = query.value( 4 ).toString();
-            gameData.region  = query.value( 5 ).toString();
-
-        }
     }
 
 }
@@ -344,15 +250,21 @@ void LibraryWorker::enqueueFiles( QString &filePath ) {
 
     switch( fileInfo.fileType() ) {
     case GameFileInfo::FileType::GameFile:
-        mFileInfoQueue.enqueue( std::move( fileInfo ) );
+        mFileInfoQueue.enqueue( fileInfo );
         break;
     case GameFileInfo::FileType::ZipFile: {
+
         auto zipFileInfo = static_cast<ArchieveFileInfo>( fileInfo );
 
-        for ( auto hasNext = zipFileInfo.firstFile(); hasNext; hasNext = zipFileInfo.nextFile() ) {
-            if ( zipFileInfo.isValid() ) {
-                mFileInfoQueue.enqueue( std::move( zipFileInfo ) );
+        if ( zipFileInfo.open( QuaZip::mdUnzip ) ) {
+
+            for ( auto hasNext = zipFileInfo.firstFile(); hasNext; hasNext = zipFileInfo.nextFile() ) {
+                if ( zipFileInfo.isValid() ) {
+                    mFileInfoQueue.enqueue( zipFileInfo );
+                }
             }
+
+            zipFileInfo.close();
         }
 
         break;
@@ -363,7 +275,7 @@ void LibraryWorker::enqueueFiles( QString &filePath ) {
 
         if ( cueFileInfo.isValid() ) {
             qDebug() << "Cue File (Valid): " << cueFileInfo.fullFilePath() <<  cueFileInfo.system() << cueFileInfo.sha1CheckSum();
-            mFileInfoQueue.enqueue( std::move( cueFileInfo ) );
+            mFileInfoQueue.enqueue( cueFileInfo );
         } else {
             qDebug() << "Cue File (Invalid): " << cueFileInfo.fullFilePath();
         }

@@ -27,9 +27,6 @@ namespace Library {
         QString genre;
         QString description;
 
-        bool updated = false;
-        int zipIndex = -1;
-
         qint64 fileID;
     };
 
@@ -65,7 +62,6 @@ namespace Library {
             void setInsertCancelled( const bool cancelled );
             void setInsertPaused( const bool paused );
 
-            void prepareMetadata( GameData &gameData );
             bool findGameFiles( const QString localUrl, bool autoStart );
 
             void eventLoopStarted();
