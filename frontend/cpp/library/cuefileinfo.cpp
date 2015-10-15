@@ -1,7 +1,5 @@
 #include "cuefileinfo.h"
 
-#include <QtCore>
-
 using namespace Library;
 
 CueFileInfo::CueFileInfo( const QString &file )

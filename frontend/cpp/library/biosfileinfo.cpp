@@ -1,7 +1,4 @@
 #include "biosfileinfo.h"
-#include "systemdatabase.h"
-
-#include <QtCore>
 
 using namespace Library;
 

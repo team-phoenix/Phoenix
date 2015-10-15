@@ -1,9 +1,9 @@
 #ifndef CUEFILEINFO_H
 #define CUEFILEINFO_H
 
-#include "gamefileinfo.h"
+#include "frontendcommon.h"
 
-#include <QFile>
+#include "gamefileinfo.h"
 
 namespace Library {
 

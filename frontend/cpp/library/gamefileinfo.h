@@ -1,9 +1,10 @@
 #ifndef GAMEFILEINFO_H
 #define GAMEFILEINFO_H
 
-#include <QList>
-#include <QFileInfo>
-#include <QSqlQuery>
+#include "frontendcommon.h"
+
+#include "systemdatabase.h"
+#include "metadatadatabase.h"
 
 namespace Library {
 

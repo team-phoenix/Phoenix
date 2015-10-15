@@ -1,6 +1,9 @@
 #ifndef BIOSFILEINFO_H
 #define BIOSFILEINFO_H
 
+#include "frontendcommon.h"
+
+#include "systemdatabase.h"
 #include "gamefileinfo.h"
 
 namespace Library {

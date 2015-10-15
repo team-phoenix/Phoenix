@@ -6,9 +6,7 @@
 #include "systemdatabase.h"
 #include "logging.h"
 #include "phxpaths.h"
-#include "archievefileinfo.h"
-#include "JlCompress.h"
-#include "QFileInfo"
+#include "archivefileinfo.h"
 
 class GameLauncher : public QObject {
         Q_OBJECT

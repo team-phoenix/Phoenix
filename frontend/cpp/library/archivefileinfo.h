@@ -1,18 +1,19 @@
 #ifndef ARCHIEVEFILEINFO_H
 #define ARCHIEVEFILEINFO_H
 
+#include "frontendcommon.h"
+
 #include "gamefileinfo.h"
 #include "systemdatabase.h"
-
-#include "quazip.h"
+#include "metadatadatabase.h"
 
 namespace Library {
 
-    class ArchieveFileInfo : public GameFileInfo {
+    class ArchiveFileInfo : public GameFileInfo {
     public:
 
-        ArchieveFileInfo( const QString &file );
-        ArchieveFileInfo( GameFileInfo &gameInfo );
+        ArchiveFileInfo( const QString &file );
+        ArchiveFileInfo( GameFileInfo &gameInfo );
 
         bool firstFile();
         bool nextFile();

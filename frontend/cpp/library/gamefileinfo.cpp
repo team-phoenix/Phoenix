@@ -1,9 +1,4 @@
 #include "gamefileinfo.h"
-#include "JlCompress.h"
-#include "systemdatabase.h"
-#include "metadatadatabase.h"
-
-#include <QtCore>
 
 using namespace Library;
 

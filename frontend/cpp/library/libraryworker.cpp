@@ -1,7 +1,7 @@
 #include "libraryworker.h"
 #include "JlCompress.h"
 
-#include "archievefileinfo.h"
+#include "archivefileinfo.h"
 #include "cuefileinfo.h"
 #include "biosfileinfo.h"
 
@@ -254,7 +254,7 @@ void LibraryWorker::enqueueFiles( QString &filePath ) {
         break;
     case GameFileInfo::FileType::ZipFile: {
 
-        auto zipFileInfo = static_cast<ArchieveFileInfo>( fileInfo );
+        auto zipFileInfo = static_cast<ArchiveFileInfo>( fileInfo );
 
         if ( zipFileInfo.open( QuaZip::mdUnzip ) ) {
 

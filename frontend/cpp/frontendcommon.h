@@ -13,6 +13,9 @@
 
 #include <memory>
 
+#include "quazip.h"
+#include "JlCompress.h"
+
 #endif
 
 #endif // FRONTENDCOMMON_H

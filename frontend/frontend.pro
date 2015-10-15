@@ -238,10 +238,10 @@ SOURCES += cpp/main.cpp \
            cpp/library/collectionsmodel.cpp \
            cpp/library/systemdatabase.cpp \
            cpp/library/gamelauncher.cpp \
-    cpp/library/gamefileinfo.cpp \
-    cpp/library/archievefileinfo.cpp \
-    cpp/library/cuefileinfo.cpp \
-    cpp/library/biosfileinfo.cpp
+           cpp/library/gamefileinfo.cpp \
+           cpp/library/cuefileinfo.cpp \
+           cpp/library/biosfileinfo.cpp \
+           cpp/library/archivefileinfo.cpp
 
 HEADERS += cpp/library/librarymodel.h \
            cpp/library/libraryinternaldatabase.h \
@@ -253,10 +253,10 @@ HEADERS += cpp/library/librarymodel.h \
            cpp/library/collectionsmodel.h \
            cpp/library/systemdatabase.h \
            cpp/library/gamelauncher.h \
-    cpp/library/gamefileinfo.h \
-    cpp/library/archievefileinfo.h \
-    cpp/library/cuefileinfo.h \
-    cpp/library/biosfileinfo.h
+           cpp/library/gamefileinfo.h \
+           cpp/library/cuefileinfo.h \
+           cpp/library/biosfileinfo.h \
+           cpp/library/archivefileinfo.h
 
 PRECOMPILED_HEADER = cpp/frontendcommon.h
 

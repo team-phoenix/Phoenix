@@ -59,7 +59,7 @@ QString GameLauncher::trimmedGame(QString game) {
         game.remove( QStringLiteral( "cue://" ) );
     } else if ( game.startsWith( QStringLiteral( "zip://" ) ) ) {
         game.remove( QStringLiteral( "zip://" ) );
-        auto nameList = game.split( Library::ArchieveFileInfo::delimiter() );
+        auto nameList = game.split( Library::ArchiveFileInfo::delimiter() );
 
         auto baseDestName = nameList.at( 1 );
 

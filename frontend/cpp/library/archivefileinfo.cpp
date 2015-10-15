@@ -1,13 +1,8 @@
-#include "archievefileinfo.h"
-#include "systemdatabase.h"
-#include "metadatadatabase.h"
-#include "quazip.h"
-
-#include <QSqlQuery>
+#include "archivefileinfo.h"
 
 using namespace Library;
 
-ArchieveFileInfo::ArchieveFileInfo(const QString &file)
+ArchiveFileInfo::ArchiveFileInfo(const QString &file)
     : GameFileInfo( file ),
       mZipFile( nullptr ),
       mIsValid( true ) {
@@ -16,13 +11,13 @@ ArchieveFileInfo::ArchieveFileInfo(const QString &file)
 
 }
 
-ArchieveFileInfo::ArchieveFileInfo(GameFileInfo &gameInfo)
-    : ArchieveFileInfo( gameInfo.canonicalFilePath() )
+ArchiveFileInfo::ArchiveFileInfo(GameFileInfo &gameInfo)
+    : ArchiveFileInfo( gameInfo.canonicalFilePath() )
 {
 
 }
 
-bool ArchieveFileInfo::firstFile()
+bool ArchiveFileInfo::firstFile()
 {
     bool next = mZipFile->goToFirstFile();
     if ( next ) {
@@ -31,7 +26,7 @@ bool ArchieveFileInfo::firstFile()
     return next;
 }
 
-bool ArchieveFileInfo::nextFile() {
+bool ArchiveFileInfo::nextFile() {
     bool next = mZipFile->goToNextFile();
 
     if ( next ) {
@@ -41,35 +36,35 @@ bool ArchieveFileInfo::nextFile() {
     return next;
 }
 
-bool ArchieveFileInfo::isValid() const
+bool ArchiveFileInfo::isValid() const
 {
     return mIsValid;
 }
 
-bool ArchieveFileInfo::open( QuaZip::Mode mode ) {
+bool ArchiveFileInfo::open( QuaZip::Mode mode ) {
     if ( !mZipFile ) {
         mZipFile = new QuaZip( canonicalFilePath() );
     }
     return mZipFile->open( mode );
 }
 
-void ArchieveFileInfo::close()
+void ArchiveFileInfo::close()
 {
     mZipFile->close();
     delete mZipFile;
 }
 
-QString ArchieveFileInfo::nextFileName() const
+QString ArchiveFileInfo::nextFileName() const
 {
     return mZipFile->getCurrentFileName();
 }
 
-QString ArchieveFileInfo::delimiter()
+QString ArchiveFileInfo::delimiter()
 {
     return QStringLiteral( "<><>" );
 }
 
-void ArchieveFileInfo::update() {
+void ArchiveFileInfo::update() {
 
     QuaZipFileInfo zipFileInfo;
     if ( mZipFile->getCurrentFileInfo( &zipFileInfo ) ) {
@@ -89,7 +84,7 @@ void ArchieveFileInfo::update() {
 
     mTitle = nextFileName().left( nextFileName().lastIndexOf( '.' ) );
     mFullFilePath = QStringLiteral( "zip://" ) + canonicalFilePath()
-            + ArchieveFileInfo::delimiter() + nextFileName();
+            + ArchiveFileInfo::delimiter() + nextFileName();
 
 }
 
