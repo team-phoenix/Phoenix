@@ -95,7 +95,7 @@ macx {
     # Metadata databases
     portable.commands += mkdir -p \"$$PREFIX/Metadata/\" &&\
                          cp -f \"$$TARGET_PATH/metadata/openvgdb.sqlite\" \"$$PREFIX/Metadata/openvgdb.sqlite\" &&\
-                         cp -f \"$$TARGET_PATH/metadata/systems.sqlite\" \"$$PREFIX/Metadata/systems.sqlite\" &&\
+                         cp -f \"$$TARGET_PATH/metadata/systems.sqlite\" \"$$PREFIX/Metadata/systems.sqlite\"
 }
 
 ##
