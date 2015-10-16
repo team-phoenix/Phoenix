@@ -100,7 +100,7 @@ void PhxPaths::createAllPaths() {
     if( mPortableMode ) {
         qCDebug( phxLibrary ) << "Portable mode";
         PhxPaths::mResourceLocation = PhxPaths::mBinLocation;
-        PhxPaths::mCoreLocation = PhxPaths::mUserDataLocation % '/' % QStringLiteral( "Cores" );
+        PhxPaths::mCoreLocation = PhxPaths::mBinLocation % '/' % QStringLiteral( "Cores" );
         PhxPaths::mMetadataLocation = PhxPaths::mBinLocation % '/' % QStringLiteral( "Metadata" ) % '/';
 
         PhxPaths::mUserDataLocation = PhxPaths::mBinLocation % '/' % QStringLiteral( "User Data" );
