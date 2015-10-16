@@ -78,7 +78,8 @@ QStringList GameFileInfo::gameFilter() {
 
     if ( filter.isEmpty() ) {
         auto query = QSqlQuery( SystemDatabase::database() );
-        Q_ASSERT( query.exec( QStringLiteral( "SELECT DISTINCT extension FROM extensions" ) ) );
+        auto exec = query.exec( QStringLiteral( "SELECT DISTINCT extension FROM extensions" ) );
+        Q_ASSERT(  exec );
 
         while ( query.next() ) {
             auto extension = query.value( 0 ).toString();
@@ -110,7 +111,8 @@ QStringList GameFileInfo::getAvailableSystems(const QString &extension) {
 QString GameFileInfo::getRealSystem( const QList<GameFileInfo::HeaderData> &possibleHeaders ) {
     QFile gameFile( canonicalFilePath() );
 
-    Q_ASSERT( gameFile.open( QIODevice::ReadOnly ) );
+    auto opened = gameFile.open( QIODevice::ReadOnly );
+    Q_ASSERT( opened );
 
     QString realSystem;
 
@@ -127,8 +129,9 @@ QString GameFileInfo::getRealSystem( const QList<GameFileInfo::HeaderData> &poss
 
             mQuery.prepare( QStringLiteral( "SELECT systemname FROM systemMap WHERE systemIndex = ?" ) );
             mQuery.addBindValue( headerData.systemIndex );
+            auto exec = mQuery.exec();
 
-            Q_ASSERT( mQuery.exec() );
+            Q_ASSERT( exec );
 
             mQuery.first();
             realSystem = mQuery.value( 0 ).toString();
@@ -152,8 +155,8 @@ void GameFileInfo::cache( const QString &location ) {
 
 QString GameFileInfo::getRealSystem(const QList<GameFileInfo::HeaderData> &possibleHeaders, const QString &localFile ) {
     QFile gameFile( localFile );
-
-    Q_ASSERT( gameFile.open( QIODevice::ReadOnly ) );
+    auto opened = gameFile.open( QIODevice::ReadOnly );
+    Q_ASSERT( opened );
 
     QString realSystem;
 
@@ -173,7 +176,8 @@ QString GameFileInfo::getRealSystem(const QList<GameFileInfo::HeaderData> &possi
             query.prepare( QStringLiteral( "SELECT systemname FROM systemMap WHERE systemIndex = ?" ) );
             query.addBindValue( headerData.systemIndex );
 
-            Q_ASSERT( query.exec() );
+            auto exec = query.exec();
+            Q_ASSERT( exec );
 
             query.first();
             realSystem = query.value( 0 ).toString();
@@ -260,7 +264,8 @@ QList<GameFileInfo::HeaderData> GameFileInfo::getPossibleHeaders( const QStringL
                                      + QStringLiteral( "WHERE systemMap.systemname = ?" ) );
         mQuery.addBindValue( system );
 
-        Q_ASSERT( mQuery.exec() );
+        auto exec = mQuery.exec();
+        Q_ASSERT( exec );
 
         while( mQuery.next() ) {
 
@@ -315,7 +320,8 @@ bool GameFileInfo::isBios( QString &biosName ) {
     mQuery.prepare( statement );
     mQuery.addBindValue( mSha1Sum );
 
-    Q_ASSERT( mQuery.exec() );
+    auto exec = mQuery.exec();
+    Q_ASSERT( exec );
 
     if ( mQuery.first() ) {
         biosName = mQuery.value( 0 ).toString();
