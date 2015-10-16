@@ -174,6 +174,13 @@ void PhxPaths::createAllPaths() {
         coverArtCacheDir.mkpath( coverArtCacheDir.path() );
     }
 
+    // Create the log directory, too
+    QDir logDir( PhxPaths::userDataLocation() % '/' % QStringLiteral( "Logs" ) );
+
+    if( !logDir.exists() ) {
+        logDir.mkpath( logDir.path() );
+    }
+
 }
 
 // Instantiate PhxPaths for QML use as a singleton object

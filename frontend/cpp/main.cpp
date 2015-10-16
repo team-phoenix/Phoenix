@@ -65,6 +65,51 @@ void phoenixDebugMessageHandler( QtMsgType type, const QMessageLogContext &conte
 
 }
 
+FILE *logFP = nullptr;
+
+// Alternate version, writes to file
+void phoenixDebugMessageLog( QtMsgType type, const QMessageLogContext &context, const QString &msg ) {
+
+    QByteArray localMsg = msg.toLocal8Bit();
+
+    switch( type ) {
+
+        case QtDebugMsg:
+            fprintf( logFP, "Debug: %s (%s:%u, %s)\n",
+                     localMsg.constData(), context.file, context.line, context.function );
+            break;
+
+        case QtInfoMsg:
+            fprintf( logFP, "Info: %s (%s:%u, %s)\n",
+                     localMsg.constData(), context.file, context.line, context.function );
+            break;
+
+        case QtWarningMsg:
+            fprintf( logFP, "Warning: %s (%s:%u, %s)\n",
+                     localMsg.constData(), context.file, context.line, context.function );
+            break;
+
+        case QtCriticalMsg:
+            fprintf( logFP, "Critical: %s (%s:%u, %s)\n",
+                     localMsg.constData(), context.file, context.line, context.function );
+            break;
+
+        case QtFatalMsg:
+            fprintf( logFP, "Fatal: %s (%s:%u, %s)\n",
+                     localMsg.constData(), context.file, context.line, context.function );
+            abort();
+            break;
+
+        default:
+            break;
+
+    }
+
+    // Print to console too, just in case
+    phoenixDebugMessageHandler( type, context, msg );
+
+}
+
 int main( int argc, char *argv[] ) {
 
     // Init controller db file for backend
@@ -83,6 +128,19 @@ int main( int argc, char *argv[] ) {
 
     // Create the folders used by Phoenix.
     Library::PhxPaths::createAllPaths();
+
+    // For release builds, write to a log file along with the console
+#ifdef QT_NO_DEBUG
+    QFile logFile( Library::PhxPaths::userDataLocation() % '/' % QStringLiteral( "Logs" ) % '/' %
+                   QDateTime::currentDateTime().toString( QStringLiteral( "ddd MMM d yyyy - h mm ss AP" ) ) %
+                   QStringLiteral( ".log" ) );
+
+    // If this fails... how would we know? :)
+    logFile.open( QIODevice::WriteOnly | QIODevice::Text );
+    int logFD = logFile.handle();
+    logFP = fdopen( dup( logFD ), "w" );
+    qInstallMessageHandler( phoenixDebugMessageLog );
+#endif
 
     // Open connections to the SQL databases.
     Library::SystemDatabase::open();
@@ -127,6 +185,14 @@ int main( int argc, char *argv[] ) {
     QVariant pathVar( path );
     prop.write( pathVar );
 
+    // Run the app and write return code if in release mode
+#ifdef QT_NO_DEBUG
+    int ret = app.exec();
+    fprintf( logFP, "Returned %d", ret );
+    fclose( logFP );
+    return ret;
+#else
     return app.exec();
+#endif
 
 }
