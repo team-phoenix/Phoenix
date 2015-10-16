@@ -107,7 +107,7 @@ void PhxPaths::createAllPaths() {
         PhxPaths::mCoverArtCacheLocation = PhxPaths::mUserDataLocation % '/' % QStringLiteral( "Cover Art Cache" );
 
         // Create a core and game folder if they do not exist
-        QDir coreDir( PhxPaths::mCoreLocation);
+        QDir coreDir( PhxPaths::mCoreLocation );
 
         if( !coreDir.exists() ) {
             coreDir.mkpath( coreDir.path() );
