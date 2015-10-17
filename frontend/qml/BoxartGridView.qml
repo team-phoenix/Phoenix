@@ -108,8 +108,6 @@ Rectangle {
                     onClicked: { gridView.currentIndex = index; }
                     onDoubleClicked: {
 
-
-
                         var core = coreFilePath;
                         if ( core === "" ) {
                             core = gameLauncher.getDefaultCore( system )
@@ -229,6 +227,11 @@ Rectangle {
                         fontSize: PhxTheme.common.baseFontSize;
                         running: index === gridView.currentIndex || gridItemMouseArea.containsMouse;
                         pixelsPerFrame: contentArea.contentSlider.value / 100;
+
+                        Connections {
+                            target: gridView;
+                            onCellWidthChanged: titleText.handleSituationChanged();
+                        }
                     }
 
                     // For debugging the above MarqueeText
