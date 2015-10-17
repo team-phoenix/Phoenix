@@ -22,7 +22,7 @@ ScrollView {
             Rectangle {
                 id: highlighterRectangle;
                 anchors { left: parent.left; top: parent.top; bottom: parent.bottom; }
-                width: 5;
+                width: 4;
                 height: 35;
                 color: PhxTheme.common.baseBackgroundColor;
                 opacity: .5;
@@ -49,8 +49,14 @@ ScrollView {
         }
 
         delegate: Item {
-            height: 35;
+            height: 30;
             anchors { left: parent.left; right: parent.right; }
+
+            Image {
+                anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin:  17; }
+                smooth: true;
+                source: "systems/" + listView.model.get( index ) + ".svg";
+            }
 
             Label {
                 id: platformText;

@@ -9,11 +9,10 @@ import vg.phoenix.themes 1.0
 
 Rectangle {
     id: gameActionBar;
-    height: 50;
-    color: Qt.rgba(0,0,0,0.65);
-    // radius: height/2;
+    height: 80;
+    color: "transparent";
+    // color: Qt.rgba(0,0,0,0.5);
     // Image {  smooth: true; source: "bg.svg"; anchors.fill: parent; fillMode: Image.TileHorizontally; verticalAlignment: Image.AlignLeft; }
-
     property int volumeValue: 1;
 
     //  Volumen Icon changer
@@ -34,6 +33,13 @@ Rectangle {
         if(root.height < root.defaultMinHeight) { root.height = root.defaultMinHeight; }
         if(root.width < root.defaultMinWidth) { root.width = root.defaultMinWidth; }
     }
+
+Rectangle {
+    width: 350;
+    anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom; bottomMargin: 10; }
+    height: 45;
+    color: Qt.rgba(0,0,0,0.65);
+    // color: "transparent";
 
     // Left-Side
     Row {
@@ -65,7 +71,9 @@ Rectangle {
             }
         }
 
+        // Volume
         Row {
+            anchors { top: parent.top; bottom: parent.bottom; }
             spacing: 0;
 
             Rectangle {
@@ -231,4 +239,5 @@ Rectangle {
         }
         Rectangle { anchors { top: parent.top; bottom: parent.bottom; } color: "transparent"; width: 12; } // DO NOT remove this - Separator
     }
+}
 }

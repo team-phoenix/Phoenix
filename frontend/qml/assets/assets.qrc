@@ -22,11 +22,20 @@
         <file>window.svg</file>
         <file>bg.svg</file>
         <file>noartwork.png</file>
-        <file>systems/nes.svg</file>
+        <file>systems/Nintendo Entertainment System.svg</file>
         <file>add2.svg</file>
         <file>bg0.png</file>
         <file>bg3.png</file>
         <file>bg2.png</file>
         <file>bg1.svg</file>
+        <file>systems/Game Boy.svg</file>
+        <file>systems/Game Boy Advance.svg</file>
+        <file>systems/Nintendo DS.svg</file>
+        <file>systems/Game Boy Color.svg</file>
+        <file>systems/All.svg</file>
+        <file>bg-t.jpg</file>
+        <file>systems/Super Nintendo.svg</file>
+        <file>systems/Nintendo 64.svg</file>
+        <file>systems/Sony PlayStation.svg</file>
     </qresource>
 </RCC>

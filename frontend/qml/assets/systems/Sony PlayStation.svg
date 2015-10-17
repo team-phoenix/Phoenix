@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 16 16" style="enable-background:new 0 0 16 16;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#FFFFFF;stroke:#000000;stroke-miterlimit:10;stroke-opacity:0.75;}
+	.st1{fill:url(#XMLID_8_);}
+	.st2{fill:#020202;fill-opacity:5.000000e-002;stroke:#000000;stroke-miterlimit:10;stroke-opacity:0.35;}
+	.st3{opacity:0.35;}
+</style>
+<g id="_x31_">
+	<path id="XMLID_1_" class="st0" d="M14,13H2c-0.8,0-1.5-0.7-1.5-1.5v-8C0.5,3.2,0.7,3,1,3h14c0.3,0,0.5,0.2,0.5,0.5v8
+		C15.5,12.3,14.8,13,14,13z"/>
+</g>
+<g id="_x32_">
+	<linearGradient id="XMLID_8_" gradientUnits="userSpaceOnUse" x1="7.9907" y1="13" x2="7.9907" y2="3">
+		<stop  offset="0.3" style="stop-color:#000000;stop-opacity:0.35"/>
+		<stop  offset="1" style="stop-color:#000000;stop-opacity:0"/>
+	</linearGradient>
+	<path id="XMLID_6_" class="st1" d="M14,13H2c-0.8,0-1.5-0.7-1.5-1.5v-8C0.5,3.2,0.7,3,1,3h14c0.3,0,0.5,0.2,0.5,0.5v8
+		C15.5,12.3,14.8,13,14,13z"/>
+</g>
+<g id="_x33_">
+	<circle id="XMLID_2_" class="st2" cx="8" cy="8" r="3.8"/>
+	<circle id="XMLID_3_" class="st3" cx="3" cy="10.5" r="1"/>
+	<circle id="XMLID_4_" class="st3" cx="13" cy="10.5" r="1"/>
+	<circle id="XMLID_5_" class="st3" cx="2.5" cy="8.5" r="0.5"/>
+</g>
+</svg>

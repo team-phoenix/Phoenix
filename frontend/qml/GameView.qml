@@ -138,8 +138,7 @@ Rectangle {
 
     GameActionBar {
         id: gameActionBar;
-        width: 350;
-        anchors { bottom: parent.bottom; horizontalCenter: parent.horizontalCenter; }
+        anchors { bottom: parent.bottom; left: parent.left; right: parent.right; }
     }
 
     // Use the main mouse area to monitor the mouse for movement
@@ -166,7 +165,5 @@ Rectangle {
         }
     }
 
-    function resetCursor() {
-        if( rootMouseArea.cursorShape !== Qt.ArrowCursor ) rootMouseArea.cursorShape = Qt.ArrowCursor;
-    }
+    function resetCursor() { if( rootMouseArea.cursorShape !== Qt.ArrowCursor ) rootMouseArea.cursorShape = Qt.ArrowCursor; }
 }

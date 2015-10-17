@@ -17,7 +17,7 @@ ApplicationWindow {
     color: "black";
 
     property int defaultMinHeight: 540;
-    property int defaultMinWidth: 800;
+    property int defaultMinWidth: 840;
     minimumHeight: defaultMinHeight;
     minimumWidth: defaultMinWidth;
 
