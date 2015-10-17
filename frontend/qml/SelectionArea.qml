@@ -169,7 +169,7 @@ Item {
                                 if ( sectionsAreaStackView.currentItem.objectName !== "SettingsView" ) {
                                     sectionsAreaStackView.push( { item: settingsView, replace: true } );
                                     if( contentArea.contentStackView.currentItem.objectName !== "InputView") {
-                                        contentArea.contentStackView.push( { item: contentArea.contentInputView, replace: true } );
+                                        // contentArea.contentStackView.push( { item: contentArea.contentInputView, replace: true } );
                                     }
                                 }
                                 break;

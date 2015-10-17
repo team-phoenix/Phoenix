@@ -15,9 +15,10 @@ ScrollView {
         spacing: 0;
         model: ListModel {
             id: settingsModel;
-            ListElement { section: "Input Controls"; }
-            //ListElement { section: "Video Playback"; }
-            //ListElement { section: "Audio Playback"; }
+            ListElement { section: "Coming soon..."; }
+            // ListElement { section: "Input"; }
+            // ListElement { section: "Video"; }
+            // ListElement { section: "Audio"; }
         }
 
         highlight: Item {
@@ -55,7 +56,7 @@ ScrollView {
             Text {
                 id: sectionText;
                 text: section;
-                anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin:  45; }
+                anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 45; }
                 font { pointSize: PhxTheme.selectionArea.basePixelSize; }
                 color: index === listView.currentIndex ? PhxTheme.common.baseBackgroundColor : PhxTheme.selectionArea.baseFontColor;
             }
@@ -67,7 +68,7 @@ ScrollView {
                     listView.currentIndex = index
                     switch ( index ) {
                     case 0:
-                        contentArea.contentStackView.push( { item: contentArea.contentInputView, replace: true } );
+                        // contentArea.contentStackView.push( { item: contentArea.contentInputView, replace: true } );
                         break;
                     case 1:
                         break;
