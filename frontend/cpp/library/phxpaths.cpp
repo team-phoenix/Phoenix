@@ -124,7 +124,7 @@ void PhxPaths::createAllPaths() {
     else {
         qCDebug( phxLibrary ) << "Installed mode";
 
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
         PhxPaths::mResourceLocation = PhxPaths::mBinLocation;
         // TODO: Make this work on all languages
         PhxPaths::mCoreLocation = QStringLiteral( "C:/Program Files/Libretro/Cores" );

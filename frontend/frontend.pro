@@ -22,17 +22,20 @@ include( deployment.pri )
     RCC_DIR     = rcc
     UI_DIR      = gui
 
-    # SDL 2
+    # FIXME: Remove once newer Qt versions make this unnecessary
+    macx: QMAKE_MAC_SDK = macosx10.11
 
+    # SDL 2
     # http://web.archive.org/web/20150305002626/http://blog.debao.me/2013/07/link-confilict-between-sdl-and-qt-under-windows/
     # Applies to both compiler and linker stages
     win32: CONFIG -= windows
     win32: QMAKE_LFLAGS += $$QMAKE_LFLAGS_WINDOWS
 
+    # Include libraries
     win32: INCLUDEPATH += C:/msys64/mingw64/include C:/msys64/mingw64/include/SDL2 # MSYS2
     macx:  INCLUDEPATH += /usr/local/include /usr/local/include/SDL2               # Homebrew
     macx:  INCLUDEPATH += /usr/local/include /opt/local/include/SDL2               # MacPorts
-    unix:  INCLUDEPATH += /usr/include/SDL2                                        # Linux
+    unix:  INCLUDEPATH += /usr/include /usr/include/SDL2                           # Linux
 
     # Include externals
     DEFINES += QUAZIP_STATIC
@@ -80,10 +83,6 @@ include( deployment.pri )
                  qml/assets/assets.qrc \
                  qml/BigPicture/bigpicture.qrc
 
-    DISTFILES += \
-        qml/Theme/qmldir \
-    deployment.pri
-
 ##
 ## Linker settings
 ##
@@ -94,11 +93,9 @@ include( deployment.pri )
 
     # Externals
     LIBS += -L../externals/quazip/quazip
-    win32: CONFIG( debug, debug|release ): LIBS += -L../externals/quazip/quazip/debug   -L../backend/debug
 
     # Our stuff
     LIBS += -L../backend
-    win32: CONFIG( release, debug|release ): LIBS += -L../externals/quazip/quazip/release -L../backend/release
 
     # SDL2
     macx: LIBS += -L/usr/local/lib -L/opt/local/lib # Homebrew, MacPorts

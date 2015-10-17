@@ -6,11 +6,10 @@
 
     TARGET = Phoenix
 
-    # App icon
+    # App icon, metadata
     win32: RC_FILE = ../phoenix.rc
 
     macx {
-        QMAKE_MAC_SDK = macosx10.11
         ICON = ../phoenix.icns
     }
 
@@ -43,9 +42,7 @@
     }
 
     # Force the Phoenix binary to be relinked if the backend code has changed
-    win32: CONFIG(debug, debug|release): TARGETDEPS += ../backend/debug/libphoenix-backend.a ../externals/quazip/quazip/debug/libquazip.a
-    win32: CONFIG(release, debug|release): TARGETDEPS += ../backend/release/libphoenix-backend.a ../externals/quazip/quazip/release/libquazip.a
-    !win32: TARGETDEPS += ../backend/libphoenix-backend.a ../externals/quazip/quazip/libquazip.a
+    TARGETDEPS += ../backend/libphoenix-backend.a ../externals/quazip/quazip/libquazip.a
 
     # Make sure it gets installed
     target.path = "$$PREFIX"
