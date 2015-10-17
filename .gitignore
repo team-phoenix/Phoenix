@@ -27,7 +27,7 @@ release/
 debug/
 
 # OSX
-*.DS_Store
+.DS_Store
 
 # QtCreator
 
