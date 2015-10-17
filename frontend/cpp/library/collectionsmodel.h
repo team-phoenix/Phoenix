@@ -1,11 +1,11 @@
 #ifndef COLLECTIONSMODEL_H
 #define COLLECTIONSMODEL_H
 
-#include "libraryinternaldatabase.h"
+#include "frontendcommon.h"
 
-#include <QSqlTableModel>
-#include <QHash>
-#include <QVariantMap>
+#include "libraryinternaldatabase.h"
+#include "collectionsmodel.h"
+#include "logging.h"
 
 namespace Library {
 

@@ -1,11 +1,4 @@
 #include "libraryinternaldatabase.h"
-#include "logging.h"
-
-#include <QStandardPaths>
-#include <QApplication>
-#include <QDir>
-
-#include <memory>
 
 using namespace Library;
 
@@ -14,7 +7,6 @@ const QString LibraryInternalDatabase::databaseName = QStringLiteral( "gamelibra
 const QString LibraryInternalDatabase::tableName = QStringLiteral( "games" );
 const QString LibraryInternalDatabase::tableCollectionMappings = QStringLiteral( "collectionMappings" );
 const QString LibraryInternalDatabase::tableCollections = QStringLiteral( "collections" );
-
 
 LibraryInternalDatabase::LibraryInternalDatabase() {
     open();
@@ -36,17 +28,10 @@ void LibraryInternalDatabase::open() {
     if( !db.isValid() ) {
         db = QSqlDatabase::addDatabase( QStringLiteral( "QSQLITE" ), QStringLiteral( "LIBRARY" ) );
 
-        QString dataPathStr = QStandardPaths::writableLocation( QStandardPaths::GenericDataLocation );
+        QString dataPathStr = PhxPaths::userDataLocation();
         Q_ASSERT( !dataPathStr.isEmpty() );
 
         QDir dataPath( dataPathStr );
-        auto appname = QApplication::applicationName();
-
-        if( !dataPath.exists( appname ) ) {
-            dataPath.mkdir( appname ); // race...
-        }
-
-        Q_ASSERT( dataPath.cd( appname ) );
 
         mFilePath = dataPath.filePath( databaseName );
 
@@ -69,8 +54,10 @@ void LibraryInternalDatabase::open() {
 }
 
 bool LibraryInternalDatabase::createSchema() {
+
     qCDebug( phxLibrary, "Initializing database schema" );
     db.transaction();
+
     QSqlQuery q( db );
     q.exec( "CREATE TABLE " + LibraryInternalDatabase::tableVersion + " (version INTEGER NOT NULL)" );
     q.exec( QStringLiteral( "INSERT INTO " ) + LibraryInternalDatabase::tableVersion + QStringLiteral( " (version) VALUES (0)" ) );
@@ -85,12 +72,11 @@ bool LibraryInternalDatabase::createSchema() {
             QStringLiteral( "   timePlayed DATETIME,\n" ) +
             QStringLiteral( "   artworkUrl TEXT,\n" ) +
             QStringLiteral( "   coreFilePath TEXT,\n" ) +
-            QStringLiteral( "   description TEXT,\n" ) +
 
             QStringLiteral( "   /* file info */" ) +
             QStringLiteral( "   absolutePath TEXT,\n" ) +
-            QStringLiteral( "   absoluteFilePath TEXT UNIQUE NOT NULL,\n" ) +
-            QStringLiteral( "   sha1 TEXT UNIQUE NOT NULL\n" ) +
+            QStringLiteral( "   absoluteFilePath TEXT NOT NULL,\n" ) +
+            QStringLiteral( "   sha1 TEXT\n" ) +
             QStringLiteral( ")" ) );
 
     q.exec( QStringLiteral( "CREATE INDEX title_index ON " ) + LibraryInternalDatabase::tableName + QStringLiteral( " (title)" ) );
@@ -98,7 +84,7 @@ bool LibraryInternalDatabase::createSchema() {
 
 
     // Create Collections Mapping Table
-   qDebug()<< q.exec( QStringLiteral( "CREATE TABLE " ) + LibraryInternalDatabase::tableCollections + QStringLiteral( "(\n" ) +
+    q.exec( QStringLiteral( "CREATE TABLE " ) + LibraryInternalDatabase::tableCollections + QStringLiteral( "(\n" ) +
             QStringLiteral( " collectionID INTEGER PRIMARY KEY AUTOINCREMENT,\n" ) +
             QStringLiteral( " collectionName TEXT UNIQUE NOT NULL\n" ) +
             QStringLiteral( ")" ) );
@@ -107,18 +93,17 @@ bool LibraryInternalDatabase::createSchema() {
 
 
     // Create Collections Table
-    qDebug() << q.exec( QStringLiteral( "CREATE TABLE " ) + LibraryInternalDatabase::tableCollectionMappings + QStringLiteral( "(\n" ) +
-                        QStringLiteral( " collectionID INTEGER,\n" ) +
-                        QStringLiteral( " rowIndex INTEGER,\n" )  +
-                        QStringLiteral( " FOREIGN KEY (collectionID) REFERENCES " ) + LibraryInternalDatabase::tableCollections +
-                        QStringLiteral( "(collectionID) ON DELETE CASCADE ON UPDATE CASCADE\n" ) +
-                        QStringLiteral( " FOREIGN KEY (rowIndex) REFERENCES " ) + LibraryInternalDatabase::tableName +
-                        QStringLiteral( "(rowIndex) ON DELETE CASCADE ON UPDATE CASCADE\n" ) +
-                        QStringLiteral( ")" ) );
+    q.exec( QStringLiteral( "CREATE TABLE " ) + LibraryInternalDatabase::tableCollectionMappings + QStringLiteral( "(\n" ) +
+            QStringLiteral( " collectionID INTEGER,\n" ) +
+            QStringLiteral( " rowIndex INTEGER,\n" )  +
+            QStringLiteral( " FOREIGN KEY (collectionID) REFERENCES " ) + LibraryInternalDatabase::tableCollections +
+            QStringLiteral( "(collectionID) ON DELETE CASCADE ON UPDATE CASCADE\n" ) +
+            QStringLiteral( " FOREIGN KEY (rowIndex) REFERENCES " ) + LibraryInternalDatabase::tableName +
+            QStringLiteral( "(rowIndex) ON DELETE CASCADE ON UPDATE CASCADE\n" ) +
+            QStringLiteral( ")" ) );
 
     q.exec( QStringLiteral( "INSERT INTO " ) + LibraryInternalDatabase::tableCollections
             + QStringLiteral( " (collectionID, collectionName) VALUES (0, 'All')" ) );
-    qDebug() << q.lastQuery() << q.lastError().text();
 
     db.commit();
 

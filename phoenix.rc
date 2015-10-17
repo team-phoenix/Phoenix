@@ -1,1 +1,32 @@
+#include <windows.h>
+
 IDI_ICON1 ICON DISCARDABLE "phoenix.ico"
+
+
+1 VERSIONINFO
+FILEVERSION 0,0,1,0
+PRODUCTVERSION 0,0,1,0
+FILEFLAGSMASK VS_FFI_FILEFLAGSMASK
+FILEOS VOS__WINDOWS32
+FILETYPE VFT_APP
+FILESUBTYPE VFT2_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904E4"
+        BEGIN
+            VALUE "CompanyName", "Team Phoenix"
+            VALUE "FileDescription", "A multi-system game emulator"
+            VALUE "FileVersion", "Pre-alpha (0.0.1)"
+            VALUE "InternalName", "Phoenix"
+            VALUE "LegalCopyright", "Copyright (c) 2015 Team Phoenix"
+            VALUE "OriginalFilename", "Phoenix.exe"
+            VALUE "ProductName", "Phoenix"
+            VALUE "ProductVersion", "Pre-alpha (0.0.1)"
+        END
+    END
+    BLOCK "VarFileInfo"
+		BEGIN
+			VALUE "Translation", 0x409, 1252
+		END
+END

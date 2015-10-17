@@ -1,11 +1,10 @@
 #ifndef METADATADATABASE_H
 #define METADATADATABASE_H
 
-#include <QSqlDatabase>
-#include <QSqlError>
-#include <QDebug>
-#include <QSqlQuery>
-#include <QString>
+#include "frontendcommon.h"
+
+#include "phxpaths.h"
+#include "logging.h"
 
 namespace Library {
 
@@ -33,17 +32,13 @@ namespace Library {
             static const QString tableReleases;
             static const QString tableRegions;
 
-            MetaDataDatabase();
 
-            ~MetaDataDatabase();
+            static QSqlDatabase database();
 
-            QSqlDatabase &database();
-
-            void open();
-            void close();
+            static void open();
 
         private:
-            QSqlDatabase db;
+            MetaDataDatabase();
 
     };
 

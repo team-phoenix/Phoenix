@@ -50,7 +50,7 @@ class SystemMapUpdater(SqlTableUpdater):
                 hashDict[a] = None
 
             for s, h in zip(sysDict.keys(), hashDict.keys()):
-                db.insert(self.tableName, self.rowsDict.keys(), values=[s,h])
+                db.insert(self.tableName, self.rowsDict.keys(), values=[h, s])
 
 if __name__ == "__main__":
 

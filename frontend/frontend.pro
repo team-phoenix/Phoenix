@@ -1,129 +1,118 @@
-TEMPLATE += app
+include( deployment.pri )
 
-QT += qml quick widgets sql multimedia network
+##
+## Qt settings
+##
 
-CONFIG += c++11 lib_bundle
+    # Undefine this (for some reason it's on by default on Windows)
+    CONFIG -= debug_and_release debug_and_release_target
 
-# Include externals
-INCLUDEPATH += ../externals/quazip/quazip
+    TEMPLATE += app
 
-# Inlcude backend path
-INCLUDEPATH += ../backend ../backend/input
+    QT += qml quick widgets sql multimedia network
 
-LIBS += -L../externals/quazip/quazip -lquazip
-LIBS += -L../backend -lphoenix-backend
-LIBS += -lsamplerate -lz
+##
+## Compiler settings
+##
 
-# Rebuild/relink if library code changes
-win32:CONFIG(debug, debug|release) {
-    TARGETDEPS += ../backend/debug/libphoenix-backend.a
-}
-win32:CONFIG(release, debug|release) {
-    TARGETDEPS += ../backend/release/libphoenix-backend.a
-}
-!win32:TARGETDEPS +=../backend/libphoenix-backend.a
+    CONFIG += c++11
 
-win32 {
-    CONFIG -= windows
-    QMAKE_LFLAGS += $$QMAKE_LFLAGS_WINDOWS
+    OBJECTS_DIR = obj
+    MOC_DIR     = moc
+    RCC_DIR     = rcc
+    UI_DIR      = gui
 
-    # Not sure why, but...
-    LIBS += -L../externals/quazip/quazip/debug -L../externals/quazip/quazip/release
-    LIBS += -L../backend/debug -L../backend/release
+    # FIXME: Remove once newer Qt versions make this unnecessary
+    macx: QMAKE_MAC_SDK = macosx10.11
 
-    LIBS += -LC:/SDL2/lib
-    LIBS += -lmingw32 -lSDL2main -lSDL2 -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -luuid
+    # SDL 2
+    # http://web.archive.org/web/20150305002626/http://blog.debao.me/2013/07/link-confilict-between-sdl-and-qt-under-windows/
+    # Applies to both compiler and linker stages
+    win32: CONFIG -= windows
+    win32: QMAKE_LFLAGS += $$QMAKE_LFLAGS_WINDOWS
 
-    DEFINES += SDL_WIN
-    INCLUDEPATH += C:/SDL2/include C:/msys64/mingw64/include/SDL2 C:/msys64/mingw32/include/SDL2
+    # Include libraries
+    win32: INCLUDEPATH += C:/msys64/mingw64/include C:/msys64/mingw64/include/SDL2 # MSYS2
+    macx:  INCLUDEPATH += /usr/local/include /usr/local/include/SDL2               # Homebrew
+    macx:  INCLUDEPATH += /usr/local/include /opt/local/include/SDL2               # MacPorts
+    unix:  INCLUDEPATH += /usr/include /usr/include/SDL2                           # Linux
 
-    CONFIG(debug, debug|release)  {
-        depends.path = $$OUT_PWD
-        depends.files += C:/msys64/mingw64/bin/SDL2.dll
-        depends.files += $${PWD}/metadata/openvgdb.sqlite
+    # Include externals
+    DEFINES += QUAZIP_STATIC
+    INCLUDEPATH += ../externals/quazip/quazip
 
-    }
+    # Include our stuff
+    INCLUDEPATH += ../backend ../backend/input
+    INCLUDEPATH += cpp/library cpp
 
-    CONFIG(release, debug|release) {
-        depends.path = $$OUT_PWD
-        depends.files += C:/msys64/mingw64/bin/SDL2.dll
-        depends.files += $${PWD}/metadata/openvgdb.sqlite
-    }
+    SOURCES += cpp/main.cpp \
+               cpp/library/librarymodel.cpp \
+               cpp/library/libraryinternaldatabase.cpp \
+               cpp/library/metadatadatabase.cpp \
+               cpp/library/libraryworker.cpp \
+               cpp/library/imagecacher.cpp \
+               cpp/library/platformsmodel.cpp \
+               cpp/library/phxpaths.cpp \
+               cpp/library/collectionsmodel.cpp \
+               cpp/library/systemdatabase.cpp \
+               cpp/library/gamelauncher.cpp \
+               cpp/library/gamefileinfo.cpp \
+               cpp/library/cuefileinfo.cpp \
+               cpp/library/biosfileinfo.cpp \
+               cpp/library/archivefileinfo.cpp
 
-    INSTALLS += depends
-    RC_FILE = ../phoenix.rc
-}
+    HEADERS += cpp/library/librarymodel.h \
+               cpp/library/libraryinternaldatabase.h \
+               cpp/library/metadatadatabase.h \
+               cpp/library/libraryworker.h \
+               cpp/library/imagecacher.h \
+               cpp/library/platformsmodel.h \
+               cpp/library/phxpaths.h \
+               cpp/library/collectionsmodel.h \
+               cpp/library/systemdatabase.h \
+               cpp/library/gamelauncher.h \
+               cpp/library/gamefileinfo.h \
+               cpp/library/cuefileinfo.h \
+               cpp/library/biosfileinfo.h \
+               cpp/library/archivefileinfo.h
 
-else {
+    PRECOMPILED_HEADER = cpp/frontendcommon.h
+
+    RESOURCES += qml/qml.qrc \
+                 qml/Theme/theme.qrc \
+                 qml/assets/assets.qrc \
+                 qml/BigPicture/bigpicture.qrc
+
+##
+## Linker settings
+##
+
+    ##
+    ## Library paths
+    ##
+
+    # Externals
+    LIBS += -L../externals/quazip/quazip
+
+    # Our stuff
+    LIBS += -L../backend
+
+    # SDL2
+    macx: LIBS += -L/usr/local/lib -L/opt/local/lib # Homebrew, MacPorts
+
+    ##
+    ## Libraries
+    ##
+
+    # Externals
+    LIBS += -lquazip
+
+    # Our stuff
+    LIBS += -lphoenix-backend
+
+    # SDL 2
+    win32: LIBS += -lmingw32 -lSDL2main
     LIBS += -lSDL2
-    INCLUDEPATH += /usr/local/include /usr/local/include/SDL2 # Homebrew (OS X)
-    INCLUDEPATH += /opt/local/include /opt/local/include/SDL2 # MacPorts (OS X)
-    INCLUDEPATH += /usr/include /usr/include/SDL2 # Linux
-    QMAKE_CXXFLAGS +=
-    QMAKE_LFLAGS += -L/usr/local/lib -L/opt/local/lib
-}
 
-linux {
-
-    CONFIG( debug, debug|release )  {
-        depends.path = $$OUT_PWD/debug
-        depends.files += $${PWD}/metadata/openvgdb.sqlite
-    }
-
-
-    CONFIG(release, debug|release) {
-        depends.path = $$OUT_PWD/release
-        depends.files += $${PWD}/metadata/openvgdb.sqlite
-    }
-
-    INSTALLS += depends
-
-}
-
-macx {
-        depends.files += $${PWD}/metadata/openvgdb.sqlite
-        depends.path = Contents/MacOS
-        QMAKE_BUNDLE_DATA += depends
-        QMAKE_MAC_SDK = macosx10.11
-        ICON = ../phoenix.icns
-}
-
-INCLUDEPATH += cpp/library
-
-SOURCES += cpp/main.cpp \
-           cpp/library/librarymodel.cpp \
-           cpp/library/libraryinternaldatabase.cpp \
-           cpp/library/platforms.cpp \
-           cpp/library/metadatadatabase.cpp \
-           cpp/library/libraryworker.cpp \
-           cpp/library/imagecacher.cpp \
-           cpp/library/platformsmodel.cpp \
-           cpp/library/phxpaths.cpp \
-           cpp/library/collectionsmodel.cpp \
-           cpp/library/platform.cpp
-
-HEADERS += cpp/library/librarymodel.h \
-           cpp/library/libraryinternaldatabase.h \
-           cpp/library/libretro_cores_info_map.h \
-           cpp/library/platforms.h \
-           cpp/library/metadatadatabase.h \
-           cpp/library/libraryworker.h \
-           cpp/library/imagecacher.h \
-           cpp/library/platformsmodel.h \
-           cpp/library/phxpaths.h \
-           cpp/library/collectionsmodel.h \
-           cpp/library/platform.h
-
-# Will build the final executable in the main project directory.
-TARGET = ../Phoenix
-
-# Check if the config file exists
-include( ../common.pri )
-
-RESOURCES += qml/qml.qrc \
-             qml/Theme/theme.qrc \
-             qml/assets/assets.qrc \
-             qml/BigPicture/bigpicture.qrc
-
-DISTFILES += \
-    qml/Theme/qmldir
+    # Other libraries we use
+    LIBS += -lsamplerate -lz

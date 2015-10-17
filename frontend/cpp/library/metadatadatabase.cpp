@@ -1,12 +1,4 @@
 #include "metadatadatabase.h"
-#include "logging.h"
-
-#include <QCryptographicHash>
-#include <QFile>
-#include <QThread>
-#include <QApplication>
-#include <QDir>
-#include <QStandardPaths>
 
 using namespace Library;
 
@@ -15,26 +7,21 @@ const QString MetaDataDatabase::tableSystems = QStringLiteral( "SYSTEMS" );
 const QString MetaDataDatabase::tableReleases = QStringLiteral( "RELEASES" );
 const QString MetaDataDatabase::tableRegions = QStringLiteral( "REGIONS" );
 
-MetaDataDatabase::MetaDataDatabase() {
-
-}
-
-MetaDataDatabase::~MetaDataDatabase() {
-}
-
-void MetaDataDatabase::close() {
-    db.close();
-}
-
-
 void MetaDataDatabase::open() {
-    auto currentDir = QDir::current().path();
 
-    if ( !db.isValid() )  {
-        db = QSqlDatabase::addDatabase( QStringLiteral( "QSQLITE" ), QStringLiteral( "METADATA" ) );
+    auto db = QSqlDatabase::addDatabase( QStringLiteral( "QSQLITE" ), QStringLiteral( "METADATA" ) );
 
-        db.setDatabaseName( currentDir + QDir::separator() + QStringLiteral( "openvgdb.sqlite" ) );
-    }
+    //#######################
+    QString dataPathStr = PhxPaths::metadataLocation();
+    Q_ASSERT( !dataPathStr.isEmpty() );
+
+    QDir dataPath( dataPathStr );
+
+    auto databaseName = QStringLiteral( "openvgdb.sqlite" );
+    auto filePath = dataPath.filePath( databaseName );
+
+    db.setDatabaseName( filePath );
+    //#######################
 
     if( !db.open() ) {
         qFatal( "Could not open database METADATA %s",
@@ -43,9 +30,8 @@ void MetaDataDatabase::open() {
 
     qCDebug( phxLibrary, "Opening library database %s", qPrintable( db.databaseName() ) );
 
-
 }
 
-QSqlDatabase &MetaDataDatabase::database() {
-    return db;
+QSqlDatabase MetaDataDatabase::database() {
+    return QSqlDatabase::database( QStringLiteral( "METADATA" ) );
 }

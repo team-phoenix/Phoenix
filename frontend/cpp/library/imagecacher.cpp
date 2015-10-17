@@ -1,11 +1,4 @@
 #include "imagecacher.h"
-#include "logging.h"
-#include "phxpaths.h"
-
-#include <QUrl>
-#include <QNetworkRequest>
-#include <QFile>
-#include <QFileInfo>
 
 using namespace Library;
 
@@ -26,7 +19,7 @@ void ImageCacher::cache() {
     auto urlString = imageUrl().toString();
     mImageType = QFileInfo( urlString ).suffix();
 
-    auto cachedFile = PhxPaths::artworkLocation() + identifier() + "." + mImageType;
+    QString cachedFile = PhxPaths::coverArtCacheLocation() % '/' % identifier() % '.' % mImageType;
 
     if( !QFile::exists( cachedFile ) && imageUrl().isValid() ) {
 
@@ -43,6 +36,7 @@ void ImageCacher::cache() {
 
         return;
     }
+
     setCachedUrl( QUrl( qmlFilePrefix + cachedFile ) );
 
 }
@@ -79,12 +73,12 @@ void ImageCacher::handleRequest( QNetworkReply *reply ) {
     if( !reply->error() ) {
         auto imageBytes = reply->readAll();
 
-        QFile file( PhxPaths::artworkLocation() + identifier() + "." + mImageType );
+        QFile file( PhxPaths::coverArtCacheLocation() + '/' + identifier() + "." + mImageType );
 
         if( file.open( QIODevice::WriteOnly ) ) {
 
             if( file.write( std::move( imageBytes ) ) == -1 ) {
-                qCWarning( phxLibrary ) << "Couldn't cache " << identifier() << "to" << PhxPaths::artworkLocation();
+                qCWarning( phxLibrary ) << "Couldn't cache " << identifier() << "to" << PhxPaths::coverArtCacheLocation();
             }
 
             else {
@@ -112,7 +106,7 @@ void ImageCacher::handleRequestProgress( qint64 bytesRecieved, qint64 bytesTotal
     Q_UNUSED( bytesRecieved );
     Q_UNUSED( bytesTotal );
     //qCDebug( phxLibrary ) << "Downloading Image: "
-      //                    << ( bytesRecieved / static_cast<qreal>( bytesTotal ) ) * 100.0;
+    //                    << ( bytesRecieved / static_cast<qreal>( bytesTotal ) ) * 100.0;
 }
 
 void ImageCacher::handleSSLErrors( const QList<QSslError> &errors ) {

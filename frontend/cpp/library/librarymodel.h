@@ -1,17 +1,11 @@
 #ifndef LIBRARYMODEL_H
 #define LIBRARYMODEL_H
 
-#include <QSqlTableModel>
-#include <QVariant>
-#include <QHash>
-#include <QUrl>
-#include <QMutex>
-#include <QFileInfo>
-#include <QThread>
+#include "frontendcommon.h"
 
 #include "libraryinternaldatabase.h"
-#include "platforms.h"
 #include "libraryworker.h"
+#include "logging.h"
 
 namespace Library {
 
@@ -123,6 +117,7 @@ namespace Library {
                 mWorkerThread.start( QThread::HighPriority );
             }
 
+
         private slots:
 
             // handleInsertGame runs on the main QML thread, and is
@@ -148,7 +143,7 @@ namespace Library {
             void containsDrag( const bool contains );
             void droppedUrls();
 
-            void insertGames( const QString url );
+            void insertGames( const QString url, bool autoStart );
             void signalInsertCancelled( const bool cancel );
             void signalInsertPaused( const bool paused );
 
@@ -179,10 +174,7 @@ namespace Library {
             bool qmlInsertPaused;
             bool qmlInsertCancelled;
 
-
             LibraryWorker mLibraryWorker;
-            // Used to find metadata for any game.
-            MetaDataDatabase mMetaDataDatabse;
 
             // QML Variables
             int qmlCount;

@@ -1,15 +1,13 @@
 #ifndef LIBRARYWORKER_H
 #define LIBRARYWORKER_H
 
-#include <QObject>
-#include <QMutex>
-#include <QFileInfo>
-#include <QUrl>
-#include <QQueue>
-#include <QDirIterator>
+#include "frontendcommon.h"
 
+#include "phxpaths.h"
 #include "metadatadatabase.h"
-#include "platform.h"
+#include "systemdatabase.h"
+#include "logging.h"
+#include "gamefileinfo.h"
 
 namespace Library {
 
@@ -29,10 +27,6 @@ namespace Library {
         QString genre;
         QString description;
 
-        QString coreName;
-        QString coreFilePath;
-
-        bool updated = false;
         qint64 fileID;
     };
 
@@ -68,8 +62,7 @@ namespace Library {
             void setInsertCancelled( const bool cancelled );
             void setInsertPaused( const bool paused );
 
-            void prepareMetadata( GameData &gameData );
-            void findGameFiles( const QString localUrl );
+            bool findGameFiles( const QString localUrl, bool autoStart );
 
             void eventLoopStarted();
 
@@ -79,14 +72,13 @@ namespace Library {
 
 
         private slots:
-            void prepareGameData( QQueue<QFileInfo> &queue );
+            void prepareGameData( QQueue<GameFileInfo> &queue );
 
         private:
             bool mInsertCancelled;
             bool mInsertPaused;
             QMutex mMutex;
-            QStringList mFileFilters;
-            QQueue<QFileInfo> mFileInfoQueue;
+            QQueue<GameFileInfo> mFileInfoQueue;
             bool mRunning;
             bool mContainsDrag;
             bool qmlResumeQuitScan;
@@ -96,17 +88,11 @@ namespace Library {
             QString mResumeInsertID;
             QString mResumeDirectory;
 
-            MetaDataDatabase mMetaDatabase;
-
             // Setters
             void setIsRunning( const bool running );
 
-            // Helper Functions
-            void checkHeaderOffsets( const QFileInfo &fileInfo, Platform::Platforms &platform );
-            bool getCueFileInfo( QFileInfo &fileInfo );
-            QString getCheckSum( const QString filePath );
-            bool isBios( const QString &hex, QString &biosName );
-            void cacheBiosFile( const QString &filePath, const QString &biosName );
+            void enqueueFiles( QString &filePath );
+
     };
 
 }

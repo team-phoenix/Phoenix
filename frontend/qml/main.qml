@@ -6,6 +6,8 @@ import QtGraphicalEffects 1.0
 
 import vg.phoenix.backend 1.0
 import vg.phoenix.themes 1.0
+import vg.phoenix.launcher 1.0
+import vg.phoenix.paths 1.0
 
 ApplicationWindow {
     id: root;
@@ -21,7 +23,14 @@ ApplicationWindow {
     minimumHeight: defaultMinHeight;
     minimumWidth: defaultMinWidth;
 
-    property InputManager inputManager: InputManager { gamepadControlsFrontend: true; }
+    GameLauncher {
+        id: gameLauncher;
+    }
+
+    property InputManager inputManager: InputManager {
+        id: inputManager;
+        gamepadControlsFrontend: true;
+    }
     property var gameViewObject: null;
 
     // Use when transitioning

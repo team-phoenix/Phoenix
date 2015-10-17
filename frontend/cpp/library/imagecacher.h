@@ -1,13 +1,10 @@
 #ifndef IMAGECACHER_H
 #define IMAGECACHER_H
 
-#include <QQuickImageProvider>
-#include <QPixmap>
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
-#include <QObject>
-#include <QDir>
-#include <QString>
+#include "frontendcommon.h"
+
+#include "logging.h"
+#include "phxpaths.h"
 
 namespace  Library {
 

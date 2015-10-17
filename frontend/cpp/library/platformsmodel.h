@@ -1,10 +1,10 @@
 #ifndef PLATFORMSMODEL_H
 #define PLATFORMSMODEL_H
 
-#include <QObject>
-#include <QAbstractListModel>
-#include <QStringList>
-#include <QVariantMap>
+#include "frontendcommon.h"
+
+#include "systemdatabase.h"
+#include "logging.h"
 
 namespace Library {
 
@@ -44,6 +44,7 @@ namespace Library {
 
         private:
             QStringList mPlatformsList;
+            QString mFilePath;
     };
 
 }

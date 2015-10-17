@@ -1,11 +1,10 @@
 #ifndef LIBRARYINTERNALDATABASE_H
 #define LIBRARYINTERNALDATABASE_H
 
-#include <QString>
-#include <QSqlDatabase>
-#include <QSqlError>
-#include <QDebug>
-#include <QSqlQuery>
+#include "frontendcommon.h"
+
+#include "logging.h"
+#include "phxpaths.h"
 
 namespace Library {
 
