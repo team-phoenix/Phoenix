@@ -175,7 +175,7 @@ void LibraryModel::setFilter( const QString table, const QString row, const QVar
 
     auto tableRow = table + QStringLiteral( "." ) + row;
 
-    filterParameterMap.insert( tableRow, value );
+    filterParameterMap.insert( tableRow, value.toString().toLower() );
 
     QSqlTableModel::setFilter( createFilter() );
 }
