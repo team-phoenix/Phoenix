@@ -16,7 +16,7 @@ BEGIN
         BLOCK "040904E4"
         BEGIN
             VALUE "CompanyName", "Team Phoenix"
-            VALUE "FileDescription", "A multi-system game emulator"
+            VALUE "FileDescription", "Phoenix"
             VALUE "FileVersion", "Pre-alpha (0.0.1)"
             VALUE "InternalName", "Phoenix"
             VALUE "LegalCopyright", "Copyright (c) 2015 Team Phoenix"
