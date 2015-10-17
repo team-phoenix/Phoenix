@@ -25,7 +25,7 @@ namespace Library {
         };
 
         QString system() const;
-        QString sha1CheckSum() const;
+        QString crc32CheckSum() const;
         QString title() const;
         QString fullFilePath() const;
         QString timePlayed() const;
@@ -54,10 +54,9 @@ namespace Library {
     protected:
         FileType mFileType;
         QString mSystem;
-        QString mSha1Sum;
+        QString mCrc32Checksum;
         QString mTitle;
         QString mFullFilePath;
-        QString mCrc32Checksum;
         QString mArtworkUrl;
         QSqlQuery mQuery;
 

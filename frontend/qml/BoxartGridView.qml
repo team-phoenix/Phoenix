@@ -206,7 +206,7 @@ Rectangle {
                             ImageCacher {
                                 id: imageCacher;
                                 imageUrl: artworkUrl;
-                                identifier: sha1;
+                                identifier: crc32Checksum;
                                 Component.onCompleted: cache();
                             }
 

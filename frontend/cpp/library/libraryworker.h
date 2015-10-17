@@ -17,7 +17,7 @@ namespace Library {
         QString timePlayed;
         QString title;
         QString filePath;
-        QString sha1;
+        QString crc32Checksum;
 
         QString artworkUrl;
         QString goodToolsCode;

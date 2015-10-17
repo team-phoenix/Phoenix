@@ -232,7 +232,7 @@ void LibraryWorker::prepareGameData( QQueue<GameFileInfo> &queue ) {
         importData.timePlayed = gameInfo.timePlayed();
         importData.title = gameInfo.title();
         importData.filePath = gameInfo.fullFilePath();
-        importData.sha1 = gameInfo.sha1CheckSum();
+        importData.crc32Checksum = gameInfo.crc32CheckSum();
         importData.system = gameInfo.system();
         importData.fileID = i - 1;
         importData.artworkUrl = gameInfo.artworkUrl();
@@ -274,7 +274,7 @@ void LibraryWorker::enqueueFiles( QString &filePath ) {
         auto cueFileInfo = static_cast<CueFileInfo>( fileInfo );
 
         if ( cueFileInfo.isValid() ) {
-            qDebug() << "Cue File (Valid): " << cueFileInfo.fullFilePath() <<  cueFileInfo.system() << cueFileInfo.sha1CheckSum();
+            qDebug() << "Cue File (Valid): " << cueFileInfo.fullFilePath() <<  cueFileInfo.system() << cueFileInfo.crc32CheckSum();
             mFileInfoQueue.enqueue( cueFileInfo );
         } else {
             qDebug() << "Cue File (Invalid): " << cueFileInfo.fullFilePath();

@@ -21,6 +21,8 @@ void ImageCacher::cache() {
 
     QString cachedFile = PhxPaths::coverArtCacheLocation() % '/' % identifier() % '.' % mImageType;
 
+    qDebug() << cachedFile;
+
     if( !QFile::exists( cachedFile ) && imageUrl().isValid() ) {
 
         QNetworkRequest request( imageUrl() );

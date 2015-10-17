@@ -40,7 +40,7 @@ bool CueFileInfo::isValid() {
     }
 
     mFullFilePath = QStringLiteral( "cue://" ) + canonicalFilePath();
-    mSha1Sum = getCheckSum( canonicalFilePath() );
+    mCrc32Checksum = getCheckSum( canonicalFilePath() );
 
     return exists;
 }
