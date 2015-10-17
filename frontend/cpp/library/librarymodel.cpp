@@ -324,8 +324,8 @@ void LibraryModel::handleInsertGame( const GameData importData ) {
 
     static const auto statement = QStringLiteral( "INSERT INTO " )
                                   + LibraryInternalDatabase::tableName
-                                  + QStringLiteral( " (title, system, absoluteFilePath, timePlayed, sha1, artworkUrl) " )
-                                  + QStringLiteral( "VALUES (?,?,?,?,?,?)" );
+                                  + QStringLiteral( " (title, system, absoluteFilePath, timePlayed, artworkUrl) " )
+                                  + QStringLiteral( "VALUES (?,?,?,?,?)" );
 
 
     if( insertCancelled() ) {
@@ -359,11 +359,11 @@ void LibraryModel::handleInsertGame( const GameData importData ) {
     query.addBindValue( importData.system );
     query.addBindValue( importData.filePath );
     query.addBindValue( importData.timePlayed );
-    query.addBindValue( importData.sha1 );
+    //query.addBindValue( importData.sha1 );
     query.addBindValue( importData.artworkUrl );
 
     if( !query.exec() ) {
-        qDebug() << "SQL Insertion Error: " << query.lastError().text() << query.lastQuery() << query.boundValues();
+        qDebug() << "SQL Insertion Error: " << query.lastError().text() << query.lastQuery();
     }
 
     // Limit how many times the progress is updated, to reduce strain on the render thread.

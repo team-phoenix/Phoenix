@@ -75,8 +75,8 @@ bool LibraryInternalDatabase::createSchema() {
 
             QStringLiteral( "   /* file info */" ) +
             QStringLiteral( "   absolutePath TEXT,\n" ) +
-            QStringLiteral( "   absoluteFilePath TEXT NOT NULL,\n" ) +
-            QStringLiteral( "   sha1 TEXT\n" ) +
+            QStringLiteral( "   absoluteFilePath TEXT UNIQUE NOT NULL,\n" ) +
+            QStringLiteral( "   crc32Checksum TEXT\n" ) +
             QStringLiteral( ")" ) );
 
     q.exec( QStringLiteral( "CREATE INDEX title_index ON " ) + LibraryInternalDatabase::tableName + QStringLiteral( " (title)" ) );
