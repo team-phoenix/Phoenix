@@ -5,7 +5,7 @@ QtObject {
     property color normalFontColor: "#F1F1F1";
 
     property QtObject selectionArea: QtObject {
-        property int basePixelSize:        11;
+        property int basePixelSize:        12;
         property int headerFontSize:       13;
         property color baseColor:          "#2E0E19";
         property color baseFontColor:      "#D5D5D5" // "#8A8889";

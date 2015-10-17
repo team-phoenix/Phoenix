@@ -15,8 +15,7 @@ ScrollView {
         spacing: 0;
         model: ListModel {
             id: settingsModel;
-            ListElement { section: "Coming soon..."; }
-            // ListElement { section: "Input"; }
+            ListElement { section: "Input (coming soon...)"; }
             // ListElement { section: "Video"; }
             // ListElement { section: "Audio"; }
         }
@@ -53,17 +52,25 @@ ScrollView {
             height: 35;
             anchors { left: parent.left; right: parent.right; }
 
-            Text {
+            MarqueeText {
                 id: sectionText;
+                anchors { verticalCenter: parent.verticalCenter; left: parent.left; right: parent.right; leftMargin: 45; rightMargin: 17; }
+                horizontalAlignment: Text.AlignLeft;
+
                 text: section;
-                anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 45; }
-                font { pointSize: PhxTheme.selectionArea.basePixelSize; }
+                fontSize: PhxTheme.selectionArea.basePixelSize;
                 color: index === listView.currentIndex ? PhxTheme.common.baseBackgroundColor : PhxTheme.selectionArea.baseFontColor;
+
+
+                spacing: 40;
+                running: index === listView.currentIndex || mouseArea.containsMouse;
+                pixelsPerFrame: 2.0;
             }
 
             MouseArea {
                 id: mouseArea;
                 anchors.fill: parent;
+                hoverEnabled: true;
                 onClicked: {
                     listView.currentIndex = index
                     switch ( index ) {

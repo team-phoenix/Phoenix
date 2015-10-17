@@ -58,16 +58,25 @@ ScrollView {
                 source: "systems/" + listView.model.get( index ) + ".svg";
             }
 
-            Label {
+            MarqueeText {
                 id: platformText;
+                anchors { verticalCenter: parent.verticalCenter; left: parent.left; right: parent.right; leftMargin: 45; rightMargin: 17; }
+                horizontalAlignment: Text.AlignLeft;
+
                 text: listView.model.get( index );
-                anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin:  45; }
-                font { pointSize: PhxTheme.selectionArea.basePixelSize; }
+                fontSize: PhxTheme.selectionArea.basePixelSize;
                 color: index === listView.currentIndex ? PhxTheme.common.baseBackgroundColor : PhxTheme.selectionArea.baseFontColor;
+
+
+                spacing: 40;
+                running: index === listView.currentIndex || mouseArea.containsMouse;
+                pixelsPerFrame: 2.0;
             }
 
             MouseArea {
+                id: mouseArea;
                 anchors.fill: parent;
+                hoverEnabled: true;
                 onClicked: {
                     if ( contentArea.contentStackView.currentItem.objectName !== "PlatformsView" ) {
                         contentArea.contentStackView.push( { item: contentArea.boxartGrid, replace: true } );
