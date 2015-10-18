@@ -8,7 +8,7 @@ import vg.phoenix.models 1.0
 TextField {
     id: searchBar;
     placeholderText: "";
-    textColor: "#FFFFFF";
+    textColor: "#333";
 
     style: TextFieldStyle {
         placeholderTextColor: PhxTheme.common.baseFontColor;

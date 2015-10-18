@@ -17,7 +17,7 @@ ScrollView {
         header: Rectangle {
             anchors { left: parent.left; right: parent.right; }
             color: "transparent";
-            height: 70;
+            height: PhxTheme.common.menuTitleHeight;
 
             Text {
                 text: qsTr( "Collections" );

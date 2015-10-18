@@ -24,7 +24,5 @@ MouseArea {
         onTriggered: tip.hide();
     }
 
-    ToolTip{
-        id:tip
-    }
+    ToolTip { id :tip }
 }

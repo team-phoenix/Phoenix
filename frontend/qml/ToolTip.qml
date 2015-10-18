@@ -9,10 +9,7 @@ Rectangle {
     width: textContainer.width + horizontalPadding * 2;
     height: textContainer.height + verticalPadding * 2;
     z: 9999999999;
-
-    anchors {
-        horizontalCenter: parent.horizontalCenter
-    }
+    anchors { horizontalCenter: parent.horizontalCenter }
 
     Text {
         anchors.centerIn: parent;
@@ -44,12 +41,6 @@ Rectangle {
     visible:false;
     onVisibleChanged: if(visible)fadein.start();
 
-    function show(){
-        visible = true;
-        fadein.start();
-    }
-
-    function hide(){
-        fadeout.start();
-    }
+    function show(){ visible = true; fadein.start(); }
+    function hide(){ fadeout.start(); }
 }

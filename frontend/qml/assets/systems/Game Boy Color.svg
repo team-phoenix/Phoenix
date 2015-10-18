@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 16 16" style="enable-background:new 0 0 16 16;" xml:space="preserve">
+	 viewBox="-2 -2 20 20" style="enable-background:new -2 -2 20 20;" xml:space="preserve">
 <style type="text/css">
 	.st0{fill:#FFFFFF;stroke:#000000;stroke-miterlimit:10;stroke-opacity:0.75;}
 	.st1{opacity:0.75;}
@@ -11,22 +11,22 @@
 	.st5{opacity:0.3;}
 </style>
 <g id="Capa_3">
-	<path class="st0" d="M2.5,13.5v-13h11v13c0,1.1-0.9,2-2,2h-7C3.4,15.5,2.5,14.6,2.5,13.5z"/>
+	<path class="st0" d="M1,15V-1.5h14V15c0,1.4-1.1,2.5-2.5,2.5H3.5C2.1,17.5,1,16.4,1,15z"/>
 </g>
 <g id="Capa_4">
-	<polygon class="st1" points="7,9.6 5.9,9.6 5.9,8.5 5.1,8.5 5.1,9.6 4,9.6 4,10.4 5.1,10.4 5.1,11.5 5.9,11.5 5.9,10.4 7,10.4 	"/>
+	<polygon class="st1" points="7,10 5.5,10 5.5,8.5 4.5,8.5 4.5,10 3,10 3,11 4.5,11 4.5,12.5 5.5,12.5 5.5,11 7,11 	"/>
 </g>
 <g id="Capa_5">
-	<circle class="st2" cx="9.4" cy="10.7" r="0.7"/>
-	<circle class="st2" cx="11.4" cy="9.4" r="0.7"/>
+	<circle class="st2" cx="9.5" cy="11.5" r="1"/>
+	<circle class="st2" cx="12" cy="9.5" r="1"/>
 </g>
 <g id="Capa_6">
-	<rect x="4" y="2.3" class="st3" width="8" height="4.5"/>
+	<rect x="3" y="0.5" class="st3" width="10" height="6"/>
 </g>
 <g id="Capa_7">
-	<rect x="5.3" y="2.8" class="st4" width="5.5" height="3.5"/>
+	<rect x="4.5" y="1.3" class="st4" width="7" height="4.5"/>
 </g>
 <g id="Capa_8">
-	<path class="st5" d="M13.5,13.5h-11v0c0,1.1,0.9,2,2,2h7.1C12.6,15.5,13.5,14.6,13.5,13.5L13.5,13.5z"/>
+	<path class="st5" d="M15,15H1v0c0,1.4,1.1,2.5,2.5,2.5h9C13.9,17.5,15,16.4,15,15L15,15z"/>
 </g>
 </svg>

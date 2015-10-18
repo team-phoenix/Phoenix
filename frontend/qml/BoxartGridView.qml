@@ -177,6 +177,25 @@ Rectangle {
                                 }
                             }
 
+                            // BoxArt: Glass line effect
+                            Rectangle {
+                                anchors { bottom: parent.bottom; bottomMargin: parent.paintedHeight - 1; horizontalCenter: parent.horizontalCenter; }
+                                width: parent.paintedWidth ;
+                                height: 1;
+                                color: Qt.rgba(255,255,255,.25);
+                            }
+
+                            /* BoxArt: Inner Border
+                            Rectangle {
+                                anchors { bottom: parent.bottom; topMargin: -border.width; bottomMargin: -border.width; leftMargin: -border.width; rightMargin: -border.width; horizontalCenter: parent.horizontalCenter; }
+                                z: gridItemImage.z + 1;
+                                height: parent.paintedHeight + border.width;
+                                width: parent.paintedWidth + border.width;
+                                border.color: Qt.rgba(0,0,0,.75);
+                                border.width: 1;
+                                color: "transparent";
+                            } */
+
                             // BoxArt: Outer Border
                             Rectangle {
                                 anchors { bottom: parent.bottom; topMargin: -border.width; bottomMargin: -border.width; leftMargin: -border.width; rightMargin: -border.width; horizontalCenter: parent.horizontalCenter; }

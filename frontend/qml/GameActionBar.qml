@@ -34,210 +34,218 @@ Rectangle {
         if(root.width < root.defaultMinWidth) { root.width = root.defaultMinWidth; }
     }
 
-Rectangle {
-    width: 350;
-    anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom; bottomMargin: 10; }
-    height: 45;
-    color: Qt.rgba(0,0,0,0.65);
-    // color: "transparent";
+    Rectangle {
+        width: 350;
+        anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom; bottomMargin: 10; }
+        height: 45;
+        color: Qt.rgba(0,0,0,0.75);
+        radius: 1;
+        // color: "transparent";
 
-    // Left-Side
-    Row {
-        id: mediaButtonsRow;
-        anchors.fill: parent;
-        spacing: 0;
-        Rectangle { anchors { top: parent.top; bottom: parent.bottom; } color: "transparent"; width: 10; } // DO NOT remove this - Separator
-
-        // Play - Pause
         Rectangle {
-            anchors { top: parent.top; bottom: parent.bottom; }
-            color: "transparent";
-            width: 40;
-
-            Button {
-                anchors.centerIn: parent;
-                width: parent.width;
-                iconName: videoItem.running ? qsTr( "Pause" ) : qsTr( "Play" );
-                iconSource: videoItem.running ? qsTr( "pause.svg" ) : qsTr( "play.svg" );
-                style: ButtonStyle { background: Rectangle { color: "transparent"; } }
-            }
-
-            MouseArea {
-                anchors.fill: parent;
-                onClicked: {
-                    if (videoItem.running) { videoItem.slotPause(); }
-                    else { videoItem.slotResume(); }
-                }
-            }
+            width: parent.width - 2;
+            height: 1;
+            anchors { top: parent.top; topMargin: 1; horizontalCenter: parent.horizontalCenter; }
+            color: Qt.rgba(255,255,255,.35);
         }
 
-        // Volume
+        // Left-Side
         Row {
-            anchors { top: parent.top; bottom: parent.bottom; }
+            id: mediaButtonsRow;
+            anchors.fill: parent;
             spacing: 0;
+            Rectangle { anchors { top: parent.top; bottom: parent.bottom; } color: "transparent"; width: 10; } // DO NOT remove this - Separator
 
+            // Play - Pause
             Rectangle {
-                id: volIcon;
                 anchors { top: parent.top; bottom: parent.bottom; }
-                width: 32;
-                color: "transparent"
+                color: "transparent";
+                width: 40;
 
                 Button {
                     anchors.centerIn: parent;
                     width: parent.width;
-                    iconName: "Volume";
-                    iconSource: gameActionBar.volumeIcon;
+                    iconName: videoItem.running ? qsTr( "Pause" ) : qsTr( "Play" );
+                    iconSource: videoItem.running ? qsTr( "pause.svg" ) : qsTr( "play.svg" );
                     style: ButtonStyle { background: Rectangle { color: "transparent"; } }
                 }
 
-                MouseArea{
-                    anchors.fill: parent;
-                    hoverEnabled: true;
-                    onClicked: {
-                        if (volumeValue == 1) { volumeValue = 0; }
-                        else { volumeValue = 1; }
-                    }
-                }
-
-                /* Notworking
                 MouseArea {
                     anchors.fill: parent;
-                    hoverEnabled: true;
-                    onEntered: {
-                        volumeSlider.visible = !volumeSlider.visible;
-                    }
-                    onExited: {
-                        volumeSlider.opacity = !volumeSlider.visible;
-                    }
-                } */
-            }
-
-            Slider {
-                id: volumeSlider;
-                anchors { verticalCenter: parent.verticalCenter; }
-                width: 55;
-                height: gameActionBar.height;
-                minimumValue: 0;
-                maximumValue: 1;
-                value: volumeValue;
-                stepSize: 0.01;
-                activeFocusOnPress: true;
-                tickmarksEnabled: false;
-                onValueChanged: { videoItem.signalSetVolume(value); }
-
-                style: SliderStyle {
-                    handle: Item {
-                        height: 12;
-                        width: 4;
-                        Rectangle { id: handleRectangle; anchors.fill: parent; color: "white"; }
-                    }
-
-                    groove: Item {
-                        width: control.width;
-                        height: 2;
-                        Rectangle { anchors.fill: parent; color: "#FFFFFF"; opacity: .35; }
+                    onClicked: {
+                        if (videoItem.running) { videoItem.slotPause(); }
+                        else { videoItem.slotResume(); }
                     }
                 }
             }
-            move: Transition { NumberAnimation { properties: "y"; duration: 1000 } }
+
+            // Volume
+            Row {
+                anchors { top: parent.top; bottom: parent.bottom; }
+                spacing: 0;
+
+                Rectangle {
+                    id: volIcon;
+                    anchors { top: parent.top; bottom: parent.bottom; }
+                    width: 32;
+                    color: "transparent"
+
+                    Button {
+                        anchors.centerIn: parent;
+                        width: parent.width;
+                        iconName: "Volume";
+                        iconSource: gameActionBar.volumeIcon;
+                        style: ButtonStyle { background: Rectangle { color: "transparent"; } }
+                    }
+
+                    MouseArea{
+                        anchors.fill: parent;
+                        hoverEnabled: true;
+                        onClicked: {
+                            if (volumeValue == 1) { volumeValue = 0; }
+                            else { volumeValue = 1; }
+                        }
+                    }
+
+                    /* Notworking
+                    MouseArea {
+                        anchors.fill: parent;
+                        hoverEnabled: true;
+                        onEntered: {
+                            volumeSlider.visible = !volumeSlider.visible;
+                        }
+                        onExited: {
+                            volumeSlider.opacity = !volumeSlider.visible;
+                        }
+                    } */
+                }
+
+                Slider {
+                    id: volumeSlider;
+                    anchors { verticalCenter: parent.verticalCenter; }
+                    width: 55;
+                    height: gameActionBar.height;
+                    minimumValue: 0;
+                    maximumValue: 1;
+                    value: volumeValue;
+                    stepSize: 0.01;
+                    activeFocusOnPress: true;
+                    tickmarksEnabled: false;
+                    onValueChanged: { videoItem.signalSetVolume(value); }
+
+                    style: SliderStyle {
+                        handle: Item {
+                            height: 12;
+                            width: 4;
+                            Rectangle { id: handleRectangle; anchors.fill: parent; color: "white"; }
+                        }
+
+                        groove: Item {
+                            width: control.width;
+                            height: 2;
+                            Rectangle { anchors.fill: parent; color: "#FFFFFF"; opacity: .35; }
+                        }
+                    }
+                }
+                move: Transition { NumberAnimation { properties: "y"; duration: 1000 } }
+            }
+
+            /*/ Settings
+            Rectangle {
+                anchors { top: parent.top; bottom: parent.bottom; }
+                color: "transparent"
+                width: 40;
+
+                Button {
+                    anchors.centerIn: parent;
+                    width: parent.width;
+                    iconName: "Settings";
+                    iconSource: "settings.svg";
+                    style: ButtonStyle { background: Rectangle { color: "transparent"; } }
+                }
+            } */
+
+            // Blur
+            Rectangle {
+                anchors { top: parent.top; bottom: parent.bottom; }
+                color: "transparent"
+                width: 40;
+
+                Label {
+                    anchors.centerIn: parent;
+                    color: PhxTheme.normalFontColor;
+                    text: qsTr( "Blur" );
+                }
+
+                MouseArea {
+                    anchors.fill: parent;
+                    onClicked: {
+                        if( blurEffect.visible ) { blurEffect.visible = false; }
+                        else if( !blurEffect.visible ) { blurEffect.visible = true; }
+                    }
+                }
+            }
         }
 
-        /*/ Settings
-        Rectangle {
-            anchors { top: parent.top; bottom: parent.bottom; }
-            color: "transparent"
-            width: 40;
+        // Right-Side
+        Row {
+            spacing: 0;
+            anchors { top: parent.top; bottom: parent.bottom; right: parent.right; }
 
-            Button {
-                anchors.centerIn: parent;
-                width: parent.width;
-                iconName: "Settings";
-                iconSource: "settings.svg";
-                style: ButtonStyle { background: Rectangle { color: "transparent"; } }
-            }
-        } */
+            // Suspend - Minimize
+            Rectangle {
+                anchors { top: parent.top; bottom: parent.bottom; }
+                color: "transparent"
+                width: 32;
 
-        // Blur
-        Rectangle {
-            anchors { top: parent.top; bottom: parent.bottom; }
-            color: "transparent"
-            width: 40;
+                Button {
+                    anchors.centerIn: parent;
+                    width: parent.width;
+                    iconName: "Suspend";
+                    iconSource: "minimize.svg";
+                    style: ButtonStyle { background: Rectangle { color: "transparent"; } }
+                }
 
-            Label {
-                anchors.centerIn: parent;
-                color: PhxTheme.normalFontColor;
-                text: qsTr( "Blur" );
-            }
-
-            MouseArea {
-                anchors.fill: parent;
-                onClicked: {
-                    if( blurEffect.visible ) { blurEffect.visible = false; }
-                    else if( !blurEffect.visible ) { blurEffect.visible = true; }
+                MouseArea {
+                    anchors.fill: parent;
+                    onClicked: {
+                        videoItem.slotPause();
+                        root.disableMouseClicks();
+                        rootMouseArea.hoverEnabled = false;
+                        resetCursor();
+                        resetWindowSize();
+                        layoutStackView.push( mouseDrivenView );
+                    }
                 }
             }
+
+            // Shutdown - Close
+            Rectangle {
+                anchors { top: parent.top; bottom: parent.bottom; }
+                color: "transparent"
+                width: 32;
+
+                Button {
+                    anchors.centerIn: parent;
+                    width: parent.width;
+                    iconName: "Shutdown";
+                    iconSource: "shutdown.svg";
+                    style: ButtonStyle { background: Rectangle { color: "transparent"; } }
+                }
+
+                MouseArea {
+                    anchors.fill: parent;
+                    onClicked: {
+                        videoItem.slotStop();
+                        root.disableMouseClicks();
+                        rootMouseArea.hoverEnabled = false;
+                        resetCursor();
+                        resetWindowSize();
+                        layoutStackView.push( mouseDrivenView );
+                    }
+                }
+            }
+            Rectangle { anchors { top: parent.top; bottom: parent.bottom; } color: "transparent"; width: 12; } // DO NOT remove this - Separator
         }
     }
-
-    // Right-Side
-    Row {
-        spacing: 0;
-        anchors { top: parent.top; bottom: parent.bottom; right: parent.right; }
-
-        // Suspend - Minimize
-        Rectangle {
-            anchors { top: parent.top; bottom: parent.bottom; }
-            color: "transparent"
-            width: 32;
-
-            Button {
-                anchors.centerIn: parent;
-                width: parent.width;
-                iconName: "Suspend";
-                iconSource: "minimize.svg";
-                style: ButtonStyle { background: Rectangle { color: "transparent"; } }
-            }
-
-            MouseArea {
-                anchors.fill: parent;
-                onClicked: {
-                    videoItem.slotPause();
-                    root.disableMouseClicks();
-                    rootMouseArea.hoverEnabled = false;
-                    resetCursor();
-                    resetWindowSize();
-                    layoutStackView.push( mouseDrivenView );
-                }
-            }
-        }
-
-        // Shutdown - Close
-        Rectangle {
-            anchors { top: parent.top; bottom: parent.bottom; }
-            color: "transparent"
-            width: 32;
-
-            Button {
-                anchors.centerIn: parent;
-                width: parent.width;
-                iconName: "Shutdown";
-                iconSource: "shutdown.svg";
-                style: ButtonStyle { background: Rectangle { color: "transparent"; } }
-            }
-
-            MouseArea {
-                anchors.fill: parent;
-                onClicked: {
-                    videoItem.slotStop();
-                    root.disableMouseClicks();
-                    rootMouseArea.hoverEnabled = false;
-                    resetCursor();
-                    resetWindowSize();
-                    layoutStackView.push( mouseDrivenView );
-                }
-            }
-        }
-        Rectangle { anchors { top: parent.top; bottom: parent.bottom; } color: "transparent"; width: 12; } // DO NOT remove this - Separator
-    }
-}
 }

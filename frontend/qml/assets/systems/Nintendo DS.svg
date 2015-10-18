@@ -1,25 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 16 16" style="enable-background:new 0 0 16 16;" xml:space="preserve">
+	 viewBox="-2 -2 20 20" style="enable-background:new -2 -2 20 20;" xml:space="preserve">
 <style type="text/css">
 	.st0{fill:#F4F4F4;stroke:#000000;stroke-miterlimit:10;stroke-opacity:0.75;}
 	.st1{opacity:0.6;}
 	.st2{opacity:0.5;}
 	.st3{opacity:0.25;}
 	.st4{opacity:0.35;}
+	.st5{fill-opacity:0.65;}
+	.st6{opacity:0.65;}
 </style>
 <g id="_x31_">
-	<path class="st0" d="M13,14.5H3c-0.5,0-1-0.4-1-1v-11c0-0.5,0.5-1,1-1h10c0.6,0,1,0.5,1,1v11C14,14.1,13.6,14.5,13,14.5z"/>
+	<path class="st0" d="M14.3,17.5H1.7c-1.4,0-2.5-1.1-2.5-2.5V1c0-1.4,1.1-2.5,2.5-2.5h12.5c1.4,0,2.5,1.1,2.5,2.5v14
+		C16.8,16.4,15.6,17.5,14.3,17.5z"/>
 </g>
 <g id="_x32_">
-	<rect x="5.5" y="3.5" class="st1" width="5" height="3"/>
-	<rect x="5.5" y="9.5" class="st2" width="5" height="3"/>
+	<rect x="4" y="1.1" class="st1" width="8" height="5"/>
+	<rect x="4" y="9.9" class="st2" width="8" height="5"/>
 </g>
 <g id="_x33_">
-	<rect x="2" y="7.5" class="st3" width="12" height="1"/>
+	<rect x="-0.8" y="7.3" class="st3" width="17.5" height="1.5"/>
 </g>
 <g id="_x34_">
-	<rect x="11.5" y="7.5" class="st4" width="1" height="1"/>
+	<rect x="12.5" y="7.3" class="st4" width="1" height="1.5"/>
+	<rect x="14.5" y="7.3" class="st4" width="1" height="1.5"/>
+	<polygon class="st5" points="3.3,11.6 2.4,11.6 2.4,10.7 1.6,10.7 1.6,11.6 0.7,11.6 0.7,12.4 1.6,12.4 1.6,13.3 2.4,13.3 
+		2.4,12.4 3.3,12.4 	"/>
+	<circle id="XMLID_42_" class="st6" cx="13" cy="12" r="0.5"/>
+	<circle id="XMLID_43_" class="st6" cx="14" cy="13" r="0.5"/>
+	<circle id="XMLID_44_" class="st6" cx="14" cy="11" r="0.5"/>
+	<circle id="XMLID_45_" class="st6" cx="15" cy="12" r="0.5"/>
 </g>
 </svg>

@@ -13,8 +13,10 @@ QtObject {
     }
 
     property QtObject common: QtObject {
-        property int baseFontSize:           12;
-        property int menuWidth:               280;
+        property int baseFontSize:    12;
+        property int menuWidth:       250;
+        property int menuTitleHeight: 70;
+        property int menuItemHeight:  30;
         property color baseFontColor:        "#ADADAD";
         property color highlighterFontColor: "#D5D5D5";
 
@@ -31,7 +33,7 @@ QtObject {
         property color boxartNormalBorderColor:   "#00FFFFFF";
         property color boxartSelectedBorderColor: "#55AAAAAA";
 
-        property color gameViewBackgroundColor: "black";
+        property color gameViewBackgroundColor: "#000000";
 
         property color normalButtonColor: "#10FFFFFF";
     }

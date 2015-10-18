@@ -1,29 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 16 16" style="enable-background:new 0 0 16 16;" xml:space="preserve">
+	 viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
 <style type="text/css">
 	.st0{fill:#FFFFFF;stroke:#000000;stroke-miterlimit:10;stroke-opacity:0.75;}
-	.st1{fill:url(#XMLID_8_);}
+	.st1{opacity:0.25;fill:url(#XMLID_13_);}
 	.st2{fill:#020202;fill-opacity:5.000000e-002;stroke:#000000;stroke-miterlimit:10;stroke-opacity:0.35;}
 	.st3{opacity:0.35;}
+	.st4{opacity:0.3;}
+	.st5{opacity:0.2;}
+	.st6{opacity:0.4;}
 </style>
 <g id="_x31_">
-	<path id="XMLID_1_" class="st0" d="M14,13H2c-0.8,0-1.5-0.7-1.5-1.5v-8C0.5,3.2,0.7,3,1,3h14c0.3,0,0.5,0.2,0.5,0.5v8
-		C15.5,12.3,14.8,13,14,13z"/>
+	<path id="XMLID_1_" class="st0" d="M17.5,17h-15c-1.1,0-2-0.9-2-2V4c0-0.6,0.4-1,1-1h17c0.6,0,1,0.4,1,1v11
+		C19.5,16.1,18.6,17,17.5,17z"/>
 </g>
 <g id="_x32_">
-	<linearGradient id="XMLID_8_" gradientUnits="userSpaceOnUse" x1="7.9907" y1="13" x2="7.9907" y2="3">
+	<linearGradient id="XMLID_13_" gradientUnits="userSpaceOnUse" x1="9.9907" y1="17" x2="9.9907" y2="3">
 		<stop  offset="0.3" style="stop-color:#000000;stop-opacity:0.35"/>
 		<stop  offset="1" style="stop-color:#000000;stop-opacity:0"/>
 	</linearGradient>
-	<path id="XMLID_6_" class="st1" d="M14,13H2c-0.8,0-1.5-0.7-1.5-1.5v-8C0.5,3.2,0.7,3,1,3h14c0.3,0,0.5,0.2,0.5,0.5v8
-		C15.5,12.3,14.8,13,14,13z"/>
+	<path id="XMLID_6_" class="st1" d="M17.5,17h-15c-1.1,0-2-0.9-2-2V4c0-0.6,0.4-1,1-1h17c0.6,0,1,0.4,1,1v11
+		C19.5,16.1,18.6,17,17.5,17z"/>
 </g>
 <g id="_x33_">
-	<circle id="XMLID_2_" class="st2" cx="8" cy="8" r="3.8"/>
-	<circle id="XMLID_3_" class="st3" cx="3" cy="10.5" r="1"/>
-	<circle id="XMLID_4_" class="st3" cx="13" cy="10.5" r="1"/>
-	<circle id="XMLID_5_" class="st3" cx="2.5" cy="8.5" r="0.5"/>
+	<circle id="XMLID_2_" class="st2" cx="10" cy="9" r="4.8"/>
+	<circle id="XMLID_3_" class="st3" cx="3.5" cy="12" r="1.5"/>
+	<circle id="XMLID_4_" class="st3" cx="16.5" cy="12" r="1.5"/>
+	<circle id="XMLID_5_" class="st3" cx="3" cy="9" r="0.8"/>
+	<path id="XMLID_7_" class="st4" d="M17.5,17.1h-15c-1.1,0-2-0.9-2-2l0-0.7h19l0,0.7C19.5,16.2,18.6,17.1,17.5,17.1z"/>
+	<rect id="XMLID_8_" x="5" y="3" class="st5" width="1" height="14"/>
+	<rect id="XMLID_9_" x="14" y="3.1" class="st5" width="1" height="14"/>
+	<rect id="XMLID_10_" x="6.5" y="14.8" class="st6" width="3" height="0.5"/>
+	<rect id="XMLID_11_" x="10.5" y="14.8" class="st6" width="3" height="0.5"/>
 </g>
 </svg>

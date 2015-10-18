@@ -29,14 +29,14 @@ ScrollView {
                 id: highlighterRectangle;
                 anchors { left: parent.left; top: parent.top; bottom: parent.bottom; }
                 width: 5;
-                height: 35;
+                height: PhxTheme.common.menuItemHeight;
                 color: PhxTheme.common.baseBackgroundColor;
                 opacity: .5;
             }
         }
 
         header: Item {
-            height: 70;
+            height: PhxTheme.common.menuTitleHeight;
             anchors { left: parent.left; right: parent.right; }
 
             Text {
@@ -49,7 +49,7 @@ ScrollView {
 
         delegate: Item {
             id: listViewDelegate;
-            height: 35;
+            height: PhxTheme.common.menuItemHeight;
             anchors { left: parent.left; right: parent.right; }
 
             MarqueeText {

@@ -1,5 +1,6 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.2
+import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.1
 import QtGraphicalEffects 1.0
 
@@ -23,7 +24,7 @@ ScrollView {
                 id: highlighterRectangle;
                 anchors { left: parent.left; top: parent.top; bottom: parent.bottom; }
                 width: 4;
-                height: 35;
+                height: PhxTheme.common.menuItemHeight;
                 color: PhxTheme.common.baseBackgroundColor;
                 opacity: .5;
             }
@@ -31,7 +32,7 @@ ScrollView {
 
         header: Rectangle {
             color: "transparent";
-            height: 70;
+            height: PhxTheme.common.menuTitleHeight;
             anchors { left: parent.left; right: parent.right; }
 
             Label {
@@ -49,12 +50,12 @@ ScrollView {
         }
 
         delegate: Item {
-            height: 30;
+            height: PhxTheme.common.menuItemHeight;
             anchors { left: parent.left; right: parent.right; }
 
             Image {
                 anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin:  17; }
-                smooth: true;
+                smooth: false;
                 source: "systems/" + listView.model.get( index ) + ".svg";
             }
 
@@ -66,7 +67,6 @@ ScrollView {
                 text: listView.model.get( index );
                 fontSize: PhxTheme.selectionArea.basePixelSize;
                 color: index === listView.currentIndex ? PhxTheme.common.baseBackgroundColor : PhxTheme.selectionArea.baseFontColor;
-
 
                 spacing: 40;
                 running: index === listView.currentIndex || mouseArea.containsMouse;

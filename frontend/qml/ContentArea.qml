@@ -29,14 +29,11 @@ Rectangle {
         anchors { top: parent.top; left: parent.left; right: parent.right;}
         color: "transparent";
         z: 100;
-        height: 95;
-        opacity: .75;
+        height: 70;
 
         Rectangle {
             anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 35; }
-            color: "transparent";
-            border.width: 1;
-            border.color: "#FFFFFF";
+            color: "#FFF";
             width: 250;
             radius: height/2;
             height: 30;
@@ -48,7 +45,7 @@ Rectangle {
                 placeholderText: "";
                 width: parent.width - 50;
                 height: parent.height;
-                textColor: "#FFFFFF";
+                textColor: "#333";
 
                 Timer {
                     id: searchTimer;
@@ -77,7 +74,7 @@ Rectangle {
 
             Rectangle {
                 anchors { verticalCenter: parent.verticalCenter; }
-                border { width: 1; color: "white"; }
+                border { width: 1; color: "#FFFFFF"; }
                 color: "transparent";
                 height: 8;
                 width: height;
@@ -103,7 +100,7 @@ Rectangle {
                         Rectangle {
                             id: handleRectangle;
                             anchors.fill: parent;
-                            color: "white";
+                            color: "#FFFFFF";
                         }
                     }
 
@@ -122,7 +119,7 @@ Rectangle {
 
             Rectangle {
                 anchors { verticalCenter: parent.verticalCenter; }
-                border { width: 1; color: "white"; }
+                border { width: 1; color: "#FFFFFF"; }
                 color: "transparent";
                 height: 12;
                 width: height;
@@ -240,12 +237,10 @@ Rectangle {
     StackView {
         id: contentAreaStackView;
         initialItem: boxArtGridComponent;
-
         anchors.fill: parent;
 
         delegate: StackViewDelegate {
-            function transitionFinished( properties )
-            {
+            function transitionFinished( properties ) {
                 properties.exitItem.opacity = 1;
             }
 
@@ -256,6 +251,7 @@ Rectangle {
                     from: 0;
                     to: 1;
                 }
+
                 PropertyAnimation {
                     target: exitItem;
                     property: "opacity";
