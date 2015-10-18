@@ -5,7 +5,8 @@ import QtQuick.Controls.Styles 1.4
 import vg.phoenix.models 1.0
 import vg.phoenix.themes 1.0
 
-ScrollView {
+// @disable-check M300
+PhxScrollView {
     width: 100
     height: 65
 
@@ -13,6 +14,8 @@ ScrollView {
         id: listView;
         spacing: 0;
         model: CollectionsModel { id: collectionsModel; }
+
+        boundsBehavior: Flickable.StopAtBounds;
 
         header: Rectangle {
             anchors { left: parent.left; right: parent.right; }
@@ -26,21 +29,23 @@ ScrollView {
                 color: PhxTheme.selectionArea.highlightFontColor;
             }
 
-            Button {
+            Image {
                 anchors { verticalCenter: parent.verticalCenter; right: parent.right; rightMargin: 17; }
                 // text: qsTr( "Add" );
                 anchors.centerIn: parent;
-                width: parent.width;
-                iconName: "Add Collection";
-                iconSource:  "add2.svg";
-                style: ButtonStyle { background: Rectangle { color: "transparent"; } }
-
-                onClicked: {
-                    collectionsModel.append( { "collectionID": listView.count
-                                                , "collectionName": "New Collection "
-                                                                    + listView.count } );
-                    listView.currentIndex = listView.count - 1;
-                    listView.currentItem.state = "ADDED";
+                height: 20;
+                width: height;
+                sourceSize { height: height; width: width; }
+                source:  "add2.svg";
+                MouseArea {
+                    anchors.fill: parent;
+                    onClicked: {
+                        collectionsModel.append( { "collectionID": listView.count
+                                                    , "collectionName": "New Collection "
+                                                                        + listView.count } );
+                        listView.currentIndex = listView.count - 1;
+                        listView.currentItem.state = "ADDED";
+                    }
                 }
             }
         }

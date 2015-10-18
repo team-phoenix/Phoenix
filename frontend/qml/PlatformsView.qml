@@ -7,13 +7,16 @@ import QtGraphicalEffects 1.0
 import vg.phoenix.models 1.0
 import vg.phoenix.themes 1.0
 
-ScrollView {
+// @disable-check M300
+PhxScrollView {
     id: platformsView;
 
     ListView {
         id: listView;
         spacing: 0;
         model: PlatformsModel { id: platformsModel; }
+
+        boundsBehavior: Flickable.StopAtBounds;
 
         highlight: Item {
             x: listView.currentItem.x;
@@ -54,8 +57,9 @@ ScrollView {
             anchors { left: parent.left; right: parent.right; }
 
             Image {
-                anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin:  17; }
+                anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 17; }
                 smooth: false;
+                sourceSize { height: height; width: width; }
                 source: "systems/" + listView.model.get( index ) + ".svg";
             }
 

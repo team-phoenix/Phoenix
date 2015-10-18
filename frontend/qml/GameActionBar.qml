@@ -12,7 +12,7 @@ Rectangle {
     height: 80;
     color: "transparent";
     // color: Qt.rgba(0,0,0,0.5);
-    // Image {  smooth: true; source: "bg.svg"; anchors.fill: parent; fillMode: Image.TileHorizontally; verticalAlignment: Image.AlignLeft; }
+    // Image {  smooth: true; source: "bg.svg"; anchors.fill: parent; fillMode: Image.TileHorizontally; verticalAlignment: Image.AlignLeft; sourceSize { height: height; width: width; } }
     property int volumeValue: 1;
 
     //  Volumen Icon changer
@@ -60,14 +60,14 @@ Rectangle {
             Rectangle {
                 anchors { top: parent.top; bottom: parent.bottom; }
                 color: "transparent";
-                width: 40;
+                width: 32;
 
-                Button {
+                Image {
                     anchors.centerIn: parent;
+                    anchors.margins: 10;
                     width: parent.width;
-                    iconName: videoItem.running ? qsTr( "Pause" ) : qsTr( "Play" );
-                    iconSource: videoItem.running ? qsTr( "pause.svg" ) : qsTr( "play.svg" );
-                    style: ButtonStyle { background: Rectangle { color: "transparent"; } }
+                    sourceSize { height: height; width: width; }
+                    source: videoItem.running ? qsTr( "pause.svg" ) : qsTr( "play.svg" );
                 }
 
                 MouseArea {
@@ -90,15 +90,15 @@ Rectangle {
                     width: 32;
                     color: "transparent"
 
-                    Button {
+                    Image {
                         anchors.centerIn: parent;
+                        anchors.margins: 10;
                         width: parent.width;
-                        iconName: "Volume";
-                        iconSource: gameActionBar.volumeIcon;
-                        style: ButtonStyle { background: Rectangle { color: "transparent"; } }
+                        source: gameActionBar.volumeIcon;
+                        sourceSize { height: height; width: width; }
                     }
 
-                    MouseArea{
+                    MouseArea {
                         anchors.fill: parent;
                         hoverEnabled: true;
                         onClicked: {
@@ -198,12 +198,12 @@ Rectangle {
                 color: "transparent"
                 width: 32;
 
-                Button {
+                Image {
                     anchors.centerIn: parent;
+                    anchors.margins: 10;
                     width: parent.width;
-                    iconName: "Suspend";
-                    iconSource: "minimize.svg";
-                    style: ButtonStyle { background: Rectangle { color: "transparent"; } }
+                    source: "minimize.svg";
+                    sourceSize { height: height; width: width; }
                 }
 
                 MouseArea {
@@ -225,12 +225,12 @@ Rectangle {
                 color: "transparent"
                 width: 32;
 
-                Button {
+                Image {
                     anchors.centerIn: parent;
+                    anchors.margins: 10;
                     width: parent.width;
-                    iconName: "Shutdown";
-                    iconSource: "shutdown.svg";
-                    style: ButtonStyle { background: Rectangle { color: "transparent"; } }
+                    source: "shutdown.svg";
+                    sourceSize { height: height; width: width; }
                 }
 
                 MouseArea {

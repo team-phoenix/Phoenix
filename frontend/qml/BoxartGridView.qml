@@ -161,7 +161,7 @@ Rectangle {
                             visible: true;
                             asynchronous: true;
                             source: imageCacher.cachedUrl == "" ? "noartwork.png" : imageCacher.cachedUrl;
-                            sourceSize { width: 450; height: 450; }
+                            sourceSize { height: contentArea.contentSlider.maximumValue; width: contentArea.contentSlider.maximumValue; }
                             verticalAlignment: Image.AlignBottom;
                             fillMode: Image.PreserveAspectFit;
 

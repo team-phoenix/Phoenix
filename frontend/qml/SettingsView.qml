@@ -6,7 +6,8 @@ import QtQuick.Layouts 1.2
 
 import vg.phoenix.themes 1.0
 
-ScrollView {
+// @disable-check M300
+PhxScrollView {
     width: 100;
     height: 62;
 
@@ -19,6 +20,8 @@ ScrollView {
             // ListElement { section: "Video"; }
             // ListElement { section: "Audio"; }
         }
+
+        boundsBehavior: Flickable.StopAtBounds;
 
         highlight: Item {
             x: listView.currentItem.x;

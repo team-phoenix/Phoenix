@@ -46,6 +46,7 @@ Rectangle {
         width: 150;
         height: width;
         source: "phoenix.png";
+        sourceSize { height: height; width: width; }
         opacity: 0.25;
         enabled: videoItemContainer.opacity === 1.0 ? false : true;
     }

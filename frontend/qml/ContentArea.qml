@@ -57,14 +57,16 @@ Rectangle {
                 onTextChanged: searchTimer.restart();
             }
 
-            Button {
+            Image {
                 anchors { right: parent.right; rightMargin: searchBar.anchors.leftMargin; verticalCenter: parent.verticalCenter; }
                 width: 20;
                 height: width;
-                smooth: true;
-                iconSource: searchBar.text === "" ? "search.svg" : "del.svg";
-                style: ButtonStyle { background: Rectangle { color: "transparent"; } }
-                onClicked: searchBar.text = "";
+                sourceSize { height: height; width: width; }
+                source: searchBar.text === "" ? "search.svg" : "del.svg";
+                MouseArea {
+                    anchors.fill: parent;
+                    onClicked: searchBar.text = "";
+                }
             }
         }
 
@@ -131,17 +133,20 @@ Rectangle {
                 color: "transparent";
                 width: 40;
 
-                Button {
+                Image {
                     anchors.centerIn: parent;
-                    width: parent.width;
-                    iconName: screenIcon;
-                    iconSource: screenIcon;
-                    style: ButtonStyle { background: Rectangle { color: "transparent"; } }
-                    onClicked: {
-                            if ( root.visibility === Window.FullScreen )
-                                root.visibility = Window.Windowed;
-                            else if ( root.visibility === Window.Windowed | Window.Maximized )
-                                root.visibility = Window.FullScreen;
+                    height: 20;
+                    width: height;
+                    sourceSize { height: height; width: width; }
+                    source: screenIcon;
+                    MouseArea {
+                        anchors.fill: parent;
+                        onClicked: {
+                                if ( root.visibility === Window.FullScreen )
+                                    root.visibility = Window.Windowed;
+                                else if ( root.visibility === Window.Windowed | Window.Maximized )
+                                    root.visibility = Window.FullScreen;
+                        }
                     }
                 }
             }

@@ -93,10 +93,7 @@ Item {
             source: "playstationController.svg";
             fillMode: Image.PreserveAspectFit;
 
-            sourceSize {
-                width: 500;
-                height: 500;
-            }
+            sourceSize { height: height; width: width; }
 
         }
 

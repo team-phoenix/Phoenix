@@ -135,6 +135,7 @@ Item {
                     Image {
                         height: 24; width: height;
                         source: imageSource;
+                        sourceSize { height: height; width: width; }
                         fillMode: Image.PreserveAspectFit;
                         smooth: false;
                         anchors { centerIn: parent; }
