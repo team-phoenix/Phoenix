@@ -1,4 +1,5 @@
 #include "gamefileinfo.h"
+#include "cryptohash.h"
 
 using namespace Library;
 
@@ -38,9 +39,9 @@ QString GameFileInfo::system() const
     return mSystem;
 }
 
-QString GameFileInfo::sha1CheckSum() const
+QString GameFileInfo::crc32CheckSum() const
 {
-    return mSha1Sum;
+    return mCrc32Checksum;
 }
 
 QString GameFileInfo::title() const
@@ -193,7 +194,7 @@ void GameFileInfo::prepareMetadata() {
 
     static const QString statement = QStringLiteral( "SELECT romID FROM " )
             + MetaDataDatabase::tableRoms
-            + QStringLiteral( " WHERE romHashSHA1 = ?" );
+            + QStringLiteral( " WHERE romHashCRC = ?" );
 
     static const auto zipStatement = QStringLiteral( "SELECT romID FROM " )
                                   + MetaDataDatabase::tableRoms
@@ -201,13 +202,10 @@ void GameFileInfo::prepareMetadata() {
 
     QSqlQuery query( MetaDataDatabase::database() );
 
-    if ( fileType() == FileType::ZipFile ) {
-        query.prepare( zipStatement );
-        query.addBindValue( mCrc32Checksum );
-    } else if ( fileType() == FileType::GameFile ) {
-        query.prepare( statement );
-        query.addBindValue( mSha1Sum );
-    }
+    query.prepare( statement );
+    query.addBindValue( mCrc32Checksum );
+
+    qDebug() << Q_FUNC_INFO << mCrc32Checksum;
 
     if( !query.exec() ) {
         qCWarning( phxLibrary ) << "Metadata fetch romID error: "
@@ -288,10 +286,11 @@ QString GameFileInfo::getCheckSum( const QString &filePath ) {
 
     if( file.open( QIODevice::ReadOnly ) ) {
 
-        QCryptographicHash checkSum( QCryptographicHash::Sha1 );
-        checkSum.addData( &file );
+        auto crc32 = CryptoHash( CryptoHash::Crc32 );
 
-        hash = checkSum.result().toHex().toUpper();
+        crc32.addData( &file );
+
+        hash = crc32.result();
 
         file.close();
     }
@@ -310,15 +309,27 @@ void GameFileInfo::update( const QString &extension ) {
     }
 
     mFullFilePath = QStringLiteral( "file://" ) + canonicalFilePath();
-    mSha1Sum = getCheckSum( canonicalFilePath() );
+    mCrc32Checksum = getCheckSum( canonicalFilePath() );
 }
 
 bool GameFileInfo::isBios( QString &biosName ) {
 
     static const QString statement = QStringLiteral( "SELECT biosFile FROM firmware WHERE sha1 = ?" );
 
+    QFile file( canonicalFilePath() );
+
+    auto opened = file.open( QIODevice::ReadOnly );
+    Q_ASSERT( opened );
+
+    QCryptographicHash sha1( QCryptographicHash::Sha1 );
+
+    sha1.addData( &file );
+    auto sha1Result = sha1.result().toHex().toUpper();
+
+    file.close();
+
     mQuery.prepare( statement );
-    mQuery.addBindValue( mSha1Sum );
+    mQuery.addBindValue( sha1Result );
 
     auto exec = mQuery.exec();
     Q_ASSERT( exec );

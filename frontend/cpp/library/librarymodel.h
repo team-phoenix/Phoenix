@@ -36,7 +36,7 @@ namespace Library {
                 FileNameRole,
                 SystemPathRole,
                 RowIDRole,
-                SHA1Role,
+                Crc32Role,
                 CoreFilePathRole,
             };
 
