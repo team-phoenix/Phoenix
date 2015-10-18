@@ -124,6 +124,7 @@ int main( int argc, char *argv[] ) {
     QApplication::setApplicationDisplayName( QStringLiteral( "Phoenix" ) );
     QApplication::setApplicationName( QStringLiteral( "Phoenix" ) );
     QApplication::setApplicationVersion( QStringLiteral( "1.0" ) );
+    QApplication::setOrganizationName( QStringLiteral( "Team Phoenix" ) );
     QApplication::setOrganizationDomain( QStringLiteral( "phoenix.vg" ) );
 
     // Create the folders used by Phoenix.
