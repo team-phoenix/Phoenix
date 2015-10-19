@@ -18,6 +18,9 @@
         <file>ToolTip.qml</file>
         <file>ToolTipArea.qml</file>
         <file>GameSuspendedArea.qml</file>
+    </qresource>
+    <qresource prefix="/Widgets">
         <file>MarqueeText.qml</file>
+        <file>NativeTooltip.qml</file>
     </qresource>
 </RCC>

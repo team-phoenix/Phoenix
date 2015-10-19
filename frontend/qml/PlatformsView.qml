@@ -7,6 +7,8 @@ import QtGraphicalEffects 1.0
 import vg.phoenix.models 1.0
 import vg.phoenix.themes 1.0
 
+import "qrc:/Widgets"
+
 // @disable-check M300
 PhxScrollView {
     id: platformsView;
