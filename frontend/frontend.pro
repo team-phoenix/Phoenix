@@ -83,7 +83,8 @@ include( deployment.pri )
     RESOURCES += qml/qml.qrc \
                  qml/Theme/theme.qrc \
                  qml/assets/assets.qrc \
-                 qml/BigPicture/bigpicture.qrc
+                 qml/BigPicture/bigpicture.qrc \
+                 qml/MouseDrivenView/mousedrivenview.qrc
 
 ##
 ## Linker settings

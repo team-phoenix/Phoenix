@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/">
+        <file>BoxartGridView.qml</file>
+        <file>CollectionsView.qml</file>
+        <file>ContentArea.qml</file>
+        <file>DetailedGameView.qml</file>
+        <file>GameSuspendedArea.qml</file>
+        <file>HeaderBar.qml</file>
+        <file>InputMappingColumn.qml</file>
+        <file>InputView.qml</file>
+        <file>MouseDrivenView.qml</file>
+        <file>PlatformsView.qml</file>
+        <file>SelectionArea.qml</file>
+        <file>SettingsView.qml</file>
+    </qresource>
+</RCC>

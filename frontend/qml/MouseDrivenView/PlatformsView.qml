@@ -1,27 +1,20 @@
 import QtQuick 2.5
-import QtQuick.Controls 1.4
+import QtQuick.Controls 1.2
 import QtQuick.Controls.Styles 1.4
+import QtQuick.Layouts 1.1
 import QtGraphicalEffects 1.0
-import QtQuick.Layouts 1.2
 
+import vg.phoenix.models 1.0
 import vg.phoenix.themes 1.0
-
-import "qrc:/Widgets"
 
 // @disable-check M300
 PhxScrollView {
-    width: 100;
-    height: 62;
+    id: platformsView;
 
     ListView {
         id: listView;
         spacing: 0;
-        model: ListModel {
-            id: settingsModel;
-            ListElement { section: "Input (coming soon...)"; }
-            // ListElement { section: "Video"; }
-            // ListElement { section: "Audio"; }
-        }
+        model: PlatformsModel { id: platformsModel; }
 
         boundsBehavior: Flickable.StopAtBounds;
 
@@ -33,39 +26,51 @@ PhxScrollView {
             Rectangle {
                 id: highlighterRectangle;
                 anchors { left: parent.left; top: parent.top; bottom: parent.bottom; }
-                width: 5;
+                width: 4;
                 height: PhxTheme.common.menuItemHeight;
                 color: PhxTheme.common.baseBackgroundColor;
                 opacity: .5;
             }
         }
 
-        header: Item {
+        header: Rectangle {
+            color: "transparent";
             height: PhxTheme.common.menuTitleHeight;
             anchors { left: parent.left; right: parent.right; }
 
-            Text {
-                text: qsTr( "Settings" );
+            Label {
+                text: qsTr( "Systems" );
                 anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 17; }
                 font { pointSize: PhxTheme.selectionArea.headerFontSize; }
                 color: PhxTheme.selectionArea.highlightFontColor;
             }
+
+            /* Button {
+                anchors { verticalCenter: parent.verticalCenter; right: parent.right; rightMargin: 24; }
+                text: qsTr( "All" );
+                onClicked: { listView.currentIndex = -1; contentArea.contentLibraryModel.clearFilter( "games", "system" ); }
+            } */
         }
 
         delegate: Item {
-            id: listViewDelegate;
             height: PhxTheme.common.menuItemHeight;
             anchors { left: parent.left; right: parent.right; }
 
+            // Image {
+            //     anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 17; }
+            //     smooth: false;
+            //     sourceSize { height: height; width: width; }
+            //     source: "systems/" + listView.model.get( index ) + ".svg";
+            // }
+
             MarqueeText {
-                id: sectionText;
+                id: platformText;
                 anchors { verticalCenter: parent.verticalCenter; left: parent.left; right: parent.right; leftMargin: 45; rightMargin: 17; }
                 horizontalAlignment: Text.AlignLeft;
 
-                text: section;
+                text: listView.model.get( index );
                 fontSize: PhxTheme.selectionArea.basePixelSize;
                 color: index === listView.currentIndex ? PhxTheme.common.baseBackgroundColor : PhxTheme.selectionArea.baseFontColor;
-
 
                 spacing: 40;
                 running: index === listView.currentIndex || mouseArea.containsMouse;
@@ -77,22 +82,15 @@ PhxScrollView {
                 anchors.fill: parent;
                 hoverEnabled: true;
                 onClicked: {
-                    listView.currentIndex = index
-                    switch ( index ) {
-                    case 0:
-                        // contentArea.contentStackView.push( { item: contentArea.contentInputView, replace: true } );
-                        break;
-                    case 1:
-                        break;
-                    case 2:
-                        break;
-                    default:
-                        break;
+                    if ( contentArea.contentStackView.currentItem.objectName !== "PlatformsView" ) {
+                        contentArea.contentStackView.push( { item: contentArea.boxartGrid, replace: true } );
                     }
+
+                    listView.currentIndex = index;
+                    if ( index === 0 ) { contentArea.contentLibraryModel.clearFilter( "games", "system" ); }
+                    else { contentArea.contentLibraryModel.setFilter( "games", "system", platformText.text ); }
                 }
             }
-
         }
     }
 }
-

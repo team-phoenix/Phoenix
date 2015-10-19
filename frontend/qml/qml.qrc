@@ -1,25 +1,11 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>BoxartGridView.qml</file>
-        <file>ContentArea.qml</file>
-        <file>SelectionArea.qml</file>
-        <file>HeaderBar.qml</file>
-        <file>PlatformsView.qml</file>
-        <file>CollectionsView.qml</file>
         <file>DropdownMenu.qml</file>
-        <file>DetailedGameView.qml</file>
-        <file>SettingsView.qml</file>
-        <file>InputView.qml</file>
-        <file>InputMappingColumn.qml</file>
-        <file>MouseDrivenView.qml</file>
         <file>GameView.qml</file>
         <file>GameActionBar.qml</file>
         <file>ToolTip.qml</file>
         <file>ToolTipArea.qml</file>
-        <file>GameSuspendedArea.qml</file>
-    </qresource>
-    <qresource prefix="/Widgets">
         <file>MarqueeText.qml</file>
         <file>NativeTooltip.qml</file>
     </qresource>
