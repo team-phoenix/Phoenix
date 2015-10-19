@@ -6,6 +6,8 @@ import QtQuick.Layouts 1.2
 
 import vg.phoenix.themes 1.0
 
+import "qrc:/Widgets"
+
 // @disable-check M300
 PhxScrollView {
     width: 100;

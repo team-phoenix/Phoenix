@@ -2,13 +2,13 @@ from sqldatabase import SqlDatabase
 from retrieve_core_info import retrieveCoreInfo
 from collections import OrderedDict
 
-from updateSystemMap import SystemMapUpdater
-from updateFirmware import FirmwareUpdater
-from updateCoreMetadata import CoreMetadataUpdater
-from updateSystemCoreMap import SystemCoreMapUpdater
-from updateRomHeaderOffsets import RomHeaderOffsetUpdater
-from updateExtensions import ExtensionUpdater
-from updateDefaultCores import DefaultCoresUpdater
+from updaters.updateSystemMap import SystemMapUpdater
+from updaters.updateFirmware import FirmwareUpdater
+from updaters.updateCoreMetadata import CoreMetadataUpdater
+from updaters.updateSystemCoreMap import SystemCoreMapUpdater
+from updaters.updateRomHeaderOffsets import RomHeaderOffsetUpdater
+from updaters.updateExtensions import ExtensionUpdater
+from updaters.updateDefaultCores import DefaultCoresUpdater
 
 import os
 

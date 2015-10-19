@@ -8,7 +8,7 @@ class SqlTableUpdater():
     def __init__(self, tableName, tableRows=[], coreInfo={}):
         self.tableName = tableName
         self.rowsDict = OrderedDict(tableRows)
-        self.dbFile = os.path.join(os.getcwd().replace("python", "database"), "systems.db")
+        self.dbFile = os.path.join(os.getcwd().replace("python", "metadata"), "systems.sqlite")
         self.dbFileExists = os.path.isfile(self.dbFile)
         
         if len(coreInfo) == 0:
@@ -22,8 +22,8 @@ class SqlTableUpdater():
         # prettifySystem() function creates. Otherwise there will be a key error
         # when the keys are indexed. This is supposed to happen though.
         self.defaultCoreMap = {
-            "Nintendo": "nestopia_libretro",
-            "Super Nintendo": "bsnes_balanced_libretro",
+            "Nintendo Entertainment System": "nestopia_libretro",
+            "Super Nintendo": "bsnes_mercury_balanced_libretro",
             "Sony PlayStation": "mednafen_psx_libretro",
             "Game Boy Color": "gambatte_libretro",
             "Game Boy Advance": "vbam_libretro",
@@ -49,9 +49,9 @@ class SqlTableUpdater():
             if ("4do_libretro" == key 
                  or "81_libretro" == key
                  or "bluemsx_libretro" == key
-                 or "bsnes_mercury_accuracy_libretro" == key
-                 or "bsnes_mercury_balanced_libretro" == key
-                 or "bsnes_mercury_performance_libretro" == key
+                 or "bsnes_accuracy_libretro" == key
+                 or "bsnes_balanced_libretro" == key
+                 or "bsnes_performance_libretro" == key
                  or "cap32_libretro" == key
                  or "catsfc_libretro" == key
                  or "desmume_libretro" == key
@@ -109,7 +109,7 @@ class SqlTableUpdater():
         elif "super nintendo" in system:
             return "Super Nintendo"
         elif "nintendo entertainment system" == system:
-            return "Nintendo"
+            return "Nintendo Entertainment System"
         elif "lynx" == system:
             return "Atari Lynx"
         elif "wonderswan/color" == system:

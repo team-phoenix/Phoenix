@@ -150,7 +150,9 @@ Item {
                     }
 
                     MouseArea {
+                    // NativeTooltip {
                         anchors.fill: parent;
+                        // text: label;
                         onClicked: {
                             switch( index ) {
                             case 0:

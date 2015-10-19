@@ -8,6 +8,8 @@ import vg.phoenix.cache 1.0
 import vg.phoenix.backend 1.0
 import vg.phoenix.themes 1.0
 
+import "qrc:/Widgets"
+
 Rectangle {
     id: boxartGridBackground;
     DropdownMenu { id: dropDownMenu; }

@@ -57,12 +57,12 @@ PhxScrollView {
             anchors { left: parent.left; right: parent.right; }
 
 
-            Image {
-                anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 17; }
-                smooth: true;
-                sourceSize { height: height; width: width; }
-                source: "systems/" + listView.model.get( index ) + ".svg";
-            }
+            // Image {
+            //    anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 17; }
+            //    smooth: true;
+            //    sourceSize { height: height; width: width; }
+            //    source: "systems/" + listView.model.get( index ) + ".svg";
+            // }
 
             MarqueeText {
                 id: platformText;

@@ -5,6 +5,8 @@ import QtQuick.Controls.Styles 1.4
 import vg.phoenix.models 1.0
 import vg.phoenix.themes 1.0
 
+import "qrc:/Widgets"
+
 // @disable-check M300
 PhxScrollView {
     width: 100
