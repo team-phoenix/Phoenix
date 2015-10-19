@@ -189,10 +189,10 @@ Rectangle {
 
                             /* BoxArt: Inner Border
                             Rectangle {
-                                anchors { bottom: parent.bottom; topMargin: -border.width; bottomMargin: -border.width; leftMargin: -border.width; rightMargin: -border.width; horizontalCenter: parent.horizontalCenter; }
+                                anchors { bottom: parent.bottom; horizontalCenter: parent.horizontalCenter; }
                                 z: gridItemImage.z + 1;
-                                height: parent.paintedHeight + border.width;
-                                width: parent.paintedWidth + border.width;
+                                height: parent.paintedHeight;
+                                width: parent.paintedWidth;
                                 border.color: Qt.rgba(0,0,0,.75);
                                 border.width: 1;
                                 color: "transparent";
@@ -208,10 +208,9 @@ Rectangle {
                                 border.color: index === gridView.currentIndex ? PhxTheme.common.boxartSelectedBorderColor : PhxTheme.common.boxartNormalBorderColor;
                                 border.width: 2 + (contentArea.contentSlider.value/50);
                                 color: "transparent";
-                                radius: 3;
                             }
 
-                            // BoxArt Shadow
+                            /* BoxArt Shadow
                             RectangularGlow {
                                 anchors.bottom: parent.bottom;
                                 anchors.horizontalCenter: parent.horizontalCenter;
@@ -222,7 +221,7 @@ Rectangle {
                                 color: "#50000000";
                                 cornerRadius: glowRadius;
                                 z: imageBackground.z - 1;
-                            }
+                            } */
 
                             ImageCacher {
                                 id: imageCacher;
@@ -245,7 +244,7 @@ Rectangle {
                         text: title;
                         spacing: contentArea.contentSlider.value / 10;
                         color: PhxTheme.common.highlighterFontColor;
-                        fontSize: PhxTheme.common.baseFontSize;
+                        fontSize: PhxTheme.common.boxartFontSize;
                         running: index === gridView.currentIndex || gridItemMouseArea.containsMouse;
                         pixelsPerFrame: contentArea.contentSlider.value / 100;
 

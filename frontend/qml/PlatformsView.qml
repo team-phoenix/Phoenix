@@ -30,7 +30,7 @@ PhxScrollView {
                 anchors { left: parent.left; top: parent.top; bottom: parent.bottom; }
                 width: 4;
                 height: PhxTheme.common.menuItemHeight;
-                color: PhxTheme.common.baseBackgroundColor;
+                color: PhxTheme.common.menuSelectedColor;
                 opacity: .5;
             }
         }
@@ -59,10 +59,10 @@ PhxScrollView {
             anchors { left: parent.left; right: parent.right; }
 
             // Image {
-            //     anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 17; }
-            //     smooth: false;
-            //     sourceSize { height: height; width: width; }
-            //     source: "systems/" + listView.model.get( index ) + ".svg";
+            //    anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 17; }
+            //    smooth: true;
+            //    sourceSize { height: height; width: width; }
+            //    source: "systems/" + listView.model.get( index ) + ".svg";
             // }
 
             MarqueeText {
@@ -72,7 +72,8 @@ PhxScrollView {
 
                 text: listView.model.get( index );
                 fontSize: PhxTheme.selectionArea.basePixelSize;
-                color: index === listView.currentIndex ? PhxTheme.common.baseBackgroundColor : PhxTheme.selectionArea.baseFontColor;
+
+                color: index === listView.currentIndex ? PhxTheme.common.menuSelectedColor : PhxTheme.selectionArea.baseFontColor;
 
                 spacing: 40;
                 running: index === listView.currentIndex || mouseArea.containsMouse;

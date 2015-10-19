@@ -23,7 +23,7 @@ Item {
             // Image { smooth: true; source: "bg3.png"; horizontalAlignment: Image.AlignLeft; verticalAlignment: Image.AlignTop; anchors.fill: parent; fillMode: Image.Tile; }
             // Image { smooth: true; source: "bg1.svg"; horizontalAlignment: Image.AlignLeft; verticalAlignment: Image.AlignTop; anchors.fill: parent; fillMode: Image.PreserveAspectFit; }
             // Image { smooth: true; source: "bg0.png"; horizontalAlignment: Image.AlignLeft; verticalAlignment: Image.AlignTop; anchors.fill: parent; fillMode: Image.Tile; }
-            Image { smooth: true; source: "bg-t.jpg"; horizontalAlignment: Image.AlignLeft; verticalAlignment: Image.AlignTop; anchors.fill: parent; fillMode: Image.PreserveAspectCrop; opacity: .75; }
+            // Image { smooth: true; source: "bg-t.jpg"; horizontalAlignment: Image.AlignLeft; verticalAlignment: Image.AlignTop; anchors.fill: parent; fillMode: Image.PreserveAspectCrop; opacity: .75; }
          }
          /* FastBlur {
             id: blurEffect;
