@@ -18,6 +18,13 @@ Rectangle {
     z: parent.z + 1;
     anchors { bottom: parent.bottom }
 
+    /* Rectangle {
+        anchors { top: parent.top; topMargin: 0; }
+        width: parent.width;
+        height: 1;
+        color: Qt.rgba(255,255,255,.1);
+    } */
+
     Row {
         anchors.fill: parent;
         spacing: 0;
@@ -112,8 +119,8 @@ Rectangle {
             // Close
             Image {
                 anchors.centerIn: parent;
-                width: 22;
-                height: 22;
+                width: 16;
+                height: 16;
                 source: "close.svg";
                 sourceSize { height: height; width: width; }
             }

@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="-12 14 24 24" style="enable-background:new -12 14 24 24;" xml:space="preserve">
+	 viewBox="4 -4 24 24" style="enable-background:new 4 -4 24 24;" xml:space="preserve">
 <style type="text/css">
 	.st0{display:none;}
 	.st1{display:inline;fill:#FFFFFF;}
-	.st2{fill:#FFFFFF;}
+	.st2{fill:none;stroke:#FFFFFF;stroke-width:2;stroke-miterlimit:10;}
 </style>
 <g id="Capa_2" class="st0">
-	<polygon class="st1" points="2,30 -2,30 -2,26 -4,26 -4,30 -8,30 -8,32 -4,32 -4,36 -2,36 -2,32 2,32 	"/>
+	<polygon class="st1" points="6,26 2,26 2,22 0,22 0,26 -4,26 -4,28 0,28 0,32 2,32 2,28 6,28 	"/>
 </g>
-<path id="XMLID_6_" class="st2" d="M10,27.7v-3.3H7.3c-0.2-0.8-0.5-1.6-1-2.3l1.9-1.9l-2.3-2.3L4,19.7c-0.7-0.4-1.5-0.8-2.3-1V16
-	h-3.3v2.7c-0.8,0.2-1.6,0.5-2.3,1l-1.9-1.9l-2.3,2.3l1.9,1.9c-0.4,0.8-0.8,1.5-1,2.3H-10v3.3h2.7c0.2,0.8,0.5,1.6,1,2.3l-1.9,1.9
-	l2.3,2.3l1.9-1.9c0.7,0.4,1.5,0.8,2.3,1V36h3.3v-2.7c0.8-0.2,1.6-0.5,2.3-1l1.9,1.9l2.3-2.3L6.3,30c0.4-0.7,0.7-1.5,1-2.3H10z
-	 M0,30.2c-2.3,0-4.2-1.8-4.2-4.2s1.8-4.2,4.2-4.2s4.2,1.8,4.2,4.2S2.3,30.2,0,30.2z"/>
+<path id="XMLID_6_" class="st2" d="M27,9.9V6.2h-3c-0.2-0.9-0.6-1.8-1.1-2.5L25,1.6l-2.5-2.5l-2.1,2c-0.8-0.4-1.6-0.9-2.5-1.1v-3
+	h-3.6v3c-0.9,0.2-1.8,0.5-2.5,1.1L9.6-1L7.1,1.5l2.1,2.1C8.7,4.5,8.3,5.3,8.1,6.1H5v3.6h3c0.2,0.9,0.5,1.8,1.1,2.5L7,14.4l2.5,2.5
+	l2.1-2.1c0.8,0.4,1.7,0.9,2.5,1.1V19h3.6v-3c0.9-0.2,1.8-0.5,2.5-1.1l2.1,2.1l2.5-2.5l-2-2.1c0.4-0.8,0.8-1.6,1.1-2.5H27z M16,12
+	c-2.2,0-4-1.7-4-4s1.7-4,4-4s4,1.7,4,4S18.2,12,16,12z"/>
 </svg>

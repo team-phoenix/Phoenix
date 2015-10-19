@@ -27,12 +27,12 @@ Item {
         anchors.fill: parent;
         color: PhxTheme.common.primaryBackgroundColor;
 
-        Rectangle {
+        /* Rectangle {
             anchors { right: parent.right; rightMargin: -1; }
             width: 1;
             height: parent.height;
             color: Qt.rgba(255,255,255,.1);
-        }
+        } */
 
         Row { anchors { top: parent.top; bottom: parent.bottom; right: parent.right; } }
 
