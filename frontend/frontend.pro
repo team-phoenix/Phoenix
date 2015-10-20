@@ -60,7 +60,7 @@ include( deployment.pri )
                cpp/library/cuefileinfo.cpp \
                cpp/library/biosfileinfo.cpp \
                cpp/library/archivefileinfo.cpp \
-    cpp/library/cryptohash.cpp
+               cpp/library/cryptohash.cpp
 
     HEADERS += cpp/library/librarymodel.h \
                cpp/library/libraryinternaldatabase.h \
@@ -76,7 +76,7 @@ include( deployment.pri )
                cpp/library/cuefileinfo.h \
                cpp/library/biosfileinfo.h \
                cpp/library/archivefileinfo.h \
-    cpp/library/cryptohash.h
+               cpp/library/cryptohash.h
 
     PRECOMPILED_HEADER = cpp/frontendcommon.h
 
@@ -84,7 +84,8 @@ include( deployment.pri )
                  qml/Theme/theme.qrc \
                  qml/assets/assets.qrc \
                  qml/BigPicture/bigpicture.qrc \
-                 qml/MouseDrivenView/mousedrivenview.qrc
+                 qml/MouseDrivenView/mousedrivenview.qrc \
+                 qml/GameView/gameview.qrc
 
 ##
 ## Linker settings

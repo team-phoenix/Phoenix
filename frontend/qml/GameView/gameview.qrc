@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>GameActionBar.qml</file>
+        <file>GameView.qml</file>
+    </qresource>
+</RCC>
