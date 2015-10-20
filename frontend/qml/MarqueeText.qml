@@ -21,6 +21,7 @@ Item {
     // Feel free to change these
     property string text: "Error!";
     property int fontSize: PhxTheme.common.baseFontSize;
+    property string fontFamily: PhxTheme.common.systemFontFamily;
     property color color: "white";
     property int spacing: 20;
     property bool running: false;
@@ -186,7 +187,7 @@ Item {
 
         text: parent.text;
         color: parent.color;
-        font { pixelSize: parent.fontSize; }
+        font { pixelSize: parent.fontSize; family: fontFamily; }
     }
 
     // This text is only visible when animating
@@ -201,7 +202,7 @@ Item {
 
         text: parent.text;
         color: parent.color;
-        font { pixelSize: parent.fontSize; }
+        font { pixelSize: parent.fontSize; family: fontFamily; }
     }
 }
 

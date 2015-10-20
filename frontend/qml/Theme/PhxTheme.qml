@@ -1,4 +1,5 @@
 import QtQuick 2.3
+import QtQuick.Controls 1.4
 pragma Singleton
 
 QtObject {
@@ -13,6 +14,7 @@ QtObject {
     }
 
     property QtObject common: QtObject {
+        property string systemFontFamily: dummyLabel.font.family;
         property int baseFontSize:    13;
         property color baseFontColor:        "#ADADAD";
         property color highlighterFontColor: "#FFFFFF";
@@ -46,5 +48,12 @@ QtObject {
     property QtObject bigPictureView: QtObject {
         property color baseColor: "#1F1F1F";
         property color highlightColor: "blue";
+    }
+
+    // Small hack to get the system's font
+    property Label dummyLabel: Label {
+        Component.onCompleted: {
+            console.log( "PhxTheme: Using system font \"" + font.family + "\"" );
+        }
     }
 }
