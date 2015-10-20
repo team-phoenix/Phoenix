@@ -21,17 +21,18 @@ QtObject {
         property int menuTitleHeight: 50;
         property int menuItemHeight:  30;
         property color menuTitleColor: "#35000000";
+        property color menuItemHighlight: "#A32127";
         property color menuSelectedColor: "#FFFFFF";
 
         property string backgroundImage: "bg.png";
 
-        property color baseBackgroundColor:      "#222222";
-        property color primaryBackgroundColor:   "#50000000";
-        property color secondaryBackgroundColor: "#00000000";
+        property color baseBackgroundColor:      "#FFFFFF";
+        property color primaryBackgroundColor:   "#14151A";
+        property color secondaryBackgroundColor: "#201F27";
 
         property int suspendedGameFontSize: 13;
         property color gameSuspendedBackgroundColor:      "#A32127";
-        property color gameSuspendedHoverBackgroundColor: "#05FFFFFF";
+        property color gameSuspendedHoverBackgroundColor: "#15FFFFFF";
 
         property int boxartFontSize: 12;
         property color boxartNormalBorderColor:   "#00FFFFFF";

@@ -25,11 +25,16 @@ PhxScrollView {
 
             Rectangle {
                 id: highlighterRectangle;
-                anchors { left: parent.left; top: parent.top; bottom: parent.bottom; }
-                width: 4;
+                anchors { top: parent.top; bottom: parent.bottom; left: parent.left; right: parent.right; }
                 height: PhxTheme.common.menuItemHeight;
-                color: PhxTheme.common.baseBackgroundColor;
-                opacity: .5;
+                color: Qt.rgba(255,2555,255,.1);
+
+                Rectangle {
+                    anchors { top: parent.top; bottom: parent.bottom; left: parent.left; }
+                    width: 4;
+                    height: parent.height;
+                    color: PhxTheme.common.menuItemHighlight;
+                }
             }
         }
 

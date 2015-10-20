@@ -5,30 +5,21 @@ import QtGraphicalEffects 1.0
 
 ScrollView {
     style: ScrollViewStyle {
-        scrollBarBackground: Item { width: 12; }
+
+        scrollBarBackground: Item { width: 9; }
         incrementControl: Item { }
         decrementControl: Item { }
 
         handle: Item {
             implicitWidth: 8;
             implicitHeight: 30;
-            x: 0;
-
-            DropShadow {
-                anchors.fill: source;
-                source: handleRectangle;
-                verticalOffset: 0;
-                horizontalOffset: 0;
-                radius: 8;
-                samples: radius * 2;
-                color: "black";
-                transparentBorder: true;
-            }
+            x: 1;
 
             Rectangle {
                 id: handleRectangle;
-                color: "#30FFFFFF";
+                color: "#20FFFFFF";
                 anchors.fill: parent;
+                radius: parent.implicitWidth/2;
             }
         }
     }

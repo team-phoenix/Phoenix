@@ -209,7 +209,7 @@ Rectangle {
                                 radius: 3;
                             }
 
-                            // BoxArt Shadow
+                            /* BoxArt Shadow
                             RectangularGlow {
                                 anchors.bottom: parent.bottom;
                                 anchors.horizontalCenter: parent.horizontalCenter;
@@ -220,7 +220,7 @@ Rectangle {
                                 color: "#50000000";
                                 cornerRadius: glowRadius;
                                 z: imageBackground.z - 1;
-                            }
+                            } */
 
                             ImageCacher {
                                 id: imageCacher;

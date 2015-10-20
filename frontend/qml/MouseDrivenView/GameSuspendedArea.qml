@@ -112,8 +112,8 @@ Rectangle {
             // Close
             Image {
                 anchors.centerIn: parent;
-                width: 22;
-                height: 22;
+                width: 14;
+                height: 14;
                 source: "close.svg";
                 sourceSize { height: height; width: width; }
             }
