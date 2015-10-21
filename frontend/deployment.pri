@@ -91,7 +91,7 @@
         # Metadata databases
         portable.commands += mkdir -p \"$$PREFIX/Metadata/\" &&\
                              cp -p -f \"$$TARGET_PATH/metadata/openvgdb.sqlite\" \"$$PREFIX/Metadata/openvgdb.sqlite\" &&\
-                             cp -p -f \"$$TARGET_PATH/metadata/systems.sqlite\" \"$$PREFIX/Metadata/systems.sqlite\"
+                             cp -p -f \"$$TARGET_PATH/metadata/libretro.sqlite\" \"$$PREFIX/Metadata/libretro.sqlite\"
     }
 
 ##
@@ -101,17 +101,17 @@
     # Ideally these files should come from the build folder, however, qmake will not generate rules for them if they don't
     # already exist
     metadb.depends += "$$PWD/metadata/openvgdb.sqlite" \
-                      "$$PWD/metadata/systems.sqlite"
+                      "$$PWD/metadata/libretro.sqlite"
 
     # For the default target (...and anything that depends on it)
     metadb.commands += mkdir -p \"$$TARGET_PATH/Metadata/\" &&\
                        cp -p -f \"$$SOURCE_PATH/metadata/openvgdb.sqlite\" \"$$TARGET_PATH/Metadata/openvgdb.sqlite\" &&\
-                       cp -p -f \"$$SOURCE_PATH/metadata/systems.sqlite\" \"$$TARGET_PATH/Metadata/systems.sqlite\"
+                       cp -p -f \"$$SOURCE_PATH/metadata/libretro.sqlite\" \"$$TARGET_PATH/Metadata/libretro.sqlite\"
     POST_TARGETDEPS += metadb
 
     # For make install
     metadb.files += "$$PWD/metadata/openvgdb.sqlite" \
-                    "$$PWD/metadata/systems.sqlite"
+                    "$$PWD/metadata/libretro.sqlite"
     metadb.path = "$$PREFIX/Metadata"
     unix: metadb.path = "$$PREFIX/share/phoenix/Metadata"
     INSTALLS += metadb

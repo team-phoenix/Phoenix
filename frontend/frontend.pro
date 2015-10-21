@@ -60,7 +60,8 @@ include( deployment.pri )
                cpp/library/cuefileinfo.cpp \
                cpp/library/biosfileinfo.cpp \
                cpp/library/archivefileinfo.cpp \
-               cpp/library/cryptohash.cpp
+               cpp/library/cryptohash.cpp \
+                cpp/library/defaultcoremodel.cpp
 
     HEADERS += cpp/library/librarymodel.h \
                cpp/library/libraryinternaldatabase.h \
@@ -76,7 +77,8 @@ include( deployment.pri )
                cpp/library/cuefileinfo.h \
                cpp/library/biosfileinfo.h \
                cpp/library/archivefileinfo.h \
-               cpp/library/cryptohash.h
+               cpp/library/cryptohash.h \
+               cpp/library/defaultcoremodel.h
 
     PRECOMPILED_HEADER = cpp/frontendcommon.h
 

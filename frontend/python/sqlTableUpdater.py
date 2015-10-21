@@ -8,7 +8,7 @@ class SqlTableUpdater():
     def __init__(self, tableName, tableRows=[], coreInfo={}):
         self.tableName = tableName
         self.rowsDict = OrderedDict(tableRows)
-        self.dbFile = os.path.join(os.getcwd().replace("python", "metadata"), "systems.sqlite")
+        self.dbFile = os.path.join(os.getcwd().replace("python", "metadata"), "libretro.sqlite")
         self.dbFileExists = os.path.isfile(self.dbFile)
         
         if len(coreInfo) == 0:
@@ -116,15 +116,15 @@ class SqlTableUpdater():
             return "WonderSwan (Color)"
         return platform
 
-    def updateColumns(self, database):
+    def updateColumns(self, database, additionalStatement = ""):
 
         if not self.dbFileExists:
-            database.createTable(self.tableName, self.rowsDict )
+            database.createTable(self.tableName, self.rowsDict, additionalStatement )
         else:
             try:
                 database.deleteTable(self.tableName)
             except:
-                database.createTable(self.tableName, self.rowsDict )
+                database.createTable(self.tableName, self.rowsDict, additionalStatement )
 
     def __del__(self):
         print("Updated " + self.tableName + " table.")

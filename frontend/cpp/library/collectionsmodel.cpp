@@ -15,7 +15,7 @@ CollectionsModel::CollectionsModel( LibraryInternalDatabase *db, QObject *parent
 CollectionsModel::CollectionsModel( LibraryInternalDatabase &db, QObject *parent )
     : QSqlTableModel( parent, db.database() ) {
 
-    mRoleNames =  QSqlTableModel::roleNames();
+    mRoleNames = QSqlTableModel::roleNames();
     mRoleNames.insert( CollectionIDRole, QByteArrayLiteral( "collectionID" ) );
     mRoleNames.insert( CollectionNameRole, QByteArrayLiteral( "collectionName" ) );
 

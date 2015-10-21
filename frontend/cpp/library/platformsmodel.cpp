@@ -7,14 +7,14 @@ PlatformsModel::PlatformsModel( QObject *parent )
 
     auto query = QSqlQuery( SystemDatabase::database() );
 
-    if( query.exec( QStringLiteral( "SELECT systemname FROM systemMap" ) ) ) {
+    auto exec = query.exec( QStringLiteral( "SELECT phoenixSystemName FROM systems ORDER BY phoenixSystemName ASC" ) );
+    Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( query.lastError().text() ) );
 
-        mPlatformsList.append( QStringLiteral( "All" ) );
+    mPlatformsList.append( QStringLiteral( "All" ) );
 
-        while( query.next() ) {
-            auto core = query.value( 0 ).toString();
-            mPlatformsList.append( std::move( core ) );
-        }
+    while( query.next() ) {
+        auto system = query.value( 0 );
+        mPlatformsList.append( std::move( system ) );
     }
 
     // Just sort the list so it looks pretty. This shouldn't take that long. There aren't
@@ -78,7 +78,7 @@ QVariant PlatformsModel::get( int index ) const {
     return mPlatformsList.at( index );
 }
 
-void PlatformsModel::append( QStringList values ) {
+void PlatformsModel::append( QVariantList values ) {
 
     beginInsertRows( QModelIndex(), mPlatformsList.size(), mPlatformsList.size()
                      + values.size() - 1 );

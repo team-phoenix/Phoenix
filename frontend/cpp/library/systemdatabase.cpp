@@ -19,19 +19,17 @@ void SystemDatabase::open() {
     auto db = QSqlDatabase::addDatabase( QStringLiteral( "QSQLITE" ), QStringLiteral( "SYSTEMS" ) );
 
     QString dataPathStr = PhxPaths::metadataLocation();
-    Q_ASSERT( !dataPathStr.isEmpty() );
+    Q_ASSERT_X( !dataPathStr.isEmpty(), Q_FUNC_INFO, "dataPathStr.isEmpty()" );
 
     QDir dataPath( dataPathStr );
 
-    auto databaseName = QStringLiteral( "systems.sqlite" );
+    auto databaseName = QStringLiteral( "libretro.sqlite" );
     auto filePath = dataPath.filePath( databaseName );
 
     db.setDatabaseName( filePath );
 
-    if( !db.open() ) {
-        qCDebug( phxLibrary ) << "Could not open database SYSTEMS " << qPrintable( db.lastError().driverText() );
-        return;
-    }
+    auto open = db.open();
+    Q_ASSERT_X( open, Q_FUNC_INFO, "db.open() == false") ;
 
     qCDebug( phxLibrary, "Opening library database %s", qPrintable( db.databaseName() ) );
 }

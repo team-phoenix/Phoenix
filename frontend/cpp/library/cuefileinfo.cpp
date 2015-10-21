@@ -34,8 +34,8 @@ bool CueFileInfo::isValid() {
 
             auto gameInfo = GameFileInfo( localFile );
 
-            auto possibleHeaders = gameInfo.getPossibleHeaders( possibleSystemsList );
-            mSystem = gameInfo.getRealSystem( possibleHeaders );
+            auto header = gameInfo.getPossibleHeaders( possibleSystemsList );
+            mSystem = header.phoenixSystemName;
         }
     }
 

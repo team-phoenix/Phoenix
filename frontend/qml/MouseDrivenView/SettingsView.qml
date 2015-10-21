@@ -17,6 +17,7 @@ PhxScrollView {
         model: ListModel {
             id: settingsModel;
             ListElement { section: "Input (coming soon...)"; }
+            ListElement { section: "Library"; }
             // ListElement { section: "Video"; }
             // ListElement { section: "Audio"; }
         }
@@ -86,6 +87,7 @@ PhxScrollView {
                         // contentArea.contentStackView.push( { item: contentArea.contentInputView, replace: true } );
                         break;
                     case 1:
+                        contentArea.contentStackView.push( { item: contentArea.contentLibraryView, replace: true } );
                         break;
                     case 2:
                         break;

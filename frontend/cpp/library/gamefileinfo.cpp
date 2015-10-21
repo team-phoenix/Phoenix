@@ -1,6 +1,8 @@
 #include "gamefileinfo.h"
 #include "cryptohash.h"
 
+#include <QStringBuilder>
+
 using namespace Library;
 
 GameFileInfo::GameFileInfo( const QString &file )
@@ -79,8 +81,9 @@ QStringList GameFileInfo::gameFilter() {
 
     if ( filter.isEmpty() ) {
         auto query = QSqlQuery( SystemDatabase::database() );
+
         auto exec = query.exec( QStringLiteral( "SELECT DISTINCT extension FROM extensions" ) );
-        Q_ASSERT(  exec );
+        Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( query.lastError().text() ) );
 
         while ( query.next() ) {
             auto extension = query.value( 0 ).toString();
@@ -92,56 +95,23 @@ QStringList GameFileInfo::gameFilter() {
 }
 
 QStringList GameFileInfo::getAvailableSystems(const QString &extension) {
-    mQuery.prepare( QStringLiteral( "SELECT DISTINCT systemMap.systemname FROM systemMap" )
-                                 + QStringLiteral( " INNER JOIN extensions ON systemMap.systemIndex=extensions.systemIndex" )
+    mQuery.prepare( QStringLiteral( "SELECT DISTINCT systems.phoenixSystemName FROM systems" )
+                                 + QStringLiteral( " INNER JOIN extensions ON systems.infoSystemName=extensions.infoSystemName" )
                                  + QStringLiteral( " WHERE extensions.extension = ?" ) );
 
     mQuery.addBindValue( extension );
 
     QStringList systemsList;
 
-    if( mQuery.exec() ) {
-        while( mQuery.next() ) {
-            systemsList.append( mQuery.value( 0 ).toString() );
-        }
+
+    auto exec = mQuery.exec();
+    Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( mQuery.lastError().text() ) );
+
+    while( mQuery.next() ) {
+        systemsList.append( mQuery.value( 0 ).toString() );
     }
 
     return std::move( systemsList );
-}
-
-QString GameFileInfo::getRealSystem( const QList<GameFileInfo::HeaderData> &possibleHeaders ) {
-    QFile gameFile( canonicalFilePath() );
-
-    auto opened = gameFile.open( QIODevice::ReadOnly );
-    Q_ASSERT( opened );
-
-    QString realSystem;
-
-    for( auto &headerData : possibleHeaders ) {
-
-        if( !gameFile.seek( headerData.seekPosition ) ) {
-            qCWarning( phxLibrary ) << "Could not put " << gameFile.fileName() << "'s seek at " << headerData.seekPosition;
-            continue;
-        }
-
-        auto bytes = QString( gameFile.read( headerData.byteLength ).simplified().toHex() );
-
-        if( bytes == headerData.result ) {
-
-            mQuery.prepare( QStringLiteral( "SELECT systemname FROM systemMap WHERE systemIndex = ?" ) );
-            mQuery.addBindValue( headerData.systemIndex );
-            auto exec = mQuery.exec();
-
-            Q_ASSERT( exec );
-
-            mQuery.first();
-            realSystem = mQuery.value( 0 ).toString();
-            break;
-        }
-
-    }
-
-    return std::move( realSystem );
 }
 
 void GameFileInfo::cache( const QString &location ) {
@@ -154,64 +124,19 @@ void GameFileInfo::cache( const QString &location ) {
 
 }
 
-QString GameFileInfo::getRealSystem(const QList<GameFileInfo::HeaderData> &possibleHeaders, const QString &localFile ) {
-    QFile gameFile( localFile );
-    auto opened = gameFile.open( QIODevice::ReadOnly );
-    Q_ASSERT( opened );
-
-    QString realSystem;
-
-    auto query = QSqlQuery( SystemDatabase::database() );
-
-    for( auto &headerData : possibleHeaders ) {
-
-        if( !gameFile.seek( headerData.seekPosition ) ) {
-            qCWarning( phxLibrary ) << "Could not put " << gameFile.fileName() << "'s seek at " << headerData.seekPosition;
-            continue;
-        }
-
-        auto bytes = QString( gameFile.read( headerData.byteLength ).simplified().toHex() );
-
-        if( bytes == headerData.result ) {
-
-            query.prepare( QStringLiteral( "SELECT systemname FROM systemMap WHERE systemIndex = ?" ) );
-            query.addBindValue( headerData.systemIndex );
-
-            auto exec = query.exec();
-            Q_ASSERT( exec );
-
-            query.first();
-            realSystem = query.value( 0 ).toString();
-            break;
-        }
-
-    }
-
-    return std::move( realSystem );
-}
-
 void GameFileInfo::prepareMetadata() {
 
     static const QString statement = QStringLiteral( "SELECT romID FROM " )
             + MetaDataDatabase::tableRoms
             + QStringLiteral( " WHERE romHashCRC = ?" );
 
-    static const auto zipStatement = QStringLiteral( "SELECT romID FROM " )
-                                  + MetaDataDatabase::tableRoms
-                                  + QStringLiteral( " WHERE romHashCRC = ?" );
-
     QSqlQuery query( MetaDataDatabase::database() );
 
     query.prepare( statement );
     query.addBindValue( mCrc32Checksum );
 
-    qDebug() << Q_FUNC_INFO << mCrc32Checksum;
-
-    if( !query.exec() ) {
-        qCWarning( phxLibrary ) << "Metadata fetch romID error: "
-                                << query.lastError().text() << query.executedQuery();
-        return;
-    }
+    auto exec = query.exec();
+    Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( query.lastError().text() ) );
 
     // Get all of the rowID's to lookup in the RELEASES table.
     if( query.first() ) {
@@ -229,12 +154,8 @@ void GameFileInfo::fillMetadata( int romID, QSqlQuery &query ) {
         query.prepare( statement );
         query.addBindValue( romID );
 
-        if( !query.exec() ) {
-
-            qCWarning( phxLibrary ) << "Metadata fetch artwork error: "
-                                    << query.lastError().text() << query.isActive() << query.isValid();
-            return;
-        }
+        auto exec = query.exec();
+        Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( query.lastError().text() ) );
 
         if( query.first() ) {
 
@@ -248,36 +169,37 @@ void GameFileInfo::fillMetadata( int romID, QSqlQuery &query ) {
     }
 }
 
-QList<GameFileInfo::HeaderData> GameFileInfo::getPossibleHeaders( const QStringList &possibleSystems ) {
+GameFileInfo::HeaderData GameFileInfo::getPossibleHeaders( const QStringList &possibleSystems ) {
 
-    QList<HeaderData> headerDataList;
+    HeaderData headerData;
 
     for( auto &system : possibleSystems ) {
 
-        mQuery.clear();
-        mQuery.prepare( QStringLiteral( "SELECT DISTINCT systemHeaderOffsets.byteLength, " )
-                                     + QStringLiteral( "systemHeaderOffsets.seekIndex, systemHeaderOffsets.result, systemHeaderOffsets.systemIndex " )
-                                     + QStringLiteral( "FROM systemHeaderOffsets INNER JOIN  systemMap ON " )
-                                     + QStringLiteral( "systemMap.systemIndex=systemHeaderOffsets.systemIndex " )
-                                     + QStringLiteral( "WHERE systemMap.systemname = ?" ) );
+        mQuery.prepare( QStringLiteral( "SELECT DISTINCT headers.byteLength, " )
+                        % QStringLiteral( "headers.seekIndex, headers.result, headers.infoSystemName FROM headers " )
+                        % QStringLiteral( "INNER JOIN systems " )
+                        % QStringLiteral( "WHERE systems.phoenixSystemName = ?" ) );
+
+        qDebug() << system << canonicalFilePath();
         mQuery.addBindValue( system );
 
         auto exec = mQuery.exec();
-        Q_ASSERT( exec );
+        Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( mQuery.lastError().text() ) );
 
+        int count = 0;
         while( mQuery.next() ) {
 
-            HeaderData headerData;
             headerData.byteLength = mQuery.value( 0 ).toInt();
             headerData.seekPosition = mQuery.value( 1 ).toInt();
             headerData.result = mQuery.value( 2 ).toString();
-            headerData.systemIndex = mQuery.value( 3 ).toString();
+            headerData.phoenixSystemName = system;
 
-            headerDataList.append( std::move( headerData ) );
+            count++;
         }
+        Q_ASSERT_X( count == 1, Q_FUNC_INFO, "count != 1" );
     }
 
-    return std::move( headerDataList );
+    return std::move( headerData );
 }
 
 QString GameFileInfo::getCheckSum( const QString &filePath ) {
@@ -304,11 +226,11 @@ void GameFileInfo::update( const QString &extension ) {
     if ( possibleSystemsList.size() == 1 ) {
         mSystem = possibleSystemsList.at( 0 );
     } else {
-        auto possibleHeaders = getPossibleHeaders( possibleSystemsList );
-        mSystem = getRealSystem( possibleHeaders );
+        auto header = getPossibleHeaders( possibleSystemsList );
+        mSystem = header.phoenixSystemName;
     }
 
-    mFullFilePath = QStringLiteral( "file://" ) + canonicalFilePath();
+    mFullFilePath = QStringLiteral( "file://" ) % canonicalFilePath();
     mCrc32Checksum = getCheckSum( canonicalFilePath() );
 }
 
@@ -332,7 +254,7 @@ bool GameFileInfo::isBios( QString &biosName ) {
     mQuery.addBindValue( sha1Result );
 
     auto exec = mQuery.exec();
-    Q_ASSERT( exec );
+    Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( mQuery.lastError().text() ) );
 
     if ( mQuery.first() ) {
         biosName = mQuery.value( 0 ).toString();

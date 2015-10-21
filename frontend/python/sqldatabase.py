@@ -13,7 +13,7 @@ class SqlDatabase():
         self.cursor = None
         self.autoCommit = autoCommit
 
-    def createTable(self, tableName, rowsAndTypes={}):
+    def createTable(self, tableName, rowsAndTypes={}, additionalStatement=""):
         ''' Helper function for creating a new SQL table.
             Just pass it the table's name, and a dictionary containing
             the table rows and keys and the types as the values.
@@ -23,9 +23,12 @@ class SqlDatabase():
         if len(rowsAndTypes) == 0:
             return False
 
-        statement = "CREATE TABLE {} ( {} )".format(tableName
+        statement = "CREATE TABLE {} ({} {})".format(tableName
                       , ", ".join(
-                      [k + " " + v for k, v in rowsAndTypes.iteritems()]))
+                      [k + " " + v for k, v in rowsAndTypes.iteritems()])
+                      , additionalStatement)
+
+        print(statement)
 
         self.cursor.execute( statement )
 
@@ -65,6 +68,8 @@ class SqlDatabase():
 
         rowStatement = " ({}) ".format(",".join(i for i in rows))
         fullStatement = preStatement + rowStatement + "VALUES ({})".format(",".join("?" for i in values))
+        
+        #print( values )
         self.cursor.execute( fullStatement, values )
 
         if self.autoCommit:

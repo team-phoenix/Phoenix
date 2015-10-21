@@ -14,7 +14,7 @@ namespace Library {
 
         struct HeaderData {
             QString result;
-            QString systemIndex;
+            QString phoenixSystemName;
             qint64 seekPosition;
             qint64 byteLength;
         };
@@ -43,12 +43,10 @@ namespace Library {
         FileType fileType() const;
 
         static QStringList gameFilter();
-        QList<HeaderData> getPossibleHeaders( const QStringList &possibleSystems );
-        QString getRealSystem( const QList<HeaderData> &possibleHeaders );
+        HeaderData getPossibleHeaders( const QStringList &possibleSystems );
 
         void cache( const QString &location );
 
-        static QString getRealSystem( const QList<HeaderData> &possibleHeaders, const QString &localFile );
         void prepareMetadata();
 
     protected:

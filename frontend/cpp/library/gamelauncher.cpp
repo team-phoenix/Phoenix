@@ -8,14 +8,13 @@ GameLauncher::GameLauncher( QObject *parent ) :
 
 const QString GameLauncher::getDefaultCore( const QString system ) {
 
-    const static QString statement = QStringLiteral( "SELECT core FROM defaultCoresMap WHERE systemname = ?" );
+    const static QString statement = QStringLiteral( "SELECT defaultCore FROM systems WHERE phoenixSystemName = ?" );
     auto query = QSqlQuery( Library::SystemDatabase::database() );
     query.prepare( statement );
     query.addBindValue( system );
 
-    if( !query.exec() ) {
-        qFatal( "Error in SystemDatabase, 'getDefaultCore()': %s", qPrintable( query.lastError().text() ) );
-    }
+    auto exec = query.exec();
+    Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( query.lastError().text() ) );
 
     QString defaultCore;
 

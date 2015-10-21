@@ -10,6 +10,7 @@
 #include "phxpaths.h"
 #include "systemdatabase.h"
 #include "metadatadatabase.h"
+#include "defaultcoremodel.h"
 #include "gamelauncher.h"
 
 // This is used to get the stack trace behind whatever debug message you want to diagnose
@@ -161,6 +162,7 @@ int main( int argc, char *argv[] ) {
     qmlRegisterType<Library::PlatformsModel>( "vg.phoenix.models", 1, 0, "PlatformsModel" );
     qmlRegisterType<Library::CollectionsModel>( "vg.phoenix.models", 1, 0, "CollectionsModel" );
     qmlRegisterType<Library::LibraryModel>( "vg.phoenix.models", 1, 0, "LibraryModel" );
+    qmlRegisterType<Library::DefaultCoreModel>( "vg.phoenix.models", 1, 0, "DefaultCoreModel" );
     qmlRegisterType<Library::ImageCacher>( "vg.phoenix.cache", 1, 0, "ImageCacher" );
     qmlRegisterSingletonType<Library::PhxPaths>( "vg.phoenix.paths", 1, 0, "PhxPaths", PhxPathsSingletonProviderCallback );
     qmlRegisterType<GameLauncher>( "vg.phoenix.launcher", 1, 0, "GameLauncher" );

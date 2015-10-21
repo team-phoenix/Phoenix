@@ -1,7 +1,6 @@
 from sqlTableUpdater import SqlTableUpdater
 from sqldatabase import SqlDatabase
 from collections import OrderedDict
-import hashlib
 
 class ExtensionUpdater(SqlTableUpdater):
     '''
@@ -13,7 +12,7 @@ class ExtensionUpdater(SqlTableUpdater):
 
     def __init__(self, tableName="", tableRows=[], coreInfo={}):
         if len(tableRows) == 0:
-            tableRows = ( ("systemIndex", "TEXT NOT NULL")
+            tableRows = ( ("infoSystemName", "TEXT NOT NULL")
                         , ("extension", "TEXT NOT NULL") )
 
         SqlTableUpdater.__init__(self, tableName, tableRows, coreInfo)
@@ -36,16 +35,13 @@ class ExtensionUpdater(SqlTableUpdater):
                     if "display_name" in v:
                         name = v["display_name"]
 
-                name = self.prettifySystem(name)
-                h = hashlib.sha1(name).hexdigest()
-
                 if "supported_extensions" in v:
                     rawExt = v["supported_extensions"]
                     if rawExt != "":
                         exts = rawExt.split("|")
 
                         for e in exts:
-                            values = (h, e)
+                            values = (name, e)
                             db.insert(self.tableName, self.rowsDict.keys(), values)
 
                 i = i + 1

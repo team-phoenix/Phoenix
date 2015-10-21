@@ -73,9 +73,13 @@ void ArchiveFileInfo::update() {
 
     auto fileInfo = QFileInfo( nextFileName() );
 
+    if ( fileInfo.suffix() == QStringLiteral( "zip" ) ) {
+        mIsValid = false;
+        return;
+    }
+
     auto possibleSystemsList = getAvailableSystems( fileInfo.suffix() );
 
-    //if ( possibleSystemsList.isEmpty() )
     mIsValid = !possibleSystemsList.isEmpty();
 
     if ( possibleSystemsList.size() == 1 ) {

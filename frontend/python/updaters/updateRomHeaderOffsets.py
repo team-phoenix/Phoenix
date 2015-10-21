@@ -14,15 +14,15 @@ class RomHeaderOffsetUpdater(SqlTableUpdater):
         if len(tableRows) == 0:
              tableRows = ( ("seekIndex", "INTEGER NOT NULL")
                          , ("byteLength", "INTEGER NOT NULL")
-                         , ("systemIndex", "TEXT NOT NULL UNIQUE")
+                         , ("infoSystemName", "TEXT NOT NULL UNIQUE")
                          , ("result", "TEXT NOT NULL") )
 
         SqlTableUpdater.__init__(self, tableName, tableRows, coreInfo)
 
     def getHeaderData(self, system):
-        if "Sony PlayStation" == system:
+        if "PlayStation" == system:
             return (37664, 11, "504c415953544154494f4e")
-        elif "GameCube (Wii)" == system:
+        elif "GameCube / Wii" == system:
             return (24, 4, "C2339F3D|"      # Wii ID
                             + "5d1c9ea3")  # GameCube ID
         return ()
@@ -44,21 +44,19 @@ class RomHeaderOffsetUpdater(SqlTableUpdater):
                     if "display_name" in v:
                         name = v["display_name"]
 
-                name = self.prettifySystem(name)
                 offset = self.getHeaderData(name)
 
                 if len(offset) > 0:
 
                     seek, size, result = offset
-                    h = hashlib.sha1(name).hexdigest()
 
                     db.insert( self.tableName
                               , self.rowsDict.keys()
-                              , values=[seek, size, h, result]
+                              , values=[seek, size, name, result]
                               , force=True )
 
 if __name__ == "__main__":
 
-    updater = RomHeaderOffsetUpdater(tableName="systemHeaderOffsets")
+    updater = RomHeaderOffsetUpdater(tableName="headers")
     updater.updateTable()
 

@@ -1,7 +1,6 @@
 from sqlTableUpdater import SqlTableUpdater
 from sqldatabase import SqlDatabase
 from collections import OrderedDict
-import hashlib
 
 class SystemCoreMapUpdater(SqlTableUpdater):
     '''
@@ -38,7 +37,7 @@ class SystemCoreMapUpdater(SqlTableUpdater):
 
                 name = self.prettifySystem(name)
                 h = hashlib.sha1(name).hexdigest()
-                values = [h, i]
+                values = [name, k]
 
                 db.insert(self.tableName, self.rowsDict.keys(), values, force=True)
                 i = i + 1

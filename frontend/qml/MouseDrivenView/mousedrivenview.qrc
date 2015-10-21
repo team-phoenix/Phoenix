@@ -12,5 +12,6 @@
         <file>PlatformsView.qml</file>
         <file>SelectionArea.qml</file>
         <file>SettingsView.qml</file>
+        <file>LibraryView.qml</file>
     </qresource>
 </RCC>
