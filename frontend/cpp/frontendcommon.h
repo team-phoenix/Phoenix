@@ -10,6 +10,7 @@
 #include <QtSql>
 #include <QtMultimedia>
 #include <QtNetwork>
+#include <QStringBuilder>
 
 #include <memory>
 

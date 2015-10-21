@@ -33,7 +33,8 @@ namespace Library {
     signals:
 
     public slots:
-        void save( const QString system, const QString defaultCore );
+        void save( const QString system, const QString core );
+        bool coreExists( QString defaultCore );
 
     protected:
         QHash<int, QByteArray> mRoleNames;

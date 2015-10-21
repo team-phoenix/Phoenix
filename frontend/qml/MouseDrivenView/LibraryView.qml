@@ -1,6 +1,7 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.1
+import QtQuick.Controls.Styles 1.4
 
 import vg.phoenix.models 1.0
 
@@ -50,6 +51,14 @@ Item {
                         width: 100;
                         anchors {
                             right: parent.right;
+                        }
+
+                        style: ComboBoxStyle {
+                            background: Rectangle {
+                                implicitHeight: control.height;
+                                implicitWidth: control.width;
+                                color: listView.model.coreExists( control.currentText ) ? "lightblue" : "red";
+                            }
                         }
 
                         Component.onCompleted: {

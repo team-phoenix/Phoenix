@@ -1,7 +1,7 @@
 #include "defaultcoremodel.h"
 #include "systemdatabase.h"
-
 #include "frontendcommon.h"
+#include "phxpaths.h"
 
 using namespace Library;
 
@@ -106,5 +106,20 @@ void DefaultCoreModel::save(const QString system, const QString defaultCore)
     auto commit = db.commit();
     Q_ASSERT_X( commit, Q_FUNC_INFO, qPrintable( query.lastError().text() ) );
 
+}
+
+bool DefaultCoreModel::coreExists( QString core ) {
+    QString defaultCore;
+#if defined( Q_OS_WIN )
+    defaultCore = PhxPaths::coreLocation() % QStringLiteral( "/" ) % core % QStringLiteral( ".dll" );
+#endif
+#if defined( Q_OS_MAC )
+    defaultCore = PhxPaths::coreLocation() % QStringLiteral( "/" ) % core % QStringLiteral( ".dylib" );
+#endif
+#if defined( Q_OS_LINUX )
+    defaultCore = PhxPaths::coreLocation() % QStringLiteral( "/" ) % core % QStringLiteral( ".so" );
+#endif
+    qDebug() << defaultCore;
+    return QFile::exists( defaultCore );
 }
 
