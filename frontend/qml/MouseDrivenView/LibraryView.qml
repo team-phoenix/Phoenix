@@ -15,7 +15,7 @@ Item {
             top: parent.top; bottom: parent.bottom; left: parent.left;
             topMargin: headerArea.height; leftMargin: 30;
         }
-        width: 400;
+        width: 420;
         color: "transparent";
 
         ListView {

@@ -37,5 +37,6 @@
         <file>systems/Super Nintendo.svg</file>
         <file>systems/Nintendo 64.svg</file>
         <file>systems/Sony PlayStation.svg</file>
+        <file>blur.svg</file>
     </qresource>
 </RCC>
