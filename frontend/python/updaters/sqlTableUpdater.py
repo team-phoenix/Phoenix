@@ -3,6 +3,7 @@ from sqldatabase import SqlDatabase
 from retrieve_core_info import retrieveCoreInfo
 import os
 
+# Root class that all SQL table updaters derive from
 class SqlTableUpdater():
 
     def __init__(self, tableName, tableRows=[], coreInfo={}):
