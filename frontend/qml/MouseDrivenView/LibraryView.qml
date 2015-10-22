@@ -55,6 +55,10 @@ Item {
                         }
 
                         Component.onCompleted: {
+
+                            // Set the default core's index now
+                            currentIndex = defaultCoreIndex;
+
                             // Work around because onCurrentTextChanged is fired when the ComboBox
                             // is constructed.
                             currentTextChanged.connect( function() {
@@ -68,7 +72,7 @@ Item {
                         anchors { right: parent.right; }
                         width: 8;
                         height: comboBox.height;
-                        color: listView.model.coreExists(comboBox.currentText ) ? PhxTheme.common.successColor : PhxTheme.common.errorColor;
+                        color: listView.model.coreExists( comboBox.currentText ) ? PhxTheme.common.successColor : PhxTheme.common.errorColor;
                     }
                 }
             }
