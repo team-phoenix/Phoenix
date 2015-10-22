@@ -27,9 +27,8 @@ Rectangle {
 
     Rectangle {
         id: headerArea;
-        anchors { top: parent.top; left: parent.left; right: parent.right;}
-        color: "transparent";
-        z: 100;
+        anchors { top: parent.top; left: parent.left; right: parent.right; }
+        color: "transparent"
         height: 70;
 
         Rectangle {
@@ -42,7 +41,7 @@ Rectangle {
             PhxSearchBar {
                 anchors { left: parent.left; leftMargin: 10; }
                 id: searchBar;
-                font.pixelSize: 14;
+                font.pixelSize: PhxTheme.common.baseFontSize;
                 placeholderText: "";
                 width: parent.width - 50;
                 height: parent.height;

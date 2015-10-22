@@ -142,7 +142,7 @@ Rectangle {
                     spacing: 13;
                     anchors {
                         top: parent.top; bottom: parent.bottom; left: parent.left; right: parent.right;
-                        topMargin: gridView.itemMargin / 2; bottomMargin: gridView.itemMargin / 2;
+                        topMargin: gridView.itemMargin; bottomMargin: gridView.itemMargin;
                         leftMargin: gridView.itemMargin; rightMargin: gridView.itemMargin;
                     }
 

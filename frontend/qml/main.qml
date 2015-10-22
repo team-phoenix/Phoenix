@@ -18,8 +18,8 @@ ApplicationWindow {
     title: qsTr("Phoenix");
     color: "black";
 
-    property int defaultMinHeight: 540;
-    property int defaultMinWidth: 840;
+    property int defaultMinHeight: 600;
+    property int defaultMinWidth: 900;
     minimumHeight: defaultMinHeight;
     minimumWidth: defaultMinWidth;
 

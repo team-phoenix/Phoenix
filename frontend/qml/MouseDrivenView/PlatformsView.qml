@@ -15,7 +15,6 @@ PhxScrollView {
         id: listView;
         spacing: 0;
         model: PlatformsModel { id: platformsModel; }
-
         boundsBehavior: Flickable.StopAtBounds;
 
         highlight: Item {
@@ -27,14 +26,14 @@ PhxScrollView {
                 id: highlighterRectangle;
                 anchors { top: parent.top; bottom: parent.bottom; left: parent.left; right: parent.right; }
                 height: PhxTheme.common.menuItemHeight;
-                color: Qt.rgba(255,2555,255,.1);
+                color: PhxTheme.common.menuItemBackgroundColor;
 
-                Rectangle {
+                /* Rectangle {
                     anchors { top: parent.top; bottom: parent.bottom; left: parent.left; }
                     width: 4;
                     height: parent.height;
                     color: PhxTheme.common.menuItemHighlight;
-                }
+                } */
             }
         }
 
@@ -43,18 +42,12 @@ PhxScrollView {
             height: PhxTheme.common.menuTitleHeight;
             anchors { left: parent.left; right: parent.right; }
 
-            Label {
+            Text {
                 text: qsTr( "Systems" );
-                anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 17; }
-                font { pointSize: PhxTheme.selectionArea.headerFontSize; }
+                anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 25; }
+                font { pixelSize: PhxTheme.selectionArea.headerFontSize; }
                 color: PhxTheme.selectionArea.highlightFontColor;
             }
-
-            /* Button {
-                anchors { verticalCenter: parent.verticalCenter; right: parent.right; rightMargin: 24; }
-                text: qsTr( "All" );
-                onClicked: { listView.currentIndex = -1; contentArea.contentLibraryModel.clearFilter( "games", "system" ); }
-            } */
         }
 
         delegate: Item {
@@ -70,13 +63,11 @@ PhxScrollView {
 
             MarqueeText {
                 id: platformText;
-                anchors { verticalCenter: parent.verticalCenter; left: parent.left; right: parent.right; leftMargin: 45; rightMargin: 17; }
+                anchors { verticalCenter: parent.verticalCenter; left: parent.left; right: parent.right; leftMargin: 25; rightMargin: 25; }
                 horizontalAlignment: Text.AlignLeft;
-
                 text: listView.model.get( index );
-                fontSize: PhxTheme.selectionArea.basePixelSize;
+                fontSize: PhxTheme.common.baseFontSize + 1;
                 color: index === listView.currentIndex ? PhxTheme.common.baseBackgroundColor : PhxTheme.selectionArea.baseFontColor;
-
                 spacing: 40;
                 running: index === listView.currentIndex || mouseArea.containsMouse;
                 pixelsPerFrame: 2.0;

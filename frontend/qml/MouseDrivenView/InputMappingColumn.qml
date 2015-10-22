@@ -45,9 +45,7 @@ ListView {
             }
 
             text: inputMappingColumn.headerText;
-            font {
-                pixelSize: 13;
-            }
+            font { pixelSize: PhxTheme.common.baseFontSize; }
         }
     }
 

@@ -24,14 +24,13 @@ PhxScrollView {
 
             Text {
                 text: qsTr( "Collections" );
-                anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 17; }
-                font { pointSize: PhxTheme.selectionArea.headerFontSize; }
+                anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 25; }
+                font { pixelSize: PhxTheme.selectionArea.headerFontSize; }
                 color: PhxTheme.selectionArea.highlightFontColor;
             }
 
             Image {
-                anchors { verticalCenter: parent.verticalCenter; right: parent.right; rightMargin: 17; }
-                // text: qsTr( "Add" );
+                anchors { verticalCenter: parent.verticalCenter; right: parent.right; rightMargin: 25; }
                 anchors.centerIn: parent;
                 height: 20;
                 width: height;
@@ -86,7 +85,7 @@ PhxScrollView {
                 id: platformText;
                 text: collectionName;
                 readOnly: true;
-                anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin:  24; }
+                anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin:  25; }
 
                 onAccepted: {
                     collectionsModel.set( collectionID, platformText.text );
@@ -94,7 +93,7 @@ PhxScrollView {
                     focus = false;
                 }
 
-                font { pointSize: PhxTheme.selectionArea.basePixelSize; }
+                font { pixelSize: PhxTheme.common.baseFontSize; }
                 textColor: PhxTheme.common.baseFontColor;
 
             }
@@ -104,10 +103,7 @@ PhxScrollView {
                 z: mouseArea.z + 1;
                 anchors { right: parent.right; verticalCenter: parent.verticalCenter; rightMargin: 12; }
                 text: "Remove";
-
-                onClicked: {
-                    collectionsModel.remove( collectionID );
-                }
+                onClicked: { collectionsModel.remove( collectionID ); }
             }
 
             MouseArea {

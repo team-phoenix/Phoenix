@@ -6,43 +6,45 @@ QtObject {
     property color normalFontColor: "#F1F1F1";
 
     property QtObject selectionArea: QtObject {
-        property int basePixelSize:        13;
-        property int headerFontSize:       13;
+        property int headerFontSize:       20;
         property color baseColor:          "#2E0E19";
         property color baseFontColor:      "#75FFFFFF" // "#8A8889";
         property color highlightFontColor: "#FFFFFF" // "#D5D5D5";
     }
 
     property QtObject common: QtObject {
+        // BASE
         property string systemFontFamily: dummyLabel.font.family;
-        property int baseFontSize:    13;
+        property int baseFontSize:    12;
         property color baseFontColor:        "#ADADAD";
         property color highlighterFontColor: "#FFFFFF";
 
+        // MENU
         property int menuWidth:       250;
-        property int menuTitleHeight: 50;
-        property int menuItemHeight:  30;
+        property int menuTitleHeight: 70;
+        property int menuItemHeight:  35;
         property color menuTitleColor: "#35000000";
         property color menuItemHighlight: "#A32127";
+        property color menuItemBackgroundColor: "#A32127";
         property color menuSelectedColor: "#FFFFFF";
 
-        property string backgroundImage: "bg.png";
+        // BACKGROUND
+        property string backgroundImage: "";
+        property color baseBackgroundColor:      "#FFFFFF"; // Black or White
+        property color primaryBackgroundColor:   "#14151A"; // Sidebar
+        property color secondaryBackgroundColor: "#201F27"; // Content (Grid)
 
-        property color baseBackgroundColor:      "#FFFFFF";
-        property color primaryBackgroundColor:   "#14151A";
-        property color secondaryBackgroundColor: "#201F27";
-
+        // SUSPENDED GAME AREA
         property int suspendedGameFontSize: 13;
         property color gameSuspendedBackgroundColor:      "#A32127";
         property color gameSuspendedHoverBackgroundColor: "#15FFFFFF";
 
+        // BOXART
         property int boxartFontSize: 12;
         property color boxartNormalBorderColor:   "#00FFFFFF";
         property color boxartSelectedBorderColor: "#55AAAAAA";
 
         property color gameViewBackgroundColor: "#000000";
-
-        property color normalButtonColor: "#10FFFFFF";
     }
 
     property QtObject bigPictureView: QtObject {

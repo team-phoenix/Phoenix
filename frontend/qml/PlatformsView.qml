@@ -43,7 +43,7 @@ PhxScrollView {
             Label {
                 text: qsTr( "Systems" );
                 anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 17; }
-                font { pointSize: PhxTheme.selectionArea.headerFontSize; }
+                font { pixelSize: PhxTheme.selectionArea.headerFontSize; }
                 color: PhxTheme.selectionArea.highlightFontColor;
             }
 

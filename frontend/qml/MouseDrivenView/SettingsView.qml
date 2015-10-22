@@ -8,9 +8,6 @@ import vg.phoenix.themes 1.0
 
 // @disable-check M300
 PhxScrollView {
-    width: 100;
-    height: 62;
-
     ListView {
         id: listView;
         spacing: 0;
@@ -33,14 +30,14 @@ PhxScrollView {
                 id: highlighterRectangle;
                 anchors { top: parent.top; bottom: parent.bottom; left: parent.left; right: parent.right; }
                 height: PhxTheme.common.menuItemHeight;
-                color: Qt.rgba(255,2555,255,.1);
+                color: PhxTheme.common.menuItemBackgroundColor;
 
-                Rectangle {
+                /* Rectangle {
                     anchors { top: parent.top; bottom: parent.bottom; left: parent.left; }
                     width: 4;
                     height: parent.height;
                     color: PhxTheme.common.menuItemHighlight;
-                }
+                } */
             }
         }
 
@@ -50,8 +47,8 @@ PhxScrollView {
 
             Text {
                 text: qsTr( "Settings" );
-                anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 17; }
-                font { pointSize: PhxTheme.selectionArea.headerFontSize; }
+                anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 25; }
+                font { pixelSize: PhxTheme.selectionArea.headerFontSize; }
                 color: PhxTheme.selectionArea.highlightFontColor;
             }
         }
@@ -63,13 +60,12 @@ PhxScrollView {
 
             MarqueeText {
                 id: sectionText;
-                anchors { verticalCenter: parent.verticalCenter; left: parent.left; right: parent.right; leftMargin: 45; rightMargin: 17; }
+                anchors { verticalCenter: parent.verticalCenter; left: parent.left; right: parent.right; leftMargin: 25; rightMargin: 25; }
                 horizontalAlignment: Text.AlignLeft;
 
                 text: section;
-                fontSize: PhxTheme.selectionArea.basePixelSize;
+                fontSize: PhxTheme.common.baseFontSize;
                 color: index === listView.currentIndex ? PhxTheme.common.baseBackgroundColor : PhxTheme.selectionArea.baseFontColor;
-
 
                 spacing: 40;
                 running: index === listView.currentIndex || mouseArea.containsMouse;

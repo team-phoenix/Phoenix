@@ -146,7 +146,7 @@ Item {
                         anchors.centerIn: parent;
                         text: label;
                         color: PhxTheme.common.baseFontColor;
-                        font { pointSize: PhxTheme.selectionArea.basePixelSize; }
+                        font { pixelSize: PhxTheme.selectionArea.basePixelSize; }
                     }
 
                     MouseArea {

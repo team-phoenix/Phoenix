@@ -13,6 +13,7 @@ ScrollView {
         handle: Item {
             implicitWidth: 8;
             implicitHeight: 30;
+            y: 0;
             x: 1;
 
             Rectangle {
