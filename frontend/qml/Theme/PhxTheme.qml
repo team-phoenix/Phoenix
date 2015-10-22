@@ -10,6 +10,7 @@ QtObject {
         property color baseColor:          "#2E0E19";
         property color baseFontColor:      "#75FFFFFF" // "#8A8889";
         property color highlightFontColor: "#FFFFFF" // "#D5D5D5";
+
     }
 
     property QtObject common: QtObject {
@@ -25,6 +26,7 @@ QtObject {
         property int menuWidth:       250;
         property int menuTitleHeight: 70;
         property int menuItemHeight:  35;
+        property int menuItemMargin:  25;
         property color menuTitleColor: "#35000000";
         property color menuItemHighlight: "#A32127";
         property color menuItemBackgroundColor: "#A32127";

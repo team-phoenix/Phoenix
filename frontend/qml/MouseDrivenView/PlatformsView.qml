@@ -44,7 +44,7 @@ PhxScrollView {
 
             Text {
                 text: qsTr( "Systems" );
-                anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 25; }
+                anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: PhxTheme.common.menuItemMargin; }
                 font { pixelSize: PhxTheme.selectionArea.headerFontSize; }
                 color: PhxTheme.selectionArea.highlightFontColor;
             }
@@ -55,7 +55,7 @@ PhxScrollView {
             anchors { left: parent.left; right: parent.right; }
 
             // Image {
-            //     anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 17; }
+            //     anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: PhxTheme.common.menuItemMargin; }
             //     smooth: false;
             //     sourceSize { height: height; width: width; }
             //     source: "systems/" + listView.model.get( index ) + ".svg";
@@ -63,7 +63,7 @@ PhxScrollView {
 
             MarqueeText {
                 id: platformText;
-                anchors { verticalCenter: parent.verticalCenter; left: parent.left; right: parent.right; leftMargin: 25; rightMargin: 25; }
+                anchors { verticalCenter: parent.verticalCenter; left: parent.left; right: parent.right; leftMargin: PhxTheme.common.menuItemMargin; rightMargin: PhxTheme.common.menuItemMargin; }
                 horizontalAlignment: Text.AlignLeft;
                 text: listView.model.get( index );
                 fontSize: PhxTheme.common.baseFontSize + 1;
