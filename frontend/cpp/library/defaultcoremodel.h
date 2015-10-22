@@ -1,9 +1,7 @@
 #ifndef DEFAULTCOREMODEL_H
 #define DEFAULTCOREMODEL_H
 
-#include <QAbstractTableModel>
-#include <QMap>
-#include <QVariantList>
+#include "frontendcommon.h"
 
 namespace Library {
 
@@ -28,7 +26,7 @@ namespace Library {
 
             QVariant data( const QModelIndex &index, int role ) const override;
 
-            QHash<int, QByteArray> roleNames() const;
+            QHash<int, QByteArray> roleNames() const override;
 
         signals:
 
@@ -42,9 +40,6 @@ namespace Library {
             QMap<QString, QStringList> coreListMap;
             QMap<QString, int> defaultCoreIndex;
     };
-    //  list< map< int, list >>:
-    //      item[int] == "Super Nintendo": ( return QVariant data(); )
-    //
 
 }
 
