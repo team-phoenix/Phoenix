@@ -18,6 +18,8 @@ QtObject {
         property int baseFontSize:    12;
         property color baseFontColor:        "#ADADAD";
         property color highlighterFontColor: "#FFFFFF";
+        property color successColor: "#71A321";
+        property color errorColor: "#A32127";
 
         // MENU
         property int menuWidth:       250;

@@ -32,7 +32,7 @@ Rectangle {
         height: 70;
 
         Rectangle {
-            anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 35; }
+            anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 30; }
             color: "#FFF";
             width: 250;
             radius: height/2;
@@ -58,7 +58,7 @@ Rectangle {
             }
 
             Image {
-                anchors { right: parent.right; rightMargin: searchBar.anchors.leftMargin; verticalCenter: parent.verticalCenter; }
+                anchors { right: parent.right; rightMargin: 10; verticalCenter: parent.verticalCenter; }
                 width: 20;
                 height: width;
                 sourceSize { height: height; width: width; }
@@ -131,12 +131,12 @@ Rectangle {
             Rectangle {
                 anchors { top: parent.top; bottom: parent.bottom; }
                 color: "transparent";
-                width: 40;
+                width: 24;
 
                 Image {
                     anchors.centerIn: parent;
-                    height: 20;
-                    width: height;
+                    height: 24;
+                    width: 24;
                     sourceSize { height: height; width: width; }
                     source: screenIcon;
                     MouseArea {
