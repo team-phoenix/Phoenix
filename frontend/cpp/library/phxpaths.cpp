@@ -104,7 +104,6 @@ void PhxPaths::initPaths() {
         PhxPaths::mMetadataLocation = PhxPaths::mBinLocation % '/' % QStringLiteral( "Metadata" ) % '/';
 
         PhxPaths::mUserDataLocation = PhxPaths::mBinLocation % '/' % QStringLiteral( "User Data" );
-        PhxPaths::mCoverArtCacheLocation = PhxPaths::mUserDataLocation % '/' % QStringLiteral( "Cover Art Cache" );
 
         // Create a core and game folder if they do not exist
         QDir coreDir( PhxPaths::mCoreLocation );
@@ -152,6 +151,7 @@ void PhxPaths::initPaths() {
 
     PhxPaths::mSaveLocation = PhxPaths::mUserDataLocation % '/' % QStringLiteral( "Saves" ) % '/';
     PhxPaths::mBiosLocation = PhxPaths::mUserDataLocation % '/' % QStringLiteral( "BIOS" ) % '/';
+    PhxPaths::mCoverArtCacheLocation = PhxPaths::mUserDataLocation % '/' % QStringLiteral( "Cover Art Cache" );
 
     QDir userDir( PhxPaths::mUserDataLocation );
     QDir saveDir( PhxPaths::mSaveLocation );
