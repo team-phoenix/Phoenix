@@ -95,8 +95,8 @@ QStringList GameFileInfo::gameFilter() {
 }
 
 QStringList GameFileInfo::getAvailableSystems(const QString &extension) {
-    mQuery.prepare( QStringLiteral( "SELECT DISTINCT systems.phoenixSystemName FROM systems" )
-                                 + QStringLiteral( " INNER JOIN extensions ON systems.infoSystemName=extensions.infoSystemName" )
+    mQuery.prepare( QStringLiteral( "SELECT DISTINCT systems.system FROM systems" )
+                                 + QStringLiteral( " INNER JOIN extensions ON systems.system=extensions.system" )
                                  + QStringLiteral( " WHERE extensions.extension = ?" ) );
 
     mQuery.addBindValue( extension );
@@ -176,9 +176,9 @@ GameFileInfo::HeaderData GameFileInfo::getPossibleHeaders( const QStringList &po
     for( auto &system : possibleSystems ) {
 
         mQuery.prepare( QStringLiteral( "SELECT DISTINCT headers.byteLength, " )
-                        % QStringLiteral( "headers.seekIndex, headers.result, headers.infoSystemName FROM headers " )
+                        % QStringLiteral( "headers.seekIndex, headers.result, headers.system FROM headers " )
                         % QStringLiteral( "INNER JOIN systems " )
-                        % QStringLiteral( "WHERE systems.phoenixSystemName = ?" ) );
+                        % QStringLiteral( "WHERE systems.system = ?" ) );
 
         qDebug() << system << canonicalFilePath();
         mQuery.addBindValue( system );
@@ -192,7 +192,7 @@ GameFileInfo::HeaderData GameFileInfo::getPossibleHeaders( const QStringList &po
             headerData.byteLength = mQuery.value( 0 ).toInt();
             headerData.seekPosition = mQuery.value( 1 ).toInt();
             headerData.result = mQuery.value( 2 ).toString();
-            headerData.phoenixSystemName = system;
+            headerData.system = system;
 
             count++;
         }
@@ -227,7 +227,7 @@ void GameFileInfo::update( const QString &extension ) {
         mSystem = possibleSystemsList.at( 0 );
     } else {
         auto header = getPossibleHeaders( possibleSystemsList );
-        mSystem = header.phoenixSystemName;
+        mSystem = header.system;
     }
 
     mFullFilePath = QStringLiteral( "file://" ) % canonicalFilePath();

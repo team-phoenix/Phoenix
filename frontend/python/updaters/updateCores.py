@@ -2,24 +2,19 @@ from sqlTableUpdater import SqlTableUpdater
 from sqldatabase import SqlDatabase
 
 class CoresUpdater(SqlTableUpdater):
-    '''
-        Base methods:
-            SqlDatabase.updateTable( self, tableRows=O )
-            SqlDatabase.prettifySystem( system="" )
-            SqlDatabase.updateColumns( self, sqlDatabase = SqlDatabase() )
-    '''
 
-    def __init__(self, tableName="", tableRows=[], coreInfo={}):
-        if len(tableRows) == 0:
-            tableRows = ( ("core", "TEXT")
+    def __init__(self, tableName="", tableColumns=[], coreInfo={}):
+        if len(tableColumns) == 0:
+            tableColumns = ( ("core", "TEXT")
                         , ("supported_extensions", "TEXT")
                         , ("display_version", "TEXT")
                         , ("license", "TEXT")
                         , ("authors", "TEXT")
                         , ("manufacturer", "TEXT")
-                        , ("infoSystemName", "INTEGER NOT NULL" )
+                        , ("system", "TEXT NOT NULL" )
+                        , ("libretroSystemName", "TEXT NOT NULL" )
                         )
-        SqlTableUpdater.__init__(self, tableName, tableRows, coreInfo)
+        SqlTableUpdater.__init__(self, tableName, tableColumns, coreInfo)
 
     def updateTable(self):
     
@@ -28,24 +23,34 @@ class CoresUpdater(SqlTableUpdater):
 
             for k, v in self.coreInfo['cores'].iteritems():
 
+                # Filter out anything that isn't an emulator
                 if "categories" not in v or v["categories"] != "Emulator":
                     continue
 
+                # Iterate through tableColumns, defined up above
                 values = []
                 for row in self.rowsDict.keys():
 
+                    # The key contains the name of the core
                     if row == "core":
                         values.append(k)
-                    elif row == "infoSystemName":
+
+                    # The system name must be stored as the Phoenix system name
+                    elif row == "system":
                         name = ""
                         if "systemname" in v:
-                            name = v["systemname"]
+                            name = self.libretroToPhoenix(v)
                         else:
                             if "display_name" in v:
                                 name = v["display_name"]
 
                         values.append( name )
 
+                    # Copy libretro system name
+                    elif row == "libretroSystemName":
+                        values.append( v["systemname"] )
+
+                    # Directly copy data for the other columns, their keys match the libretro .info file keys exactly
                     elif row in v:
                         values.append( v[row] )
 

@@ -7,7 +7,7 @@ PlatformsModel::PlatformsModel( QObject *parent )
 
     auto query = QSqlQuery( SystemDatabase::database() );
 
-    auto exec = query.exec( QStringLiteral( "SELECT phoenixSystemName FROM systems ORDER BY phoenixSystemName ASC" ) );
+    auto exec = query.exec( QStringLiteral( "SELECT DISTINCT system FROM systems ORDER BY system ASC" ) );
     Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( query.lastError().text() ) );
 
     mPlatformsList.append( QStringLiteral( "All" ) );

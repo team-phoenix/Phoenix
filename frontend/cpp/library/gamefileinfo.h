@@ -14,7 +14,7 @@ namespace Library {
 
         struct HeaderData {
             QString result;
-            QString phoenixSystemName;
+            QString system;
             qint64 seekPosition;
             qint64 byteLength;
         };

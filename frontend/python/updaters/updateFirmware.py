@@ -2,23 +2,17 @@ from sqldatabase import SqlDatabase
 from sqlTableUpdater import SqlTableUpdater
 
 class FirmwareUpdater(SqlTableUpdater):
-    '''
-        Base methods:
-            SqlDatabase.updateTable( self, tableRows=O )
-            SqlDatabase.prettifySystem( system="" )
-            SqlDatabase.updateColumns( self, sqlDatabase = SqlDatabase() )
-    '''
 
-    def __init__(self, tableName="", tableRows=[], coreInfo={}):
+    def __init__(self, tableName="", tableColumns=[], coreInfo={}):
 
-        if len(tableRows) == 0:
-            tableRows = ( ("infoSystemName", "TEXT NOT NULL")
+        if len(tableColumns) == 0:
+            tableColumns = ( ("system", "TEXT NOT NULL")
                         , ("biosFile", "TEXT NOT NULL UNIQUE")
                         , ("sha1", "TEXT")
                         , ("md5", "TEXT")
                         , ("region", "TEXT") )
 
-        SqlTableUpdater.__init__(self, tableName, tableRows, coreInfo)
+        SqlTableUpdater.__init__(self, tableName, tableColumns, coreInfo)
 
     def updateTable(self):
 
@@ -32,7 +26,7 @@ class FirmwareUpdater(SqlTableUpdater):
 
                 name = ""
                 if "systemname" in v:
-                   name = v["systemname"]
+                   name = self.libretroToPhoenix(v)
                 else:
                     if "display_name" in v:
                         name = v["display_name"]
@@ -46,7 +40,7 @@ class FirmwareUpdater(SqlTableUpdater):
                         db.insert(self.tableName, self.rowsDict.keys(), values=[name, bios, sha1, md5, region], force=True)
 
     def getFirmwareTuple(self, system):
-        if system == "PlayStation":
+        if system == "Sony PlayStation":
             return (
                       ("scph5500.bin", "B05DEF971D8EC59F346F2D9AC21FB742E3EB6917", "8dd7d5296a650fac7319bce665a6a53c", "J")
                     , ("scph5501.bin", "0555C6FAE8906F3F09BAF5988F00E55F88E9F30B", "490f666e1afb15b7362b406ed1cea246", "U")

@@ -3,24 +3,18 @@ from sqldatabase import SqlDatabase
 import hashlib
 
 class RomHeaderOffsetUpdater(SqlTableUpdater):
-    '''
-        Base methods:
-            SqlDatabase.updateTable( self, tableRows=O )
-            SqlDatabase.prettifySystem( system="" )
-            SqlDatabase.updateColumns( self, sqlDatabase = SqlDatabase() )
-    '''
 
-    def __init__(self, tableName="", tableRows=[], coreInfo={}):
-        if len(tableRows) == 0:
-             tableRows = ( ("seekIndex", "INTEGER NOT NULL")
+    def __init__(self, tableName="", tableColumns=[], coreInfo={}):
+        if len(tableColumns) == 0:
+             tableColumns = ( ("system", "TEXT NOT NULL UNIQUE")
                          , ("byteLength", "INTEGER NOT NULL")
-                         , ("infoSystemName", "TEXT NOT NULL UNIQUE")
+                         , ("seekIndex", "INTEGER NOT NULL")
                          , ("result", "TEXT NOT NULL") )
 
-        SqlTableUpdater.__init__(self, tableName, tableRows, coreInfo)
+        SqlTableUpdater.__init__(self, tableName, tableColumns, coreInfo)
 
     def getHeaderData(self, system):
-        if "PlayStation" == system:
+        if "Sony PlayStation" == system:
             return (37664, 11, "504c415953544154494f4e")
         elif "GameCube / Wii" == system:
             return (24, 4, "C2339F3D|"      # Wii ID
@@ -39,7 +33,7 @@ class RomHeaderOffsetUpdater(SqlTableUpdater):
 
                 name = ""
                 if "systemname" in v:
-                   name = v["systemname"]
+                   name = self.libretroToPhoenix(v)
                 else:
                     if "display_name" in v:
                         name = v["display_name"]
@@ -52,7 +46,7 @@ class RomHeaderOffsetUpdater(SqlTableUpdater):
 
                     db.insert( self.tableName
                               , self.rowsDict.keys()
-                              , values=[seek, size, name, result]
+                              , values=[name, size, seek, result]
                               , force=True )
 
 if __name__ == "__main__":

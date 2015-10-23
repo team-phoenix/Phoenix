@@ -13,7 +13,7 @@ DefaultCoreModel::DefaultCoreModel( QObject *parent )
     mRoleNames.insert( DefaultCoreRoles::DefaultCoreIndexRole, QByteArrayLiteral( "defaultCoreIndex" ) );
 
     auto db = QSqlQuery( SystemDatabase::database() );
-    auto exec = db.exec( QStringLiteral( "SELECT DISTINCT infoSystemName, defaultCore FROM systems;" ) );
+    auto exec = db.exec( QStringLiteral( "SELECT DISTINCT system, defaultCore FROM systems;" ) );
     Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( db.lastError().text() ) );
 
     beginResetModel();
@@ -31,7 +31,7 @@ DefaultCoreModel::DefaultCoreModel( QObject *parent )
 
     systemList.sort( Qt::CaseInsensitive );
 
-    exec = db.exec( QStringLiteral( "SELECT core, infoSystemName FROM cores" ) );
+    exec = db.exec( QStringLiteral( "SELECT core, system FROM cores" ) );
     Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( db.lastError().text() ) );
 
     while( db.next() ) {
@@ -115,7 +115,7 @@ void DefaultCoreModel::save( const QString system, const QString defaultCore ) {
     Q_ASSERT( transaction );
 
     auto query = QSqlQuery( db );
-    auto statement = QString( "UPDATE systems SET defaultCore = \'%1\' WHERE phoenixSystemName = \'%2\'" ).arg( defaultCore, system );
+    auto statement = QString( "UPDATE systems SET defaultCore = \'%1\' WHERE system = \'%2\'" ).arg( defaultCore, system );
     //db.prepare( statement );
     //db.addBindValue( defaultCore );
     //db.addBindValue( system );

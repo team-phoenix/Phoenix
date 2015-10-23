@@ -8,7 +8,7 @@ GameLauncher::GameLauncher( QObject *parent ) :
 
 const QString GameLauncher::getDefaultCore( const QString system ) {
 
-    const static QString statement = QStringLiteral( "SELECT defaultCore FROM systems WHERE phoenixSystemName = ?" );
+    const static QString statement = QStringLiteral( "SELECT defaultCore FROM systems WHERE system = ?" );
     auto query = QSqlQuery( Library::SystemDatabase::database() );
     query.prepare( statement );
     query.addBindValue( system );

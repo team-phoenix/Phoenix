@@ -6,46 +6,46 @@ import os
 # Root class that all SQL table updaters derive from
 class SqlTableUpdater():
 
-    def __init__(self, tableName, tableRows=[], coreInfo={}):
+    systemMetadata = {
+        "Arcade (various)": {"openvgdbSystemName": "", "phoenixSystemName": "Arcade", "defaultCore": "mame_libretro", "isSupported": False},
+        "MULTI (various)": {"openvgdbSystemName": "", "phoenixSystemName": "Arcade", "defaultCore": "mame_libretro", "isSupported": False},
+        "Game Boy Advance": {"openvgdbSystemName": "", "phoenixSystemName": "Game Boy Advance", "defaultCore": "vbam_libretro", "isSupported": True},
+        "Game Boy/Game Boy Color": {"openvgdbSystemName": "", "phoenixSystemName": "Game Boy Color", "defaultCore": "gambatte_libretro", "isSupported": True},
+        "Lynx": {"openvgdbSystemName": "", "phoenixSystemName": "Atari Lynx", "defaultCore": "mednafen_lynx_libretro", "isSupported": False},
+        "MULTI (various)": {"openvgdbSystemName": "", "phoenixSystemName": "Arcade", "defaultCore": "mame_libretro", "isSupported": False},
+        "Neo Geo Pocket (Color)": {"openvgdbSystemName": "", "phoenixSystemName": "SNK Neo Geo Pocket Color", "defaultCore": "mednafen_ngp_libretro", "isSupported": False},
+        "Neo Geo": {"openvgdbSystemName": "", "phoenixSystemName": "SNK Neo Geo", "defaultCore": "fb_alpha_neo_libretro", "isSupported": False},
+        "Nintendo Entertainment System": {"openvgdbSystemName": "", "phoenixSystemName": "Nintendo Entertainment System", "defaultCore": "nestopia_libretro", "isSupported": True},
+        "PC Engine SuperGrafx": {"openvgdbSystemName": "", "phoenixSystemName": "Super Grafx", "defaultCore": "mednafen_supergrafx_libretro", "isSupported": False},
+        "PC Engine/PCE-CD": {"openvgdbSystemName": "", "phoenixSystemName": "PC Engine CD", "defaultCore": "mednafen_pce_fast_libretro", "isSupported": False},
+        "PC-FX": {"openvgdbSystemName": "", "phoenixSystemName": "PC-FX", "defaultCore": "mednafen_pcfx_libretro", "isSupported": False},
+        "PlayStation": {"openvgdbSystemName": "", "phoenixSystemName": "Sony PlayStation", "defaultCore": "mednafen_psx_libretro", "isSupported": True},
+        "Saturn": {"openvgdbSystemName": "", "phoenixSystemName": "Sega Saturn", "defaultCore": "yabause_libretro", "isSupported": False},
+        "Sega 8/16-bit (Various)": {"openvgdbSystemName": "", "phoenixSystemName": "Sega Genesis", "defaultCore": "genesis_plus_gx_libretro", "isSupported": True},
+        "Sega 8/16-bit + 32X (Various)": {"openvgdbSystemName": "", "phoenixSystemName": "Sega Genesis", "defaultCore": "genesis_plus_gx_libretro", "isSupported": True},
+        "Sega Master System": {"openvgdbSystemName": "", "phoenixSystemName": "Sega Master System", "defaultCore": "emux_sms_libretro", "isSupported": True},
+        "Super Nintendo Entertainment System": {"openvgdbSystemName": "", "phoenixSystemName": "Super Nintendo", "defaultCore": "bsnes_mercury_balanced_libretro", "isSupported": True},
+        "Virtual Boy": {"openvgdbSystemName": "", "phoenixSystemName": "Virtual Boy", "defaultCore": "mednafen_vb_libretro", "isSupported": False},
+        "WonderSwan/Color": {"openvgdbSystemName": "", "phoenixSystemName": "WonderSwan Color", "defaultCore": "mednafen_wswan_libretro", "isSupported": False},
+        "ZX Spectrum (various)": {"openvgdbSystemName": "", "phoenixSystemName": "Zx Spectrum", "defaultCore": "fuse_libretro", "isSupported": False},
+    }
+
+    def __init__(self, tableName, tableColumns=[], coreInfo={}):
         self.tableName = tableName
-        self.rowsDict = OrderedDict(tableRows)
+        self.rowsDict = OrderedDict(tableColumns)
         self.dbFile = os.path.join(os.getcwd().replace("python", "metadata"), "libretro.sqlite")
         self.dbFileExists = os.path.isfile(self.dbFile)
-        
-        if len(coreInfo) == 0:
-            self.coreInfo = retrieveCoreInfo()
-        else:
-            self.coreInfo = coreInfo
+        self.coreInfo = coreInfo
 
-        self.filterSystems()
-
-        # This map needs to have exactly the same keys that the
-        # prettifySystem() function creates. Otherwise there will be a key error
-        # when the keys are indexed. This is supposed to happen though.
-        self.defaultCoreMap = {
-            "Nintendo Entertainment System": "nestopia_libretro",
-            "Super Nintendo": "bsnes_mercury_balanced_libretro",
-            "Sony PlayStation": "mednafen_psx_libretro",
-            "Game Boy Color": "gambatte_libretro",
-            "Game Boy Advance": "vbam_libretro",
-            "Sega Genesis": "genesis_plus_gx_libretro",
-            "Sega Saturn": "yabause_libretro",
-            "Arcade": "mame_libretro",
-            "Neo Geo": "fb_alpha_neo_libretro",
-            "Atari Lynx": "mednafen_lynx_libretro",
-            "Neo Geo Pocket (Color)": "mednafen_ngp_libretro",
-            "PC Engine": "mednafen_pce_fast_libretro",
-            "PC Engine SuperGrafx": "mednafen_supergrafx_libretro",
-            "PC-FX": "mednafen_pcfx_libretro",
-            "Virtual Boy": "mednafen_vb_libretro",
-            "WonderSwan (Color)": "mednafen_wswan_libretro",
-            "Zx Spectrum": "fuse_libretro",
-        }
+        self.filterUnusedCores()
 
     def updateTable(self):
         pass
 
-    def filterSystems(self):
+    def libretroToPhoenix(self, v):
+        return self.systemMetadata[v["systemname"]]["phoenixSystemName"]
+
+    def filterUnusedCores(self):
         for key in self.coreInfo["cores"].keys():
             if ("4do_libretro" == key 
                  or "81_libretro" == key
@@ -82,40 +82,6 @@ class SqlTableUpdater():
                  or "vecx_libretro" == key
                  or "virtualjaguar_libretro" == key ):
                 del self.coreInfo["cores"][key]
-
-    def prettifySystem(self, platform):
-        system = platform.lower()
-        if "colecovision" in system:
-            return "ColecoVision"
-        elif "gamecube" in system:
-            return "GameCube (Wii)"
-        elif "game boy" in system and "color" in system:
-            return "Game Boy Color"
-        elif "sega 8/16" in system or "sega master system" == system:
-            return "Sega Genesis"
-        elif "atari st/ste" in system:
-            return "Atari ST"
-        elif "pc engine/pce" in system:
-            return "PC Engine"
-        elif "multi" in system:
-            return "Arcade"
-        elif "(various)" in system:
-            return platform.replace(" (various)", "").title()
-        elif "/ videopac+" in system:
-            return " & ".join(platform.split(" / "))
-        elif "saturn" == system:
-            return "Sega Saturn"
-        elif "playstation" == system:
-            return "Sony PlayStation"
-        elif "super nintendo" in system:
-            return "Super Nintendo"
-        elif "nintendo entertainment system" == system:
-            return "Nintendo Entertainment System"
-        elif "lynx" == system:
-            return "Atari Lynx"
-        elif "wonderswan/color" == system:
-            return "WonderSwan (Color)"
-        return platform
 
     def updateColumns(self, database, additionalStatement = ""):
 

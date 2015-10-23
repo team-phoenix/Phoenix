@@ -3,19 +3,13 @@ from sqldatabase import SqlDatabase
 from collections import OrderedDict
 
 class ExtensionUpdater(SqlTableUpdater):
-    '''
-        Base methods:
-            SqlDatabase.updateTable( self, tableRows=O )
-            SqlDatabase.prettifySystem( system="" )
-            SqlDatabase.updateColumns( self, sqlDatabase = SqlDatabase() )
-    '''
 
-    def __init__(self, tableName="", tableRows=[], coreInfo={}):
-        if len(tableRows) == 0:
-            tableRows = ( ("infoSystemName", "TEXT NOT NULL")
+    def __init__(self, tableName="", tableColumns=[], coreInfo={}):
+        if len(tableColumns) == 0:
+            tableColumns = ( ("system", "TEXT NOT NULL")
                         , ("extension", "TEXT NOT NULL") )
 
-        SqlTableUpdater.__init__(self, tableName, tableRows, coreInfo)
+        SqlTableUpdater.__init__(self, tableName, tableColumns, coreInfo)
 
     def updateTable(self):
 
@@ -30,7 +24,7 @@ class ExtensionUpdater(SqlTableUpdater):
 
                 name = ""
                 if "systemname" in v:
-                   name = v["systemname"]
+                   name = self.libretroToPhoenix(v)
                 else:
                     if "display_name" in v:
                         name = v["display_name"]

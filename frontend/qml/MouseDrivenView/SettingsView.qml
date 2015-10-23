@@ -13,13 +13,18 @@ PhxScrollView {
         spacing: 0;
         model: ListModel {
             id: settingsModel;
-            ListElement { section: "Input (coming soon...)"; }
             ListElement { section: "Library"; }
+            // ListElement { section: "Input (coming soon...)"; }
             // ListElement { section: "Video"; }
             // ListElement { section: "Audio"; }
         }
 
         boundsBehavior: Flickable.StopAtBounds;
+
+        // Open the first item in the list automatically
+        Component.onCompleted: {
+            contentArea.contentStackView.push( { item: contentArea.contentLibraryView, replace: true } );
+        }
 
         highlight: Item {
             x: listView.currentItem.x;
@@ -78,14 +83,12 @@ PhxScrollView {
                 hoverEnabled: true;
                 onClicked: {
                     listView.currentIndex = index
-                    switch ( index ) {
-                    case 0:
-                        // contentArea.contentStackView.push( { item: contentArea.contentInputView, replace: true } );
-                        break;
-                    case 1:
+                    switch ( section ) {
+                    case "Library":
                         contentArea.contentStackView.push( { item: contentArea.contentLibraryView, replace: true } );
                         break;
-                    case 2:
+                    case "Input":
+                        // contentArea.contentStackView.push( { item: contentArea.contentInputView, replace: true } );
                         break;
                     default:
                         break;
