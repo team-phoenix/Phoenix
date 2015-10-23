@@ -70,7 +70,7 @@ void LibraryWorker::handleDroppedUrls() {
 
         auto localUrl = url.toLocalFile();
 
-        if ( !findGameFiles( localUrl, false ) ) {
+        if( !findGameFiles( localUrl, false ) ) {
             enqueueFiles( localUrl );
         }
 
@@ -193,7 +193,7 @@ bool LibraryWorker::findGameFiles( const QString localUrl, bool autoStart = true
         setResumeDirectory( localUrl );
     }
 
-    if ( autoStart ) {
+    if( autoStart ) {
         emit started();
         prepareGameData( mFileInfoQueue );
         emit finished();
@@ -249,45 +249,50 @@ void LibraryWorker::enqueueFiles( QString &filePath ) {
     auto fileInfo = GameFileInfo( filePath );
 
     switch( fileInfo.fileType() ) {
-    case GameFileInfo::FileType::GameFile:
-        mFileInfoQueue.enqueue( fileInfo );
-        break;
-    case GameFileInfo::FileType::ZipFile: {
+        case GameFileInfo::FileType::GameFile:
+            mFileInfoQueue.enqueue( fileInfo );
+            break;
 
-        auto zipFileInfo = static_cast<ArchiveFileInfo>( fileInfo );
+        case GameFileInfo::FileType::ZipFile: {
 
-        if ( zipFileInfo.open( QuaZip::mdUnzip ) ) {
+            auto zipFileInfo = static_cast<ArchiveFileInfo>( fileInfo );
 
-            for ( auto hasNext = zipFileInfo.firstFile(); hasNext; hasNext = zipFileInfo.nextFile() ) {
-                if ( zipFileInfo.isValid() ) {
-                    mFileInfoQueue.enqueue( zipFileInfo );
+            if( zipFileInfo.open( QuaZip::mdUnzip ) ) {
+
+                for( auto hasNext = zipFileInfo.firstFile(); hasNext; hasNext = zipFileInfo.nextFile() ) {
+                    if( zipFileInfo.isValid() ) {
+                        mFileInfoQueue.enqueue( zipFileInfo );
+                    }
                 }
+
+                zipFileInfo.close();
             }
 
-            zipFileInfo.close();
+            break;
+
         }
 
-        break;
+        case GameFileInfo::FileType::CueFile: {
+            auto cueFileInfo = static_cast<CueFileInfo>( fileInfo );
 
-    }
-    case GameFileInfo::FileType::CueFile: {
-        auto cueFileInfo = static_cast<CueFileInfo>( fileInfo );
+            if( cueFileInfo.isValid() ) {
+                qDebug() << "Cue File (Valid): " << cueFileInfo.fullFilePath() <<  cueFileInfo.system() << cueFileInfo.crc32CheckSum();
+                mFileInfoQueue.enqueue( cueFileInfo );
+            } else {
+                qDebug() << "Cue File (Invalid): " << cueFileInfo.fullFilePath();
+            }
 
-        if ( cueFileInfo.isValid() ) {
-            qDebug() << "Cue File (Valid): " << cueFileInfo.fullFilePath() <<  cueFileInfo.system() << cueFileInfo.crc32CheckSum();
-            mFileInfoQueue.enqueue( cueFileInfo );
-        } else {
-            qDebug() << "Cue File (Invalid): " << cueFileInfo.fullFilePath();
+            break;
         }
-        break;
-    }
-    case GameFileInfo::FileType::BiosFile: {
-        auto biosFileInfo = static_cast<BiosFileInfo>( fileInfo );
-        biosFileInfo.cache( PhxPaths::biosLocation() );
-        break;
-    }
-    default:
-        break;
+
+        case GameFileInfo::FileType::BiosFile: {
+            auto biosFileInfo = static_cast<BiosFileInfo>( fileInfo );
+            biosFileInfo.cache( PhxPaths::biosLocation() );
+            break;
+        }
+
+        default:
+            break;
     }
 
 }

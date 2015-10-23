@@ -10,29 +10,29 @@
 namespace Library {
 
     class ArchiveFileInfo : public GameFileInfo {
-    public:
+        public:
 
-        ArchiveFileInfo( const QString &file );
-        ArchiveFileInfo( GameFileInfo &gameInfo );
+            ArchiveFileInfo( const QString &file );
+            ArchiveFileInfo( GameFileInfo &gameInfo );
 
-        bool firstFile();
-        bool nextFile();
-        bool isValid() const;
-        bool open( QuaZip::Mode mode );
+            bool firstFile();
+            bool nextFile();
+            bool isValid() const;
+            bool open( QuaZip::Mode mode );
 
 
-        void close();
+            void close();
 
-        QString nextFileName() const;
-        static QString delimiter();
+            QString nextFileName() const;
+            static QString delimiter();
 
-    private:
-         QStringList mChecksums;
-         QuaZip *mZipFile;
-         QSqlQuery mQuery;
-         bool mIsValid;
+        private:
+            QStringList mChecksums;
+            QuaZip *mZipFile;
+            QSqlQuery mQuery;
+            bool mIsValid;
 
-         void update();
+            void update();
 
 
     };

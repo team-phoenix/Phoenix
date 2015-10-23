@@ -2,7 +2,7 @@
 
 using namespace Library;
 
-ArchiveFileInfo::ArchiveFileInfo(const QString &file)
+ArchiveFileInfo::ArchiveFileInfo( const QString &file )
     : GameFileInfo( file ),
       mZipFile( nullptr ),
       mIsValid( true ) {
@@ -11,69 +11,67 @@ ArchiveFileInfo::ArchiveFileInfo(const QString &file)
 
 }
 
-ArchiveFileInfo::ArchiveFileInfo(GameFileInfo &gameInfo)
-    : ArchiveFileInfo( gameInfo.canonicalFilePath() )
-{
+ArchiveFileInfo::ArchiveFileInfo( GameFileInfo &gameInfo )
+    : ArchiveFileInfo( gameInfo.canonicalFilePath() ) {
 
 }
 
-bool ArchiveFileInfo::firstFile()
-{
+bool ArchiveFileInfo::firstFile() {
     bool next = mZipFile->goToFirstFile();
-    if ( next ) {
+
+    if( next ) {
         update();
     }
+
     return next;
 }
 
 bool ArchiveFileInfo::nextFile() {
     bool next = mZipFile->goToNextFile();
 
-    if ( next ) {
+    if( next ) {
         update();
     }
 
     return next;
 }
 
-bool ArchiveFileInfo::isValid() const
-{
+bool ArchiveFileInfo::isValid() const {
     return mIsValid;
 }
 
 bool ArchiveFileInfo::open( QuaZip::Mode mode ) {
-    if ( !mZipFile ) {
+    if( !mZipFile ) {
         mZipFile = new QuaZip( canonicalFilePath() );
     }
+
     return mZipFile->open( mode );
 }
 
-void ArchiveFileInfo::close()
-{
+void ArchiveFileInfo::close() {
     mZipFile->close();
     delete mZipFile;
 }
 
-QString ArchiveFileInfo::nextFileName() const
-{
+QString ArchiveFileInfo::nextFileName() const {
     return mZipFile->getCurrentFileName();
 }
 
-QString ArchiveFileInfo::delimiter()
-{
+QString ArchiveFileInfo::delimiter() {
     return QStringLiteral( "<><>" );
 }
 
 void ArchiveFileInfo::update() {
 
     QuaZipFileInfo zipFileInfo;
-    if ( mZipFile->getCurrentFileInfo( &zipFileInfo ) ) {
+
+    if( mZipFile->getCurrentFileInfo( &zipFileInfo ) ) {
         mCrc32Checksum = QString::number( zipFileInfo.crc, 16 ).toUpper();
     }
 
     auto fileInfo = QFileInfo( nextFileName() );
 
-    if ( fileInfo.suffix() == QStringLiteral( "zip" ) ) {
+    if( fileInfo.suffix() == QStringLiteral( "zip" ) ) {
         mIsValid = false;
         return;
     }
@@ -82,13 +80,13 @@ void ArchiveFileInfo::update() {
 
     mIsValid = !possibleSystemsList.isEmpty();
 
-    if ( possibleSystemsList.size() == 1 ) {
+    if( possibleSystemsList.size() == 1 ) {
         mSystem = possibleSystemsList.at( 0 );
     }
 
     mTitle = nextFileName().left( nextFileName().lastIndexOf( '.' ) );
     mFullFilePath = QStringLiteral( "zip://" ) + canonicalFilePath()
-            + ArchiveFileInfo::delimiter() + nextFileName();
+                    + ArchiveFileInfo::delimiter() + nextFileName();
 
 }
 

@@ -8,15 +8,14 @@
 
 namespace Library {
 
-    class BiosFileInfo : public GameFileInfo
-    {
-    public:
+    class BiosFileInfo : public GameFileInfo {
+        public:
 
-        BiosFileInfo( const QString &file );
-        BiosFileInfo( GameFileInfo &gameInfo );
+            BiosFileInfo( const QString &file );
+            BiosFileInfo( GameFileInfo &gameInfo );
 
-    private:
-        QString mBiosName;
+        private:
+            QString mBiosName;
 
     };
 

@@ -268,7 +268,7 @@ void LibraryModel::handleUpdateGame( const GameData metaData ) {
     query.prepare( updateDataStatement );
 
     query.addBindValue( metaData.artworkUrl );
-    query.addBindValue( metaData.crc32Checksum);
+    query.addBindValue( metaData.crc32Checksum );
 
     if( !query.exec() ) {
         qCWarning( phxLibrary ) << "Sql Update Error: " << query.lastError().text();

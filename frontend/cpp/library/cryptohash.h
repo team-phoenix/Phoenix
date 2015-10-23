@@ -5,28 +5,27 @@
 
 namespace Library {
 
-    class CryptoHash
-    {
-    public:
-        enum Hash {
-            Crc32 = 0,
-            Sha1,
-        };
+    class CryptoHash {
+        public:
+            enum Hash {
+                Crc32 = 0,
+                Sha1,
+            };
 
-        CryptoHash( const Hash hash );
+            CryptoHash( const Hash hash );
 
-        void addData( const char *data, const int length );
+            void addData( const char *data, const int length );
 
-        void addData( const QByteArray &data );
+            void addData( const QByteArray &data );
 
-        bool addData( QIODevice *device );
+            bool addData( QIODevice *device );
 
-        QByteArray result() const;
+            QByteArray result() const;
 
-    private:
-        Hash mHash;
-        ulong mCrc32Result;
-        QByteArray mResult;
+        private:
+            Hash mHash;
+            ulong mCrc32Result;
+            QByteArray mResult;
     };
 
 }

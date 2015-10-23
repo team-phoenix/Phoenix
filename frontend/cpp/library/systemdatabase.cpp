@@ -29,7 +29,7 @@ void SystemDatabase::open() {
     db.setDatabaseName( filePath );
 
     auto open = db.open();
-    Q_ASSERT_X( open, Q_FUNC_INFO, "db.open() == false") ;
+    Q_ASSERT_X( open, Q_FUNC_INFO, "db.open() == false" ) ;
 
     qCDebug( phxLibrary, "Opening library database %s", qPrintable( db.databaseName() ) );
 }

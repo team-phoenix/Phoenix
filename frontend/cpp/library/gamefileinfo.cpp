@@ -11,24 +11,24 @@ GameFileInfo::GameFileInfo( const QString &file )
       mTitle( canonicalFilePath().remove( canonicalPath() ).remove( 0, 1 ).remove( QStringLiteral( "." ) + suffix() ) ),
       mFullFilePath( canonicalFilePath() ),
       mQuery( QSqlQuery( SystemDatabase::database() ) ),
-      mTimePlayed( QStringLiteral( "00:00" ) )
-{
+      mTimePlayed( QStringLiteral( "00:00" ) ) {
 
-    if ( QStringLiteral( "zip" ) == suffix() ) {
+    if( QStringLiteral( "zip" ) == suffix() ) {
         mFileType = FileType::ZipFile;
-    } else if ( QStringLiteral( "cue" ) == suffix() ) {
+    } else if( QStringLiteral( "cue" ) == suffix() ) {
         mFileType = FileType::CueFile;
-    } else if ( QStringLiteral( "bin" ) == suffix() ) {
+    } else if( QStringLiteral( "bin" ) == suffix() ) {
 
         QString biosName;
-        if ( isBios( biosName ) ) {
+
+        if( isBios( biosName ) ) {
             mFileType = FileType::BiosFile;
             mTitle = biosName;
         }
 
-    } else if ( QStringLiteral( "7z" ) == suffix() ) {
+    } else if( QStringLiteral( "7z" ) == suffix() ) {
 
-    } else if ( QStringLiteral( "iso" ) == suffix() ) {
+    } else if( QStringLiteral( "iso" ) == suffix() ) {
 
     } else {
         mFileType = FileType::GameFile;
@@ -36,56 +36,48 @@ GameFileInfo::GameFileInfo( const QString &file )
     }
 }
 
-QString GameFileInfo::system() const
-{
+QString GameFileInfo::system() const {
     return mSystem;
 }
 
-QString GameFileInfo::crc32CheckSum() const
-{
+QString GameFileInfo::crc32CheckSum() const {
     return mCrc32Checksum;
 }
 
-QString GameFileInfo::title() const
-{
+QString GameFileInfo::title() const {
     return mTitle;
 }
 
-QString GameFileInfo::fullFilePath() const
-{
+QString GameFileInfo::fullFilePath() const {
     return mFullFilePath;
 }
 
-QString GameFileInfo::timePlayed() const
-{
+QString GameFileInfo::timePlayed() const {
     return mTimePlayed;
 }
 
-QString GameFileInfo::crc32Checksum() const
-{
+QString GameFileInfo::crc32Checksum() const {
     return mCrc32Checksum;
 }
 
-QString GameFileInfo::artworkUrl() const
-{
+QString GameFileInfo::artworkUrl() const {
     return mArtworkUrl;
 }
 
-GameFileInfo::FileType GameFileInfo::fileType() const
-{
+GameFileInfo::FileType GameFileInfo::fileType() const {
     return mFileType;
 }
 
 QStringList GameFileInfo::gameFilter() {
     static QStringList filter;
 
-    if ( filter.isEmpty() ) {
+    if( filter.isEmpty() ) {
         auto query = QSqlQuery( SystemDatabase::database() );
 
         auto exec = query.exec( QStringLiteral( "SELECT DISTINCT extension FROM extensions" ) );
         Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( query.lastError().text() ) );
 
-        while ( query.next() ) {
+        while( query.next() ) {
             auto extension = query.value( 0 ).toString();
             filter.append( QStringLiteral( "*." ) + extension );
         }
@@ -94,10 +86,10 @@ QStringList GameFileInfo::gameFilter() {
     return filter;
 }
 
-QStringList GameFileInfo::getAvailableSystems(const QString &extension) {
+QStringList GameFileInfo::getAvailableSystems( const QString &extension ) {
     mQuery.prepare( QStringLiteral( "SELECT DISTINCT systems.system FROM systems" )
-                                 + QStringLiteral( " INNER JOIN extensions ON systems.system=extensions.system" )
-                                 + QStringLiteral( " WHERE extensions.extension = ?" ) );
+                    + QStringLiteral( " INNER JOIN extensions ON systems.system=extensions.system" )
+                    + QStringLiteral( " WHERE extensions.extension = ?" ) );
 
     mQuery.addBindValue( extension );
 
@@ -127,8 +119,8 @@ void GameFileInfo::cache( const QString &location ) {
 void GameFileInfo::prepareMetadata() {
 
     static const QString statement = QStringLiteral( "SELECT romID FROM " )
-            + MetaDataDatabase::tableRoms
-            + QStringLiteral( " WHERE romHashCRC = ?" );
+                                     + MetaDataDatabase::tableRoms
+                                     + QStringLiteral( " WHERE romHashCRC = ?" );
 
     QSqlQuery query( MetaDataDatabase::database() );
 
@@ -161,7 +153,7 @@ void GameFileInfo::fillMetadata( int romID, QSqlQuery &query ) {
 
             mArtworkUrl = query.value( 0 ).toString();
 
-            if ( mSystem.isEmpty() ) {
+            if( mSystem.isEmpty() ) {
                 mSystem = query.value( 1 ).toString();
             }
 
@@ -187,6 +179,7 @@ GameFileInfo::HeaderData GameFileInfo::getPossibleHeaders( const QStringList &po
         Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( mQuery.lastError().text() ) );
 
         int count = 0;
+
         while( mQuery.next() ) {
 
             headerData.byteLength = mQuery.value( 0 ).toInt();
@@ -196,6 +189,7 @@ GameFileInfo::HeaderData GameFileInfo::getPossibleHeaders( const QStringList &po
 
             count++;
         }
+
         Q_ASSERT_X( count == 1, Q_FUNC_INFO, "count != 1" );
     }
 
@@ -223,7 +217,7 @@ QString GameFileInfo::getCheckSum( const QString &filePath ) {
 void GameFileInfo::update( const QString &extension ) {
     auto possibleSystemsList = getAvailableSystems( extension );
 
-    if ( possibleSystemsList.size() == 1 ) {
+    if( possibleSystemsList.size() == 1 ) {
         mSystem = possibleSystemsList.at( 0 );
     } else {
         auto header = getPossibleHeaders( possibleSystemsList );
@@ -256,7 +250,7 @@ bool GameFileInfo::isBios( QString &biosName ) {
     auto exec = mQuery.exec();
     Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( mQuery.lastError().text() ) );
 
-    if ( mQuery.first() ) {
+    if( mQuery.first() ) {
         biosName = mQuery.value( 0 ).toString();
 
         return !biosName.isEmpty();

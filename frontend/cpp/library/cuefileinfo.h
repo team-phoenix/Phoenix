@@ -8,15 +8,15 @@
 namespace Library {
 
     class CueFileInfo : public GameFileInfo {
-    public:
-
-        CueFileInfo( const QString &file );
-        CueFileInfo( GameFileInfo &gameInfo );
+        public:
         
-        bool isValid();
+            CueFileInfo( const QString &file );
+            CueFileInfo( GameFileInfo &gameInfo );
 
-    private:
-        QStringList files();
+            bool isValid();
+
+        private:
+            QStringList files();
     };
 
 }

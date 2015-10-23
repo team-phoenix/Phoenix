@@ -3,22 +3,21 @@
 using namespace Library;
 
 CueFileInfo::CueFileInfo( const QString &file )
-    : GameFileInfo( file )
-{
+    : GameFileInfo( file ) {
 
 }
 
 
-CueFileInfo::CueFileInfo(GameFileInfo &gameInfo)
-    : CueFileInfo( gameInfo.canonicalFilePath() )
-{
+CueFileInfo::CueFileInfo( GameFileInfo &gameInfo )
+    : CueFileInfo( gameInfo.canonicalFilePath() ) {
 
 }
 
 bool CueFileInfo::isValid() {
 
     auto gameFiles = files();
-    if ( gameFiles.isEmpty() ) {
+
+    if( gameFiles.isEmpty() ) {
         return false;
     }
 
@@ -26,10 +25,10 @@ bool CueFileInfo::isValid() {
 
     auto possibleSystemsList = getAvailableSystems( suffix() );
 
-    if ( possibleSystemsList.size() == 1 ) {
+    if( possibleSystemsList.size() == 1 ) {
         mSystem = possibleSystemsList.at( 0 );
     } else {
-        if ( exists ) {
+        if( exists ) {
             auto localFile = gameFiles.first();
 
             auto gameInfo = GameFileInfo( localFile );
