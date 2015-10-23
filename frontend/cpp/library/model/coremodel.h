@@ -1,5 +1,5 @@
-#ifndef DEFAULTCOREMODEL_H
-#define DEFAULTCOREMODEL_H
+#ifndef COREMODEL_H
+#define COREMODEL_H
 
 #include "frontendcommon.h"
 
@@ -8,12 +8,19 @@
 #include "frontendcommon.h"
 #include "phxpaths.h"
 
+/*
+ * Used from QML to display available systems (role: "system", a QString).
+ * and a secondary model of what cores are available for that system (role: "cores", a QStringList).
+ * The default core the user has chosen for a given system is given in the form of an index into the "cores" model.
+ * Access it with role: "defaultCoreIndex", an int.
+ */
+
 namespace Library {
 
-    class DefaultCoreModel : public QAbstractTableModel {
+    class CoreModel : public QAbstractTableModel {
             Q_OBJECT
         public:
-            explicit DefaultCoreModel( QObject *parent = 0 );
+            explicit CoreModel( QObject *parent = 0 );
 
             enum DefaultCoreRoles {
                 SystemRole = Qt::UserRole + 1,
@@ -36,16 +43,20 @@ namespace Library {
         signals:
 
         public slots:
+
+            // Immediately save new default core to user db
             void save( const QString system, const QString core );
+
+            // Check that the given core exists on the filesystem where it should be
             bool coreExists( QString defaultCore );
 
         protected:
             QHash<int, QByteArray> mRoleNames;
-            QStringList systemToDefaultCoreMap;
+            QStringList systemList;
             QMap<QString, QStringList> systemToCoresMap;
             QMap<QString, int> defaultCoreIndex;
     };
 
 }
 
-#endif // DEFAULTCOREMODEL_H
+#endif // COREMODEL_H

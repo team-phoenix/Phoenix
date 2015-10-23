@@ -58,7 +58,7 @@ include( deployment.pri )
                cpp/library/fileinfo/cuefileinfo.cpp \
                cpp/library/fileinfo/gamefileinfo.cpp \
                cpp/library/model/collectionsmodel.cpp \
-               cpp/library/model/defaultcoremodel.cpp \
+               cpp/library/model/coremodel.cpp \
                cpp/library/model/librarymodel.cpp \
                cpp/library/model/libraryworker.cpp \
                cpp/library/model/platformsmodel.cpp
@@ -75,7 +75,7 @@ include( deployment.pri )
                cpp/library/fileinfo/cuefileinfo.h \
                cpp/library/fileinfo/gamefileinfo.h \
                cpp/library/model/collectionsmodel.h \
-               cpp/library/model/defaultcoremodel.h \
+               cpp/library/model/coremodel.h \
                cpp/library/model/librarymodel.h \
                cpp/library/model/libraryworker.h \
                cpp/library/model/platformsmodel.h \

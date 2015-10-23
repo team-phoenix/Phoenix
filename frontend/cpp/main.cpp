@@ -1,7 +1,7 @@
 #include "frontendcommon.h"
 
 #include "collectionsmodel.h"
-#include "defaultcoremodel.h"
+#include "coremodel.h"
 #include "gamelauncher.h"
 #include "imagecacher.h"
 #include "inputmanager.h"
@@ -163,7 +163,7 @@ int main( int argc, char *argv[] ) {
     qmlRegisterType<Library::PlatformsModel>( "vg.phoenix.models", 1, 0, "PlatformsModel" );
     qmlRegisterType<Library::CollectionsModel>( "vg.phoenix.models", 1, 0, "CollectionsModel" );
     qmlRegisterType<Library::LibraryModel>( "vg.phoenix.models", 1, 0, "LibraryModel" );
-    qmlRegisterType<Library::DefaultCoreModel>( "vg.phoenix.models", 1, 0, "DefaultCoreModel" );
+    qmlRegisterType<Library::CoreModel>( "vg.phoenix.models", 1, 0, "CoreModel" );
     qmlRegisterType<Library::ImageCacher>( "vg.phoenix.cache", 1, 0, "ImageCacher" );
     qmlRegisterType<GameLauncher>( "vg.phoenix.launcher", 1, 0, "GameLauncher" );
 

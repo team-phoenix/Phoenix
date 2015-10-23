@@ -11,7 +11,7 @@ const QString GameLauncher::getDefaultCore( const QString system ) {
     // Let the constructor run so it'll make sure default cores are set for any new systems that might not have had their
     // defaults written to the user database yet because the user has not opened that settings page
     // Ugly hack or good idea?
-    DefaultCoreModel *model = new DefaultCoreModel();
+    CoreModel *model = new CoreModel();
     delete model;
 
     const static QString statement = QStringLiteral( "SELECT defaultCore FROM defaultCores WHERE system = ?" );

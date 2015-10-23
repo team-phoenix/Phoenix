@@ -7,6 +7,10 @@
 #include "collectionsmodel.h"
 #include "logging.h"
 
+/*
+ * Used from QML to display collections of games stored in the user database.
+ */
+
 namespace Library {
 
     class CollectionsModel : public QSqlTableModel {
@@ -22,7 +26,7 @@ namespace Library {
                 CollectionNameRole,
             };
 
-            Q_ENUMS( CollectionRoles );
+            Q_ENUMS( CollectionRoles )
 
             virtual QHash<int, QByteArray> roleNames() const override;
             virtual bool select() override;

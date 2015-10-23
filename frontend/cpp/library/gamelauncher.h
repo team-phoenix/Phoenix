@@ -3,7 +3,7 @@
 
 #include "frontendcommon.h"
 
-#include "defaultcoremodel.h"
+#include "coremodel.h"
 #include "userdatabase.h"
 #include "libretrodatabase.h"
 #include "logging.h"

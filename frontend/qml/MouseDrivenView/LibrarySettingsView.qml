@@ -24,7 +24,7 @@ Item {
                 anchors.fill: parent;
                 anchors.rightMargin: 10;
                 spacing: 3;
-                model: DefaultCoreModel { }
+                model: CoreModel { }
 
                 delegate: Item {
                     anchors { left: parent.left; right: parent.right; }

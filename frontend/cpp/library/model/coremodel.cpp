@@ -1,8 +1,8 @@
-#include "defaultcoremodel.h"
+#include "coremodel.h"
 
 using namespace Library;
 
-DefaultCoreModel::DefaultCoreModel( QObject *parent )
+CoreModel::CoreModel( QObject *parent )
     : QAbstractTableModel( parent ) {
 
     mRoleNames.insert( DefaultCoreRoles::CoresRole, QByteArrayLiteral( "cores" ) );
@@ -26,12 +26,12 @@ DefaultCoreModel::DefaultCoreModel( QObject *parent )
             defaultCores.insert( system, defaultCore );
         }
 
-        systemToDefaultCoreMap.append( system );
+        systemList.append( system );
     }
 
     systemDBQuery.finish();
 
-    systemToDefaultCoreMap.sort( Qt::CaseInsensitive );
+    systemList.sort( Qt::CaseInsensitive );
 
     // Grab the user's default core choices from the user DB
     auto userDB = UserDatabase::instance()->database();
@@ -89,7 +89,7 @@ DefaultCoreModel::DefaultCoreModel( QObject *parent )
     systemDBQuery.finish();
 
     // Sort cores, store index of default core after the list is sorted
-    for( auto system : systemToDefaultCoreMap ) {
+    for( auto system : systemList ) {
         auto defaultCore = systemToCoresMap[ system ][ 0 ];
 
         QStringList &list = systemToCoresMap[ system ];
@@ -106,15 +106,15 @@ DefaultCoreModel::DefaultCoreModel( QObject *parent )
 
 }
 
-int DefaultCoreModel::rowCount( const QModelIndex &parent ) const {
+int CoreModel::rowCount( const QModelIndex &parent ) const {
     if( parent.isValid() ) {
         return 0;
     }
 
-    return systemToDefaultCoreMap.size();
+    return systemList.size();
 }
 
-int DefaultCoreModel::columnCount( const QModelIndex &parent ) const {
+int CoreModel::columnCount( const QModelIndex &parent ) const {
     if( parent.isValid() ) {
         return 0;
     }
@@ -122,22 +122,22 @@ int DefaultCoreModel::columnCount( const QModelIndex &parent ) const {
     return 2;
 }
 
-QVariant DefaultCoreModel::data( const QModelIndex &index, int role ) const {
-    if( !index.isValid() || index.row() >= systemToDefaultCoreMap.size() || index.row() < 0 ) {
+QVariant CoreModel::data( const QModelIndex &index, int role ) const {
+    if( !index.isValid() || index.row() >= systemList.size() || index.row() < 0 ) {
         return QVariant();
     }
 
     switch( role ) {
         case CoresRole: {
-            auto &system = systemToDefaultCoreMap.at( index.row() );
+            auto &system = systemList.at( index.row() );
             return systemToCoresMap[ system ];
         }
 
         case SystemRole:
-            return systemToDefaultCoreMap[ index.row() ];
+            return systemList[ index.row() ];
 
         case DefaultCoreIndexRole: {
-            auto &system = systemToDefaultCoreMap.at( index.row() );
+            auto &system = systemList.at( index.row() );
             return defaultCoreIndex[ system ];
         }
 
@@ -148,11 +148,11 @@ QVariant DefaultCoreModel::data( const QModelIndex &index, int role ) const {
 
 }
 
-QHash<int, QByteArray> DefaultCoreModel::roleNames() const {
+QHash<int, QByteArray> CoreModel::roleNames() const {
     return mRoleNames;
 }
 
-void DefaultCoreModel::save( const QString system, const QString defaultCore ) {
+void CoreModel::save( const QString system, const QString defaultCore ) {
     auto db = UserDatabase::instance()->database();
     auto transaction = db.transaction();
     Q_ASSERT_X( transaction, Q_FUNC_INFO, qPrintable( db.lastError().text() ) );
@@ -168,7 +168,7 @@ void DefaultCoreModel::save( const QString system, const QString defaultCore ) {
 
 }
 
-bool DefaultCoreModel::coreExists( QString core ) {
+bool CoreModel::coreExists( QString core ) {
     QString defaultCore;
 #if defined( Q_OS_WIN )
     defaultCore = PhxPaths::coreLocation() % QStringLiteral( "/" ) % core % QStringLiteral( ".dll" );
