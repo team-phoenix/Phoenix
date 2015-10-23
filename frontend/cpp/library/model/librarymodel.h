@@ -3,7 +3,7 @@
 
 #include "frontendcommon.h"
 
-#include "libraryinternaldatabase.h"
+#include "userdatabase.h"
 #include "libraryworker.h"
 #include "logging.h"
 
@@ -153,8 +153,8 @@ namespace Library {
 
         private:
 
-            explicit LibraryModel( LibraryInternalDatabase &db, QObject *parent = 0 );
-            explicit LibraryModel( LibraryInternalDatabase *db, QObject *parent = 0 );
+            explicit LibraryModel( UserDatabase &db, QObject *parent = 0 );
+            explicit LibraryModel( UserDatabase *db, QObject *parent = 0 );
 
             // Normal Variables
             QStringList mFileFilter;

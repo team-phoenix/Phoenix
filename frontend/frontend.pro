@@ -43,42 +43,43 @@ include( deployment.pri )
 
     # Include our stuff
     INCLUDEPATH += ../backend ../backend/input
-    INCLUDEPATH += cpp/library cpp
+    INCLUDEPATH += cpp cpp/library cpp/library/database cpp/library/fileinfo cpp/library/model cpp/theme
 
     SOURCES += cpp/main.cpp \
-               cpp/library/librarymodel.cpp \
-               cpp/library/libraryinternaldatabase.cpp \
-               cpp/library/metadatadatabase.cpp \
-               cpp/library/libraryworker.cpp \
-               cpp/library/imagecacher.cpp \
-               cpp/library/platformsmodel.cpp \
-               cpp/library/phxpaths.cpp \
-               cpp/library/collectionsmodel.cpp \
-               cpp/library/systemdatabase.cpp \
                cpp/library/gamelauncher.cpp \
-               cpp/library/gamefileinfo.cpp \
-               cpp/library/cuefileinfo.cpp \
-               cpp/library/biosfileinfo.cpp \
-               cpp/library/archivefileinfo.cpp \
-               cpp/library/cryptohash.cpp \
-                cpp/library/defaultcoremodel.cpp
+               cpp/library/imagecacher.cpp \
+               cpp/library/phxpaths.cpp \
+               cpp/library/database/metadatadatabase.cpp \
+               cpp/library/database/systemdatabase.cpp \
+               cpp/library/database/userdatabase.cpp \
+               cpp/library/fileinfo/archivefileinfo.cpp \
+               cpp/library/fileinfo/biosfileinfo.cpp \
+               cpp/library/fileinfo/cryptohash.cpp \
+               cpp/library/fileinfo/cuefileinfo.cpp \
+               cpp/library/fileinfo/gamefileinfo.cpp \
+               cpp/library/model/collectionsmodel.cpp \
+               cpp/library/model/defaultcoremodel.cpp \
+               cpp/library/model/librarymodel.cpp \
+               cpp/library/model/libraryworker.cpp \
+               cpp/library/model/platformsmodel.cpp
 
-    HEADERS += cpp/library/librarymodel.h \
-               cpp/library/libraryinternaldatabase.h \
-               cpp/library/metadatadatabase.h \
-               cpp/library/libraryworker.h \
+    HEADERS += cpp/library/gamelauncher.h \
                cpp/library/imagecacher.h \
-               cpp/library/platformsmodel.h \
                cpp/library/phxpaths.h \
-               cpp/library/collectionsmodel.h \
-               cpp/library/systemdatabase.h \
-               cpp/library/gamelauncher.h \
-               cpp/library/gamefileinfo.h \
-               cpp/library/cuefileinfo.h \
-               cpp/library/biosfileinfo.h \
-               cpp/library/archivefileinfo.h \
-               cpp/library/cryptohash.h \
-               cpp/library/defaultcoremodel.h
+               cpp/library/database/metadatadatabase.h \
+               cpp/library/database/systemdatabase.h \
+               cpp/library/database/userdatabase.h \
+               cpp/library/fileinfo/archivefileinfo.h \
+               cpp/library/fileinfo/biosfileinfo.h \
+               cpp/library/fileinfo/cryptohash.h \
+               cpp/library/fileinfo/cuefileinfo.h \
+               cpp/library/fileinfo/gamefileinfo.h \
+               cpp/library/model/collectionsmodel.h \
+               cpp/library/model/defaultcoremodel.h \
+               cpp/library/model/librarymodel.h \
+               cpp/library/model/libraryworker.h \
+               cpp/library/model/platformsmodel.h \
+               cpp/theme/phoenixtheme.h
 
     PRECOMPILED_HEADER = cpp/frontendcommon.h
 

@@ -1,7 +1,7 @@
 #ifndef CRYPTOHASH_H
 #define CRYPTOHASH_H
 
-#include <QIODevice>
+#include "frontendcommon.h"
 
 namespace Library {
 

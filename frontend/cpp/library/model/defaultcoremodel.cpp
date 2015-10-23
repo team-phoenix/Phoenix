@@ -34,10 +34,10 @@ DefaultCoreModel::DefaultCoreModel( QObject *parent )
     systemToDefaultCoreMap.sort( Qt::CaseInsensitive );
 
     // Grab the user's default core choices from the user DB
-    auto userDB = LibraryInternalDatabase::instance()->database();
+    auto userDB = UserDatabase::instance()->database();
     auto userDBQuery = QSqlQuery( userDB );
     execStatus = userDBQuery.exec( QStringLiteral( "SELECT DISTINCT system, defaultCore FROM " ) +
-                                   LibraryInternalDatabase::tableDefaultCores + QStringLiteral( ";" ) );
+                                   UserDatabase::tableDefaultCores + QStringLiteral( ";" ) );
     Q_ASSERT_X( execStatus, Q_FUNC_INFO, qPrintable( userDBQuery.lastError().text() ) );
 
     while( userDBQuery.next() ) {
@@ -58,7 +58,7 @@ DefaultCoreModel::DefaultCoreModel( QObject *parent )
     for( auto system : defaultCores.keys() ) {
         if( !systemToCoresMap.contains( system ) ) {
             qCDebug( phxLibrary ) << "Adding missing system" << system << "and default core" << defaultCores[ system ] << "to user database...";
-            execStatus = userDBQuery.exec( QStringLiteral( "INSERT INTO " ) + LibraryInternalDatabase::tableDefaultCores +
+            execStatus = userDBQuery.exec( QStringLiteral( "INSERT INTO " ) + UserDatabase::tableDefaultCores +
                                            QString( " (system, defaultCore) VALUES (\'%1\', \'%2');" ).arg( system, defaultCores[ system ] ) );
             Q_ASSERT_X( execStatus, Q_FUNC_INFO, qPrintable( userDBQuery.lastError().text() ) );
             systemToCoresMap.insert( system, QStringList{ defaultCores[ system ] } );
@@ -153,7 +153,7 @@ QHash<int, QByteArray> DefaultCoreModel::roleNames() const {
 }
 
 void DefaultCoreModel::save( const QString system, const QString defaultCore ) {
-    auto db = LibraryInternalDatabase::instance()->database();
+    auto db = UserDatabase::instance()->database();
     auto transaction = db.transaction();
     Q_ASSERT_X( transaction, Q_FUNC_INFO, qPrintable( db.lastError().text() ) );
 

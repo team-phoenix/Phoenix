@@ -3,16 +3,16 @@
 using namespace Library;
 
 LibraryModel::LibraryModel( QObject *parent )
-    : LibraryModel( LibraryInternalDatabase::instance(), parent ) {
+    : LibraryModel( UserDatabase::instance(), parent ) {
 
 }
 
-LibraryModel::LibraryModel( LibraryInternalDatabase *db, QObject *parent )
+LibraryModel::LibraryModel( UserDatabase *db, QObject *parent )
     : LibraryModel( *db, parent ) {
 
 }
 
-LibraryModel::LibraryModel( LibraryInternalDatabase &db, QObject *parent )
+LibraryModel::LibraryModel( UserDatabase &db, QObject *parent )
     : QSqlTableModel( parent, db.database() ),
       mWorkerThread( this ),
       mFilterCollection( false ),
@@ -37,7 +37,7 @@ LibraryModel::LibraryModel( LibraryInternalDatabase &db, QObject *parent )
     mRoleNames.insert( CoreFilePathRole, QByteArrayLiteral( "coreFilePath" ) );
 
     setEditStrategy( QSqlTableModel::OnManualSubmit );
-    setTable( LibraryInternalDatabase::tableName );
+    setTable( UserDatabase::tableName );
     select();
 
 
@@ -160,7 +160,7 @@ void LibraryModel::updateCount() {
 
     QSqlQuery query( database() );
 
-    query.exec( QStringLiteral( "SELECT Count(*) FROM " ) + LibraryInternalDatabase::tableName );
+    query.exec( QStringLiteral( "SELECT Count(*) FROM " ) + UserDatabase::tableName );
 
     while( query.next() ) {
         qmlCount = query.value( 0 ).toInt();
@@ -259,7 +259,7 @@ void LibraryModel::handleUpdateGame( const GameData metaData ) {
     transaction();
 
     static const auto updateDataStatement = QStringLiteral( "UPDATE " )
-                                            + LibraryInternalDatabase::tableName
+                                            + UserDatabase::tableName
                                             + QStringLiteral( " SET artworkUrl = ?" )
                                             + QStringLiteral( " WHERE crc32Checksum = ? " );
 
@@ -294,21 +294,21 @@ void LibraryModel::handleUpdateGame( const GameData metaData ) {
 
 QString LibraryModel::selectStatement() const {
     static const auto collectionFilterStatement = QStringLiteral( "SELECT " )
-            + LibraryInternalDatabase::tableName
+            + UserDatabase::tableName
             + QStringLiteral( ".* FROM " )
-            + LibraryInternalDatabase::tableName
+            + UserDatabase::tableName
             + QStringLiteral( " INNER JOIN " )
-            + LibraryInternalDatabase::tableCollectionMappings
+            + UserDatabase::tableCollectionMappings
             + QStringLiteral( " ON " )
-            + LibraryInternalDatabase::tableName
+            + UserDatabase::tableName
             + QStringLiteral( ".rowIndex = " )
-            + LibraryInternalDatabase::tableCollectionMappings
+            + UserDatabase::tableCollectionMappings
             + QStringLiteral( ".rowIndex JOIN " )
-            + LibraryInternalDatabase::tableCollections
+            + UserDatabase::tableCollections
             + QStringLiteral( " ON " )
-            + LibraryInternalDatabase::tableCollections
+            + UserDatabase::tableCollections
             + QStringLiteral( ".collectionID = " )
-            + LibraryInternalDatabase::tableCollectionMappings
+            + UserDatabase::tableCollectionMappings
             + QStringLiteral( ".collectionID" );
 
     auto select = collectionFilterStatement + " WHERE " + filter();
@@ -323,7 +323,7 @@ QString LibraryModel::selectStatement() const {
 void LibraryModel::handleInsertGame( const GameData importData ) {
 
     static const auto statement = QStringLiteral( "INSERT INTO " )
-                                  + LibraryInternalDatabase::tableName
+                                  + UserDatabase::tableName
                                   + QStringLiteral( " (title, system, absoluteFilePath, timePlayed, crc32Checksum, artworkUrl) " )
                                   + QStringLiteral( "VALUES (?,?,?,?,?,?)" );
 
@@ -406,10 +406,10 @@ QString LibraryModel::createFilter() {
         mFilterCollection = key.contains( QStringLiteral( "collections" ) );
         QString comparison;
 
-        if( key == LibraryInternalDatabase::tableName + QStringLiteral( ".title" ) ) {
+        if( key == UserDatabase::tableName + QStringLiteral( ".title" ) ) {
             comparison = QStringLiteral( "LIKE ?" );
-        } else if( key == LibraryInternalDatabase::tableCollections + QStringLiteral( ".collectionID" )
-                   || key == LibraryInternalDatabase::tableName + QStringLiteral( ".system" ) ) {
+        } else if( key == UserDatabase::tableCollections + QStringLiteral( ".collectionID" )
+                   || key == UserDatabase::tableName + QStringLiteral( ".system" ) ) {
             comparison = QStringLiteral( "= ?" );
         }
 
@@ -484,7 +484,7 @@ void LibraryModel::clearDatabase() {
     transaction();
     QSqlQuery query( database() );
 
-    if( !query.exec( QStringLiteral( "DELETE FROM " ) + LibraryInternalDatabase::tableName ) ) {
+    if( !query.exec( QStringLiteral( "DELETE FROM " ) + UserDatabase::tableName ) ) {
         qDebug() << "SQLITE Deletion Error: " << query.lastError().text();
         return;
     }

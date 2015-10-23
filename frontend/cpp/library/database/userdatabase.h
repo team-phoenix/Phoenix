@@ -1,5 +1,5 @@
-#ifndef LIBRARYINTERNALDATABASE_H
-#define LIBRARYINTERNALDATABASE_H
+#ifndef USERDATABASE_H
+#define USERDATABASE_H
 
 #include "frontendcommon.h"
 
@@ -8,28 +8,28 @@
 
 namespace Library {
 
-    class LibraryInternalDatabase {
+    class UserDatabase {
 
         public:
 
-            class LibraryDatabasePointer {
+            class UserDatabasePointer {
                 public:
-                    LibraryDatabasePointer( LibraryInternalDatabase *db )
+                    UserDatabasePointer( UserDatabase *db )
                         : mPtr( db ) {
 
                     }
 
-                    LibraryInternalDatabase *get() {
+                    UserDatabase *get() {
                         return mPtr;
                     }
 
-                    ~LibraryDatabasePointer()  {
+                    ~UserDatabasePointer()  {
                         mPtr->close();
                         delete mPtr;
                     }
 
                 private:
-                    LibraryInternalDatabase *mPtr;
+                    UserDatabase *mPtr;
             };
 
             static const QString tableVersion;
@@ -39,7 +39,7 @@ namespace Library {
             static const QString tableCollections;
             static const QString tableDefaultCores;
 
-            static LibraryInternalDatabase *instance();
+            static UserDatabase *instance();
 
             QSqlDatabase &database();
 
@@ -59,9 +59,9 @@ namespace Library {
         private:
             QSqlDatabase db;
 
-            LibraryInternalDatabase();
-            LibraryInternalDatabase( LibraryInternalDatabase const & ) = delete;
-            LibraryInternalDatabase operator =( LibraryInternalDatabase const & ) = delete;
+            UserDatabase();
+            UserDatabase( UserDatabase const & ) = delete;
+            UserDatabase operator =( UserDatabase const & ) = delete;
 
             // Creates the table.
             bool createSchema();
@@ -73,4 +73,4 @@ namespace Library {
     };
 }
 
-#endif // LIBRARYINTERNALDATABASE_H
+#endif // USERDATABASE_H

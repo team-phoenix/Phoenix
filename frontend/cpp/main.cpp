@@ -1,17 +1,17 @@
 #include "frontendcommon.h"
 
-#include "videoitem.h"
+#include "collectionsmodel.h"
+#include "defaultcoremodel.h"
+#include "gamelauncher.h"
+#include "imagecacher.h"
 #include "inputmanager.h"
 #include "librarymodel.h"
 #include "libraryworker.h"
-#include "imagecacher.h"
-#include "platformsmodel.h"
-#include "collectionsmodel.h"
-#include "phxpaths.h"
-#include "systemdatabase.h"
 #include "metadatadatabase.h"
-#include "defaultcoremodel.h"
-#include "gamelauncher.h"
+#include "phxpaths.h"
+#include "platformsmodel.h"
+#include "systemdatabase.h"
+#include "videoitem.h"
 
 // This is used to get the stack trace behind whatever debug message you want to diagnose
 // Simply change the message string below to whatever you want (partial string matching), set the breakpoint

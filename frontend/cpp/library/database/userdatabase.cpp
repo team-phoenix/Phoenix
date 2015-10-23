@@ -1,31 +1,31 @@
-#include "libraryinternaldatabase.h"
+#include "userdatabase.h"
 
 using namespace Library;
 
-const QString LibraryInternalDatabase::tableVersion = QStringLiteral( "schema_version" );
-const QString LibraryInternalDatabase::databaseName = QStringLiteral( "userdata.sqlite" );
-const QString LibraryInternalDatabase::tableName = QStringLiteral( "games" );
-const QString LibraryInternalDatabase::tableCollectionMappings = QStringLiteral( "collectionMappings" );
-const QString LibraryInternalDatabase::tableCollections = QStringLiteral( "collections" );
-const QString LibraryInternalDatabase::tableDefaultCores = QStringLiteral( "defaultCores" );
+const QString UserDatabase::tableVersion = QStringLiteral( "schema_version" );
+const QString UserDatabase::databaseName = QStringLiteral( "userdata.sqlite" );
+const QString UserDatabase::tableName = QStringLiteral( "games" );
+const QString UserDatabase::tableCollectionMappings = QStringLiteral( "collectionMappings" );
+const QString UserDatabase::tableCollections = QStringLiteral( "collections" );
+const QString UserDatabase::tableDefaultCores = QStringLiteral( "defaultCores" );
 
-LibraryInternalDatabase::LibraryInternalDatabase() {
+UserDatabase::UserDatabase() {
     open();
 }
 
-LibraryInternalDatabase *LibraryInternalDatabase::instance() {
-    static LibraryDatabasePointer instance( new LibraryInternalDatabase );
+UserDatabase *UserDatabase::instance() {
+    static UserDatabasePointer instance( new UserDatabase );
     return instance.get();
 }
 
-QSqlDatabase &LibraryInternalDatabase::database() {
+QSqlDatabase &UserDatabase::database() {
     return db;
 }
-void LibraryInternalDatabase::close() {
+void UserDatabase::close() {
     db.close();
 }
 
-void LibraryInternalDatabase::open() {
+void UserDatabase::open() {
     if( !db.isValid() ) {
         db = QSqlDatabase::addDatabase( QStringLiteral( "QSQLITE" ), QStringLiteral( "LIBRARY" ) );
 
@@ -54,7 +54,7 @@ void LibraryInternalDatabase::open() {
     }
 }
 
-bool LibraryInternalDatabase::createSchema() {
+bool UserDatabase::createSchema() {
 
     qCDebug( phxLibrary, "Initializing database schema" );
     db.transaction();
@@ -62,9 +62,9 @@ bool LibraryInternalDatabase::createSchema() {
     qCDebug( phxLibrary ) << db;
 
     QSqlQuery q( db );
-    q.exec( "CREATE TABLE " + LibraryInternalDatabase::tableVersion + " (version INTEGER NOT NULL)" );
-    q.exec( QStringLiteral( "INSERT INTO " ) + LibraryInternalDatabase::tableVersion + QStringLiteral( " (version) VALUES (0)" ) );
-    q.exec( QStringLiteral( "CREATE TABLE " ) + LibraryInternalDatabase::tableName + QStringLiteral( " (\n" ) +
+    q.exec( "CREATE TABLE " + UserDatabase::tableVersion + " (version INTEGER NOT NULL)" );
+    q.exec( QStringLiteral( "INSERT INTO " ) + UserDatabase::tableVersion + QStringLiteral( " (version) VALUES (0)" ) );
+    q.exec( QStringLiteral( "CREATE TABLE " ) + UserDatabase::tableName + QStringLiteral( " (\n" ) +
             QStringLiteral( "   rowIndex INTEGER PRIMARY KEY AUTOINCREMENT,\n" ) +
 
             QStringLiteral( "   \n/* game info */\n" ) +
@@ -82,31 +82,31 @@ bool LibraryInternalDatabase::createSchema() {
             QStringLiteral( "   crc32Checksum TEXT\n" ) +
             QStringLiteral( ")" ) );
 
-    q.exec( QStringLiteral( "CREATE INDEX title_index ON " ) + LibraryInternalDatabase::tableName + QStringLiteral( " (title)" ) );
-    q.exec( QStringLiteral( "CREATE INDEX favorite_index ON " ) + LibraryInternalDatabase::tableName + QStringLiteral( " (is_favorite)" ) );
+    q.exec( QStringLiteral( "CREATE INDEX title_index ON " ) + UserDatabase::tableName + QStringLiteral( " (title)" ) );
+    q.exec( QStringLiteral( "CREATE INDEX favorite_index ON " ) + UserDatabase::tableName + QStringLiteral( " (is_favorite)" ) );
 
 
     // Create Collections Mapping Table
-    q.exec( QStringLiteral( "CREATE TABLE " ) + LibraryInternalDatabase::tableCollections + QStringLiteral( "(\n" ) +
+    q.exec( QStringLiteral( "CREATE TABLE " ) + UserDatabase::tableCollections + QStringLiteral( "(\n" ) +
             QStringLiteral( " collectionID INTEGER PRIMARY KEY AUTOINCREMENT,\n" ) +
             QStringLiteral( " collectionName TEXT UNIQUE NOT NULL\n" ) +
             QStringLiteral( ")" ) );
 
     // Create Collections Table
-    q.exec( QStringLiteral( "CREATE TABLE " ) + LibraryInternalDatabase::tableCollectionMappings + QStringLiteral( "(\n" ) +
+    q.exec( QStringLiteral( "CREATE TABLE " ) + UserDatabase::tableCollectionMappings + QStringLiteral( "(\n" ) +
             QStringLiteral( " collectionID INTEGER,\n" ) +
             QStringLiteral( " rowIndex INTEGER,\n" )  +
-            QStringLiteral( " FOREIGN KEY (collectionID) REFERENCES " ) + LibraryInternalDatabase::tableCollections +
+            QStringLiteral( " FOREIGN KEY (collectionID) REFERENCES " ) + UserDatabase::tableCollections +
             QStringLiteral( "(collectionID) ON DELETE CASCADE ON UPDATE CASCADE\n" ) +
-            QStringLiteral( " FOREIGN KEY (rowIndex) REFERENCES " ) + LibraryInternalDatabase::tableName +
+            QStringLiteral( " FOREIGN KEY (rowIndex) REFERENCES " ) + UserDatabase::tableName +
             QStringLiteral( "(rowIndex) ON DELETE CASCADE ON UPDATE CASCADE\n" ) +
             QStringLiteral( ")" ) );
 
-    q.exec( QStringLiteral( "INSERT INTO " ) + LibraryInternalDatabase::tableCollections
+    q.exec( QStringLiteral( "INSERT INTO " ) + UserDatabase::tableCollections
             + QStringLiteral( " (collectionID, collectionName) VALUES (0, 'All')" ) );
 
     // Create default core table
-    q.exec( QStringLiteral( "CREATE TABLE " ) + LibraryInternalDatabase::tableDefaultCores + QStringLiteral( "(\n" ) +
+    q.exec( QStringLiteral( "CREATE TABLE " ) + UserDatabase::tableDefaultCores + QStringLiteral( "(\n" ) +
             QStringLiteral( " system TEXT UNIQUE NOT NULL," ) +
             QStringLiteral( " defaultCore TEXT" ) +
             QStringLiteral( ")" ) );
@@ -116,7 +116,7 @@ bool LibraryInternalDatabase::createSchema() {
     return true;
 }
 
-bool LibraryInternalDatabase::loadFixtures() {
+bool UserDatabase::loadFixtures() {
     qCDebug( phxLibrary, "Loading fixtures" );
     db.transaction();
     QSqlQuery q( db );
@@ -133,7 +133,7 @@ bool LibraryInternalDatabase::loadFixtures() {
     return true;
 }
 
-int LibraryInternalDatabase::version() const {
+int UserDatabase::version() const {
     QSqlQuery q( QStringLiteral( "SELECT version FROM " )
                  + tableVersion
                  + QStringLiteral( " LIMIT 0,1" ), db );
@@ -147,6 +147,6 @@ int LibraryInternalDatabase::version() const {
     return q.value( 0 ).toInt();
 }
 
-QString LibraryInternalDatabase::filePath() const {
+QString UserDatabase::filePath() const {
     return mFilePath;
 }

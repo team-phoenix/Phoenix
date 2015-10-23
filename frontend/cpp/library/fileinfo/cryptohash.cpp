@@ -1,5 +1,4 @@
 #include "cryptohash.h"
-#include "zlib.h"
 
 using namespace Library;
 

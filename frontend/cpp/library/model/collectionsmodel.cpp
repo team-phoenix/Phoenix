@@ -3,16 +3,16 @@
 using namespace Library;
 
 CollectionsModel::CollectionsModel( QObject *parent )
-    : CollectionsModel( LibraryInternalDatabase::instance(), parent ) {
+    : CollectionsModel( UserDatabase::instance(), parent ) {
 
 }
 
-CollectionsModel::CollectionsModel( LibraryInternalDatabase *db, QObject *parent )
+CollectionsModel::CollectionsModel( UserDatabase *db, QObject *parent )
     : CollectionsModel( *db, parent ) {
 
 }
 
-CollectionsModel::CollectionsModel( LibraryInternalDatabase &db, QObject *parent )
+CollectionsModel::CollectionsModel( UserDatabase &db, QObject *parent )
     : QSqlTableModel( parent, db.database() ) {
 
     mRoleNames = QSqlTableModel::roleNames();
@@ -20,7 +20,7 @@ CollectionsModel::CollectionsModel( LibraryInternalDatabase &db, QObject *parent
     mRoleNames.insert( CollectionNameRole, QByteArrayLiteral( "collectionName" ) );
 
     setEditStrategy( QSqlTableModel::OnManualSubmit );
-    setTable( LibraryInternalDatabase::tableCollections );
+    setTable( UserDatabase::tableCollections );
     select();
 }
 
@@ -47,7 +47,7 @@ void CollectionsModel::sort( int column, Qt::SortOrder order ) {
 void CollectionsModel::append( const QVariantMap dict ) {
 
     static const auto insertCollectionStatement = QStringLiteral( "INSERT INTO " )
-            + LibraryInternalDatabase::tableCollections
+            + UserDatabase::tableCollections
             + QStringLiteral( " (collectionID, collectionName) " )
             + QStringLiteral( "VALUES (?,?)" );
 
@@ -74,7 +74,7 @@ void CollectionsModel::append( const QVariantMap dict ) {
 
 void CollectionsModel::set( const QVariant id, const QString name ) {
     static const auto updateStatement = QStringLiteral( "UPDATE " )
-                                        + LibraryInternalDatabase::tableCollections
+                                        + UserDatabase::tableCollections
                                         + " SET collectionName = ? WHERE collectionID = ?";
 
     database().transaction();
@@ -95,7 +95,7 @@ void CollectionsModel::set( const QVariant id, const QString name ) {
 
 void CollectionsModel::remove( const QVariant id ) {
     static const auto removeStatement = QStringLiteral( "DELETE FROM " )
-                                        + LibraryInternalDatabase::tableCollections
+                                        + UserDatabase::tableCollections
                                         + QStringLiteral( " WHERE collectionID = ?" );
     database().transaction();
 

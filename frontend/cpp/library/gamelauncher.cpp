@@ -15,7 +15,7 @@ const QString GameLauncher::getDefaultCore( const QString system ) {
     delete model;
 
     const static QString statement = QStringLiteral( "SELECT defaultCore FROM defaultCores WHERE system = ?" );
-    auto query = QSqlQuery( LibraryInternalDatabase::instance()->database() );
+    auto query = QSqlQuery( UserDatabase::instance()->database() );
     query.prepare( statement );
     query.addBindValue( system );
 

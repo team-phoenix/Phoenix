@@ -3,7 +3,7 @@
 
 #include "frontendcommon.h"
 
-#include "libraryinternaldatabase.h"
+#include "userdatabase.h"
 #include "systemdatabase.h"
 #include "frontendcommon.h"
 #include "phxpaths.h"

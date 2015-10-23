@@ -3,7 +3,7 @@
 
 #include "frontendcommon.h"
 
-#include "libraryinternaldatabase.h"
+#include "userdatabase.h"
 #include "collectionsmodel.h"
 #include "logging.h"
 
@@ -39,11 +39,11 @@ namespace Library {
             void setFilter( const CollectionRoles role, const QVariant id );
 
         private:
-            explicit CollectionsModel( LibraryInternalDatabase &db, QObject *parent = 0 );
+            explicit CollectionsModel( UserDatabase &db, QObject *parent = 0 );
 
-            explicit CollectionsModel( LibraryInternalDatabase *db, QObject *parent = 0 );
+            explicit CollectionsModel( UserDatabase *db, QObject *parent = 0 );
 
-            LibraryInternalDatabase *mLibraryDatabase;
+            UserDatabase *mLibraryDatabase;
             QHash<int, QByteArray> mRoleNames;
             QVariantList params;
             QHash<CollectionRoles, QVariant> filterParameterMap;
