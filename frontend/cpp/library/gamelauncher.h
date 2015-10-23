@@ -3,6 +3,8 @@
 
 #include "frontendcommon.h"
 
+#include "defaultcoremodel.h"
+#include "libraryinternaldatabase.h"
 #include "systemdatabase.h"
 #include "logging.h"
 #include "phxpaths.h"

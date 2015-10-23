@@ -1,7 +1,4 @@
 #include "defaultcoremodel.h"
-#include "systemdatabase.h"
-#include "frontendcommon.h"
-#include "phxpaths.h"
 
 using namespace Library;
 
@@ -12,44 +9,90 @@ DefaultCoreModel::DefaultCoreModel( QObject *parent )
     mRoleNames.insert( DefaultCoreRoles::SystemRole, QByteArrayLiteral( "system" ) );
     mRoleNames.insert( DefaultCoreRoles::DefaultCoreIndexRole, QByteArrayLiteral( "defaultCoreIndex" ) );
 
-    auto db = QSqlQuery( SystemDatabase::database() );
-    auto exec = db.exec( QStringLiteral( "SELECT DISTINCT system, defaultCore FROM systems;" ) );
-    Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( db.lastError().text() ) );
-
     beginResetModel();
 
-    while( db.next() ) {
-        auto system = db.value( 0 ).toString();
-        auto core = db.value( 1 ).toString();
+    auto systemDBQuery = QSqlQuery( SystemDatabase::database() );
+    auto execStatus = systemDBQuery.exec( QStringLiteral( "SELECT DISTINCT system, defaultCore FROM systems;" ) );
+    Q_ASSERT_X( execStatus, Q_FUNC_INFO, qPrintable( systemDBQuery.lastError().text() ) );
 
-        if( !core.isNull() ) {
-            coreListMap.insert( system, QStringList{ core } );
+    // Grab the system list from the system DB along with the default core
+    QMap<QString, QString> defaultCores;
+
+    while( systemDBQuery.next() ) {
+        auto system = systemDBQuery.value( 0 ).toString();
+        auto defaultCore = systemDBQuery.value( 1 ).toString();
+
+        if( !defaultCore.isNull() ) {
+            defaultCores.insert( system, defaultCore );
         }
 
-        systemList.append( system );
+        systemToDefaultCoreMap.append( system );
     }
 
-    systemList.sort( Qt::CaseInsensitive );
+    systemDBQuery.finish();
 
-    exec = db.exec( QStringLiteral( "SELECT core, system FROM cores" ) );
-    Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( db.lastError().text() ) );
+    systemToDefaultCoreMap.sort( Qt::CaseInsensitive );
 
-    while( db.next() ) {
-        auto core = db.value( 0 ).toString();
-        auto system = db.value( 1 ).toString();
+    // Grab the user's default core choices from the user DB
+    auto userDB = LibraryInternalDatabase::instance()->database();
+    auto userDBQuery = QSqlQuery( userDB );
+    execStatus = userDBQuery.exec( QStringLiteral( "SELECT DISTINCT system, defaultCore FROM " ) +
+                                   LibraryInternalDatabase::tableDefaultCores + QStringLiteral( ";" ) );
+    Q_ASSERT_X( execStatus, Q_FUNC_INFO, qPrintable( userDBQuery.lastError().text() ) );
 
-        auto &list = coreListMap[ system ];
+    while( userDBQuery.next() ) {
+        auto system = userDBQuery.value( 0 ).toString();
+        auto defaultCore = userDBQuery.value( 1 ).toString();
+
+        if( !defaultCore.isNull() ) {
+            systemToCoresMap.insert( system, QStringList{ defaultCore } );
+        }
+    }
+
+    userDBQuery.finish();
+
+    auto transaction = userDB.transaction();
+    Q_ASSERT_X( transaction, Q_FUNC_INFO, qPrintable( userDB.lastError().text() ) );
+
+    // Copy the systems and their default core over to the user database (and model list) that aren't already there
+    for( auto system : defaultCores.keys() ) {
+        if( !systemToCoresMap.contains( system ) ) {
+            qCDebug( phxLibrary ) << "Adding missing system" << system << "and default core" << defaultCores[ system ] << "to user database...";
+            execStatus = userDBQuery.exec( QStringLiteral( "INSERT INTO " ) + LibraryInternalDatabase::tableDefaultCores +
+                                           QString( " (system, defaultCore) VALUES (\'%1\', \'%2');" ).arg( system, defaultCores[ system ] ) );
+            Q_ASSERT_X( execStatus, Q_FUNC_INFO, qPrintable( userDBQuery.lastError().text() ) );
+            systemToCoresMap.insert( system, QStringList{ defaultCores[ system ] } );
+
+        }
+    }
+
+    auto commit = userDB.commit();
+    Q_ASSERT_X( commit, Q_FUNC_INFO, qPrintable( userDB.lastError().text() ) );
+
+    userDBQuery.finish();
+
+    // Grab all the other available cores from the system DB
+    execStatus = systemDBQuery.exec( QStringLiteral( "SELECT core, system FROM cores" ) );
+    Q_ASSERT_X( execStatus, Q_FUNC_INFO, qPrintable( systemDBQuery.lastError().text() ) );
+
+    while( systemDBQuery.next() ) {
+        auto core = systemDBQuery.value( 0 ).toString();
+        auto system = systemDBQuery.value( 1 ).toString();
+
+        auto &list = systemToCoresMap[ system ];
 
         if( !list.contains( core ) ) {
             list.append( core );
         }
     }
 
-    // Sort cores, store index of default core after the list is sorted
-    for( auto system : systemList ) {
-        auto defaultCore = coreListMap[ system ][ 0 ];
+    systemDBQuery.finish();
 
-        QStringList &list = coreListMap[ system ];
+    // Sort cores, store index of default core after the list is sorted
+    for( auto system : systemToDefaultCoreMap ) {
+        auto defaultCore = systemToCoresMap[ system ][ 0 ];
+
+        QStringList &list = systemToCoresMap[ system ];
         list.sort( Qt::CaseInsensitive );
         defaultCoreIndex[ system ] = list.indexOf( defaultCore );
     }
@@ -68,7 +111,7 @@ int DefaultCoreModel::rowCount( const QModelIndex &parent ) const {
         return 0;
     }
 
-    return systemList.size();
+    return systemToDefaultCoreMap.size();
 }
 
 int DefaultCoreModel::columnCount( const QModelIndex &parent ) const {
@@ -80,21 +123,21 @@ int DefaultCoreModel::columnCount( const QModelIndex &parent ) const {
 }
 
 QVariant DefaultCoreModel::data( const QModelIndex &index, int role ) const {
-    if( !index.isValid() || index.row() >= systemList.size() || index.row() < 0 ) {
+    if( !index.isValid() || index.row() >= systemToDefaultCoreMap.size() || index.row() < 0 ) {
         return QVariant();
     }
 
     switch( role ) {
         case CoresRole: {
-            auto &system = systemList.at( index.row() );
-            return coreListMap[ system ];
+            auto &system = systemToDefaultCoreMap.at( index.row() );
+            return systemToCoresMap[ system ];
         }
 
         case SystemRole:
-            return systemList[ index.row() ];
+            return systemToDefaultCoreMap[ index.row() ];
 
         case DefaultCoreIndexRole: {
-            auto &system = systemList.at( index.row() );
+            auto &system = systemToDefaultCoreMap.at( index.row() );
             return defaultCoreIndex[ system ];
         }
 
@@ -110,15 +153,12 @@ QHash<int, QByteArray> DefaultCoreModel::roleNames() const {
 }
 
 void DefaultCoreModel::save( const QString system, const QString defaultCore ) {
-    auto db = SystemDatabase::database();
+    auto db = LibraryInternalDatabase::instance()->database();
     auto transaction = db.transaction();
-    Q_ASSERT( transaction );
+    Q_ASSERT_X( transaction, Q_FUNC_INFO, qPrintable( db.lastError().text() ) );
 
     auto query = QSqlQuery( db );
-    auto statement = QString( "UPDATE systems SET defaultCore = \'%1\' WHERE system = \'%2\'" ).arg( defaultCore, system );
-    //db.prepare( statement );
-    //db.addBindValue( defaultCore );
-    //db.addBindValue( system );
+    auto statement = QString( "UPDATE defaultCores SET defaultCore = \'%1\' WHERE system = \'%2\'" ).arg( defaultCore, system );
 
     auto exec = query.exec( statement );
     Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( query.lastError().text() ) );
@@ -142,4 +182,3 @@ bool DefaultCoreModel::coreExists( QString core ) {
     // qCDebug( phxLibrary ) << defaultCore;
     return QFile::exists( defaultCore );
 }
-

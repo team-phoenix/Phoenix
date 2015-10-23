@@ -3,6 +3,11 @@
 
 #include "frontendcommon.h"
 
+#include "libraryinternaldatabase.h"
+#include "systemdatabase.h"
+#include "frontendcommon.h"
+#include "phxpaths.h"
+
 namespace Library {
 
     class DefaultCoreModel : public QAbstractTableModel {
@@ -36,8 +41,8 @@ namespace Library {
 
         protected:
             QHash<int, QByteArray> mRoleNames;
-            QStringList systemList;
-            QMap<QString, QStringList> coreListMap;
+            QStringList systemToDefaultCoreMap;
+            QMap<QString, QStringList> systemToCoresMap;
             QMap<QString, int> defaultCoreIndex;
     };
 

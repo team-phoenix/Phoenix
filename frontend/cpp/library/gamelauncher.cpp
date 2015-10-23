@@ -8,8 +8,14 @@ GameLauncher::GameLauncher( QObject *parent ) :
 
 const QString GameLauncher::getDefaultCore( const QString system ) {
 
-    const static QString statement = QStringLiteral( "SELECT defaultCore FROM systems WHERE system = ?" );
-    auto query = QSqlQuery( Library::SystemDatabase::database() );
+    // Let the constructor run so it'll make sure default cores are set for any new systems that might not have had their
+    // defaults written to the user database yet because the user has not opened that settings page
+    // Ugly hack or good idea?
+    DefaultCoreModel *model = new DefaultCoreModel();
+    delete model;
+
+    const static QString statement = QStringLiteral( "SELECT defaultCore FROM defaultCores WHERE system = ?" );
+    auto query = QSqlQuery( LibraryInternalDatabase::instance()->database() );
     query.prepare( statement );
     query.addBindValue( system );
 

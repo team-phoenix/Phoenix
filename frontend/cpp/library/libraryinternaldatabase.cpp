@@ -3,10 +3,11 @@
 using namespace Library;
 
 const QString LibraryInternalDatabase::tableVersion = QStringLiteral( "schema_version" );
-const QString LibraryInternalDatabase::databaseName = QStringLiteral( "gamelibrary.sqlite" );
+const QString LibraryInternalDatabase::databaseName = QStringLiteral( "userdata.sqlite" );
 const QString LibraryInternalDatabase::tableName = QStringLiteral( "games" );
 const QString LibraryInternalDatabase::tableCollectionMappings = QStringLiteral( "collectionMappings" );
 const QString LibraryInternalDatabase::tableCollections = QStringLiteral( "collections" );
+const QString LibraryInternalDatabase::tableDefaultCores = QStringLiteral( "defaultCores" );
 
 LibraryInternalDatabase::LibraryInternalDatabase() {
     open();
@@ -58,6 +59,8 @@ bool LibraryInternalDatabase::createSchema() {
     qCDebug( phxLibrary, "Initializing database schema" );
     db.transaction();
 
+    qCDebug( phxLibrary ) << db;
+
     QSqlQuery q( db );
     q.exec( "CREATE TABLE " + LibraryInternalDatabase::tableVersion + " (version INTEGER NOT NULL)" );
     q.exec( QStringLiteral( "INSERT INTO " ) + LibraryInternalDatabase::tableVersion + QStringLiteral( " (version) VALUES (0)" ) );
@@ -89,9 +92,6 @@ bool LibraryInternalDatabase::createSchema() {
             QStringLiteral( " collectionName TEXT UNIQUE NOT NULL\n" ) +
             QStringLiteral( ")" ) );
 
-
-
-
     // Create Collections Table
     q.exec( QStringLiteral( "CREATE TABLE " ) + LibraryInternalDatabase::tableCollectionMappings + QStringLiteral( "(\n" ) +
             QStringLiteral( " collectionID INTEGER,\n" ) +
@@ -104,6 +104,12 @@ bool LibraryInternalDatabase::createSchema() {
 
     q.exec( QStringLiteral( "INSERT INTO " ) + LibraryInternalDatabase::tableCollections
             + QStringLiteral( " (collectionID, collectionName) VALUES (0, 'All')" ) );
+
+    // Create default core table
+    q.exec( QStringLiteral( "CREATE TABLE " ) + LibraryInternalDatabase::tableDefaultCores + QStringLiteral( "(\n" ) +
+            QStringLiteral( " system TEXT UNIQUE NOT NULL," ) +
+            QStringLiteral( " defaultCore TEXT" ) +
+            QStringLiteral( ")" ) );
 
     db.commit();
 

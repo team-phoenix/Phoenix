@@ -166,7 +166,7 @@ void LibraryModel::updateCount() {
         qmlCount = query.value( 0 ).toInt();
     }
 
-    mTransaction = false;
+    sync();
 
     emit countChanged();
 }
