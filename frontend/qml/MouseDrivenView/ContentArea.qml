@@ -283,14 +283,12 @@ Rectangle {
 
     Component {
         id: inputSettingsView;
-        InputSettingsView { objectName: "InputSettingsView" }
+        InputSettingsView { objectName: "InputSettingsView"; }
     }
 
     Component {
         id: librarySettingsView;
-        LibrarySettingsView {
-
-        }
+        LibrarySettingsView { objectName: "LibrarySettingsView"; }
 
     }
 }

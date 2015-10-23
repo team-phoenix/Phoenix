@@ -184,8 +184,8 @@ Item {
                             case 2:                                
                                 if ( sectionsAreaStackView.currentItem.objectName !== "SettingsView" ) {
                                     sectionsAreaStackView.push( { item: settingsView, replace: true } );
-                                    if( contentArea.contentStackView.currentItem.objectName !== "InputView") {
-                                        // contentArea.contentStackView.push( { item: contentArea.contentInputView, replace: true } );
+                                    if( contentArea.contentStackView.currentItem.objectName !== "LibrarySettingsView") {
+                                        contentArea.contentStackView.push( { item: contentArea.contentLibrarySettingsView, replace: true } );
                                     }
                                 }
                                 selectionAreaToolbar.currentIndex = index;
