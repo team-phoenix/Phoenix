@@ -10,7 +10,7 @@ GameFileInfo::GameFileInfo( const QString &file )
       mFileType( FileType::UnsupportedFile ),
       mTitle( canonicalFilePath().remove( canonicalPath() ).remove( 0, 1 ).remove( QStringLiteral( "." ) + suffix() ) ),
       mFullFilePath( canonicalFilePath() ),
-      mQuery( QSqlQuery( SystemDatabase::database() ) ),
+      mQuery( QSqlQuery( LibretroDatabase::database() ) ),
       mTimePlayed( QStringLiteral( "00:00" ) ) {
 
     if( QStringLiteral( "zip" ) == suffix() ) {
@@ -72,7 +72,7 @@ QStringList GameFileInfo::gameFilter() {
     static QStringList filter;
 
     if( filter.isEmpty() ) {
-        auto query = QSqlQuery( SystemDatabase::database() );
+        auto query = QSqlQuery( LibretroDatabase::database() );
 
         auto exec = query.exec( QStringLiteral( "SELECT DISTINCT extension FROM extensions" ) );
         Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( query.lastError().text() ) );

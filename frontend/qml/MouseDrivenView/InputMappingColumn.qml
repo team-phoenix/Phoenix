@@ -70,15 +70,15 @@ ListView {
 
         property bool mappingCollisionDetected: false;
 
-        property string text: inputView.currentMapping === undefined
-                              ? "None" : inputView.currentMapping[ key ];
+        property string text: inputSettingsView.currentMapping === undefined
+                              ? "None" : inputSettingsView.currentMapping[ key ];
 
         function handleEvent( event, state, type ) {
             if ( state ) {
                 if ( root.inputManager.get( devicesCombobox.currentText ).setMappings( key, event, type ) ) {
                     inputMappingColumn.currentIndex = -1;
                     root.inputManager.get( devicesCombobox.currentText ).editModeEvent.disconnect( handleEvent );
-                    inputView.currentMapping = root.inputManager.get( devicesCombobox.currentText ).mapping();
+                    inputSettingsView.currentMapping = root.inputManager.get( devicesCombobox.currentText ).mapping();
                 } else {
                     mappingCollisionDetected = true;
                     mappingCollsionTimer.start();

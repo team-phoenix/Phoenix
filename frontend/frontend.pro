@@ -9,7 +9,7 @@ include( deployment.pri )
 
     TEMPLATE += app
 
-    QT += qml quick widgets sql multimedia network
+    QT += qml quick sql multimedia network
 
 ##
 ## Compiler settings
@@ -49,8 +49,8 @@ include( deployment.pri )
                cpp/library/gamelauncher.cpp \
                cpp/library/imagecacher.cpp \
                cpp/library/phxpaths.cpp \
+               cpp/library/database/libretrodatabase.cpp \
                cpp/library/database/metadatadatabase.cpp \
-               cpp/library/database/systemdatabase.cpp \
                cpp/library/database/userdatabase.cpp \
                cpp/library/fileinfo/archivefileinfo.cpp \
                cpp/library/fileinfo/biosfileinfo.cpp \
@@ -66,8 +66,8 @@ include( deployment.pri )
     HEADERS += cpp/library/gamelauncher.h \
                cpp/library/imagecacher.h \
                cpp/library/phxpaths.h \
+               cpp/library/database/libretrodatabase.h \
                cpp/library/database/metadatadatabase.h \
-               cpp/library/database/systemdatabase.h \
                cpp/library/database/userdatabase.h \
                cpp/library/fileinfo/archivefileinfo.h \
                cpp/library/fileinfo/biosfileinfo.h \

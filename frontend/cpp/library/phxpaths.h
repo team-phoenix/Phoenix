@@ -37,7 +37,7 @@ namespace Library {
             Q_INVOKABLE QString qmlBiosLocation();
             Q_INVOKABLE QString qmlCoverArtCacheLocation();
 
-            static void createAllPaths();
+            static void initPaths();
 
         private:
 

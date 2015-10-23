@@ -6,7 +6,7 @@ import vg.phoenix.themes 1.0
 
 ComboBox {
     id: devicesCombobox;
-    model: inputView.inputDevicesModel;
+    model: inputSettingsView.inputDevicesModel;
     textRole: "name";
 
     onCurrentTextChanged: {

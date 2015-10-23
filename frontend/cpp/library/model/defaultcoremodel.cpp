@@ -11,7 +11,7 @@ DefaultCoreModel::DefaultCoreModel( QObject *parent )
 
     beginResetModel();
 
-    auto systemDBQuery = QSqlQuery( SystemDatabase::database() );
+    auto systemDBQuery = QSqlQuery( LibretroDatabase::database() );
     auto execStatus = systemDBQuery.exec( QStringLiteral( "SELECT DISTINCT system, defaultCore FROM systems;" ) );
     Q_ASSERT_X( execStatus, Q_FUNC_INFO, qPrintable( systemDBQuery.lastError().text() ) );
 

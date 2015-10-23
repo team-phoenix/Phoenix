@@ -15,8 +15,8 @@ Rectangle {
     property alias contentLibraryModel: libraryModel;
     property alias contentStackView: contentAreaStackView;
     property alias contentBoxartGrid: boxArtGridComponent
-    property alias contentLibraryView: libraryView;
-    property alias contentInputView: inputView;
+    property alias contentLibrarySettingsView: librarySettingsView;
+    property alias contentInputSettingsView: inputSettingsView;
     property alias contentSlider: zoomSlider;
     property alias boxartGrid: boxArtGridComponent;
 
@@ -282,13 +282,13 @@ Rectangle {
     }
 
     Component {
-        id: inputView;
-        InputView { objectName: "InputView" }
+        id: inputSettingsView;
+        InputSettingsView { objectName: "InputSettingsView" }
     }
 
     Component {
-        id: libraryView;
-        LibraryView {
+        id: librarySettingsView;
+        LibrarySettingsView {
 
         }
 

@@ -8,7 +8,7 @@
 
 namespace Library {
 
-    class SystemDatabase {
+    class LibretroDatabase {
         public:
 
             static QSqlDatabase database();
@@ -19,7 +19,7 @@ namespace Library {
         public slots:
 
         private:
-            SystemDatabase();
+            LibretroDatabase();
 
     };
 

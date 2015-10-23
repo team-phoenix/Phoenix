@@ -3,7 +3,7 @@
 
 #include "frontendcommon.h"
 
-#include "systemdatabase.h"
+#include "libretrodatabase.h"
 #include "gamefileinfo.h"
 
 namespace Library {

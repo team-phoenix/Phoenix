@@ -7,11 +7,11 @@
         <file>GameSuspendedArea.qml</file>
         <file>HeaderBar.qml</file>
         <file>InputMappingColumn.qml</file>
-        <file>InputView.qml</file>
+        <file>InputSettingsView.qml</file>
         <file>MouseDrivenView.qml</file>
         <file>PlatformsView.qml</file>
         <file>SelectionArea.qml</file>
         <file>SettingsView.qml</file>
-        <file>LibraryView.qml</file>
+        <file>LibrarySettingsView.qml</file>
     </qresource>
 </RCC>

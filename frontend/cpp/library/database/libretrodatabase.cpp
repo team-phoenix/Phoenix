@@ -1,12 +1,12 @@
-#include "systemdatabase.h"
+#include "libretrodatabase.h"
 
 using namespace Library;
 
-QSqlDatabase SystemDatabase::database() {
+QSqlDatabase LibretroDatabase::database() {
     return QSqlDatabase::database( QStringLiteral( "SYSTEMS" ) );
 }
 
-void SystemDatabase::close() {
+void LibretroDatabase::close() {
     if( QSqlDatabase::contains( QStringLiteral( "SYSTEMS" ) ) ) {
         qDebug( phxLibrary ) << "closing SYSTEM database";
         auto db = QSqlDatabase::database( QStringLiteral( "SYSTEMS" ) );
@@ -15,7 +15,7 @@ void SystemDatabase::close() {
     }
 }
 
-void SystemDatabase::open() {
+void LibretroDatabase::open() {
     auto db = QSqlDatabase::addDatabase( QStringLiteral( "QSQLITE" ), QStringLiteral( "SYSTEMS" ) );
 
     QString dataPathStr = PhxPaths::metadataLocation();

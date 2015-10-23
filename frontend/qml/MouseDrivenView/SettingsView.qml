@@ -23,7 +23,7 @@ PhxScrollView {
 
         // Open the first item in the list automatically
         Component.onCompleted: {
-            contentArea.contentStackView.push( { item: contentArea.contentLibraryView, replace: true } );
+            contentArea.contentStackView.push( { item: contentArea.contentLibrarySettingsView, replace: true } );
         }
 
         highlight: Item {
@@ -85,10 +85,10 @@ PhxScrollView {
                     listView.currentIndex = index
                     switch ( section ) {
                     case "Library":
-                        contentArea.contentStackView.push( { item: contentArea.contentLibraryView, replace: true } );
+                        contentArea.contentStackView.push( { item: contentArea.contentLibrarySettingsView, replace: true } );
                         break;
                     case "Input":
-                        // contentArea.contentStackView.push( { item: contentArea.contentInputView, replace: true } );
+                        // contentArea.contentStackView.push( { item: contentArea.contentInputSettingsView, replace: true } );
                         break;
                     default:
                         break;

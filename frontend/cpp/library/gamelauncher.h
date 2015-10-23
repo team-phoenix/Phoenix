@@ -5,7 +5,7 @@
 
 #include "defaultcoremodel.h"
 #include "userdatabase.h"
-#include "systemdatabase.h"
+#include "libretrodatabase.h"
 #include "logging.h"
 #include "phxpaths.h"
 #include "archivefileinfo.h"

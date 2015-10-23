@@ -5,7 +5,7 @@
 
 #include "phxpaths.h"
 #include "metadatadatabase.h"
-#include "systemdatabase.h"
+#include "libretrodatabase.h"
 #include "logging.h"
 #include "gamefileinfo.h"
 

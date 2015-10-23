@@ -4,7 +4,7 @@
 #include "frontendcommon.h"
 
 #include "userdatabase.h"
-#include "systemdatabase.h"
+#include "libretrodatabase.h"
 #include "frontendcommon.h"
 #include "phxpaths.h"
 

@@ -5,7 +5,7 @@ using namespace Library;
 PlatformsModel::PlatformsModel( QObject *parent )
     : QAbstractListModel( parent ) {
 
-    auto query = QSqlQuery( SystemDatabase::database() );
+    auto query = QSqlQuery( LibretroDatabase::database() );
 
     auto exec = query.exec( QStringLiteral( "SELECT DISTINCT system FROM systems ORDER BY system ASC" ) );
     Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( query.lastError().text() ) );
