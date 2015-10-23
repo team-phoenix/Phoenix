@@ -35,8 +35,8 @@ QtObject {
         // BACKGROUND
         property string backgroundImage: "";
         property color baseBackgroundColor:      "#FFFFFF"; // Black or White
-        property color primaryBackgroundColor:   "#14151A"; // Sidebar
-        property color secondaryBackgroundColor: "#201F27"; // Content (Grid)
+        property color primaryBackgroundColor:   "#1E2024";// Sidebar
+        property color secondaryBackgroundColor: "#141619"; // Content (Grid)
 
         // SUSPENDED GAME AREA
         property int suspendedGameFontSize: 13;
@@ -46,7 +46,7 @@ QtObject {
         // BOXART
         property int boxartFontSize: 12;
         property color boxartNormalBorderColor:   "#00FFFFFF";
-        property color boxartSelectedBorderColor: "#55AAAAAA";
+        property color boxartSelectedBorderColor: "#A32127"; // "#55AAAAAA";
 
         property color gameViewBackgroundColor: "#000000";
     }

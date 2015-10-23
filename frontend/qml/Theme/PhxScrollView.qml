@@ -6,21 +6,21 @@ import QtGraphicalEffects 1.0
 ScrollView {
     style: ScrollViewStyle {
 
-        scrollBarBackground: Item { width: 9; }
+        scrollBarBackground: Item { width: 0; }
         incrementControl: Item { }
         decrementControl: Item { }
 
         handle: Item {
-            implicitWidth: 8;
+            implicitWidth: 6;
             implicitHeight: 30;
             y: 0;
-            x: 1;
+            x: -implicitWidth + 1;
 
             Rectangle {
                 id: handleRectangle;
                 color: "#20FFFFFF";
                 anchors.fill: parent;
-                radius: parent.implicitWidth/2;
+                // radius: parent.implicitWidth/2;
             }
         }
     }
