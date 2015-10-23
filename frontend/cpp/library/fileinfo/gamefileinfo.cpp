@@ -135,6 +135,19 @@ void GameFileInfo::prepareMetadata() {
         fillMetadata( query.value( 0 ).toInt(), query );
     }
 
+    // If that got us nothing, try searching by filename
+    else {
+        QFileInfo file( mFullFilePath );
+        QString filename = file.fileName();
+
+        auto exec = query.exec( QString( "SELECT romID FROM %1 WHERE romFileName = \'%2\'" ).arg( MetaDataDatabase::tableRoms, filename ) );
+        Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( query.lastError().text() ) );
+
+        if( query.first() ) {
+            fillMetadata( query.value( 0 ).toInt(), query );
+        }
+    }
+
 }
 
 void GameFileInfo::fillMetadata( int romID, QSqlQuery &query ) {
