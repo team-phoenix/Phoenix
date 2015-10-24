@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application                                         # This specification defines 3 types of desktop entries: Application (type 1), Link (type 2) and Directory (type 3)
+Version=1.0                                              # The version of the desktop entry specification to which this file complies
+Name=Phoenix                                             # Specific name of the application, for example "Mozilla"
+GenericName=Multi-system Emulator                        # Generic name of the application, for example "Web Browser"
+Comment=Play and manage your classic game collection     # Tooltip for the entry, for example "View sites on the Internet". The value should not be redundant with the values of Name and GenericName
+Exec=phoenix                                             # The executable of the application.
+Icon=phoenix                                             # The name of the icon that will be used to display this entry
+Terminal=false                                           # Describes whether this application needs to be run in a terminal or not
+Categories=Game;Emulator;Database;                       # Describes the categories in which this entry should be shown

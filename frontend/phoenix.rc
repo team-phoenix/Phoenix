@@ -2,7 +2,6 @@
 
 IDI_ICON1 ICON DISCARDABLE "phoenix.ico"
 
-
 1 VERSIONINFO
 FILEVERSION 0,0,1,0
 PRODUCTVERSION 0,0,1,0
@@ -16,10 +15,10 @@ BEGIN
         BLOCK "040904E4"
         BEGIN
             VALUE "CompanyName", "Team Phoenix"
-            VALUE "FileDescription", "Phoenix"
+            VALUE "FileDescription", "Phoenix Multi-system Emulator"
             VALUE "FileVersion", "Pre-alpha (0.0.1)"
             VALUE "InternalName", "Phoenix"
-            VALUE "LegalCopyright", "Copyright (c) 2015 Team Phoenix"
+            VALUE "LegalCopyright", "Copyright (c) 2015 Team Phoenix -- Licensed under GPLv2"
             VALUE "OriginalFilename", "Phoenix.exe"
             VALUE "ProductName", "Phoenix"
             VALUE "ProductVersion", "Pre-alpha (0.0.1)"

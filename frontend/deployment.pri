@@ -7,10 +7,10 @@
     TARGET = Phoenix
 
     # App icon, metadata
-    win32: RC_FILE = ../phoenix.rc
+    win32: RC_FILE = phoenix.rc
 
     macx {
-        ICON = ../phoenix.icns
+        ICON = phoenix.icns
     }
 
 ##
@@ -118,6 +118,44 @@
 
     # Make qmake aware that this target exists
     QMAKE_EXTRA_TARGETS += metadb
+
+##
+## Linux icon
+##
+
+    unix: !macx {
+        # Ideally these files should come from the build folder, however, qmake will not generate rules for them if they don't
+        # already exist
+        linuxicon.depends += "$$PWD/phoenix.png"
+
+        # For make install
+        linuxicon.files += "$$PWD/phoenix.png"
+
+        linuxicon.path = "$$PREFIX/share/pixmaps"
+        INSTALLS += linuxicon
+
+        # Make qmake aware that this target exists
+        QMAKE_EXTRA_TARGETS += linuxicon
+    }
+
+##
+## Linux .desktop entry
+##
+
+    unix: !macx {
+        # Ideally these files should come from the build folder, however, qmake will not generate rules for them if they don't
+        # already exist
+        linuxdesktopentry.depends += "$$PWD/phoenix.desktop"
+
+        # For make install
+        linuxdesktopentry.files += "$$PWD/phoenix.desktop"
+
+        linuxdesktopentry.path = "$$PREFIX/share/applications"
+        INSTALLS += linuxdesktopentry
+
+        # Make qmake aware that this target exists
+        QMAKE_EXTRA_TARGETS += linuxdesktopentry
+    }
 
 ##
 ## On OS X, ignore all of the above when it comes to make install and just copy the whole .app folder verbatim
