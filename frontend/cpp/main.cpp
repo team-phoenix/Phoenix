@@ -128,7 +128,7 @@ int main( int argc, char *argv[] ) {
     // Set application metadata
     QGuiApplication::setApplicationDisplayName( QStringLiteral( "Phoenix" ) );
     QGuiApplication::setApplicationName( QStringLiteral( "Phoenix" ) );
-    QGuiApplication::setApplicationVersion( QStringLiteral( "1.0" ) );
+    QGuiApplication::setApplicationVersion( QStringLiteral( "0.0.1" ) );
     QGuiApplication::setOrganizationName( QStringLiteral( "Team Phoenix" ) );
     QGuiApplication::setOrganizationDomain( QStringLiteral( "phoenix.vg" ) );
 
