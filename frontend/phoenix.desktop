@@ -10,7 +10,7 @@ GenericName=Multi-system Emulator
 # Tooltip for the entry, for example "View sites on the Internet". The value should not be redundant with the values of Name and GenericName
 Comment=Play and manage your classic game collection
 # The executable of the application.
-Exec=phoenix
+Exec=/usr/bin/Phoenix
 # The name of the icon that will be used to display this entry
 Icon=phoenix
 # Describes whether this application needs to be run in a terminal or not
