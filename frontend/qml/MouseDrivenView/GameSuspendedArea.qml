@@ -1,9 +1,10 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
-import QtGraphicalEffects 1.0
+import QtQuick.Window 2.0
 import QtQuick.Layouts 1.2
 import QtQuick.Dialogs 1.2
+import QtGraphicalEffects 1.0
 
 import vg.phoenix.models 1.0
 import vg.phoenix.themes 1.0
@@ -12,11 +13,12 @@ import vg.phoenix.backend 1.0
 // Suspended game section
 Rectangle {
     id: gameSuspendedArea;
+    anchors { bottom: parent.bottom; left: parent.left; right: parent.right; }
+    Layout.fillWidth: true;
     height: 65;
     color: PhxTheme.common.gameSuspendedBackgroundColor;
-    Layout.fillWidth: true;
-    z: parent.z + 1;
-    anchors { bottom: parent.bottom }
+    z: parent.z + 1000;
+    opacity: .95;
 
     Row {
         anchors.fill: parent;
@@ -41,16 +43,24 @@ Rectangle {
                 fillMode: Image.PreserveAspectFit;
             }
 
-            Label {
+            MarqueeText {
                 anchors { left: parent.left; leftMargin: 64; verticalCenter: parent.verticalCenter; }
-                elide: Text.ElideRight;
+                horizontalAlignment: Text.AlignLeft;
                 width: PhxTheme.common.menuWidth - 72;
                 text: root.gameViewObject.coreGamePair[ "title" ];
-                color: PhxTheme.normalFontColor;
-                font.pixelSize: PhxTheme.common.suspendedGameFontSize;
+                fontSize: PhxTheme.common.baseFontSize + 1;
+                color: PhxTheme.common.baseBackgroundColor;
+                spacing: 40;
+                running: gameSuspendedMouseArea.containsMouse;
+                pixelsPerFrame: 2.0;
+                Connections {
+                    target: gameSuspendedMouseArea;
+                }
             }
 
+
             MouseArea {
+                id: gameSuspendedMouseArea;
                 anchors.fill: parent;
                 hoverEnabled: true;
                 onClicked: {
@@ -64,7 +74,7 @@ Rectangle {
                 onEntered: {
                     parent.color = PhxTheme.common.gameSuspendedHoverBackgroundColor;
                     rootMouseArea.cursorShape = Qt.PointingHandCursor;
-                }
+                                    }
                 onExited: {
                     parent.color = "transparent" // "PhxTheme.common.suspendedGameBackgroundColor";
                     rootMouseArea.cursorShape = Qt.ArrowCursor;
@@ -94,6 +104,9 @@ Rectangle {
 
                     // Destroy the compenent this MouseArea lives in
                     layoutStackView.pop();
+
+                    // Resume game
+                    root.gameView.videoItem.slotResume();
                 }
                 onEntered: { rootMouseArea.cursorShape = Qt.PointingHandCursor; }
                 onExited: { rootMouseArea.cursorShape = Qt.ArrowCursor; }

@@ -27,7 +27,7 @@ Item {
             id: gameSelectionPane;
             anchors { fill: parent; }
             spacing: 0;
-            anchors.bottomMargin: root.gameViewObject.videoItem.coreState === Core.STATEPAUSED ? gameSuspendedArea.height : 0;
+            // anchors.bottomMargin: root.gameViewObject.videoItem.coreState === Core.STATEPAUSED ? gameSuspendedArea.height : 0;
 
             SelectionArea {
                 id: selectionArea;
@@ -41,12 +41,6 @@ Item {
                 anchors { top: parent.top; bottom: parent.bottom; }
                 Layout.fillWidth: true;
             }
-        }
-
-        GameSuspendedArea {
-            id: gameSuspendedArea;
-            objectName: "GameSuspendedArea";
-            visible: root.gameViewObject.videoItem.coreState === Core.STATEPAUSED;
         }
     }
 }

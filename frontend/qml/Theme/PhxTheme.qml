@@ -35,7 +35,7 @@ QtObject {
         // BACKGROUND
         property string backgroundImage: "";
         property color baseBackgroundColor:      "#FFFFFF"; // Black or White
-        property color primaryBackgroundColor:   "#1E2024";// Sidebar
+        property color primaryBackgroundColor:   "#1E2024"; // Sidebar
         property color secondaryBackgroundColor: "#141619"; // Content (Grid)
 
         // SUSPENDED GAME AREA

@@ -13,6 +13,7 @@ Rectangle {
     color: "transparent";
     // color: Qt.rgba(0,0,0,0.5);
     // Image {  smooth: true; source: "bg.svg"; anchors.fill: parent; fillMode: Image.TileHorizontally; verticalAlignment: Image.AlignLeft; sourceSize { height: height; width: width; } }
+
     property int volumeValue: 1;
 
     //  Volumen Icon changer
@@ -40,7 +41,6 @@ Rectangle {
         height: 45;
         color: Qt.rgba(0,0,0,0.75);
         radius: 1;
-        // color: "transparent";
 
         Rectangle {
             width: parent.width - 2;

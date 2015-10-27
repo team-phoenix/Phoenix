@@ -7,6 +7,7 @@ import QtGraphicalEffects 1.0
 
 import vg.phoenix.models 1.0
 import vg.phoenix.themes 1.0
+import vg.phoenix.backend 1.0
 
 Rectangle {
     id: contentArea;
@@ -215,26 +216,14 @@ Rectangle {
 
     LibraryModel {
         id: libraryModel;
-
-        function dragEvent( drag ) {
-            if ( drag.hasUrls ) {
-                handleDraggedUrls( drag.urls );
-            }
-        }
-
-        function dropEvent( drop ) {
-            handleDroppedUrls();
-        }
-
-        function containsEvent() {
-            handleContainsDrag( rootDropArea.containsDrag );
-        }
+        function dragEvent( drag ) { if ( drag.hasUrls ) { handleDraggedUrls( drag.urls ); } }
+        function dropEvent( drop ) { handleDroppedUrls(); }
+        function containsEvent() { handleContainsDrag( rootDropArea.containsDrag ); }
 
         Component.onCompleted: {
             rootDropArea.onEntered.connect( dragEvent );
             rootDropArea.onDropped.connect( dropEvent );
             rootDropArea.onContainsDragChanged.connect( containsEvent );
-
             libraryModel.startWorkerThread();
         }
     }
@@ -243,11 +232,10 @@ Rectangle {
         id: contentAreaStackView;
         initialItem: boxArtGridComponent;
         anchors.fill: parent;
+        anchors.bottomMargin: root.gameViewObject.videoItem.coreState === Core.STATEPAUSED ? gameSuspendedArea.height : 0;
 
         delegate: StackViewDelegate {
-            function transitionFinished( properties ) {
-                properties.exitItem.opacity = 1;
-            }
+            function transitionFinished( properties ) { properties.exitItem.opacity = 1; }
 
             pushTransition: StackViewTransition {
                 PropertyAnimation {
@@ -290,5 +278,10 @@ Rectangle {
         id: librarySettingsView;
         LibrarySettingsView { objectName: "LibrarySettingsView"; }
 
+    }
+    GameSuspendedArea {
+        id: gameSuspendedArea;
+        objectName: "GameSuspendedArea";
+        visible: root.gameViewObject.videoItem.coreState === Core.STATEPAUSED;
     }
 }
