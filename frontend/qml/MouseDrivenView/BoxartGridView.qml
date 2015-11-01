@@ -131,6 +131,9 @@ Rectangle {
                                                                , "gamePath": game
                                                                , "title": title };
 
+                            // Set window title to game title
+                            root.title = title;
+
                             layoutStackView.pop();
                         }
 

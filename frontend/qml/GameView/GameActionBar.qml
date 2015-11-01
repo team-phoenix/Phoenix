@@ -239,6 +239,7 @@ Rectangle {
                     anchors.fill: parent;
                     onClicked: {
                         videoItem.slotStop();
+                        root.title = "";
                         root.disableMouseClicks();
                         rootMouseArea.hoverEnabled = false;
                         resetCursor();
