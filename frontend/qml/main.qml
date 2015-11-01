@@ -33,6 +33,8 @@ ApplicationWindow {
     }
     property var gameViewObject: null;
 
+    function resetTitle() { title = ""; }
+
     // Use when transitioning
     function disableMouseClicks() { rootMouseArea.propagateComposedEvents = false; }
     function enableMouseClicks()  { rootMouseArea.propagateComposedEvents = true; }
