@@ -4,29 +4,34 @@ from updaters.retrieve_core_info import retrieveCoreInfo
 
 from updaters.sqldatabase import SqlDatabase
 
-from updaters.updateRomHeaderOffsets import RomHeaderOffsetUpdater
+from updaters.updateSystem import SystemUpdater
+from updaters.updateCore import CoreUpdater
+from updaters.updateSystemToCore import SystemToCoreUpdater
+from updaters.updateExtension import ExtensionUpdater
 from updaters.updateFirmware import FirmwareUpdater
-from updaters.updateCores import CoresUpdater
-from updaters.updateExtensions import ExtensionUpdater
-from updaters.updateSystems import SystemsUpdater
+from updaters.updateRomHeaderOffset import RomHeaderOffsetUpdater
 
 import os
+import json
 
 if __name__ == "__main__":
 
     info = retrieveCoreInfo()
 
-    romHeaders = RomHeaderOffsetUpdater(tableName="headers", coreInfo=info)
-    romHeaders.updateTable()
+    system = SystemUpdater(tableName="system", coreInfo=info)
+    system.updateTable();
+
+    core = CoreUpdater(tableName="core", coreInfo=info)
+    core.updateTable()
+
+    systemToCore = SystemToCoreUpdater(tableName="systemToCore", coreInfo=info)
+    systemToCore.updateTable()
+
+    extensions = ExtensionUpdater(tableName="extension", coreInfo=info)
+    extensions.updateTable()
 
     firmware = FirmwareUpdater(tableName="firmware", coreInfo=info)
     firmware.updateTable()
 
-    cores = CoresUpdater(tableName="cores", coreInfo=info)
-    cores.updateTable()
-
-    extensions = ExtensionUpdater(tableName="extensions", coreInfo=info)
-    extensions.updateTable()
-
-    systems = SystemsUpdater(tableName="systems", coreInfo=info)
-    systems.updateTable();
+    romHeader = RomHeaderOffsetUpdater(tableName="header", coreInfo=info)
+    romHeader.updateTable()

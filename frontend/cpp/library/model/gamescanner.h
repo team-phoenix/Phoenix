@@ -30,12 +30,12 @@ namespace Library {
         qint64 fileID;
     };
 
-    class LibraryWorker : public QObject {
+    class GameScanner : public QObject {
             Q_OBJECT
         public:
 
-            explicit LibraryWorker( QObject *parent = 0 );
-            ~LibraryWorker();
+            explicit GameScanner( QObject *parent = 0 );
+            ~GameScanner();
 
             bool insertCancelled();
             bool insertPaused();
@@ -62,7 +62,7 @@ namespace Library {
             void setInsertCancelled( const bool cancelled );
             void setInsertPaused( const bool paused );
 
-            bool findGameFiles( const QString localUrl, bool autoStart );
+            bool scanFolder( const QString path, bool autoStart );
 
             void eventLoopStarted();
 

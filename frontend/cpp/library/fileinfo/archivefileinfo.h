@@ -29,7 +29,7 @@ namespace Library {
         private:
             QStringList mChecksums;
             QuaZip *mZipFile;
-            QSqlQuery mQuery;
+            QSqlQuery mLibretroQuery;
             bool mIsValid;
 
             void update();

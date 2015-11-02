@@ -59,8 +59,8 @@ include( deployment.pri )
                cpp/library/fileinfo/gamefileinfo.cpp \
                cpp/library/model/collectionsmodel.cpp \
                cpp/library/model/coremodel.cpp \
+               cpp/library/model/gamescanner.cpp \
                cpp/library/model/librarymodel.cpp \
-               cpp/library/model/libraryworker.cpp \
                cpp/library/model/platformsmodel.cpp
 
     HEADERS += cpp/library/gamelauncher.h \
@@ -76,8 +76,8 @@ include( deployment.pri )
                cpp/library/fileinfo/gamefileinfo.h \
                cpp/library/model/collectionsmodel.h \
                cpp/library/model/coremodel.h \
+               cpp/library/model/gamescanner.h \
                cpp/library/model/librarymodel.h \
-               cpp/library/model/libraryworker.h \
                cpp/library/model/platformsmodel.h \
                cpp/theme/phoenixtheme.h
 

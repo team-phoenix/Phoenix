@@ -7,18 +7,28 @@ PlatformsModel::PlatformsModel( QObject *parent )
 
     auto query = QSqlQuery( LibretroDatabase::database() );
 
-    auto exec = query.exec( QStringLiteral( "SELECT DISTINCT system FROM systems ORDER BY system ASC" ) );
+    auto exec = query.exec( QStringLiteral( "SELECT DISTINCT UUID, friendlyName, shortName, manufacturer FROM system WHERE enabled=1 ORDER BY UUID ASC" ) );
     Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( query.lastError().text() ) );
 
-    mPlatformsList.append( QStringLiteral( "All" ) );
+    mPlatformsList.append( {QStringLiteral( "All" ), QStringLiteral( "" )} );
 
     while( query.next() ) {
-        auto system = query.value( 0 );
-        mPlatformsList.append( std::move( system ) );
+        // Store a friendlier name, if one exists, in the second spot of the UUID
+        QStringList UUID = { query.value( 0 ).toString(), QStringLiteral( "" ) };
+        QString friendlyName = query.value( 1 ).toString();
+        // QString shortName = query.value( 2 ).toString();
+        QString manufacturer = query.value( 3 ).toString();
+
+        if( friendlyName != "" ) {
+            UUID[1] = manufacturer + " - " + friendlyName;
+        }
+
+        mPlatformsList.append( std::move( UUID ) );
     }
 
     // Just sort the list so it looks pretty. This shouldn't take that long. There aren't
     // that many platforms.
+    // mPlatformsList.sort();
 
 }
 
@@ -28,19 +38,9 @@ int PlatformsModel::rowCount( const QModelIndex &parent ) const {
 }
 
 QVariant PlatformsModel::data( const QModelIndex &index, int role ) const {
-
-    if( index.isValid() ) {
-
-        if( index.row() >= mPlatformsList.size() ) {
-            return QVariant();
-        }
-
-        if( role == Qt::DisplayRole ) {
-            return mPlatformsList.at( index.row() );
-        }
-
+    if( index.isValid() && role == Qt::DisplayRole ) {
+        return get( index.row() );
     }
-
     return QVariant();
 }
 
@@ -56,7 +56,7 @@ bool PlatformsModel::setData( const QModelIndex &index, const QVariant &value, i
 
     if( index.isValid() && role == Qt::EditRole ) {
 
-        mPlatformsList.replace( index.row(), value.toString() );
+        mPlatformsList.replace( index.row(), { value.toString(), QStringLiteral( "" ) } );
         emit dataChanged( index, index );
         return true;
     }
@@ -71,20 +71,22 @@ int PlatformsModel::count() {
 }
 
 QVariant PlatformsModel::get( int index ) const {
-    if( index >= mPlatformsList.size() || index < 0 ) {
+    // Off the edge
+    if( index >= mPlatformsList.size() ) {
         return QVariant();
     }
 
-    return mPlatformsList.at( index );
+    return mPlatformsList[ index ];
+
 }
 
-void PlatformsModel::append( QVariantList values ) {
+void PlatformsModel::append( QStringList values ) {
 
     beginInsertRows( QModelIndex(), mPlatformsList.size(), mPlatformsList.size()
                      + values.size() - 1 );
 
     for( auto &value : values ) {
-        mPlatformsList.append( value );
+        mPlatformsList.append( { value, QStringLiteral( "" ) } );
     }
 
     endInsertRows();

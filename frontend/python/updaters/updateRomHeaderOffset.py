@@ -14,11 +14,12 @@ class RomHeaderOffsetUpdater(SqlTableUpdater):
         SqlTableUpdater.__init__(self, tableName, tableColumns, coreInfo)
 
     def getHeaderData(self, system):
-        if "Sony PlayStation" == system:
+        if "Sony - PlayStation" == system:
             return (37664, 11, "504c415953544154494f4e")
-        elif "GameCube / Wii" == system:
-            return (24, 4, "C2339F3D|"      # Wii ID
-                            + "5d1c9ea3")  # GameCube ID
+        if "Nintendo - GameCube" == system:
+          return (24, 4, "5D1C9EA3")
+        if "Nintendo - Wii" == system:
+          return (24, 4, "C2339F3D")
         return ()
 
     def updateTable(self):
@@ -26,31 +27,24 @@ class RomHeaderOffsetUpdater(SqlTableUpdater):
         with SqlDatabase(self.dbFile, autoCommit=True) as db:
             self.updateColumns(db)
 
-            for k, v in self.coreInfo['cores'].iteritems():
+            systems = self.phoenixSystems()
 
-                if "categories" not in v or v["categories"] != "Emulator":
-                    continue
+            # System, metadata
+            for s, m in systems.iteritems():
 
-                name = ""
-                if "systemname" in v:
-                   name = self.libretroToPhoenix(v)
-                else:
-                    if "display_name" in v:
-                        name = v["display_name"]
-
-                offset = self.getHeaderData(name)
+                offset = self.getHeaderData(s)
 
                 if len(offset) > 0:
 
                     seek, size, result = offset
 
                     db.insert( self.tableName
-                              , self.rowsDict.keys()
-                              , values=[name, size, seek, result]
+                              , self.columnsDict.keys()
+                              , values=[s, size, seek, result]
                               , force=True )
 
 if __name__ == "__main__":
 
-    updater = RomHeaderOffsetUpdater(tableName="headers")
+    updater = RomHeaderOffsetUpdater(tableName="header")
     updater.updateTable()
 

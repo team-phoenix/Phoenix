@@ -34,20 +34,27 @@ def retrieveCoreInfo():
                             break
                         op.append(t)
 
-                        if len(op) == 3: # 'var' '=' 'value'
+                        # 'var' '=' 'value'
+                        if len(op) == 3: 
                             assert op[1] in ('=', ':')
-                            if op[1] == ':': # for: 'some:var = value' syntax
+
+                            # For: 'some:var = value' syntax
+                            # Merge 'some:var' into 'somevar' (?)
+                            if op[1] == ':': 
                                 op = [''.join(op)]
                                 continue
 
+                            # Strip quotes
                             if op[2][0] == '"' and op[2][-1] == '"':
                                 op[2] = op[2][1:-1]
 
+                            # Convert string to boolean
                             if op[2] in ('true', 'True'):
                                 op[2] = True
                             elif op[2] in ('false', 'False'):
                                 op[2] = False
 
+                            # Decode utf-8 into unicode
                             if isinstance(op[2], str):
                                 op[2] = op[2].decode('utf-8')
 
@@ -57,7 +64,6 @@ def retrieveCoreInfo():
                 except (ValueError, AssertionError) as e:
                     print("Could not process file %s (%s) " % (f.name, e), file=sys.stderr)
                     continue
-
             output['cores'][f.name.split(DIR_PREFIX)[1].split('.info')[0]] = info
         return output
     return infoToDict(files)

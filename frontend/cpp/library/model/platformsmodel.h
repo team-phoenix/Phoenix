@@ -31,7 +31,7 @@ namespace Library {
 
             QVariant get( int index ) const;
 
-            void append( QVariantList values );
+            void append(QStringList values);
 
             void clear();
 
@@ -43,7 +43,7 @@ namespace Library {
             void countChanged();
 
         private:
-            QVariantList mPlatformsList;
+            QList<QStringList> mPlatformsList;
             QString mFilePath;
     };
 

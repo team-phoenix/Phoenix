@@ -129,7 +129,7 @@ Item {
                 FileDialog {
                     id: fileDialog;
                     selectFolder: true;
-                    onAccepted: { contentArea.contentLibraryModel.append( fileUrl ); }
+                    onAccepted: { contentArea.contentLibraryModel.scanFolder( fileUrl ); }
                 }
 
                 delegate: Item {

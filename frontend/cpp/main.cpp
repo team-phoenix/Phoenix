@@ -6,7 +6,7 @@
 #include "imagecacher.h"
 #include "inputmanager.h"
 #include "librarymodel.h"
-#include "libraryworker.h"
+#include "gamescanner.h"
 #include "metadatadatabase.h"
 #include "phxpaths.h"
 #include "platformsmodel.h"

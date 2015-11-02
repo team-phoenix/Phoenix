@@ -10,7 +10,7 @@ GameFileInfo::GameFileInfo( const QString &file )
       mFileType( FileType::UnsupportedFile ),
       mTitle( canonicalFilePath().remove( canonicalPath() ).remove( 0, 1 ).remove( QStringLiteral( "." ) + suffix() ) ),
       mFullFilePath( canonicalFilePath() ),
-      mQuery( QSqlQuery( LibretroDatabase::database() ) ),
+      mLibretroQuery( QSqlQuery( LibretroDatabase::database() ) ),
       mTimePlayed( QStringLiteral( "00:00" ) ) {
 
     if( QStringLiteral( "zip" ) == suffix() ) {
@@ -74,7 +74,7 @@ QStringList GameFileInfo::gameFilter() {
     if( filter.isEmpty() ) {
         auto query = QSqlQuery( LibretroDatabase::database() );
 
-        auto exec = query.exec( QStringLiteral( "SELECT DISTINCT extension FROM extensions" ) );
+        auto exec = query.exec( QStringLiteral( "SELECT DISTINCT extension FROM extension" ) );
         Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( query.lastError().text() ) );
 
         while( query.next() ) {
@@ -87,20 +87,20 @@ QStringList GameFileInfo::gameFilter() {
 }
 
 QStringList GameFileInfo::getAvailableSystems( const QString &extension ) {
-    mQuery.prepare( QStringLiteral( "SELECT DISTINCT systems.system FROM systems" )
-                    + QStringLiteral( " INNER JOIN extensions ON systems.system=extensions.system" )
-                    + QStringLiteral( " WHERE extensions.extension = ?" ) );
+    mLibretroQuery.prepare( QStringLiteral( "SELECT DISTINCT system.UUID FROM system"
+                                            " INNER JOIN extension ON system.UUID=extension.system"
+                                            " WHERE extension.extension = ? AND system.enabled=1" ) );
 
-    mQuery.addBindValue( extension );
+    mLibretroQuery.addBindValue( extension );
 
     QStringList systemsList;
 
 
-    auto exec = mQuery.exec();
-    Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( mQuery.lastError().text() ) );
+    auto exec = mLibretroQuery.exec();
+    Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( mLibretroQuery.lastError().text() ) );
 
-    while( mQuery.next() ) {
-        systemsList.append( mQuery.value( 0 ).toString() );
+    while( mLibretroQuery.next() ) {
+        systemsList.append( mLibretroQuery.value( 0 ).toString() );
     }
 
     return std::move( systemsList );
@@ -130,7 +130,7 @@ void GameFileInfo::prepareMetadata() {
     auto exec = query.exec();
     Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( query.lastError().text() ) );
 
-    // Get all of the rowID's to lookup in the RELEASES table.
+    // Get all of the romIDs to look up in the RELEASES table.
     if( query.first() ) {
         fillMetadata( query.value( 0 ).toInt(), query );
     }
@@ -150,25 +150,37 @@ void GameFileInfo::prepareMetadata() {
 
 }
 
-void GameFileInfo::fillMetadata( int romID, QSqlQuery &query ) {
+void GameFileInfo::fillMetadata( int romID, QSqlQuery &metadataQuery ) {
 
     if( romID > -1 ) {
 
         static const auto statement = QStringLiteral( "SELECT RELEASES.releaseCoverFront, SYSTEMS.systemName FROM ROMs INNER JOIN SYSTEMS ON SYSTEMS.systemID = ROMs.systemID INNER JOIN RELEASES ON RELEASES.romID = ROMs.romID WHERE ROMs.romID = ?" );
 
-        query.prepare( statement );
-        query.addBindValue( romID );
+        metadataQuery.prepare( statement );
+        metadataQuery.addBindValue( romID );
 
-        auto exec = query.exec();
-        Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( query.lastError().text() ) );
+        auto exec = metadataQuery.exec();
+        Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( metadataQuery.lastError().text() ) );
 
-        if( query.first() ) {
+        if( metadataQuery.first() ) {
 
-            mArtworkUrl = query.value( 0 ).toString();
+            mArtworkUrl = metadataQuery.value( 0 ).toString();
 
-            if( mSystem.isEmpty() ) {
-                mSystem = query.value( 1 ).toString();
+            // Get the Phoenix UUID
+            auto exec = mLibretroQuery.exec( QString( "SELECT UUID, enabled FROM system WHERE openvgdbSystemName=\'%1\'" ).arg( metadataQuery.value( 1 ).toString() ) );
+            Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( mLibretroQuery.lastError().text() ) );
+            qCDebug( phxLibrary ) << mLibretroQuery.lastQuery();
+
+            if( mLibretroQuery.first() ) {
+
+                // Do not import games for systems that are disabled
+                // Leaving system name blank will make game scanner skip it
+                mSystem = "";
+                if( mLibretroQuery.value( 1 ).toInt() ) {
+                    mSystem = mLibretroQuery.value( 0 ).toString();
+                }
             }
+
 
         }
     }
@@ -180,30 +192,25 @@ GameFileInfo::HeaderData GameFileInfo::getPossibleHeaders( const QStringList &po
 
     for( auto &system : possibleSystems ) {
 
-        mQuery.prepare( QStringLiteral( "SELECT DISTINCT headers.byteLength, " )
-                        % QStringLiteral( "headers.seekIndex, headers.result, headers.system FROM headers " )
-                        % QStringLiteral( "INNER JOIN systems " )
-                        % QStringLiteral( "WHERE systems.system = ?" ) );
+        QString statement = QStringLiteral( "SELECT DISTINCT header.byteLength, header.seekIndex, header.result,"
+                                            " header.system FROM header INNER JOIN system ON system.UUID=\'%1\'"
+                                            " WHERE system.UUID=header.system AND system.enabled=1" );
+        statement = statement.arg( system );
 
-        qDebug() << system << canonicalFilePath();
-        mQuery.addBindValue( system );
+        auto exec = mLibretroQuery.exec( statement );
+        Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( mLibretroQuery.lastError().text() ) );
 
-        auto exec = mQuery.exec();
-        Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( mQuery.lastError().text() ) );
+        if ( mLibretroQuery.first() ) {
 
-        int count = 0;
-
-        while( mQuery.next() ) {
-
-            headerData.byteLength = mQuery.value( 0 ).toInt();
-            headerData.seekPosition = mQuery.value( 1 ).toInt();
-            headerData.result = mQuery.value( 2 ).toString();
+            headerData.byteLength = mLibretroQuery.value( 0 ).toInt();
+            headerData.seekPosition = mLibretroQuery.value( 1 ).toInt();
+            headerData.result = mLibretroQuery.value( 2 ).toString();
             headerData.system = system;
 
-            count++;
+        } else {
+            qCDebug( phxLibrary ) << "\n" << "Statement: " << statement << system << "\n" << mLibretroQuery.result();
         }
 
-        Q_ASSERT_X( count == 1, Q_FUNC_INFO, "count != 1" );
     }
 
     return std::move( headerData );
@@ -230,6 +237,11 @@ QString GameFileInfo::getCheckSum( const QString &filePath ) {
 void GameFileInfo::update( const QString &extension ) {
     auto possibleSystemsList = getAvailableSystems( extension );
 
+    if( possibleSystemsList.size() == 0 ) {
+        return;
+    }
+
+    mSystem = possibleSystemsList.at( 0 );
     if( possibleSystemsList.size() == 1 ) {
         mSystem = possibleSystemsList.at( 0 );
     } else {
@@ -257,14 +269,14 @@ bool GameFileInfo::isBios( QString &biosName ) {
 
     file.close();
 
-    mQuery.prepare( statement );
-    mQuery.addBindValue( sha1Result );
+    mLibretroQuery.prepare( statement );
+    mLibretroQuery.addBindValue( sha1Result );
 
-    auto exec = mQuery.exec();
-    Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( mQuery.lastError().text() ) );
+    auto exec = mLibretroQuery.exec();
+    Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( mLibretroQuery.lastError().text() ) );
 
-    if( mQuery.first() ) {
-        biosName = mQuery.value( 0 ).toString();
+    if( mLibretroQuery.first() ) {
+        biosName = mLibretroQuery.value( 0 ).toString();
 
         return !biosName.isEmpty();
     }

@@ -9,10 +9,10 @@
 #include "phxpaths.h"
 
 /*
- * Used from QML to display available systems (role: "system", a QString).
- * and a secondary model of what cores are available for that system (role: "cores", a QStringList).
+ * Primary model is a sorted list of available systems (role: QString system)
+ * and a secondary sorted list of what cores are available for that system (role: QStringList cores).
  * The default core the user has chosen for a given system is given in the form of an index into the "cores" model.
- * Access it with role: "defaultCoreIndex", an int.
+ * (role: int defaultCoreIndex)
  */
 
 namespace Library {
@@ -22,22 +22,17 @@ namespace Library {
         public:
             explicit CoreModel( QObject *parent = 0 );
 
-            enum DefaultCoreRoles {
+            enum CoreModelRoles {
                 SystemRole = Qt::UserRole + 1,
                 CoresRole,
                 DefaultCoreIndexRole
             };
 
-            QModelIndex index( int row, int column, const QModelIndex &parent ) const override {
-                return hasIndex( row, column, parent ) ? createIndex( row, column, nullptr ) : QModelIndex();
-            }
-
+            // Implementations of the base class functions
+            QModelIndex index( int row, int column, const QModelIndex &parent ) const override;
             int rowCount( const QModelIndex &parent ) const override;
-
             int columnCount( const QModelIndex &parent ) const override;
-
             QVariant data( const QModelIndex &index, int role ) const override;
-
             QHash<int, QByteArray> roleNames() const override;
 
         signals:

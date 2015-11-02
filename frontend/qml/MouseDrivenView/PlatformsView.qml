@@ -65,7 +65,8 @@ PhxScrollView {
                 id: platformText;
                 anchors { verticalCenter: parent.verticalCenter; left: parent.left; right: parent.right; leftMargin: PhxTheme.common.menuItemMargin; rightMargin: PhxTheme.common.menuItemMargin; }
                 horizontalAlignment: Text.AlignLeft;
-                text: listView.model.get( index );
+                // Print friendly name if one exists
+                text: listView.model.get( index )[1] !== "" ? listView.model.get( index )[1] : listView.model.get( index )[0];
                 fontSize: PhxTheme.common.baseFontSize + 1;
                 color: index === listView.currentIndex ? PhxTheme.common.baseBackgroundColor : PhxTheme.selectionArea.baseFontColor;
                 spacing: 40;
@@ -82,9 +83,10 @@ PhxScrollView {
                         contentArea.contentStackView.push( { item: contentArea.boxartGrid, replace: true } );
                     }
 
+                    // Always use UUID
                     listView.currentIndex = index;
                     if ( index === 0 ) { contentArea.contentLibraryModel.clearFilter( "games", "system" ); }
-                    else { contentArea.contentLibraryModel.setFilter( "games", "system", platformText.text ); }
+                    else { contentArea.contentLibraryModel.setFilter( "games", "system", listView.model.get( index )[0] ); }
                 }
             }
         }

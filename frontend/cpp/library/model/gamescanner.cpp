@@ -1,4 +1,4 @@
-#include "libraryworker.h"
+#include "gamescanner.h"
 #include "JlCompress.h"
 
 #include "archivefileinfo.h"
@@ -7,18 +7,18 @@
 
 using namespace Library;
 
-LibraryWorker::LibraryWorker( QObject *parent )
+GameScanner::GameScanner( QObject *parent )
     : QObject( parent ),
       mInsertCancelled( false ),
       mInsertPaused( false ),
       mRunning( false ),
       qmlResumeQuitScan( false ) {
 
-    connect( this, &LibraryWorker::started, this, [ this ] {
+    connect( this, &GameScanner::started, this, [ this ] {
         setIsRunning( true );
     } );
 
-    connect( this, &LibraryWorker::finished, this, [ this ] {
+    connect( this, &GameScanner::finished, this, [ this ] {
         setIsRunning( false );
         mFileInfoQueue.clear();
         setInsertCancelled( false );
@@ -26,7 +26,7 @@ LibraryWorker::LibraryWorker( QObject *parent )
 
 }
 
-LibraryWorker::~LibraryWorker() {
+GameScanner::~GameScanner() {
 
     if( !resumeQuitScan() ) {
         setResumeDirectory( "" );
@@ -40,7 +40,7 @@ LibraryWorker::~LibraryWorker() {
 
 }
 
-void LibraryWorker::eventLoopStarted() {
+void GameScanner::eventLoopStarted() {
 
     if( resumeQuitScan() ) {
         QSettings settings;
@@ -54,23 +54,23 @@ void LibraryWorker::eventLoopStarted() {
             setResumeDirectory( lastUsedPath.toString() );
 
             if( !resumeInsertID().isEmpty() ) {
-                findGameFiles( resumeDirectory(), true );
+                scanFolder( resumeDirectory(), true );
             }
         }
     }
 }
 
-void LibraryWorker::handleDraggedUrls( QList<QUrl> urls ) {
+void GameScanner::handleDraggedUrls( QList<QUrl> urls ) {
     mDraggedUrls = urls;
 }
 
-void LibraryWorker::handleDroppedUrls() {
+void GameScanner::handleDroppedUrls() {
 
     for( auto &url : mDraggedUrls ) {
 
         auto localUrl = url.toLocalFile();
 
-        if( !findGameFiles( localUrl, false ) ) {
+        if( !scanFolder( localUrl, false ) ) {
             enqueueFiles( localUrl );
         }
 
@@ -81,63 +81,63 @@ void LibraryWorker::handleDroppedUrls() {
     emit finished();
 }
 
-void LibraryWorker::handleContainsDrag( const bool contains ) {
+void GameScanner::handleContainsDrag( const bool contains ) {
     if( !contains ) {
         mDraggedUrls.clear();
     }
 }
 
-bool LibraryWorker::resumeQuitScan() {
+bool GameScanner::resumeQuitScan() {
     QMutexLocker locker( &mMutex );
     return qmlResumeQuitScan;
 }
 
-void LibraryWorker::setResumeQuitScan( const bool resume ) {
+void GameScanner::setResumeQuitScan( const bool resume ) {
     QMutexLocker locker( &mMutex );
     qmlResumeQuitScan = resume;
 }
 
-QString LibraryWorker::resumeDirectory() {
+QString GameScanner::resumeDirectory() {
     QMutexLocker locker( &mMutex );
     return mResumeDirectory;;
 }
 
-void LibraryWorker::setResumeDirectory( const QString directory ) {
+void GameScanner::setResumeDirectory( const QString directory ) {
     QMutexLocker locker( &mMutex );
     mResumeDirectory = directory;
 }
 
-QString LibraryWorker::resumeInsertID() {
+QString GameScanner::resumeInsertID() {
     QMutexLocker locker( &mMutex );
     return mResumeInsertID;
 }
 
-void LibraryWorker::setResumeInsertID( const QString id ) {
+void GameScanner::setResumeInsertID( const QString id ) {
     QMutexLocker locker( &mMutex );
     mResumeInsertID = id;
 }
 
-bool LibraryWorker::isRunning() {
+bool GameScanner::isRunning() {
     QMutexLocker locker( &mMutex );
     return mRunning;
 }
 
-void LibraryWorker::setIsRunning( const bool running ) {
+void GameScanner::setIsRunning( const bool running ) {
     QMutexLocker locker( &mMutex );
     mRunning = running;
 }
 
-bool LibraryWorker::insertCancelled() {
+bool GameScanner::insertCancelled() {
     QMutexLocker locker( &mMutex );
     return mInsertCancelled;
 }
 
-bool LibraryWorker::insertPaused() {
+bool GameScanner::insertPaused() {
     QMutexLocker locker( &mMutex );
     return mInsertPaused;
 }
 
-void LibraryWorker::setInsertCancelled( const bool cancelled ) {
+void GameScanner::setInsertCancelled( const bool cancelled ) {
     QMutexLocker locker( &mMutex );
 
     if( cancelled ) {
@@ -148,21 +148,22 @@ void LibraryWorker::setInsertCancelled( const bool cancelled ) {
     mInsertCancelled = cancelled;
 }
 
-void LibraryWorker::setInsertPaused( const bool paused ) {
+void GameScanner::setInsertPaused( const bool paused ) {
     QMutexLocker locker( &mMutex );
     mInsertPaused = paused;
 }
 
-bool LibraryWorker::findGameFiles( const QString localUrl, bool autoStart = true ) {
+bool GameScanner::scanFolder( const QString path, bool autoStart = true ) {
 
-    QDir urlDirectory( localUrl );
+    // Check that the directory exists before continuing
+    QDir directory( path );
 
-    if( !urlDirectory.exists() ) {
-        qCWarning( phxLibrary ) << localUrl << " does not exist!";
+    if( !directory.exists() ) {
+        qCWarning( phxLibrary ) << path << " does not exist!";
         return false;
     }
 
-    QDirIterator dirIter( localUrl, GameFileInfo::gameFilter(), QDir::Files, QDirIterator::NoIteratorFlags );
+    QDirIterator dirIter( path, GameFileInfo::gameFilter(), QDir::Files, QDirIterator::NoIteratorFlags );
 
     if( resumeQuitScan() && !resumeInsertID().isEmpty() ) {
 
@@ -190,7 +191,7 @@ bool LibraryWorker::findGameFiles( const QString localUrl, bool autoStart = true
     }
 
     if( resumeDirectory().isEmpty() ) {
-        setResumeDirectory( localUrl );
+        setResumeDirectory( path );
     }
 
     if( autoStart ) {
@@ -203,7 +204,7 @@ bool LibraryWorker::findGameFiles( const QString localUrl, bool autoStart = true
 
 }
 
-void LibraryWorker::prepareGameData( QQueue<GameFileInfo> &queue ) {
+void GameScanner::prepareGameData( QQueue<GameFileInfo> &queue ) {
 
     int i = 0;
     int queueLength = queue.size();
@@ -237,6 +238,11 @@ void LibraryWorker::prepareGameData( QQueue<GameFileInfo> &queue ) {
         importData.fileID = i - 1;
         importData.artworkUrl = gameInfo.artworkUrl();
 
+        // Do not import any game that does not have a valid system set
+        if( importData.system == "" ) {
+            continue;
+        }
+
         // Goodbyte data! Make us proud.
         emit insertGameData( std::move( importData ) );
 
@@ -244,7 +250,7 @@ void LibraryWorker::prepareGameData( QQueue<GameFileInfo> &queue ) {
 
 }
 
-void LibraryWorker::enqueueFiles( QString &filePath ) {
+void GameScanner::enqueueFiles( QString &filePath ) {
 
     auto fileInfo = GameFileInfo( filePath );
 

@@ -25,18 +25,20 @@ bool CueFileInfo::isValid() {
 
     auto possibleSystemsList = getAvailableSystems( suffix() );
 
-    if( possibleSystemsList.size() == 1 ) {
-        mSystem = possibleSystemsList.at( 0 );
-    } else {
-        if( exists ) {
-            auto localFile = gameFiles.first();
+    mSystem = possibleSystemsList.at( 0 );
 
-            auto gameInfo = GameFileInfo( localFile );
+    //    if( possibleSystemsList.size() == 1 ) {
+    //        mSystem = possibleSystemsList.at( 0 );
+    //    } else {
+    //        if( exists ) {
+    //            auto localFile = gameFiles.first();
 
-            auto header = gameInfo.getPossibleHeaders( possibleSystemsList );
-            mSystem = header.system;
-        }
-    }
+    //            auto gameInfo = GameFileInfo( localFile );
+
+    //            auto header = gameInfo.getPossibleHeaders( possibleSystemsList );
+    //            mSystem = header.system;
+    //        }
+    //    }
 
     mFullFilePath = QStringLiteral( "cue://" ) + canonicalFilePath();
     mCrc32Checksum = getCheckSum( canonicalFilePath() );

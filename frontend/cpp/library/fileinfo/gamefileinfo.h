@@ -56,7 +56,7 @@ namespace Library {
             QString mTitle;
             QString mFullFilePath;
             QString mArtworkUrl;
-            QSqlQuery mQuery;
+            QSqlQuery mLibretroQuery;
 
             QStringList getAvailableSystems( const QString &extension );
             QString getCheckSum( const QString &filePath );
@@ -65,7 +65,7 @@ namespace Library {
 
             bool isBios( QString &biosName );
 
-            void fillMetadata( int romID, QSqlQuery &query );
+            void fillMetadata( int romID, QSqlQuery &metadataQuery );
 
 
         private:

@@ -224,7 +224,7 @@ Rectangle {
             rootDropArea.onEntered.connect( dragEvent );
             rootDropArea.onDropped.connect( dropEvent );
             rootDropArea.onContainsDragChanged.connect( containsEvent );
-            libraryModel.startWorkerThread();
+            libraryModel.startGameScannerThread();
         }
     }
 

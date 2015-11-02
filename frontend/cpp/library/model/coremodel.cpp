@@ -5,14 +5,14 @@ using namespace Library;
 CoreModel::CoreModel( QObject *parent )
     : QAbstractTableModel( parent ) {
 
-    mRoleNames.insert( DefaultCoreRoles::CoresRole, QByteArrayLiteral( "cores" ) );
-    mRoleNames.insert( DefaultCoreRoles::SystemRole, QByteArrayLiteral( "system" ) );
-    mRoleNames.insert( DefaultCoreRoles::DefaultCoreIndexRole, QByteArrayLiteral( "defaultCoreIndex" ) );
+    mRoleNames.insert( CoreModelRoles::CoresRole, QByteArrayLiteral( "cores" ) );
+    mRoleNames.insert( CoreModelRoles::SystemRole, QByteArrayLiteral( "system" ) );
+    mRoleNames.insert( CoreModelRoles::DefaultCoreIndexRole, QByteArrayLiteral( "defaultCoreIndex" ) );
 
     beginResetModel();
 
     auto systemDBQuery = QSqlQuery( LibretroDatabase::database() );
-    auto execStatus = systemDBQuery.exec( QStringLiteral( "SELECT DISTINCT system, defaultCore FROM systems;" ) );
+    auto execStatus = systemDBQuery.exec( QStringLiteral( "SELECT DISTINCT UUID, defaultCore FROM system WHERE enabled=1" ) );
     Q_ASSERT_X( execStatus, Q_FUNC_INFO, qPrintable( systemDBQuery.lastError().text() ) );
 
     // Grab the system list from the system DB along with the default core
@@ -72,7 +72,7 @@ CoreModel::CoreModel( QObject *parent )
     userDBQuery.finish();
 
     // Grab all the other available cores from the system DB
-    execStatus = systemDBQuery.exec( QStringLiteral( "SELECT core, system FROM cores" ) );
+    execStatus = systemDBQuery.exec( QStringLiteral( "SELECT DISTINCT core, system FROM systemToCore" ) );
     Q_ASSERT_X( execStatus, Q_FUNC_INFO, qPrintable( systemDBQuery.lastError().text() ) );
 
     while( systemDBQuery.next() ) {
@@ -104,6 +104,10 @@ CoreModel::CoreModel( QObject *parent )
 
     endResetModel();
 
+}
+
+QModelIndex CoreModel::index( int row, int column, const QModelIndex &parent ) const {
+    return hasIndex( row, column, parent ) ? createIndex( row, column, nullptr ) : QModelIndex();
 }
 
 int CoreModel::rowCount( const QModelIndex &parent ) const {

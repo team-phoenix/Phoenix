@@ -14,7 +14,7 @@ LibraryModel::LibraryModel( UserDatabase *db, QObject *parent )
 
 LibraryModel::LibraryModel( UserDatabase &db, QObject *parent )
     : QSqlTableModel( parent, db.database() ),
-      mWorkerThread( this ),
+      mGameScannerThread( this ),
       mFilterCollection( false ),
       mTransaction( false ),
       qmlInsertPaused( false ),
@@ -23,7 +23,7 @@ LibraryModel::LibraryModel( UserDatabase &db, QObject *parent )
       qmlRecursiveScan( true ),
       qmlProgress( 0.0 ) {
 
-    mLibraryWorker.moveToThread( &mWorkerThread );
+    mGameScanner.moveToThread( &mGameScannerThread );
 
     mRoleNames = QSqlTableModel::roleNames();
     mRoleNames.insert( TitleRole, QByteArrayLiteral( "title" ) );
@@ -40,45 +40,42 @@ LibraryModel::LibraryModel( UserDatabase &db, QObject *parent )
     setTable( UserDatabase::tableName );
     select();
 
-
     // Connect Model to Worker.
-    connect( this, &LibraryModel::droppedUrls, &mLibraryWorker, &LibraryWorker::handleDroppedUrls );
-    connect( this, &LibraryModel::containsDrag, &mLibraryWorker, &LibraryWorker::handleContainsDrag );
-    connect( this, &LibraryModel::draggedUrls, &mLibraryWorker, &LibraryWorker::handleDraggedUrls );
-    connect( this, &LibraryModel::insertGames, &mLibraryWorker, &LibraryWorker::findGameFiles );
-    connect( this, &LibraryModel::signalInsertCancelled, &mLibraryWorker, &LibraryWorker::setInsertCancelled );
-    connect( this, &LibraryModel::signalInsertPaused, &mLibraryWorker, &LibraryWorker::setInsertPaused );
+    connect( this, &LibraryModel::droppedUrls, &mGameScanner, &GameScanner::handleDroppedUrls );
+    connect( this, &LibraryModel::containsDrag, &mGameScanner, &GameScanner::handleContainsDrag );
+    connect( this, &LibraryModel::draggedUrls, &mGameScanner, &GameScanner::handleDraggedUrls );
+    connect( this, &LibraryModel::insertGames, &mGameScanner, &GameScanner::scanFolder );
+    connect( this, &LibraryModel::signalInsertCancelled, &mGameScanner, &GameScanner::setInsertCancelled );
+    connect( this, &LibraryModel::signalInsertPaused, &mGameScanner, &GameScanner::setInsertPaused );
 
     // Connect Worker to Model.
 
     // Do not change this from a blocking queued connection. This is to simplify the threaded code.
-    connect( &mLibraryWorker, &LibraryWorker::insertGameData, this, &LibraryModel::handleInsertGame );
-    connect( &mLibraryWorker, &LibraryWorker::started, this, [] {
-        qCDebug( phxLibrary ) << "Worker Started...";
+    connect( &mGameScanner, &GameScanner::insertGameData, this, &LibraryModel::handleInsertGame );
+    connect( &mGameScanner, &GameScanner::started, this, [] {
+        qCDebug( phxLibrary ) << "Worker started...";
     } );
 
     // Do some thread cleanup.
-    connect( &mLibraryWorker, &LibraryWorker::finished, this, [ this ] {
-        qCDebug( phxLibrary ) << "Worker Finished...";
+    connect( &mGameScanner, &GameScanner::finished, this, [ this ] {
+        qCDebug( phxLibrary ) << "Worker finished...";
     } );
-
 
     // Listen to the Worker Thread.
-    connect( &mWorkerThread, &QThread::started, &mLibraryWorker, &LibraryWorker::eventLoopStarted );
-    connect( &mWorkerThread, &QThread::started, this, [ this ] {
-        qCDebug( phxLibrary ) << "mWorkerThread Started...";
+    connect( &mGameScannerThread, &QThread::started, &mGameScanner, &GameScanner::eventLoopStarted );
+    connect( &mGameScannerThread, &QThread::started, this, [ this ] {
+        qCDebug( phxLibrary ) << "Worker thread started...";
     } );
 
-
-    connect( &mWorkerThread, &QThread::finished, this, [ this ] {
-        qCDebug( phxLibrary ) << "mWorkerThread Stopped...";
+    connect( &mGameScannerThread, &QThread::finished, this, [ this ] {
+        qCDebug( phxLibrary ) << "Worker thread stopped...";
     } );
 
 }
 
 LibraryModel::~LibraryModel() {
 
-    closeWorkerThread();
+    stopGameScannerThread();
 
     if( submitAll() ) {
         // database().commit();
@@ -145,7 +142,6 @@ bool LibraryModel::select() {
     endResetModel();
     return true;
 }
-
 
 bool LibraryModel::transaction() {
     if( !mTransaction ) {
@@ -215,40 +211,39 @@ void LibraryModel::handleDroppedUrls() {
 }
 
 void LibraryModel::resumeInsert() {
-    if( mWorkerThread.isRunning() ) {
-        mLibraryWorker.setInsertPaused( false );
+    if( mGameScannerThread.isRunning() ) {
+        mGameScanner.setInsertPaused( false );
     }
 
 }
 
 void LibraryModel::pauseInsert() {
-    if( mWorkerThread.isRunning() ) {
-        mLibraryWorker.setInsertPaused( true );
+    if( mGameScannerThread.isRunning() ) {
+        mGameScanner.setInsertPaused( true );
     }
 }
 
 void LibraryModel::cancelInsert() {
-    if( mWorkerThread.isRunning() ) {
-        mLibraryWorker.setInsertCancelled( true );
+    if( mGameScannerThread.isRunning() ) {
+        mGameScanner.setInsertCancelled( true );
     }
 }
 
-void LibraryModel::closeWorkerThread() {
-    if( mWorkerThread.isRunning() ) {
-        mLibraryWorker.setInsertCancelled( true );
-        mWorkerThread.quit();
-        mWorkerThread.wait();
+void LibraryModel::stopGameScannerThread() {
+    if( mGameScannerThread.isRunning() ) {
+        mGameScanner.setInsertCancelled( true );
+        mGameScannerThread.quit();
+        mGameScannerThread.wait();
     }
 }
 
 bool LibraryModel::insertCancelled() {
-    return mLibraryWorker.insertCancelled();
+    return mGameScanner.insertCancelled();
 }
 
 bool LibraryModel::insertPaused() {
-    return mLibraryWorker.insertPaused();
+    return mGameScanner.insertPaused();
 }
-
 
 void LibraryModel::handleUpdateGame( const GameData metaData ) {
     // We need to be careful here. This function needs to only set data
@@ -350,7 +345,7 @@ void LibraryModel::handleInsertGame( const GameData importData ) {
     */
 
 
-    mLibraryWorker.setResumeInsertID( importData.filePath );
+    mGameScanner.setResumeInsertID( importData.filePath );
 
     QSqlQuery query( database() );
 
@@ -375,8 +370,8 @@ void LibraryModel::handleInsertGame( const GameData importData ) {
 
     if( static_cast<int>( progress() ) == 100 ) {
 
-        mLibraryWorker.setResumeInsertID( "" );
-        mLibraryWorker.setResumeDirectory( "" );
+        mGameScanner.setResumeInsertID( "" );
+        mGameScanner.setResumeDirectory( "" );
 
         setProgress( 0.0 );
         setMessage( QStringLiteral( "Import Synced..." ) );
@@ -461,11 +456,11 @@ void LibraryModel::setMessage( const QString message ) {
     emit messageChanged();
 }
 
-void LibraryModel::append( const QUrl url ) {
+void LibraryModel::scanFolder( const QUrl url ) {
 
     auto localUrl = url.toLocalFile();
 
-    if( mLibraryWorker.isRunning() ) {
+    if( mGameScanner.isRunning() ) {
         qDebug() << "Scan in already running. returning...";
         return;
     }
@@ -476,7 +471,7 @@ void LibraryModel::append( const QUrl url ) {
 }
 
 void LibraryModel::clearDatabase() {
-    if( mLibraryWorker.isRunning() ) {
+    if( mGameScanner.isRunning() ) {
         qCWarning( phxLibrary ) << "Cannot remove entries when scan is running.";
         return;
     }

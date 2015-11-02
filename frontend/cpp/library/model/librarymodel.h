@@ -4,7 +4,7 @@
 #include "frontendcommon.h"
 
 #include "userdatabase.h"
-#include "libraryworker.h"
+#include "gamescanner.h"
 #include "logging.h"
 
 namespace Library {
@@ -74,12 +74,12 @@ namespace Library {
 
             // Starts the import progress. The url is a folder or
             // file that the user wants to import.
-            void append( const QUrl url );
+            void scanFolder( const QUrl url );
 
             // clear removes every SQL row  in the database permanently.
             void clearDatabase();
 
-            //  updateCount() reads the SQL database and updates the count()
+            // updateCount() reads the SQL database and updates the count()
             // function with how many entries are actually in the databaes.
             // This is important for creating our own scrollbar.
             void updateCount();
@@ -111,10 +111,10 @@ namespace Library {
 
             void cancelInsert();
 
-            void closeWorkerThread();
+            void stopGameScannerThread();
 
-            void startWorkerThread() {
-                mWorkerThread.start( QThread::HighPriority );
+            void startGameScannerThread() {
+                mGameScannerThread.start( QThread::HighPriority );
             }
 
 
@@ -167,14 +167,13 @@ namespace Library {
             // This thread is started when a user wants to import
             // a games folder. Currently, the thread quits whenever the
             // user cancels and import, or the import finishes.
-            QThread mWorkerThread;
+            QThread mGameScannerThread;
+            GameScanner mGameScanner;
 
             bool mFilterCollection;
             bool mTransaction;
             bool qmlInsertPaused;
             bool qmlInsertCancelled;
-
-            LibraryWorker mLibraryWorker;
 
             // QML Variables
             int qmlCount;
@@ -182,13 +181,10 @@ namespace Library {
             qreal qmlProgress;
             QString qmlMessage;
 
-
             // QML Setters
             void setProgress( const qreal progress );
 
-
             // Normal Setters
-
             QString createFilter();
     };
 
