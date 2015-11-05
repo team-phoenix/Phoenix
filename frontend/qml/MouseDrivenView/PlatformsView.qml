@@ -67,7 +67,7 @@ PhxScrollView {
             Text {
                 text: qsTr( "Systems" );
                 anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: PhxTheme.common.menuItemMargin; }
-                font { pixelSize: PhxTheme.selectionArea.headerFontSize; }
+                font { pixelSize: PhxTheme.selectionArea.headerFontSize; bold: true; }
                 color: PhxTheme.selectionArea.highlightFontColor;
             }
         }

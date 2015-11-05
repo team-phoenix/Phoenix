@@ -6,7 +6,7 @@ QtObject {
     property color normalFontColor: "#F1F1F1";
 
     property QtObject selectionArea: QtObject {
-        property int headerFontSize:       20;
+        property int headerFontSize:       14;
         property color baseColor:          "#2E0E19";
         property color baseFontColor:      "#75FFFFFF" // "#8A8889";
         property color highlightFontColor: "#FFFFFF" // "#D5D5D5";
@@ -24,7 +24,7 @@ QtObject {
 
         // MENU
         property int menuWidth:       250;
-        property int menuTitleHeight: 70;
+        property int menuTitleHeight: 35;
         property int menuItemHeight:  25;
         property int menuItemMargin:  25;
         property color menuTitleColor: "#35000000";
