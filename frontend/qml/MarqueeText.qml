@@ -26,6 +26,7 @@ Item {
     property int spacing: 20;
     property bool running: false;
     property double pixelsPerFrame: 1;
+    property bool bold: false;
 
     property bool finishedAnimating: true;
 
@@ -187,7 +188,7 @@ Item {
 
         text: parent.text;
         color: parent.color;
-        font { pixelSize: parent.fontSize; family: fontFamily; }
+        font { pixelSize: parent.fontSize; family: fontFamily; bold: parent.bold; }
     }
 
     // This text is only visible when animating
@@ -202,7 +203,7 @@ Item {
 
         text: parent.text;
         color: parent.color;
-        font { pixelSize: parent.fontSize; family: fontFamily; }
+        font { pixelSize: parent.fontSize; family: fontFamily; bold: parent.bold; }
     }
 }
 

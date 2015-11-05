@@ -22,11 +22,33 @@ PhxScrollView {
             y: listView.currentItem.y;
             anchors.fill: listView.currentItem;
 
+            // Gives the highlighter that nice glow.
+            DropShadow {
+                source: highlighterRectangle;
+                anchors.fill: source;
+                horizontalOffset: 0;
+                verticalOffset: 0;
+                radius: 12.0;
+                samples: radius * 2;
+                color: "red";
+            }
+
             Rectangle {
                 id: highlighterRectangle;
-                anchors { top: parent.top; bottom: parent.bottom; left: parent.left; right: parent.right; }
-                height: PhxTheme.common.menuItemHeight;
-                color: PhxTheme.common.menuItemBackgroundColor;
+                anchors {
+                    top: parent.top; bottom: parent.bottom; left: parent.left; right: parent.right;
+                    leftMargin: 12;
+                    rightMargin: 12;
+                }
+                //width: listView.currentItem.marqueeText.running ? listView.currentItem.marqueeText.textWidth : listView.currentItem.width;
+                color: "transparent";
+
+                border {
+                    width: 3;
+                    color: PhxTheme.common.menuItemBackgroundColor;
+                }
+
+                radius: 5;
 
                 /* Rectangle {
                     anchors { top: parent.top; bottom: parent.bottom; left: parent.left; }
@@ -51,6 +73,7 @@ PhxScrollView {
         }
 
         delegate: Item {
+            property alias marqueeText: platformText;
             height: PhxTheme.common.menuItemHeight;
             anchors { left: parent.left; right: parent.right; }
 
@@ -68,10 +91,11 @@ PhxScrollView {
                 // Print friendly name if one exists
                 text: listView.model.get( index )[1] !== "" ? listView.model.get( index )[1] : listView.model.get( index )[0];
                 fontSize: PhxTheme.common.baseFontSize + 1;
-                color: index === listView.currentIndex ? PhxTheme.common.baseBackgroundColor : PhxTheme.selectionArea.baseFontColor;
+                color: index === listView.currentIndex ? PhxTheme.common.menuItemHighlight : PhxTheme.selectionArea.baseFontColor;
                 spacing: 40;
                 running: index === listView.currentIndex || mouseArea.containsMouse;
                 pixelsPerFrame: 2.0;
+                bold: index === listView.currentIndex;
             }
 
             MouseArea {

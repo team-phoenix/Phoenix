@@ -25,11 +25,11 @@ QtObject {
         // MENU
         property int menuWidth:       250;
         property int menuTitleHeight: 70;
-        property int menuItemHeight:  35;
+        property int menuItemHeight:  25;
         property int menuItemMargin:  25;
         property color menuTitleColor: "#35000000";
-        property color menuItemHighlight: "#A32127";
-        property color menuItemBackgroundColor: "#A32127";
+        property color menuItemHighlight: "#ff8e8e";
+        property color menuItemBackgroundColor: "#f95656";
         property color menuSelectedColor: "#FFFFFF";
 
         // BACKGROUND
