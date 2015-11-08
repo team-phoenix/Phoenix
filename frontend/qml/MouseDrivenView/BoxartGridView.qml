@@ -125,10 +125,7 @@ Rectangle {
                             rootMouseArea.hoverEnabled = false;
 
                             // Let the user know we're thinking!
-                            rootMouseArea.cursorShape = Qt.BusyCursor;
-
-                            // Call this callback once the coreGamePair below makes its way to the Core
-                            root.gameViewObject.coreControl.sourceChanged.connect( sourceChangedCallback );
+                            rootMouseArea.cursorShape = Qt.WaitCursor;
 
                             // Set window title to game title
                             root.title = "Loading - " + title;
@@ -145,38 +142,31 @@ Rectangle {
 
                             // Extra stuff
                             dict[ "title" ] = title;
+                            dict[ "system" ] = system;
 
                             // Assign the source
-                            // Execution will continue in sourceChangedCallback() once CoreControl gets this assignment
                             root.gameViewObject.coreControl.source = dict;
 
+                            // Connect the next callback in the chain to be called once the load begins/ends
+                            root.gameViewObject.coreControl.stateChanged.connect( stateChangedCallback );
+
+                            // Begin the load
+                            // Execution will continue in stateChangedCallback() once CoreControl changes state
+                            root.gameViewObject.coreControl.load();
 
                         }
-
-                    }
-
-                    // Once the source has been properly set in the Core, begin the load
-                    function sourceChangedCallback() {
-                        console.log( "sourceChangedCallback()" );
-
-                        // Disconnect this callback once it's been used
-                        root.gameViewObject.coreControl.sourceChanged.disconnect( sourceChangedCallback );
-
-                        // Connect the next callback in the chain to be called once the load begins
-                        root.gameViewObject.coreControl.stateChanged.connect( stateChangedCallback );
-
-                        // Begin the load
-                        // Execution will continue in stateChangedCallback() once CoreControl changes state
-                        root.gameViewObject.coreControl.load();
                     }
 
                     // Once the load completes, launch the game
                     function stateChangedCallback( newState ) {
                         console.log( "stateChangedCallback(" + newState + ")" );
 
+                        // Nothing to do, the load has begun
                         if( newState === Control.LOADING ) {
-                            // Nothing to do when we go from setting source to loading core/game
+                            return;
                         }
+
+                        // Load complete, start game and hide library
                         if( newState === Control.PAUSED ) {
                             // Disconnect this callback once it's been used where we want it to be used
                             root.gameViewObject.coreControl.stateChanged.disconnect( stateChangedCallback );
@@ -185,6 +175,7 @@ Rectangle {
 
                             // Destroy this library view and show the game
                             layoutStackView.pop();
+                            return;
                         }
                     }
                 }

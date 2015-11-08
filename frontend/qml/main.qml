@@ -36,8 +36,14 @@ ApplicationWindow {
     function resetTitle() { title = ""; }
 
     // Use when transitioning
-    function disableMouseClicks() { rootMouseArea.propagateComposedEvents = false; }
-    function enableMouseClicks()  { rootMouseArea.propagateComposedEvents = true; }
+    function disableMouseClicks() {
+        rootMouseArea.propagateComposedEvents = false;
+        rootMouseArea.acceptedButtons = Qt.AllButtons;
+    }
+    function enableMouseClicks()  {
+        rootMouseArea.propagateComposedEvents = true;
+        rootMouseArea.acceptedButtons = Qt.NoButton;
+    }
 
     MouseArea {
         id: rootMouseArea;
