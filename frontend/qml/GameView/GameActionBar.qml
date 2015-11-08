@@ -194,6 +194,87 @@ Rectangle {
             spacing: 0;
             anchors { top: parent.top; bottom: parent.bottom; right: parent.right; }
 
+            property alias tvmodeToggle: tvmodeToggle;
+
+            // Toggle anamorphic widescreen
+            Rectangle {
+                anchors { top: parent.top; bottom: parent.bottom; }
+                color: "transparent"
+                width: 32;
+
+                enabled: tvmodeToggle.tvmode;
+                visible: enabled;
+
+                property bool widescreen: false;
+
+                Text {
+                    anchors.centerIn: parent;
+                    anchors.margins: 10;
+                    width: 24;
+                    height: 24;
+                    verticalAlignment: Text.AlignVCenter;
+                    horizontalAlignment: Text.AlignHCenter;
+
+                    text: parent.widescreen ? "16:9" : "4:3";
+                    color: "white";
+                    font {
+                        pixelSize: PhxTheme.common.baseFontSize;
+                        family: PhxTheme.common.systemFontFamily;
+                        bold: true;
+                    }
+                }
+
+                MouseArea {
+                    anchors.fill: parent;
+                    onClicked: {
+                        if( parent.widescreen === true ) parent.widescreen = false;
+                        else parent.widescreen = true;
+
+                        videoOutput.widescreen = parent.widescreen;
+                    }
+
+                }
+            }
+
+            // Toggle TV mode
+            Rectangle {
+                id: tvmodeToggle;
+                anchors { top: parent.top; bottom: parent.bottom; }
+                color: "transparent"
+                width: 32;
+
+                property bool tvmode: false;
+
+                Text {
+                    anchors.centerIn: parent;
+                    anchors.margins: 10;
+                    width: 24;
+                    height: 24;
+                    verticalAlignment: Text.AlignVCenter;
+                    horizontalAlignment: Text.AlignHCenter;
+
+                    text: "TV";
+                    color: "white";
+                    font {
+                        pixelSize: PhxTheme.common.baseFontSize;
+                        family: PhxTheme.common.systemFontFamily;
+                        bold: true;
+                        strikeout: !parent.tvmode;
+                    }
+                }
+
+                MouseArea {
+                    anchors.fill: parent;
+                    onClicked: {
+                        if( parent.tvmode === true ) parent.tvmode = false;
+                        else parent.tvmode = true;
+
+                        videoOutput.television = parent.tvmode;
+                    }
+
+                }
+            }
+
             // Suspend - Minimize
             Rectangle {
                 anchors { top: parent.top; bottom: parent.bottom; }
@@ -282,6 +363,7 @@ Rectangle {
 
                 }
             }
+
             Rectangle { anchors { top: parent.top; bottom: parent.bottom; } color: "transparent"; width: 12; } // DO NOT remove this - Separator
         }
     }
