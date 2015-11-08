@@ -50,6 +50,9 @@ Item {
     // ...or gains focus and needs to have its animation begin
     onRunningChanged: handleSituationChanged();
 
+    // Handle bold toggling affecting width of text
+    onBoldChanged: handleSituationChanged();
+
     // Deal with either needsMarqueeAtAll or running having changed
     function handleSituationChanged() {
         if( needsMarqueeAtAll ) beginAnimation();

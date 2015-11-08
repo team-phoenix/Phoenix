@@ -19,46 +19,31 @@ PhxScrollView {
         spacing: 0;
         model: PlatformsModel { id: platformsModel; }
         boundsBehavior: Flickable.StopAtBounds;
+        highlightFollowsCurrentItem: false;
 
-        highlight: Item {
-            x: listView.currentItem.x;
-            y: listView.currentItem.y;
-            anchors.fill: listView.currentItem;
+        signal doShowAnimation();
 
-            // Gives the highlighter that nice glow.
-            DropShadow {
-                source: highlighterRectangle;
-                anchors.fill: source;
-                horizontalOffset: 0;
-                verticalOffset: 0;
-                radius: 12.0;
-                samples: radius * 2;
-                color: "red";
+        highlight: Rectangle {
+            id: highlighter;
+            width: 4;
+            height: listView.currentItem.height;
+            color: PhxTheme.common.menuItemHighlight;
+
+            x: 0;
+            y: 0;
+
+            Connections {
+                target: listView;
+                onDoShowAnimation: {
+                    showAnimation.complete();
+                    showAnimation.start();
+                }
             }
 
-            Rectangle {
-                id: highlighterRectangle;
-                anchors {
-                    top: parent.top; bottom: parent.bottom; left: parent.left; right: parent.right;
-                    leftMargin: 12;
-                    rightMargin: 12;
-                }
-                //width: listView.currentItem.marqueeText.running ? listView.currentItem.marqueeText.textWidth : listView.currentItem.width;
-                color: "transparent";
-
-                border {
-                    width: 3;
-                    color: PhxTheme.common.menuItemBackgroundColor;
-                }
-
-                radius: 5;
-
-                /* Rectangle {
-                    anchors { top: parent.top; bottom: parent.bottom; left: parent.left; }
-                    width: 4;
-                    height: parent.height;
-                    color: PhxTheme.common.menuItemHighlight;
-                } */
+            SequentialAnimation {
+                id: showAnimation;
+                PropertyAction { target: highlighter; properties: "y"; value: listView.currentItem.y; }
+                PropertyAnimation { target: highlighter; properties: "x"; from: -4; to: 0; duration: 300; easing.type: Easing.InOutQuart; }
             }
         }
 
@@ -72,6 +57,13 @@ PhxScrollView {
                 anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: PhxTheme.common.menuItemMargin; }
                 font { pixelSize: PhxTheme.selectionArea.headerFontSize; bold: true; }
                 color: PhxTheme.selectionArea.highlightFontColor;
+            }
+
+            MouseArea {
+                anchors.fill: parent;
+                hoverEnabled: false;
+                propagateComposedEvents: false;
+                acceptedButtons: Qt.AllButtons;
             }
         }
 
@@ -94,7 +86,7 @@ PhxScrollView {
                 // Print friendly name if one exists
                 text: listView.model.get( index )[1] !== "" ? listView.model.get( index )[1] : listView.model.get( index )[0];
                 fontSize: PhxTheme.common.baseFontSize + 1;
-                color: index === listView.currentIndex ? PhxTheme.common.menuItemHighlight : PhxTheme.selectionArea.baseFontColor;
+                color: index === listView.currentIndex ? PhxTheme.common.menuSelectedColor : PhxTheme.selectionArea.baseFontColor;
                 spacing: 40;
                 running: index === listView.currentIndex || mouseArea.containsMouse;
                 pixelsPerFrame: 2.0;
@@ -105,15 +97,19 @@ PhxScrollView {
                 id: mouseArea;
                 anchors.fill: parent;
                 hoverEnabled: true;
+
                 onClicked: {
                     if ( contentArea.contentStackView.currentItem.objectName !== "PlatformsView" ) {
                         contentArea.contentStackView.push( { item: contentArea.boxartGrid, replace: true } );
                     }
 
                     // Always use UUID
-                    listView.currentIndex = index;
-                    if ( index === 0 ) { contentArea.contentLibraryModel.clearFilter( "games", "system" ); }
-                    else { contentArea.contentLibraryModel.setFilter( "games", "system", listView.model.get( index )[0] ); }
+                    if( listView.currentIndex !== index ) {
+                        listView.currentIndex = index;
+                        if ( index === 0 ) { contentArea.contentLibraryModel.clearFilter( "games", "system" ); }
+                        else { contentArea.contentLibraryModel.setFilter( "games", "system", listView.model.get( index )[0] ); }
+                        listView.doShowAnimation();
+                    }
                 }
             }
         }

@@ -21,23 +21,31 @@ PhxScrollView {
 
         boundsBehavior: Flickable.StopAtBounds;
 
-        highlight: Item {
-            x: listView.currentItem.x;
-            y: listView.currentItem.y;
-            anchors.fill: listView.currentItem;
+        highlightFollowsCurrentItem: false;
 
-            Rectangle {
-                id: highlighterRectangle;
-                anchors { top: parent.top; bottom: parent.bottom; left: parent.left; right: parent.right; }
-                height: PhxTheme.common.menuItemHeight;
-                color: PhxTheme.common.menuItemBackgroundColor;
+        signal doShowAnimation();
 
-                /* Rectangle {
-                    anchors { top: parent.top; bottom: parent.bottom; left: parent.left; }
-                    width: 4;
-                    height: parent.height;
-                    color: PhxTheme.common.menuItemHighlight;
-                } */
+        highlight: Rectangle {
+            id: highlighter;
+            width: 4;
+            height: listView.currentItem.height;
+            color: PhxTheme.common.menuItemHighlight;
+
+            x: 0;
+            y: 0;
+
+            Connections {
+                target: listView;
+                onDoShowAnimation: {
+                    showAnimation.complete();
+                    showAnimation.start();
+                }
+            }
+
+            SequentialAnimation {
+                id: showAnimation;
+                PropertyAction { target: highlighter; properties: "y"; value: listView.currentItem.y; }
+                PropertyAnimation { target: highlighter; properties: "x"; from: -4; to: 0; duration: 300; easing.type: Easing.InOutQuart; }
             }
         }
 
@@ -82,11 +90,13 @@ PhxScrollView {
                     case "Library":
                         if( contentArea.contentStackView.currentItem.objectName !== "LibrarySettingsView") {
                             contentArea.contentStackView.push( { item: contentArea.contentLibrarySettingsView, replace: true } );
+                            listView.doShowAnimation();
                         }
                         break;
                     case "Input":
                         if( contentArea.contentStackView.currentItem.objectName !== "InputSettingsView") {
                             // contentArea.contentStackView.push( { item: contentArea.contentInputSettingsView, replace: true } );
+                            listView.doShowAnimation();
                         }
                         break;
                     default:

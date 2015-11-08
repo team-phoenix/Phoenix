@@ -105,18 +105,33 @@ Item {
                 spacing: 0;
                 interactive: false;
                 orientation: ListView.Horizontal;
+                highlightFollowsCurrentItem: false;
 
-                highlight: Item {
-                    x: selectionAreaToolbar.currentItem.x;
-                    y: selectionAreaToolbar.currentItem.y;
-                    anchors.fill: selectionAreaToolbar.currentItem;
+                signal doShowAnimation();
 
-                        Rectangle {
-                            anchors { bottom: parent.bottom; left: parent.left; right: parent.right; }
-                            width: selectionAreaToolbar.width / selectionAreaToolbar.count;
-                            height: 4;
-                            color: PhxTheme.common.menuItemHighlight;
+                highlight: Rectangle {
+                    id: highlighter;
+                    height: 4;
+                    width: selectionAreaToolbar.currentItem.width;
+                    color: PhxTheme.common.menuItemHighlight;
+
+                    x: 0;
+                    y: selectionAreaToolbar.currentItem.height - 4;
+
+                    Connections {
+                        target: selectionAreaToolbar;
+                        onDoShowAnimation: {
+                            showAnimation.complete();
+                            showAnimation.start();
                         }
+                    }
+
+                    SequentialAnimation {
+                        id: showAnimation;
+                        PropertyAction { target: highlighter; properties: "x"; value: selectionAreaToolbar.currentItem.x; }
+                        PropertyAnimation { target: highlighter; properties: "y"; from: selectionAreaToolbar.currentItem.height;
+                            to: selectionAreaToolbar.currentItem.height - 4; duration: 300; easing.type: Easing.InOutQuart; }
+                    }
                 }
 
                 model: ListModel {
@@ -136,15 +151,15 @@ Item {
                     height: parent.height;
                     width: selectionAreaToolbar.width / selectionAreaToolbar.count;
 
-                    Row { anchors { right: parent.right; bottom: parent.bottom; bottomMargin: 6; } }
-
                     Image {
-                        height: 24; width: height;
+                        id: image;
+                        anchors.fill: parent;
                         source: imageSource;
-                        sourceSize { height: height; width: width; }
-                        fillMode: Image.PreserveAspectFit;
+                        sourceSize { height: 24; width: 24; }
+                        fillMode: Image.Pad;
                         smooth: false;
                         anchors { centerIn: parent; }
+                        opacity: index === selectionAreaToolbar.currentIndex ? 1.0 : 0.5;
                     }
 
                     Text {
@@ -169,6 +184,7 @@ Item {
                                     }
                                 }
                                 selectionAreaToolbar.currentIndex = index;
+                                selectionAreaToolbar.doShowAnimation();
                                 break;
 
                             case 1:
@@ -179,6 +195,7 @@ Item {
                                     }
                                 }
                                 selectionAreaToolbar.currentIndex = index;
+                                selectionAreaToolbar.doShowAnimation();
                                 break;
 
                             case 2:                                
@@ -189,6 +206,7 @@ Item {
                                     }
                                 }
                                 selectionAreaToolbar.currentIndex = index;
+                                selectionAreaToolbar.doShowAnimation();
                                 break;
 
                             case 3:

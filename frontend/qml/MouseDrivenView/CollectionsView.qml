@@ -17,6 +17,34 @@ PhxScrollView {
 
         boundsBehavior: Flickable.StopAtBounds;
 
+        highlightFollowsCurrentItem: false;
+
+        signal doShowAnimation();
+
+        highlight: Rectangle {
+            id: highlighter;
+            width: 4;
+            height: listView.currentItem.height;
+            color: PhxTheme.common.menuItemHighlight;
+
+            x: 0;
+            y: 0;
+
+            Connections {
+                target: listView;
+                onDoShowAnimation: {
+                    showAnimation.complete();
+                    showAnimation.start();
+                }
+            }
+
+            SequentialAnimation {
+                id: showAnimation;
+                PropertyAction { target: highlighter; properties: "y"; value: listView.currentItem.y; }
+                PropertyAnimation { target: highlighter; properties: "x"; from: -4; to: 0; duration: 300; easing.type: Easing.InOutQuart; }
+            }
+        }
+
         header: Rectangle {
             anchors { left: parent.left; right: parent.right; }
             color: "transparent";
@@ -117,8 +145,11 @@ PhxScrollView {
 
                     if ( collectionID == 0 ) {
                         contentArea.contentLibraryModel.clearFilter( "collections", "collectionID" );
+                        listView.doShowAnimation();
                     } else {
+                        console.log( collectionID );
                         contentArea.contentLibraryModel.setFilter( "collections", "collectionID", collectionID );
+                        listView.doShowAnimation();
                     }
                 }
             }
