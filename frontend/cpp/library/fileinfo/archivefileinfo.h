@@ -15,8 +15,8 @@ namespace Library {
             ArchiveFileInfo( const QString &file );
             ArchiveFileInfo( GameFileInfo &gameInfo );
 
-            bool firstFile();
-            bool nextFile();
+            bool checkFirstFile();
+            bool checkNextFile();
             bool isValid() const;
             bool open( QuaZip::Mode mode );
 
@@ -32,7 +32,7 @@ namespace Library {
             QSqlQuery mLibretroQuery;
             bool mIsValid;
 
-            void update();
+            void fillBasicInfo() override;
 
 
     };

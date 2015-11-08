@@ -11,6 +11,9 @@ import vg.phoenix.themes 1.0
 PhxScrollView {
     id: platformsView;
 
+    // The default of 20 just isn't fast enough
+    __wheelAreaScrollSpeed: 100;
+
     ListView {
         id: listView;
         spacing: 0;

@@ -1,9 +1,4 @@
 #include "gamescanner.h"
-#include "JlCompress.h"
-
-#include "archivefileinfo.h"
-#include "cuefileinfo.h"
-#include "biosfileinfo.h"
 
 using namespace Library;
 
@@ -35,8 +30,8 @@ GameScanner::~GameScanner() {
 
     QSettings settings;
     settings.beginGroup( QStringLiteral( "Library" ) );
-    settings.setValue( QStringLiteral( "ResumeInsertID" ), resumeInsertID() );
-    settings.setValue( QStringLiteral( "ResumeDirectory" ), resumeDirectory() );
+    settings.setValue( QStringLiteral( "ResumeInsertID" ), getResumeInsertID() );
+    settings.setValue( QStringLiteral( "ResumeDirectory" ), getResumeDirectory() );
 
 }
 
@@ -53,8 +48,13 @@ void GameScanner::eventLoopStarted() {
             setResumeInsertID( value.toString() );
             setResumeDirectory( lastUsedPath.toString() );
 
-            if( !resumeInsertID().isEmpty() ) {
-                scanFolder( resumeDirectory(), true );
+            if( !getResumeInsertID().isEmpty() ) {
+                qCDebug( phxLibrary ) << "Resuming interrupted scan of" << getResumeDirectory();
+
+                // Scan the thing we were supposed to scan before, scan as a file if it's a file
+                if( scanFolder( getResumeDirectory(), true ) == 1 ) {
+                    hashAndEnqueueFile( getResumeDirectory() );
+                }
             }
         }
     }
@@ -66,12 +66,15 @@ void GameScanner::handleDraggedUrls( QList<QUrl> urls ) {
 
 void GameScanner::handleDroppedUrls() {
 
+    qCDebug( phxLibrary ) << "Message received:" << mDraggedUrls.size() << "files and/or folders have been passed via drag & drop. Calculating their hashes...";
+
     for( auto &url : mDraggedUrls ) {
 
         auto localUrl = url.toLocalFile();
 
-        if( !scanFolder( localUrl, false ) ) {
-            enqueueFiles( localUrl );
+        // Process a file if given a file
+        if( scanFolder( localUrl, false ) == 1 ) {
+            hashAndEnqueueFile( localUrl );
         }
 
     }
@@ -97,7 +100,7 @@ void GameScanner::setResumeQuitScan( const bool resume ) {
     qmlResumeQuitScan = resume;
 }
 
-QString GameScanner::resumeDirectory() {
+QString GameScanner::getResumeDirectory() {
     QMutexLocker locker( &mMutex );
     return mResumeDirectory;;
 }
@@ -107,7 +110,7 @@ void GameScanner::setResumeDirectory( const QString directory ) {
     mResumeDirectory = directory;
 }
 
-QString GameScanner::resumeInsertID() {
+QString GameScanner::getResumeInsertID() {
     QMutexLocker locker( &mMutex );
     return mResumeInsertID;
 }
@@ -153,32 +156,38 @@ void GameScanner::setInsertPaused( const bool paused ) {
     mInsertPaused = paused;
 }
 
-bool GameScanner::scanFolder( const QString path, bool autoStart = true ) {
+int GameScanner::scanFolder( const QString path, bool autoStart = true ) {
 
     // Check that the directory exists before continuing
     QDir directory( path );
 
+    QFileInfo dir( path );
+
+    if( dir.isFile() ) {
+        return 1;
+    }
+
     if( !directory.exists() ) {
         qCWarning( phxLibrary ) << path << " does not exist!";
-        return false;
+        return 2;
     }
 
     QDirIterator dirIter( path, GameFileInfo::gameFilter(), QDir::Files, QDirIterator::NoIteratorFlags );
 
-    if( resumeQuitScan() && !resumeInsertID().isEmpty() ) {
+    if( resumeQuitScan() && !getResumeInsertID().isEmpty() ) {
 
         bool insert = false;
 
         while( dirIter.hasNext() ) {
             auto localFile = dirIter.next();
 
-            if( localFile == resumeInsertID() ) {
+            if( localFile == getResumeInsertID() ) {
                 insert = true;
                 localFile = dirIter.next();
             }
 
             if( insert ) {
-                enqueueFiles( localFile );
+                hashAndEnqueueFile( localFile );
             }
         }
     }
@@ -186,11 +195,11 @@ bool GameScanner::scanFolder( const QString path, bool autoStart = true ) {
     else {
         while( dirIter.hasNext() ) {
             auto localFile = dirIter.next();
-            enqueueFiles( localFile );
+            hashAndEnqueueFile( localFile );
         }
     }
 
-    if( resumeDirectory().isEmpty() ) {
+    if( getResumeDirectory().isEmpty() ) {
         setResumeDirectory( path );
     }
 
@@ -200,7 +209,7 @@ bool GameScanner::scanFolder( const QString path, bool autoStart = true ) {
         emit finished();
     }
 
-    return true;
+    return 0;
 
 }
 
@@ -209,12 +218,14 @@ void GameScanner::prepareGameData( QQueue<GameFileInfo> &queue ) {
     int i = 0;
     int queueLength = queue.size();
 
+    qCDebug( phxLibrary ) << "Matching" << queue.size() << "file(s) against the database...";
+
     while( queue.size() > 0 && !insertCancelled() ) {
         ++i;
 
         while( insertPaused() ) {
             QThread::msleep( 500 );
-            qDebug() << "paused ";
+            qCDebug( phxLibrary ) << "paused ";
 
             if( insertCancelled() ) {
                 return;
@@ -223,10 +234,10 @@ void GameScanner::prepareGameData( QQueue<GameFileInfo> &queue ) {
 
         GameFileInfo gameInfo = queue.dequeue();
 
-        // Find MetaData.
-        gameInfo.prepareMetadata();
+        // Find metadata
+        gameInfo.scanOpenVGDBForGame();
 
-        qDebug() << "ImportData: " << gameInfo.system() << gameInfo.fullFilePath() << gameInfo.artworkUrl();
+        // qCDebug( phxLibrary ) << "ImportData: " << gameInfo.system() << gameInfo.fullFilePath() << gameInfo.artworkUrl();
 
         GameData importData;
         importData.importProgress = ( i / static_cast<qreal>( queueLength ) ) * 100.0;
@@ -250,7 +261,7 @@ void GameScanner::prepareGameData( QQueue<GameFileInfo> &queue ) {
 
 }
 
-void GameScanner::enqueueFiles( QString &filePath ) {
+void GameScanner::hashAndEnqueueFile( QString filePath ) {
 
     auto fileInfo = GameFileInfo( filePath );
 
@@ -259,13 +270,15 @@ void GameScanner::enqueueFiles( QString &filePath ) {
             mFileInfoQueue.enqueue( fileInfo );
             break;
 
+        // If we encounter a .zip file, recurse into it as if it were a folder itself
         case GameFileInfo::FileType::ZipFile: {
 
             auto zipFileInfo = static_cast<ArchiveFileInfo>( fileInfo );
 
             if( zipFileInfo.open( QuaZip::mdUnzip ) ) {
 
-                for( auto hasNext = zipFileInfo.firstFile(); hasNext; hasNext = zipFileInfo.nextFile() ) {
+                // Check all files within .zip
+                for( auto hasNext = zipFileInfo.checkFirstFile(); hasNext; hasNext = zipFileInfo.checkNextFile() ) {
                     if( zipFileInfo.isValid() ) {
                         mFileInfoQueue.enqueue( zipFileInfo );
                     }
@@ -282,10 +295,10 @@ void GameScanner::enqueueFiles( QString &filePath ) {
             auto cueFileInfo = static_cast<CueFileInfo>( fileInfo );
 
             if( cueFileInfo.isValid() ) {
-                qDebug() << "Cue File (Valid): " << cueFileInfo.fullFilePath() <<  cueFileInfo.system() << cueFileInfo.crc32CheckSum();
+                qCDebug( phxLibrary ) << "Cue File (Valid): " << cueFileInfo.fullFilePath() <<  cueFileInfo.system() << cueFileInfo.crc32CheckSum();
                 mFileInfoQueue.enqueue( cueFileInfo );
             } else {
-                qDebug() << "Cue File (Invalid): " << cueFileInfo.fullFilePath();
+                qCDebug( phxLibrary ) << "Cue File (Invalid): " << cueFileInfo.fullFilePath();
             }
 
             break;
@@ -293,7 +306,7 @@ void GameScanner::enqueueFiles( QString &filePath ) {
 
         case GameFileInfo::FileType::BiosFile: {
             auto biosFileInfo = static_cast<BiosFileInfo>( fileInfo );
-            biosFileInfo.cache( PhxPaths::biosLocation() );
+            biosFileInfo.cache( PhxPaths::firmwareLocation() );
             break;
         }
 

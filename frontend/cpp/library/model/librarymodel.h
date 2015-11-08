@@ -45,7 +45,7 @@ namespace Library {
             ~LibraryModel();
 
             // Getters
-            bool select();
+            bool select() override;
             bool transaction();
 
             //  QML Getters
@@ -62,10 +62,11 @@ namespace Library {
 
             // Subclass Setters.
             QVariantMap get( int inx );
-            QVariant data( const QModelIndex &index, int role ) const;
+            QVariant data( const QModelIndex &index, int role ) const override;
+            Q_INVOKABLE void sort( int column, Qt::SortOrder order ) override;
 
             // Subclass Getters
-            QHash<int, QByteArray> roleNames() const;
+            QHash<int, QByteArray> roleNames() const override;
 
         public slots:
 
@@ -86,10 +87,8 @@ namespace Library {
 
             // Filters the SQL model based on a SQL query.
             // This is used to filter games in the BoxartGrid
-            void setFilter( const QString table, const QString row, const QVariant value );
-            void clearFilter( const QString table, const QString row );
-
-
+            void setFilter( const QString table, const QString column, const QVariant value );
+            void clearFilter( const QString table, const QString column );
 
             void sync();
 
@@ -149,7 +148,7 @@ namespace Library {
 
         protected:
 
-            QString selectStatement() const;
+            QString selectStatement() const override;
 
         private:
 

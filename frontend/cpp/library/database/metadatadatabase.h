@@ -6,6 +6,11 @@
 #include "phxpaths.h"
 #include "logging.h"
 
+#define OPENVGDBTABLEROMS "ROMs"
+#define OPENVGDBTABLESYSTEMS "SYSTEMS"
+#define OPENVGDBTABLERELEASES "RELEASES"
+#define OPENVGDBTABLEREGIONS "REGIONS"
+
 namespace Library {
 
     // GameMetaData is used to set in metadata for any game during;

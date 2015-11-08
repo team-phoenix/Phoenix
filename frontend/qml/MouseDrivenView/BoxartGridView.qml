@@ -7,6 +7,7 @@ import QtGraphicalEffects 1.0
 import vg.phoenix.cache 1.0
 import vg.phoenix.backend 1.0
 import vg.phoenix.themes 1.0
+import vg.phoenix.paths 1.0
 
 Rectangle {
     id: boxartGridBackground;
@@ -91,7 +92,7 @@ Rectangle {
 
             boundsBehavior: Flickable.StopAtBounds;
 
-            Component.onCompleted: { libraryModel.updateCount(); }
+            Component.onCompleted: { libraryModel.updateCount(); libraryModel.sort( 1, Qt.AscendingOrder ); }
 
             delegate: Rectangle {
                 id: gridItem;
@@ -126,18 +127,65 @@ Rectangle {
                             // Let the user know we're thinking!
                             rootMouseArea.cursorShape = Qt.BusyCursor;
 
-                            // Do the assignment that triggers the game launch
-                            root.gameViewObject.coreGamePair = { "corePath": core
-                                                               , "gamePath": game
-                                                               , "title": title };
+                            // Call this callback once the coreGamePair below makes its way to the Core
+                            root.gameViewObject.coreControl.sourceChanged.connect( sourceChangedCallback );
 
                             // Set window title to game title
-                            root.title = title;
+                            root.title = "Loading - " + title;
+                            console.log( title );
+                            console.log( root.title );
 
-                            layoutStackView.pop();
+                            // Set up the packet of information to pass to CoreControl
+                            var dict = {};
+                            dict[ "type" ] = "libretro";
+                            dict[ "core" ] = core;
+                            dict[ "game" ] = game;
+                            dict[ "systemPath" ] = PhxPaths.qmlFirmwareLocation();
+                            dict[ "savePath" ] = PhxPaths.qmlSaveLocation();
+
+                            // Extra stuff
+                            dict[ "title" ] = title;
+
+                            // Assign the source
+                            // Execution will continue in sourceChangedCallback() once CoreControl gets this assignment
+                            root.gameViewObject.coreControl.source = dict;
+
+
                         }
 
+                    }
 
+                    // Once the source has been properly set in the Core, begin the load
+                    function sourceChangedCallback() {
+                        console.log( "sourceChangedCallback()" );
+
+                        // Disconnect this callback once it's been used
+                        root.gameViewObject.coreControl.sourceChanged.disconnect( sourceChangedCallback );
+
+                        // Connect the next callback in the chain to be called once the load begins
+                        root.gameViewObject.coreControl.stateChanged.connect( stateChangedCallback );
+
+                        // Begin the load
+                        // Execution will continue in stateChangedCallback() once CoreControl changes state
+                        root.gameViewObject.coreControl.load();
+                    }
+
+                    // Once the load completes, launch the game
+                    function stateChangedCallback( newState ) {
+                        console.log( "stateChangedCallback(" + newState + ")" );
+
+                        if( newState === Control.LOADING ) {
+                            // Nothing to do when we go from setting source to loading core/game
+                        }
+                        if( newState === Control.PAUSED ) {
+                            // Disconnect this callback once it's been used where we want it to be used
+                            root.gameViewObject.coreControl.stateChanged.disconnect( stateChangedCallback );
+
+                            root.gameViewObject.coreControl.play();
+
+                            // Destroy this library view and show the game
+                            layoutStackView.pop();
+                        }
                     }
                 }
 

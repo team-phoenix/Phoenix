@@ -22,7 +22,7 @@ namespace Library {
 
             static QString userDataLocation();
             static QString saveLocation();
-            static QString biosLocation();
+            static QString firmwareLocation();
             static QString coverArtCacheLocation();
 
             Q_INVOKABLE bool qmlPortableMode();
@@ -34,7 +34,7 @@ namespace Library {
 
             Q_INVOKABLE QString qmlUserDataLocation();
             Q_INVOKABLE QString qmlSaveLocation();
-            Q_INVOKABLE QString qmlBiosLocation();
+            Q_INVOKABLE QString qmlFirmwareLocation();
             Q_INVOKABLE QString qmlCoverArtCacheLocation();
 
             static void initPaths();
@@ -57,7 +57,7 @@ namespace Library {
             // These can be written to and read from freely
             static QString mUserDataLocation;
             static QString mSaveLocation;
-            static QString mBiosLocation;
+            static QString mFirmwareLocation;
             static QString mCoverArtCacheLocation;
     };
 

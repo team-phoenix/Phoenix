@@ -1,8 +1,10 @@
 [submodule "backend"]
 	path = backend
-	url = https://github.com/team-phoenix/phoenix-backend
+	url = git@github.com:team-phoenix/phoenix-backend.git
 	branch = master
 	ignore = dirty
 [submodule "externals/quazip"]
 	path = externals/quazip
-	url = https://github.com/team-phoenix/quazip
+	url = git@github.com:team-phoenix/quazip.git
+	branch = master
+	ignore = dirty

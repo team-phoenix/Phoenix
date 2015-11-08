@@ -8,6 +8,8 @@ using namespace Library;
 GameFileInfo::GameFileInfo( const QString &file )
     : QFileInfo( file ),
       mFileType( FileType::UnsupportedFile ),
+      mSystem(),
+      mPossibleSystemsList(),
       mTitle( canonicalFilePath().remove( canonicalPath() ).remove( 0, 1 ).remove( QStringLiteral( "." ) + suffix() ) ),
       mFullFilePath( canonicalFilePath() ),
       mLibretroQuery( QSqlQuery( LibretroDatabase::database() ) ),
@@ -32,7 +34,7 @@ GameFileInfo::GameFileInfo( const QString &file )
 
     } else {
         mFileType = FileType::GameFile;
-        update( suffix() );
+        fillBasicInfo();
     }
 }
 
@@ -75,7 +77,7 @@ QStringList GameFileInfo::gameFilter() {
         auto query = QSqlQuery( LibretroDatabase::database() );
 
         auto exec = query.exec( QStringLiteral( "SELECT DISTINCT extension FROM extension" ) );
-        Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( query.lastError().text() ) );
+        Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( query.lastError().text() % " -- " % query.lastQuery() ) );
 
         while( query.next() ) {
             auto extension = query.value( 0 ).toString();
@@ -86,15 +88,14 @@ QStringList GameFileInfo::gameFilter() {
     return filter;
 }
 
-QStringList GameFileInfo::getAvailableSystems( const QString &extension ) {
+QStringList GameFileInfo::getSystemListForExtension( const QString &extension ) {
     mLibretroQuery.prepare( QStringLiteral( "SELECT DISTINCT system.UUID FROM system"
                                             " INNER JOIN extension ON system.UUID=extension.system"
-                                            " WHERE extension.extension = ? AND system.enabled=1" ) );
+                                            " WHERE extension.extension = :extension AND system.enabled=1" ) );
 
-    mLibretroQuery.addBindValue( extension );
+    mLibretroQuery.bindValue( ":extension", extension );
 
     QStringList systemsList;
-
 
     auto exec = mLibretroQuery.exec();
     Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( mLibretroQuery.lastError().text() ) );
@@ -116,23 +117,20 @@ void GameFileInfo::cache( const QString &location ) {
 
 }
 
-void GameFileInfo::prepareMetadata() {
+void GameFileInfo::scanOpenVGDBForGame() {
 
-    static const QString statement = QStringLiteral( "SELECT romID FROM " )
-                                     + MetaDataDatabase::tableRoms
-                                     + QStringLiteral( " WHERE romHashCRC = ?" );
+    QSqlQuery openVGDBQuery( MetaDataDatabase::database() );
+    bool ret = false;
 
-    QSqlQuery query( MetaDataDatabase::database() );
+    openVGDBQuery.prepare( QStringLiteral( "SELECT romID FROM " OPENVGDBTABLEROMS " WHERE romHashCRC LIKE :mCrc32Checksum" ) );
+    openVGDBQuery.bindValue( QStringLiteral( ":mCrc32Checksum" ), mCrc32Checksum );
 
-    query.prepare( statement );
-    query.addBindValue( mCrc32Checksum );
+    ret = openVGDBQuery.exec();
+    Q_ASSERT_X( ret, Q_FUNC_INFO, qPrintable( openVGDBQuery.lastError().text() % " -- " % getLastExecutedQuery( openVGDBQuery ) ) );
 
-    auto exec = query.exec();
-    Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( query.lastError().text() ) );
-
-    // Get all of the romIDs to look up in the RELEASES table.
-    if( query.first() ) {
-        fillMetadata( query.value( 0 ).toInt(), query );
+    // If we found a match, ask OpenVGDB for the rest
+    if( openVGDBQuery.first() ) {
+        fillMetadataFromOpenVGDB( openVGDBQuery.value( 0 ).toInt(), openVGDBQuery );
     }
 
     // If that got us nothing, try searching by filename
@@ -140,50 +138,97 @@ void GameFileInfo::prepareMetadata() {
         QFileInfo file( mFullFilePath );
         QString filename = file.fileName();
 
-        auto exec = query.exec( QString( "SELECT romID FROM %1 WHERE romFileName = \'%2\'" ).arg( MetaDataDatabase::tableRoms, filename ) );
-        Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( query.lastError().text() ) );
+        // Filename must be sanitized before being passed into an SQL query
+        openVGDBQuery.prepare( QStringLiteral( "SELECT romID FROM " OPENVGDBTABLEROMS " WHERE romFileName = :romFileName" ) );
+        openVGDBQuery.bindValue( QStringLiteral( ":romFileName" ), filename );
 
-        if( query.first() ) {
-            fillMetadata( query.value( 0 ).toInt(), query );
+        ret = openVGDBQuery.exec();
+        Q_ASSERT_X( ret, Q_FUNC_INFO, qPrintable( openVGDBQuery.lastError().text() % " -- " % getLastExecutedQuery( openVGDBQuery ) ) );
+
+        if( openVGDBQuery.first() ) {
+            fillMetadataFromOpenVGDB( openVGDBQuery.value( 0 ).toInt(), openVGDBQuery );
         }
     }
 
 }
 
-void GameFileInfo::fillMetadata( int romID, QSqlQuery &metadataQuery ) {
+void GameFileInfo::fillMetadataFromOpenVGDB( int romID, QSqlQuery &openVGDBQuery ) {
 
     if( romID > -1 ) {
+        openVGDBQuery.prepare( QStringLiteral( "SELECT RELEASES.releaseCoverFront, SYSTEMS.systemName FROM ROMs "
+                                               "INNER JOIN SYSTEMS ON SYSTEMS.systemID = ROMs.systemID "
+                                               "INNER JOIN RELEASES ON RELEASES.romID = ROMs.romID "
+                                               "WHERE ROMs.romID = :romID" ) );
 
-        static const auto statement = QStringLiteral( "SELECT RELEASES.releaseCoverFront, SYSTEMS.systemName FROM ROMs INNER JOIN SYSTEMS ON SYSTEMS.systemID = ROMs.systemID INNER JOIN RELEASES ON RELEASES.romID = ROMs.romID WHERE ROMs.romID = ?" );
+        openVGDBQuery.bindValue( QStringLiteral( ":romID" ), romID );
 
-        metadataQuery.prepare( statement );
-        metadataQuery.addBindValue( romID );
+        auto exec = openVGDBQuery.exec();
+        Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( openVGDBQuery.lastError().text() % " -- " % getLastExecutedQuery( openVGDBQuery ) ) );
 
-        auto exec = metadataQuery.exec();
-        Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( metadataQuery.lastError().text() ) );
+        if( openVGDBQuery.first() ) {
 
-        if( metadataQuery.first() ) {
-
-            mArtworkUrl = metadataQuery.value( 0 ).toString();
+            mArtworkUrl = openVGDBQuery.value( 0 ).toString();
 
             // Get the Phoenix UUID
-            auto exec = mLibretroQuery.exec( QString( "SELECT UUID, enabled FROM system WHERE openvgdbSystemName=\'%1\'" ).arg( metadataQuery.value( 1 ).toString() ) );
-            Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( mLibretroQuery.lastError().text() ) );
-            qCDebug( phxLibrary ) << mLibretroQuery.lastQuery();
+            mLibretroQuery.prepare( QStringLiteral( "SELECT UUID, enabled FROM system "
+                                                    "WHERE openvgdbSystemName=:openvgdbSystemName" ) );
+            mLibretroQuery.bindValue( ":openvgdbSystemName", openVGDBQuery.value( 1 ).toString() );
+
+            auto exec = mLibretroQuery.exec();
+            Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( mLibretroQuery.lastError().text() % " -- " % mLibretroQuery.lastQuery() ) );
+            //qCDebug( phxLibrary ) << mLibretroQuery.lastQuery();
 
             if( mLibretroQuery.first() ) {
-
                 // Do not import games for systems that are disabled
                 // Leaving system name blank will make game scanner skip it
                 mSystem = "";
+
                 if( mLibretroQuery.value( 1 ).toInt() ) {
                     mSystem = mLibretroQuery.value( 0 ).toString();
                 }
             }
 
-
         }
     }
+
+}
+
+QString GameFileInfo::getLastExecutedQuery( const QSqlQuery &query ) {
+    QString sql = query.executedQuery();
+    int nbBindValues = query.boundValues().size();
+
+    for( int i = 0, j = 0; j < nbBindValues; ) {
+        int s = sql.indexOf( QLatin1Char( '\'' ), i );
+        i = sql.indexOf( QLatin1Char( '?' ), i );
+
+        if( i < 1 ) {
+            break;
+        }
+
+        if( s < i && s > 0 ) {
+            i = sql.indexOf( QLatin1Char( '\'' ), s + 1 ) + 1;
+
+            if( i < 2 ) {
+                break;
+            }
+        } else {
+            const QVariant &var = query.boundValue( j );
+            QSqlField field( QLatin1String( "" ), var.type() );
+
+            if( var.isNull() ) {
+                field.clear();
+            } else {
+                field.setValue( var );
+            }
+
+            QString formatV = query.driver()->formatValue( field );
+            sql.replace( i, 1, formatV );
+            i += formatV.length();
+            ++j;
+        }
+    }
+
+    return sql;
 }
 
 GameFileInfo::HeaderData GameFileInfo::getPossibleHeaders( const QStringList &possibleSystems ) {
@@ -198,9 +243,9 @@ GameFileInfo::HeaderData GameFileInfo::getPossibleHeaders( const QStringList &po
         statement = statement.arg( system );
 
         auto exec = mLibretroQuery.exec( statement );
-        Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( mLibretroQuery.lastError().text() ) );
+        Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( mLibretroQuery.lastError().text() % mLibretroQuery.lastQuery() ) );
 
-        if ( mLibretroQuery.first() ) {
+        if( mLibretroQuery.first() ) {
 
             headerData.byteLength = mLibretroQuery.value( 0 ).toInt();
             headerData.seekPosition = mLibretroQuery.value( 1 ).toInt();
@@ -208,7 +253,7 @@ GameFileInfo::HeaderData GameFileInfo::getPossibleHeaders( const QStringList &po
             headerData.system = system;
 
         } else {
-            qCDebug( phxLibrary ) << "\n" << "Statement: " << statement << system << "\n" << mLibretroQuery.result();
+            // qCDebug( phxLibrary ) << "\n" << "Statement: " << statement << system << "\n" << mLibretroQuery.result();
         }
 
     }
@@ -216,7 +261,7 @@ GameFileInfo::HeaderData GameFileInfo::getPossibleHeaders( const QStringList &po
     return std::move( headerData );
 }
 
-QString GameFileInfo::getCheckSum( const QString &filePath ) {
+QString GameFileInfo::getCRC32AsQString( const QString &filePath ) {
     QString hash;
     QFile file( filePath );
 
@@ -234,23 +279,28 @@ QString GameFileInfo::getCheckSum( const QString &filePath ) {
     return std::move( hash );
 }
 
-void GameFileInfo::update( const QString &extension ) {
-    auto possibleSystemsList = getAvailableSystems( extension );
+void GameFileInfo::fillBasicInfo() {
+    const QString extension = suffix();
+    mPossibleSystemsList = getSystemListForExtension( extension );
 
-    if( possibleSystemsList.size() == 0 ) {
+    // No match for this extension means mSystem will be empty, ensuring the game will not be imported unless there's
+    // a match by hash from the DB
+    if( mPossibleSystemsList.size() == 0 ) {
         return;
     }
 
-    mSystem = possibleSystemsList.at( 0 );
-    if( possibleSystemsList.size() == 1 ) {
-        mSystem = possibleSystemsList.at( 0 );
+    // Implicitly set the system for this file here. Will not be overwritten if the scanner fails to match
+    mSystem = mPossibleSystemsList.at( 0 );
+
+    if( mPossibleSystemsList.size() == 1 ) {
+        mSystem = mPossibleSystemsList.at( 0 );
     } else {
-        auto header = getPossibleHeaders( possibleSystemsList );
+        auto header = getPossibleHeaders( mPossibleSystemsList );
         mSystem = header.system;
     }
 
     mFullFilePath = QStringLiteral( "file://" ) % canonicalFilePath();
-    mCrc32Checksum = getCheckSum( canonicalFilePath() );
+    mCrc32Checksum = getCRC32AsQString( canonicalFilePath() );
 }
 
 bool GameFileInfo::isBios( QString &biosName ) {

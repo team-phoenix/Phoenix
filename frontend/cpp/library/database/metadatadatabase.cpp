@@ -2,10 +2,10 @@
 
 using namespace Library;
 
-const QString MetaDataDatabase::tableRoms = QStringLiteral( "ROMs" );
-const QString MetaDataDatabase::tableSystems = QStringLiteral( "SYSTEMS" );
-const QString MetaDataDatabase::tableReleases = QStringLiteral( "RELEASES" );
-const QString MetaDataDatabase::tableRegions = QStringLiteral( "REGIONS" );
+const QString MetaDataDatabase::tableRoms = QStringLiteral( OPENVGDBTABLEROMS );
+const QString MetaDataDatabase::tableSystems = QStringLiteral( OPENVGDBTABLESYSTEMS );
+const QString MetaDataDatabase::tableReleases = QStringLiteral( OPENVGDBTABLERELEASES );
+const QString MetaDataDatabase::tableRegions = QStringLiteral( OPENVGDBTABLEREGIONS );
 
 void MetaDataDatabase::open() {
 

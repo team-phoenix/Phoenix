@@ -5,6 +5,7 @@ import QtQuick.Window 2.0
 
 import vg.phoenix.backend 1.0
 import vg.phoenix.themes 1.0
+import vg.phoenix.paths 1.0
 
 // Without deleting this component after every play session, we run the risk of a memory link from the core pointer not being cleared properly.
 // This issue needs to be fixed.
@@ -14,29 +15,12 @@ Rectangle {
     color: PhxTheme.common.gameViewBackgroundColor;
 
     // Automatically set by VideoItem, true if a game is loaded and unpaused
-    property bool running: videoItem.running;
-    property alias coreState: videoItem.coreState;
-    property alias loadedGame: videoItem.game;
-    property alias videoItem: videoItem;
-
-    // A small workaround to guarantee that the core and game are loaded in the correct order
-    property var coreGamePair: {
-        "corePath": ""
-        , "gamePath": ""
-        , "title": ""
-    };
-
-    // Changing this property triggers essentially launches the given game with the given core immediately
-    onCoreGamePairChanged: {
-
-        if ( coreGamePair[ "corePath" ] !== "" ) {
-            console.log( "Attempting to load core: " + gameView.coreGamePair[ "corePath" ] );
-            console.log( "Attempting to load game: " + gameView.coreGamePair[ "gamePath" ] );
-        }
-
-        videoItem.libretroCore = coreGamePair[ "corePath" ];
-        videoItem.game = coreGamePair[ "gamePath" ];
-    }
+    property bool running: coreControl.state === Control.PLAYING;
+    property alias coreState: coreControl.state;
+    // property alias loadedGame: coreControl.source["game"];
+    property alias coreControl: coreControl;
+    property alias videoOutput: videoOutput;
+    property string title: "";
 
     // A logo
     // Only visible when a game is not running
@@ -48,7 +32,7 @@ Rectangle {
         source: "phoenix.png";
         sourceSize { height: height; width: width; }
         opacity: 0.25;
-        enabled: videoItemContainer.opacity === 1.0 ? false : true;
+        enabled: coreControlContainer.opacity === 1.0 ? false : true;
     }
 
     // Glow effect for the logo
@@ -59,7 +43,7 @@ Rectangle {
         color: "#d55b4a";
         radius: 8.0;
         samples: 16;
-        enabled: videoItemContainer.opacity === 1.0 ? false : true;
+        enabled: coreControlContainer.opacity === 1.0 ? false : true;
         SequentialAnimation on radius {
             loops: Animation.Infinite;
             PropertyAnimation { to: 16; duration: 2000; easing.type: Easing.InOutQuart; }
@@ -71,60 +55,109 @@ Rectangle {
     FastBlur {
         id: blurEffect;
         anchors.fill: parent;
-        source: videoItemContainer;
+        source: coreControlContainer;
         radius: 64;
     }
 
-    // VideoItem serves simultaneously as a video output QML item (consumer) and as a "controller" for the
-    // underlying emulation
     Rectangle {
-        id: videoItemContainer;
-        anchors { top: parent.top; bottom: parent.bottom; horizontalCenter: parent.horizontalCenter; }
-        width: height * videoItem.aspectRatio;
+        id: coreControlContainer;
+        anchors.centerIn: parent;
+
+        // TODO: This sets up a "fit" strategy. If the user wants we should also have a
+        // "stretch" (width/height = parent.width/height), "fill" (use aspectWidth/Height)
+        // and "center" (have VideoOutput export nativeHeight/Width and clamp if larger than this container) strategy
+        property int aspectWidth: parent.height * videoOutput.aspectRatio;
+        property int aspectHeight: videoOutput.aspectRatio < 1.0 ? parent.height : parent.width / videoOutput.aspectRatio;
+
+        property int fitModeWidth: aspectWidth > parent.width ? parent.width : aspectWidth;
+        property int fitModeHeight: aspectHeight > parent.height ? parent.height : aspectHeight;
+
+        width: fitModeWidth;
+        height: fitModeHeight;
+
         color: "black";
-        opacity: 0;
+        opacity: 0.0;
 
         Behavior on opacity { NumberAnimation { duration: 250; } }
 
-        VideoItem {
-            id: videoItem;
-            anchors.fill: parent;
+        CoreControl {
+            id: coreControl;
+            Component.onCompleted: {
+                this.videoOutput = videoOutput;
+                this.inputManager = root.inputManager;
+            }
 
-            onCoreStateChanged: {
-                switch( coreState ) {
-                    case Core.STATEUNINITIALIZED:
+            vsync: true;
+
+            // Use this to automatically play once loaded
+            property bool autoPlay: false;
+            property bool firstLaunch: true;
+
+            onSourceChanged: {
+                title = source[ "title" ];
+            }
+
+            onStateChanged: {
+                switch( state ) {
+                    case Control.STOPPED:
+                        coreControlContainer.opacity = 0.0;
                         resetCursor();
                         cursorTimer.stop();
                         break;
-                    case Core.STATEREADY:
+
+                    case Control.LOADING:
+                        coreControlContainer.opacity = 0.0;
+                        resetCursor();
+                        cursorTimer.stop();
+                        break;
+
+                    case Control.PLAYING:
+                        root.title = title;
+
                         rootMouseArea.cursorShape = Qt.BlankCursor;
 
                         // Show the game content
-                        videoItemContainer.opacity = 1.0;
+                        coreControlContainer.opacity = 1.0;
 
                         // Let the window be resized even smaller than the default minimum size according to the aspect ratio
-                        root.minimumWidth = Math.min( root.defaultMinWidth, root.defaultMinWidth / aspectRatio / 2);
-                        root.minimumHeight = Math.min( root.defaultMinHeight, root.defaultMinHeight / aspectRatio / 2);
+                        root.minimumWidth = Math.min( root.defaultMinWidth, root.defaultMinWidth / videoOutput.aspectRatio / 2 );
+                        root.minimumHeight = Math.min( root.defaultMinHeight, root.defaultMinHeight / videoOutput.aspectRatio / 2 );
 
                         break;
-                    case Core.STATEFINISHED:
+
+                    case Control.PAUSED:
+                        root.title = "Paused - " + title;
+                        if( firstLaunch ) {
+                            firstLaunch = false;
+                            if( autoPlay ) {
+                                console.log( "Autoplay activated" );
+                                play();
+                            }
+                        }
+
+                        coreControlContainer.opacity = 1.0;
                         resetCursor();
                         cursorTimer.stop();
                         break;
-                    case Core.STATEERROR:
-                        break;
-                    case Core.STATEPAUSED:
+
+                    case Control.UNLOADING:
+                        root.title = "Unloading - " + title;
+                        firstLaunch = true;
+                        coreControlContainer.opacity = 0.0;
                         resetCursor();
                         cursorTimer.stop();
                         break;
+
                     default:
                         break;
                 }
             }
+        }
 
+        VideoOutput {
+            id: videoOutput;
+            anchors.fill: parent;
             rotation: 180;
-            inputManager: root.inputManager;
-
             MouseArea {
                 anchors.fill: parent;
                 onDoubleClicked: {
@@ -134,13 +167,20 @@ Rectangle {
                         root.visibility = Window.FullScreen;
                 }
             }
+            linearFiltering: false;
+            television: false;
+            ntsc: true;
+            widescreen: false;
         }
+
     }
 
     GameActionBar {
         id: gameActionBar;
         anchors { bottom: parent.bottom; left: parent.left; right: parent.right; }
     }
+
+    // Mouse stuff
 
     // Use the main mouse area to monitor the mouse for movement
     Connections {

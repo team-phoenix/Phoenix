@@ -47,7 +47,7 @@ Rectangle {
                 anchors { left: parent.left; leftMargin: 64; verticalCenter: parent.verticalCenter; }
                 horizontalAlignment: Text.AlignLeft;
                 width: PhxTheme.common.menuWidth - 72;
-                text: root.gameViewObject.coreGamePair[ "title" ];
+                text: root.gameViewObject.title;
                 fontSize: PhxTheme.common.baseFontSize + 1;
                 color: PhxTheme.common.baseBackgroundColor;
                 spacing: 40;
@@ -106,7 +106,7 @@ Rectangle {
                     layoutStackView.pop();
 
                     // Resume game
-                    root.gameView.videoItem.slotResume();
+                    root.gameViewObject.coreControl.play();
                 }
                 onEntered: { rootMouseArea.cursorShape = Qt.PointingHandCursor; }
                 onExited: { rootMouseArea.cursorShape = Qt.ArrowCursor; }
@@ -135,7 +135,7 @@ Rectangle {
                 hoverEnabled: true;
                 onEntered: { rootMouseArea.cursorShape = Qt.PointingHandCursor; }
                 onExited: { rootMouseArea.cursorShape = Qt.ArrowCursor; }
-                onClicked: { root.resetTitle(); root.gameViewObject.videoItem.slotStop(); }
+                onClicked: { root.resetTitle(); root.gameViewObject.coreControl.stop(); }
             }
         }
     }

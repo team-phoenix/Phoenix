@@ -17,7 +17,11 @@ Item {
         ListElement { name: ""; port: 0  }
 
         Component.onCompleted: {
-            clear()
+
+            // Clear list
+            clear();
+
+            // Make the InputManager emit the deviceAdded signal for each known input device to populate the list
             root.inputManager.deviceAdded.connect( handleDeviceAdded );
             root.inputManager.emitConnectedDevices();
         }
@@ -40,7 +44,8 @@ Item {
 
     function handleDeviceAdded( device ) {
 
-        device.editMode = true;
+        // TODO: Set editMode only on one controller at a time
+        // device.editMode = true;
 
         if (  inputDevicesModel.count > 0 && inputDevicesModel.get( 0 ).name === "" ) {
             inputDevicesModel.set( 0, { "name": device.name } );

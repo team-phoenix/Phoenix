@@ -3,7 +3,7 @@
 using namespace Library;
 
 bool PhxPaths::mPortableMode = false;
-QString PhxPaths::mBiosLocation = QStringLiteral( "" );
+QString PhxPaths::mFirmwareLocation = QStringLiteral( "" );
 QString PhxPaths::mSaveLocation = QStringLiteral( "" );
 QString PhxPaths::mCoverArtCacheLocation = QStringLiteral( "" );
 QString PhxPaths::mBinLocation = QStringLiteral( "" );
@@ -20,8 +20,8 @@ bool PhxPaths::portableMode() {
     return mPortableMode;
 }
 
-QString PhxPaths::biosLocation() {
-    return mBiosLocation;
+QString PhxPaths::firmwareLocation() {
+    return mFirmwareLocation;
 }
 
 QString PhxPaths::saveLocation() {
@@ -56,8 +56,8 @@ bool PhxPaths::qmlPortableMode() {
     return portableMode();
 }
 
-QString PhxPaths::qmlBiosLocation() {
-    return PhxPaths::biosLocation();
+QString PhxPaths::qmlFirmwareLocation() {
+    return PhxPaths::firmwareLocation();
 }
 
 QString PhxPaths::qmlSaveLocation() {
@@ -150,12 +150,12 @@ void PhxPaths::initPaths() {
     }
 
     PhxPaths::mSaveLocation = PhxPaths::mUserDataLocation % '/' % QStringLiteral( "Saves" ) % '/';
-    PhxPaths::mBiosLocation = PhxPaths::mUserDataLocation % '/' % QStringLiteral( "BIOS" ) % '/';
+    PhxPaths::mFirmwareLocation = PhxPaths::mUserDataLocation % '/' % QStringLiteral( "Firmware" ) % '/';
     PhxPaths::mCoverArtCacheLocation = PhxPaths::mUserDataLocation % '/' % QStringLiteral( "Cover Art Cache" );
 
     QDir userDir( PhxPaths::mUserDataLocation );
     QDir saveDir( PhxPaths::mSaveLocation );
-    QDir biosDir( PhxPaths::mBiosLocation );
+    QDir firmwareDir( PhxPaths::mFirmwareLocation );
     QDir coverArtCacheDir( PhxPaths::mCoverArtCacheLocation );
 
     if( !userDir.exists() ) {
@@ -166,8 +166,8 @@ void PhxPaths::initPaths() {
         saveDir.mkpath( saveDir.path() );
     }
 
-    if( !biosDir.exists() ) {
-        biosDir.mkpath( biosDir.path() );
+    if( !firmwareDir.exists() ) {
+        firmwareDir.mkpath( firmwareDir.path() );
     }
 
     if( !coverArtCacheDir.exists() ) {

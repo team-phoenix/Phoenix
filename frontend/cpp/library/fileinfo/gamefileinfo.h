@@ -19,6 +19,7 @@ namespace Library {
                 qint64 byteLength;
             };
 
+            // FIXME: Unused
             struct CueData {
                 QString system;
                 QString sha1;
@@ -42,34 +43,45 @@ namespace Library {
 
             FileType fileType() const;
 
+            // Returns list of extensions the scanner supports based off of the system database
             static QStringList gameFilter();
+
             HeaderData getPossibleHeaders( const QStringList &possibleSystems );
 
             void cache( const QString &location );
 
-            void prepareMetadata();
+            void scanOpenVGDBForGame();
 
         protected:
             FileType mFileType;
             QString mSystem;
+            QStringList mPossibleSystemsList;
             QString mCrc32Checksum;
             QString mTitle;
             QString mFullFilePath;
             QString mArtworkUrl;
             QSqlQuery mLibretroQuery;
 
-            QStringList getAvailableSystems( const QString &extension );
-            QString getCheckSum( const QString &filePath );
+            // Query the systems database for all systems (Phoenix UUIDs) that use our extension
+            QStringList getSystemListForExtension( const QString &extension );
 
-            void update( const QString &extension );
+            // We internally store hashes as QStrings for convenience
+            QString getCRC32AsQString( const QString &filePath );
+
+            // Calculate and store this file's hash and determine what systems it might apply to based on extension
+            virtual void fillBasicInfo();
 
             bool isBios( QString &biosName );
 
-            void fillMetadata( int romID, QSqlQuery &metadataQuery );
-
+            // Query OpenVGDB for metadata based on this file's hash. If that fails, query based off filename
+            void fillMetadataFromOpenVGDB( int romID, QSqlQuery &openVGDBQuery );
 
         private:
             QString mTimePlayed;
+
+            // Helper for debugging errors with SQL queries
+            // http://stackoverflow.com/a/10641002/4190028
+            static QString getLastExecutedQuery( const QSqlQuery &query );
 
     };
 

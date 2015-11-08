@@ -1,5 +1,9 @@
 language: cpp
+git:
+  submodules: false
 before_install:
+  - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
+  - git submodule update --init --recursive
   - sudo add-apt-repository --yes ppa:beineri/opt-qt55
   - sudo apt-add-repository --yes ppa:zoogie/sdl2-snapshots
   - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test

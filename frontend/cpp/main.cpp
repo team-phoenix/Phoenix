@@ -1,17 +1,32 @@
 #include "frontendcommon.h"
 
-#include "collectionsmodel.h"
-#include "coremodel.h"
+// Library
 #include "gamelauncher.h"
-#include "imagecacher.h"
-#include "inputmanager.h"
-#include "librarymodel.h"
 #include "gamescanner.h"
+#include "imagecacher.h"
 #include "metadatadatabase.h"
-#include "phxpaths.h"
-#include "platformsmodel.h"
 #include "libretrodatabase.h"
-#include "videoitem.h"
+#include "collectionsmodel.h"
+#include "librarymodel.h"
+#include "coremodel.h"
+#include "platformsmodel.h"
+
+// Backend
+#include "control.h"
+#include "controllable.h"
+#include "producer.h"
+#include "consumer.h"
+#include "corecontrolproxy.h"
+#include "corecontrol.h"
+#include "inputmanager.h"
+#include "core.h"
+#include "libretrocore.h"
+#include "videooutput.h"
+
+// Misc
+#include "logging.h"
+#include "phxpaths.h"
+#include "controlhelper.h"
 
 // This is used to get the stack trace behind whatever debug message you want to diagnose
 // Simply change the message string below to whatever you want (partial string matching), set the breakpoint
@@ -119,6 +134,8 @@ int main( int argc, char *argv[] ) {
     // Uncomment this to enable the message handler for debugging and stack tracing
     // qInstallMessageHandler( phoenixDebugMessageHandler );
 
+    QThread::currentThread()->setObjectName( "Main thread" );
+
     // Handles stuff with the windowing system
     QGuiApplication app( argc, argv );
 
@@ -156,8 +173,18 @@ int main( int argc, char *argv[] ) {
     QObject::connect( &engine, &QQmlApplicationEngine::quit, &app, &QGuiApplication::quit );
 
     // Register our custom types for use within QML
-    VideoItem::registerTypes();
+    // VideoItem::registerTypes();
+    qmlRegisterType<VideoOutput>( "vg.phoenix.backend", 1, 0, "VideoOutput" );
+    qmlRegisterType<CoreControlProxy>( "vg.phoenix.backend", 1, 0, "CoreControl" );
+    qmlRegisterUncreatableType<ControlHelper>( "vg.phoenix.backend", 1, 0, "Control", "Control or its subclasses cannot be instantiated from QML." );
     InputManager::registerTypes();
+
+    // Needed for connecting signals/slots
+    qRegisterMetaType<Control::State>( "Control::State" );
+    qRegisterMetaType<ControlHelper::State>( "ControlHelper::State" );
+    qRegisterMetaType<size_t>( "size_t" );
+    qRegisterMetaType<QStringMap>();
+    qRegisterMetaType<ProducerFormat>();
 
     // Register our custom QML-accessable/instantiable objects
     qmlRegisterType<Library::PlatformsModel>( "vg.phoenix.models", 1, 0, "PlatformsModel" );

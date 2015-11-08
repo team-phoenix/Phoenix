@@ -27,7 +27,6 @@ Item {
             id: gameSelectionPane;
             anchors { fill: parent; }
             spacing: 0;
-            // anchors.bottomMargin: root.gameViewObject.videoItem.coreState === Core.STATEPAUSED ? gameSuspendedArea.height : 0;
 
             SelectionArea {
                 id: selectionArea;

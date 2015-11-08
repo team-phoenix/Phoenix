@@ -23,7 +23,7 @@ bool CueFileInfo::isValid() {
 
     auto exists = QFile::exists( gameFiles.first() );
 
-    auto possibleSystemsList = getAvailableSystems( suffix() );
+    auto possibleSystemsList = getSystemListForExtension( suffix() );
 
     mSystem = possibleSystemsList.at( 0 );
 
@@ -41,7 +41,7 @@ bool CueFileInfo::isValid() {
     //    }
 
     mFullFilePath = QStringLiteral( "cue://" ) + canonicalFilePath();
-    mCrc32Checksum = getCheckSum( canonicalFilePath() );
+    mCrc32Checksum = getCRC32AsQString( canonicalFilePath() );
 
     return exists;
 }

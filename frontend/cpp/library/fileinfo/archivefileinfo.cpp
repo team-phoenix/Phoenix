@@ -16,21 +16,21 @@ ArchiveFileInfo::ArchiveFileInfo( GameFileInfo &gameInfo )
 
 }
 
-bool ArchiveFileInfo::firstFile() {
+bool ArchiveFileInfo::checkFirstFile() {
     bool next = mZipFile->goToFirstFile();
 
     if( next ) {
-        update();
+        fillBasicInfo();
     }
 
     return next;
 }
 
-bool ArchiveFileInfo::nextFile() {
+bool ArchiveFileInfo::checkNextFile() {
     bool next = mZipFile->goToNextFile();
 
     if( next ) {
-        update();
+        fillBasicInfo();
     }
 
     return next;
@@ -61,14 +61,16 @@ QString ArchiveFileInfo::delimiter() {
     return QStringLiteral( "<><>" );
 }
 
-void ArchiveFileInfo::update() {
+void ArchiveFileInfo::fillBasicInfo() {
 
+    // Grab CRC32 from archive
     QuaZipFileInfo zipFileInfo;
 
     if( mZipFile->getCurrentFileInfo( &zipFileInfo ) ) {
         mCrc32Checksum = QString::number( zipFileInfo.crc, 16 ).toUpper();
     }
 
+    // Filter out any .zip files within
     auto fileInfo = QFileInfo( nextFileName() );
 
     if( fileInfo.suffix() == QStringLiteral( "zip" ) ) {
@@ -76,7 +78,7 @@ void ArchiveFileInfo::update() {
         return;
     }
 
-    auto possibleSystemsList = getAvailableSystems( fileInfo.suffix() );
+    auto possibleSystemsList = getSystemListForExtension( fileInfo.suffix() );
 
     mIsValid = !possibleSystemsList.isEmpty();
 

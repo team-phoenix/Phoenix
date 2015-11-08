@@ -24,7 +24,7 @@ Rectangle {
     }
 
     // gameActionBar visible only when paused or mouse recently moved and only while not transitioning
-    opacity: ( ( ( gameView.coreState === Core.STATEPAUSED ) || ( cursorTimer.running ) )  && ( !layoutStackView.transitioning ) ) ? 1.0 : 0.0;
+    opacity: ( ( ( gameView.coreState === Control.PAUSED ) || ( cursorTimer.running ) )  && ( !layoutStackView.transitioning ) ) ? 1.0 : 0.0;
 
     Behavior on opacity { PropertyAnimation { duration: 250; } }
 
@@ -67,14 +67,14 @@ Rectangle {
                     anchors.margins: 10;
                     width: parent.width;
                     sourceSize { height: height; width: width; }
-                    source: videoItem.running ? qsTr( "pause.svg" ) : qsTr( "play.svg" );
+                    source: gameView.running ? qsTr( "pause.svg" ) : qsTr( "play.svg" );
                 }
 
                 MouseArea {
                     anchors.fill: parent;
                     onClicked: {
-                        if (videoItem.running) { videoItem.slotPause(); }
-                        else { videoItem.slotResume(); }
+                        if( gameView.running ) { coreControl.pause(); }
+                        else { coreControl.play(); }
                     }
                 }
             }
@@ -130,7 +130,7 @@ Rectangle {
                     stepSize: 0.01;
                     activeFocusOnPress: true;
                     tickmarksEnabled: false;
-                    onValueChanged: { videoItem.signalSetVolume(value); }
+                    onValueChanged: { coreControl.volume = value; }
 
                     style: SliderStyle {
                         handle: Item {
@@ -211,12 +211,27 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent;
                     onClicked: {
-                        videoItem.slotPause();
-                        root.disableMouseClicks();
-                        rootMouseArea.hoverEnabled = false;
-                        resetCursor();
-                        resetWindowSize();
-                        layoutStackView.push( mouseDrivenView );
+                        console.log( "GameActionBar: Minimize (Pause game)" );
+                        // These callbacks are necessary as the call to pause() is non-blocking, it just sends out a signal
+                        // The callback will execute when it *actually* pauses
+                        coreControl.stateChanged.connect( pausedCallback );
+                        coreControl.pause();
+                    }
+                    function pausedCallback( newState ) {
+                        // console.log( "pausedCallback(" + newState + ")" );
+                        if( newState === Control.PAUSED ) {
+
+                            // This callback is meant to be used until the pause goes through.
+                            // Disconnect once it's done
+                            coreControl.stateChanged.disconnect( pausedCallback );
+
+                            root.disableMouseClicks();
+                            rootMouseArea.hoverEnabled = false;
+                            resetCursor();
+                            resetWindowSize();
+                            layoutStackView.push( mouseDrivenView );
+
+                        }
                     }
                 }
             }
@@ -238,14 +253,33 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent;
                     onClicked: {
-                        videoItem.slotStop();
-                        root.resetTitle();
-                        root.disableMouseClicks();
-                        rootMouseArea.hoverEnabled = false;
-                        resetCursor();
-                        resetWindowSize();
-                        layoutStackView.push( mouseDrivenView );
+                        console.log( "GameActionBar: Close game" );
+
+                        // Do not transition back to the library until we've *fully* shut down (deleted threads)
+                        coreControl.stateChanged.connect( stoppedCallback );
+
+                        coreControl.stop();
+
+                        // Let the user know we're thinking!
+                        rootMouseArea.cursorShape = Qt.BusyCursor;
+
                     }
+
+                    function stoppedCallback( newState ) {
+                        console.log( "stoppedCallback(" + newState + ")" );
+                        if( newState === Control.STOPPED ) {
+                            coreControl.stateChanged.disconnect( stoppedCallback );
+
+                            console.log( "Going to library" );
+
+                            resetWindowSize();
+                            root.resetTitle();
+                            root.disableMouseClicks();
+                            rootMouseArea.hoverEnabled = false;
+                            layoutStackView.push( mouseDrivenView );
+                        }
+                    }
+
                 }
             }
             Rectangle { anchors { top: parent.top; bottom: parent.bottom; } color: "transparent"; width: 12; } // DO NOT remove this - Separator

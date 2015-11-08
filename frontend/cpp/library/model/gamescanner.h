@@ -9,6 +9,10 @@
 #include "logging.h"
 #include "gamefileinfo.h"
 
+#include "archivefileinfo.h"
+#include "cuefileinfo.h"
+#include "biosfileinfo.h"
+
 namespace Library {
 
     struct GameData {
@@ -37,14 +41,14 @@ namespace Library {
             explicit GameScanner( QObject *parent = 0 );
             ~GameScanner();
 
+            // Synchronous state changers (thread-safe via built-in mutexes)
             bool insertCancelled();
             bool insertPaused();
             bool isRunning();
             bool resumeQuitScan();
 
-            QString resumeInsertID();
-            QString resumeDirectory();
-
+            QString getResumeInsertID();
+            QString getResumeDirectory();
             void setResumeInsertID( const QString id );
             void setResumeDirectory( const QString directory );
             void setResumeQuitScan( const bool resume );
@@ -62,13 +66,14 @@ namespace Library {
             void setInsertCancelled( const bool cancelled );
             void setInsertPaused( const bool paused );
 
-            bool scanFolder( const QString path, bool autoStart );
-
             void eventLoopStarted();
 
             void handleDraggedUrls( QList<QUrl> urls );
-            void handleDroppedUrls();
             void handleContainsDrag( const bool contains );
+
+            // These slots invoke the scanner to scan and import files (along with the constructor)
+            int scanFolder( const QString path, bool autoStart );
+            void handleDroppedUrls();
 
 
         private slots:
@@ -91,7 +96,8 @@ namespace Library {
             // Setters
             void setIsRunning( const bool running );
 
-            void enqueueFiles( QString &filePath );
+            // Hash and enqueue all files within .zip if given a .zip file. Otherwise, enqueue a single file for processing
+            void hashAndEnqueueFile( QString filePath );
 
     };
 

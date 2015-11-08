@@ -19,6 +19,10 @@ Item {
         color: "transparent";
         PhxScrollView {
             anchors.fill: parent;
+
+            // The default of 20 just isn't fast enough
+            __wheelAreaScrollSpeed: 100;
+
             ListView {
                 id: listView;
                 anchors.fill: parent;
