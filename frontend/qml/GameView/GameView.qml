@@ -89,6 +89,8 @@ Rectangle {
 
             vsync: true;
 
+            volume: gameActionBar.volumeValue;
+
             // Use this to automatically play once loaded
             property bool autoPlay: false;
             property bool firstLaunch: true;
@@ -177,7 +179,8 @@ Rectangle {
 
     GameActionBar {
         id: gameActionBar;
-        anchors { bottom: parent.bottom; left: parent.left; right: parent.right; }
+        anchors { bottom: parent.bottom; }
+        anchors.horizontalCenter: parent.horizontalCenter;
     }
 
     // Mouse stuff
@@ -191,10 +194,21 @@ Rectangle {
         onPressAndHold: mouseMoved();
     }
 
+    Connections {
+        target: gameActionBarMouseArea;
+        onEntered: {
+            cursorTimer.stop();
+            resetCursor();
+        }
+        onExited: {
+            mouseMoved();
+        }
+    }
+
     property Timer cursorTimer: Timer {
         interval: 1000;
         running: false;
-        onTriggered: { rootMouseArea.cursorShape = Qt.BlankCursor; }
+        onTriggered: hideCursor();
     }
 
     // This function will reset the timer when called (which is whenever the mouse is moved)
@@ -206,5 +220,6 @@ Rectangle {
         }
     }
 
-    function resetCursor() { if( rootMouseArea.cursorShape !== Qt.ArrowCursor ) rootMouseArea.cursorShape = Qt.ArrowCursor; }
+    function hideCursor() { rootMouseArea.cursorShape = Qt.BlankCursor; }
+    function resetCursor() { rootMouseArea.cursorShape = Qt.ArrowCursor; }
 }

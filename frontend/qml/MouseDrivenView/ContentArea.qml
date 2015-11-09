@@ -228,11 +228,14 @@ Rectangle {
         }
     }
 
+    property bool currentlySuspended: root.gameViewObject === null ?
+                                      false : root.gameViewObject.coreControl.state === Control.PAUSED;
+
     StackView {
         id: contentAreaStackView;
         initialItem: boxArtGridComponent;
         anchors.fill: parent;
-        anchors.bottomMargin: root.gameViewObject.coreControl.state === Control.PAUSED ? gameSuspendedArea.height : 0;
+        anchors.bottomMargin: currentlySuspended ? gameSuspendedArea.height : 0;
 
         delegate: StackViewDelegate {
             function transitionFinished( properties ) { properties.exitItem.opacity = 1; }
@@ -283,6 +286,6 @@ Rectangle {
     GameSuspendedArea {
         id: gameSuspendedArea;
         objectName: "GameSuspendedArea";
-        visible: root.gameViewObject.coreControl.state === Control.PAUSED;
+        visible: currentlySuspended;
     }
 }

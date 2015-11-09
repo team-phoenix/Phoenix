@@ -15,7 +15,6 @@ ApplicationWindow {
     visibility: Window.Windowed;
     width: Screen.width * 0.7;
     height: Screen.height * 0.7;
-    //title: qsTr("Phoenix");
     color: "black";
 
     property int defaultMinHeight: 600;
@@ -31,28 +30,10 @@ ApplicationWindow {
         id: inputManager;
         gamepadControlsFrontend: true;
     }
+
     property var gameViewObject: null;
 
     function resetTitle() { title = ""; }
-
-    // Use when transitioning
-    function disableMouseClicks() {
-        rootMouseArea.propagateComposedEvents = false;
-        rootMouseArea.acceptedButtons = Qt.AllButtons;
-    }
-    function enableMouseClicks()  {
-        rootMouseArea.propagateComposedEvents = true;
-        rootMouseArea.acceptedButtons = Qt.NoButton;
-    }
-
-    MouseArea {
-        id: rootMouseArea;
-        anchors.fill: parent;
-        hoverEnabled: false;
-        propagateComposedEvents: true;
-        z: parent.z + 1;
-        acceptedButtons: Qt.NoButton;
-    }
 
     StackView {
         id: layoutStackView;
@@ -145,31 +126,39 @@ ApplicationWindow {
         }
     }
 
-    // Debug button to switch between mouse driven and big picture modes
-    /* Rectangle {
-        anchors {
-            right: parent.right;
-            top: parent.top;
-        }
-        height: 25;
-        width: 25;
-        color: "red"
+    // Use when transitioning
+    function disableMouseClicks() {
+        rootMouseArea.propagateComposedEvents = false;
+        rootMouseArea.acceptedButtons = Qt.AllButtons;
+    }
+    function enableMouseClicks()  {
+        rootMouseArea.propagateComposedEvents = true;
+        rootMouseArea.acceptedButtons = Qt.NoButton;
+    }
+
+    property alias gameActionBarMouseArea: gameActionBarMouseArea;
+    MouseArea {
+        id: rootMouseArea;
+        anchors.fill: parent;
+        hoverEnabled: false;
+
+        // Let clicks reach everything below this
+        propagateComposedEvents: true;
+        acceptedButtons: Qt.NoButton;
 
         MouseArea {
-            anchors.fill: parent;
-            onClicked: {
-                if ( layoutStackView.currentItem.objectName === "MouseDrivenView" ) {
-                    layoutStackView.push( { item: bigPictureView, replace: true } );
-                } else if ( layoutStackView.currentItem.objectName === "BigPictureView" ) {
-                    layoutStackView.push( { item: mouseDrivenView, replace: true } );
-                }
-            }
+            id: gameActionBarMouseArea;
+            anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom; bottomMargin: 10; }
+            width: 350;
+            height: 45;
+            hoverEnabled: true;
+            preventStealing: true;
+            acceptedButtons: Qt.NoButton;
         }
-    } */
+    }
 
     Component {
         id: bigPictureView;
-
         BigPictureView {
             id: pictureView;
             objectName: "BigPictureView";
@@ -194,6 +183,6 @@ ApplicationWindow {
 
     Component {
         id: gameView;
-        GameView { }
+        GameView { objectName: "GameView"; }
     }
 }

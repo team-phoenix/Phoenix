@@ -9,22 +9,26 @@ import vg.phoenix.themes 1.0
 
 Rectangle {
     id: gameActionBar;
-    height: 80;
+    width: 350;
+    height: 45;
     color: "transparent";
-    // color: Qt.rgba(0,0,0,0.5);
-    // Image {  smooth: true; source: "bg.svg"; anchors.fill: parent; fillMode: Image.TileHorizontally; verticalAlignment: Image.AlignLeft; sourceSize { height: height; width: width; } }
+    anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom; bottomMargin: 10; }
 
-    property int volumeValue: 1;
+    property int volumeValue: 1.0;
 
-    //  Volumen Icon changer
+    // Volume Icon changer
     property string volumeIcon: {
-        if(volumeSlider.value <= 1.0 && volumeSlider.value > 0.5) { volumeIcon: "volume.svg"; }
-        if(volumeSlider.value <= 0.5 && volumeSlider.value > 0.0) { volumeIcon: "volumehalf.svg"; }
-        if(volumeSlider.value == 0)  { volumeIcon: "volumemute.svg"; }
+        if( volumeSlider.value <= 1.0 && volumeSlider.value > 0.5 ) { volumeIcon: "volume.svg"; }
+        if( volumeSlider.value <= 0.5 && volumeSlider.value > 0.0 ) { volumeIcon: "volumehalf.svg"; }
+        if( volumeSlider.value == 0 ) { volumeIcon: "volumemute.svg"; }
     }
 
     // gameActionBar visible only when paused or mouse recently moved and only while not transitioning
-    opacity: ( ( ( gameView.coreState === Control.PAUSED ) || ( cursorTimer.running ) )  && ( !layoutStackView.transitioning ) ) ? 1.0 : 0.0;
+    opacity: (  ( ( gameView.coreState === Control.PAUSED )
+               || ( cursorTimer.running )
+               || ( gameActionBarMouseArea.containsMouse )
+                )
+               && ( !layoutStackView.transitioning ) ) ? 1.0 : 0.0;
 
     Behavior on opacity { PropertyAnimation { duration: 250; } }
 
@@ -36,8 +40,7 @@ Rectangle {
     }
 
     Rectangle {
-        width: 350;
-        anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom; bottomMargin: 10; }
+        width: parent.width;
         height: 45;
         color: Qt.rgba(0,0,0,0.75);
         radius: 1;
