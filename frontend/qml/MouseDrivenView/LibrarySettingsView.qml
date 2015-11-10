@@ -29,7 +29,8 @@ Item {
             Image {
                 anchors { right: pathHelperText.left; rightMargin: 8; }
                 anchors.verticalCenter: pathHelper.verticalCenter;
-                source: "settings.svg";
+                source: "core.svg";
+                smooth: false;
             }
 
             Text {
