@@ -183,22 +183,24 @@ Item {
                         Image {
                             id: resetCoreButton;
                             anchors.verticalCenter: parent.verticalCenter;
-                            width: 15;
-                            height: 15;
+                            width: 20;
+                            height: 20;
                             visible: comboBox.currentIndex !== defaultCoreIndex;
                             enabled: visible;
                             sourceSize { width: width; height: height; }
-                            source: "close.svg";
+                            source: "default.svg";
                             fillMode: Image.PreserveAspectFit;
+
                             MouseArea {
                                 anchors.fill: parent;
                                 onClicked: comboBox.currentIndex = defaultCoreIndex;
                             }
                         }
+
                         Item {
                             id: filler;
-                            width: 15;
-                            height: 15;
+                            width: 20;
+                            height: 20;
                             visible: !resetCoreButton.visible;
                             enabled: visible;
                         }
