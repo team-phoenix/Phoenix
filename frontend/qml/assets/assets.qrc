@@ -42,5 +42,6 @@
         <file>tv43.svg</file>
         <file>tv169.svg</file>
         <file>default.svg</file>
+        <file>core.svg</file>
     </qresource>
 </RCC>
