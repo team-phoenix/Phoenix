@@ -28,6 +28,10 @@
 #include "phxpaths.h"
 #include "controlhelper.h"
 
+// Version string helper
+#define xstr(s) str(s)
+#define str(s) #s
+
 // This is used to get the stack trace behind whatever debug message you want to diagnose
 // Simply change the message string below to whatever you want (partial string matching), set the breakpoint
 // and uncomment the first line in main()
@@ -145,7 +149,7 @@ int main( int argc, char *argv[] ) {
     // Set application metadata
     QGuiApplication::setApplicationDisplayName( QStringLiteral( "Phoenix" ) );
     QGuiApplication::setApplicationName( QStringLiteral( "Phoenix" ) );
-    QGuiApplication::setApplicationVersion( QStringLiteral( "0.0.1" ) );
+    QGuiApplication::setApplicationVersion( QStringLiteral( xstr( PHOENIX_VERSION_STR ) ) );
     QGuiApplication::setOrganizationName( QStringLiteral( "Team Phoenix" ) );
     QGuiApplication::setOrganizationDomain( QStringLiteral( "phoenix.vg" ) );
 

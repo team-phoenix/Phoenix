@@ -1,10 +1,12 @@
 #include <windows.h>
+#define xstr(s) str(s)
+#define str(s) #s
 
 IDI_ICON1 ICON DISCARDABLE "phoenix.ico"
 
 1 VERSIONINFO
-FILEVERSION 0,0,1,0
-PRODUCTVERSION 0,0,1,0
+FILEVERSION PHOENIX_VER_TUPLE
+PRODUCTVERSION PHOENIX_VER_TUPLE
 FILEFLAGSMASK VS_FFI_FILEFLAGSMASK
 FILEOS VOS__WINDOWS32
 FILETYPE VFT_APP
@@ -15,13 +17,13 @@ BEGIN
         BLOCK "040904E4"
         BEGIN
             VALUE "CompanyName", "Team Phoenix"
-            VALUE "FileDescription", "Phoenix Multi-system Emulator"
-            VALUE "FileVersion", "Pre-alpha (0.0.1)"
+            VALUE "FileDescription", "Phoenix"
+            VALUE "FileVersion", xstr(PHOENIX_VER_STR)
             VALUE "InternalName", "Phoenix"
             VALUE "LegalCopyright", "Copyright (c) 2015 Team Phoenix -- Licensed under GPLv2"
             VALUE "OriginalFilename", "Phoenix.exe"
             VALUE "ProductName", "Phoenix"
-            VALUE "ProductVersion", "Pre-alpha (0.0.1)"
+            VALUE "ProductVersion", xstr(PHOENIX_VER_STR)
         END
     END
     BLOCK "VarFileInfo"

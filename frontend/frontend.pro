@@ -22,6 +22,27 @@ include( deployment.pri )
     RCC_DIR     = rcc
     UI_DIR      = gui
 
+    # Version info
+    win32: {
+        # Grab current git tag (will be appended with revision hash if not on the commit the tag is tagged to)
+        VERSION = $$system( C:\msys64\usr\bin\git describe )
+
+        # Strip v from beginning of tag
+        VERSION_TUPLE_1 = $$replace( VERSION, v,  )
+
+        # Strip everything after third number
+        VERSION_TUPLE_3 = $$section( VERSION, -, 0, 0 )
+
+        # Put it all together
+        VERSION_TUPLE = $$section( VERSION_TUPLE_1, ., 0, 0 ),$$section( VERSION, ., 1, 1 ),$$section( VERSION_TUPLE_3, ., 2, 2 ),0
+        DEFINES += PHOENIX_VER_STR=\"$$VERSION\" PHOENIX_VER_TUPLE=$$VERSION_TUPLE
+    }
+
+    unix: {
+        VERSION = $$system( git describe )
+        DEFINES += PHOENIX_VER_STR=\"$$VERSION\"
+    }
+
     # FIXME: Remove once newer Qt versions make this unnecessary
     macx: QMAKE_MAC_SDK = macosx10.11
 
