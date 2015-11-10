@@ -187,85 +187,50 @@ Rectangle {
 
         // Right-Side
         Row {
-            spacing: 0;
+            spacing: 4;
             anchors { top: parent.top; bottom: parent.bottom; right: parent.right; }
-
-            property alias tvmodeToggle: tvmodeToggle;
-
-            // Toggle anamorphic widescreen
-            Rectangle {
-                anchors { top: parent.top; bottom: parent.bottom; }
-                color: "transparent"
-                width: 32;
-
-                enabled: tvmodeToggle.tvmode;
-                visible: enabled;
-
-                property bool widescreen: false;
-
-                Text {
-                    anchors.centerIn: parent;
-                    anchors.margins: 10;
-                    width: 24;
-                    height: 24;
-                    verticalAlignment: Text.AlignVCenter;
-                    horizontalAlignment: Text.AlignHCenter;
-
-                    text: parent.widescreen ? "16:9" : "4:3";
-                    color: "white";
-                    font {
-                        pixelSize: PhxTheme.common.baseFontSize;
-                        family: PhxTheme.common.systemFontFamily;
-                        bold: true;
-                    }
-                }
-
-                MouseArea {
-                    anchors.fill: parent;
-                    onClicked: {
-                        if( parent.widescreen === true ) parent.widescreen = false;
-                        else parent.widescreen = true;
-
-                        videoOutput.widescreen = parent.widescreen;
-                    }
-
-                }
-            }
 
             // Toggle TV mode
             Rectangle {
                 id: tvmodeToggle;
-                anchors { top: parent.top; bottom: parent.bottom; }
+                anchors.verticalCenter: parent.verticalCenter;
                 color: "transparent"
                 width: 32;
+                height: width;
 
-                property bool tvmode: false;
+                Image {
+                    id: tvLabel;
+                    anchors.fill: parent;
+                    anchors.margins: 4;
+                    source: "tv.svg"
 
-                Text {
-                    anchors.centerIn: parent;
-                    anchors.margins: 10;
-                    width: 24;
-                    height: 24;
-                    verticalAlignment: Text.AlignVCenter;
-                    horizontalAlignment: Text.AlignHCenter;
-
-                    text: "TV";
-                    color: "white";
-                    font {
-                        pixelSize: PhxTheme.common.baseFontSize;
-                        family: PhxTheme.common.systemFontFamily;
-                        bold: true;
-                        strikeout: !parent.tvmode;
-                    }
+                    sourceSize { height: height; width: width; }
                 }
 
                 MouseArea {
                     anchors.fill: parent;
                     onClicked: {
-                        if( parent.tvmode === true ) parent.tvmode = false;
-                        else parent.tvmode = true;
-
-                        videoOutput.television = parent.tvmode;
+                        // off -> 4:3
+                        if( !videoOutput.television ) {
+                            videoOutput.television = true;
+                            videoOutput.widescreen = false;
+                            tvLabel.source = "tv43.svg";
+                            return;
+                        }
+                        // 4:3 -> 16:9
+                        if( videoOutput.television && !videoOutput.widescreen ) {
+                            videoOutput.television = true;
+                            videoOutput.widescreen = true;
+                            tvLabel.source = "tv169.svg";
+                            return;
+                        }
+                        // 16:9 -> off
+                        if( videoOutput.television && videoOutput.widescreen ) {
+                            videoOutput.television = false;
+                            videoOutput.widescreen = true;
+                            tvLabel.source = "tv.svg"
+                            return;
+                        }
                     }
 
                 }
