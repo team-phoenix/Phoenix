@@ -52,7 +52,7 @@ Item {
             MouseArea {
                 anchors.fill: parent;
                 onClicked: {
-                    Qt.openUrlExternally( PhxPaths.qmlCoreLocation() );
+                    Qt.openUrlExternally( "file:///" + PhxPaths.qmlCoreLocation() );
                 }
 
                 hoverEnabled: true;
