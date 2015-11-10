@@ -37,7 +37,7 @@ namespace Library {
             static const QString tableName;
             static const QString tableCollectionMappings;
             static const QString tableCollections;
-            static const QString tableDefaultCores;
+            static const QString tableCurrentCores;
 
             static UserDatabase *instance();
 

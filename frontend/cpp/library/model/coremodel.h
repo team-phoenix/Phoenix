@@ -25,7 +25,9 @@ namespace Library {
             enum CoreModelRoles {
                 SystemRole = Qt::UserRole + 1,
                 CoresRole,
-                DefaultCoreIndexRole
+                CurrentCoreIndexRole,
+                DefaultCoreIndexRole,
+                DefaultCoreRole
             };
 
             // Implementations of the base class functions
@@ -38,9 +40,9 @@ namespace Library {
         signals:
 
         public slots:
-
             // Immediately save new default core to user db
-            void save( const QString system, const QString core );
+            void save(const QString system, const QString newCurrentCore );
+            void save(const QString system, int newCurrentCoreIndex );
 
             // Check that the given core exists on the filesystem where it should be
             bool coreExists( QString defaultCore );
@@ -49,7 +51,10 @@ namespace Library {
             QHash<int, QByteArray> mRoleNames;
             QStringList systemList;
             QMap<QString, QStringList> systemToCoresMap;
+            QMap<QString, QStringList> systemToCoreFriendlyNamesMap;
+            QMap<QString, int> currentCoreIndex;
             QMap<QString, int> defaultCoreIndex;
+            QMap<QString, QString> defaultCoreList;
     };
 
 }

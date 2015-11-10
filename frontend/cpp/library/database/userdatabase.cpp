@@ -7,7 +7,7 @@ const QString UserDatabase::databaseName = QStringLiteral( "userdata.sqlite" );
 const QString UserDatabase::tableName = QStringLiteral( "games" );
 const QString UserDatabase::tableCollectionMappings = QStringLiteral( "collectionMappings" );
 const QString UserDatabase::tableCollections = QStringLiteral( "collections" );
-const QString UserDatabase::tableDefaultCores = QStringLiteral( "defaultCores" );
+const QString UserDatabase::tableCurrentCores = QStringLiteral( "defaultCores" );
 
 UserDatabase::UserDatabase() {
     open();
@@ -106,7 +106,7 @@ bool UserDatabase::createSchema() {
             + QStringLiteral( " (collectionID, collectionName) VALUES (0, 'All')" ) );
 
     // Create default core table
-    q.exec( QStringLiteral( "CREATE TABLE " ) + UserDatabase::tableDefaultCores + QStringLiteral( "(\n" ) +
+    q.exec( QStringLiteral( "CREATE TABLE " ) + UserDatabase::tableCurrentCores + QStringLiteral( "(\n" ) +
             QStringLiteral( " system TEXT UNIQUE NOT NULL," ) +
             QStringLiteral( " defaultCore TEXT" ) +
             QStringLiteral( ")" ) );
