@@ -38,5 +38,8 @@
         <file>systems/Nintendo 64.svg</file>
         <file>systems/Sony PlayStation.svg</file>
         <file>blur.svg</file>
+        <file>tv.svg</file>
+        <file>tv43.svg</file>
+        <file>tv169.svg</file>
     </qresource>
 </RCC>
