@@ -35,6 +35,7 @@ ApplicationWindow {
 
     function resetTitle() { title = ""; }
 
+    property alias layoutStackView: layoutStackView;
     StackView {
         id: layoutStackView;
         anchors.fill: parent;
@@ -137,6 +138,7 @@ ApplicationWindow {
     }
 
     property alias gameActionBarMouseArea: gameActionBarMouseArea;
+    property bool touchMode: false;
     MouseArea {
         id: rootMouseArea;
         anchors.fill: parent;
@@ -151,6 +153,8 @@ ApplicationWindow {
             anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom; bottomMargin: 10; }
             width: 350;
             height: 45;
+            visible: !touchMode && layoutStackView.depth === 1 && !layoutStackView.transitioning;
+            enabled: visible;
             hoverEnabled: true;
             preventStealing: true;
             acceptedButtons: Qt.NoButton;

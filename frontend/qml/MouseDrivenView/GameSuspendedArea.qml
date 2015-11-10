@@ -6,6 +6,7 @@ import QtQuick.Layouts 1.2
 import QtQuick.Dialogs 1.2
 import QtGraphicalEffects 1.0
 
+import vg.phoenix.cache 1.0
 import vg.phoenix.models 1.0
 import vg.phoenix.themes 1.0
 import vg.phoenix.backend 1.0
@@ -13,51 +14,55 @@ import vg.phoenix.backend 1.0
 // Suspended game section
 Rectangle {
     id: gameSuspendedArea;
-    anchors { bottom: parent.bottom; left: parent.left; right: parent.right; }
-    Layout.fillWidth: true;
-    height: 65;
     color: PhxTheme.common.gameSuspendedBackgroundColor;
-    z: parent.z + 1000;
-    opacity: .95;
+    // opacity: .95;
 
     Row {
-        anchors.fill: parent;
-        spacing: 0;
+        anchors { top: parent.top; bottom: parent.bottom; left: parent.left; }
+        width: PhxTheme.common.menuWidth;
+
+        spacing: 8;
 
         Rectangle {
             id: gameSuspendedSec;
             anchors { top: parent.top; bottom: parent.bottom; }
-            width: PhxTheme.common.menuWidth;
+            width: parent.width;
+
             color: "transparent";
 
-            Image {
-                id: gridItemImage;
-                anchors { bottomMargin: 8; leftMargin: 8; left: parent.left; right: parent.right; bottom: parent.bottom; }
-                visible: true;
-                asynchronous: true;
-                width: 48;
-                height: 48;
-                horizontalAlignment: Image.AlignLeft;
-                source: "noartwork.png";
-                sourceSize { height: height; width: width; }
-                fillMode: Image.PreserveAspectFit;
-            }
+            Row {
+                anchors { top: parent.top; bottom: parent.bottom; }
+                width: parent.width;
 
-            MarqueeText {
-                anchors { left: parent.left; leftMargin: 64; verticalCenter: parent.verticalCenter; }
-                horizontalAlignment: Text.AlignLeft;
-                width: PhxTheme.common.menuWidth - 72;
-                text: root.gameViewObject.title;
-                fontSize: PhxTheme.common.baseFontSize + 1;
-                color: PhxTheme.common.baseBackgroundColor;
-                spacing: 40;
-                running: gameSuspendedMouseArea.containsMouse;
-                pixelsPerFrame: 2.0;
-                Connections {
-                    target: gameSuspendedMouseArea;
+                spacing: 8;
+
+                Image {
+                    id: gridItemImage;
+                    anchors { verticalCenter: parent.verticalCenter; }
+                    width: 48;
+                    height: 48;
+                    visible: true;
+                    asynchronous: true;
+                    source: root.gameViewObject.artworkURL === "" ? "noartwork.png" : root.gameViewObject.artworkURL;
+                    sourceSize { height: height; width: width; }
+                    fillMode: Image.PreserveAspectFit;
+                }
+
+                MarqueeText {
+                    anchors { verticalCenter: parent.verticalCenter; }
+                    width: parent.width - 72;
+
+                    horizontalAlignment: Text.AlignLeft;
+                    fontSize: PhxTheme.common.baseFontSize + 1;
+                    color: PhxTheme.common.baseBackgroundColor;
+                    spacing: 40;
+
+                    text: root.gameViewObject.title;
+
+                    running: gameSuspendedMouseArea.containsMouse;
+                    pixelsPerFrame: 2.0;
                 }
             }
-
 
             MouseArea {
                 id: gameSuspendedMouseArea;
@@ -70,46 +75,56 @@ Rectangle {
                     // Destroy the compenent this MouseArea lives in
                     layoutStackView.pop();
                 }
-                cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor;
-                onEntered: {
-                    parent.color = PhxTheme.common.gameSuspendedHoverBackgroundColor;
-                    rootMouseArea.cursorShape = Qt.PointingHandCursor;
-                                    }
-                onExited: {
-                    parent.color = "transparent" // "PhxTheme.common.suspendedGameBackgroundColor";
-                    rootMouseArea.cursorShape = Qt.ArrowCursor;
+                onContainsMouseChanged: checkMouse();
+
+                Connections {
+                    target: root.layoutStackView;
+                    onTransitioningChanged: gameSuspendedMouseArea.checkMouse();
+                }
+
+                function checkMouse() {
+                    if( containsMouse ) {
+                        gameSuspendedSec.color = PhxTheme.common.gameSuspendedHoverBackgroundColor;
+                        rootMouseArea.cursorShape = Qt.PointingHandCursor;
+                    } else {
+                        gameSuspendedSec.color = "transparent";
+                        rootMouseArea.cursorShape = Qt.ArrowCursor;
+                    }
                 }
             }
         }
 
-        // Play button
-        Rectangle {
+        Item {
             anchors { top: parent.top; bottom: parent.bottom; }
-            color: "transparent";
             width: 32;
+
+            // Play
             Image {
-                anchors.centerIn: parent;
-                anchors.margins: 10;
+                id: playImage;
+                anchors { verticalCenter: parent.verticalCenter; }
+                // anchors.margins: 10;
                 width: parent.width;
-                source:  "play.svg";
+                fillMode: Image.PreserveAspectCrop;
+
+                source: "play.svg";
                 sourceSize { height: height; width: width; }
             }
+
             MouseArea {
                 anchors.fill: parent;
                 hoverEnabled: true;
-                cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor;
+                onEntered: { rootMouseArea.cursorShape = Qt.PointingHandCursor; }
+                onExited: { rootMouseArea.cursorShape = Qt.ArrowCursor; }
                 onClicked: {
                     // Prevent user from clicking on anything while the transition occurs
                     root.disableMouseClicks();
 
-                    // Destroy the compenent this MouseArea lives in
-                    layoutStackView.pop();
-
                     // Resume game
                     root.gameViewObject.coreControl.play();
+
+                    // Destroy the compenent this MouseArea lives in
+                    layoutStackView.pop();
                 }
-                onEntered: { rootMouseArea.cursorShape = Qt.PointingHandCursor; }
-                onExited: { rootMouseArea.cursorShape = Qt.ArrowCursor; }
             }
         }
     }
@@ -117,10 +132,9 @@ Rectangle {
     Row {
         anchors { top: parent.top; bottom: parent.bottom; right: parent.right; }
 
-        Rectangle {
+        Item {
             anchors { top: parent.top; bottom: parent.bottom; }
             width: 40;
-            color: "transparent";
 
             // Close
             Image {

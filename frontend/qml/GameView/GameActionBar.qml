@@ -23,13 +23,6 @@ Rectangle {
         if( volumeSlider.value == 0 ) { volumeIcon: "volumemute.svg"; }
     }
 
-    // gameActionBar visible only when paused or mouse recently moved and only while not transitioning
-    opacity: (  ( ( gameView.coreState === Control.PAUSED )
-               || ( cursorTimer.running )
-               || ( gameActionBarMouseArea.containsMouse )
-                )
-               && ( !layoutStackView.transitioning ) ) ? 1.0 : 0.0;
-
     Behavior on opacity { PropertyAnimation { duration: 250; } }
 
     function resetWindowSize() {

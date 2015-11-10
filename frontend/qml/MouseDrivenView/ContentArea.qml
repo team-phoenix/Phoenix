@@ -287,5 +287,7 @@ Rectangle {
         id: gameSuspendedArea;
         objectName: "GameSuspendedArea";
         visible: currentlySuspended;
+        anchors { bottom: parent.bottom; left: parent.left; right: parent.right; }
+        height: 65;
     }
 }

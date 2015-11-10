@@ -143,6 +143,7 @@ Rectangle {
                             // Extra stuff
                             dict[ "title" ] = title;
                             dict[ "system" ] = system;
+                            dict[ "artworkURL" ] = imageCacher.cachedUrl;
 
                             // Assign the source
                             root.gameViewObject.coreControl.source = dict;
