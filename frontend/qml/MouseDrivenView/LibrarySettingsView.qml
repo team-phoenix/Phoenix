@@ -40,7 +40,7 @@ Item {
 
                 verticalAlignment: Text.AlignVCenter;
                 horizontalAlignment: Text.AlignHCenter;
-                text: "Cores files must be placed in the core folder. Click here to open...";
+                text: "Core files must be placed in the core folder. Click here to open...";
                 color: "white";
                 font {
                     pixelSize: PhxTheme.common.baseFontSize;
