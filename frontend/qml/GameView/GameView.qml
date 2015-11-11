@@ -144,28 +144,92 @@ Rectangle {
         }
     }
 
+    // VideoOutput settings
+    property alias aspectMode: videoOutput.aspectMode;
+    property alias linearFiltering: videoOutput.linearFiltering;
+    property alias television: videoOutput.television;
+    property alias ntsc: videoOutput.ntsc;
+    property alias widescreen: videoOutput.widescreen;
+
     // QML-based video output module
     VideoOutput {
         id: videoOutput;
         anchors.centerIn: parent;
 
-        // TODO: This sets up a "fit" strategy. If the user wants we should also have a
-        // "stretch" (width/height = parent.width/height), "fill" (use aspectWidth/Height)
-        // and "center" (have VideoOutput export nativeHeight/Width and clamp if larger than this container) strategy
-        property int aspectWidth: parent.height * videoOutput.aspectRatio;
-        property int aspectHeight: videoOutput.aspectRatio < 1.0 ? parent.height : parent.width / videoOutput.aspectRatio;
+        // Scaling
 
-        property int fitModeWidth: aspectWidth > parent.width ? parent.width : aspectWidth;
-        property int fitModeHeight: aspectHeight > parent.height ? parent.height : aspectHeight;
+        // Info for the various modes
+        property real letterBoxHeight: parent.width / aspectRatio;
+        property real letterBoxWidth: parent.width;
+        property real pillBoxWidth: parent.height * aspectRatio;
+        property real pillBoxHeight: parent.height;
+        property bool pillBoxing: parent.width / parent.height / aspectRatio > 1.0;
 
-        width: fitModeWidth;
-        height: fitModeHeight;
+        // Fit mode (0): Maintain aspect ratio, fit all content within window, letterboxing/pillboxing as necessary
+        property real fitModeWidth: pillBoxing ? pillBoxWidth : letterBoxWidth;
+        property real fitModeHeight: pillBoxing ? pillBoxHeight : letterBoxHeight;
+
+        // Stretch mode (1): Fit to parent, ignore aspect ratio
+        property real stretchModeWidth: parent.width;
+        property real stretchModeHeight: parent.height;
+
+        // Fill mode (2): Maintian aspect ratio, fill window with content, cropping the remaining stuff
+        property real fillModeWidth: 0;
+        property real fillModeHeight: 0;
+
+        // Center mode (3): Show at core's native resolution
+        property real centerModeWidth: 0;
+        property real centerModeHeight: 0;
+
+        property int aspectMode: 0;
+
+        width: {
+            switch( aspectMode ) {
+                case 0:
+                    width: fitModeWidth;
+                    break;
+                case 1:
+                    width: stretchModeWidth;
+                    break;
+                case 2:
+                    width: fillModeWidth;
+                    break;
+                case 3:
+                    width: centerModeWidth;
+                    break;
+                default:
+                    width: 0;
+                    break;
+            }
+        }
+        height: {
+            switch( aspectMode ) {
+                case 0:
+                    height: fitModeHeight;
+                    break;
+                case 1:
+                    height: stretchModeHeight;
+                    break;
+                case 2:
+                    height: fillModeHeight;
+                    break;
+                case 3:
+                    height: centerModeHeight;
+                    break;
+                default:
+                    height: 0;
+                    break;
+            }
+        }
+
         rotation: 180;
 
         linearFiltering: false;
         television: false;
         ntsc: true;
         widescreen: false;
+
+        // Touch control
 
         MouseArea {
             anchors.fill: parent;
