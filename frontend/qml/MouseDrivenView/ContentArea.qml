@@ -21,9 +21,10 @@ Rectangle {
     property alias contentSlider: zoomSlider;
     property alias boxartGrid: boxArtGridComponent;
 
+    property bool fullscreen: root.visibility === Window.FullScreen;
     property string screenIcon: {
-        if ( root.visibility === Window.FullScreen ) screenIcon: "window.svg";
-        else if ( root.visibility === Window.Windowed | Window.Maximized ) screenIcon: "fullscreen.svg";
+        if( fullscreen ) screenIcon: "window.svg";
+        else screenIcon: "fullscreen.svg";
     }
 
     Rectangle {
@@ -75,12 +76,24 @@ Rectangle {
             anchors { verticalCenter: parent.verticalCenter; right: parent.right; rightMargin: 30; }
             spacing: 12;
 
-            Rectangle {
+            // Small rectangle
+            Item {
                 anchors { verticalCenter: parent.verticalCenter; }
-                border { width: 1; color: "#FFFFFF"; }
-                color: "transparent";
-                height: 8;
-                width: height;
+                width: 12;
+                height: parent.height;
+
+                Rectangle {
+                    anchors { verticalCenter: parent.verticalCenter; right: parent.right; }
+                    border { width: 1; color: "#FFFFFF"; }
+                    color: "transparent";
+                    width: height;
+                    height: 8;
+
+                }
+                MouseArea {
+                    anchors.fill: parent;
+                    onClicked: zoomSlider.value = Math.max( zoomSlider.minimumValue, zoomSlider.value - zoomSlider.stepSize );
+                }
             }
 
             Slider {
@@ -120,35 +133,62 @@ Rectangle {
                 }
             }
 
-            Rectangle {
+            // Large rectangle
+            Item {
                 anchors { verticalCenter: parent.verticalCenter; }
-                border { width: 1; color: "#FFFFFF"; }
-                color: "transparent";
-                height: 12;
-                width: height;
+                width: 12;
+                height: parent.height;
+
+                Rectangle {
+                    anchors { verticalCenter: parent.verticalCenter; }
+                    border { width: 1; color: "#FFFFFF"; }
+                    color: "transparent";
+                    height: 12;
+                    width: height;
+                }
+
+                MouseArea {
+                    anchors.fill: parent;
+                    onClicked: zoomSlider.value = Math.min( zoomSlider.maximumValue, zoomSlider.value + zoomSlider.stepSize );
+                }
             }
 
-            // Fullscreen
-            Rectangle {
-                anchors { top: parent.top; bottom: parent.bottom; }
-                color: "transparent";
-                width: 24;
+            // Spacer
+            Item { width: 12; height: 12; }
 
-                Image {
-                    anchors.centerIn: parent;
-                    height: 24;
-                    width: 24;
-                    sourceSize { height: height; width: width; }
-                    source: screenIcon;
-                    MouseArea {
-                        anchors.fill: parent;
-                        onClicked: {
-                                if ( root.visibility === Window.FullScreen )
-                                    root.visibility = Window.Windowed;
-                                else if ( root.visibility === Window.Windowed | Window.Maximized )
-                                    root.visibility = Window.FullScreen;
-                        }
+            // Fullscreen
+            Image {
+                anchors.verticalCenter: parent.verticalCenter;
+                height: fullscreen ? 18 : 24;
+                width: height;
+
+                sourceSize { height: height; width: width; }
+                source: screenIcon;
+
+                MouseArea {
+                    anchors.fill: parent;
+                    onClicked: {
+                        if( fullscreen ) root.visibility = Window.Windowed;
+                        else root.visibility = Window.FullScreen;
                     }
+                }
+            }
+
+            // Close
+            Image {
+                anchors.verticalCenter: parent.verticalCenter;
+                height: 14;
+                width: 14;
+
+                visible: root.visibility === Window.FullScreen;
+                enabled: visible;
+
+                sourceSize { height: height; width: width; }
+                source: "close.svg";
+
+                MouseArea {
+                    anchors.fill: parent;
+                    onClicked: Qt.quit();
                 }
             }
         }

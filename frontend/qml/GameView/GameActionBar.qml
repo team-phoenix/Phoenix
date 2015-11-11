@@ -9,10 +9,7 @@ import vg.phoenix.themes 1.0
 
 Rectangle {
     id: gameActionBar;
-    width: 350;
-    height: 45;
     color: "transparent";
-    anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom; bottomMargin: 10; }
 
     property int volumeValue: 1.0;
 
@@ -25,25 +22,27 @@ Rectangle {
 
     Behavior on opacity { PropertyAnimation { duration: 250; } }
 
+    // Background
     Rectangle {
         width: parent.width;
         height: 45;
-        color: Qt.rgba(0,0,0,0.75);
+        color: Qt.rgba( 0, 0, 0, 0.75 );
         radius: 1;
 
+        // Top accent (thin white bar)
         Rectangle {
             width: parent.width - 2;
             height: 1;
             anchors { top: parent.top; topMargin: 1; horizontalCenter: parent.horizontalCenter; }
-            color: Qt.rgba(255,255,255,.35);
+            opacity: 0.35;
+            color: Qt.rgba( 255, 255, 255, 0.35 );
         }
 
-        // Left-Side
+        // Left side
         Row {
             id: mediaButtonsRow;
             anchors.fill: parent;
-            spacing: 0;
-            Rectangle { anchors { top: parent.top; bottom: parent.bottom; } color: "transparent"; width: 10; } // DO NOT remove this - Separator
+            anchors.leftMargin: 10;
 
             // Play - Pause
             Rectangle {
@@ -69,73 +68,75 @@ Rectangle {
             }
 
             // Volume
-            Row {
+            Item {
                 anchors { top: parent.top; bottom: parent.bottom; }
-                spacing: 0;
+                width: 28 + 55;
+                Row {
+                    anchors.fill: parent;
 
-                Rectangle {
-                    id: volIcon;
-                    anchors { top: parent.top; bottom: parent.bottom; margins: 10; }
-                    width: 28;
-                    color: "transparent"
+                    Rectangle {
+                        id: volIcon;
+                        anchors { top: parent.top; bottom: parent.bottom; margins: 10; }
+                        width: 28;
+                        color: "transparent"
 
-                    Image {
-                        anchors.centerIn: parent;
-                        width: parent.width;
-                        source: gameActionBar.volumeIcon;
-                        sourceSize { height: height; width: width; }
-                    }
+                        Image {
+                            anchors.centerIn: parent;
+                            width: parent.width;
+                            source: gameActionBar.volumeIcon;
+                            sourceSize { height: height; width: width; }
+                        }
 
-                    MouseArea {
-                        anchors.fill: parent;
-                        hoverEnabled: true;
-                        onClicked: {
-                            if (volumeValue == 1) { volumeValue = 0; }
-                            else { volumeValue = 1; }
+                        MouseArea {
+                            anchors.fill: parent;
+                            onClicked: {
+                                if ( volumeValue == 1) { volumeValue = 0; }
+                                else { volumeValue = 1; }
+                            }
                         }
                     }
 
-                    /* Notworking
-                    MouseArea {
-                        anchors.fill: parent;
-                        hoverEnabled: true;
-                        onEntered: {
-                            volumeSlider.visible = !volumeSlider.visible;
+                    Slider {
+                        id: volumeSlider;
+                        anchors { verticalCenter: parent.verticalCenter; }
+                        width: 55;
+                        height: gameActionBar.height;
+                        minimumValue: 0;
+                        maximumValue: 1;
+                        value: volumeValue;
+                        stepSize: 0.01;
+                        activeFocusOnPress: true;
+                        tickmarksEnabled: false;
+                        onValueChanged: { coreControl.volume = value; }
+
+                        style: SliderStyle {
+                            handle: Item {
+                                height: 12;
+                                width: 4;
+                                Rectangle { id: handleRectangle; anchors.fill: parent; color: "white"; }
+                            }
+
+                            groove: Item {
+                                width: control.width;
+                                height: 2;
+                                Rectangle { anchors.fill: parent; color: "#FFFFFF"; opacity: .35; }
+                            }
                         }
-                        onExited: {
-                            volumeSlider.opacity = !volumeSlider.visible;
-                        }
-                    } */
+                    }
+                    move: Transition { NumberAnimation { properties: "y"; duration: 1000 } }
                 }
 
-                Slider {
-                    id: volumeSlider;
-                    anchors { verticalCenter: parent.verticalCenter; }
-                    width: 55;
-                    height: gameActionBar.height;
-                    minimumValue: 0;
-                    maximumValue: 1;
-                    value: volumeValue;
-                    stepSize: 0.01;
-                    activeFocusOnPress: true;
-                    tickmarksEnabled: false;
-                    onValueChanged: { coreControl.volume = value; }
-
-                    style: SliderStyle {
-                        handle: Item {
-                            height: 12;
-                            width: 4;
-                            Rectangle { id: handleRectangle; anchors.fill: parent; color: "white"; }
-                        }
-
-                        groove: Item {
-                            width: control.width;
-                            height: 2;
-                            Rectangle { anchors.fill: parent; color: "#FFFFFF"; opacity: .35; }
-                        }
+                // FIXME: Non functional, rootMouseArea and gameActionBarMouseArea eat hover events
+                /*MouseArea {
+                    anchors.fill: parent;
+                    hoverEnabled: true;
+                    onEntered: {
+                        volumeSlider.visible = !volumeSlider.visible;
                     }
-                }
-                move: Transition { NumberAnimation { properties: "y"; duration: 1000 } }
+                    onExited: {
+                        volumeSlider.opacity = !volumeSlider.visible;
+                    }
+                }*/
             }
 
             /*/ Settings
@@ -178,16 +179,15 @@ Rectangle {
             }
         }
 
-        // Right-Side
+        // Right side
         Row {
-            spacing: 4;
             anchors { top: parent.top; bottom: parent.bottom; right: parent.right; }
+            anchors.rightMargin: 12;
 
             // Toggle TV mode
-            Rectangle {
+            Item {
                 id: tvmodeToggle;
                 anchors.verticalCenter: parent.verticalCenter;
-                color: "transparent"
                 width: 32;
                 height: width;
 
@@ -229,10 +229,9 @@ Rectangle {
                 }
             }
 
-            // Suspend - Minimize
-            Rectangle {
+            // Suspend/minimize
+            Item {
                 anchors { top: parent.top; bottom: parent.bottom; }
-                color: "transparent"
                 width: 32;
 
                 Image {
@@ -271,10 +270,36 @@ Rectangle {
                 }
             }
 
-            // Shutdown - Close
-            Rectangle {
+            // Fullscreen
+            Item {
                 anchors { top: parent.top; bottom: parent.bottom; }
-                color: "transparent"
+                width: 24;
+
+                Image {
+                    anchors.centerIn: parent;
+                    height: 18;
+                    width: 18;
+                    sourceSize { height: height; width: width; }
+                    property string screenIcon: {
+                        if ( root.visibility === Window.FullScreen ) screenIcon: "window.svg";
+                        else if ( root.visibility === Window.Windowed | Window.Maximized ) screenIcon: "fullscreen.svg";
+                    }
+                    source: screenIcon;
+                    MouseArea {
+                        anchors.fill: parent;
+                        onClicked: {
+                            if ( root.visibility === Window.FullScreen )
+                                root.visibility = Window.Windowed;
+                            else if ( root.visibility & ( Window.Windowed | Window.Maximized ) )
+                                root.visibility = Window.FullScreen;
+                        }
+                    }
+                }
+            }
+
+            // Shutdown/close
+            Item {
+                anchors { top: parent.top; bottom: parent.bottom; }
                 width: 32;
 
                 Image {
@@ -315,8 +340,6 @@ Rectangle {
                     }
                 }
             }
-
-            Rectangle { anchors { top: parent.top; bottom: parent.bottom; } color: "transparent"; width: 12; } // DO NOT remove this - Separator
         }
     }
 }

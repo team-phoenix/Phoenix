@@ -153,12 +153,13 @@ Item {
 
                     Image {
                         id: image;
-                        anchors.fill: parent;
-                        source: imageSource;
-                        sourceSize { height: 24; width: 24; }
-                        fillMode: Image.Pad;
-                        smooth: false;
                         anchors { centerIn: parent; }
+                        width: 24;
+                        height: 24;
+
+                        source: imageSource;
+                        sourceSize { width: width; height: height; }
+
                         opacity: index === selectionAreaToolbar.currentIndex ? 1.0 : 0.5;
                     }
 

@@ -19,7 +19,7 @@ Rectangle {
     property alias coreState: coreControl.state;
     property alias coreControl: coreControl;
     property alias videoOutput: videoOutput;
-    property bool showBar: false;
+    property bool showBar: true;
     property string title: "";
     property string artworkURL: "";
 
@@ -50,6 +50,7 @@ Rectangle {
                     videoOutput.opacity = 0.0;
                     resetCursor();
                     cursorTimer.stop();
+                    showBar = true;
                     break;
 
                 case Control.LOADING:
@@ -289,8 +290,10 @@ Rectangle {
     // In-game controls
     GameActionBar {
         id: gameActionBar;
-        anchors { bottom: parent.bottom; }
-        anchors.horizontalCenter: parent.horizontalCenter;
+
+        anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom; bottomMargin: 10; }
+        width: 350;
+        height: 45;
 
         visible: opacity !== 0.0;
         enabled: visible;
@@ -308,6 +311,32 @@ Rectangle {
                     opacity: 0.0;
                 }
             }
+        }
+    }
+
+    // A hint on how to hide the action bar (for touch mode)
+    Text {
+        id: actionBarHint;
+        anchors.horizontalCenter: parent.horizontalCenter;
+        anchors.bottom: gameActionBar.top;
+        anchors.bottomMargin: 8;
+        width: contentWidth * 2;
+        height: contentHeight * 2;
+
+        opacity: gameActionBar.opacity;
+        visible: root.touchMode;
+        enabled: visible;
+
+        verticalAlignment: Text.AlignVCenter;
+        horizontalAlignment: Text.AlignHCenter;
+        text: "(Right-click to hide)";
+        color: "white";
+        style: Text.Outline;
+        styleColor: "black";
+
+        font {
+            pixelSize: 12;
+            family: PhxTheme.common.systemFontFamily;
         }
     }
 
