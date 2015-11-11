@@ -196,7 +196,7 @@ Rectangle {
                     anchors.fill: parent;
                     anchors.margins: 4;
                     source: "tv.svg"
-
+                    smooth: false;
                     sourceSize { height: height; width: width; }
                 }
 
