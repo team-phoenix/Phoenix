@@ -22,6 +22,13 @@ ApplicationWindow {
     minimumHeight: defaultMinHeight;
     minimumWidth: defaultMinWidth;
 
+    function resetWindowSize() {
+        root.minimumWidth = root.defaultMinWidth;
+        root.minimumHeight = root.defaultMinHeight;
+        if( root.height < root.defaultMinHeight ) { root.height = root.defaultMinHeight; }
+        if( root.width < root.defaultMinWidth ) { root.width = root.defaultMinWidth; }
+    }
+
     GameLauncher {
         id: gameLauncher;
     }

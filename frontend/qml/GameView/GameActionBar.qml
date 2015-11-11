@@ -25,13 +25,6 @@ Rectangle {
 
     Behavior on opacity { PropertyAnimation { duration: 250; } }
 
-    function resetWindowSize() {
-        root.minimumWidth = root.defaultMinWidth;
-        root.minimumHeight = root.defaultMinHeight;
-        if(root.height < root.defaultMinHeight) { root.height = root.defaultMinHeight; }
-        if(root.width < root.defaultMinWidth) { root.width = root.defaultMinWidth; }
-    }
-
     Rectangle {
         width: parent.width;
         height: 45;
@@ -304,7 +297,6 @@ Rectangle {
 
                         // Let the user know we're thinking!
                         rootMouseArea.cursorShape = Qt.BusyCursor;
-
                     }
 
                     function stoppedCallback( newState ) {
@@ -314,14 +306,13 @@ Rectangle {
 
                             console.log( "Going to library" );
 
-                            resetWindowSize();
+                            root.resetWindowSize();
                             root.resetTitle();
                             root.disableMouseClicks();
                             rootMouseArea.hoverEnabled = false;
                             layoutStackView.push( mouseDrivenView );
                         }
                     }
-
                 }
             }
 

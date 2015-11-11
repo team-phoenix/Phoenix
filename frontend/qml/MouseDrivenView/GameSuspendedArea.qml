@@ -15,7 +15,7 @@ import vg.phoenix.backend 1.0
 Rectangle {
     id: gameSuspendedArea;
     color: PhxTheme.common.gameSuspendedBackgroundColor;
-    // opacity: .95;
+    opacity: .95;
 
     Row {
         anchors { top: parent.top; bottom: parent.bottom; left: parent.left; }
@@ -31,8 +31,8 @@ Rectangle {
             color: "transparent";
 
             Row {
-                anchors { top: parent.top; bottom: parent.bottom; }
-                width: parent.width;
+                anchors.fill: parent;
+                anchors.leftMargin: 8;
 
                 spacing: 8;
 
@@ -96,45 +96,7 @@ Rectangle {
 
         Item {
             anchors { top: parent.top; bottom: parent.bottom; }
-            width: 32;
-
-            // Play
-            Image {
-                id: playImage;
-                anchors { verticalCenter: parent.verticalCenter; }
-                // anchors.margins: 10;
-                width: parent.width;
-                fillMode: Image.PreserveAspectCrop;
-
-                source: "play.svg";
-                sourceSize { height: height; width: width; }
-            }
-
-            MouseArea {
-                anchors.fill: parent;
-                hoverEnabled: true;
-                onEntered: { rootMouseArea.cursorShape = Qt.PointingHandCursor; }
-                onExited: { rootMouseArea.cursorShape = Qt.ArrowCursor; }
-                onClicked: {
-                    // Prevent user from clicking on anything while the transition occurs
-                    root.disableMouseClicks();
-
-                    // Resume game
-                    root.gameViewObject.coreControl.play();
-
-                    // Destroy the compenent this MouseArea lives in
-                    layoutStackView.pop();
-                }
-            }
-        }
-    }
-
-    Row {
-        anchors { top: parent.top; bottom: parent.bottom; right: parent.right; }
-
-        Item {
-            anchors { top: parent.top; bottom: parent.bottom; }
-            width: 40;
+            width: 18;
 
             // Close
             Image {
@@ -149,7 +111,33 @@ Rectangle {
                 hoverEnabled: true;
                 onEntered: { rootMouseArea.cursorShape = Qt.PointingHandCursor; }
                 onExited: { rootMouseArea.cursorShape = Qt.ArrowCursor; }
-                onClicked: { root.resetTitle(); root.gameViewObject.coreControl.stop(); }
+
+                onClicked: {
+                    console.log( "GameSuspendedArea: Close game" );
+
+                    root.resetWindowSize();
+
+                    root.disableMouseClicks();
+                    rootMouseArea.hoverEnabled = true;
+                    rootMouseArea.cursorShape = Qt.BusyCursor;
+
+                    root.gameViewObject.coreControl.stateChanged.connect( stoppedCallback );
+                    root.gameViewObject.coreControl.stop();
+                }
+
+                function stoppedCallback( newState ) {
+                    console.log( "stoppedCallback(" + newState + ")" );
+                    if( newState === Control.STOPPED ) {
+                        root.gameViewObject.coreControl.stateChanged.disconnect( stoppedCallback );
+
+                        root.resetTitle();
+
+                        rootMouseArea.cursorShape = Qt.ArrowCursor;
+                        rootMouseArea.hoverEnabled = false;
+                        root.enableMouseClicks();
+
+                    }
+                }
             }
         }
     }
