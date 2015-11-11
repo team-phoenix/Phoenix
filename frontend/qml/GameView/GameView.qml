@@ -252,7 +252,7 @@ Rectangle {
             }
             onClicked: {
                 if( root.touchMode ) {
-                    if( mouse.button === Qt.RightButton ) {
+                    if( mouse.button === Qt.RightButton && running ) {
                         // Toggle state
                         if( showBar ) showBar = false;
                         else showBar = true;
