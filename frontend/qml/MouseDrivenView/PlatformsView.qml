@@ -12,13 +12,15 @@ PhxScrollView {
     id: platformsView;
 
     // The default of 20 just isn't fast enough
-    __wheelAreaScrollSpeed: 100;
+    // __wheelAreaScrollSpeed: 100;
 
-    ListView {
+    // @disable-check M300
+    PhxListView {
         id: listView;
+        anchors.fill: parent;
+
         spacing: 0;
         model: PlatformsModel { id: platformsModel; }
-        boundsBehavior: Flickable.StopAtBounds;
         highlightFollowsCurrentItem: false;
 
         signal doShowAnimation();

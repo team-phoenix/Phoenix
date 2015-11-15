@@ -8,9 +8,14 @@ import vg.phoenix.themes 1.0
 
 // @disable-check M300
 PhxScrollView {
-    ListView {
+
+    // @disable-check M300
+    PhxListView {
         id: listView;
+        anchors.fill: parent;
+
         spacing: 0;
+
         model: ListModel {
             id: settingsModel;
             ListElement { section: "Library"; }
@@ -18,8 +23,6 @@ PhxScrollView {
             // ListElement { section: "Video"; }
             // ListElement { section: "Audio"; }
         }
-
-        boundsBehavior: Flickable.StopAtBounds;
 
         highlightFollowsCurrentItem: false;
 

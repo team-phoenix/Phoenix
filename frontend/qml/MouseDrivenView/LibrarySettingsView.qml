@@ -63,18 +63,18 @@ Item {
             }
         }
 
+        // @disable-check M300
         PhxScrollView {
             id: scrollView;
             anchors { top: pathHelper.bottom; left: parent.left; right: parent.right; bottom: parent.bottom; }
             anchors.topMargin: parent.verticalMargin;
 
-            // The default of 20 just isn't fast enough
-            __wheelAreaScrollSpeed: 100;
-
-            ListView {
+            // @disable-check M300
+            PhxListView {
                 id: listView;
                 anchors.fill: parent;
                 anchors.rightMargin: 10;
+
                 spacing: 3;
                 model: CoreModel { }
 
@@ -97,6 +97,7 @@ Item {
                             bold: true;
                         }
                     }
+
                     Text {
                         anchors.top: headerText.bottom; anchors.left: parent.left;
                         width: parent.width;

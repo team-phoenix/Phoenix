@@ -32,6 +32,7 @@ Rectangle {
         anchors { top: parent.top; left: parent.left; right: parent.right; }
         color: "transparent"
         height: 70;
+        z: 1;
 
         Rectangle {
             anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 30; }

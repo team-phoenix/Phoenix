@@ -11,6 +11,8 @@ import vg.phoenix.paths 1.0
 
 Rectangle {
     id: boxartGridBackground;
+
+    // @disable-check M300
     DropdownMenu { id: dropDownMenu; }
 
     // @disable-check M300
@@ -18,24 +20,19 @@ Rectangle {
         id: scrollView;
         anchors { fill: parent; topMargin: headerArea.height; }
 
-        // The default of 20 just isn't fast enough
-        __wheelAreaScrollSpeed: 100;
-
-        // How much do you add to each grid entry's width so that the sum of the widths of the items in a row match the
-        // GridView's width?
-        // Don't use these two properties, they just create binding loops...
-        // property int numItems: Math.floor( contentItem.width / contentArea.contentSlider.value );
-        // property int addToMarginsTotal: contentItem.width % contentArea.contentSlider.value;
+        // How much do you add to each grid entry's width so that the sum of a row's widths equal the GridView's width?
         property double addToMargins: 0;
 
+        // Don't set the actual binding until we're fully initalized. You'll get binding loop warnings otherwise
         Component.onCompleted: {
             addToMargins = Qt.binding( function() {
                 return contentItem.width % contentArea.contentSlider.value
                         / Math.floor( contentItem.width / contentArea.contentSlider.value );
-            });
+            } );
         }
 
-        contentItem: GridView {
+        // @disable-check M300
+        PhxGridView {
             id: gridView;
             anchors {
                 top: parent.top; bottom: parent.bottom; left: parent.left; right: parent.right;
@@ -89,8 +86,6 @@ Rectangle {
                 else
                     lastY = contentY;
             }
-
-            boundsBehavior: Flickable.StopAtBounds;
 
             Component.onCompleted: { libraryModel.updateCount(); libraryModel.sort( 1, Qt.AscendingOrder ); }
 
@@ -276,6 +271,7 @@ Rectangle {
                             // ToolTipArea { text: title; tip {  x: 0; y: parent.width + 24; } }
 
                         }
+
                     }
 
                     // A label for the game's title

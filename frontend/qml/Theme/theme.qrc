@@ -4,5 +4,8 @@
         <file>PhxTheme.qml</file>
         <file>PhxScrollView.qml</file>
         <file>PhxComboBox.qml</file>
+        <file>PhxScrollBar.qml</file>
+        <file>PhxGridView.qml</file>
+        <file>PhxListView.qml</file>
     </qresource>
 </RCC>
