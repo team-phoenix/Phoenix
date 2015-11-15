@@ -7,15 +7,14 @@ import vg.phoenix.themes 1.0
 
 // @disable-check M300
 PhxScrollView {
-    width: 100
-    height: 65
 
-    ListView {
+    // @disable-check M300
+    PhxListView {
         id: listView;
+        anchors.fill: parent;
+
         spacing: 0;
         model: CollectionsModel { id: collectionsModel; }
-
-        boundsBehavior: Flickable.StopAtBounds;
 
         highlightFollowsCurrentItem: false;
 
