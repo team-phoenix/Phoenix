@@ -293,7 +293,7 @@ void LibraryModel::handleUpdateGame( const GameData metaData ) {
 }
 
 QString LibraryModel::selectStatement() const {
-    static const auto collectionFilterStatement = QStringLiteral( "SELECT " )
+    static const QString collectionFilterStatement = QStringLiteral( "SELECT " )
             % UserDatabase::tableName
             % QStringLiteral( ".* FROM " )
             % UserDatabase::tableName
@@ -311,7 +311,7 @@ QString LibraryModel::selectStatement() const {
             % UserDatabase::tableCollectionMappings
             % QStringLiteral( ".collectionID" );
 
-    auto select = collectionFilterStatement % " WHERE " % filter();
+    QString select = collectionFilterStatement % " WHERE " % filter();
 
     if( !mFilterCollection ) {
         return QSqlTableModel::selectStatement();
@@ -367,7 +367,7 @@ void LibraryModel::handleInsertGame( const GameData importData ) {
     }
 
     // Limit how many times the progress is updated, to reduce strain on the render thread.
-    auto importProgress = static_cast<int>( importData.importProgress );
+    int importProgress = static_cast<int>( importData.importProgress );
 
     if( importProgress  != static_cast<int>( progress() ) ) {
         setProgress( importProgress );
