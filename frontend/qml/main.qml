@@ -56,6 +56,8 @@ ApplicationWindow {
             push( { item: mouseDrivenView, properties: { opacity: 0 } } );
         }
 
+        property string currentObjectName: currentItem === null ? "" : currentItem.objectName;
+
         // Here we define the (push) transition that occurs when going from GameView into the library
         Component {
             id: libraryTransition;
@@ -132,6 +134,20 @@ ApplicationWindow {
             pushTransition: libraryTransition;
             popTransition: gameTransition;
         }
+
+        GameView {
+            id: gameView;
+            objectName: "GameView";
+            visible: !layoutStackView.currentObjectName.localeCompare( objectName );
+            enabled: visible;
+        }
+
+        MouseDrivenView {
+            id: mouseDrivenView;
+            objectName: "MouseDrivenView";
+            visible: !layoutStackView.currentObjectName.localeCompare( objectName );
+            enabled: visible;
+        }
     }
 
     // Use when transitioning
@@ -166,34 +182,5 @@ ApplicationWindow {
             preventStealing: true;
             acceptedButtons: Qt.NoButton;
         }
-    }
-
-    Component {
-        id: bigPictureView;
-        BigPictureView {
-            id: pictureView;
-            objectName: "BigPictureView";
-
-            Connections {
-                target: root.inputManager;
-                onDeviceAdded: {
-                    console.log( device.name );
-                    console.log( device.editMode )
-                    device.inputDeviceEvent.connect( pictureView.qmlInputDevice.insert );
-                }
-            }
-
-            Component.onCompleted: { root.inputManager.emitConnectedDevices(); }
-        }
-    }
-
-    Component {
-        id: mouseDrivenView;
-        MouseDrivenView { objectName: "MouseDrivenView"; }
-    }
-
-    Component {
-        id: gameView;
-        GameView { objectName: "GameView"; }
     }
 }

@@ -31,7 +31,7 @@ Item {
             for ( var i = 0; i < root.inputManager.count; ++i ) {
                 if ( root.inputManager.at( i ) ) {
                     root.inputManager.at( i ).editMode = false;
-                    root.inputManager.at( i ).editModeEvent.disconnect();
+                    // root.inputManager.at( i ).editModeEvent.disconnect();
                 }
             }
         }

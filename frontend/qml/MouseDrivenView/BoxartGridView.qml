@@ -9,11 +9,13 @@ import vg.phoenix.backend 1.0
 import vg.phoenix.themes 1.0
 import vg.phoenix.paths 1.0
 
-Rectangle {
+FocusScope {
     id: boxartGridBackground;
 
     // @disable-check M300
     DropdownMenu { id: dropDownMenu; }
+
+    property alias gridView: gridView;
 
     // @disable-check M300
     PhxScrollView {
@@ -37,6 +39,17 @@ Rectangle {
             anchors {
                 top: parent.top; bottom: parent.bottom; left: parent.left; right: parent.right;
                 leftMargin: searchBar.anchors.leftMargin; rightMargin: leftMargin;
+            }
+
+            Component.onCompleted: {
+                // Try to get the library to give us an accurate picture of how tall the GridView really is
+                libraryModel.updateCount();
+
+                // Sort in order
+                libraryModel.sort( 1, Qt.AscendingOrder );
+
+                // Grab focus for ourselves
+                forceActiveFocus();
             }
 
             // Our own custom model, defined in librarymodel.cpp
@@ -87,93 +100,95 @@ Rectangle {
                     lastY = contentY;
             }
 
-            Component.onCompleted: { libraryModel.updateCount(); libraryModel.sort( 1, Qt.AscendingOrder ); }
-
-            delegate: Rectangle {
+            delegate: Item {
                 id: gridItem;
                 width: gridView.cellWidth - scrollView.addToMargins; height: gridView.cellHeight;
                 anchors.rightMargin: scrollView.addToMargins;
-                color: "transparent";
-                // border.color: "black";
-                // border.width: 1;
+
+                Keys.onPressed: {
+                    if( event.key === Qt.Key_Enter || event.key === Qt.Key_Return ) {
+                        launchGame();
+                    }
+                }
+
+                // Once the load completes, launch the game
+                function stateChangedCallback( newState ) {
+                    console.log( "stateChangedCallback(" + newState + ")" );
+
+                    // Nothing to do, the load has begun
+                    if( newState === Control.LOADING ) {
+                        return;
+                    }
+
+                    // Load complete, start game and hide library
+                    if( newState === Control.PAUSED ) {
+                        // Disconnect this callback once it's been used where we want it to be used
+                        root.gameViewObject.coreControl.stateChanged.disconnect( stateChangedCallback );
+
+                        root.gameViewObject.coreControl.play();
+
+                        // Destroy this library view and show the game
+                        layoutStackView.pop();
+                        return;
+                    }
+                }
+
+                function launchGame() {
+                    var core = coreFilePath;
+                    if ( core === "" ) {
+                        core = gameLauncher.getDefaultCore( system )
+                    }
+
+                    var game = gameLauncher.trimmedGame( absoluteFilePath );
+
+                    if ( gameLauncher.verify( core, game ) ) {
+
+                        // Prevent user from clicking on anything while the transition occurs
+                        root.disableMouseClicks();
+
+                        // Don't check the mouse until the transition's done
+                        rootMouseArea.hoverEnabled = false;
+
+                        // Let the user know we're thinking!
+                        rootMouseArea.cursorShape = Qt.WaitCursor;
+
+                        // Set window title to game title
+                        root.title = "Loading - " + title;
+                        console.log( title );
+                        console.log( root.title );
+
+                        // Set up the packet of information to pass to CoreControl
+                        var dict = {};
+                        dict[ "type" ] = "libretro";
+                        dict[ "core" ] = core;
+                        dict[ "game" ] = game;
+                        dict[ "systemPath" ] = PhxPaths.qmlFirmwareLocation();
+                        dict[ "savePath" ] = PhxPaths.qmlSaveLocation();
+
+                        // Extra stuff
+                        dict[ "title" ] = title;
+                        dict[ "system" ] = system;
+                        dict[ "artworkURL" ] = imageCacher.cachedUrl;
+
+                        // Assign the source
+                        root.gameViewObject.coreControl.source = dict;
+
+                        // Connect the next callback in the chain to be called once the load begins/ends
+                        root.gameViewObject.coreControl.stateChanged.connect( stateChangedCallback );
+
+                        // Begin the load
+                        // Execution will continue in stateChangedCallback() once CoreControl changes state
+                        root.gameViewObject.coreControl.load();
+                    }
+                }
 
                 MouseArea {
                     id: gridItemMouseArea;
                     anchors.fill: parent;
                     hoverEnabled: true;
-                    onClicked: { gridView.currentIndex = index; }
-                    onDoubleClicked: {
+                    onClicked: { gridView.currentIndex = index; gridView.forceActiveFocus(); }
+                    onDoubleClicked: launchGame();
 
-                        var core = coreFilePath;
-                        if ( core === "" ) {
-                            core = gameLauncher.getDefaultCore( system )
-                        }
-
-                        var game = gameLauncher.trimmedGame( absoluteFilePath );
-
-                        if ( gameLauncher.verify( core, game ) ) {
-
-                            // Prevent user from clicking on anything while the transition occurs
-                            root.disableMouseClicks();
-
-                            // Don't check the mouse until the transition's done
-                            rootMouseArea.hoverEnabled = false;
-
-                            // Let the user know we're thinking!
-                            rootMouseArea.cursorShape = Qt.WaitCursor;
-
-                            // Set window title to game title
-                            root.title = "Loading - " + title;
-                            console.log( title );
-                            console.log( root.title );
-
-                            // Set up the packet of information to pass to CoreControl
-                            var dict = {};
-                            dict[ "type" ] = "libretro";
-                            dict[ "core" ] = core;
-                            dict[ "game" ] = game;
-                            dict[ "systemPath" ] = PhxPaths.qmlFirmwareLocation();
-                            dict[ "savePath" ] = PhxPaths.qmlSaveLocation();
-
-                            // Extra stuff
-                            dict[ "title" ] = title;
-                            dict[ "system" ] = system;
-                            dict[ "artworkURL" ] = imageCacher.cachedUrl;
-
-                            // Assign the source
-                            root.gameViewObject.coreControl.source = dict;
-
-                            // Connect the next callback in the chain to be called once the load begins/ends
-                            root.gameViewObject.coreControl.stateChanged.connect( stateChangedCallback );
-
-                            // Begin the load
-                            // Execution will continue in stateChangedCallback() once CoreControl changes state
-                            root.gameViewObject.coreControl.load();
-
-                        }
-                    }
-
-                    // Once the load completes, launch the game
-                    function stateChangedCallback( newState ) {
-                        console.log( "stateChangedCallback(" + newState + ")" );
-
-                        // Nothing to do, the load has begun
-                        if( newState === Control.LOADING ) {
-                            return;
-                        }
-
-                        // Load complete, start game and hide library
-                        if( newState === Control.PAUSED ) {
-                            // Disconnect this callback once it's been used where we want it to be used
-                            root.gameViewObject.coreControl.stateChanged.disconnect( stateChangedCallback );
-
-                            root.gameViewObject.coreControl.play();
-
-                            // Destroy this library view and show the game
-                            layoutStackView.pop();
-                            return;
-                        }
-                    }
                 }
 
                 ColumnLayout {
@@ -241,8 +256,8 @@ Rectangle {
                                 z: gridItemImage.z - 1;
                                 height: parent.paintedHeight + border.width * 2;
                                 width: parent.paintedWidth + border.width * 2;
-                                border.color: index === gridView.currentIndex ? PhxTheme.common.boxartSelectedBorderColor : PhxTheme.common.boxartNormalBorderColor;
-                                border.width: 2 + (contentArea.contentSlider.value/50);
+                                border.color: index === gridView.currentIndex && gridView.activeFocus ? PhxTheme.common.boxartSelectedBorderColor : PhxTheme.common.boxartNormalBorderColor;
+                                border.width: 2 + ( contentArea.contentSlider.value / 50 );
                                 color: "transparent";
                                 radius: 3;
                             }
@@ -283,7 +298,7 @@ Rectangle {
                         spacing: contentArea.contentSlider.value / 10;
                         color: PhxTheme.common.highlighterFontColor;
                         fontSize: PhxTheme.common.baseFontSize;
-                        running: index === gridView.currentIndex || gridItemMouseArea.containsMouse;
+                        running: index === gridView.currentIndex && gridView.activeFocus || gridItemMouseArea.containsMouse;
                         pixelsPerFrame: contentArea.contentSlider.value / 100;
 
                         Connections {
