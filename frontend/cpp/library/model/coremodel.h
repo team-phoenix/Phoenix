@@ -24,6 +24,8 @@ namespace Library {
 
             enum CoreModelRoles {
                 SystemRole = Qt::UserRole + 1,
+                SystemFriendlyNameRole,
+                NumSystemsRole,
                 CoresRole,
                 CurrentCoreIndexRole,
                 DefaultCoreIndexRole,
@@ -50,6 +52,7 @@ namespace Library {
         protected:
             QHash<int, QByteArray> mRoleNames;
             QStringList systemList;
+            QStringList systemFriendlyNameList;
             QMap<QString, QStringList> systemToCoresMap;
             QMap<QString, QStringList> systemToCoreFriendlyNamesMap;
             QMap<QString, int> currentCoreIndex;

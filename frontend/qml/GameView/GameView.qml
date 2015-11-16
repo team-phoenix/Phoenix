@@ -319,12 +319,11 @@ Rectangle {
         id: actionBarHint;
         anchors.horizontalCenter: parent.horizontalCenter;
         anchors.bottom: gameActionBar.top;
-        anchors.bottomMargin: 8;
         width: contentWidth * 2;
         height: contentHeight * 2;
 
         opacity: gameActionBar.opacity;
-        visible: root.touchMode;
+        visible: root.touchMode && gameView.coreState === Control.PLAYING;
         enabled: visible;
 
         verticalAlignment: Text.AlignVCenter;

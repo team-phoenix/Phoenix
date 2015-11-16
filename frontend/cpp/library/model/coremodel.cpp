@@ -7,6 +7,8 @@ CoreModel::CoreModel( QObject *parent )
 
     mRoleNames.insert( CoreModelRoles::CoresRole, QByteArrayLiteral( "cores" ) );
     mRoleNames.insert( CoreModelRoles::SystemRole, QByteArrayLiteral( "system" ) );
+    mRoleNames.insert( CoreModelRoles::SystemFriendlyNameRole, QByteArrayLiteral( "systemFriendlyName" ) );
+    mRoleNames.insert( CoreModelRoles::NumSystemsRole, QByteArrayLiteral( "numSystems" ) );
     mRoleNames.insert( CoreModelRoles::CurrentCoreIndexRole, QByteArrayLiteral( "currentCoreIndex" ) );
     mRoleNames.insert( CoreModelRoles::DefaultCoreIndexRole, QByteArrayLiteral( "defaultCoreIndex" ) );
     mRoleNames.insert( CoreModelRoles::DefaultCoreRole, QByteArrayLiteral( "defaultCore" ) );
@@ -16,20 +18,23 @@ CoreModel::CoreModel( QObject *parent )
     LibretroDatabase::open();
 
     auto systemDBQuery = QSqlQuery( LibretroDatabase::database() );
-    auto execStatus = systemDBQuery.exec( QStringLiteral( "SELECT DISTINCT UUID, defaultCore FROM system "
-                                                          "WHERE enabled = 1" ) );
+    auto execStatus = systemDBQuery.exec( QStringLiteral( "SELECT DISTINCT UUID, defaultCore, friendlyName, manufacturer FROM system "
+                                          "WHERE enabled = 1" ) );
     Q_ASSERT_X( execStatus, Q_FUNC_INFO, qPrintable( systemDBQuery.lastError().text() ) );
 
     // Grab the system list from the system DB along with the default core
     while( systemDBQuery.next() ) {
         auto system = systemDBQuery.value( 0 ).toString();
         auto defaultCore = systemDBQuery.value( 1 ).toString();
+        auto friendlyName = systemDBQuery.value( 2 ).toString();
+        auto manufacturer = systemDBQuery.value( 3 ).toString();
 
         if( !defaultCore.isNull() ) {
             defaultCoreList.insert( system, defaultCore );
         }
 
         systemList.append( system );
+        systemFriendlyNameList.append( friendlyName.isEmpty() || friendlyName.isNull() ? QString( "" ) : QString( manufacturer % QStringLiteral( " - " ) % friendlyName ) );
     }
 
     LibretroDatabase::close();
@@ -77,8 +82,8 @@ CoreModel::CoreModel( QObject *parent )
 
     // Grab all the other available cores from the system DB
     execStatus = systemDBQuery.exec( QStringLiteral( "SELECT DISTINCT core, system FROM systemToCore "
-                                                     "INNER JOIN system ON system.UUID = systemToCore.system "
-                                                     "WHERE system.enabled = 1" ) );
+                                     "INNER JOIN system ON system.UUID = systemToCore.system "
+                                     "WHERE system.enabled = 1" ) );
     Q_ASSERT_X( execStatus, Q_FUNC_INFO, qPrintable( systemDBQuery.lastError().text() ) );
 
     while( systemDBQuery.next() ) {
@@ -107,8 +112,8 @@ CoreModel::CoreModel( QObject *parent )
     // Mark default cores with a tag
     for( auto system : systemList ) {
         // Copy the map in its entirety
-        for( auto core: systemToCoresMap[ system ] ) {
-                systemToCoreFriendlyNamesMap[ system ] << core;
+        for( auto core : systemToCoresMap[ system ] ) {
+            systemToCoreFriendlyNamesMap[ system ] << core;
         }
 
         // Give the default cores an indication that they're default
@@ -158,6 +163,12 @@ QVariant CoreModel::data( const QModelIndex &index, int role ) const {
 
         case SystemRole:
             return systemList[ index.row() ];
+
+        case SystemFriendlyNameRole:
+            return systemFriendlyNameList[ index.row() ];
+
+        case NumSystemsRole:
+            return systemList.size();
 
         case CurrentCoreIndexRole: {
             auto &system = systemList.at( index.row() );

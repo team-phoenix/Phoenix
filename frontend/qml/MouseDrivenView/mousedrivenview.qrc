@@ -5,7 +5,6 @@
         <file>ContentArea.qml</file>
         <file>DetailedGameView.qml</file>
         <file>GameSuspendedArea.qml</file>
-        <file>HeaderBar.qml</file>
         <file>InputMappingColumn.qml</file>
         <file>InputSettingsView.qml</file>
         <file>MouseDrivenView.qml</file>

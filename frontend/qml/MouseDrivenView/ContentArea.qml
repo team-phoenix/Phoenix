@@ -15,11 +15,11 @@ Rectangle {
 
     property alias contentLibraryModel: libraryModel;
     property alias contentStackView: contentAreaStackView;
-    property alias contentBoxartGrid: boxArtGridComponent
     property alias contentLibrarySettingsView: librarySettingsView;
     property alias contentInputSettingsView: inputSettingsView;
     property alias contentSlider: zoomSlider;
-    property alias boxartGrid: boxArtGridComponent;
+    property alias contentBoxartGrid: boxartGridView;
+    property alias boxartGrid: boxartGridView;
 
     property bool fullscreen: root.visibility === Window.FullScreen;
     property string screenIcon: {
@@ -38,9 +38,12 @@ Rectangle {
             anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 30; }
             color: "#FFF";
             width: 250;
-            radius: height/2;
+            radius: height / 2;
             height: 30;
+            border.color: searchBar.activeFocus ? PhxTheme.common.menuItemHighlight : "transparent";
+            border.width: 2;
 
+            // @disable-check M300
             PhxSearchBar {
                 anchors { left: parent.left; leftMargin: 10; }
                 id: searchBar;
@@ -109,15 +112,21 @@ Rectangle {
                 activeFocusOnPress: true;
                 tickmarksEnabled: false;
 
+                // FIXME: Animation looks awkward. Maybe instead of one rectangle centered vertically have two that
+                // "grow" from the center (one facing up, one facing down)
                 style: SliderStyle {
                     handle: Item {
-                        height: 10;
                         width: 6;
+                        height: zoomSlider.activeFocus ? 15 : 10;
+
+                        Behavior on height { PropertyAnimation { duration: 250; } }
 
                         Rectangle {
                             id: handleRectangle;
                             anchors.fill: parent;
-                            color: "#FFFFFF";
+                            color: zoomSlider.activeFocus ? PhxTheme.common.menuItemHighlight : "#FFFFFF";
+
+                            Behavior on color { ColorAnimation { duration: 250; } }
                         }
                     }
 
@@ -159,6 +168,7 @@ Rectangle {
 
             // Fullscreen
             Image {
+                id: fullScreenButton;
                 anchors.verticalCenter: parent.verticalCenter;
                 height: fullscreen ? 18 : 24;
                 width: height;
@@ -166,23 +176,44 @@ Rectangle {
                 sourceSize { height: height; width: width; }
                 source: screenIcon;
 
+                activeFocusOnTab: true;
+
+                function toggleFullScreen() {
+                    if( fullscreen ) root.visibility = Window.Windowed;
+                    else root.visibility = Window.FullScreen;
+                }
+
                 MouseArea {
                     anchors.fill: parent;
-                    onClicked: {
-                        if( fullscreen ) root.visibility = Window.Windowed;
-                        else root.visibility = Window.FullScreen;
+                    onClicked: fullScreenButton.toggleFullScreen();
+                }
+
+                Keys.onPressed: {
+                    if( event.key === Qt.Key_Enter || event.key === Qt.Key_Return ) {
+                        toggleFullScreen();
+                        event.accepted = true;
                     }
+                }
+
+                Rectangle {
+                    anchors.fill: parent;
+                    color: "transparent";
+                    border.color: fullScreenButton.activeFocus ? PhxTheme.common.menuItemHighlight : "transparent";
+                    border.width: 2;
                 }
             }
 
             // Close
             Image {
+                id: closeButton;
                 anchors.verticalCenter: parent.verticalCenter;
                 height: 14;
                 width: 14;
 
                 visible: root.visibility === Window.FullScreen;
                 enabled: visible;
+
+                activeFocusOnTab: enabled;
 
                 sourceSize { height: height; width: width; }
                 source: "close.svg";
@@ -191,69 +222,23 @@ Rectangle {
                     anchors.fill: parent;
                     onClicked: Qt.quit();
                 }
+
+                Keys.onPressed: {
+                    if( event.key === Qt.Key_Enter || event.key === Qt.Key_Return ) {
+                        Qt.quit();
+                        event.accepted = true;
+                    }
+                }
+
+                Rectangle {
+                    anchors.fill: parent;
+                    color: "transparent";
+                    border.color: closeButton.activeFocus ? PhxTheme.common.menuItemHighlight : "transparent";
+                    border.width: 2;
+                }
             }
         }
-
-//        Column {
-//            anchors {
-//                left: parent.left;
-//                right: parent.right;
-//                bottom: parent.bottom;
-//            }
-
-//            Rectangle {
-//                anchors {
-//                    left: parent.left;
-//                    right: parent.right;
-//                }
-//                height: 1;
-//                color: "white";
-//                opacity: 0.05;
-//            }
-
-//            Rectangle {
-//                anchors {
-//                    left: parent.left;
-//                    right: parent.right;
-//                }
-//                height: 2;
-//                color: "black";
-//                opacity: 0.2;
-//            }
-//        }
     }
-
-    /*
-    HeaderBar {
-        id: headerBar;
-        z: 100;
-        height: 36;
-        state: "SELECTION";
-
-        anchors {
-            left: parent.left
-            right: parent.right;
-            top: parent.top;
-
-            topMargin: 24;
-            leftMargin: 12;
-            rightMargin: 12;
-        }
-
-        visible: {
-            if ( contentAreaStackView.currentItem !== null ) {
-                return contentAreaStackView.currentItem.objectName === "BoxartGridView";
-            }
-            return false;
-        }
-
-
-        MouseArea {
-            anchors.fill: parent;
-            onClicked: headerBar.state = "PLAYING_GAME";
-        }
-    }
-    */
 
     LibraryModel {
         id: libraryModel;
@@ -274,9 +259,11 @@ Rectangle {
 
     StackView {
         id: contentAreaStackView;
-        initialItem: boxArtGridComponent;
+        initialItem: boxartGridView;
         anchors.fill: parent;
         anchors.bottomMargin: currentlySuspended ? gameSuspendedArea.height : 0;
+
+        property string currentObjectName: currentItem === null ? "" : currentItem.objectName;
 
         delegate: StackViewDelegate {
             function transitionFinished( properties ) { properties.exitItem.opacity = 1; }
@@ -297,32 +284,36 @@ Rectangle {
                 }
             }
         }
-    }
 
-    Component {
-        id: boxArtGridComponent;
         BoxartGridView {
-            id: boxartGrid;
+            id: boxartGridView;
             objectName: "BoxartGridView";
-            color: "transparent";
+            visible: !contentAreaStackView.currentObjectName.localeCompare( objectName );
+            enabled: visible;
+        }
+
+        DetailedGameView {
+            id: detailGameView;
+            objectName: "DetailedGameView";
+            visible: !contentAreaStackView.currentObjectName.localeCompare( objectName );
+            enabled: visible;
+        }
+
+        InputSettingsView {
+            id: inputSettingsView;
+            objectName: "InputSettingsView";
+            visible: !contentAreaStackView.currentObjectName.localeCompare( objectName );
+            enabled: visible;
+        }
+
+        LibrarySettingsView {
+            id: librarySettingsView;
+            objectName: "LibrarySettingsView";
+            visible: !contentAreaStackView.currentObjectName.localeCompare( objectName );
+            enabled: visible;
         }
     }
 
-    Component {
-        id: detailGameViewComponent;
-        DetailedGameView { }
-    }
-
-    Component {
-        id: inputSettingsView;
-        InputSettingsView { objectName: "InputSettingsView"; }
-    }
-
-    Component {
-        id: librarySettingsView;
-        LibrarySettingsView { objectName: "LibrarySettingsView"; }
-
-    }
 
     GameSuspendedArea {
         id: gameSuspendedArea;

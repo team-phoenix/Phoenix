@@ -102,7 +102,6 @@ Rectangle {
 
         Row {
             id: sectionRow;
-            focus: true;
             anchors {
                 horizontalCenter: parent.horizontalCenter;
             }
