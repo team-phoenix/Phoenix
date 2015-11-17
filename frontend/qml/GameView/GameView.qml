@@ -135,14 +135,6 @@ Rectangle {
             }
         }
 
-        // A blurred copy of the video that sits behind the real video as an effect
-        FastBlur {
-            id: blurEffect;
-            anchors.fill: parent;
-            source: videoOutput;
-            rotation: 180;
-            radius: 64;
-        }
     }
 
     // VideoOutput settings
@@ -151,6 +143,14 @@ Rectangle {
     property alias television: videoOutput.television;
     property alias ntsc: videoOutput.ntsc;
     property alias widescreen: videoOutput.widescreen;
+
+    // A blurred copy of the video that sits behind the real video as an effect
+    FastBlur {
+        id: blurEffect;
+        anchors.fill: parent;
+        source: videoOutput;
+        radius: 64;
+    }
 
     // QML-based video output module
     VideoOutput {
