@@ -223,8 +223,6 @@ Rectangle {
             }
         }
 
-        rotation: 180;
-
         linearFiltering: false;
         television: false;
         ntsc: true;
