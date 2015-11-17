@@ -6,6 +6,7 @@
 #include "userdatabase.h"
 #include "gamescanner.h"
 #include "logging.h"
+#include "gamescancontrollerproxy.h"
 
 namespace Library {
 
@@ -131,6 +132,10 @@ namespace Library {
             void handleUpdateGame( const GameData metaData );
 
         signals:
+
+            void startScan();
+            void appendScanPath( const QString filePath );
+
             void countChanged();
             void messageChanged();
             void recursiveScanChanged();
@@ -161,6 +166,8 @@ namespace Library {
             QVariantList filterParameters;
             QMutex mMutex;
             QHash<QString, QVariant> filterParameterMap;
+
+            GameScanControllerProxy mGameScanControllerProxy;
 
 
             // This thread is started when a user wants to import

@@ -2,7 +2,10 @@
 #define GAMESCANCONTROLLER_H
 
 #include <QObject>
-#include <QtConcurrent>
+
+#include "futuremanager.h"
+
+using WatcherPtr = QFutureWatcher<QStringList> *;
 
 class GameScanController : public QObject
 {
@@ -17,11 +20,18 @@ public:
         TypeError = 1, // Tried to use a file as a folder.
     };
 
-    void appendScanPath( const QString scanPath );
+
+    // Getters
+    virtual int progress();
     QStringList scanPath() const;
 
 signals:
+
+    void scanPathChanged();
+
     void threadSafeStartScan();
+
+    void progressChanged();
 
     // emitted when the scanning process is completely done
     void scanFinished();
@@ -33,12 +43,14 @@ signals:
     // Is used to check whether any error has occured in the scanning process.
     void error( const ErrorCode errorCode );
 
-    void progress( int progress );
-
 public slots:
     // Starts the scanning process in a thread safe manner.
     // Calls "emit threadSafeStartScan()".
     virtual void startScan();
+
+    // Setters that have to be connected to a proxy class.
+    virtual void appendScanPath( const QString scanPath );
+    void setProgress( int progress );
 
 private slots:
 
@@ -50,8 +62,42 @@ private slots:
     // do the actual scanning work.
     void handleScanStarted();
 
+    // Slots connected to the QFutureWatcher's
+    void handleEnumerateFilesFinished();
+    void handleParseFilesFinished();
+    void handleParseCueFilesFinished();
+
+    // Parse files asynchronous
+    void parseArchiveFiles( QStringList result );
+    void parseCueFiles( QStringList result );
+
+
 private:
     QStringList mScanPathList;
+    QList<WatcherPtr> mWatcherList;
+    int mProgress;
+
+    inline QStringList watcherResult()
+    {
+        QStringList result;
+
+        for ( int i=0; i < mWatcherList.size(); ++i ) {
+
+            WatcherPtr watcher = mWatcherList.at( i );
+            if ( watcher->isFinished() ) {
+
+                result = watcher->result();
+
+                // Clean up so no memory leaks occur.
+                watcher->deleteLater();
+                mWatcherList.removeAt( i );
+                break;
+            }
+
+        }
+
+        return result;
+    }
 
 };
 

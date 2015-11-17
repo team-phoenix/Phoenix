@@ -11,10 +11,20 @@ class GameScanControllerProxy : public GameScanController
 public:
     explicit GameScanControllerProxy( QObject *parent = 0 );
 
+    void startThread( const QThread::Priority priority );
+
+    void quitThread( const bool waitForClose = false );
+
+    ~GameScanControllerProxy();
+
+    int progress() override;
+
 signals:
     void startThreadedScan();
 
 public slots:
+    void startScan() override;
+    void appendScanPath( const QString scanPath ) override;
 
 private:
     GameScanController mGameScanController;

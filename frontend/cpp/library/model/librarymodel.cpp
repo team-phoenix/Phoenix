@@ -44,7 +44,11 @@ LibraryModel::LibraryModel( UserDatabase &db, QObject *parent )
     connect( this, &LibraryModel::droppedUrls, &mGameScanner, &GameScanner::handleDroppedUrls );
     connect( this, &LibraryModel::containsDrag, &mGameScanner, &GameScanner::handleContainsDrag );
     connect( this, &LibraryModel::draggedUrls, &mGameScanner, &GameScanner::handleDraggedUrls );
-    connect( this, &LibraryModel::insertGames, &mGameScanner, &GameScanner::scanFolder );
+    //connect( this, &LibraryModel::insertGames, &mGameScanner, &GameScanner::scanFolder );
+
+    connect( this, &LibraryModel::appendScanPath, &mGameScanControllerProxy, &GameScanControllerProxy::appendScanPath );
+    connect( this, &LibraryModel::startScan, &mGameScanControllerProxy, &GameScanControllerProxy::startScan );
+
     connect( this, &LibraryModel::signalInsertCancelled, &mGameScanner, &GameScanner::setInsertCancelled );
     connect( this, &LibraryModel::signalInsertPaused, &mGameScanner, &GameScanner::setInsertPaused );
 
@@ -470,8 +474,10 @@ void LibraryModel::scanFolder( const QUrl url ) {
         return;
     }
 
-    bool autoStart = true;
-    emit insertGames( std::move( localUrl ), autoStart );
+    qDebug() << Q_FUNC_INFO << localUrl;
+    emit appendScanPath( localUrl );
+    //emit insertGames( std::move( localUrl ), autoStart );
+    emit startScan();
 
 }
 
