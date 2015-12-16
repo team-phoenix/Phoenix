@@ -203,15 +203,8 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent;
                     onClicked: {
-                        // off -> 4:3
+                        // off -> 16:9
                         if( !videoOutput.television ) {
-                            videoOutput.television = true;
-                            videoOutput.widescreen = false;
-                            tvLabel.source = "tv43.svg";
-                            return;
-                        }
-                        // 4:3 -> 16:9
-                        if( videoOutput.television && !videoOutput.widescreen ) {
                             videoOutput.television = true;
                             videoOutput.widescreen = true;
                             tvLabel.source = "tv169.svg";
@@ -220,7 +213,7 @@ Rectangle {
                         // 16:9 -> off
                         if( videoOutput.television && videoOutput.widescreen ) {
                             videoOutput.television = false;
-                            videoOutput.widescreen = true;
+                            videoOutput.widescreen = false;
                             tvLabel.source = "tv.svg"
                             return;
                         }
@@ -288,10 +281,17 @@ Rectangle {
                     MouseArea {
                         anchors.fill: parent;
                         onClicked: {
+                            coreControl.stateChanged.connect( stateCallback );
+                            coreControl.pause();
+                        }
+
+                        function stateCallback( newState ) {
+                            coreControl.stateChanged.disconnect( stateCallback );
                             if ( root.visibility === Window.FullScreen )
                                 root.visibility = Window.Windowed;
                             else if ( root.visibility & ( Window.Windowed | Window.Maximized ) )
                                 root.visibility = Window.FullScreen;
+                            coreControl.play();
                         }
                     }
                 }
