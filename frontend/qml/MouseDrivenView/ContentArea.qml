@@ -167,41 +167,43 @@ Rectangle {
             Item { width: 12; height: 12; }
 
             // Fullscreen
-            Image {
-                id: fullScreenButton;
+            Rectangle {
                 anchors.verticalCenter: parent.verticalCenter;
-                height: fullscreen ? 18 : 24;
+                height: 32;
                 width: height;
+                color: fullscreenButton.activeFocus ? PhxTheme.common.menuItemHighlight : "transparent";
+                radius: width * 0.5;
 
-                sourceSize { height: height; width: width; }
-                source: screenIcon;
+                Image {
+                    id: fullscreenButton;
+                    anchors.centerIn: parent;
+                    height: fullscreen ? 18 : 24;
+                    width: height;
 
-                activeFocusOnTab: true;
+                    sourceSize { height: height; width: width; }
+                    source: screenIcon;
 
-                function toggleFullScreen() {
-                    if( fullscreen ) root.visibility = Window.Windowed;
-                    else root.visibility = Window.FullScreen;
-                }
+                    activeFocusOnTab: true;
 
-                MouseArea {
-                    anchors.fill: parent;
-                    onClicked: fullScreenButton.toggleFullScreen();
-                }
+                    function toggleFullScreen() {
+                        if( fullscreen ) root.visibility = Window.Windowed;
+                        else root.visibility = Window.FullScreen;
+                    }
 
-                Keys.onPressed: {
-                    if( event.key === Qt.Key_Enter || event.key === Qt.Key_Return ) {
-                        toggleFullScreen();
-                        event.accepted = true;
+                    MouseArea {
+                        anchors.fill: parent;
+                        onClicked: fullscreenButton.toggleFullScreen();
+                    }
+
+                    Keys.onPressed: {
+                        if( event.key === Qt.Key_Enter || event.key === Qt.Key_Return ) {
+                            toggleFullScreen();
+                            event.accepted = true;
+                        }
                     }
                 }
-
-                Rectangle {
-                    anchors.fill: parent;
-                    color: "transparent";
-                    border.color: fullScreenButton.activeFocus ? PhxTheme.common.menuItemHighlight : "transparent";
-                    border.width: 2;
-                }
             }
+
 
             // Close
             Image {
