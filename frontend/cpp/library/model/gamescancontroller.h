@@ -4,8 +4,9 @@
 #include <QObject>
 
 #include "futuremanager.h"
+#include "archivefile.h"
 
-using WatcherPtr = QFutureWatcher<QStringList> *;
+using WatcherPtr = QFutureWatcher<QVariant> *;
 
 class GameScanController : public QObject
 {
@@ -77,16 +78,17 @@ private:
     QList<WatcherPtr> mWatcherList;
     int mProgress;
 
-    inline QStringList watcherResult()
+
+    inline QVariantList watcherResult()
     {
-        QStringList result;
+        QVariantList result;
 
         for ( int i=0; i < mWatcherList.size(); ++i ) {
 
             WatcherPtr watcher = mWatcherList.at( i );
             if ( watcher->isFinished() ) {
 
-                result = watcher->result();
+                result.append( watcher->result() );
 
                 // Clean up so no memory leaks occur.
                 watcher->deleteLater();

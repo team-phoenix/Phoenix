@@ -1,5 +1,6 @@
 #include "gamescancontroller.h"
 #include "gamefileinfo.h"
+#include "cuefile.h"
 
 #include <QtCore>
 #include <QtConcurrent>
@@ -7,13 +8,16 @@
 using namespace Library;
 
 // Step 3: Parse cue files and pass along game files.
-QStringList mapCueFiles( const QString &file ) {
-    QStringList filePathList;
+QVariantList mapCueFiles( const QString &file ) {
+    QVariantList filePathList;
     QFileInfo info( file );
 
     if ( info.suffix() == QStringLiteral( "cue" ) ) {
         // Explore the cue file.
         qDebug() << "Found cue file: " << file;
+        QVariantList binFiles = CueFile::parse( file );
+        filePathList.append( binFiles );
+
     } else {
         filePathList.append( file );
     }
@@ -22,19 +26,22 @@ QStringList mapCueFiles( const QString &file ) {
 }
 
 // Step 3.
-void reduceCueFiles( QStringList &outputList, const QStringList &fileList ) {
+void reduceCueFiles( QVariantList &outputList, const QVariantList &fileList ) {
     outputList.append( fileList );
 }
 
 // Step 2: Parse archive files and pass along game files.
-QStringList mapZippedFiles( const QString &file ) {
+QVariantList mapZippedFiles( const QString &file ) {
 
-    QStringList filePathList;
+    QVariantList filePathList;
 
     QFileInfo info( file );
     if ( info.suffix() == QStringLiteral( "zip" ) ) {
         // Expand and explore the zip file.
         qDebug() << "Found zip file: " << file;
+
+        ArchiveFile::ParseData parsedData = ArchiveFile::parse( file );
+        filePathList.append( parsedData );
     } else {
         filePathList.append( file );
     }
@@ -43,15 +50,15 @@ QStringList mapZippedFiles( const QString &file ) {
 }
 
 // Step 2: Parse archive files, cue files, and bin files, game files get passed along.
-void reduceZippedFiles( QStringList &outputList, const QStringList &fileList ) {
+void reduceZippedFiles( QVariantList &outputList, const QStringList &fileList ) {
     outputList.append( fileList );
 }
 
 // Step 1: Enumerate files and folders
 // Returns the QString filePath in the given path
-QStringList mapScanFiles( const QString &path ) {
+QVariantList mapScanFiles( const QString &path ) {
 
-    QStringList filePathList;
+    QVariantList filePathList;
     QFileInfo dir( path );
 
     qDebug() << path;
@@ -66,7 +73,7 @@ QStringList mapScanFiles( const QString &path ) {
 
     if( !directory.exists() ) {
         //emit error( ErrorCode::PathError );
-        return QStringList();
+        return QVariantList();
     }
 
     QDirIterator dirIter( path, GameFileInfo::gameFilter(), QDir::Files, QDirIterator::NoIteratorFlags );
@@ -81,7 +88,7 @@ QStringList mapScanFiles( const QString &path ) {
 }
 
 // Step 1: Enumerate files and folders
-void reduceScanFiles( QStringList &pathList, const QStringList &fileList ) {
+void reduceScanFiles( QVariantList &pathList, const QStringList &fileList ) {
     if ( !fileList.isEmpty() ) {
         pathList.append( fileList );
     }
@@ -143,10 +150,10 @@ void GameScanController::handleScanStarted()
 
     qDebug() << "Started " << Q_FUNC_INFO;
 
-    QFutureWatcher<QStringList> *watcher = new QFutureWatcher<QStringList>;
+    QFutureWatcher<QVariantList> *watcher = new QFutureWatcher<QVariantList>;
 
     connect( watcher, SIGNAL( finished() ), this, SLOT( handleEnumerateFilesFinished() ) );
-    QFuture<QStringList> future = QtConcurrent::mappedReduced( mScanPathList, mapScanFiles, reduceScanFiles );
+    QFuture<QVariantList> future = QtConcurrent::mappedReduced( mScanPathList, mapScanFiles, reduceScanFiles );
 
 
     mWatcherList.append( watcher );
@@ -159,7 +166,7 @@ void GameScanController::handleScanStarted()
 // Finish up with Step 1, prepare for moving onto Step 2.
 void GameScanController::handleEnumerateFilesFinished()
 {
-    QStringList result = watcherResult();
+    QVariantList result = watcherResult();
 
     // Move onto Step 2.
     parseArchiveFiles( result );
@@ -168,7 +175,10 @@ void GameScanController::handleEnumerateFilesFinished()
 // Finish up with Step 2, prepare for moving onto Step 3.s
 void GameScanController::handleParseFilesFinished()
 {
-    QStringList result = watcherResult();
+    QList<ArchiveFile::ParseData> result = qvariant_cast<QList<ArchiveFile::ParseData>>( watcherResult() );
+
+    qDebug() << Q_FUNC_INFO << result;
+
 
     // Move onto Step 3.
     parseCueFiles( result );
@@ -176,21 +186,21 @@ void GameScanController::handleParseFilesFinished()
 
 void GameScanController::handleParseCueFilesFinished()
 {
-    QStringList result = watcherResult();
-    //qDebug() << Q_FUNC_INFO << result;
+    QStringList result = watcherResult().toStringList();
+    qDebug() << Q_FUNC_INFO << result;
 }
 
 // Step 2: Parse archive files, cue files, and bin files, game files get passed along.
-void GameScanController::parseArchiveFiles( QStringList result )
+void GameScanController::parseArchiveFiles( QVariantList result )
 {
 
     //qDebug() << "Finished scan" << Q_FUNC_INFO << result;
 
-    QFutureWatcher<QStringList> *watcher = new QFutureWatcher<QStringList>;
+    QFutureWatcher<QVariantList> *watcher = new QFutureWatcher<QVariantList>;
 
     connect( watcher, SIGNAL( finished() ), this, SLOT( handleParseFilesFinished() ) );
 
-    QFuture<QStringList> future = QtConcurrent::mappedReduced( result, mapZippedFiles, reduceZippedFiles );
+    QFuture<QVariant> future = QtConcurrent::mappedReduced( result, mapZippedFiles, reduceZippedFiles );
 
     mWatcherList.append( watcher );
 
@@ -202,11 +212,11 @@ void GameScanController::parseArchiveFiles( QStringList result )
 // Step 3:
 void GameScanController::parseCueFiles( QStringList result ) {
 
-    QFutureWatcher<QStringList> *watcher = new QFutureWatcher<QStringList>;
+    QFutureWatcher<QVariant> *watcher = new QFutureWatcher<QVariant>;
 
     connect( watcher, SIGNAL( finished() ), this, SLOT( handleParseCueFilesFinished() ) );
 
-    QFuture<QStringList> future = QtConcurrent::mappedReduced( result, mapCueFiles, reduceCueFiles );
+    QFuture<QVariant> future = QtConcurrent::mappedReduced( result, mapCueFiles, reduceCueFiles );
 
     mWatcherList.append( watcher );
     watcher->setFuture( future );
