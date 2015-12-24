@@ -1,106 +1,79 @@
 #ifndef GAMESCANCONTROLLER_H
 #define GAMESCANCONTROLLER_H
 
-#include <QObject>
+#include "frontendcommon.h"
 
 #include "futuremanager.h"
 #include "archivefile.h"
 
 using WatcherPtr = QFutureWatcher<QVariant> *;
 
-class GameScanController : public QObject
-{
-    Q_OBJECT
-public:
-    explicit GameScanController( QObject *parent = 0 );
+class GameScanController : public QObject {
+        Q_OBJECT
+    public:
+        explicit GameScanController( QObject *parent = 0 );
 
-    // Error code that could be emitted by "handleScanStarted()".
-    // Used in the "error( const ErrorCode )" signal.
-    enum ErrorCode {
-        PathError = 0, // Path could not be found
-        TypeError = 1, // Tried to use a file as a folder.
-    };
+        // Error code that could be emitted by "handleScanStarted()".
+        // Used in the "error( const ErrorCode )" signal.
+        enum ErrorCode {
+            PathError = 0, // Path could not be found
+            TypeError = 1, // Tried to use a file as a folder.
+        };
 
+        // Getters
+        virtual int progress();
+        QStringList scanPath() const;
 
-    // Getters
-    virtual int progress();
-    QStringList scanPath() const;
+    signals:
+        void scanPathChanged();
 
-signals:
+        void threadSafeStartScan();
 
-    void scanPathChanged();
+        void progressChanged();
 
-    void threadSafeStartScan();
+        // emitted when the scanning process is completely done
+        void scanFinished();
 
-    void progressChanged();
+        // emitted when the scanning process has first started,
+        // before any actual work has been completed.
+        void scanStarted();
 
-    // emitted when the scanning process is completely done
-    void scanFinished();
+        // Is used to check whether any error has occured in the scanning process.
+        void error( const ErrorCode errorCode );
 
-    // emitted when the scanning process has first started,
-    // before any actual work has been completed.
-    void scanStarted();
+    public slots:
+        // Starts the scanning process in a thread safe manner.
+        // Calls "emit threadSafeStartScan()".
+        virtual void startScan();
 
-    // Is used to check whether any error has occured in the scanning process.
-    void error( const ErrorCode errorCode );
+        // Setters that have to be connected to a proxy class.
+        virtual void appendScanPath( const QString scanPath );
+        void setProgress( int progress );
 
-public slots:
-    // Starts the scanning process in a thread safe manner.
-    // Calls "emit threadSafeStartScan()".
-    virtual void startScan();
+    private slots:
+        // Connects to the "error( const ErrorCode ) signal
+        // and gives a read out of what each error means.
+        void handleError( const ErrorCode error );
 
-    // Setters that have to be connected to a proxy class.
-    virtual void appendScanPath( const QString scanPath );
-    void setProgress( int progress );
+        // Connects to the signal "threadSafeStartScan()" in order to
+        // do the actual scanning work.
+        void handleScanStarted();
 
-private slots:
+        // Slots connected to the QFutureWatcher's
+        void handleEnumerateFilesFinished();
+        void handleParseFilesFinished();
+        void handleParseCueFilesFinished();
 
-    // Connects to the "error( const ErrorCode ) signal
-    // and gives a read out of what each error means.
-    void handleError( const ErrorCode error );
+        // Parse files asynchronous
+        void parseArchiveFiles( QStringList result );
+        void parseCueFiles( QStringList result );
 
-    // Connects to the signal "threadSafeStartScan()" in order to
-    // do the actual scanning work.
-    void handleScanStarted();
+    private:
+        QStringList mScanPathList;
+        QList<WatcherPtr> mWatcherList;
+        int mProgress;
 
-    // Slots connected to the QFutureWatcher's
-    void handleEnumerateFilesFinished();
-    void handleParseFilesFinished();
-    void handleParseCueFilesFinished();
-
-    // Parse files asynchronous
-    void parseArchiveFiles( QStringList result );
-    void parseCueFiles( QStringList result );
-
-
-private:
-    QStringList mScanPathList;
-    QList<WatcherPtr> mWatcherList;
-    int mProgress;
-
-
-    inline QVariantList watcherResult()
-    {
-        QVariantList result;
-
-        for ( int i=0; i < mWatcherList.size(); ++i ) {
-
-            WatcherPtr watcher = mWatcherList.at( i );
-            if ( watcher->isFinished() ) {
-
-                result.append( watcher->result() );
-
-                // Clean up so no memory leaks occur.
-                watcher->deleteLater();
-                mWatcherList.removeAt( i );
-                break;
-            }
-
-        }
-
-        return result;
-    }
-
+        inline QVariantList watcherResult();
 };
 
 #endif // GAMESCANCONTROLLER_H

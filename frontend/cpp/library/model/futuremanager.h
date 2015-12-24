@@ -1,7 +1,7 @@
 #ifndef FUTUREMANAGER_H
 #define FUTUREMANAGER_H
 
-#include <QObject>
+#include "frontendcommon.h"
 
 #include <QFutureWatcher>
 

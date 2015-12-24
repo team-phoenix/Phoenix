@@ -1,34 +1,33 @@
 #ifndef GAMESCANCONTROLLERPROXY_H
 #define GAMESCANCONTROLLERPROXY_H
 
+#include "frontendcommon.h"
+
 #include "gamescancontroller.h"
 
-#include <QThread>
+class GameScanControllerProxy : public GameScanController {
+        Q_OBJECT
+    public:
+        explicit GameScanControllerProxy( QObject *parent = 0 );
 
-class GameScanControllerProxy : public GameScanController
-{
-    Q_OBJECT
-public:
-    explicit GameScanControllerProxy( QObject *parent = 0 );
+        void startThread( const QThread::Priority priority );
 
-    void startThread( const QThread::Priority priority );
+        void quitThread( const bool waitForClose = false );
 
-    void quitThread( const bool waitForClose = false );
+        ~GameScanControllerProxy();
 
-    ~GameScanControllerProxy();
+        int progress() override;
 
-    int progress() override;
+    signals:
+        void startThreadedScan();
 
-signals:
-    void startThreadedScan();
+    public slots:
+        void startScan() override;
+        void appendScanPath( const QString scanPath ) override;
 
-public slots:
-    void startScan() override;
-    void appendScanPath( const QString scanPath ) override;
-
-private:
-    GameScanController mGameScanController;
-    QThread mThread;
+    private:
+        GameScanController *mGameScanController;
+        QThread *mThread;
 };
 
 #endif // GAMESCANCONTROLLERPROXY_H

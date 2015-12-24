@@ -12,7 +12,7 @@ QVariantList mapCueFiles( const QString &file ) {
     QVariantList filePathList;
     QFileInfo info( file );
 
-    if ( info.suffix() == QStringLiteral( "cue" ) ) {
+    if( info.suffix() == QStringLiteral( "cue" ) ) {
         // Explore the cue file.
         qDebug() << "Found cue file: " << file;
         QVariantList binFiles = CueFile::parse( file );
@@ -36,7 +36,8 @@ QVariantList mapZippedFiles( const QString &file ) {
     QVariantList filePathList;
 
     QFileInfo info( file );
-    if ( info.suffix() == QStringLiteral( "zip" ) ) {
+
+    if( info.suffix() == QStringLiteral( "zip" ) ) {
         // Expand and explore the zip file.
         qDebug() << "Found zip file: " << file;
 
@@ -77,9 +78,11 @@ QVariantList mapScanFiles( const QString &path ) {
     }
 
     QDirIterator dirIter( path, GameFileInfo::gameFilter(), QDir::Files, QDirIterator::NoIteratorFlags );
-    while ( dirIter.hasNext() ) {
+
+    while( dirIter.hasNext() ) {
         const QString filePath = dirIter.next();
-        if ( QFile::exists( filePath ) ) {
+
+        if( QFile::exists( filePath ) ) {
             filePathList.append( filePath );
         }
     }
@@ -89,55 +92,52 @@ QVariantList mapScanFiles( const QString &path ) {
 
 // Step 1: Enumerate files and folders
 void reduceScanFiles( QVariantList &pathList, const QStringList &fileList ) {
-    if ( !fileList.isEmpty() ) {
+    if( !fileList.isEmpty() ) {
         pathList.append( fileList );
     }
 }
 
 
-GameScanController::GameScanController(QObject *parent)
-    : QObject(parent),
-      mProgress( 0 )
-{
+GameScanController::GameScanController( QObject *parent )
+    : QObject( parent ),
+      mProgress( 0 ) {
     connect( this, &GameScanController::error, this, &GameScanController::handleError );
     connect( this, &GameScanController::threadSafeStartScan, this, &GameScanController::handleScanStarted );
     //connect( &mFutureManager, FutureManager::finished, this, &GameScanController::handleFutureFinished );
 }
 
-void GameScanController::appendScanPath( const QString scanPath )
-{
+void GameScanController::appendScanPath( const QString scanPath ) {
     mScanPathList.append( scanPath );
     emit scanPathChanged();
 }
 
-void GameScanController::setProgress(int progress) {
+void GameScanController::setProgress( int progress ) {
     mProgress = progress;
     emit progressChanged();
 }
 
-int GameScanController::progress()
-{
+int GameScanController::progress() {
     return mProgress;
 }
 
-QStringList GameScanController::scanPath() const
-{
+QStringList GameScanController::scanPath() const {
     return mScanPathList;
 }
 
-void GameScanController::startScan()
-{
+void GameScanController::startScan() {
     emit threadSafeStartScan();
 }
 
-void GameScanController::handleError(const GameScanController::ErrorCode error) {
-    switch ( error ) {
+void GameScanController::handleError( const GameScanController::ErrorCode error ) {
+    switch( error ) {
         case ErrorCode::PathError:
             qCDebug( phxLibrary ) << "Import path does not exist";
             break;
+
         case ErrorCode::TypeError:
             qCDebug( phxLibrary ) << "Import path is a file.";
             break;
+
         default:
             Q_UNREACHABLE();
             break;
@@ -145,8 +145,7 @@ void GameScanController::handleError(const GameScanController::ErrorCode error) 
 }
 
 // Step 1: Enumerate files and folders
-void GameScanController::handleScanStarted()
-{
+void GameScanController::handleScanStarted() {
 
     qDebug() << "Started " << Q_FUNC_INFO;
 
@@ -164,8 +163,7 @@ void GameScanController::handleScanStarted()
 }
 
 // Finish up with Step 1, prepare for moving onto Step 2.
-void GameScanController::handleEnumerateFilesFinished()
-{
+void GameScanController::handleEnumerateFilesFinished() {
     QVariantList result = watcherResult();
 
     // Move onto Step 2.
@@ -173,8 +171,7 @@ void GameScanController::handleEnumerateFilesFinished()
 }
 
 // Finish up with Step 2, prepare for moving onto Step 3.s
-void GameScanController::handleParseFilesFinished()
-{
+void GameScanController::handleParseFilesFinished() {
     QList<ArchiveFile::ParseData> result = qvariant_cast<QList<ArchiveFile::ParseData>>( watcherResult() );
 
     qDebug() << Q_FUNC_INFO << result;
@@ -184,15 +181,13 @@ void GameScanController::handleParseFilesFinished()
     parseCueFiles( result );
 }
 
-void GameScanController::handleParseCueFilesFinished()
-{
+void GameScanController::handleParseCueFilesFinished() {
     QStringList result = watcherResult().toStringList();
     qDebug() << Q_FUNC_INFO << result;
 }
 
 // Step 2: Parse archive files, cue files, and bin files, game files get passed along.
-void GameScanController::parseArchiveFiles( QVariantList result )
-{
+void GameScanController::parseArchiveFiles( QVariantList result ) {
 
     //qDebug() << "Finished scan" << Q_FUNC_INFO << result;
 
@@ -221,5 +216,24 @@ void GameScanController::parseCueFiles( QStringList result ) {
     mWatcherList.append( watcher );
     watcher->setFuture( future );
 
+}
+
+QVariantList GameScanController::watcherResult() {
+    QVariantList result;
+
+    for( int i = 0; i < mWatcherList.size(); ++i ) {
+        WatcherPtr watcher = mWatcherList.at( i );
+
+        if( watcher->isFinished() ) {
+            result.append( watcher->result() );
+
+            // Clean up so no memory leaks occur.
+            watcher->deleteLater();
+            mWatcherList.removeAt( i );
+            break;
+        }
+    }
+
+    return result;
 }
 
