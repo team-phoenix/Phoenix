@@ -85,7 +85,9 @@ include( deployment.pri )
                cpp/library/model/platformsmodel.cpp \
                cpp/library/model/gamescancontroller.cpp \
                cpp/library/model/gamescancontrollerproxy.cpp \
-               cpp/library/model/futuremanager.cpp
+               cpp/library/model/futuremanager.cpp \
+               cpp/library/cuefile.cpp \
+               cpp/library/fileinfo/archivefile.cpp
 
     HEADERS += cpp/library/gamelauncher.h \
                cpp/library/imagecacher.h \
@@ -106,7 +108,9 @@ include( deployment.pri )
                cpp/theme/phoenixtheme.h \
                cpp/library/model/gamescancontroller.h \
                cpp/library/model/gamescancontrollerproxy.h \
-               cpp/library/model/futuremanager.h
+               cpp/library/model/futuremanager.h \
+               cpp/library/cuefile.h \
+               cpp/library/fileinfo/archivefile.h
 
     PRECOMPILED_HEADER = cpp/frontendcommon.h
 
