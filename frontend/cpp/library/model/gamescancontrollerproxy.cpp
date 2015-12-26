@@ -6,7 +6,7 @@ GameScanControllerProxy::GameScanControllerProxy( QObject *parent )
       mThread( new QThread() ) {
     mGameScanController->moveToThread( mThread );
 
-    connect( &mGameScanController, &GameScanController::scanFinished, &mThread, &QThread::quit );
+    connect( mGameScanController, &GameScanController::scanFinished, mThread, &QThread::quit );
 
 
     connect( QCoreApplication::instance(), &QCoreApplication::aboutToQuit, this, [ = ]() {

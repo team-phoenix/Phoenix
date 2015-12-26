@@ -21,7 +21,7 @@ class GameScanController : public QObject {
         };
 
         // Getters
-        virtual int progress();
+        int progress();
         QStringList scanPath() const;
 
     signals:
@@ -44,10 +44,10 @@ class GameScanController : public QObject {
     public slots:
         // Starts the scanning process in a thread safe manner.
         // Calls "emit threadSafeStartScan()".
-        virtual void startScan();
+        void startScan();
 
         // Setters that have to be connected to a proxy class.
-        virtual void appendScanPath( const QString scanPath );
+        void appendScanPath( const QString scanPath );
         void setProgress( int progress );
 
     private slots:

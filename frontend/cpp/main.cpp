@@ -2,7 +2,7 @@
 
 // Library
 #include "gamelauncher.h"
-#include "gamescanner.h"
+#include "gamescannerold.h"
 #include "imagecacher.h"
 #include "metadatadatabase.h"
 #include "libretrodatabase.h"

@@ -1,107 +1,88 @@
-#ifndef LIBRARYWORKER_H
-#define LIBRARYWORKER_H
+#ifndef GAMESCANNER_H
+#define GAMESCANNER_H
 
 #include "frontendcommon.h"
 
-#include "phxpaths.h"
-#include "metadatadatabase.h"
-#include "libretrodatabase.h"
-#include "logging.h"
-#include "gamefileinfo.h"
+// A set of MapReduce functions for GameScanController. These functions exist in a separate class to keep the code cleaner.
+// Note that static linking is necessary unless the functions were to return objects of type GameScanner, which they
+// never will.
 
-#include "archivefileinfo.h"
-#include "cuefileinfo.h"
-#include "biosfileinfo.h"
+class GameScanner : public QObject {
+        Q_OBJECT
 
-namespace Library {
+        // Step-specific structs and enums. These hold some extra data along with the usual file path
 
-    struct GameData {
-        qreal importProgress;
-        QString system;
-        QString timePlayed;
-        QString title;
-        QString filePath;
-        QString crc32Checksum;
+        typedef struct stepTwoOutputEntryStruct {
+            stepTwoOutputEntryStruct() : filePath(), hash( 0 ), hasHash( false ) {}
+            QString filePath;
+            quint32 hash; // TODO: proper type for hash exists?
+            bool hasHash;
+        } stepTwoOutputEntry;
 
-        QString artworkUrl;
-        QString goodToolsCode;
-        QString region;
-        QString developer;
-        QString releaseDate;
-        QString genre;
-        QString description;
+        typedef QList<stepTwoOutputEntry> stepTwoOutput;
 
-        qint64 fileID;
-    };
+        typedef stepTwoOutput stepThreeInput;
 
-    class GameScanner : public QObject {
-            Q_OBJECT
-        public:
+        // Extra data that holds the result of the game scanner
+        typedef enum {
+            // Default value, not yet scanned
+            NOT_YET_SCANNED,
 
-            explicit GameScanner( QObject *parent = 0 );
-            ~GameScanner();
+            // Hit against game database by hash or filename matching (TODO: separate?)
+            // Implies that the system UUID is known too
+            GAME_UUID_KNOWN,
 
-            // Synchronous state changers (thread-safe via built-in mutexes)
-            bool insertCancelled();
-            bool insertPaused();
-            bool isRunning();
-            bool resumeQuitScan();
+            // Hit against system database by extension (only one system uses the extension)
+            SYSTEM_UUID_KNOWN,
 
-            QString getResumeInsertID();
-            QString getResumeDirectory();
-            void setResumeInsertID( const QString id );
-            void setResumeDirectory( const QString directory );
-            void setResumeQuitScan( const bool resume );
+            // Hit against system database by extension (multiple systems use the extension)
+            MULTIPLE_SYSTEM_UUIDS,
 
-        signals:
-            void started();
-            void finished();
+            // Miss against game and system database
+            SYSTEM_UUID_UNKNOWN,
 
-            void insertGameData( const GameData gameData );
-            void processFileInfo( QFileInfo fileInfo );
-            void progressChanged( qreal value );
+            // Path is a .bin file that is listed in a valid .cue file. This path is marked to be pruned between steps
+            // 3 and 4
+            // This is an optimization: .bin files tend to be huge and expensive to hash. If the .cue file associated with
+            // can be matched against the database, the .bin files can be skipped, saving a lot of scanning time.
+            PART_OF_CUE_FILE
+        } stepThreeOutputType;
 
+        typedef struct stepThreeOutputEntryStruct {
+            stepThreeOutputEntryStruct(): filePath(), gameUUID(), systemUUIDs(), type( NOT_YET_SCANNED ) {}
+            QString filePath;
+            QString gameUUID;
+            QStringList systemUUIDs;
+            stepThreeOutputType type;
+        } stepThreeOutputEntry;
 
-        public slots:
-            void setInsertCancelled( const bool cancelled );
-            void setInsertPaused( const bool paused );
+        typedef QList<stepThreeOutputEntry> stepThreeOutput;
 
-            void eventLoopStarted();
+    public:
+        explicit GameScanner( QObject *parent = 0 );
 
-            void handleDraggedUrls( QList<QUrl> urls );
-            void handleContainsDrag( const bool contains );
+        // Step 1: Build a list of file paths from a list of file and folder paths by enumerating folders
 
-            // These slots invoke the scanner to scan and import files (along with the constructor)
-            int scanFolder( const QString path, bool autoStart );
-            void handleDroppedUrls();
+        // If a file path, returns a single-element list containing that file path
+        // Otherwise, enumerate that directory and return list of all files within
+        static QStringList stepOneMap( const QString &path );
 
+        // Merge lists together into one main list
+        static void stepOneReduce( QStringList &outputPathList, const QStringList &inputPathList );
 
-        private slots:
-            void prepareGameData( QQueue<GameFileInfo> &queue );
+        // Step 2: Expand list of file paths by enumerating archive files, caching hashes if available
 
-        private:
-            bool mInsertCancelled;
-            bool mInsertPaused;
-            QMutex mMutex;
-            QQueue<GameFileInfo> mFileInfoQueue;
-            bool mRunning;
-            bool mContainsDrag;
-            bool qmlResumeQuitScan;
+        // Enumerate archive file if given one, caching hashes if the format supports the ones we need.
+        // Only archive files will have multiple entries in the return value, and only archive files formats that give
+        // us checksums will have a cache
+        static stepTwoOutput stepTwoMap( const QString &filePath );
 
-            QList<QUrl> mDraggedUrls;
+        // Merge lists together into one main list
+        static void stepTwoReduce( stepTwoOutput &outputPathList, const stepTwoOutput &inputPathList );
 
-            QString mResumeInsertID;
-            QString mResumeDirectory;
+    signals:
 
-            // Setters
-            void setIsRunning( const bool running );
+    public slots:
+};
 
-            // Hash and enqueue all files within .zip if given a .zip file. Otherwise, enqueue a single file for processing
-            void hashAndEnqueueFile( QString filePath );
-
-    };
-
-}
-
-
-#endif // LIBRARYWORKER_H
+#endif // GAMESCANNER_H

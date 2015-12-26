@@ -41,32 +41,32 @@ LibraryModel::LibraryModel( UserDatabase &db, QObject *parent )
     select();
 
     // Connect Model to Worker.
-    connect( this, &LibraryModel::droppedUrls, &mGameScanner, &GameScanner::handleDroppedUrls );
-    connect( this, &LibraryModel::containsDrag, &mGameScanner, &GameScanner::handleContainsDrag );
-    connect( this, &LibraryModel::draggedUrls, &mGameScanner, &GameScanner::handleDraggedUrls );
+    connect( this, &LibraryModel::droppedUrls, &mGameScanner, &GameScannerOld::handleDroppedUrls );
+    connect( this, &LibraryModel::containsDrag, &mGameScanner, &GameScannerOld::handleContainsDrag );
+    connect( this, &LibraryModel::draggedUrls, &mGameScanner, &GameScannerOld::handleDraggedUrls );
     //connect( this, &LibraryModel::insertGames, &mGameScanner, &GameScanner::scanFolder );
 
     connect( this, &LibraryModel::appendScanPath, &mGameScanControllerProxy, &GameScanControllerProxy::appendScanPath );
     connect( this, &LibraryModel::startScan, &mGameScanControllerProxy, &GameScanControllerProxy::startScan );
 
-    connect( this, &LibraryModel::signalInsertCancelled, &mGameScanner, &GameScanner::setInsertCancelled );
-    connect( this, &LibraryModel::signalInsertPaused, &mGameScanner, &GameScanner::setInsertPaused );
+    connect( this, &LibraryModel::signalInsertCancelled, &mGameScanner, &GameScannerOld::setInsertCancelled );
+    connect( this, &LibraryModel::signalInsertPaused, &mGameScanner, &GameScannerOld::setInsertPaused );
 
     // Connect Worker to Model.
 
     // Do not change this from a blocking queued connection. This is to simplify the threaded code.
-    connect( &mGameScanner, &GameScanner::insertGameData, this, &LibraryModel::handleInsertGame );
-    connect( &mGameScanner, &GameScanner::started, this, [ this ] {
+    connect( &mGameScanner, &GameScannerOld::insertGameData, this, &LibraryModel::handleInsertGame );
+    connect( &mGameScanner, &GameScannerOld::started, this, [ this ] {
         qCDebug( phxLibrary ) << "Game scanner began matching games against the database";
     } );
 
     // Do some thread cleanup.
-    connect( &mGameScanner, &GameScanner::finished, this, [ this ] {
+    connect( &mGameScanner, &GameScannerOld::finished, this, [ this ] {
         qCDebug( phxLibrary ) << "Game scanner finished matching games against the database";
     } );
 
     // Listen to the Worker Thread.
-    connect( &mGameScannerThread, &QThread::started, &mGameScanner, &GameScanner::eventLoopStarted );
+    connect( &mGameScannerThread, &QThread::started, &mGameScanner, &GameScannerOld::eventLoopStarted );
     connect( &mGameScannerThread, &QThread::started, this, [ this ] {
         qCDebug( phxLibrary ) << "Game scanner thread started...";
     } );

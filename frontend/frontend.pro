@@ -80,14 +80,15 @@ include( deployment.pri )
                cpp/library/fileinfo/gamefileinfo.cpp \
                cpp/library/model/collectionsmodel.cpp \
                cpp/library/model/coremodel.cpp \
-               cpp/library/model/gamescanner.cpp \
                cpp/library/model/librarymodel.cpp \
                cpp/library/model/platformsmodel.cpp \
                cpp/library/model/gamescancontroller.cpp \
                cpp/library/model/gamescancontrollerproxy.cpp \
                cpp/library/model/futuremanager.cpp \
                cpp/library/cuefile.cpp \
-               cpp/library/fileinfo/archivefile.cpp
+               cpp/library/fileinfo/archivefile.cpp \
+    cpp/library/model/gamescannerold.cpp \
+    cpp/library/model/gamescanner.cpp
 
     HEADERS += cpp/library/gamelauncher.h \
                cpp/library/imagecacher.h \
@@ -102,7 +103,6 @@ include( deployment.pri )
                cpp/library/fileinfo/gamefileinfo.h \
                cpp/library/model/collectionsmodel.h \
                cpp/library/model/coremodel.h \
-               cpp/library/model/gamescanner.h \
                cpp/library/model/librarymodel.h \
                cpp/library/model/platformsmodel.h \
                cpp/theme/phoenixtheme.h \
@@ -110,7 +110,9 @@ include( deployment.pri )
                cpp/library/model/gamescancontrollerproxy.h \
                cpp/library/model/futuremanager.h \
                cpp/library/cuefile.h \
-               cpp/library/fileinfo/archivefile.h
+               cpp/library/fileinfo/archivefile.h \
+    cpp/library/model/gamescannerold.h \
+    cpp/library/model/gamescanner.h
 
     PRECOMPILED_HEADER = cpp/frontendcommon.h
 

@@ -5,8 +5,9 @@
 
 #include "gamescancontroller.h"
 
-class GameScanControllerProxy : public GameScanController {
+class GameScanControllerProxy {
         Q_OBJECT
+
     public:
         explicit GameScanControllerProxy( QObject *parent = 0 );
 
@@ -16,14 +17,14 @@ class GameScanControllerProxy : public GameScanController {
 
         ~GameScanControllerProxy();
 
-        int progress() override;
+        int progress();
 
     signals:
         void startThreadedScan();
 
     public slots:
-        void startScan() override;
-        void appendScanPath( const QString scanPath ) override;
+        void startScan();
+        void appendScanPath( const QString scanPath );
 
     private:
         GameScanController *mGameScanController;
