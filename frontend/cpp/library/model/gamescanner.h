@@ -42,7 +42,7 @@ class GameScanner : public QObject {
             SYSTEM_UUID_UNKNOWN,
 
             // Path is a .bin file that is listed in a valid .cue file. This path is marked to be pruned between steps
-            // 3 and 4
+            // 3 and 4. It doesn't matter if the .cue itself matches against the DB.
             // This is an optimization: .bin files tend to be huge and expensive to hash. If the .cue file associated with
             // can be matched against the database, the .bin files can be skipped, saving a lot of scanning time.
             PART_OF_CUE_FILE
@@ -79,6 +79,14 @@ class GameScanner : public QObject {
 
         // Merge lists together into one main list
         static void stepTwoReduce( stepTwoOutput &outputPathList, const stepTwoOutput &inputPathList );
+
+        // Step 3: Match .cue files first against DB
+
+        // Filter out .cue files
+        // This could be done by MapReduce too, but since it's just some list maniuplation we'll let that slide
+        static stepThreeInput stepThreeFilter( const stepTwoOutput &inputPathList );
+
+        //
 
     signals:
 
