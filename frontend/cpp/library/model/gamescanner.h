@@ -3,6 +3,8 @@
 
 #include "frontendcommon.h"
 
+#include "archivefile.h"
+
 // Phoenix's game scanner takes advantage of MapReduce (and Qt's easy-to-use implementation of it) to efficiently and
 // asyncronously scan large numbers of files
 

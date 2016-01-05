@@ -55,49 +55,6 @@ void reduceZippedFiles( QVariantList &outputList, const QStringList &fileList ) 
     outputList.append( fileList );
 }
 
-// Step 1: Enumerate files and folders
-// Returns the QString filePath in the given path
-QVariantList mapScanFiles( const QString &path ) {
-
-    QVariantList filePathList;
-    QFileInfo dir( path );
-
-    qDebug() << path;
-
-    if( dir.isFile() ) {
-        filePathList.append( path );
-        return filePathList;
-    }
-
-    // path is a file system directory past this point.
-    QDir directory( path );
-
-    if( !directory.exists() ) {
-        //emit error( ErrorCode::PathError );
-        return QVariantList();
-    }
-
-    QDirIterator dirIter( path, GameFileInfo::gameFilter(), QDir::Files, QDirIterator::NoIteratorFlags );
-
-    while( dirIter.hasNext() ) {
-        const QString filePath = dirIter.next();
-
-        if( QFile::exists( filePath ) ) {
-            filePathList.append( filePath );
-        }
-    }
-
-    return filePathList;
-}
-
-// Step 1: Enumerate files and folders
-void reduceScanFiles( QVariantList &pathList, const QStringList &fileList ) {
-    if( !fileList.isEmpty() ) {
-        pathList.append( fileList );
-    }
-}
-
-
 GameScanController::GameScanController( QObject *parent )
     : QObject( parent ),
       mProgress( 0 ) {
