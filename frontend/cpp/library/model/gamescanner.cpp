@@ -1,5 +1,7 @@
 #include "gamescanner.h"
 
+#include "cuefile.h"
+
 GameScanner::GameScanner( QObject *parent ) : QObject( parent ) {
 
 }
@@ -58,4 +60,52 @@ GameScanner::FileList GameScanner::stepTwoMap( const QString &filePath ) {
 
     return filePathList;
 }
+
+void GameScanner::stepTwoReduce( GameScanner::FileList &mergedList, const GameScanner::FileList &givenList ) {
+    mergedList.append( giveList );
+}
+
+GameScanner::FileList GameScanner::stepThreeMap( const GameScanner::FileEntry &fileEntry )  {
+
+    GameScanner::FileList filePathList;
+
+    QFileInfo info( fileEntry.filePath );
+    if( info.suffix() == QStringLiteral( "cue" ) ) {
+        // Explore the cue file.
+        qDebug() << "Found cue file: " << entry.filePath;
+        QStringList binFiles = CueFile::parse( entry.filePath );
+        for ( QString binFile : binFiles ) {
+            GameScanner::FileEntry entry;
+            entry.filePath = binFile;
+            filePathList.append( entry );
+        }
+    }
+
+    return filePathList;
+}
+
+void GameScanner::stepThreeReduce(GameScanner::FileList &mergedList, const GameScanner::FileList &givenList) {
+    if ( !givenList.isEmpty() ) {
+        mergedList.append( givenList );
+    }
+}
+
+GameScanner::FileList GameScanner::stepFourFilter( const GameScanner::FileList &fileList ) {
+
+    for ( FileEntry entry : fileList ) {
+        QFileInfo info( entry.filePath );
+        if ( info.suffix() == QStringLiteral( "bin" ) ) {
+            // Delete entry from main list.
+            int i = 0;
+            for ( FileEntry mainEntry : mFileList ) {
+                if ( mainEntry.filePath == entry.filePath ) {
+                    mFileList.removeAt( i );
+                }
+                i++;
+            }
+        }
+    }
+
+}
+
 

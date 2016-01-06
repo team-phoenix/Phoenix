@@ -88,13 +88,9 @@ class GameScanner : public QObject {
         // This is an optimization: .bin files tend to be huge and time-consuming to hash. If a .cue file that matches
         // against the database lists a bunch of .bin files that have yet to be scanned, the .bin files can be skipped
 
-        // Filter .cue files
-        // This could be done by MapReduce too, but since it's just some list maniuplation we'll let that slide
-        static FileList stepThreeFilter( const FileList &inputPathList );
-
         // Enumerate .bin files in each .cue file, return the list of .bin files without checking if the .bin files exist
         // Prepend .bin file paths with directory .cue file resides in
-        static FileList stepThreeMap( const FileEntry &cueFilePath );
+        static FileList stepThreeMap( const FileEntry &filePath );
 
         // Merge lists together into one main list
         static void stepThreeReduce( FileList &mergedList, const FileList &givenList );
@@ -118,6 +114,9 @@ class GameScanner : public QObject {
     signals:
 
     public slots:
+
+private:
+    GameScanner::FileList mFileList;
 };
 
 #endif // GAMESCANNER_H
