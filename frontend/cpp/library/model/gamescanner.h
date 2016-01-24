@@ -7,6 +7,7 @@
 
 // Phoenix's game scanner takes advantage of MapReduce (and Qt's easy-to-use implementation of it) to efficiently and
 // asyncronously scan large numbers of files
+// This class holds the static methods and related structs used by the scanner to do its job
 
 class GameScanner : public QObject {
         Q_OBJECT
@@ -90,16 +91,16 @@ class GameScanner : public QObject {
 
         // Enumerate .bin files in each .cue file, return the list of .bin files without checking if the .bin files exist
         // Prepend .bin file paths with directory .cue file resides in
-        static FileList stepThreeMap( const FileEntry &filePath );
+        static QStringList stepThreeMap( const FileEntry &filePath );
 
         // Merge lists together into one main list
-        static void stepThreeReduce( FileList &mergedList, const FileList &givenList );
+        static void stepThreeReduce( QStringList &mergedList, const QStringList &givenList );
 
         // Step 4: Match file list against game database
 
         // Mark .bin files from main list that came from step 3's output as not needing to be scanned (cheaper than removing?)
         // FIXME: This operation is O( stepThreeOutputCount * mainListCount ) ~= O( n^2 )... bad enough it should be its own step?
-        static FileList stepFourFilter( const FileList &fileList );
+        static FileList stepFourFilter( const QStringList &binList );
 
         // Match against game database by hash, falling back in the following order if that misses:
         // - Filename matching, making sure the extension is valid for the system (fuzzy matching?)
@@ -115,8 +116,8 @@ class GameScanner : public QObject {
 
     public slots:
 
-private:
-    GameScanner::FileList mFileList;
+    private:
+        GameScanner::FileList mFileList;
 };
 
 #endif // GAMESCANNER_H

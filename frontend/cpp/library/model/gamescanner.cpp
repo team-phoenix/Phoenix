@@ -20,6 +20,7 @@ QStringList GameScanner::stepOneMap( const QString &path ) {
     // path is a file system directory past this point.
     QDir directory( path );
 
+    // Guard against ToC to ToU errors (attacks?)
     if( !directory.exists() ) {
         return QStringList();
     }
@@ -38,13 +39,11 @@ QStringList GameScanner::stepOneMap( const QString &path ) {
 }
 
 void GameScanner::stepOneReduce( QStringList &mergedList, const QStringList &givenList ) {
-    if( !givenList.isEmpty() ) {
-        mergedList.append( givenList );
-    }
+    mergedList.append( givenList );
 }
 
 GameScanner::FileList GameScanner::stepTwoMap( const QString &filePath ) {
-    QStringList filePathList;
+    FileList fileList;
 
     QFileInfo info( filePath );
 
@@ -52,60 +51,60 @@ GameScanner::FileList GameScanner::stepTwoMap( const QString &filePath ) {
         // Expand and explore the zip file.
         qDebug() << "Found zip file:" << filePath;
 
-        ArchiveFile::ParseData parsedData = ArchiveFile::parse( filePath );
-        filePathList.append( parsedData );
+        ArchiveFile::FileToHashMap parsedData = ArchiveFile::parse( filePath );
+
+        // Insert path and hash cache into main list for this zip for each file
+        for( QString path : parsedData ) {
+            FileEntry fileEntry;
+            fileEntry.filePath = path;
+            fileEntry.hash = parsedData[path];
+            fileEntry.hasHashCached = true;
+            fileList.append( fileEntry );
+        }
     } else {
-        filePathList.append( filePath );
+        // Insert a single entry into this list run's output list
+        FileEntry fileEntry;
+        fileEntry.filePath = filePath;
+        fileList.append( fileEntry );
     }
 
-    return filePathList;
+    return fileList;
 }
 
 void GameScanner::stepTwoReduce( GameScanner::FileList &mergedList, const GameScanner::FileList &givenList ) {
-    mergedList.append( giveList );
+    mergedList.append( givenList );
 }
 
-GameScanner::FileList GameScanner::stepThreeMap( const GameScanner::FileEntry &fileEntry )  {
-
-    GameScanner::FileList filePathList;
+QStringList GameScanner::stepThreeMap( const GameScanner::FileEntry &fileEntry ) {
+    QStringList binList;
 
     QFileInfo info( fileEntry.filePath );
+
     if( info.suffix() == QStringLiteral( "cue" ) ) {
         // Explore the cue file.
-        qDebug() << "Found cue file: " << entry.filePath;
-        QStringList binFiles = CueFile::parse( entry.filePath );
-        for ( QString binFile : binFiles ) {
-            GameScanner::FileEntry entry;
-            entry.filePath = binFile;
-            filePathList.append( entry );
-        }
+        qDebug() << "Found cue file: " << fileEntry.filePath;
+        binList = CueFile::parse( fileEntry.filePath );
     }
 
-    return filePathList;
+    return binList;
 }
 
-void GameScanner::stepThreeReduce(GameScanner::FileList &mergedList, const GameScanner::FileList &givenList) {
-    if ( !givenList.isEmpty() ) {
-        mergedList.append( givenList );
-    }
+void GameScanner::stepThreeReduce( QStringList &mergedList, const QStringList &givenList ) {
+    mergedList.append( givenList );
 }
 
-GameScanner::FileList GameScanner::stepFourFilter( const GameScanner::FileList &fileList ) {
+GameScanner::FileList GameScanner::stepFourFilter( const QStringList &binList ) {
+    for( FileEntry &fileEntry : mFileList ) {
+        QFileInfo info( fileEntry.filePath );
 
-    for ( FileEntry entry : fileList ) {
-        QFileInfo info( entry.filePath );
-        if ( info.suffix() == QStringLiteral( "bin" ) ) {
-            // Delete entry from main list.
-            int i = 0;
-            for ( FileEntry mainEntry : mFileList ) {
-                if ( mainEntry.filePath == entry.filePath ) {
-                    mFileList.removeAt( i );
-                }
-                i++;
+        // Check the list's .bin files to see if it's a .bin file named in a .cue file and mark it as skippable
+        if( info.suffix() == QStringLiteral( "bin" ) ) {
+            // FIXME: Handle case insensitivity on filesystems used by Windows such as FAT32 or NTFS
+            if( binList.contains( fileEntry.filePath /*, Qt::CaseInsensitive */ ) ) {
+                fileEntry.scannerResult = PART_OF_CUE_FILE;
             }
         }
     }
-
 }
 
 
