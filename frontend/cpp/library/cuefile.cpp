@@ -10,8 +10,10 @@ CueFile::CueFile()
 
 QStringList CueFile::parse( const QString &filePath ) {
 
+    // TODO: zip detection
+
     QFile cueFile( filePath );
-    //QFileInfo info( filePath );
+    QFileInfo info( filePath );
     QStringList gameFiles;
 
     if( !cueFile.open( QIODevice::ReadOnly ) ) {
@@ -43,8 +45,8 @@ QStringList CueFile::parse( const QString &filePath ) {
         }
 
         if( !obtainedTitle.isEmpty() ) {
-            auto gameFile = filePath % CueFile::delimiter() % obtainedTitle;
-            gameFiles.append( CueFile::prefix() % gameFile );
+            QDir dir = info.absoluteDir();
+            gameFiles.append( dir.path() % obtainedTitle );
         }
 
     }

@@ -207,30 +207,22 @@ bool GameScanner::searchDatabase( const SearchReason reason, FileEntry &fileEntr
             //if ( fileEntry.scannerResult == GameScannerResult::)
             /*
             HeaderData headerData;
-
             for( auto &system : possibleSystems ) {
-
                 static QString statement = QStringLiteral( "SELECT DISTINCT header.byteLength, header.seekIndex, header.result,"
                                                     " header.system FROM header INNER JOIN system ON system.UUID=\'%1\'"
                                                     " WHERE system.UUID=header.system AND system.enabled=1" );
                 statement = statement.arg( system );
-
                 bool exec = mLibretroQuery.exec( statement );
                 Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( mLibretroQuery.lastError().text() % mLibretroQuery.lastQuery() ) );
-
                 if( mLibretroQuery.first() ) {
-
                     headerData.byteLength = mLibretroQuery.value( 0 ).toInt();
                     headerData.seekPosition = mLibretroQuery.value( 1 ).toInt();
                     headerData.result = mLibretroQuery.value( 2 ).toString();
                     headerData.system = system;
-
                 } else {
                     // qCDebug( phxLibrary ) << "\n" << "Statement: " << statement << system << "\n" << mLibretroQuery.result();
                 }
-
             }
-
             return headerData;
             */
             break;
@@ -573,4 +565,3 @@ QString GameScanner::getLastExecutedQuery( const QSqlQuery &query ) {
 
     return sql;
 }
-

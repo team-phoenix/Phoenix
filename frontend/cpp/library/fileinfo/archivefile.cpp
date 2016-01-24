@@ -15,34 +15,29 @@ const QString ArchiveFile::prefix() {
     return QStringLiteral( "zip://" );
 }
 
-ArchiveFile::ParseData ArchiveFile::parse( const QString &file ) {
+ArchiveFile::FileToHashMap ArchiveFile::parse( const QString &file ) {
     QuaZip zip( file );
     zip.open( QuaZip::mdUnzip );
 
     Q_ASSERT( zip.isOpen() );
 
-    QStringList zipFileList;
-    QHash<QString, QString> fileHashMap;
+    FileToHashMap fileHashMap;
 
+    // Iterate through all files in the .zip
     for( bool f = zip.goToFirstFile(); f; f = zip.goToNextFile() ) {
 
+        // Construct a path that we can detect later so it'll get handled differently from non .zip files
         const QString absPath = ArchiveFile::prefix() % file
                                 % ArchiveFile::delimiter() % zip.getCurrentFileName();
-        zipFileList.append( absPath );
 
-        // Grab CRC32 from archive
+        // Grab CRC32 for the current file
         QuaZipFileInfo zipFileInfo;
 
         if( zip.getCurrentFileInfo( &zipFileInfo ) ) {
-            fileHashMap.insert( absPath, QString::number( zipFileInfo.crc, 16 ).toUpper() );
+            fileHashMap.insert( absPath, zipFileInfo.crc );
         }
-
     }
 
-    ParseData data;
-    data.enumeratedFiles = zipFileList;
-    data.fileHashesMap = fileHashMap;
-
-    return data;
+    return fileHashMap;
 }
 
