@@ -17,6 +17,32 @@ ApplicationWindow {
     height: Screen.height * 0.7;
     color: "black";
 
+    property CmdLineArgs cmdLineArgs: CmdLineArgs {
+
+    }
+
+    function stateChangedCallback( newState ) {
+        console.log( "stateChangedCallback(" + newState + ")" );
+
+        // Nothing to do, the load has begun
+        if( newState === Control.LOADING ) {
+            return;
+        }
+
+        // Load complete, start game and hide library
+        if( newState === Control.PAUSED ) {
+            // Disconnect this callback once it's been used where we want it to be used
+            root.gameViewObject.coreControl.stateChanged.disconnect( stateChangedCallback );
+
+            root.gameViewObject.coreControl.play();
+
+            // Destroy this library view and show the game
+            layoutStackView.pop();
+            return;
+        }
+    }
+
+
     property int defaultMinHeight: 600;
     property int defaultMinWidth: 900;
     minimumHeight: defaultMinHeight;
@@ -43,6 +69,7 @@ ApplicationWindow {
     function resetTitle() { title = ""; }
 
     property alias layoutStackView: layoutStackView;
+
     StackView {
         id: layoutStackView;
         anchors.fill: parent;
