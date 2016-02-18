@@ -111,28 +111,6 @@ FocusScope {
                     }
                 }
 
-                // Once the load completes, launch the game
-                function stateChangedCallback( newState ) {
-                    console.log( "stateChangedCallback(" + newState + ")" );
-
-                    // Nothing to do, the load has begun
-                    if( newState === Control.LOADING ) {
-                        return;
-                    }
-
-                    // Load complete, start game and hide library
-                    if( newState === Control.PAUSED ) {
-                        // Disconnect this callback once it's been used where we want it to be used
-                        root.gameViewObject.coreControl.stateChanged.disconnect( stateChangedCallback );
-
-                        root.gameViewObject.coreControl.play();
-
-                        // Destroy this library view and show the game
-                        layoutStackView.pop();
-                        return;
-                    }
-                }
-
                 function launchGame() {
                     var core = coreFilePath;
                     if ( core === "" ) {
@@ -174,7 +152,7 @@ FocusScope {
                         root.gameViewObject.coreControl.source = dict;
 
                         // Connect the next callback in the chain to be called once the load begins/ends
-                        root.gameViewObject.coreControl.stateChanged.connect( stateChangedCallback );
+                        root.gameViewObject.coreControl.stateChanged.connect( root.stateChangedCallback );
 
                         // Begin the load
                         // Execution will continue in stateChangedCallback() once CoreControl changes state
