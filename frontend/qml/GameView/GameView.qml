@@ -135,14 +135,6 @@ Rectangle {
             }
         }
 
-        // A blurred copy of the video that sits behind the real video as an effect
-        FastBlur {
-            id: blurEffect;
-            anchors.fill: parent;
-            source: videoOutput;
-            rotation: 180;
-            radius: 64;
-        }
     }
 
     // VideoOutput settings
@@ -151,6 +143,14 @@ Rectangle {
     property alias television: videoOutput.television;
     property alias ntsc: videoOutput.ntsc;
     property alias widescreen: videoOutput.widescreen;
+
+    // A blurred copy of the video that sits behind the real video as an effect
+    FastBlur {
+        id: blurEffect;
+        anchors.fill: parent;
+        source: videoOutput;
+        radius: 64;
+    }
 
     // QML-based video output module
     VideoOutput {
@@ -222,8 +222,6 @@ Rectangle {
                     break;
             }
         }
-
-        rotation: 180;
 
         linearFiltering: false;
         television: false;
@@ -319,12 +317,11 @@ Rectangle {
         id: actionBarHint;
         anchors.horizontalCenter: parent.horizontalCenter;
         anchors.bottom: gameActionBar.top;
-        anchors.bottomMargin: 8;
         width: contentWidth * 2;
         height: contentHeight * 2;
 
         opacity: gameActionBar.opacity;
-        visible: root.touchMode;
+        visible: root.touchMode && gameView.coreState === Control.PLAYING;
         enabled: visible;
 
         verticalAlignment: Text.AlignVCenter;

@@ -32,12 +32,11 @@ Item {
                 id: selectionArea;
                 anchors { top: parent.top; bottom: parent.bottom; }
                 width: PhxTheme.common.menuWidth;
-                z: contentArea.z + 1;
             }
 
             ContentArea {
                 id: contentArea;
-                anchors { top: parent.top; bottom: parent.bottom; }
+                anchors { top: parent.top; bottom: parent.bottom; left: selectionArea.right; }
                 Layout.fillWidth: true;
             }
         }

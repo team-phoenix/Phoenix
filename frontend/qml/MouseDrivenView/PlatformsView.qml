@@ -11,41 +11,13 @@ import vg.phoenix.themes 1.0
 PhxScrollView {
     id: platformsView;
 
-    // The default of 20 just isn't fast enough
-    __wheelAreaScrollSpeed: 100;
-
-    ListView {
+    // @disable-check M300
+    PhxListView {
         id: listView;
+        anchors.fill: parent;
+
         spacing: 0;
         model: PlatformsModel { id: platformsModel; }
-        boundsBehavior: Flickable.StopAtBounds;
-        highlightFollowsCurrentItem: false;
-
-        signal doShowAnimation();
-
-        highlight: Rectangle {
-            id: highlighter;
-            width: 4;
-            height: listView.currentItem.height;
-            color: PhxTheme.common.menuItemHighlight;
-
-            x: 0;
-            y: 0;
-
-            Connections {
-                target: listView;
-                onDoShowAnimation: {
-                    showAnimation.complete();
-                    showAnimation.start();
-                }
-            }
-
-            SequentialAnimation {
-                id: showAnimation;
-                PropertyAction { target: highlighter; properties: "y"; value: listView.currentItem.y; }
-                PropertyAnimation { target: highlighter; properties: "x"; from: -4; to: 0; duration: 300; easing.type: Easing.InOutQuart; }
-            }
-        }
 
         header: Rectangle {
             color: "transparent";
@@ -69,15 +41,19 @@ PhxScrollView {
 
         delegate: Item {
             property alias marqueeText: platformText;
+            property int delegateIndex: index;
             height: PhxTheme.common.menuItemHeight;
             anchors { left: parent.left; right: parent.right; }
 
-            // Image {
-            //     anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: PhxTheme.common.menuItemMargin; }
-            //     smooth: false;
-            //     sourceSize { height: height; width: width; }
-            //     source: "systems/" + listView.model.get( index ) + ".svg";
-            // }
+            Connections {
+                target: listView
+                onCurrentIndexChanged:
+                    if( listView.currentIndex === index ) {
+                        // Always use UUID
+                        if ( index === 0 ) { contentArea.contentLibraryModel.clearFilter( "games", "system" ); }
+                        else { contentArea.contentLibraryModel.setFilter( "games", "system", listView.model.get( index )[0] ); }
+                }
+            }
 
             MarqueeText {
                 id: platformText;
@@ -99,17 +75,10 @@ PhxScrollView {
                 hoverEnabled: true;
 
                 onClicked: {
-                    if ( contentArea.contentStackView.currentItem.objectName !== "PlatformsView" ) {
+                    if ( !contentArea.contentStackView.currentItem.objectName.localeCompare( "PlatformsView" ) )
                         contentArea.contentStackView.push( { item: contentArea.boxartGrid, replace: true } );
-                    }
 
-                    // Always use UUID
-                    if( listView.currentIndex !== index ) {
-                        listView.currentIndex = index;
-                        if ( index === 0 ) { contentArea.contentLibraryModel.clearFilter( "games", "system" ); }
-                        else { contentArea.contentLibraryModel.setFilter( "games", "system", listView.model.get( index )[0] ); }
-                        listView.doShowAnimation();
-                    }
+                    if( listView.currentIndex !== index ) listView.currentIndex = index;
                 }
             }
         }

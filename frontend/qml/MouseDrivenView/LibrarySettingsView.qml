@@ -16,9 +16,10 @@ Item {
             top: parent.top; bottom: parent.bottom; left: parent.left;
             topMargin: headerArea.height; leftMargin: 30;
         }
-        width: 600;
+        width: 620;
         property int verticalMargin: 10;
 
+        // A handy clickable link that takes you straight to the core folder
         Item {
             id: pathHelper;
             anchors { top: parent.top; horizontalCenter: parent.horizontalCenter; }
@@ -59,24 +60,29 @@ Item {
                 hoverEnabled: true;
                 onEntered: { rootMouseArea.cursorShape = Qt.PointingHandCursor; }
                 onExited: { rootMouseArea.cursorShape = Qt.ArrowCursor; }
-                Component.onCompleted: console.log( width + " " + height );
             }
         }
 
+        // A list of systems and the current core for that system
+        // @disable-check M300
         PhxScrollView {
             id: scrollView;
             anchors { top: pathHelper.bottom; left: parent.left; right: parent.right; bottom: parent.bottom; }
             anchors.topMargin: parent.verticalMargin;
 
-            // The default of 20 just isn't fast enough
-            __wheelAreaScrollSpeed: 100;
-
-            ListView {
+            // @disable-check M300
+            PhxListView {
                 id: listView;
                 anchors.fill: parent;
                 anchors.rightMargin: 10;
+
                 spacing: 3;
                 model: CoreModel { }
+
+                growOnFocusValue: 8;
+
+                // Grab focus for ourselves on init
+                Component.onCompleted: forceActiveFocus();
 
                 header: Item {
                     anchors { left: parent.left; right: parent.right; }
@@ -97,6 +103,7 @@ Item {
                             bold: true;
                         }
                     }
+
                     Text {
                         anchors.top: headerText.bottom; anchors.left: parent.left;
                         width: parent.width;
@@ -115,22 +122,37 @@ Item {
                     }
                 }
 
-                delegate: Item {
+                delegate: FocusScope {
+                    id: delegate;
                     anchors { left: parent.left; right: parent.right; }
                     height: 35;
 
                     Text {
                         anchors.left: parent.left;
+                        anchors.leftMargin: 20;
                         anchors.verticalCenter: parent.verticalCenter;
                         Layout.fillWidth: true;
                         height: parent.height;
-                        text: system + ":";
+                        text: ( systemFriendlyName.localeCompare( "" ) ? systemFriendlyName : system ) + ":";
                         color: PhxTheme.common.highlighterFontColor;
                         verticalAlignment: Text.AlignVCenter;
                         font.family: PhxTheme.common.systemFontFamily;
                     }
 
+                    // Cover only the left side with this
+                    MouseArea {
+                        anchors.left: parent.left;
+                        anchors.right: row.right;
+                        anchors.verticalCenter: parent.verticalCenter;
+                        height: parent.height;
+                        onClicked: {
+                            listView.forceActiveFocus();
+                            listView.currentIndex = index;
+                        }
+                    }
+
                     Row {
+                        id: row;
                         anchors.right: parent.right;
                         anchors.rightMargin: 8;
                         height: parent.height;
@@ -140,6 +162,25 @@ Item {
                             anchors.verticalCenter: parent.verticalCenter;
                             width: 308;
                             height: parent.height;
+                            focus: true;
+
+                            Keys.onPressed: {
+                                if( event.key === Qt.Key_Left ) {
+                                    comboBox.currentIndex = Math.max( 0, comboBox.currentIndex - 1 );
+                                    event.accepted = true;
+                                } else if( event.key === Qt.Key_Right ) {
+                                    comboBox.currentIndex = Math.min( cores.length - 1, comboBox.currentIndex + 1 );
+                                    event.accepted = true;
+                                } else if( event.key === Qt.Key_Up ) {
+                                    listView.currentIndex = Math.max( 0, listView.currentIndex - 1 );
+                                    event.accepted = true;
+                                } else if( event.key === Qt.Key_Down ) {
+                                    listView.currentIndex = Math.min( numSystems - 1, listView.currentIndex + 1 );
+                                    event.accepted = true;
+                                } else {
+                                    event.accepted = false;
+                                }
+                            }
 
                             ComboBox {
                                 id: comboBox;
@@ -147,6 +188,14 @@ Item {
                                 anchors.verticalCenter: parent.verticalCenter;
                                 width: 300;
                                 height: parent.height;
+                                activeFocusOnTab: false;
+
+                                onPressedChanged: {
+                                    if( pressed ) {
+                                        listView.forceActiveFocus();
+                                        listView.currentIndex = index;
+                                    }
+                                }
 
                                 style: ComboBoxStyle {
                                     background: Rectangle {
@@ -165,7 +214,7 @@ Item {
                                     // Workaround, onCurrentIndexChanged is fired when the ComboBox is constructed.
                                     currentIndexChanged.connect( function() {
                                         listView.model.save( system, currentIndex );
-                                    });
+                                    } );
                                 }
                             }
 

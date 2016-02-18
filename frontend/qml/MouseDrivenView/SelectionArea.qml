@@ -9,19 +9,6 @@ import vg.phoenix.themes 1.0
 import vg.phoenix.backend 1.0
 
 Item {
-    width: 100
-    height: 6
-
-//    DropShadow {
-//        source: selectionArea
-//        anchors.fill: source
-//        transparentBorder: true
-//        horizontalOffset: 8
-//        radius: 32
-//        samples: 32
-//        opacity: 0.5
-//    }
-
     Rectangle  {
         id: selectionArea;
         anchors.fill: parent;
@@ -42,19 +29,27 @@ Item {
                 Layout.fillWidth: true;
                 initialItem: platformsView;
 
-                Component {
+                property string currentObjectName: currentItem === null ? "" : currentItem.objectName;
+
+                PlatformsView {
                     id: platformsView;
-                    PlatformsView { objectName: "PlatformsView"; }
+                    objectName: "PlatformsView";
+                    visible: !sectionsAreaStackView.currentObjectName.localeCompare( objectName );
+                    enabled: visible;
                 }
 
-                Component {
-                    id: favoritesView;
-                    CollectionsView { objectName: "CollectionsView"; }
+                CollectionsView {
+                    id: collectionsView;
+                    objectName: "CollectionsView";
+                    visible: !sectionsAreaStackView.currentObjectName.localeCompare( objectName );
+                    enabled: visible;
                 }
 
-                Component {
+                SettingsView {
                     id: settingsView;
-                    SettingsView { objectName: "SettingsView"; }
+                    objectName: "SettingsView";
+                    visible: !sectionsAreaStackView.currentObjectName.localeCompare( objectName );
+                    enabled: visible;
                 }
 
                 delegate: StackViewDelegate {
@@ -97,127 +92,118 @@ Item {
                 }
             }
 
-            // The buttons along the bottom that control the sectionsAreaStackView
-            ListView {
-                id: selectionAreaToolbar;
+            Item {
+                id: bottomRowContainer;
                 height: 65;
                 anchors { left: parent.left; right: parent.right; }
-                spacing: 0;
-                interactive: false;
-                orientation: ListView.Horizontal;
-                highlightFollowsCurrentItem: false;
 
-                signal doShowAnimation();
+                // Added number: number of extra buttons past ListView
+                property real delegateWidth: width / ( listView.count + 1 );
 
-                highlight: Rectangle {
-                    id: highlighter;
-                    height: 4;
-                    width: selectionAreaToolbar.currentItem.width;
-                    color: PhxTheme.common.menuItemHighlight;
+                // The buttons along the bottom that control the sectionsAreaStackView
+                // @disable-check M300
+                PhxListView {
+                    id: listView;
+                    anchors { top: parent.top; bottom: parent.bottom; left: parent.left; }
+                    width: parent.width - parent.delegateWidth;
+                    spacing: 0;
+                    orientation: ListView.Horizontal;
 
-                    x: 0;
-                    y: selectionAreaToolbar.currentItem.height - 4;
+                    model: ListModel {
+                        ListElement { bgColor: "white"; label: "Games"; imageSource: "games.svg";
+                            leftPane: "PlatformsView"; rightPane: "BoxartGridView"; }
+                        ListElement { bgColor: "white"; label: "Favorites"; imageSource: "collections.svg";
+                            leftPane: "CollectionsView"; rightPane: "BoxartGridView"; }
+                        ListElement { bgColor: "white"; label: "Settings"; imageSource: "settings.svg";
+                            leftPane: "SettingsView"; rightPane: "LibrarySettingsView"; }
+                    }
 
-                    Connections {
-                        target: selectionAreaToolbar;
-                        onDoShowAnimation: {
-                            showAnimation.complete();
-                            showAnimation.start();
+                    FileDialog {
+                        id: fileDialog;
+                        selectFolder: true;
+                        onAccepted: { contentArea.contentLibraryModel.scanFolder( fileUrl ); }
+                    }
+
+                    // Returns first match
+                    function getObjectByName( name, parentObject ) {
+                        for( var i = 0; i < parentObject.children.length; i++ ) {
+                            if( !parentObject.children[ i ].objectName.localeCompare( name ) )
+                                return parentObject.children[ i ];
+                        }
+                        return null;
+                    }
+
+                    // Change the selectionArea and contentArea stack views if they're not already set to the given objects
+                    function changePlaces( leftPane, rightPane ) {
+
+                        // Happens during startup/shutdown
+                        if( sectionsAreaStackView.currentItem === null ) return;
+
+                        if ( sectionsAreaStackView.currentItem.objectName.localeCompare( leftPane ) ) {
+                            sectionsAreaStackView.push( getObjectByName( leftPane, sectionsAreaStackView ) );
+                            if( contentArea.contentStackView.currentItem.objectName.localeCompare( rightPane ) ) {
+                                contentArea.contentStackView.push( getObjectByName( rightPane, contentArea.contentStackView ) );
+                            }
                         }
                     }
 
-                    SequentialAnimation {
-                        id: showAnimation;
-                        PropertyAction { target: highlighter; properties: "x"; value: selectionAreaToolbar.currentItem.x; }
-                        PropertyAnimation { target: highlighter; properties: "y"; from: selectionAreaToolbar.currentItem.height;
-                            to: selectionAreaToolbar.currentItem.height - 4; duration: 300; easing.type: Easing.InOutQuart; }
+                    delegate: Item {
+                        anchors { top: parent.top; bottom: parent.bottom; }
+                        width: bottomRowContainer.delegateWidth;
+
+                        Image {
+                            anchors { centerIn: parent; }
+                            width: 24;
+                            height: 24;
+
+                            source: imageSource;
+                            sourceSize { width: width; height: height; }
+
+                            opacity: index === listView.currentIndex ? 1.0 : 0.5;
+                        }
+
+                        // If the index now points to this particular delegate, manipulate the stackview to match its role
+                        Connections {
+                            target: listView;
+                            onCurrentIndexChanged: {
+                                if( listView.currentIndex === index ) {
+                                    listView.changePlaces( leftPane, rightPane );
+                                }
+                            }
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent;
+                            onClicked: listView.currentIndex = index;
+                        }
                     }
                 }
 
-                model: ListModel {
-                    ListElement { bgColor: "white"; label: "Games"; imageSource: "games.svg"; }
-                    ListElement { bgColor: "white"; label: "Favorites"; imageSource: "collections.svg"; }
-                    ListElement { bgColor: "white"; label: "Settings"; imageSource: "settings.svg"; }
-                    ListElement { bgColor: "white"; label: "Add Games"; imageSource: "add.svg"; }
-                }
+                Rectangle {
+                    width: parent.delegateWidth;
+                    anchors { top: parent.top; bottom: parent.bottom; left: listView.right; }
 
-                FileDialog {
-                    id: fileDialog;
-                    selectFolder: true;
-                    onAccepted: { contentArea.contentLibraryModel.scanFolder( fileUrl ); }
-                }
+                    color: "transparent";
+                    border.color: activeFocus ? PhxTheme.common.menuItemHighlight : "transparent";
+                    border.width: 2;
 
-                delegate: Item {
-                    height: parent.height;
-                    width: selectionAreaToolbar.width / selectionAreaToolbar.count;
+                    activeFocusOnTab: true;
 
                     Image {
-                        id: image;
+                        id: addGameButton;
                         anchors { centerIn: parent; }
                         width: 24;
                         height: 24;
 
-                        source: imageSource;
+                        source: "add.svg";
                         sourceSize { width: width; height: height; }
 
-                        opacity: index === selectionAreaToolbar.currentIndex ? 1.0 : 0.5;
-                    }
-
-                    Text {
-                        visible: imageSource === "";
-                        anchors.centerIn: parent;
-                        text: label;
-                        color: PhxTheme.common.baseFontColor;
-                        font { pixelSize: PhxTheme.common.baseFontSize; }
+                        opacity: 0.5;
                     }
 
                     MouseArea {
-                    // NativeTooltip {
                         anchors.fill: parent;
-                        // text: label;
-                        onClicked: {
-                            switch( index ) {
-                            case 0:
-                                if ( sectionsAreaStackView.currentItem.objectName !== "PlatformsView" ) {
-                                    sectionsAreaStackView.push( { item: platformsView, replace: true } );
-                                    if( contentArea.contentStackView.currentItem.objectName !== "BoxartGridView") {
-                                        contentArea.contentStackView.push( { item: contentArea.contentBoxartGrid, replace: true } );
-                                    }
-                                }
-                                selectionAreaToolbar.currentIndex = index;
-                                selectionAreaToolbar.doShowAnimation();
-                                break;
-
-                            case 1:
-                                if ( sectionsAreaStackView.currentItem.objectName !== "CollectionsView" ) {
-                                    sectionsAreaStackView.push( { item: favoritesView, replace: true } );
-                                    if( contentArea.contentStackView.currentItem.objectName !== "BoxartGridView") {
-                                        contentArea.contentStackView.push( { item: contentArea.contentBoxartGrid, replace: true } );
-                                    }
-                                }
-                                selectionAreaToolbar.currentIndex = index;
-                                selectionAreaToolbar.doShowAnimation();
-                                break;
-
-                            case 2:                                
-                                if ( sectionsAreaStackView.currentItem.objectName !== "SettingsView" ) {
-                                    sectionsAreaStackView.push( { item: settingsView, replace: true } );
-                                    if( contentArea.contentStackView.currentItem.objectName !== "LibrarySettingsView") {
-                                        contentArea.contentStackView.push( { item: contentArea.contentLibrarySettingsView, replace: true } );
-                                    }
-                                }
-                                selectionAreaToolbar.currentIndex = index;
-                                selectionAreaToolbar.doShowAnimation();
-                                break;
-
-                            case 3:
-                                fileDialog.open();
-                                break;
-
-                            default:
-                                break;
-                            }
-                        }
+                        onClicked: fileDialog.open();
                     }
                 }
             }
