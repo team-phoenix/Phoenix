@@ -5,8 +5,8 @@
 
 #include "userdatabase.h"
 #include "gamescannerold.h"
+#include "gamescanner.h"
 #include "logging.h"
-#include "gamescancontrollerproxy.h"
 
 namespace Library {
 
@@ -167,14 +167,14 @@ namespace Library {
             QMutex mMutex;
             QHash<QString, QVariant> filterParameterMap;
 
-            GameScanControllerProxy mGameScanControllerProxy;
+            //GameScanControllerProxy mGameScanControllerProxy;
 
 
             // This thread is started when a user wants to import
             // a games folder. Currently, the thread quits whenever the
             // user cancels and import, or the import finishes.
             QThread mGameScannerThread;
-            GameScannerOld mGameScanner;
+            GameScanner mGameScanner;
 
             bool mFilterCollection;
             bool mTransaction;

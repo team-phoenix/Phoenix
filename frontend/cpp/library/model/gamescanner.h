@@ -2,64 +2,108 @@
 #define GAMESCANNER_H
 
 #include "frontendcommon.h"
-
 #include "archivefile.h"
+#include "betterfuturewatcher.h"
+
+#include <QObject>
+#include <QFutureWatcher>
+
 
 // Phoenix's game scanner takes advantage of MapReduce (and Qt's easy-to-use implementation of it) to efficiently and
 // asyncronously scan large numbers of files
 
+// Extra data that holds the result of the game scanner
+typedef enum {
+    // Default value, not yet scanned
+    NOT_YET_SCANNED,
+
+    // Hit against game database by hash or filename matching (TODO: separate?)
+    // Implies that the system UUID is known too
+    GAME_UUID_KNOWN,
+
+    // Hit against system database by extension (only one system uses the extension)
+    // systemUUIDs contains one element
+    SYSTEM_UUID_KNOWN,
+
+    // Hit against system database by extension (multiple systems use the extension)
+    // systemUUIDs contains two or more elements
+    MULTIPLE_SYSTEM_UUIDS,
+
+    // Miss against game and system database
+    SYSTEM_UUID_UNKNOWN,
+
+    // Path is a .bin file that is listed in a valid .cue file. Paths marked with this value should not be scanned
+    // in step 4.
+    PART_OF_CUE_FILE
+} gameScannerResult;
+
+
+// A struct that attaches some basic metadata to a file path
+typedef struct FileEntryStruct {
+    FileEntryStruct() : filePath(), hash( 0 ), hasHashCached( false ), gameUUID(), systemUUIDs(), scannerResult( NOT_YET_SCANNED ) {}
+
+    // Absolute path to a file
+    QString filePath;
+
+    // CRC32 hash for matching against game database
+    quint32 hash; // TODO: Use a more specific type to store the hash?
+
+    // Do we have a hash cached?
+    bool hasHashCached;
+
+    // Database UUID
+    QString gameUUID;
+
+    // Some extensions may map to multiple systems, keep a list in order to present this info to the user later
+    QStringList systemUUIDs;
+
+    // The result of the game scanner. Defines which of the above members have valid values
+    gameScannerResult scannerResult;
+} FileEntry;
+
+typedef QList<FileEntry> FileList;
+
+class BetterFutureWatcher : public QObject {
+    Q_OBJECT
+public:
+    BetterFutureWatcher( QObject *parent = 0 )
+        : QObject( parent ),
+          mListIndex( -1 )
+    {
+        connect( &mWatcher, SIGNAL( finished() ), this, SLOT(slotInterceptFinished() ) );
+    }
+
+    void setFuture( const QFuture<FileList> &future, int index ) {
+        mWatcher.setFuture( future );
+        mListIndex = index;
+    }
+
+    QFutureWatcher<FileList> &futureWatcher() {
+        return mWatcher;
+    }
+
+    int listIndex() const
+    {
+        return mListIndex;
+    }
+
+signals:
+    void finished( BetterFutureWatcher *watcher  );
+
+public slots:
+    void slotInterceptFinished() {
+        emit finished( this );
+    }
+
+
+private:
+    QFutureWatcher<FileList> mWatcher;
+    int mListIndex;
+
+};
+
 class GameScanner : public QObject {
         Q_OBJECT
-
-        // A struct that attaches some basic metadata to a file path
-        typedef struct FileEntryStruct {
-            FileEntryStruct() : filePath(), hash( 0 ), hasHashCached( false ), gameUUID(), systemUUIDs(), type( NOT_YET_SCANNED ) {}
-
-            // Absolute path to a file
-            QString filePath;
-
-            // CRC32 hash for matching against game database
-            quint32 hash; // TODO: Use a more specific type to store the hash?
-
-            // Do we have a hash cached?
-            bool hasHashCached;
-
-            // Database UUID
-            QString gameUUID;
-
-            // Some extensions may map to multiple systems, keep a list in order to present this info to the user later
-            QStringList systemUUIDs;
-
-            // The result of the game scanner. Defines which of the above members have valid values
-            gameScannerResult scannerResult;
-        } FileEntry;
-
-        // Extra data that holds the result of the game scanner
-        typedef enum {
-            // Default value, not yet scanned
-            NOT_YET_SCANNED,
-
-            // Hit against game database by hash or filename matching (TODO: separate?)
-            // Implies that the system UUID is known too
-            GAME_UUID_KNOWN,
-
-            // Hit against system database by extension (only one system uses the extension)
-            // systemUUIDs contains one element
-            SYSTEM_UUID_KNOWN,
-
-            // Hit against system database by extension (multiple systems use the extension)
-            // systemUUIDs contains two or more elements
-            MULTIPLE_SYSTEM_UUIDS,
-
-            // Miss against game and system database
-            SYSTEM_UUID_UNKNOWN,
-
-            // Path is a .bin file that is listed in a valid .cue file. Paths marked with this value should not be scanned
-            // in step 4.
-            PART_OF_CUE_FILE
-        } gameScannerResult;
-
-        typedef QList<FileEntry> FileList;
 
     public:
         explicit GameScanner( QObject *parent = 0 );
@@ -69,17 +113,17 @@ class GameScanner : public QObject {
         // If a file path, returns a single-element list containing that file path
         // Otherwise, enumerate that directory and return list of all files within
         // TODO: Recursion?
-        static QStringList stepOneMap( const QString &path );
+        static FileList stepOneMap( const QString &pathList );
 
         // Merge lists together into one main list
-        static void stepOneReduce( QStringList &mergedList, const QStringList &givenList );
+        static void stepOneReduce( FileList &mergedList, const FileList &givenList );
 
         // Step 2: Expand list of file paths by enumerating archive files, caching hashes if available
 
         // Enumerate archive file if given one, caching hashes if the format supports the ones we need.
         // Only archive files will have more than one entry in the return list, and only archive file formats that
         // store checksums will have cached checksum entries in the list
-        static FileList stepTwoMap( const QString &filePath );
+        static FileList stepTwoMap( const FileEntry &filePath );
 
         // Merge lists together into one main list
         static void stepTwoReduce( FileList &mergedList, const FileList &givenList );
@@ -99,7 +143,10 @@ class GameScanner : public QObject {
 
         // Mark .bin files from main list that came from step 3's output as not needing to be scanned (cheaper than removing?)
         // FIXME: This operation is O( stepThreeOutputCount * mainListCount ) ~= O( n^2 )... bad enough it should be its own step?
-        static FileList stepFourFilter( const FileList &fileList );
+        static bool stepFourFilter( const FileEntry &fileEntry );
+
+        // Merges entries recieved from filter into a single result.
+        static void stepFourFilterReduce( FileList &mergedList, const FileEntry &givenList );
 
         // Match against game database by hash, falling back in the following order if that misses:
         // - Filename matching, making sure the extension is valid for the system (fuzzy matching?)
@@ -114,9 +161,19 @@ class GameScanner : public QObject {
     signals:
 
     public slots:
+        void slotEnumeratePath( QString path );
+        void stepOneFinished( BetterFutureWatcher *betterWatcher);
+        void stepTwoFinished( BetterFutureWatcher *betterWatcher );
+        void stepThreeFinished( BetterFutureWatcher *betterWatcher );
+        void stepFourFilterFinished( BetterFutureWatcher *betterWatcher );
+        void stepFourMapReduceFinished( BetterFutureWatcher *betterWatcher );
 
-private:
-    GameScanner::FileList mFileList;
+    private:
+
+        // Contains a list of file paths that have been obtained by scanning the file system.
+
+        FileList mFileList;
+        QList<BetterFutureWatcher *> mWatcherList;
 };
 
 #endif // GAMESCANNER_H

@@ -1,10 +1,12 @@
 #ifndef GAMESCANCONTROLLER_H
 #define GAMESCANCONTROLLER_H
 
+/*
 #include "frontendcommon.h"
 
 #include "futuremanager.h"
 #include "archivefile.h"
+
 
 using WatcherPtr = QFutureWatcher<QVariant> *;
 
@@ -75,5 +77,7 @@ class GameScanController : public QObject {
 
         inline QVariantList watcherResult();
 };
+
+*/
 
 #endif // GAMESCANCONTROLLER_H

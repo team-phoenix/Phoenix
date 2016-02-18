@@ -1,6 +1,7 @@
 #ifndef GAMESCANCONTROLLERPROXY_H
 #define GAMESCANCONTROLLERPROXY_H
 
+/*
 #include "frontendcommon.h"
 
 #include "gamescancontroller.h"
@@ -30,5 +31,6 @@ class GameScanControllerProxy {
         GameScanController *mGameScanController;
         QThread *mThread;
 };
+*/
 
 #endif // GAMESCANCONTROLLERPROXY_H

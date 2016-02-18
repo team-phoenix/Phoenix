@@ -112,7 +112,8 @@ include( deployment.pri )
                cpp/library/cuefile.h \
                cpp/library/fileinfo/archivefile.h \
     cpp/library/model/gamescannerold.h \
-    cpp/library/model/gamescanner.h
+    cpp/library/model/gamescanner.h \
+    cpp/library/model/betterfuturewatcher.h
 
     PRECOMPILED_HEADER = cpp/frontendcommon.h
 

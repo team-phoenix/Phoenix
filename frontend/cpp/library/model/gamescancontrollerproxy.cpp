@@ -1,3 +1,5 @@
+/*
+
 #include "gamescancontrollerproxy.h"
 
 GameScanControllerProxy::GameScanControllerProxy( QObject *parent )
@@ -50,3 +52,4 @@ void GameScanControllerProxy::appendScanPath( const QString scanPath ) {
     QMetaObject::invokeMethod( &mGameScanController, "appendScanPath", Q_ARG( QString, scanPath ) );
 }
 
+*/

@@ -1,3 +1,5 @@
+/*
+
 #include "gamescancontroller.h"
 #include "gamefileinfo.h"
 #include "cuefile.h"
@@ -194,3 +196,4 @@ QVariantList GameScanController::watcherResult() {
     return result;
 }
 
+*/
