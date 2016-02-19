@@ -2,9 +2,10 @@
 #define GAMEFILEINFO_H
 
 #include "frontendcommon.h"
-
 #include "libretrodatabase.h"
 #include "metadatadatabase.h"
+
+/*
 
 namespace Library {
 
@@ -87,5 +88,7 @@ namespace Library {
 
 
 }
+
+*/
 
 #endif // GAMEFILEINFO_H

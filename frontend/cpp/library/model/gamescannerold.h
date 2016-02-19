@@ -13,6 +13,8 @@
 #include "cuefileinfo.h"
 #include "biosfileinfo.h"
 
+/*
+
 namespace Library {
 
     struct GameData {
@@ -102,6 +104,7 @@ namespace Library {
     };
 
 }
+*/
 
 
 #endif // LIBRARYWORKER_H

@@ -8,6 +8,7 @@
 
 namespace Library {
 
+/*
     class BiosFileInfo : public GameFileInfo {
         public:
 
@@ -18,6 +19,7 @@ namespace Library {
             QString mBiosName;
 
     };
+    */
 
 }
 

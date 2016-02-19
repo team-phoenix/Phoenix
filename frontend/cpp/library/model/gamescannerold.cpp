@@ -2,6 +2,8 @@
 
 using namespace Library;
 
+/*
+
 GameScannerOld::GameScannerOld( QObject *parent )
     : QObject( parent ),
       mInsertCancelled( false ),
@@ -315,3 +317,4 @@ void GameScannerOld::hashAndEnqueueFile( QString filePath ) {
     }
 
 }
+*/

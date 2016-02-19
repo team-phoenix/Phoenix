@@ -1,5 +1,6 @@
 #include "cuefileinfo.h"
 
+/*
 using namespace Library;
 
 CueFileInfo::CueFileInfo( const QString &file )
@@ -91,4 +92,5 @@ QStringList CueFileInfo::files() {
     return gameFiles;
 }
 
+*/
 

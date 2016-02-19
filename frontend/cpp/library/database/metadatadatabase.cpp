@@ -8,8 +8,14 @@ const QString MetaDataDatabase::tableReleases = QStringLiteral( OPENVGDBTABLEREL
 const QString MetaDataDatabase::tableRegions = QStringLiteral( OPENVGDBTABLEREGIONS );
 
 void MetaDataDatabase::open() {
+    {
+        QSqlDatabase db = QSqlDatabase::database( QStringLiteral( "METADATA" ) );
+        if ( db.isOpen() ) {
+            return;
+        }
+    }
 
-    auto db = QSqlDatabase::addDatabase( QStringLiteral( "QSQLITE" ), QStringLiteral( "METADATA" ) );
+    QSqlDatabase db = QSqlDatabase::addDatabase( QStringLiteral( "QSQLITE" ), QStringLiteral( "METADATA" ) );
 
     //#######################
     QString dataPathStr = PhxPaths::metadataLocation();
@@ -17,8 +23,8 @@ void MetaDataDatabase::open() {
 
     QDir dataPath( dataPathStr );
 
-    auto databaseName = QStringLiteral( "openvgdb.sqlite" );
-    auto filePath = dataPath.filePath( databaseName );
+    QString databaseName = QStringLiteral( "openvgdb.sqlite" );
+    QString filePath = dataPath.filePath( databaseName );
 
     db.setDatabaseName( filePath );
     //#######################
@@ -32,6 +38,27 @@ void MetaDataDatabase::open() {
 
 }
 
+void MetaDataDatabase::close() {
+    if( QSqlDatabase::contains( "METADATA" ) ) {
+
+        // Must be scoped. QSql is real picky about this.
+        {
+            QSqlDatabase db = QSqlDatabase::database( QStringLiteral( "METADATA" ) );
+            qDebug() << "contains db : " << db.isOpen() << ", " << db.isValid();
+
+            db.close();
+        }
+
+        //QSqlDatabase::removeDatabase( "METADATA" );
+
+    }
+}
+
 QSqlDatabase MetaDataDatabase::database() {
-    return QSqlDatabase::database( QStringLiteral( "METADATA" ) );
+    QSqlDatabase db = QSqlDatabase::database( QStringLiteral( "METADATA" ) );
+    if ( !db.isOpen() || !db.isValid() ) {
+        MetaDataDatabase::open();
+        db = QSqlDatabase::database( QStringLiteral( "METADATA" ) );
+    }
+    return db;
 }

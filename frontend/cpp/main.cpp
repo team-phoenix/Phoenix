@@ -171,7 +171,7 @@ int main( int argc, char *argv[] ) {
 
     // Open connections to the SQL databases.
     Library::LibretroDatabase::open();
-    Library::MetaDataDatabase::open();
+    //Library::MetaDataDatabase::open();
 
     // Necessary to quit properly
     QObject::connect( &engine, &QQmlApplicationEngine::quit, &app, &QGuiApplication::quit );
@@ -202,7 +202,7 @@ int main( int argc, char *argv[] ) {
     qmlRegisterSingletonType( QUrl( "qrc:/PhxTheme.qml" ), "vg.phoenix.themes", 1, 0, "PhxTheme" );
     qmlRegisterSingletonType<Library::PhxPaths>( "vg.phoenix.paths", 1, 0, "PhxPaths", PhxPathsSingletonProviderCallback );
 
-    qRegisterMetaType<Library::GameData>( "GameData" );
+    //qRegisterMetaType<Library::GameData>( "GameData" );
 
     // Load the root QML object and everything under it
     engine.load( QUrl( QStringLiteral( "qrc:/main.qml" ) ) );

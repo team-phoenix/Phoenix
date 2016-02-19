@@ -9,6 +9,8 @@
 
 namespace Library {
 
+/*
+
     class ArchiveFileInfo : public GameFileInfo {
         public:
 
@@ -36,6 +38,8 @@ namespace Library {
 
 
     };
+
+    */
 
 }
 

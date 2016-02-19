@@ -5,6 +5,8 @@
 
 using namespace Library;
 
+/*
+
 GameFileInfo::GameFileInfo( const QString &file )
     : QFileInfo( file ),
       mFileType( FileType::UnsupportedFile ),
@@ -334,3 +336,4 @@ bool GameFileInfo::isBios( QString &biosName ) {
     return false;
 }
 
+*/

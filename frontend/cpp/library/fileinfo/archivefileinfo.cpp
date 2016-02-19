@@ -1,5 +1,6 @@
 #include "archivefileinfo.h"
 
+/*
 using namespace Library;
 
 ArchiveFileInfo::ArchiveFileInfo( const QString &file )
@@ -91,4 +92,6 @@ void ArchiveFileInfo::fillBasicInfo() {
                     + ArchiveFileInfo::delimiter() + nextFileName();
 
 }
+
+*/
 

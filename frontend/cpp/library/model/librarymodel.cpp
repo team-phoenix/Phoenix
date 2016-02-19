@@ -255,6 +255,7 @@ bool LibraryModel::insertPaused() {
     return false;//mGameScanner.insertPaused();
 }
 
+/*
 void LibraryModel::handleUpdateGame( const GameData metaData ) {
     // We need to be careful here. This function needs to only set data
     // when the startMetaDataScan() function has finished.
@@ -296,6 +297,7 @@ void LibraryModel::handleUpdateGame( const GameData metaData ) {
     }
 
 }
+*/
 
 QString LibraryModel::selectStatement() const {
     static const QString collectionFilterStatement = QStringLiteral( "SELECT " )
@@ -325,6 +327,7 @@ QString LibraryModel::selectStatement() const {
     return select;
 }
 
+/*
 void LibraryModel::handleInsertGame( const GameData importData ) {
 
     static const auto statement = QStringLiteral( "INSERT INTO " )
@@ -346,13 +349,12 @@ void LibraryModel::handleInsertGame( const GameData importData ) {
         setMessage( QStringLiteral( "Importing Games..." ) );
     }
 
-    /*
+
     if( importData.fileID % 50 == 0 ) {
         qDebug() << "force sync";
         sync();
         transaction();
     }
-    */
 
 
     //mGameScanner.setResumeInsertID( importData.filePath );
@@ -394,6 +396,7 @@ void LibraryModel::handleInsertGame( const GameData importData ) {
 
     }
 }
+*/
 
 void LibraryModel::setProgress( const qreal progress ) {
     if( progress == qmlProgress ) {

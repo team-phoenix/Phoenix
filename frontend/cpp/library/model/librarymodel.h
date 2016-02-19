@@ -122,14 +122,14 @@ namespace Library {
 
             // handleInsertGame runs on the main QML thread, and is
             // where the SQL query statement is created and executed.
-            void handleInsertGame( const GameData importData );
+            //void handleInsertGame( const GameData importData );
 
             // This function is connected to the mWorkerThread.
             // This iterates through the mImportUrl, if the url is
             // a folder, and emits the filesFound signal.
 
             // This needs to be run on the main thread.
-            void handleUpdateGame( const GameData metaData );
+            //void handleUpdateGame( const GameData metaData );
 
         signals:
 

@@ -7,6 +7,7 @@
 
 namespace Library {
 
+/*
     class CueFileInfo : public GameFileInfo {
         public:
         
@@ -18,7 +19,7 @@ namespace Library {
         private:
             QStringList files();
     };
-
+*/
 }
 
 

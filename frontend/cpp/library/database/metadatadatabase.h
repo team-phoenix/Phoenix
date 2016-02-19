@@ -37,10 +37,9 @@ namespace Library {
             static const QString tableReleases;
             static const QString tableRegions;
 
-
             static QSqlDatabase database();
-
             static void open();
+            static void close();
 
         private:
             MetaDataDatabase();

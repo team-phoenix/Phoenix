@@ -1,5 +1,7 @@
 #include "gamelauncher.h"
 
+#include "archivefile.h"
+
 using namespace Library;
 
 GameLauncher::GameLauncher( QObject *parent ) :
@@ -15,11 +17,11 @@ const QString GameLauncher::getDefaultCore( const QString system ) {
     delete model;
 
     const static QString statement = QStringLiteral( "SELECT defaultCore FROM defaultCores WHERE system = ?" );
-    auto query = QSqlQuery( UserDatabase::instance()->database() );
+    QSqlQuery query = QSqlQuery( UserDatabase::instance()->database() );
     query.prepare( statement );
     query.addBindValue( system );
 
-    auto exec = query.exec();
+    bool exec = query.exec();
     Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( query.lastError().text() ) );
 
     QString defaultCore;
@@ -66,7 +68,7 @@ QString GameLauncher::trimmedGame( QString game ) {
         game.remove( QStringLiteral( "cue://" ) );
     } else if( game.startsWith( QStringLiteral( "zip://" ) ) ) {
         game.remove( QStringLiteral( "zip://" ) );
-        auto nameList = game.split( Library::ArchiveFileInfo::delimiter() );
+        auto nameList = game.split( QStringLiteral( "|||" ) );
 
         auto baseDestName = nameList.at( 1 );
 
