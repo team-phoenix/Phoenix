@@ -8,7 +8,13 @@
 #include "librarytypes.h"
 #include "betterfuturewatcher.h"
 
+<<<<<<< HEAD
 #include <QObject>
+=======
+// Phoenix's game scanner takes advantage of MapReduce (and Qt's easy-to-use implementation of it) to efficiently and
+// asyncronously scan large numbers of files
+// This class holds the static methods and related structs used by the scanner to do its job
+>>>>>>> b7f35c54857c5d4bb60c416756a0ed37c476910c
 
 namespace Library {
 
@@ -92,6 +98,7 @@ namespace Library {
 
         public slots:
 
+<<<<<<< HEAD
             void slotEnumeratePath( QString path );
             void stepOneFinished( BetterFutureWatcher *betterWatcher);
             void stepTwoFinished( BetterFutureWatcher *betterWatcher );
@@ -100,11 +107,25 @@ namespace Library {
             void stepFourMapReduceFinished( BetterFutureWatcher *betterWatcher );
 
         private:
+=======
+        // Enumerate .bin files in each .cue file, return the list of .bin files without checking if the .bin files exist
+        // Prepend .bin file paths with directory .cue file resides in
+        static QStringList stepThreeMap( const FileEntry &filePath );
+
+        // Merge lists together into one main list
+        static void stepThreeReduce( QStringList &mergedList, const QStringList &givenList );
+>>>>>>> b7f35c54857c5d4bb60c416756a0ed37c476910c
 
             // Contains a list of file paths that have been obtained by scanning the file system.
 
+<<<<<<< HEAD
             FileList mFileList;
             QList<BetterFutureWatcher *> mWatcherList;
+=======
+        // Mark .bin files from main list that came from step 3's output as not needing to be scanned (cheaper than removing?)
+        // FIXME: This operation is O( stepThreeOutputCount * mainListCount ) ~= O( n^2 )... bad enough it should be its own step?
+        static FileList stepFourFilter( const QStringList &binList );
+>>>>>>> b7f35c54857c5d4bb60c416756a0ed37c476910c
 
             qreal mTotalProgess;
             int mFilesProcessing;
@@ -118,6 +139,12 @@ namespace Library {
 
     };
 
+<<<<<<< HEAD
 }
+=======
+    private:
+        GameScanner::FileList mFileList;
+};
+>>>>>>> b7f35c54857c5d4bb60c416756a0ed37c476910c
 
 #endif // GAMESCANNER_H
