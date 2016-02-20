@@ -4,125 +4,22 @@
 #include "frontendcommon.h"
 #include "archivefile.h"
 #include "betterfuturewatcher.h"
+#include "metadatadatabase.h"
+#include "librarytypes.h"
+#include "betterfuturewatcher.h"
 
 #include <QObject>
-#include <QFutureWatcher>
 
 namespace Library {
 
     // Phoenix's game scanner takes advantage of MapReduce (and Qt's easy-to-use implementation of it) to efficiently and
     // asyncronously scan large numbers of files
 
-    // Extra data that holds the result of the game scanner
-    enum GameScannerResult {
-        // Default value, not yet scanned
-        NotYetScanned,
-
-        // Hit against game database by hash or filename matching (TODO: separate?)
-        // Implies that the system UUID is known too
-        GameUUIDKnown,
-
-        // Hit against system database by extension (only one system uses the extension)
-        // systemUUIDs contains one element
-        SystemUUIDKnown,
-
-        // Hit against system database by extension (multiple systems use the extension)
-        // systemUUIDs contains two or more elements
-        MultipleSystemUUIDs,
-
-        // Miss against game and system database
-        SystemUUIDUnknown,
-
-        // Path is a .bin file that is listed in a valid .cue file. Paths marked with this value should not be scanned
-        // in step 4.
-        PartOfCueFile,
-    };
-
-    // A struct that attaches some basic metadata to a file path
-    struct FileEntry {
-        FileEntry()
-            : hasHashCached( false ),
-              romID( -1 ),
-              scannerResult( NotYetScanned )
-        {
-
-        }
-
-        // Absolute path to a file
-        QString filePath;
-
-        // CRC32 hash for matching against game database
-        QString crc32; // TODO: Use a more specific type to store the hash?
-
-        // Do we have a hash cached?
-        bool hasHashCached;
-
-        // system name retrieved from the OpenVBDB database during a metadata search.
-        QString openVGDBsystemName;
-
-        // The romID value that is used as a UUID for the OpenVGDB for games.
-        int romID;
-
-        // Database UUID
-        QString gameUUID;
-
-        // Displayed artwork url for frontend.
-        QString frontArtwork;
-
-        // Some extensions may map to multiple systems, keep a list in order to present this info to the user later
-        QStringList systemUUIDs;
-
-        // The result of the game scanner. Defines which of the above members have valid values
-        GameScannerResult scannerResult;
-    };
-
-    using FileList = QList<FileEntry>;
-
-    class BetterFutureWatcher : public QObject {
-        Q_OBJECT
-    public:
-        BetterFutureWatcher( QObject *parent = 0 )
-            : QObject( parent ),
-              mListIndex( -1 )
-        {
-            connect( &mWatcher, SIGNAL( finished() ), this, SLOT(slotInterceptFinished() ) );
-        }
-
-        void setFuture( const QFuture<FileList> &future, int index ) {
-            mWatcher.setFuture( future );
-            mListIndex = index;
-        }
-
-        QFutureWatcher<FileList> &futureWatcher() {
-            return mWatcher;
-        }
-
-        int listIndex() const
-        {
-            return mListIndex;
-        }
-
-    signals:
-        void finished( BetterFutureWatcher *watcher  );
-
-    public slots:
-        void slotInterceptFinished() {
-            emit finished( this );
-        }
-
-
-    private:
-        QFutureWatcher<FileList> mWatcher;
-        int mListIndex;
-
-    };
-
     class GameScanner : public QObject {
             Q_OBJECT
 
         public:
             explicit GameScanner( QObject *parent = 0 );
-
 
             enum SearchReason {
                 GetROMID,
@@ -131,6 +28,9 @@ namespace Library {
                 GetMetadata,
                 GetHeaders,
             };
+
+            qreal progress() const;
+            void setProgress( qreal progress );
 
             // Searches the OpenVGDB or the LibretroDB, in hopes of finding metadata.
             // The search reasons are listed in the enum. Most of these are used
@@ -188,6 +88,7 @@ namespace Library {
             static void stepFourReduce( FileList &mergedList, const FileList &givenEntry );
 
         signals:
+            void progressChanged( qreal );
 
         public slots:
 
@@ -204,6 +105,9 @@ namespace Library {
 
             FileList mFileList;
             QList<BetterFutureWatcher *> mWatcherList;
+
+            qreal mTotalProgess;
+            int mFilesProcessing;
 
             // Helpers
                 static QString getLastExecutedQuery( const QSqlQuery &query );

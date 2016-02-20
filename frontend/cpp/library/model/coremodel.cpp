@@ -13,6 +13,8 @@ CoreModel::CoreModel( QObject *parent )
 
     beginResetModel();
 
+    LibretroDatabase::open();
+
     auto systemDBQuery = QSqlQuery( LibretroDatabase::database() );
     auto execStatus = systemDBQuery.exec( QStringLiteral( "SELECT DISTINCT UUID, defaultCore FROM system "
                                                           "WHERE enabled = 1" ) );
@@ -30,7 +32,8 @@ CoreModel::CoreModel( QObject *parent )
         systemList.append( system );
     }
 
-    systemDBQuery.finish();
+    LibretroDatabase::close();
+
 
     systemList.sort( Qt::CaseInsensitive );
 

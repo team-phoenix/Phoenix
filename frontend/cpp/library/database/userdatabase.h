@@ -6,6 +6,22 @@
 #include "logging.h"
 #include "phxpaths.h"
 
+/*
+ * All Database classes will folow this interface.
+ * class Base
+    {
+    public:
+        Base() = delete;
+
+        static QSqlDatabase database() = 0;
+        static void open() = 0;
+        static void close() = 0;
+        static void addDatabase() = 0;
+        static void removeDatabase() = 0;
+    };
+ *
+ */
+
 namespace Library {
 
     class UserDatabase {

@@ -2,47 +2,51 @@
 #define METADATADATABASE_H
 
 #include "frontendcommon.h"
-
 #include "phxpaths.h"
 #include "logging.h"
 
-#define OPENVGDBTABLEROMS "ROMs"
-#define OPENVGDBTABLESYSTEMS "SYSTEMS"
-#define OPENVGDBTABLERELEASES "RELEASES"
-#define OPENVGDBTABLEREGIONS "REGIONS"
+#include <QMutex>
+
+/*
+ * All Database classes will folow this interface.
+ * class Base
+    {
+    public:
+        Base() = delete;
+
+        static QSqlDatabase database() = 0;
+        static void open() = 0;
+        static void close() = 0;
+        static void addDatabase() = 0;
+        static void removeDatabase() = 0;
+    };
+ *
+ */
 
 namespace Library {
 
-    // GameMetaData is used to set in metadata for any game during;
-    // this usually used after the append process.
-    struct GameMetaData {
-        QString artworkUrl;
-        QString goodToolsCode;
-        QString region;
-        QString developer;
-        QString releaseDate;
-        QString genre;
-        QString description;
-        QString title;
-        QString filePath;
-        QString identifier;
-        qreal progress;
-        bool updated;
-    };
-
     class MetaDataDatabase {
         public:
+
+            enum ThreadMode {
+                NeedsMutex,
+                NoMutex,
+            };
+
             static const QString tableRoms;
             static const QString tableSystems;
             static const QString tableReleases;
             static const QString tableRegions;
 
             static QSqlDatabase database();
-            static void open();
-            static void close();
+            static void open( const ThreadMode mode = NoMutex );
+            static void close( const ThreadMode mode = NoMutex );
+            static void addDatabase();
+            static void removeDatabase();
 
-        private:
-            MetaDataDatabase();
+            static QMutex mutex;
+
+
 
     };
 

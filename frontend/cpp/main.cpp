@@ -169,9 +169,9 @@ int main( int argc, char *argv[] ) {
     qInstallMessageHandler( phoenixDebugMessageLog );
 #endif
 
-    // Open connections to the SQL databases.
-    Library::LibretroDatabase::open();
-    //Library::MetaDataDatabase::open();
+    // Add database handles to the SQL database list.
+    Library::MetaDataDatabase::addDatabase();
+    Library::LibretroDatabase::addDatabase();
 
     // Necessary to quit properly
     QObject::connect( &engine, &QQmlApplicationEngine::quit, &app, &QGuiApplication::quit );

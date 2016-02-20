@@ -2,21 +2,48 @@
 
 using namespace Library;
 
+QMutex LibretroDatabase::mutex;
+
 QSqlDatabase LibretroDatabase::database() {
     return QSqlDatabase::database( QStringLiteral( "SYSTEMS" ) );
 }
 
-void LibretroDatabase::close() {
+void LibretroDatabase::close( const ThreadMode mode ) {
     if( QSqlDatabase::contains( QStringLiteral( "SYSTEMS" ) ) ) {
         qDebug( phxLibrary ) << "closing SYSTEM database";
         auto db = QSqlDatabase::database( QStringLiteral( "SYSTEMS" ) );
-        db.close();
-        QSqlDatabase::removeDatabase( QStringLiteral( "SYSTEMS" ) );
+        if ( db.isOpen() ) {
+            db.close();
+        }
+    }
+
+    if ( mode == ThreadMode::NeedsMutex ) {
+        mutex.unlock();
     }
 }
 
-void LibretroDatabase::open() {
-    auto db = QSqlDatabase::addDatabase( QStringLiteral( "QSQLITE" ), QStringLiteral( "SYSTEMS" ) );
+LibretroDatabase::addDatabase() {
+    QSqlDatabase::addDatabase( QStringLiteral( "QSQLITE" ), QStringLiteral( "SYSTEMS" ) );
+}
+
+LibretroDatabase::removeDatabase() {
+    QSqlDatabase::removeDatabase( QStringLiteral( "SYSTEMS" ) );
+}
+
+void LibretroDatabase::open( const ThreadMode mode ) {
+
+    if ( mode == ThreadMode::NeedsMutex ) {
+        mutex.lock();
+    }
+
+    {
+        QSqlDatabase db = QSqlDatabase::database( QStringLiteral( "SYSTEMS" ) );
+        if ( db.isOpen() && !db.databaseName().isEmpty() ) {
+            return;
+        }
+    }
+
+    QSqlDatabase db = QSqlDatabase::database( QStringLiteral( "SYSTEMS" ) );
 
     QString dataPathStr = PhxPaths::metadataLocation();
     Q_ASSERT_X( !dataPathStr.isEmpty(), Q_FUNC_INFO, "dataPathStr.isEmpty()" );

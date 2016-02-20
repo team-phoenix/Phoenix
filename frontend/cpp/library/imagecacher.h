@@ -13,6 +13,7 @@ namespace  Library {
 #else
     static const QString qmlFilePrefix = QStringLiteral( "file://" );
 #endif
+
     class ImageCacher : public QObject {
             Q_OBJECT
 

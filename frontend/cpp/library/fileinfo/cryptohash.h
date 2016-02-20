@@ -20,17 +20,7 @@ namespace Library {
 
             bool addData( QIODevice *device );
 
-            bool addData( const QString &filePath ) {
-                QFile file( filePath );
-                if ( file.open( QIODevice::ReadOnly ) ) {
-                    bool _result = addData( &file );
-                    file.close();
-
-                    return _result;
-                }
-
-                return false;
-            }
+            bool addData( const QString &filePath );
 
             QByteArray result() const;
 

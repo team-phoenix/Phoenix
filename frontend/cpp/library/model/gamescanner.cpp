@@ -10,13 +10,26 @@
 using namespace Library;
 
 GameScanner::GameScanner( QObject *parent )
-    : QObject( parent ) {
+    : QObject( parent ),
+      mTotalProgess( 0.0 ),
+      mFilesProcessing( 0 ) {
 
+}
+
+qreal GameScanner::progress() const
+{
+    return mTotalProgess;
+}
+
+void GameScanner::setProgress( qreal progress ) {
+    mTotalProgess = progress;
+    emit progressChanged( mTotalProgess );
 }
 
 bool GameScanner::isBios( QFileInfo &info, QString &trueBiosName ) {
 
     static const QString statement = QStringLiteral( "SELECT biosFile FROM firmware WHERE sha1 = ?" );
+
     QSqlQuery mLibretroQuery = QSqlQuery( LibretroDatabase::database() );
 
     QFile file( info.canonicalFilePath() );
@@ -58,46 +71,49 @@ bool GameScanner::searchDatabase( const SearchReason reason, FileEntry &fileEntr
 
             // Step 1. Search the OpenVGDB, by CRC32 checksum, for the romID of the game.
 
-            CryptoHash crc32Hash( CryptoHash::Crc32 );
-            if ( !crc32Hash.addData( fileEntry.filePath ) ) {
-                return false;
+            QSqlQuery openVGDBQuery( MetaDataDatabase::database() );
+
+            if ( fileEntry.hasHashCached ) {
+
+                openVGDBQuery.prepare( QStringLiteral( "SELECT romID FROM " )
+                                       % MetaDataDatabase::tableRoms
+                                       % QStringLiteral( " WHERE romHashCRC LIKE :mCrc32Checksum" ) );
+
+
+                openVGDBQuery.bindValue( QStringLiteral( ":mCrc32Checksum" ), fileEntry.crc32 );
+
+                bool exec = openVGDBQuery.exec();
+                Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( openVGDBQuery.lastError().text() % " -- " % getLastExecutedQuery( openVGDBQuery ) ) );
+
+                // If we found a match, ask OpenVGDB for the rest
+                if( openVGDBQuery.first() ) {
+                    fileEntry.gameMetadata.romID = openVGDBQuery.value( 0 ).toInt();
+                }
             }
 
-            QSqlQuery openVGDBQuery( MetaDataDatabase::database() );
-            bool exec = false;
 
-            openVGDBQuery.prepare( QStringLiteral( "SELECT romID FROM " OPENVGDBTABLEROMS " WHERE romHashCRC LIKE :mCrc32Checksum" ) );
-
-            fileEntry.hasHashCached = true;
-            fileEntry.crc32 = crc32Hash.result();
-
-            openVGDBQuery.bindValue( QStringLiteral( ":mCrc32Checksum" ), fileEntry.crc32 );
-
-            exec = openVGDBQuery.exec();
-            Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( openVGDBQuery.lastError().text() % " -- " % getLastExecutedQuery( openVGDBQuery ) ) );
-
-            // If we found a match, ask OpenVGDB for the rest
-            if( openVGDBQuery.first() ) {
-                fileEntry.romID = openVGDBQuery.value( 0 ).toInt();
-            } else { // So we didn't find the game by it's CRC32, now try to find it via the game's title, a.k.a. base name.
+            if ( fileEntry.gameMetadata.romID == -1 ) { // So we didn't find the game by it's CRC32, now try to find it via the game's title, a.k.a. base name.
                 QFileInfo file( fileEntry.filePath );
                 QString filename = file.fileName();
 
                 // Filename must be sanitized before being passed into an SQL query
-                openVGDBQuery.prepare( QStringLiteral( "SELECT romID FROM " OPENVGDBTABLEROMS " WHERE romFileName = :romFileName" ) );
+                openVGDBQuery.prepare( QStringLiteral( "SELECT romID FROM ")
+                                       % MetaDataDatabase::tableRoms
+                                       % QStringLiteral( " WHERE romFileName = :romFileName" ) );
+
                 openVGDBQuery.bindValue( QStringLiteral( ":romFileName" ), filename );
 
-                exec = openVGDBQuery.exec();
+                bool exec = openVGDBQuery.exec();
                 Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( openVGDBQuery.lastError().text() % " -- " % getLastExecutedQuery( openVGDBQuery ) ) );
 
                 if( openVGDBQuery.first() ) {
-                    fileEntry.romID = openVGDBQuery.value( 0 ).toInt();
+                    fileEntry.gameMetadata.romID = openVGDBQuery.value( 0 ).toInt();
                     //fillMetadataFromOpenVGDB( openVGDBQuery.value( 0 ).toInt(), openVGDBQuery );
                 }
             }
 
 
-            return fileEntry.romID != -1;
+            return fileEntry.gameMetadata.romID != -1;
 
         }
 
@@ -107,7 +123,7 @@ bool GameScanner::searchDatabase( const SearchReason reason, FileEntry &fileEntr
             // romID should be good here, if not try to find it in the database.
 
             //qDebug() << "Before UUID";
-            if ( fileEntry.romID == -1 && searchDatabase( GetROMID, fileEntry ) ) {
+            if ( fileEntry.gameMetadata.romID == -1 && searchDatabase( GetROMID, fileEntry ) ) {
                 return false;
             }
 
@@ -124,19 +140,19 @@ bool GameScanner::searchDatabase( const SearchReason reason, FileEntry &fileEntr
                                                "INNER JOIN RELEASES ON RELEASES.romID = ROMs.romID "
                                                "WHERE ROMs.romID = :romID" ) );
 
-            openVGDBQuery.bindValue( QStringLiteral( ":romID" ), fileEntry.romID );
+            openVGDBQuery.bindValue( QStringLiteral( ":romID" ), fileEntry.gameMetadata.romID );
 
             bool exec = openVGDBQuery.exec();
             Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( openVGDBQuery.lastError().text() % " -- " % getLastExecutedQuery( openVGDBQuery ) ) );
 
             if( openVGDBQuery.first() ) {
 
-                fileEntry.frontArtwork = openVGDBQuery.value( 0 ).toString();
+               fileEntry.gameMetadata.frontArtwork = openVGDBQuery.value( 0 ).toString();
 
             }
 
             // Give me my artwork! (...hopefully...)"
-            return !fileEntry.frontArtwork.isEmpty();
+            return !fileEntry.gameMetadata.frontArtwork.isEmpty();
         }
         case GetSystemUUID: {
 
@@ -144,7 +160,7 @@ bool GameScanner::searchDatabase( const SearchReason reason, FileEntry &fileEntr
 
             // If we can't find the romID, then we must search for the
             // system via headers and fuzzy title matching.
-            if ( fileEntry.romID == -1 && !searchDatabase( GetROMID, fileEntry ) ) {
+            if ( fileEntry.gameMetadata.romID == -1 && !searchDatabase( GetROMID, fileEntry ) ) {
                 return false;
             }
 
@@ -153,7 +169,7 @@ bool GameScanner::searchDatabase( const SearchReason reason, FileEntry &fileEntr
             QSqlQuery mLibretroQuery( LibretroDatabase::database() );
             mLibretroQuery.prepare( QStringLiteral( "SELECT UUID, enabled FROM system "
                                                     "WHERE openvgdbSystemName=:openvgdbSystemName" ) );
-            mLibretroQuery.bindValue( ":openvgdbSystemName", fileEntry.openVGDBsystemName );
+            mLibretroQuery.bindValue( ":openvgdbSystemName", fileEntry.gameMetadata.openVGDBsystemName );
 
             bool exec = mLibretroQuery.exec();
             Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( mLibretroQuery.lastError().text() % " -- " % mLibretroQuery.lastQuery() ) );
@@ -180,12 +196,9 @@ bool GameScanner::searchDatabase( const SearchReason reason, FileEntry &fileEntr
         }
 
         case GetMetadata: {
-
-            //qDebug() << "meta";
-            bool a = true;//= searchDatabase( GetROMID, fileEntry );
-            bool b = true;//searchDatabase( GetSystemUUID, fileEntry );
-            bool c = true;//searchDatabase( GetArtwork, fileEntry );
-            searchDatabase( GetArtwork, fileEntry );
+            bool a = searchDatabase( GetROMID, fileEntry );
+            bool b = searchDatabase( GetSystemUUID, fileEntry );
+            bool c = searchDatabase( GetArtwork, fileEntry );
             return ( a && b && c );
         }
 
@@ -333,6 +346,7 @@ bool GameScanner::stepFourFilter( const FileEntry &fileEntry ) {
     if ( info.suffix() == QStringLiteral( "bin" ) ) {
         // Check for bios, cache if bios is found
 
+        /*
         QString biosName;
         if ( GameScanner::isBios( info, biosName ) ) {
             qDebug() << "is an actual bios file";
@@ -342,6 +356,7 @@ bool GameScanner::stepFourFilter( const FileEntry &fileEntry ) {
                 //QFile::copy( canonicalFilePath(), file );
             //}
         }
+        */
 
         return false;
     }
@@ -360,23 +375,17 @@ FileList GameScanner::stepFourMap( const FileEntry &fileEntry ) {
     // If this returns false, then that means one of the ops failed.
     // I'm not sure which one, and at this stage I don't care.
 
-
-    static int i = 0;
-
-    i++;
-
-
-    qDebug() << i;
-
     FileEntry entry = fileEntry;
 
-    // Something fishy is going on here... I will find it!!!
-
-    GameScanner::searchDatabase( GetROMID, entry );
+    // Hash file
+    CryptoHash crc32Hash( CryptoHash::Crc32 );
+    if ( crc32Hash.addData( entry.filePath ) ) {
+        entry.hasHashCached = true;
+        entry.crc32 = crc32Hash.result();
+    }
 
     FileList list;
     list.append( entry );
-
 
     return list;
 }
@@ -475,32 +484,9 @@ void GameScanner::stepFourFilterFinished( BetterFutureWatcher *betterWatcher )
     mWatcherList.removeAt( betterWatcher->listIndex() );
     betterWatcher->deleteLater();
 
+    mFilesProcessing += fileList.size();
 
     qDebug() << "Step four filter finished: " << fileList.size();
-    // Start for step four, map reduce.
-
-    // step four being finished via standard iteration.
-    int i = 0;
-    for ( FileEntry &entry : fileList ) {
-        MetaDataDatabase::open();
-
-        searchDatabase( GetMetadata, entry );
-        ++i;
-
-        MetaDataDatabase::close();
-
-        qDebug() << ( i / static_cast<qreal>( fileList.length() ) ) * 100.0 << " : " << entry.filePath;
-
-        // Don't block the thread completely.
-        QCoreApplication::processEvents( QEventLoop::AllEvents );
-
-    }
-
-    qDebug() << "Finish Step 4 map reduce.";
-
-    /*
-    // This is the tricky map reduce code. Uncomment this to make step 4 run on thread pools, instead of a single thread.
-    // There is a mad issue with this method though. DO NOT TOUCH YET.
 
     BetterFutureWatcher *watcher = new BetterFutureWatcher( nullptr );
     QFuture<FileList> future = QtConcurrent::mappedReduced( fileList, GameScanner::stepFourMap, GameScanner::stepFourReduce );
@@ -510,23 +496,43 @@ void GameScanner::stepFourFilterFinished( BetterFutureWatcher *betterWatcher )
     watcher->setFuture( future, mWatcherList.size() );
     mWatcherList.append( watcher );
 
-    */
-
-
 }
 
 void GameScanner::stepFourMapReduceFinished( BetterFutureWatcher *betterWatcher )
 {
     FileList fileList = betterWatcher->futureWatcher().result();
-
     qDebug() << "Step four map reduce finished. " << fileList.size();
 
     // Basic cleanup, do not call 'delete', use 'deleteLater';
     mWatcherList.removeAt( betterWatcher->listIndex() );
     betterWatcher->deleteLater();
 
+    // step four being finished via standard iteration.
+
+    MetaDataDatabase::open();
+
+    int i = 0;
+    for ( FileEntry &entry : fileList ) {
+
+        searchDatabase( GetMetadata, entry );
+        ++i;
 
 
+        setProgress( ( i / static_cast<qreal>( mFilesProcessing ) ) * 100.0 );
+
+
+        qDebug() << progress() << " : " << entry.filePath;
+
+        // Don't block the thread completely.
+        QCoreApplication::processEvents( QEventLoop::AllEvents );
+
+    }
+
+    MetaDataDatabase::close();
+
+    mFilesProcessing -= fileList.size();
+
+    qDebug() << "Finish Step 4 map reduce.";
 
 }
 

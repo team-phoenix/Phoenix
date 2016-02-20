@@ -2,20 +2,28 @@
 
 using namespace Library;
 
-const QString MetaDataDatabase::tableRoms = QStringLiteral( OPENVGDBTABLEROMS );
-const QString MetaDataDatabase::tableSystems = QStringLiteral( OPENVGDBTABLESYSTEMS );
-const QString MetaDataDatabase::tableReleases = QStringLiteral( OPENVGDBTABLERELEASES );
-const QString MetaDataDatabase::tableRegions = QStringLiteral( OPENVGDBTABLEREGIONS );
+const QString MetaDataDatabase::tableRoms = QStringLiteral( "ROMs" );
+const QString MetaDataDatabase::tableSystems = QStringLiteral( "SYSTEMS" );
+const QString MetaDataDatabase::tableReleases = QStringLiteral( "RELEASES" );
+const QString MetaDataDatabase::tableRegions = QStringLiteral( "REGIONS" );
 
-void MetaDataDatabase::open() {
+QMutex MetaDataDatabase::mutex;
+
+void MetaDataDatabase::open( const ThreadMode mode ) {
+
+    if ( mode == ThreadMode::NeedsMutex ) {
+        mutex.lock();
+    }
+
     {
         QSqlDatabase db = QSqlDatabase::database( QStringLiteral( "METADATA" ) );
-        if ( db.isOpen() ) {
+        if ( db.isOpen() && !db.databaseName().isEmpty() ) {
             return;
         }
     }
 
-    QSqlDatabase db = QSqlDatabase::addDatabase( QStringLiteral( "QSQLITE" ), QStringLiteral( "METADATA" ) );
+    QSqlDatabase db = QSqlDatabase::database( QStringLiteral( "METADATA" ) );
+
 
     //#######################
     QString dataPathStr = PhxPaths::metadataLocation();
@@ -38,20 +46,28 @@ void MetaDataDatabase::open() {
 
 }
 
-void MetaDataDatabase::close() {
+void MetaDataDatabase::close( const ThreadMode mode ) {
+
     if( QSqlDatabase::contains( "METADATA" ) ) {
 
         // Must be scoped. QSql is real picky about this.
-        {
-            QSqlDatabase db = QSqlDatabase::database( QStringLiteral( "METADATA" ) );
-            qDebug() << "contains db : " << db.isOpen() << ", " << db.isValid();
-
+        QSqlDatabase db = QSqlDatabase::database( QStringLiteral( "METADATA" ) );
+        if ( db.isOpen() ) {
             db.close();
         }
-
-        //QSqlDatabase::removeDatabase( "METADATA" );
-
     }
+
+    if ( mode == ThreadMode::NeedsMutex ) {
+        mutex.unlock();
+    }
+}
+
+void MetaDataDatabase::addDatabase() {
+    QSqlDatabase::addDatabase( QStringLiteral( "QSQLITE" ), QStringLiteral( "METADATA" ) );
+}
+
+void MetaDataDatabase::removeDatabase() {
+    QSqlDatabase::removeDatabase( QStringLiteral( "METADATA" ) );
 }
 
 QSqlDatabase MetaDataDatabase::database() {
