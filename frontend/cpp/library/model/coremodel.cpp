@@ -17,7 +17,7 @@ CoreModel::CoreModel( QObject *parent )
 
     LibretroDatabase::open();
 
-    auto systemDBQuery = QSqlQuery( LibretroDatabase::database() );
+    QSqlQuery systemDBQuery = QSqlQuery( LibretroDatabase::database() );
     auto execStatus = systemDBQuery.exec( QStringLiteral( "SELECT DISTINCT UUID, defaultCore, friendlyName, manufacturer FROM system "
                                           "WHERE enabled = 1" ) );
     Q_ASSERT_X( execStatus, Q_FUNC_INFO, qPrintable( systemDBQuery.lastError().text() ) );
@@ -36,9 +36,6 @@ CoreModel::CoreModel( QObject *parent )
         systemList.append( system );
         systemFriendlyNameList.append( friendlyName.isEmpty() || friendlyName.isNull() ? QString( "" ) : QString( manufacturer % QStringLiteral( " - " ) % friendlyName ) );
     }
-
-    LibretroDatabase::close();
-
 
     systemList.sort( Qt::CaseInsensitive );
 
@@ -127,6 +124,9 @@ CoreModel::CoreModel( QObject *parent )
     // }
 
     endResetModel();
+
+    LibretroDatabase::close();
+
 
 }
 

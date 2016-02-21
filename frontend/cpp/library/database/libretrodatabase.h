@@ -46,8 +46,8 @@ namespace Library {
             static QSqlDatabase database();
             static void open( const ThreadMode mode = NoMutex );
             static void close( const ThreadMode mode = NoMutex );
-            static addDatabase();
-            static removeDatabase();
+            static void addDatabase();
+            static void removeDatabase();
 
             static QMutex mutex;
     };

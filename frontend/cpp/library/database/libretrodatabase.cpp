@@ -22,11 +22,11 @@ void LibretroDatabase::close( const ThreadMode mode ) {
     }
 }
 
-LibretroDatabase::addDatabase() {
+void LibretroDatabase::addDatabase() {
     QSqlDatabase::addDatabase( QStringLiteral( "QSQLITE" ), QStringLiteral( "SYSTEMS" ) );
 }
 
-LibretroDatabase::removeDatabase() {
+void LibretroDatabase::removeDatabase() {
     QSqlDatabase::removeDatabase( QStringLiteral( "SYSTEMS" ) );
 }
 
