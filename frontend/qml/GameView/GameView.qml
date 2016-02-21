@@ -24,11 +24,26 @@ Rectangle {
     property string artworkURL: "";
 
     // Object that handles the running game session
+
     CoreControl {
         id: coreControl;
         Component.onCompleted: {
             this.videoOutput = videoOutput;
             this.inputManager = root.inputManager;
+
+            if ( root.cmdLineArgs.coreFound() && root.cmdLineArgs.gameFound() ) {
+                var dict = {};
+                dict["type"] = "libretro";
+                dict["core"] = root.cmdLineArgs.coreName;
+                dict["game"] = root.cmdLineArgs.gameName;
+
+                coreControl.source = dict;
+
+                // Connect the next callback in the chain to be called once the load begins/ends
+                coreControl.stateChanged.connect( root.stateChangedCallback );
+
+                coreControl.load();
+            }
         }
 
         vsync: true;

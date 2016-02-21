@@ -22,6 +22,7 @@
 #include "core.h"
 #include "libretrocore.h"
 #include "videooutput.h"
+#include "cmdlineargs.h"
 
 // Misc
 #include "logging.h"
@@ -132,6 +133,8 @@ void phoenixDebugMessageLog( QtMsgType type, const QMessageLogContext &context, 
 
 int main( int argc, char *argv[] ) {
 
+    CmdLineArgs::checkArgs( argc, argv );
+
     // Init controller db file for backend
     Q_INIT_RESOURCE( controllerdb );
 
@@ -178,6 +181,7 @@ int main( int argc, char *argv[] ) {
 
     // Register our custom types for use within QML
     // VideoItem::registerTypes();
+    qmlRegisterType<CmdLineArgs>( "vg.phoenix.backend", 1, 0, "CmdLineArgs" );
     qmlRegisterType<VideoOutput>( "vg.phoenix.backend", 1, 0, "VideoOutput" );
     qmlRegisterType<CoreControlProxy>( "vg.phoenix.backend", 1, 0, "CoreControl" );
     qmlRegisterUncreatableType<ControlHelper>( "vg.phoenix.backend", 1, 0, "Control", "Control or its subclasses cannot be instantiated from QML." );

@@ -7,9 +7,9 @@ We've designed Phoenix with the hope that it'll be perfect for everyone, whether
 
 [![Build Status](https://secure.travis-ci.org/team-phoenix/Phoenix.png)](http://travis-ci.org/team-phoenix/Phoenix)
 
-<b>Phoenix is still under early development. Don't expect everything to work!<b>
+<b>Phoenix is still in early development. Don't expect everything to work!<b>
 
-![Screenshot](https://github.com/team-phoenix/Phoenix/raw/master/assets/Phoenix.gif)
+![Screenshot](https://github.com/team-phoenix/Designs/raw/gh-pages/Screenshots/screen.png)
 
 -----------
 
