@@ -113,6 +113,7 @@ namespace Library {
 
             FileList mFileList;
             QList<BetterFutureWatcher *> mWatcherList;
+            static QHash<QString, QHash<QString, QString>> mFirmwareMap;
 
             qreal mTotalProgess;
             int mFilesProcessing;

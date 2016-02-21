@@ -9,10 +9,38 @@
 
 using namespace Library;
 
+QHash<QString, QHash<QString, QString>> GameHasher::mFirmwareMap;
+
 GameHasher::GameHasher( QObject *parent )
     : QObject( parent ),
       mTotalProgess( 0.0 ),
       mFilesProcessing( 0 ) {
+
+    // Copy firmware sql table into a QHash. This is so we can use GameHasher::isBios() from a QtConcurrent::mappedReduce
+    // thread pool, without worrying about sync issues.
+    static const QString firmwareStatement = QStringLiteral( "SELECT system, biosFile, sha1, md5, region FROM firmware" );
+
+    LibretroDatabase::open();
+
+    QSqlQuery query = QSqlQuery( LibretroDatabase::database() );
+
+    bool exec = query.exec( firmwareStatement );
+    Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( query.lastError().text() ) );
+
+    if ( exec ) {
+        while ( query.next() ) {
+            QHash<QString,QString> map = {
+              { "system", query.value(0).toString() },
+              { "biosFile", query.value(1).toString() },
+              { "md5", query.value(3).toString() },
+              { "region", query.value(4).toString() },
+
+            };
+            GameHasher::mFirmwareMap.insert( query.value( 2 ).toString(), map );
+        }
+    }
+
+    LibretroDatabase::close();
 
 }
 
@@ -27,10 +55,6 @@ void GameHasher::setProgress( qreal progress ) {
 
 bool GameHasher::isBios( QFileInfo &info, QString &trueBiosName ) {
 
-    static const QString statement = QStringLiteral( "SELECT biosFile FROM firmware WHERE sha1 = ?" );
-
-    QSqlQuery mLibretroQuery = QSqlQuery( LibretroDatabase::database() );
-
     QFile file( info.canonicalFilePath() );
 
     // This file may fail to open if the file is in a zip file, or in a cue file.
@@ -43,23 +67,17 @@ bool GameHasher::isBios( QFileInfo &info, QString &trueBiosName ) {
     QCryptographicHash sha1( QCryptographicHash::Sha1 );
 
     sha1.addData( &file );
-    auto sha1Result = sha1.result().toHex().toUpper();
+    QString sha1Result = QString( sha1.result().toHex().toUpper() );
 
     file.close();
 
-    mLibretroQuery.prepare( statement );
-    mLibretroQuery.addBindValue( sha1Result );
-
-    auto exec = mLibretroQuery.exec();
-    Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( mLibretroQuery.lastError().text() ) );
-
-    if( mLibretroQuery.first() ) {
-        trueBiosName = mLibretroQuery.value( 0 ).toString();
-
-        return !trueBiosName.isEmpty();
+    QHash<QString,QString> firmwareMap = GameHasher::mFirmwareMap.value( sha1Result );
+    bool result = !firmwareMap.isEmpty();
+    if ( !firmwareMap.isEmpty() ) {
+        trueBiosName = firmwareMap.value( "biosFile" );
     }
 
-    return false;
+    return result;
 }
 
 bool GameHasher::searchDatabase( const SearchReason reason, FileEntry &fileEntry ) {
@@ -331,17 +349,15 @@ bool GameHasher::stepFourFilter( const FileEntry &fileEntry ) {
     if( info.suffix() == QStringLiteral( "bin" ) ) {
         // Check for bios, cache if bios is found
 
-        /*
         QString biosName;
-        if ( GameScanner::isBios( info, biosName ) ) {
+        if ( isBios( info, biosName ) ) {
             qDebug() << "is an actual bios file";
-            QString file = PhxPaths::firmwareLocation() + biosName + QStringLiteral( "." ) + info.suffix();
-            qDebug() << "File To cache: " << file;
-            //if( !QFile::exists( file ) ) {
-                //QFile::copy( canonicalFilePath(), file );
-            //}
+            QString cacheFile = PhxPaths::firmwareLocation() + biosName;
+            qDebug() << "File To cache: " << cacheFile;
+            if( !QFile::exists( cacheFile ) ) {
+                QFile::copy( info.canonicalFilePath(), cacheFile );
+            }
         }
-        */
 
         return false;
     }
