@@ -8,7 +8,6 @@
 #include "libretrodatabase.h"
 #include "logging.h"
 #include "phxpaths.h"
-#include "archivefileinfo.h"
 
 class GameLauncher : public QObject {
         Q_OBJECT

@@ -23,7 +23,7 @@ LibraryModel::LibraryModel( UserDatabase &db, QObject *parent )
       qmlRecursiveScan( true ),
       qmlProgress( 0.0 ) {
 
-    mGameScanner.moveToThread( &mGameScannerThread );
+    mGameHasher.moveToThread( &mGameScannerThread );
 
     mRoleNames = QSqlTableModel::roleNames();
     mRoleNames.insert( TitleRole, QByteArrayLiteral( "title" ) );
@@ -67,7 +67,7 @@ LibraryModel::LibraryModel( UserDatabase &db, QObject *parent )
 
     // Listen to the Worker Thread.
    // connect( &mGameScannerThread, &QThread::started, &mGameScanner, &GameScannerOld::eventLoopStarted );
-    connect( this, &LibraryModel::appendScanPath, &mGameScanner, &GameScanner::slotEnumeratePath );
+    connect( this, &LibraryModel::appendScanPath, &mGameHasher, &GameHasher::addPath );
     connect( &mGameScannerThread, &QThread::started, this, [ this ] {
         qCDebug( phxLibrary ) << "Game scanner thread started...";
     } );

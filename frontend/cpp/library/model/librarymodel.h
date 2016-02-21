@@ -4,8 +4,7 @@
 #include "frontendcommon.h"
 
 #include "userdatabase.h"
-#include "gamescannerold.h"
-#include "gamescanner.h"
+#include "gamehasher.h"
 #include "logging.h"
 
 namespace Library {
@@ -174,7 +173,7 @@ namespace Library {
             // a games folder. Currently, the thread quits whenever the
             // user cancels and import, or the import finishes.
             QThread mGameScannerThread;
-            GameScanner mGameScanner;
+            GameHasher mGameHasher;
 
             bool mFilterCollection;
             bool mTransaction;

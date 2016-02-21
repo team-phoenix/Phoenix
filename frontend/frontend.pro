@@ -64,7 +64,7 @@ include( deployment.pri )
 
     # Include our stuff
     INCLUDEPATH += ../backend ../backend/consumer ../backend/core ../backend/input ../backend/role ../backend/util
-    INCLUDEPATH += cpp cpp/library cpp/library/database cpp/library/fileinfo cpp/library/model cpp/theme
+    INCLUDEPATH += cpp cpp/library cpp/library/database cpp/library/fileinfo cpp/library/model cpp/library/scanner cpp/theme
 
     SOURCES += cpp/main.cpp \
                cpp/library/gamelauncher.cpp \
@@ -73,7 +73,6 @@ include( deployment.pri )
                cpp/library/database/libretrodatabase.cpp \
                cpp/library/database/metadatadatabase.cpp \
                cpp/library/database/userdatabase.cpp \
-               cpp/library/fileinfo/archivefileinfo.cpp \
                cpp/library/fileinfo/biosfileinfo.cpp \
                cpp/library/fileinfo/cryptohash.cpp \
                cpp/library/fileinfo/cuefileinfo.cpp \
@@ -82,14 +81,10 @@ include( deployment.pri )
                cpp/library/model/coremodel.cpp \
                cpp/library/model/librarymodel.cpp \
                cpp/library/model/platformsmodel.cpp \
-               cpp/library/model/gamescancontroller.cpp \
-               cpp/library/model/gamescancontrollerproxy.cpp \
-               cpp/library/model/futuremanager.cpp \
                cpp/library/cuefile.cpp \
                cpp/library/fileinfo/archivefile.cpp \
-    cpp/library/model/gamescannerold.cpp \
-    cpp/library/model/gamescanner.cpp \
-    cpp/library/betterfuturewatcher.cpp
+    cpp/library/betterfuturewatcher.cpp \
+    cpp/library/scanner/gamehasher.cpp
 
     HEADERS += cpp/library/gamelauncher.h \
                cpp/library/imagecacher.h \
@@ -97,7 +92,6 @@ include( deployment.pri )
                cpp/library/database/libretrodatabase.h \
                cpp/library/database/metadatadatabase.h \
                cpp/library/database/userdatabase.h \
-               cpp/library/fileinfo/archivefileinfo.h \
                cpp/library/fileinfo/biosfileinfo.h \
                cpp/library/fileinfo/cryptohash.h \
                cpp/library/fileinfo/cuefileinfo.h \
@@ -107,15 +101,11 @@ include( deployment.pri )
                cpp/library/model/librarymodel.h \
                cpp/library/model/platformsmodel.h \
                cpp/theme/phoenixtheme.h \
-               cpp/library/model/gamescancontroller.h \
-               cpp/library/model/gamescancontrollerproxy.h \
-               cpp/library/model/futuremanager.h \
                cpp/library/cuefile.h \
                cpp/library/fileinfo/archivefile.h \
-    cpp/library/model/gamescannerold.h \
-    cpp/library/model/gamescanner.h \
     cpp/library/librarytypes.h \
-    cpp/library/betterfuturewatcher.h
+    cpp/library/betterfuturewatcher.h \
+    cpp/library/scanner/gamehasher.h
 
     PRECOMPILED_HEADER = cpp/frontendcommon.h
 
