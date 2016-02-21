@@ -96,7 +96,7 @@ namespace Library {
             void progressChanged( qreal );
 
         public slots:
-            // Entry points, connect to these slots to begin game scanning process
+            // Entry points, connect to and invoke these slots to begin the game scanning process
             void addPath( QString path );
 
         private slots:
@@ -109,10 +109,13 @@ namespace Library {
             void stepFourMapReduceFinished( BetterFutureWatcher *betterWatcher );
 
         private:
-            // Contains a list of file paths that have been obtained by scanning the file system.
-
+            // A list of file paths that have been obtained by scanning the file system.
             FileList mFileList;
+
+            // Our custom way of keeping track of various scanning sessions via these sessions' watchers (BetterFutureWatchers)
             QList<BetterFutureWatcher *> mWatcherList;
+
+            // Maps SHA-1 checksums to a dictionary of metadata (other hashes, filename, system, region) for firmware (BIOS) files
             static QHash<QString, QHash<QString, QString>> mFirmwareMap;
 
             qreal mTotalProgess;

@@ -432,8 +432,10 @@ void GameHasher::stepOneFinished( BetterFutureWatcher *betterWatcher ) {
 void GameHasher::stepTwoFinished( BetterFutureWatcher *betterWatcher ) {
     FileList fileList = betterWatcher->futureWatcher().result();
 
+    int pivot = betterWatcher->listIndex();
+
     // Basic cleanup, do not call 'delete', use 'deleteLater';
-    mWatcherList.removeAt( betterWatcher->listIndex() );
+    mWatcherList.removeAt( pivot );
     betterWatcher->deleteLater();
 
     qDebug() << "Step two finished." << fileList.size();
@@ -446,13 +448,20 @@ void GameHasher::stepTwoFinished( BetterFutureWatcher *betterWatcher ) {
 
     watcher->setFuture( future, mWatcherList.size() );
     mWatcherList.append( watcher );
+
+    // Adjust stored index for each item in the list that has been moved by this list manipulation
+    for( BetterFutureWatcher *b : mWatcherList ) {
+        b->adjustIndex( pivot );
+    }
 }
 
 void GameHasher::stepThreeFinished( BetterFutureWatcher *betterWatcher ) {
     FileList fileList = betterWatcher->futureWatcher().result();
 
+    int pivot = betterWatcher->listIndex();
+
     // Basic cleanup, do not call 'delete', use 'deleteLater';
-    mWatcherList.removeAt( betterWatcher->listIndex() );
+    mWatcherList.removeAt( pivot );
     betterWatcher->deleteLater();
 
     qDebug() << "Step three finished. " << fileList.size();
@@ -465,13 +474,20 @@ void GameHasher::stepThreeFinished( BetterFutureWatcher *betterWatcher ) {
 
     watcher->setFuture( future, mWatcherList.size() );
     mWatcherList.append( watcher );
+
+    // Adjust stored index for each item in the list that has been moved by this list manipulation
+    for( BetterFutureWatcher *b : mWatcherList ) {
+        b->adjustIndex( pivot );
+    }
 }
 
 void GameHasher::stepFourFilterFinished( BetterFutureWatcher *betterWatcher ) {
     FileList fileList = betterWatcher->futureWatcher().result();
 
+    int pivot = betterWatcher->listIndex();
+
     // Basic cleanup, do not call 'delete', use 'deleteLater';
-    mWatcherList.removeAt( betterWatcher->listIndex() );
+    mWatcherList.removeAt( pivot );
     betterWatcher->deleteLater();
 
     mFilesProcessing += fileList.size();
@@ -485,16 +501,23 @@ void GameHasher::stepFourFilterFinished( BetterFutureWatcher *betterWatcher ) {
 
     watcher->setFuture( future, mWatcherList.size() );
     mWatcherList.append( watcher );
+
+    // Adjust stored index for each item in the list that has been moved by this list manipulation
+    for( BetterFutureWatcher *b : mWatcherList ) {
+        b->adjustIndex( pivot );
+    }
 }
 
 void GameHasher::stepFourMapReduceFinished( BetterFutureWatcher *betterWatcher ) {
     FileList fileList = betterWatcher->futureWatcher().result();
-    qDebug() << "Step four map reduce finished. " << fileList.size();
+
+    int pivot = betterWatcher->listIndex();
 
     // Basic cleanup, do not call 'delete', use 'deleteLater';
-    mWatcherList.removeAt( betterWatcher->listIndex() );
+    mWatcherList.removeAt( pivot );
     betterWatcher->deleteLater();
 
+    qDebug() << "Step four map reduce finished: " << fileList.size();
     // step four being finished via standard iteration.
 
     MetaDataDatabase::open();
@@ -517,7 +540,12 @@ void GameHasher::stepFourMapReduceFinished( BetterFutureWatcher *betterWatcher )
 
     mFilesProcessing -= fileList.size();
 
-    qDebug() << "Finish Step 4 map reduce.";
+    qDebug() << "Scan complete";
+
+    // Adjust stored index for each item in the list that has been moved by this list manipulation
+    for( BetterFutureWatcher *b : mWatcherList ) {
+        b->adjustIndex( pivot );
+    }
 }
 
 QString GameHasher::getLastExecutedQuery( const QSqlQuery &query ) {

@@ -27,6 +27,7 @@ namespace Library {
         QFutureWatcher<FileList> &futureWatcher();
 
         int listIndex() const;
+        void adjustIndex( int pivot );
 
     signals:
         void finished( BetterFutureWatcher *watcher  );
