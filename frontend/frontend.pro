@@ -84,7 +84,10 @@ include( deployment.pri )
                cpp/library/cuefile.cpp \
                cpp/library/fileinfo/archivefile.cpp \
     cpp/library/betterfuturewatcher.cpp \
-    cpp/library/scanner/gamehasher.cpp
+    cpp/library/scanner/gamehasher.cpp \
+    cpp/library/scanner/mapfunctor.cpp \
+    cpp/library/scanner/reducefunctor.cpp \
+    cpp/library/scanner/filterfunctor.cpp
 
     HEADERS += cpp/library/gamelauncher.h \
                cpp/library/imagecacher.h \
@@ -105,7 +108,10 @@ include( deployment.pri )
                cpp/library/fileinfo/archivefile.h \
     cpp/library/librarytypes.h \
     cpp/library/betterfuturewatcher.h \
-    cpp/library/scanner/gamehasher.h
+    cpp/library/scanner/gamehasher.h \
+    cpp/library/scanner/mapfunctor.h \
+    cpp/library/scanner/reducefunctor.h \
+    cpp/library/scanner/filterfunctor.h
 
     PRECOMPILED_HEADER = cpp/frontendcommon.h
 

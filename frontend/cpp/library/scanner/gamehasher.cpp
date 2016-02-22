@@ -4,43 +4,18 @@
 #include "libretrodatabase.h"
 #include "metadatadatabase.h"
 #include "cryptohash.h"
+#include "mapfunctor.h"
+#include "reducefunctor.h"
+#include "filterfunctor.h"
 
 #include <QtConcurrent>
 
 using namespace Library;
 
-QHash<QString, QHash<QString, QString>> GameHasher::mFirmwareMap;
-
 GameHasher::GameHasher( QObject *parent )
     : QObject( parent ),
       mTotalProgess( 0.0 ),
       mFilesProcessing( 0 ) {
-
-    // Copy firmware sql table into a QHash. This is so we can use GameHasher::isBios() from a QtConcurrent::mappedReduce
-    // thread pool, without worrying about sync issues.
-    static const QString firmwareStatement = QStringLiteral( "SELECT system, biosFile, sha1, md5, region FROM firmware" );
-
-    LibretroDatabase::open();
-
-    QSqlQuery query = QSqlQuery( LibretroDatabase::database() );
-
-    bool exec = query.exec( firmwareStatement );
-    Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( query.lastError().text() ) );
-
-    if ( exec ) {
-        while ( query.next() ) {
-            QHash<QString,QString> map = {
-              { "system", query.value(0).toString() },
-              { "biosFile", query.value(1).toString() },
-              { "md5", query.value(3).toString() },
-              { "region", query.value(4).toString() },
-
-            };
-            GameHasher::mFirmwareMap.insert( query.value( 2 ).toString(), map );
-        }
-    }
-
-    LibretroDatabase::close();
 
 }
 
@@ -51,33 +26,6 @@ qreal GameHasher::progress() const {
 void GameHasher::setProgress( qreal progress ) {
     mTotalProgess = progress;
     emit progressChanged( mTotalProgess );
-}
-
-bool GameHasher::isBios( QFileInfo &info, QString &trueBiosName ) {
-
-    QFile file( info.canonicalFilePath() );
-
-    // This file may fail to open if the file is in a zip file, or in a cue file.
-    // We can skip cue files, but may need to open zip files and examine..
-    // For now just assume it isnt a bios file.
-    if( !file.open( QIODevice::ReadOnly ) ) {
-        return false;
-    }
-
-    QCryptographicHash sha1( QCryptographicHash::Sha1 );
-
-    sha1.addData( &file );
-    QString sha1Result = QString( sha1.result().toHex().toUpper() );
-
-    file.close();
-
-    QHash<QString,QString> firmwareMap = GameHasher::mFirmwareMap.value( sha1Result );
-    bool result = !firmwareMap.isEmpty();
-    if ( !firmwareMap.isEmpty() ) {
-        trueBiosName = firmwareMap.value( "biosFile" );
-    }
-
-    return result;
 }
 
 bool GameHasher::searchDatabase( const SearchReason reason, FileEntry &fileEntry ) {
@@ -246,158 +194,10 @@ bool GameHasher::searchDatabase( const SearchReason reason, FileEntry &fileEntry
     return false;
 }
 
-FileList GameHasher::stepOneMap( const QString &path ) {
-
-    FileList filePathList;
-    QFileInfo dir( path );
-
-    qDebug() << "path: " << path;
-
-    if( dir.isFile() ) {
-        FileEntry entry;
-        entry.filePath = path;
-        filePathList.append( entry );
-        return filePathList;
-    }
-
-    // path is a file system directory past this point.
-    QDir directory( path );
-
-    if( !directory.exists() ) {
-        return FileList();
-    }
-
-    QDirIterator dirIter( path, QDir::Files, QDirIterator::NoIteratorFlags );
-
-    while( dirIter.hasNext() ) {
-        const QString filePath = dirIter.next();
-
-        if( QFile::exists( filePath ) ) {
-            FileEntry entry;
-            entry.filePath = filePath;
-            filePathList.append( entry );
-        }
-    }
-
-    return filePathList;
-}
-
-void GameHasher::stepOneReduce( FileList &mergedList, const FileList &givenList ) {
-    if( !givenList.isEmpty() ) {
-        mergedList.append( givenList );
-    }
-}
-
-FileList GameHasher::stepTwoMap( const FileEntry &filePath ) {
-    FileList filePathList;
-
-    QFileInfo info( filePath.filePath );
-
-    if( info.suffix() == QStringLiteral( "zip" ) ) {
-        // Expand and explore the zip file.
-
-        ArchiveFile::ParseData parsedData = ArchiveFile::parse( filePath.filePath );
-
-        for( QString &file : parsedData.enumeratedFiles ) {
-            FileEntry entry;
-            entry.filePath = file;
-            filePathList.append( entry );
-
-        }
-
-    } else {
-        filePathList.append( filePath );
-    }
-
-
-    return filePathList;
-}
-
-void GameHasher::stepTwoReduce( FileList &mergedList, const FileList &givenList ) {
-    mergedList.append( givenList );
-}
-
-FileList GameHasher::stepThreeMap( const FileEntry &entry )  {
-    FileList filePathList;
-
-    QFileInfo info( entry.filePath );
-
-    if( info.suffix() == QStringLiteral( "cue" ) ) {
-        // Explore the cue file.
-        qDebug() << "Found cue file: " << entry.filePath;
-        QStringList binFiles = CueFile::parse( entry.filePath );
-
-        for( QString binFile : binFiles ) {
-            FileEntry newEntry;
-            newEntry.filePath = binFile;
-            filePathList.append( newEntry );
-        }
-    } else {
-        filePathList.append( entry );
-    }
-
-    return filePathList;
-}
-
-void GameHasher::stepThreeReduce( FileList &mergedList, const FileList &givenList ) {
-    mergedList.append( givenList );
-}
-
-bool GameHasher::stepFourFilter( const FileEntry &fileEntry ) {
-    QFileInfo info( fileEntry.filePath );
-
-    if( info.suffix() == QStringLiteral( "bin" ) ) {
-        // Check for bios, cache if bios is found
-
-        QString biosName;
-        if ( isBios( info, biosName ) ) {
-            qDebug() << "is an actual bios file";
-            QString cacheFile = PhxPaths::firmwareLocation() + biosName;
-            qDebug() << "File To cache: " << cacheFile;
-            if( !QFile::exists( cacheFile ) ) {
-                QFile::copy( info.canonicalFilePath(), cacheFile );
-            }
-        }
-
-        return false;
-    }
-
-    return true;
-}
-
-void GameHasher::stepFourFilterReduce( FileList &mergedList, const FileEntry &givenList ) {
-    mergedList.append( givenList );
-}
-
-FileList GameHasher::stepFourMap( const FileEntry &fileEntry ) {
-    // Just go out and fill me all the data in at once.
-    // If this returns false, then that means one of the ops failed.
-    // I'm not sure which one, and at this stage I don't care.
-
-    FileEntry entry = fileEntry;
-
-    // Hash file
-    CryptoHash crc32Hash( CryptoHash::Crc32 );
-
-    if( crc32Hash.addData( entry.filePath ) ) {
-        entry.hasHashCached = true;
-        entry.crc32 = crc32Hash.result();
-    }
-
-    FileList list;
-    list.append( entry );
-
-    return list;
-}
-
-void GameHasher::stepFourReduce( FileList &mergedList, const FileList &givenEntry ) {
-    mergedList.append( givenEntry );
-}
-
 void GameHasher::addPath( QString path ) {
     BetterFutureWatcher *watcher = new BetterFutureWatcher( nullptr );
     QStringList dirs = QStringList( path );
-    QFuture<FileList> future = QtConcurrent::mappedReduced( dirs, GameHasher::stepOneMap, GameHasher::stepOneReduce );
+    QFuture<FileList> future = QtConcurrent::mappedReduced<FileList, QStringList>( dirs, MapFunctor( MapFunctor::One ), ReduceFunctor( ReduceFunctor::One ) );
 
     connect( watcher, &BetterFutureWatcher::finished, this, &GameHasher::stepOneFinished );
 
@@ -421,7 +221,7 @@ void GameHasher::stepOneFinished( BetterFutureWatcher *betterWatcher ) {
 
     // Start for step two
     BetterFutureWatcher *watcher = new BetterFutureWatcher( nullptr );
-    QFuture<FileList> future = QtConcurrent::mappedReduced( fileList, GameHasher::stepTwoMap, GameHasher::stepTwoReduce );
+    QFuture<FileList> future = QtConcurrent::mappedReduced<FileList, FileList>( fileList, MapFunctor( MapFunctor::Two ), ReduceFunctor( ReduceFunctor::Two ) );
 
     connect( watcher, &BetterFutureWatcher::finished, this, &GameHasher::stepTwoFinished );
 
@@ -442,7 +242,7 @@ void GameHasher::stepTwoFinished( BetterFutureWatcher *betterWatcher ) {
 
     // Start for step three
     BetterFutureWatcher *watcher = new BetterFutureWatcher( nullptr );
-    QFuture<FileList> future = QtConcurrent::mappedReduced( fileList, GameHasher::stepThreeMap, GameHasher::stepThreeReduce );
+    QFuture<FileList> future = QtConcurrent::mappedReduced<FileList, FileList>( fileList, MapFunctor( MapFunctor::Three ), ReduceFunctor( ReduceFunctor::Three ) );
 
     connect( watcher, &BetterFutureWatcher::finished, this, &GameHasher::stepThreeFinished );
 
@@ -468,7 +268,9 @@ void GameHasher::stepThreeFinished( BetterFutureWatcher *betterWatcher ) {
 
     // Start for step four, filterReduce.
     BetterFutureWatcher *watcher = new BetterFutureWatcher( nullptr );
-    QFuture<FileList> future = QtConcurrent::filteredReduced( fileList, GameHasher::stepFourFilter, GameHasher::stepFourFilterReduce );
+    QFuture<FileList> future = QtConcurrent::filteredReduced<FileList, FileList>( fileList
+                                                                                  , FilterFunctor( FilterFunctor::Four )
+                                                                                  , ReduceFunctor( ReduceFunctor::FourFilter ) );
 
     connect( watcher, &BetterFutureWatcher::finished, this, &GameHasher::stepFourFilterFinished );
 
@@ -495,7 +297,7 @@ void GameHasher::stepFourFilterFinished( BetterFutureWatcher *betterWatcher ) {
     qDebug() << "Step four filter finished: " << fileList.size();
 
     BetterFutureWatcher *watcher = new BetterFutureWatcher( nullptr );
-    QFuture<FileList> future = QtConcurrent::mappedReduced( fileList, GameHasher::stepFourMap, GameHasher::stepFourReduce );
+    QFuture<FileList> future = QtConcurrent::mappedReduced<FileList, FileList>( fileList, MapFunctor( MapFunctor::Four ), ReduceFunctor( ReduceFunctor::Four ) );
 
     connect( watcher, &BetterFutureWatcher::finished, this, &GameHasher::stepFourMapReduceFinished );
 
@@ -523,14 +325,13 @@ void GameHasher::stepFourMapReduceFinished( BetterFutureWatcher *betterWatcher )
     MetaDataDatabase::open();
 
     int i = 0;
-
     for( FileEntry &entry : fileList ) {
         searchDatabase( GetMetadata, entry );
         ++i;
 
         setProgress( ( i / static_cast<qreal>( mFilesProcessing ) ) * 100.0 );
 
-        qDebug() << progress() << " : " << entry.filePath;
+        qDebug() << progress();
 
         // Don't block the thread completely.
         QCoreApplication::processEvents( QEventLoop::AllEvents );
