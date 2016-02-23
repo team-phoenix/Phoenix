@@ -217,7 +217,6 @@ int main( int argc, char *argv[] ) {
         gameControllerDBFile.open( QIODevice::ReadWrite );
         QTextStream stream( &gameControllerDBFile );
         stream << "# Insert your custom definitions here" << endl;
-        gameControllerDBFile.close();
     }
 
     // Set InputManager's custom controller DB file

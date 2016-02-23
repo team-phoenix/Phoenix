@@ -85,8 +85,6 @@ void ImageCacher::handleRequest( QNetworkReply *reply ) {
                 setCachedUrl( std::move( QUrl( qmlFilePrefix + reply->property( "cachedAbsoluteFilePath" ).toString() ) ) );
             }
 
-            file.close();
-
         }
 
     }

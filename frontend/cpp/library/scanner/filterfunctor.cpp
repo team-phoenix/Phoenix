@@ -76,8 +76,6 @@ bool FilterFunctor::isBios( QFileInfo &info, QString &trueBiosName ) {
     sha1.addData( &file );
     QString sha1Result = QString( sha1.result().toHex().toUpper() );
 
-    file.close();
-
     QHash<QString,QString> firmwareMap = mFirmwareMap.value( sha1Result );
     bool result = !firmwareMap.isEmpty();
     if ( !firmwareMap.isEmpty() ) {

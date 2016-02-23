@@ -51,8 +51,6 @@ QStringList CueFile::parse( const QString &filePath ) {
 
     }
 
-    cueFile.close();
-
     return gameFiles;
 }
 

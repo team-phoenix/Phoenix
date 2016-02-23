@@ -94,10 +94,7 @@ void PhxPaths::initPaths() {
 
     // Determine whether or not we're portable
     QString portableFilename = PhxPaths::mBinLocation % '/' % "PHOENIX-PORTABLE";
-    QFile file( portableFilename );
-    mPortableMode = file.exists();
-
-    if( mPortableMode ) {
+    if( QFile::exists( portableFilename ) ) {
         qCDebug( phxLibrary ) << "Portable mode";
         PhxPaths::mResourceLocation = PhxPaths::mBinLocation;
         PhxPaths::mCoreLocation = PhxPaths::mBinLocation % '/' % QStringLiteral( "Cores" );
