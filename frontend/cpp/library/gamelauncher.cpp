@@ -40,7 +40,7 @@ const QString GameLauncher::getDefaultCore( const QString system ) {
     defaultCore = PhxPaths::coreLocation() % QStringLiteral( "/" ) % defaultCore % QStringLiteral( ".so" );
 #endif
 
-    return std::move( defaultCore );
+    return defaultCore;
 }
 
 bool GameLauncher::verify( const QString system, QString rom ) {

@@ -208,11 +208,11 @@ void LibraryModel::sync() {
 }
 
 void LibraryModel::handleDraggedUrls( QList<QUrl> urls ) {
-    emit draggedUrls( std::move( urls ) );
+    emit draggedUrls( urls );
 }
 
 void LibraryModel::handleContainsDrag( const bool contains ) {
-    emit containsDrag( std::move( contains ) );
+    emit containsDrag( contains );
 }
 
 void LibraryModel::handleDroppedUrls() {
@@ -430,7 +430,7 @@ QString LibraryModel::createFilter() {
         }
     }
 
-    return std::move( newFilter );
+    return newFilter;
 }
 
 int LibraryModel::count() const {
@@ -484,7 +484,7 @@ void LibraryModel::scanFolder( const QUrl url ) {
     }
 
     emit appendScanPath( localUrl );
-    //emit insertGames( std::move( localUrl ), autoStart );
+    //emit insertGames( localUrl, autoStart );
     emit startScan();
 
 }

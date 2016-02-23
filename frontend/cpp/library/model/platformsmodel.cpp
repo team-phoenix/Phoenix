@@ -25,7 +25,7 @@ PlatformsModel::PlatformsModel( QObject *parent )
             UUID[1] = manufacturer + " - " + friendlyName;
         }
 
-        mPlatformsList.append( std::move( UUID ) );
+        mPlatformsList.append( UUID );
     }
 
     LibretroDatabase::close();
