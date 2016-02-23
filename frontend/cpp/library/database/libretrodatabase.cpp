@@ -4,14 +4,25 @@ using namespace Library;
 
 QMutex LibretroDatabase::mutex;
 
-QSqlDatabase LibretroDatabase::database() {
-    return QSqlDatabase::database( QStringLiteral( "SYSTEMS" ) );
+LibretroDatabase::LibretroDatabase()
+    : LibretroDatabase( NoMutex )
+{
+}
+
+LibretroDatabase::LibretroDatabase(const LibretroDatabase::ThreadMode mode)
+    : mMode( mode ) {
+    open( mMode );
+}
+
+LibretroDatabase::~LibretroDatabase()
+{
+    close( mMode );
 }
 
 void LibretroDatabase::close( const ThreadMode mode ) {
     if( QSqlDatabase::contains( QStringLiteral( "SYSTEMS" ) ) ) {
         qDebug( phxLibrary ) << "closing SYSTEM database";
-        auto db = QSqlDatabase::database( QStringLiteral( "SYSTEMS" ) );
+        QSqlDatabase db = database();
         if ( db.isOpen() ) {
             db.close();
         }
@@ -30,6 +41,11 @@ void LibretroDatabase::removeDatabase() {
     QSqlDatabase::removeDatabase( QStringLiteral( "SYSTEMS" ) );
 }
 
+QSqlDatabase LibretroDatabase::database() const
+{
+    return QSqlDatabase::database( QStringLiteral( "SYSTEMS" ) );
+}
+
 void LibretroDatabase::open( const ThreadMode mode ) {
 
     if ( mode == ThreadMode::NeedsMutex ) {
@@ -37,25 +53,25 @@ void LibretroDatabase::open( const ThreadMode mode ) {
     }
 
     {
-        QSqlDatabase db = QSqlDatabase::database( QStringLiteral( "SYSTEMS" ) );
+        QSqlDatabase db = database();
         if ( db.isOpen() && !db.databaseName().isEmpty() ) {
             return;
         }
     }
 
-    QSqlDatabase db = QSqlDatabase::database( QStringLiteral( "SYSTEMS" ) );
+    QSqlDatabase db = database();
 
     QString dataPathStr = PhxPaths::metadataLocation();
     Q_ASSERT_X( !dataPathStr.isEmpty(), Q_FUNC_INFO, "dataPathStr.isEmpty()" );
 
     QDir dataPath( dataPathStr );
 
-    auto databaseName = QStringLiteral( "libretro.sqlite" );
-    auto filePath = dataPath.filePath( databaseName );
+    QString databaseName = QStringLiteral( "libretro.sqlite" );
+    QString filePath = dataPath.filePath( databaseName );
 
     db.setDatabaseName( filePath );
 
-    auto open = db.open();
+    bool open = db.open();
     Q_ASSERT_X( open, Q_FUNC_INFO, "db.open() == false" ) ;
 
     qCDebug( phxLibrary, "Opening library database %s", qPrintable( db.databaseName() ) );

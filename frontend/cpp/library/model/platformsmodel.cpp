@@ -5,9 +5,9 @@ using namespace Library;
 PlatformsModel::PlatformsModel( QObject *parent )
     : QAbstractListModel( parent ) {
 
-    LibretroDatabase::open();
+    LibretroDatabase libretroDatabase;
 
-    QSqlQuery query = QSqlQuery( LibretroDatabase::database() );
+    QSqlQuery query = QSqlQuery( libretroDatabase );
 
     bool exec = query.exec( QStringLiteral( "SELECT DISTINCT UUID, friendlyName, shortName, manufacturer FROM system WHERE enabled=1 ORDER BY UUID ASC" ) );
     Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( query.lastError().text() ) );
@@ -27,8 +27,6 @@ PlatformsModel::PlatformsModel( QObject *parent )
 
         mPlatformsList.append( UUID );
     }
-
-    LibretroDatabase::close();
 
     // Just sort the list so it looks pretty. This shouldn't take that long. There aren't
     // that many platforms.

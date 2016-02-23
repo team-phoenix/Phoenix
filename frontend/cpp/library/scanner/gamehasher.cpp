@@ -123,8 +123,9 @@ bool GameHasher::searchDatabase( const SearchReason reason, FileEntry &fileEntry
             }
 
 
+            LibretroDatabase libretroDatabase;
 
-            QSqlQuery mLibretroQuery( LibretroDatabase::database() );
+            QSqlQuery mLibretroQuery( libretroDatabase );
             mLibretroQuery.prepare( QStringLiteral( "SELECT UUID, enabled FROM system "
                                                     "WHERE openvgdbSystemName=:openvgdbSystemName" ) );
             mLibretroQuery.bindValue( ":openvgdbSystemName", fileEntry.gameMetadata.openVGDBsystemName );

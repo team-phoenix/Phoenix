@@ -1,4 +1,5 @@
 #include "coremodel.h"
+#include "libretromodel.h"
 
 using namespace Library;
 
@@ -15,9 +16,9 @@ CoreModel::CoreModel( QObject *parent )
 
     beginResetModel();
 
-    LibretroDatabase::open();
+    LibretroDatabase libretroDatabase;
 
-    QSqlQuery systemDBQuery = QSqlQuery( LibretroDatabase::database() );
+    QSqlQuery systemDBQuery = QSqlQuery( libretroDatabase );
     auto execStatus = systemDBQuery.exec( QStringLiteral( "SELECT DISTINCT UUID, defaultCore, friendlyName, manufacturer FROM system "
                                           "WHERE enabled = 1" ) );
     Q_ASSERT_X( execStatus, Q_FUNC_INFO, qPrintable( systemDBQuery.lastError().text() ) );
@@ -124,9 +125,6 @@ CoreModel::CoreModel( QObject *parent )
     // }
 
     endResetModel();
-
-    LibretroDatabase::close();
-
 
 }
 

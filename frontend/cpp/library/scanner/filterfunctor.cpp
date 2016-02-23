@@ -14,9 +14,9 @@ FilterFunctor::FilterFunctor( const Step step )
     if ( mFirmwareMap.isEmpty() ) {
         static const QString firmwareStatement = QStringLiteral( "SELECT system, biosFile, sha1, md5, region FROM firmware" );
 
-        LibretroDatabase::open();
+        LibretroDatabase libretroDatabase;
 
-        QSqlQuery query = QSqlQuery( LibretroDatabase::database() );
+        QSqlQuery query = QSqlQuery( libretroDatabase );
 
         bool exec = query.exec( firmwareStatement );
         Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( query.lastError().text() ) );
@@ -34,7 +34,6 @@ FilterFunctor::FilterFunctor( const Step step )
             }
         }
 
-        LibretroDatabase::close();
     }
 }
 

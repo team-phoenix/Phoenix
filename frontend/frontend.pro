@@ -87,7 +87,8 @@ include( deployment.pri )
     cpp/library/scanner/gamehasher.cpp \
     cpp/library/scanner/mapfunctor.cpp \
     cpp/library/scanner/reducefunctor.cpp \
-    cpp/library/scanner/filterfunctor.cpp
+    cpp/library/scanner/filterfunctor.cpp \
+    cpp/library/model/libretromodel.cpp
 
     HEADERS += cpp/library/gamelauncher.h \
                cpp/library/imagecacher.h \
@@ -111,7 +112,8 @@ include( deployment.pri )
     cpp/library/scanner/gamehasher.h \
     cpp/library/scanner/mapfunctor.h \
     cpp/library/scanner/reducefunctor.h \
-    cpp/library/scanner/filterfunctor.h
+    cpp/library/scanner/filterfunctor.h \
+    cpp/library/model/libretromodel.h
 
     PRECOMPILED_HEADER = cpp/frontendcommon.h
 

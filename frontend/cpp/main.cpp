@@ -9,6 +9,7 @@
 #include "librarymodel.h"
 #include "coremodel.h"
 #include "platformsmodel.h"
+#include "libretromodel.h"
 
 // Backend
 #include "control.h"
@@ -174,6 +175,8 @@ int main( int argc, char *argv[] ) {
     // Add database handles to the SQL database list.
     Library::MetaDataDatabase::addDatabase();
     Library::LibretroDatabase::addDatabase();
+
+    Library::LibretroModel model();
 
     // Necessary to quit properly
     QObject::connect( &engine, &QQmlApplicationEngine::quit, &app, &QGuiApplication::quit );

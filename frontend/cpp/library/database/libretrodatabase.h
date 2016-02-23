@@ -40,16 +40,33 @@ namespace Library {
                 NoMutex,
             };
 
+            LibretroDatabase();
 
-            LibretroDatabase() = delete;
+            LibretroDatabase( const ThreadMode mode );
 
-            static QSqlDatabase database();
-            static void open( const ThreadMode mode = NoMutex );
-            static void close( const ThreadMode mode = NoMutex );
+            ~LibretroDatabase();
+
+            //operator QSqlDatabase() const
+           // {
+            //    return database();
+           // }
+
+            explicit operator QSqlQuery() {
+                return QSqlQuery( database() );
+            }
+
+            QSqlDatabase database() const;
+
+            void open( const ThreadMode mode = NoMutex );
+            void close( const ThreadMode mode = NoMutex );
+
             static void addDatabase();
             static void removeDatabase();
 
             static QMutex mutex;
+
+    private:
+            ThreadMode mMode;
     };
 
 }
