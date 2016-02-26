@@ -141,7 +141,7 @@ int main( int argc, char *argv[] ) {
     // Uncomment this to enable the message handler for debugging and stack tracing
     // qInstallMessageHandler( phoenixDebugMessageHandler );
 
-    QThread::currentThread()->setObjectName( "Main thread" );
+    QThread::currentThread()->setObjectName( "Main/QML thread" );
 
     // Handles stuff with the windowing system
     QGuiApplication app( argc, argv );
