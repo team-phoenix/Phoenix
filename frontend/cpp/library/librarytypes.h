@@ -2,6 +2,7 @@
 #define LIBRARYTYPES
 
 #include <QList>
+#include <QMetaType>
 
 namespace Library {
 
@@ -69,6 +70,20 @@ namespace Library {
 
         }
 
+        FileEntry( const FileEntry &other ) {
+            filePath = other.filePath;
+            crc32 = other.crc32;
+            hasHashCached = other.hasHashCached;
+            gameUUID = other.gameUUID;
+            systemUUIDs = other.systemUUIDs;
+            scannerResult = other.scannerResult;
+            gameMetadata = other.gameMetadata;
+        }
+
+        ~FileEntry() {
+
+        }
+
         // Absolute path to a file
         QString filePath;
 
@@ -94,6 +109,11 @@ namespace Library {
     using FileList = QList<FileEntry>;
 
 }
+
+using namespace Library;
+Q_DECLARE_METATYPE( FileEntry )
+
+
 
 #endif // LIBRARYTYPES
 

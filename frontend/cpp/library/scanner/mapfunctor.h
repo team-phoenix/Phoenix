@@ -43,7 +43,17 @@ namespace Library {
             Four,
         };
 
+        enum SearchReason {
+            GetROMID,
+            GetArtwork,
+            GetSystemUUID,
+            GetMetadata,
+            GetHeaders,
+        };
+
         MapFunctor( const Step step );
+
+        bool searchDatabase( const SearchReason reason, FileEntry &fileEntry );
 
         // This alias is needed by QtConcurrent in order to use a
         // functor. The result of the operator() must have an alias
@@ -51,11 +61,13 @@ namespace Library {
 
         using result_type = FileList;
         FileList operator()( const FileEntry &entry );
-
         FileList operator()( const QString &path );
 
     private:
         Step mStep;
+
+        QString getLastExecutedQuery( const QSqlQuery &query );
+
     };
 
 }

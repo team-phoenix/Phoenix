@@ -70,6 +70,8 @@ namespace Library {
 
         public slots:
 
+            void setProgress( const qreal progress );
+
             // Removes 1 row from the SQL model.
             // bool remove( int row, int count = 1 );
 
@@ -130,6 +132,9 @@ namespace Library {
             // This needs to be run on the main thread.
             //void handleUpdateGame( const GameData metaData );
 
+            void handleFileReady( FileEntry entry );
+            void handleProgressChanged();
+
         signals:
 
             void startScan();
@@ -185,9 +190,6 @@ namespace Library {
             bool qmlRecursiveScan;
             qreal qmlProgress;
             QString qmlMessage;
-
-            // QML Setters
-            void setProgress( const qreal progress );
 
             // Normal Setters
             QString createFilter();

@@ -63,6 +63,35 @@ namespace Library {
             static void addDatabase();
             static void removeDatabase();
 
+            static void addConnection( const QString &name ) {
+                if ( !QSqlDatabase::contains( name ) ) {
+                    qDebug() << "Added connection";
+
+
+
+                    QSqlDatabase db = QSqlDatabase::addDatabase( QStringLiteral( "QSQLITE" ), name );
+
+                    QString dataPathStr = PhxPaths::metadataLocation();
+                    Q_ASSERT_X( !dataPathStr.isEmpty(), Q_FUNC_INFO, "dataPathStr.isEmpty()" );
+
+                    QDir dataPath( dataPathStr );
+
+                    QString databaseName = QStringLiteral( "libretro.sqlite" );
+                    QString filePath = dataPath.filePath( databaseName );
+
+                    db.setDatabaseName( filePath );
+
+                    //bool open = db.open();
+                    //Q_ASSERT_X( open, Q_FUNC_INFO, "db.open() == false" ) ;
+
+                    //qCDebug( phxLibrary, "Opening library database %s", qPrintable( db.databaseName() ) );
+                }
+            }
+
+            static QSqlDatabase connection( const QString &name ) {
+                return QSqlDatabase::database( name );
+            }
+
             static QMutex mutex;
 
     private:

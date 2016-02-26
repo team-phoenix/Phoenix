@@ -10,6 +10,7 @@
 #include "coremodel.h"
 #include "platformsmodel.h"
 #include "libretromodel.h"
+#include "librarytypes.h"
 
 // Backend
 #include "control.h"
@@ -28,6 +29,8 @@
 #include "logging.h"
 #include "phxpaths.h"
 #include "controlhelper.h"
+
+using namespace Library;
 
 // Version string helper
 #define xstr(s) str(s)
@@ -195,6 +198,8 @@ int main( int argc, char *argv[] ) {
     qRegisterMetaType<size_t>( "size_t" );
     qRegisterMetaType<QStringMap>();
     qRegisterMetaType<ProducerFormat>();
+
+    qRegisterMetaType<Library::FileEntry>( "FileEntry" );
 
     // Register our custom QML-accessable/instantiable objects
     qmlRegisterType<Library::PlatformsModel>( "vg.phoenix.models", 1, 0, "PlatformsModel" );

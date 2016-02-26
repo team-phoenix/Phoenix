@@ -25,7 +25,9 @@ qreal GameHasher::progress() const {
 
 void GameHasher::setProgress( qreal progress ) {
     mTotalProgess = progress;
-    emit progressChanged( mTotalProgess );
+    if ( static_cast<int>( progress ) % 5 == 0 || progress == 100.0 ) {
+        emit progressChanged( mTotalProgess );
+    }
 }
 
 bool GameHasher::searchDatabase( const SearchReason reason, FileEntry &fileEntry ) {
@@ -93,7 +95,7 @@ bool GameHasher::searchDatabase( const SearchReason reason, FileEntry &fileEntry
 
             QSqlQuery openVGDBQuery( MetaDataDatabase::database() );
 
-            openVGDBQuery.prepare( QStringLiteral( "SELECT RELEASES.releaseCoverFront FROM ROMs "
+            openVGDBQuery.prepare( QStringLiteral( "SELECT RELEASES.releaseCoverFront, RELEASES.releaseTitleName FROM ROMs "
                                                    "INNER JOIN SYSTEMS ON SYSTEMS.systemID = ROMs.systemID "
                                                    "INNER JOIN RELEASES ON RELEASES.romID = ROMs.romID "
                                                    "WHERE ROMs.romID = :romID" ) );
@@ -106,6 +108,7 @@ bool GameHasher::searchDatabase( const SearchReason reason, FileEntry &fileEntry
             if( openVGDBQuery.first() ) {
 
                 fileEntry.gameMetadata.frontArtwork = openVGDBQuery.value( 0 ).toString();
+                fileEntry.gameMetadata.title = openVGDBQuery.value( 1 ).toString();
 
             }
 
@@ -323,6 +326,7 @@ void GameHasher::stepFourMapReduceFinished( BetterFutureWatcher *betterWatcher )
     qDebug() << "Step four map reduce finished: " << fileList.size();
     // step four being finished via standard iteration.
 
+    /*
     MetaDataDatabase::open();
 
     int i = 0;
@@ -332,13 +336,14 @@ void GameHasher::stepFourMapReduceFinished( BetterFutureWatcher *betterWatcher )
 
         setProgress( ( i / static_cast<qreal>( mFilesProcessing ) ) * 100.0 );
 
-        qDebug() << progress();
+        //emit fileReady( entry );
 
         // Don't block the thread completely.
         QCoreApplication::processEvents( QEventLoop::AllEvents );
     }
 
     MetaDataDatabase::close();
+    */
 
     mFilesProcessing -= fileList.size();
 
