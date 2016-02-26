@@ -68,6 +68,9 @@ LibraryModel::LibraryModel( UserDatabase &db, QObject *parent )
     // Listen to the Worker Thread.
    // connect( &mGameScannerThread, &QThread::started, &mGameScanner, &GameScannerOld::eventLoopStarted );
     connect( this, &LibraryModel::appendScanPath, &mGameHasher, &GameHasher::addPath );
+    connect( &mGameHasher, &GameHasher::fileReady, this, &LibraryModel::handleFileReady );
+    connect( &mGameHasher, &GameHasher::progressChanged, this, &LibraryModel::setProgress );
+    connect( this, &LibraryModel::progressChanged, this, &LibraryModel::handleProgressChanged );
     connect( &mGameScannerThread, &QThread::started, this, [ this ] {
         qCDebug( phxLibrary ) << "Game scanner thread started...";
     } );
@@ -244,6 +247,75 @@ void LibraryModel::stopGameScannerThread() {
         //mGameScanner.setInsertCancelled( true );
         mGameScannerThread.quit();
         mGameScannerThread.wait();
+    }
+}
+
+void LibraryModel::handleFileReady( FileEntry entry ) {
+
+    static const QString statement = QStringLiteral( "INSERT INTO " )
+                                  + UserDatabase::tableName
+                                  + QStringLiteral( " (title, system, absoluteFilePath, timePlayed, crc32Checksum, artworkUrl) " )
+                                  + QStringLiteral( "VALUES (?,?,?,?,?,?)" );
+
+
+    //if( insertCancelled() ) {
+       // setMessage( QStringLiteral( "" ) );
+    //    //database().rollback();
+   //     return;
+    //}
+
+
+    //mGameScanner.setResumeInsertID( importData.filePath );
+
+
+    QSqlQuery query( database() );
+
+    query.prepare( statement );
+    query.addBindValue( entry.gameMetadata.title);
+    query.addBindValue( entry.scannerResult == GameScannerResult::SystemUUIDKnown ?  entry.systemUUIDs.first() : QStringLiteral( "Unknown" ) );
+
+    query.addBindValue( entry.filePath );
+    query.addBindValue( "0:00" );
+    query.addBindValue( entry.crc32 );
+    query.addBindValue( entry.gameMetadata.frontArtwork );
+
+    if( !query.exec() ) {
+        qDebug() << "SQL Insertion Error: " << query.lastError().text() << query.lastQuery();
+    }
+
+
+    //if( static_cast<int>( progress() ) == 100 ) {
+
+        //mGameScanner.setResumeInsertID( "" );
+       // mGameScanner.setResumeDirectory( "" );
+
+        //setProgress( 0.0 );
+        //setMessage( QStringLiteral( "Import Synced..." ) );
+
+        //sync();
+
+        //updateCount();
+
+        //endInsertRows();
+
+    //}
+
+}
+
+void LibraryModel::handleProgressChanged() {
+
+    qDebug() << progress();
+
+    if ( progress() == 0.0 ) {
+        setMessage( QStringLiteral( "Importing..." ) );
+        transaction();
+    }
+
+    if ( progress() == 100.0 ) {
+        //sync();
+        submitAll();
+        updateCount();
+        setMessage( QStringLiteral( "Import Finished..." ) );
     }
 }
 

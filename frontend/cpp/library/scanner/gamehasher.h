@@ -43,7 +43,8 @@ namespace Library {
             static bool searchDatabase( const SearchReason reason, FileEntry &fileEntry );
 
         signals:
-            void progressChanged( qreal );
+            void progressChanged( const qreal progress );
+            void fileReady( FileEntry entry );
 
         public slots:
             // Entry points, connect to and invoke these slots to begin the game scanning process

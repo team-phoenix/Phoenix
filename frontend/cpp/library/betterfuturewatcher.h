@@ -31,6 +31,7 @@ namespace Library {
 
     signals:
         void finished( BetterFutureWatcher *watcher  );
+        void progress( qreal progress );
 
     public slots:
         void slotInterceptFinished();
