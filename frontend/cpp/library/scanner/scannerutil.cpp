@@ -6,6 +6,7 @@ void Library::setBackgroundIOPriority() {
 #endif
 
 #ifdef Q_OS_MACX
+    setiopolicy_np( IOPOL_TYPE_DISK, IOPOL_SCOPE_THREAD, IOPOL_THROTTLE );
 #endif
 
 #ifdef Q_OS_LINUX
@@ -18,6 +19,7 @@ void Library::setNormalIOPriority() {
 #endif
 
 #ifdef Q_OS_MACX
+    setiopolicy_np( IOPOL_TYPE_DISK, IOPOL_SCOPE_THREAD, IOPOL_IMPORTANT );
 #endif
 
 #ifdef Q_OS_LINUX

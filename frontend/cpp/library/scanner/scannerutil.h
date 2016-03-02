@@ -8,6 +8,7 @@
 #endif
 
 #ifdef Q_OS_MACX
+#include <sys/resource.h>
 #endif
 
 #ifdef Q_OS_LINUX
