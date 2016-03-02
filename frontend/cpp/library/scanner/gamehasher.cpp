@@ -25,7 +25,8 @@ qreal GameHasher::progress() const {
 
 void GameHasher::setProgress( qreal progress ) {
     mTotalProgess = progress;
-    if ( static_cast<int>( progress ) % 5 == 0 || progress == 100.0 ) {
+
+    if( static_cast<int>( progress ) % 5 == 0 || progress == 100.0 ) {
         emit progressChanged( mTotalProgess );
     }
 }
@@ -205,6 +206,8 @@ void GameHasher::addPath( QString path ) {
 
     connect( watcher, &BetterFutureWatcher::finished, this, &GameHasher::stepOneFinished );
 
+    qCDebug( phxLibrary ) << "Began scan at" << QDateTime::currentDateTime();
+
     watcher->setFuture( future, mWatcherList.size() );
     mWatcherList.append( watcher );
 }
@@ -273,8 +276,8 @@ void GameHasher::stepThreeFinished( BetterFutureWatcher *betterWatcher ) {
     // Start for step four, filterReduce.
     BetterFutureWatcher *watcher = new BetterFutureWatcher( nullptr );
     QFuture<FileList> future = QtConcurrent::filteredReduced<FileList, FileList>( fileList
-                                                                                  , FilterFunctor( FilterFunctor::Four )
-                                                                                  , ReduceFunctor( ReduceFunctor::FourFilter ) );
+                               , FilterFunctor( FilterFunctor::Four )
+                               , ReduceFunctor( ReduceFunctor::FourFilter ) );
 
     connect( watcher, &BetterFutureWatcher::finished, this, &GameHasher::stepFourFilterFinished );
 
@@ -348,6 +351,7 @@ void GameHasher::stepFourMapReduceFinished( BetterFutureWatcher *betterWatcher )
     mFilesProcessing -= fileList.size();
 
     qDebug() << "Scan complete";
+    qCDebug( phxLibrary ) << "Finished scan at" << QDateTime::currentDateTime();
 
     // Adjust stored index for each item in the list that has been moved by this list manipulation
     for( BetterFutureWatcher *b : mWatcherList ) {

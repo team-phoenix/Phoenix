@@ -46,7 +46,7 @@ Rectangle {
             }
         }
 
-        vsync: true;
+        vsync: false;
         volume: gameActionBar.volumeValue;
 
         // Use this to automatically play once loaded

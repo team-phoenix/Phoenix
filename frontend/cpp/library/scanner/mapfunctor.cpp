@@ -195,6 +195,8 @@ FileList MapFunctor::operator()( const FileEntry &entry ) {
     switch( mStep ) {
         case Two: {
 
+            setBackgroundIOPriority();
+
             QFileInfo info( entry.filePath );
 
             if( info.suffix() == QStringLiteral( "zip" ) ) {
@@ -213,9 +215,13 @@ FileList MapFunctor::operator()( const FileEntry &entry ) {
                 resultList.append( entry );
             }
 
+            setNormalIOPriority();
+
             break;
         }
         case Three: {
+
+            setBackgroundIOPriority();
 
             QFileInfo info( entry.filePath );
 
@@ -233,12 +239,16 @@ FileList MapFunctor::operator()( const FileEntry &entry ) {
                 resultList.append( entry );
             }
 
+            setNormalIOPriority();
+
             break;
         }
         case Four: {
             // Just go out and fill me all the data in at once.
             // If this returns false, then that means one of the ops failed.
             // I'm not sure which one, and at this stage I don't care.
+
+            setBackgroundIOPriority();
 
             FileEntry entryCopy = entry;
 
@@ -281,12 +291,14 @@ FileList MapFunctor::operator()( const FileEntry &entry ) {
             }
 
 
-            //bool a = searchDatabase( GetROMID, entryCopy );
-            //bool c = searchDatabase( GetArtwork, entryCopy );
+            bool a = searchDatabase( GetROMID, entryCopy );
+            bool c = searchDatabase( GetArtwork, entryCopy );
 
             //qDebug() << entryCopy.gameMetadata.frontArtwork;
 
             resultList.append( entryCopy );
+
+            setNormalIOPriority();
 
             break;
         }
