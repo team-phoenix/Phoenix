@@ -4,7 +4,7 @@
 #include <QStringBuilder>
 
 ArchiveFile::ArchiveFile( const QString &file ) {
-
+    Q_UNUSED( file )
 }
 
 const QString ArchiveFile::delimiter() {

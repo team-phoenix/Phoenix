@@ -24,6 +24,7 @@ LibraryModel::LibraryModel( UserDatabase &db, QObject *parent )
       qmlProgress( 0.0 ) {
 
     mGameHasher.moveToThread( &mGameScannerThread );
+    // TODO: Cleanup (save and stop scanner) on shutdown
 
     mRoleNames = QSqlTableModel::roleNames();
     mRoleNames.insert( TitleRole, QByteArrayLiteral( "title" ) );

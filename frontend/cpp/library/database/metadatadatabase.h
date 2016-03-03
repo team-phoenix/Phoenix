@@ -24,10 +24,8 @@
  */
 
 namespace Library {
-
     class MetaDataDatabase {
         public:
-
             enum ThreadMode {
                 NeedsMutex,
                 NoMutex,
@@ -46,32 +44,8 @@ namespace Library {
 
             static QMutex mutex;
 
-            static void addConnection( const QString &name ) {
-                if ( !QSqlDatabase::contains( name ) ) {
-                    qDebug() << "Added connection";
-
-
-
-                    QSqlDatabase db = QSqlDatabase::addDatabase( QStringLiteral( "QSQLITE" ), name );
-
-                    //#######################
-                    QString dataPathStr = PhxPaths::metadataLocation();
-                    Q_ASSERT( !dataPathStr.isEmpty() );
-
-                    QDir dataPath( dataPathStr );
-
-                    QString databaseName = QStringLiteral( "openvgdb.sqlite" );
-                    QString filePath = dataPath.filePath( databaseName );
-
-                    db.setDatabaseName( filePath );
-
-                }
-            }
-
-
-
+            static void addConnection( const QString &name );
     };
-
 }
 
 #endif // METADATADATABASE_H

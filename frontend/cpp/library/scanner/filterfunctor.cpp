@@ -40,9 +40,9 @@ FilterFunctor::FilterFunctor( const Step step )
 bool FilterFunctor::operator()( const FileEntry &entry ) {
     QFileInfo info( entry.filePath );
 
-    if( info.suffix() == QStringLiteral( "bin" ) ) {
-        // Check for bios, cache if bios is found
+    if( info.suffix() == QStringLiteral( "bin" ) && entry.scannerResult != PartOfCueFile ) {
 
+        // Check for bios, cache if bios is found
         QString biosName;
         if ( isBios( info, biosName ) ) {
             qDebug() << "is an actual bios file";

@@ -1,14 +1,4 @@
 #include "gamehasher.h"
-#include "cuefile.h"
-#include "phxpaths.h"
-#include "libretrodatabase.h"
-#include "metadatadatabase.h"
-#include "cryptohash.h"
-#include "mapfunctor.h"
-#include "reducefunctor.h"
-#include "filterfunctor.h"
-
-#include <QtConcurrent>
 
 using namespace Library;
 
@@ -215,7 +205,7 @@ void GameHasher::addPath( QString path ) {
 void GameHasher::stepOneFinished( BetterFutureWatcher *betterWatcher ) {
     FileList fileList = betterWatcher->futureWatcher().result();
 
-    qDebug() << "Step 1 finished. " << fileList.size();
+    qDebug() << "Step one finished. " << fileList.size();
 
     // Basic cleanup, do not call 'delete', use 'deleteLater';
     mWatcherList.removeAt( betterWatcher->listIndex() );
@@ -226,7 +216,7 @@ void GameHasher::stepOneFinished( BetterFutureWatcher *betterWatcher ) {
         return;
     }
 
-    // Start for step two
+    // Start step two
     BetterFutureWatcher *watcher = new BetterFutureWatcher( nullptr );
     QFuture<FileList> future = QtConcurrent::mappedReduced<FileList, FileList>( fileList, MapFunctor( MapFunctor::Two ), ReduceFunctor( ReduceFunctor::Two ) );
 
@@ -247,7 +237,7 @@ void GameHasher::stepTwoFinished( BetterFutureWatcher *betterWatcher ) {
 
     qDebug() << "Step two finished." << fileList.size();
 
-    // Start for step three
+    // Start step three
     BetterFutureWatcher *watcher = new BetterFutureWatcher( nullptr );
     QFuture<FileList> future = QtConcurrent::mappedReduced<FileList, FileList>( fileList, MapFunctor( MapFunctor::Three ), ReduceFunctor( ReduceFunctor::Three ) );
 
@@ -273,7 +263,7 @@ void GameHasher::stepThreeFinished( BetterFutureWatcher *betterWatcher ) {
 
     qDebug() << "Step three finished. " << fileList.size();
 
-    // Start for step four, filterReduce.
+    // Start step four, filterReduce.
     BetterFutureWatcher *watcher = new BetterFutureWatcher( nullptr );
     QFuture<FileList> future = QtConcurrent::filteredReduced<FileList, FileList>( fileList
                                , FilterFunctor( FilterFunctor::Four )

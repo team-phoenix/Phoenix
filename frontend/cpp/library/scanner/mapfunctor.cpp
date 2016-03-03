@@ -12,8 +12,7 @@
 using namespace Library;
 
 MapFunctor::MapFunctor( const Step step )
-    : mStep( step )
-{
+    : mStep( step ) {
 
 }
 
@@ -194,21 +193,18 @@ FileList MapFunctor::operator()( const FileEntry &entry ) {
 
     switch( mStep ) {
         case Two: {
-
             setBackgroundIOPriority();
 
             QFileInfo info( entry.filePath );
 
             if( info.suffix() == QStringLiteral( "zip" ) ) {
                 // Expand and explore the zip file.
-
                 ArchiveFile::ParseData parsedData = ArchiveFile::parse( entry.filePath );
 
                 for( QString &file : parsedData.enumeratedFiles ) {
                     FileEntry entry;
                     entry.filePath = file;
                     resultList.append( entry );
-
                 }
 
             } else {
@@ -219,8 +215,8 @@ FileList MapFunctor::operator()( const FileEntry &entry ) {
 
             break;
         }
-        case Three: {
 
+        case Three: {
             setBackgroundIOPriority();
 
             QFileInfo info( entry.filePath );
@@ -233,6 +229,8 @@ FileList MapFunctor::operator()( const FileEntry &entry ) {
                 for( QString binFile : binFiles ) {
                     FileEntry newEntry;
                     newEntry.filePath = binFile;
+                    qCDebug( phxLibrary ) << "Part of .cue file:" << binFile;
+                    newEntry.scannerResult = PartOfCueFile;
                     resultList.append( newEntry );
                 }
             } else {
@@ -243,10 +241,11 @@ FileList MapFunctor::operator()( const FileEntry &entry ) {
 
             break;
         }
+
         case Four: {
-            // Just go out and fill me all the data in at once.
-            // If this returns false, then that means one of the ops failed.
-            // I'm not sure which one, and at this stage I don't care.
+            // Just go out and fill all the data in at once
+            // If this returns false, then that means one of the ops failed
+            // I'm not sure which one, and at this stage I don't care
 
             setBackgroundIOPriority();
 
@@ -254,15 +253,14 @@ FileList MapFunctor::operator()( const FileEntry &entry ) {
 
             QThread *thread = QThread::currentThread();
 
-            if ( !thread->objectName().startsWith( '>' ) )
-            {
+            if( !thread->objectName().startsWith( "MapReduce step 4 thread #" ) ) {
                 static int i = 0;
 
                 static QMutex mutex;
                 mutex.lock();
                 i++;
 
-                const QString name( ">Thread" );
+                const QString name( "MapReduce step 4 thread #" );
 
                 thread->setObjectName( name + QString::number( i ) );
 
@@ -278,11 +276,9 @@ FileList MapFunctor::operator()( const FileEntry &entry ) {
                 Q_ASSERT( open2 );
 
                 mutex.unlock();
-
             }
 
             // Hash file
-
             CryptoHash crc32Hash( CryptoHash::Crc32 );
 
             if( crc32Hash.addData( entryCopy.filePath ) ) {
@@ -290,9 +286,10 @@ FileList MapFunctor::operator()( const FileEntry &entry ) {
                 entryCopy.crc32 = crc32Hash.result();
             }
 
-
             bool a = searchDatabase( GetROMID, entryCopy );
             bool c = searchDatabase( GetArtwork, entryCopy );
+            Q_UNUSED( a )
+            Q_UNUSED( c )
 
             //qDebug() << entryCopy.gameMetadata.frontArtwork;
 
@@ -302,6 +299,7 @@ FileList MapFunctor::operator()( const FileEntry &entry ) {
 
             break;
         }
+
         default:
             break;
     }
@@ -321,8 +319,7 @@ FileList MapFunctor::operator()( const QString &path ) {
         entry.filePath = path;
         resultList.append( entry );
     } else {
-
-        // path is a file system directory past this point.
+        // Path is a file system directory past this point
         QDir directory( path );
 
         if( !directory.exists() ) {

@@ -1,14 +1,19 @@
-#ifndef GAMESCANNER_H
-#define GAMESCANNER_H
+#pragma once
 
 #include "frontendcommon.h"
+
 #include "archivefile.h"
 #include "betterfuturewatcher.h"
-#include "metadatadatabase.h"
+#include "cryptohash.h"
+#include "cuefile.h"
 #include "librarytypes.h"
-#include "betterfuturewatcher.h"
+#include "libretrodatabase.h"
+#include "metadatadatabase.h"
+#include "phxpaths.h"
 
-#include <QObject>
+#include "mapfunctor.h"
+#include "filterfunctor.h"
+#include "reducefunctor.h"
 
 namespace Library {
 
@@ -77,5 +82,3 @@ namespace Library {
 
     };
 }
-
-#endif // GAMESCANNER_H

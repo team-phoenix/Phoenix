@@ -3,8 +3,7 @@
 #include <QtCore>
 #include <QStringBuilder>
 
-CueFile::CueFile()
-{
+CueFile::CueFile() {
 
 }
 
@@ -46,7 +45,7 @@ QStringList CueFile::parse( const QString &filePath ) {
 
         if( !obtainedTitle.isEmpty() ) {
             QDir dir = info.absoluteDir();
-            gameFiles.append( dir.path() % obtainedTitle );
+            gameFiles.append( dir.path() % '/' % obtainedTitle );
         }
 
     }
@@ -54,12 +53,10 @@ QStringList CueFile::parse( const QString &filePath ) {
     return gameFiles;
 }
 
-const QString CueFile::delimiter()
-{
+const QString CueFile::delimiter() {
     return QStringLiteral( "|||" );
 }
 
-const QString CueFile::prefix()
-{
+const QString CueFile::prefix() {
     return QStringLiteral( "cue://" );
 }

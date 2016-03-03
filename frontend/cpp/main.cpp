@@ -181,7 +181,7 @@ int main( int argc, char *argv[] ) {
 
     Library::LibretroModel model();
 
-    // Necessary to quit properly
+    // Necessary to quit properly from QML
     QObject::connect( &engine, &QQmlApplicationEngine::quit, &app, &QGuiApplication::quit );
 
     // Register our custom types for use within QML
@@ -237,7 +237,7 @@ int main( int argc, char *argv[] ) {
     // Run the app and write return code to the log file if in release mode
 #ifdef QT_NO_DEBUG
     int ret = app.exec();
-    fprintf( logFP, "Returned %d", ret );
+    fprintf( logFP, "Returned %d\n", ret );
     fclose( logFP );
     return ret;
 #else

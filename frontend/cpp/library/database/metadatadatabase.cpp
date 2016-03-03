@@ -11,13 +11,14 @@ QMutex MetaDataDatabase::mutex;
 
 void MetaDataDatabase::open( const ThreadMode mode ) {
 
-    if ( mode == ThreadMode::NeedsMutex ) {
+    if( mode == ThreadMode::NeedsMutex ) {
         mutex.lock();
     }
 
     {
         QSqlDatabase db = QSqlDatabase::database( QStringLiteral( "METADATA" ) );
-        if ( db.isOpen() && !db.databaseName().isEmpty() ) {
+
+        if( db.isOpen() && !db.databaseName().isEmpty() ) {
             return;
         }
     }
@@ -52,12 +53,13 @@ void MetaDataDatabase::close( const ThreadMode mode ) {
 
         // Must be scoped. QSql is real picky about this.
         QSqlDatabase db = QSqlDatabase::database( QStringLiteral( "METADATA" ) );
-        if ( db.isOpen() ) {
+
+        if( db.isOpen() ) {
             db.close();
         }
     }
 
-    if ( mode == ThreadMode::NeedsMutex ) {
+    if( mode == ThreadMode::NeedsMutex ) {
         mutex.unlock();
     }
 }
@@ -70,11 +72,33 @@ void MetaDataDatabase::removeDatabase() {
     QSqlDatabase::removeDatabase( QStringLiteral( "METADATA" ) );
 }
 
+void MetaDataDatabase::addConnection( const QString &name ) {
+    if( !QSqlDatabase::contains( name ) ) {
+        qCDebug( phxLibrary ) << "Opening a new SQL connection:" << name;
+
+        QSqlDatabase db = QSqlDatabase::addDatabase( QStringLiteral( "QSQLITE" ), name );
+
+        //#######################
+        QString dataPathStr = PhxPaths::metadataLocation();
+        Q_ASSERT( !dataPathStr.isEmpty() );
+
+        QDir dataPath( dataPathStr );
+
+        QString databaseName = QStringLiteral( "openvgdb.sqlite" );
+        QString filePath = dataPath.filePath( databaseName );
+
+        db.setDatabaseName( filePath );
+
+    }
+}
+
 QSqlDatabase MetaDataDatabase::database() {
     QSqlDatabase db = QSqlDatabase::database( QStringLiteral( "METADATA" ) );
-    if ( !db.isOpen() || !db.isValid() ) {
+
+    if( !db.isOpen() || !db.isValid() ) {
         MetaDataDatabase::open();
         db = QSqlDatabase::database( QStringLiteral( "METADATA" ) );
     }
+
     return db;
 }
