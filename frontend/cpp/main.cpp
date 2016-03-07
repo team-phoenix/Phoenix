@@ -179,8 +179,6 @@ int main( int argc, char *argv[] ) {
     Library::MetaDataDatabase::addDatabase();
     Library::LibretroDatabase::addDatabase();
 
-    Library::LibretroModel model();
-
     // Necessary to quit properly from QML
     QObject::connect( &engine, &QQmlApplicationEngine::quit, &app, &QGuiApplication::quit );
 

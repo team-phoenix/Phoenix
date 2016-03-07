@@ -72,14 +72,17 @@ class SqlTableUpdater():
         systems.sort()
         return systems
 
-    # TODO: Place this information into an entirely separate database
     # This map defines all Libretro-based systems that Phoenix supports. If it isn't in here, it isn't supported by Phoenix!
+    # TODO: Place this information into an entirely separate database
+    # WARNING: Do NOT change Phoenix UUIDs (1st column), even if there are spelling mistakes. Change friendlyName if you really need to.
+    phoenixSystemDatabase = {
     # friendlyName: North American console name without manufacturer
     # shortName: Abbreviation (typically 3 letters)
     # enabled: True iff a core is available, Phoenix can run it, and the game scanner can find it (extensions set)
-    phoenixSystemDatabase = {
+    
         # Everything else
         "Arcade":                                           {"enabled": True,  "defaultCore": "mame_libretro",                      "friendlyName": "",                    "shortName": "", "manufacturer": "(Various)"       },
+        "PC":                                               {"enabled": True,  "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "(Various)"       },
 
         # Conspicuously missing from No-Intro
         "Amstrad - CPC":                                    {"enabled": True,  "defaultCore": "mess2014_libretro",                  "friendlyName": "",                    "shortName": "", "manufacturer": "Amstrad"         },
@@ -121,13 +124,13 @@ class SqlTableUpdater():
         "Hartung - Game Master":                            {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Hartung"         },
         "LeapFrog - Leapster Learning Game System":         {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "LeapFrog"        },
         "Magnavox - Odyssey2":                              {"enabled": True,  "defaultCore": "o2em_libretro",                      "friendlyName": u"Odyssey²",           "shortName": "", "manufacturer": "Magnavox"        },
-        "Microsoft - MSX 2":                                {"enabled": True,  "defaultCore": "bluemsx_libretro",                   "friendlyName": "",                    "shortName": "", "manufacturer": "Microsoft"       },
+        "Microsoft - MSX 2":                                {"enabled": True,  "defaultCore": "bluemsx_libretro",                   "friendlyName": "MSX2",                "shortName": "", "manufacturer": "Microsoft"       },
         "Microsoft - MSX":                                  {"enabled": True,  "defaultCore": "bluemsx_libretro",                   "friendlyName": "",                    "shortName": "", "manufacturer": "Microsoft"       },
         #"Microsoft - XBOX 360 (DLC)":                      {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Microsoft"       },
         #"Microsoft - XBOX 360 (Games on Demand)":          {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Microsoft"       },
         #"Microsoft - XBOX 360 (Title Updates)":            {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Microsoft"       },
         "NEC - PC Engine - TurboGrafx 16":                  {"enabled": True,  "defaultCore": "mednafen_pce_fast_libretro",         "friendlyName": "TurboGrafx 16",       "shortName": "", "manufacturer": "NEC"             },
-        "NEC - Super Grafx":                                {"enabled": True,  "defaultCore": "mednafen_supergrafx_libretro",       "friendlyName": "",                    "shortName": "", "manufacturer": "NEC"             },
+        "NEC - Super Grafx":                                {"enabled": True,  "defaultCore": "mednafen_supergrafx_libretro",       "friendlyName": "SuperGrafx",          "shortName": "", "manufacturer": "NEC"             },
         #"Nintendo - Famicom Disk System":                  {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Nintendo"        },
         "Nintendo - Game Boy Advance (e-Cards)":            {"enabled": True,  "defaultCore": "vbam_libretro",                      "friendlyName": "",                    "shortName": "", "manufacturer": "Nintendo"        },
         "Nintendo - Game Boy Advance":                      {"enabled": True,  "defaultCore": "vbam_libretro",                      "friendlyName": "",                    "shortName": "", "manufacturer": "Nintendo"        },
@@ -247,6 +250,7 @@ class SqlTableUpdater():
         "Magnavox - Odyssey2":                                      {"Magnavox - Odyssey2"},
         "MAME":                                                     {"Arcade"},
         "Microsoft - MSX 2":                                        {"Microsoft - MSX 2"},
+        "Microsoft - MSX2":                                         {"Microsoft - MSX 2"},
         "Microsoft - MSX":                                          {"Microsoft - MSX"},
 
         # MESS and UME
@@ -282,6 +286,7 @@ class SqlTableUpdater():
 
         "NEC - PC Engine - TurboGrafx 16":                          {"NEC - PC Engine - TurboGrafx 16"},
         "NEC - Super Grafx":                                        {"NEC - Super Grafx"},
+        "NEC - PC Engine SuperGrafx":                               {"NEC - Super Grafx"},
         "Neo Geo":                                                  {"SNK - Neo Geo"},
         "Nintendo - Famicom Disk System":                           {"Nintendo - Nintendo Entertainment System"},
         "Nintendo - Game & Watch":                                  {"Nintendo - Game & Watch"},
@@ -298,11 +303,14 @@ class SqlTableUpdater():
         "Nintendo - Super Nintendo Entertainment System":           {"Nintendo - Super Nintendo Entertainment System"},
         "Nintendo - Virtual Boy":                                   {"Nintendo - Virtual Boy"},
         "Nintendo - Wii":                                           {"Nintendo - Wii"},
+        "PC":                                                       {"PC"},
         "PC-FX":                                                    {"NEC - PC-FX - PC-FXGA"},
         "Sega - 32X":                                               {"Sega - 32X"},
+        "Sega - Dreamcast":                                         {"Sega - Dreamcast"},
         "Sega - Game Gear":                                         {"Sega - Game Gear"},
         "Sega - Master System - Mark III":                          {"Sega - Master System - Mark III"},
         "Sega - Mega Drive - Genesis":                              {"Sega - Mega Drive - Genesis"},
+        "Sega - NAOMI":                                             {"Sega - Naomi"},
         "Sega - PICO":                                              {"Sega - PICO"},
         "Sega - Saturn":                                            {"Sega - Saturn"},
         "Sega - SG-1000":                                           {"Sega - SG-1000"},

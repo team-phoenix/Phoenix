@@ -205,7 +205,7 @@ void GameHasher::addPath( QString path ) {
 void GameHasher::stepOneFinished( BetterFutureWatcher *betterWatcher ) {
     FileList fileList = betterWatcher->futureWatcher().result();
 
-    qDebug() << "Step one finished. " << fileList.size();
+    qCDebug( phxLibrary ) << "Step one finished. " << fileList.size();
 
     // Basic cleanup, do not call 'delete', use 'deleteLater';
     mWatcherList.removeAt( betterWatcher->listIndex() );
@@ -235,7 +235,7 @@ void GameHasher::stepTwoFinished( BetterFutureWatcher *betterWatcher ) {
     mWatcherList.removeAt( pivot );
     betterWatcher->deleteLater();
 
-    qDebug() << "Step two finished." << fileList.size();
+    qCDebug( phxLibrary ) << "Step two finished." << fileList.size();
 
     // Start step three
     BetterFutureWatcher *watcher = new BetterFutureWatcher( nullptr );
@@ -261,15 +261,75 @@ void GameHasher::stepThreeFinished( BetterFutureWatcher *betterWatcher ) {
     mWatcherList.removeAt( pivot );
     betterWatcher->deleteLater();
 
-    qDebug() << "Step three finished. " << fileList.size();
+    // Step 4 filter operation
+    // Grab the list of FileEntries appended to the end of the main list
+    FileList redundantBinFiles;
+
+    for( FileEntry entry : fileList ) {
+        if( entry.scannerResult == PartOfCueFile ) {
+            redundantBinFiles.append( entry );
+        }
+    }
+
+    // Print the full list
+    {
+        int i = 0;
+        Q_UNUSED( i )
+
+        for( FileEntry entry : fileList ) {
+            // qCDebug( phxLibrary ) << i++ << entry.filePath;
+        }
+    }
+
+    // Find these files and remove them from the main list, if they exist
+    // TODO: Implement operator==() for FileEntry instead?
+    for( FileEntry redundantEntry : redundantBinFiles ) {
+        // qCDebug( phxLibrary ) << "\tLooking for:" << redundantEntry.filePath;
+
+        // FIXME: Is this always true?
+        // OS X can have a case insensitive file system
+#if defined(Q_OS_MACX) || defined(Q_OS_LINUX)
+        Qt::CaseSensitivity caseSensitive = Qt::CaseSensitive;
+#else
+        Qt::CaseSensitivity caseSensitive = Qt::CaseInsensitive;
+#endif
+
+        QMutableListIterator<FileEntry> mainEntryIterator( fileList );
+
+        while( mainEntryIterator.hasNext() ) {
+            FileEntry mainEntry = mainEntryIterator.next();
+
+            if( QString::compare( mainEntry.filePath, redundantEntry.filePath, caseSensitive ) == 0 ) {
+                // qCDebug( phxLibrary ) << "\tFound .bin file that is part of a .cue file:" << mainEntry.filePath;
+                mainEntryIterator.remove();
+            }
+        }
+    }
+
+    qCDebug( phxLibrary ) << "Step three finished. " << fileList.size();
+
+    // Print the trimmed list
+    {
+        int i = 0;
+        Q_UNUSED( i )
+
+        for( FileEntry entry : fileList ) {
+            // qCDebug( phxLibrary ) << i++ << entry.filePath;
+        }
+    }
 
     // Start step four, filterReduce.
-    BetterFutureWatcher *watcher = new BetterFutureWatcher( nullptr );
-    QFuture<FileList> future = QtConcurrent::filteredReduced<FileList, FileList>( fileList
-                               , FilterFunctor( FilterFunctor::Four )
-                               , ReduceFunctor( ReduceFunctor::FourFilter ) );
+    //    BetterFutureWatcher *watcher = new BetterFutureWatcher( nullptr );
+    //    QFuture<FileList> future = QtConcurrent::filteredReduced<FileList, FileList>( fileList
+    //                               , FilterFunctor( FilterFunctor::Four )
+    //                               , ReduceFunctor( ReduceFunctor::FourFilter ) );
 
-    connect( watcher, &BetterFutureWatcher::finished, this, &GameHasher::stepFourFilterFinished );
+    //    connect( watcher, &BetterFutureWatcher::finished, this, &GameHasher::stepFourFilterFinished );
+
+    BetterFutureWatcher *watcher = new BetterFutureWatcher( nullptr );
+    QFuture<FileList> future = QtConcurrent::mappedReduced<FileList, FileList>( fileList, MapFunctor( MapFunctor::Four ), ReduceFunctor( ReduceFunctor::Four ) );
+
+    connect( watcher, &BetterFutureWatcher::finished, this, &GameHasher::stepFourMapReduceFinished );
 
     watcher->setFuture( future, mWatcherList.size() );
     mWatcherList.append( watcher );
@@ -291,7 +351,7 @@ void GameHasher::stepFourFilterFinished( BetterFutureWatcher *betterWatcher ) {
 
     mFilesProcessing += fileList.size();
 
-    qDebug() << "Step four filter finished: " << fileList.size();
+    qCDebug( phxLibrary ) << "Step four filter finished: " << fileList.size();
 
     BetterFutureWatcher *watcher = new BetterFutureWatcher( nullptr );
     QFuture<FileList> future = QtConcurrent::mappedReduced<FileList, FileList>( fileList, MapFunctor( MapFunctor::Four ), ReduceFunctor( ReduceFunctor::Four ) );
@@ -316,31 +376,11 @@ void GameHasher::stepFourMapReduceFinished( BetterFutureWatcher *betterWatcher )
     mWatcherList.removeAt( pivot );
     betterWatcher->deleteLater();
 
-    qDebug() << "Step four map reduce finished: " << fileList.size();
-    // step four being finished via standard iteration.
-
-    /*
-    MetaDataDatabase::open();
-
-    int i = 0;
-    for( FileEntry &entry : fileList ) {
-        searchDatabase( GetMetadata, entry );
-        ++i;
-
-        setProgress( ( i / static_cast<qreal>( mFilesProcessing ) ) * 100.0 );
-
-        //emit fileReady( entry );
-
-        // Don't block the thread completely.
-        QCoreApplication::processEvents( QEventLoop::AllEvents );
-    }
-
-    MetaDataDatabase::close();
-    */
+    qCDebug( phxLibrary ) << "Step four map reduce finished: " << fileList.size();
 
     mFilesProcessing -= fileList.size();
 
-    qDebug() << "Scan complete";
+    qCDebug( phxLibrary ) << "Scan complete";
     qCDebug( phxLibrary ) << "Finished scan at" << QDateTime::currentDateTime();
 
     // Adjust stored index for each item in the list that has been moved by this list manipulation

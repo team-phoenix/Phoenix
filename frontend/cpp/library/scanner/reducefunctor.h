@@ -5,24 +5,23 @@
 
 namespace Library {
 
-    class ReduceFunctor
-    {
-    public:
-        enum Step {
-            One,
-            Two,
-            Three,
-            Four,
-            FourFilter
-        };
+    class ReduceFunctor {
+        public:
+            enum Step {
+                One,
+                Two,
+                Three,
+                Four,
+                FourFilter
+            };
 
-        ReduceFunctor( const Step step );
+            ReduceFunctor( const Step step );
 
-        void operator()( FileList &mergedList, const FileList &oldList );
-        void operator() ( FileList &mergedList, const FileEntry &entry );
+            void operator()( FileList &mergedList, const FileList &oldList );
+            void operator()( FileList &mergedList, const FileEntry &entry );
 
-    private:
-        Step mStep;
+        private:
+            Step mStep;
     };
 
 }

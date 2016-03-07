@@ -221,20 +221,19 @@ FileList MapFunctor::operator()( const FileEntry &entry ) {
 
             QFileInfo info( entry.filePath );
 
+            resultList.append( entry );
+
+            // If we've found a .cue file, enumerate all the .bin files within and add their paths to the result list
             if( info.suffix() == QStringLiteral( "cue" ) ) {
-                // Explore the cue file.
-                qDebug() << "Found cue file: " << entry.filePath;
+                // qDebug() << "Found cue file: " << entry.filePath;
                 QStringList binFiles = CueFile::parse( entry.filePath );
 
                 for( QString binFile : binFiles ) {
                     FileEntry newEntry;
                     newEntry.filePath = binFile;
-                    qCDebug( phxLibrary ) << "Part of .cue file:" << binFile;
                     newEntry.scannerResult = PartOfCueFile;
                     resultList.append( newEntry );
                 }
-            } else {
-                resultList.append( entry );
             }
 
             setNormalIOPriority();
@@ -251,6 +250,10 @@ FileList MapFunctor::operator()( const FileEntry &entry ) {
 
             FileEntry entryCopy = entry;
 
+            // Each thread must have its own unique SQL connection
+            // Give the thread a name to mark it as already having an SQL connection
+            // Reuse this thread name for the actual SQL connection's name
+            // FIXME: Connections are never closed
             QThread *thread = QThread::currentThread();
 
             if( !thread->objectName().startsWith( "MapReduce step 4 thread #" ) ) {
@@ -281,11 +284,13 @@ FileList MapFunctor::operator()( const FileEntry &entry ) {
             // Hash file
             CryptoHash crc32Hash( CryptoHash::Crc32 );
 
-            if( crc32Hash.addData( entryCopy.filePath ) ) {
+            if( entryCopy.scannerResult != PartOfCueFile && crc32Hash.addData( entryCopy.filePath ) ) {
                 entryCopy.hasHashCached = true;
                 entryCopy.crc32 = crc32Hash.result();
             }
 
+            // Search the database for this hash
+            // TODO: Fall back to more broad database search stratagies as laid out in the header for step 4
             bool a = searchDatabase( GetROMID, entryCopy );
             bool c = searchDatabase( GetArtwork, entryCopy );
             Q_UNUSED( a )
@@ -312,7 +317,7 @@ FileList MapFunctor::operator()( const QString &path ) {
 
     QFileInfo dir( path );
 
-    qDebug() << "path: " << path;
+    qCDebug( phxLibrary ) << "path: " << path;
 
     if( dir.isFile() ) {
         FileEntry entry;
