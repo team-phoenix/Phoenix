@@ -60,25 +60,17 @@ namespace Library {
             void stepOneFinished( BetterFutureWatcher *betterWatcher );
             void stepTwoFinished( BetterFutureWatcher *betterWatcher );
             void stepThreeFinished( BetterFutureWatcher *betterWatcher );
-            void stepFourFilterFinished( BetterFutureWatcher *betterWatcher );
             // TODO: Pass results onto GameMatcher
-            void stepFourMapReduceFinished( BetterFutureWatcher *betterWatcher );
+            void stepFourFinished( BetterFutureWatcher *betterWatcher );
 
         private:
-            // A list of file paths that have been obtained by scanning the file system.
-            FileList mFileList;
-
             // Our custom way of keeping track of various scanning sessions via these sessions' watchers (BetterFutureWatchers)
             QList<BetterFutureWatcher *> mWatcherList;
-
-            // Maps SHA-1 checksums to a dictionary of metadata (other hashes, filename, system, region) for firmware (BIOS) files
 
             qreal mTotalProgess;
             int mFilesProcessing;
 
             // Helpers
             static QString getLastExecutedQuery( const QSqlQuery &query );
-
-
     };
 }

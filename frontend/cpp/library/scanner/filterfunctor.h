@@ -27,7 +27,7 @@ namespace Library {
         private:
             Step mStep;
 
-            // Maps a
+            // Maps SHA-1 checksums to a dictionary of metadata (other hashes, filename, system, region) for firmware (BIOS) files
             QHash<QString, QHash<QString, QString>> mFirmwareMap;
 
     };

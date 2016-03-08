@@ -1,6 +1,8 @@
 #ifndef REDUCEFUNCTOR_H
 #define REDUCEFUNCTOR_H
 
+#include "frontendcommon.h"
+#include "logging.h"
 #include "librarytypes.h"
 
 namespace Library {
@@ -17,7 +19,7 @@ namespace Library {
 
             ReduceFunctor( const Step step );
 
-            void operator()( FileList &mergedList, const FileList &oldList );
+            void operator()( FileList &mergedList, const FileList &givenList );
             void operator()( FileList &mergedList, const FileEntry &entry );
 
         private:

@@ -201,9 +201,16 @@ FileList MapFunctor::operator()( const FileEntry &entry ) {
                 // Expand and explore the zip file.
                 ArchiveFile::ParseData parsedData = ArchiveFile::parse( entry.filePath );
 
-                for( QString &file : parsedData.enumeratedFiles ) {
+                for( QString file : parsedData.fileHashesMap.keys() ) {
                     FileEntry entry;
                     entry.filePath = file;
+                    entry.crc32 = parsedData.fileHashesMap[ file ];
+
+                    if( !entry.crc32.isEmpty() ) {
+                        entry.hasHashCached = true;
+                    }
+
+                    // qCDebug( phxLibrary ) << "Found file within zip:" << entry.filePath << entry.crc32;
                     resultList.append( entry );
                 }
 
@@ -284,7 +291,7 @@ FileList MapFunctor::operator()( const FileEntry &entry ) {
             // Hash file
             CryptoHash crc32Hash( CryptoHash::Crc32 );
 
-            if( entryCopy.scannerResult != PartOfCueFile && crc32Hash.addData( entryCopy.filePath ) ) {
+            if( !entryCopy.hasHashCached && crc32Hash.addData( entryCopy.filePath ) ) {
                 entryCopy.hasHashCached = true;
                 entryCopy.crc32 = crc32Hash.result();
             }
