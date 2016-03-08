@@ -30,22 +30,8 @@ namespace Library {
         public:
             explicit GameHasher( QObject *parent = 0 );
 
-            enum SearchReason {
-                GetROMID,
-                GetArtwork,
-                GetSystemUUID,
-                GetMetadata,
-                GetHeaders,
-            };
-
             qreal progress() const;
             void setProgress( qreal progress );
-
-            // Searches the OpenVGDB or the LibretroDB, in hopes of finding metadata.
-            // The search reasons are listed in the enum. Most of these are used
-            // internally. The main search reason to call is GetMetadata.
-            // TODO: Move to GameMatcher
-            static bool searchDatabase( const SearchReason reason, FileEntry &fileEntry );
 
         signals:
             void progressChanged( const qreal progress );
@@ -66,6 +52,10 @@ namespace Library {
         private:
             // Our custom way of keeping track of various scanning sessions via these sessions' watchers (BetterFutureWatchers)
             QList<BetterFutureWatcher *> mWatcherList;
+
+            // Copies of the main list from step 2 for use by step 3
+            // Indexed by betterFutureWatcher addresses
+            QMap<BetterFutureWatcher *, FileList> mainLists;
 
             qreal mTotalProgess;
             int mFilesProcessing;

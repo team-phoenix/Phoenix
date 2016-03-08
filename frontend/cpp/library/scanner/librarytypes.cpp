@@ -74,3 +74,7 @@ QDebug Library::operator<<( QDebug debug, const GameMetaData &entry ) {
                                  );
     return debug.maybeSpace();
 }
+
+bool Library::operator==( const FileEntry left, const FileEntry right ) {
+    return left.filePath == right.filePath;
+}

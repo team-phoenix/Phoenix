@@ -93,6 +93,12 @@ namespace Library {
             GameMetaData gameMetadata;
     };
 
+    bool operator==( const FileEntry left, const FileEntry right );
+
+    inline uint qHash( const FileEntry &key ) {
+        return qHash( key.filePath );
+    }
+
     using GameScannerResult = FileEntry::GameScannerResult;
 
     QDebug operator<<( QDebug debug, const FileEntry &entry );

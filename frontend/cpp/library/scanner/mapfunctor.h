@@ -19,7 +19,6 @@ namespace Library {
     class MapFunctor {
         public:
             enum Step {
-
                 // If a file path, returns a single-element list containing that file path
                 // Otherwise, enumerate that directory and return list of all files within
                 // TODO: Recursion?

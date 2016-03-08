@@ -227,12 +227,8 @@ FileList MapFunctor::operator()( const FileEntry &entry ) {
         case Three: {
             setBackgroundIOPriority();
 
-            QFileInfo info( entry.filePath );
-
-            resultList.append( entry );
-
             // If we've found a .cue file, enumerate all the .bin files within and add their paths to the result list
-            if( info.suffix() == QStringLiteral( "cue" ) ) {
+            if( entry.filePath.endsWith( QStringLiteral( "cue" ), Qt::CaseInsensitive ) ) {
                 // qDebug() << "Found cue file: " << entry.filePath;
                 QStringList binFiles = CueFile::parse( entry.filePath );
 
