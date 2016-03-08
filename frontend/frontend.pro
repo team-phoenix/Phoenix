@@ -89,7 +89,8 @@ include( deployment.pri )
     cpp/library/scanner/reducefunctor.cpp \
     cpp/library/scanner/filterfunctor.cpp \
     cpp/library/model/libretromodel.cpp \
-    cpp/library/scanner/scannerutil.cpp
+    cpp/library/scanner/scannerutil.cpp \
+    cpp/library/scanner/librarytypes.cpp
 
     HEADERS += cpp/library/gamelauncher.h \
                cpp/library/imagecacher.h \

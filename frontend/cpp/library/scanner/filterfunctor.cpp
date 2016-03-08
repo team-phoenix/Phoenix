@@ -36,7 +36,7 @@ FilterFunctor::FilterFunctor( const Step step )
 bool FilterFunctor::operator()( const FileEntry &entry ) {
     QFileInfo info( entry.filePath );
 
-    if( info.suffix() == QStringLiteral( "bin" ) && entry.scannerResult != PartOfCueFile ) {
+    if( info.suffix() == QStringLiteral( "bin" ) && entry.scannerResult != GameScannerResult::PartOfCueFile ) {
 
         // Check for bios, cache if bios is found
         QString biosName;

@@ -42,7 +42,7 @@ bool MapFunctor::searchDatabase( const SearchReason reason, FileEntry &fileEntry
                 }
             }
 
-            if( fileEntry.gameMetadata.romID == -1 ) {  // So we didn't find the game by it's CRC32, now try to find it via the game's title, a.k.a. base name.
+            if( fileEntry.gameMetadata.romID == -1 ) {  // So we didn't find the game by its CRC32, now try to find it via the game's title, a.k.a. base name.
                 QFileInfo file( fileEntry.filePath );
                 QString filename = file.fileName();
 
@@ -141,7 +141,8 @@ bool MapFunctor::searchDatabase( const SearchReason reason, FileEntry &fileEntry
                 fileEntry.scannerResult = GameScannerResult::SystemUUIDUnknown;
 
             } else {
-                fileEntry.scannerResult = fileEntry.systemUUIDs.size() == 1 ? SystemUUIDKnown : MultipleSystemUUIDs;
+                fileEntry.scannerResult = fileEntry.systemUUIDs.size() == 1 ?
+                                          GameScannerResult::SystemUUIDKnown : GameScannerResult::MultipleSystemUUIDs;
             }
 
 
@@ -238,7 +239,7 @@ FileList MapFunctor::operator()( const FileEntry &entry ) {
                 for( QString binFile : binFiles ) {
                     FileEntry newEntry;
                     newEntry.filePath = binFile;
-                    newEntry.scannerResult = PartOfCueFile;
+                    newEntry.scannerResult = GameScannerResult::PartOfCueFile;
                     resultList.append( newEntry );
                 }
             }
@@ -289,6 +290,7 @@ FileList MapFunctor::operator()( const FileEntry &entry ) {
             }
 
             // Hash file
+            // TODO: Progress reporting (at least for large files > 16MB)
             CryptoHash crc32Hash( CryptoHash::Crc32 );
 
             if( !entryCopy.hasHashCached && crc32Hash.addData( entryCopy.filePath ) ) {

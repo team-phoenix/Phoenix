@@ -142,7 +142,7 @@ bool GameHasher::searchDatabase( const SearchReason reason, FileEntry &fileEntry
                 fileEntry.scannerResult = GameScannerResult::SystemUUIDUnknown;
 
             } else {
-                fileEntry.scannerResult = fileEntry.systemUUIDs.size() == 1 ? SystemUUIDKnown : MultipleSystemUUIDs;
+                fileEntry.scannerResult = fileEntry.systemUUIDs.size() == 1 ? GameScannerResult::SystemUUIDKnown : GameScannerResult::MultipleSystemUUIDs;
             }
 
 
@@ -293,6 +293,14 @@ void GameHasher::stepFourFinished( BetterFutureWatcher *betterWatcher ) {
     mFilesProcessing -= fileList.size();
 
     qCDebug( phxLibrary ) << "Scan complete, finished scan at" << QDateTime::currentDateTime();
+
+    qCDebug( phxLibrary ) << "Results:";
+
+    for( FileEntry entry : fileList ) {
+        qCDebug( phxLibrary ) << entry;
+    }
+
+    qCDebug( phxLibrary ) << "End of list";
 
     // Adjust stored index for each item in the list that has been moved by this list manipulation
     for( BetterFutureWatcher *b : mWatcherList ) {

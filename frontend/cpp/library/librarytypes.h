@@ -1,19 +1,16 @@
-#ifndef LIBRARYTYPES
-#define LIBRARYTYPES
+#pragma once
 
-#include <QList>
-#include <QMetaType>
+#include "frontendcommon.h"
 
 namespace Library {
-
     // GameMetaData is used to set in metadata for any game during;
     // this usually used after the append process.
     struct GameMetaData {
         GameMetaData()
             : progress( 0.0 ),
               updated( false ),
-              romID( -1 )
-        {}
+              romID( -1 ) {
+        }
 
         // system name retrieved from the OpenVBDB database during a metadata search.
         QString openVGDBsystemName;
@@ -36,84 +33,72 @@ namespace Library {
         int romID;
     };
 
-    // Extra data that holds the result of the game scanner
-    enum GameScannerResult {
-        // Default value, not yet scanned
-        NotYetScanned,
-
-        // Hit against game database by hash or filename matching (TODO: separate?)
-        // Implies that the system UUID is known too
-        GameUUIDKnown,
-
-        // Hit against system database by extension (only one system uses the extension)
-        // systemUUIDs contains one element
-        SystemUUIDKnown,
-
-        // Hit against system database by extension (multiple systems use the extension)
-        // systemUUIDs contains two or more elements
-        MultipleSystemUUIDs,
-
-        // Miss against game and system database
-        SystemUUIDUnknown,
-
-        // Path is a .bin file that is listed in a valid .cue file. Paths marked with this value should not be scanned
-        // in step 4.
-        PartOfCueFile,
-    };
+    QDebug operator<<( QDebug debug, const GameMetaData &entry );
 
     // A struct that attaches some basic metadata to a file path
     struct FileEntry {
-        FileEntry()
-            : hasHashCached( false ),
-              scannerResult( NotYetScanned )
-        {
+            Q_GADGET
+        public:
+            FileEntry();
 
-        }
+            FileEntry( const FileEntry &other );
 
-        FileEntry( const FileEntry &other ) {
-            filePath = other.filePath;
-            crc32 = other.crc32;
-            hasHashCached = other.hasHashCached;
-            gameUUID = other.gameUUID;
-            systemUUIDs = other.systemUUIDs;
-            scannerResult = other.scannerResult;
-            gameMetadata = other.gameMetadata;
-        }
+            ~FileEntry() {}
 
-        ~FileEntry() {
+            // Extra data that holds the result of the game scanner
+            enum GameScannerResult{
+                // Default value, not yet scanned
+                NotYetScanned,
 
-        }
+                // Hit against game database by hash or filename matching (TODO: separate?)
+                // Implies that the system UUID is known too
+                GameUUIDKnown,
 
-        // Absolute path to a file
-        QString filePath;
+                // Hit against system database by extension (only one system uses the extension)
+                // systemUUIDs contains one element
+                SystemUUIDKnown,
 
-        // CRC32 hash for matching against game database
-        QString crc32; // TODO: Use a more specific type to store the hash?
+                // Hit against system database by extension (multiple systems use the extension)
+                // systemUUIDs contains two or more elements
+                MultipleSystemUUIDs,
 
-        // Do we have a hash cached?
-        bool hasHashCached;
+                // Miss against game and system database
+                SystemUUIDUnknown,
 
-        // Database UUID, which in our case is the libretro system's name.
-        QString gameUUID;
+                // Path is a .bin file that is listed in a valid .cue file. Paths marked with this value should not be scanned
+                // in step 4.
+                PartOfCueFile,
+            };
+            Q_ENUM( GameScannerResult )
 
-        // Some extensions may map to multiple systems, keep a list in order to present this info to the user later
-        QStringList systemUUIDs;
+            // Absolute path to a file
+            QString filePath;
 
-        // The result of the game scanner. Defines which of the above members have valid values
-        GameScannerResult scannerResult;
+            // CRC32 hash for matching against game database
+            QString crc32; // TODO: Use a more specific type to store the hash?
 
-        // Metadata attached to the game file, like artwork.
-        GameMetaData gameMetadata;
+            // Do we have a hash cached?
+            bool hasHashCached;
+
+            // Database UUID, which in our case is the libretro system's name.
+            QString gameUUID;
+
+            // Some extensions may map to multiple systems, keep a list in order to present this info to the user later
+            QStringList systemUUIDs;
+
+            // The result of the game scanner. Defines which of the above members have valid values
+            GameScannerResult scannerResult;
+
+            // Metadata attached to the game file, like artwork.
+            GameMetaData gameMetadata;
     };
+
+    using GameScannerResult = FileEntry::GameScannerResult;
+
+    QDebug operator<<( QDebug debug, const FileEntry &entry );
 
     using FileList = QList<FileEntry>;
 
 }
 
 using namespace Library;
-Q_DECLARE_METATYPE( FileEntry )
-
-
-
-#endif // LIBRARYTYPES
-
