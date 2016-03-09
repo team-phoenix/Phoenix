@@ -1,8 +1,15 @@
 #ifndef MAPFUNCTOR_H
 #define MAPFUNCTOR_H
 
+#include "frontendcommon.h"
+
 #include "librarytypes.h"
 #include "scannerutil.h"
+#include "archivefile.h"
+#include "cuefile.h"
+#include "cryptohash.h"
+#include "libretrodatabase.h"
+#include "metadatadatabase.h"
 
 // Step 1: Build a list of file paths from a list of file and folder paths by enumerating folders
 
@@ -42,11 +49,13 @@ namespace Library {
             };
 
             enum SearchReason {
-                GetROMID,
-                GetArtwork,
-                GetSystemUUID,
+                GetROMIDByHash,
+                GetROMIDByFilename,
                 GetMetadata,
-                GetHeaders,
+                GetSystemUUID,
+                GetEverything,
+                GetSystemByHeader,
+                GetSystemByExtension
             };
 
             MapFunctor( const Step step );

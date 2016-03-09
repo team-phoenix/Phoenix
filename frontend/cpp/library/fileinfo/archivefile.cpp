@@ -1,8 +1,5 @@
 #include "archivefile.h"
 
-#include <QtCore>
-#include <QStringBuilder>
-
 ArchiveFile::ArchiveFile( const QString &file ) {
     Q_UNUSED( file )
 }
@@ -36,7 +33,6 @@ ArchiveFile::ParseData ArchiveFile::parse( const QString &file ) {
         if( zip.getCurrentFileInfo( &zipFileInfo ) ) {
             fileHashMap.insert( absPath, QString::number( zipFileInfo.crc, 16 ).toUpper() );
         }
-
     }
 
     ParseData data;

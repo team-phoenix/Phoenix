@@ -13,7 +13,7 @@ namespace Library {
         }
 
         // system name retrieved from the OpenVBDB database during a metadata search.
-        QString openVGDBsystemName;
+        QString openVGDBSystemUUID;
 
         // Displayed artwork url for frontend.
         QString frontArtwork;
@@ -50,9 +50,13 @@ namespace Library {
                 // Default value, not yet scanned
                 NotYetScanned,
 
-                // Hit against game database by hash or filename matching (TODO: separate?)
+                // Hit against game database by hash
                 // Implies that the system UUID is known too
-                GameUUIDKnown,
+                GameUUIDByHash,
+
+                // Hit against game database by filename matching
+                // Implies that the system UUID is known too
+                GameUUIDByFilename,
 
                 // Hit against system database by extension (only one system uses the extension)
                 // systemUUIDs contains one element
@@ -63,6 +67,7 @@ namespace Library {
                 MultipleSystemUUIDs,
 
                 // Miss against game and system database
+                // Must be manually matched by user
                 SystemUUIDUnknown,
 
                 // Path is a .bin file that is listed in a valid .cue file. Paths marked with this value should not be scanned
@@ -75,7 +80,7 @@ namespace Library {
             QString filePath;
 
             // CRC32 hash for matching against game database
-            QString crc32; // TODO: Use a more specific type to store the hash?
+            QString crc32; // TODO: Use a more specific type to store the hash like quint32?
 
             // Do we have a hash cached?
             bool hasHashCached;

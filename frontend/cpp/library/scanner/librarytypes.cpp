@@ -41,7 +41,7 @@ QDebug Library::operator<<( QDebug debug, const FileEntry &entry ) {
 QDebug Library::operator<<( QDebug debug, const GameMetaData &entry ) {
 
     debug.nospace() << qPrintable( QString(
-                                       "\t\topenVGDBsystemName = %1\n"
+                                       "\t\topenVGDBSystemUUID = %1\n"
                                        "\t\tfrontArtwork = %2\n"
                                        "\t\tgoodToolsCode = %3\n"
                                        "\t\tregion = %4\n"
@@ -51,7 +51,7 @@ QDebug Library::operator<<( QDebug debug, const GameMetaData &entry ) {
                                        "\t\tdescription = %8\n"
                                        "\t\ttitle = %9\n"
                                    ).
-                                   arg( entry.openVGDBsystemName )
+                                   arg( entry.openVGDBSystemUUID )
                                    .arg( entry.frontArtwork )
                                    .arg( entry.goodToolsCode )
                                    .arg( entry.region )

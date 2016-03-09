@@ -82,7 +82,6 @@ class SqlTableUpdater():
     
         # Everything else
         "Arcade":                                           {"enabled": True,  "defaultCore": "mame_libretro",                      "friendlyName": "",                    "shortName": "", "manufacturer": "(Various)"       },
-        "PC":                                               {"enabled": True,  "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "(Various)"       },
 
         # Conspicuously missing from No-Intro
         "Amstrad - CPC":                                    {"enabled": True,  "defaultCore": "mess2014_libretro",                  "friendlyName": "",                    "shortName": "", "manufacturer": "Amstrad"         },
@@ -187,7 +186,7 @@ class SqlTableUpdater():
         "Commodore - Amiga CD32":                           {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Commodore"       },
         "Commodore - Amiga CDTV":                           {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Commodore"       },
         "Fujitsu - FM Towns series":                        {"enabled": True,  "defaultCore": "mess2014_libretro",                  "friendlyName": "",                    "shortName": "", "manufacturer": "Fujitsu"         },
-        "IBM PC compatible":                                {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "(Various)"       },
+        "IBM PC compatible":                                {"enabled": False, "defaultCore": "",                                   "friendlyName": "PC",                  "shortName": "", "manufacturer": "(Various)"       },
         "Mattel - HyperScan":                               {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Mattel"          },
         "Microsoft - Xbox":                                 {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Microsoft"       },
         "Namco / Sega / Nintendo - Triforce":               {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Sega"            },
@@ -247,6 +246,7 @@ class SqlTableUpdater():
         "CPC":                                                      {"Amstrad - CPC"},
         "DOS":                                                      {"DOS"},
         "GCE - Vectrex":                                            {"GCE - Vectrex"},
+        "IBM PC compatible":                                        {"IBM PC compatible"},
         "Magnavox - Odyssey2":                                      {"Magnavox - Odyssey2"},
         "MAME":                                                     {"Arcade"},
         "Microsoft - MSX 2":                                        {"Microsoft - MSX 2"},
@@ -303,7 +303,7 @@ class SqlTableUpdater():
         "Nintendo - Super Nintendo Entertainment System":           {"Nintendo - Super Nintendo Entertainment System"},
         "Nintendo - Virtual Boy":                                   {"Nintendo - Virtual Boy"},
         "Nintendo - Wii":                                           {"Nintendo - Wii"},
-        "PC":                                                       {"PC"},
+        "PC":                                                       {"IBM PC compatible"},
         "PC-FX":                                                    {"NEC - PC-FX - PC-FXGA"},
         "Sega - 32X":                                               {"Sega - 32X"},
         "Sega - Dreamcast":                                         {"Sega - Dreamcast"},

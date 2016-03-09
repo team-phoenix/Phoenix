@@ -1,6 +1,9 @@
 #ifndef ARCHIVEFILE_H
 #define ARCHIVEFILE_H
 
+#include "frontendcommon.h"
+
+#include "logging.h"
 #include "quazipfile.h"
 #include "quazip.h"
 
