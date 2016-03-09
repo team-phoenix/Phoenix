@@ -10,6 +10,7 @@ void Library::setBackgroundIOPriority() {
 #endif
 
 #ifdef Q_OS_LINUX
+    //syscall( SYS_ioprio_set, IOPRIO_WHO_PROCESS, 0, IOPRIO_PRIO_VALUE( IOPRIO_CLASS_IDLE, 0) );
 #endif
 }
 
@@ -23,5 +24,6 @@ void Library::setNormalIOPriority() {
 #endif
 
 #ifdef Q_OS_LINUX
+    //syscall( SYS_ioprio_set, IOPRIO_WHO_PROCESS, 0, IOPRIO_PRIO_VALUE( IOPRIO_CLASS_BE, 0) );
 #endif
 }
