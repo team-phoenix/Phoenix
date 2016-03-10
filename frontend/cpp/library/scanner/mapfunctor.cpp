@@ -245,7 +245,7 @@ FileList MapFunctor::operator()( const FileEntry &entry ) {
 
                 const QString name( "MapReduce step 4 thread #" );
 
-                thread->setObjectName( name + QString::number( i ) );
+                thread->setObjectName( name % QString::number( i ) % QStringLiteral( " " ) );
 
                 LibretroDatabase::addConnection( thread->objectName() % "libretro" );
                 MetaDataDatabase::addConnection( thread->objectName() % "openvgdb" );
