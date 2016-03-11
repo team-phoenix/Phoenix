@@ -81,3 +81,21 @@ QString GameLauncher::trimmedGame( QString game ) {
 
     return game;
 }
+
+QString GameLauncher::trimmedGameNoExtract( QString game ) {
+
+    if( game.startsWith( QStringLiteral( "file://" ) ) ) {
+        game.remove( QStringLiteral( "file://" ) );
+    } else if( game.startsWith( QStringLiteral( "cue://" ) ) ) {
+        game.remove( QStringLiteral( "cue://" ) );
+    } else if( game.startsWith( QStringLiteral( "zip://" ) ) ) {
+        game.remove( QStringLiteral( "zip://" ) );
+        auto nameList = game.split( QStringLiteral( "|||" ) );
+
+        auto baseDestName = nameList.at( 1 );
+
+        game = QDir::tempPath() + "/" + baseDestName;
+    }
+
+    return game;
+}

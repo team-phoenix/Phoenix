@@ -15,11 +15,12 @@ class GameLauncher : public QObject {
         explicit GameLauncher( QObject *parent = 0 );
 
     public slots:
-        const QString getDefaultCore( const QString system );
+        static const QString getDefaultCore( const QString system );
 
-        bool verify( const QString system, QString rom );
+        static bool verify( const QString system, QString rom );
 
-        QString trimmedGame( QString game );
+        static QString trimmedGame( QString game );
+        static QString trimmedGameNoExtract( QString game );
 
 
     private:

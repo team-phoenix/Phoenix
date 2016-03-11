@@ -166,7 +166,6 @@ FocusScope {
                     hoverEnabled: true;
                     onClicked: { gridView.currentIndex = index; gridView.forceActiveFocus(); }
                     onDoubleClicked: launchGame();
-
                 }
 
                 ColumnLayout {

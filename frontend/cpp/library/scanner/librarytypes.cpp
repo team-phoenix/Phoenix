@@ -1,7 +1,5 @@
 #include "librarytypes.h"
 
-using namespace Library;
-
 FileEntry::FileEntry()
     : hasHashCached( false ),
       scannerResult( NotYetScanned ) {

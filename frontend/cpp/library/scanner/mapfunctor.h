@@ -10,6 +10,7 @@
 #include "cryptohash.h"
 #include "libretrodatabase.h"
 #include "metadatadatabase.h"
+#include "gamelauncher.h"
 
 // Step 1: Build a list of file paths from a list of file and folder paths by enumerating folders
 

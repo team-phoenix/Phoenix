@@ -10,8 +10,6 @@ MapFunctor::MapFunctor( const Step step )
 bool MapFunctor::searchDatabase( const SearchReason reason, FileEntry &fileEntry ) {
     switch( reason ) {
         case GetROMIDByHash: {
-            // Step 1. Search the OpenVGDB, by CRC32 checksum, for the romID of the game.
-
             QSqlQuery openVGDBQuery( QSqlDatabase::database( QThread::currentThread()->objectName() % "openvgdb" ) );
 
             Q_ASSERT( fileEntry.hasHashCached );
@@ -35,8 +33,10 @@ bool MapFunctor::searchDatabase( const SearchReason reason, FileEntry &fileEntry
 
         case GetROMIDByFilename: {
             QSqlQuery openVGDBQuery( QSqlDatabase::database( QThread::currentThread()->objectName() % "openvgdb" ) );
-            QFileInfo file( fileEntry.filePath );
+            QFileInfo file( GameLauncher::trimmedGameNoExtract( fileEntry.filePath ) );
             QString filename = file.fileName();
+
+            qCDebug( phxLibrary ) << filename;
 
             // Filename must be sanitized before being passed into an SQL query
             openVGDBQuery.prepare( QStringLiteral( "SELECT romID FROM " )
@@ -113,12 +113,15 @@ bool MapFunctor::searchDatabase( const SearchReason reason, FileEntry &fileEntry
                 fileEntry.systemUUIDs.append( libretroQuery.value( 0 ).toString() );
             }
 
-            if( fileEntry.systemUUIDs.size() == 0 ) {
-                fileEntry.scannerResult = GameScannerResult::SystemUUIDUnknown;
-            } else {
-                fileEntry.scannerResult = fileEntry.systemUUIDs.size() == 1 ?
-                                          GameScannerResult::SystemUUIDKnown : GameScannerResult::MultipleSystemUUIDs;
-                return true;
+            // Don't say anything about system UUIDs if we already have the game UUID
+            if( !( fileEntry.scannerResult == GameScannerResult::GameUUIDByFilename
+                   || fileEntry.scannerResult == GameScannerResult::GameUUIDByHash ) ) {
+                if( fileEntry.systemUUIDs.size() == 0 ) {
+                    fileEntry.scannerResult = GameScannerResult::SystemUUIDUnknown;
+                } else {
+                    fileEntry.scannerResult = fileEntry.systemUUIDs.size() == 1 ?
+                                              GameScannerResult::SystemUUIDKnown : GameScannerResult::MultipleSystemUUIDs;
+                }
             }
 
             break;
@@ -157,6 +160,9 @@ bool MapFunctor::searchDatabase( const SearchReason reason, FileEntry &fileEntry
         }
 
         case GetSystemByExtension: {
+            QFileInfo file( fileEntry.filePath );
+            QString filename = GameLauncher::trimmedGameNoExtract( file.fileName() );
+            Q_UNUSED( filename );
             break;
         }
 
@@ -236,27 +242,25 @@ FileList MapFunctor::operator()( const FileEntry &entry ) {
             // FIXME: Connections are never closed
             QThread *thread = QThread::currentThread();
 
-            if( !thread->objectName().startsWith( "MapReduce step 4 thread #" ) ) {
+            if( !thread->objectName().startsWith( QStringLiteral( "MapReduce step 4 thread #" ) ) ) {
                 static int i = 0;
 
                 static QMutex mutex;
                 mutex.lock();
                 i++;
 
-                const QString name( "MapReduce step 4 thread #" );
+                const QString name = QStringLiteral( "MapReduce step 4 thread #" );
 
                 thread->setObjectName( name % QString::number( i ) % QStringLiteral( " " ) );
 
                 LibretroDatabase::addConnection( thread->objectName() % "libretro" );
                 MetaDataDatabase::addConnection( thread->objectName() % "openvgdb" );
 
+                // Test the connection
                 QSqlDatabase libretroDB = QSqlDatabase::database( thread->objectName() % "libretro" );
                 QSqlDatabase openVGDB = QSqlDatabase::database( thread->objectName() % "openvgdb" );
-                bool libretroDBConnectionResult = libretroDB.open();
-                bool openVGDBConnectionResult = openVGDB.open();
-
-                Q_ASSERT( libretroDBConnectionResult );
-                Q_ASSERT( openVGDBConnectionResult );
+                Q_ASSERT( libretroDB.open() );
+                Q_ASSERT( openVGDB.open() );
 
                 mutex.unlock();
             }

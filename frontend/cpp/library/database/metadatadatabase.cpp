@@ -74,7 +74,7 @@ void MetaDataDatabase::removeDatabase() {
 
 void MetaDataDatabase::addConnection( const QString &name ) {
     if( !QSqlDatabase::contains( name ) ) {
-        qCDebug( phxLibrary ) << "Opening a new SQL connection:" << name;
+        qCDebug( phxLibrary ) << "Opening a new metadata DB SQL connection:" << name;
 
         QSqlDatabase db = QSqlDatabase::addDatabase( QStringLiteral( "QSQLITE" ), name );
 
@@ -88,7 +88,6 @@ void MetaDataDatabase::addConnection( const QString &name ) {
         QString filePath = dataPath.filePath( databaseName );
 
         db.setDatabaseName( filePath );
-
     }
 }
 

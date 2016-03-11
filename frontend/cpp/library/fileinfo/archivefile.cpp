@@ -22,6 +22,11 @@ ArchiveFile::ParseData ArchiveFile::parse( const QString &file ) {
     QHash<QString, QString> fileHashMap;
 
     for( bool f = zip.goToFirstFile(); f; f = zip.goToNextFile() ) {
+        // Skip folders (the contents of the folders should still be recursed)
+        // Apparently this is guarantied by the standard?
+        if( zip.getCurrentFileName().endsWith( '/' ) ) {
+            continue;
+        }
 
         const QString absPath = ArchiveFile::prefix() % file
                                 % ArchiveFile::delimiter() % zip.getCurrentFileName();
