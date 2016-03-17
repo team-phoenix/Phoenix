@@ -13,10 +13,10 @@ qreal GameHasher::progress() const {
     return mTotalProgess;
 }
 
-void GameHasher::setProgress( qreal progress ) {
+void GameHasher::setProgress( int progress ) {
     mTotalProgess = progress;
 
-    if( static_cast<int>( progress ) % 5 == 0 || progress == 100.0 ) {
+    if( progress % 5 == 0 || progress == 100 ) {
         emit progressChanged( mTotalProgess );
     }
 }
@@ -138,14 +138,22 @@ void GameHasher::stepFourFinished( BetterFutureWatcher *betterWatcher ) {
 
     qCDebug( phxLibrary ) << "Step four map reduce finished: " << fileList.size();
 
-    mFilesProcessing -= fileList.size();
 
     qCDebug( phxLibrary ) << "Scan complete, finished scan at" << QDateTime::currentDateTime();
 
     qCDebug( phxLibrary ) << "Results:";
 
-    for( FileEntry entry : fileList ) {
+    int i = 0;
+    for( const FileEntry &entry : fileList ) {
+        int progress = qFloor( ( i / static_cast<qreal>( mFilesProcessing ) ) * 100 );
+
         qCDebug( phxLibrary ) << entry;
+
+        emit fileReady( entry );
+        setProgress( progress );
+
+        i++;
+        mFilesProcessing -= i;
     }
 
     qCDebug( phxLibrary ) << "End of list";

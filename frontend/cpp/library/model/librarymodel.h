@@ -70,7 +70,7 @@ namespace Library {
 
         public slots:
 
-            void setProgress( const qreal progress );
+            void setProgress( const int progress );
 
             // Removes 1 row from the SQL model.
             // bool remove( int row, int count = 1 );
@@ -188,7 +188,7 @@ namespace Library {
             // QML Variables
             int qmlCount;
             bool qmlRecursiveScan;
-            qreal qmlProgress;
+            int qmlProgress;
             QString qmlMessage;
 
             // Normal Setters

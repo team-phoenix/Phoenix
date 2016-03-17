@@ -31,15 +31,16 @@ namespace Library {
             explicit GameHasher( QObject *parent = 0 );
 
             qreal progress() const;
-            void setProgress( qreal progress );
+            void setProgress( int progress );
 
         signals:
-            void progressChanged( const qreal progress );
+            void progressChanged( const int progress );
             void fileReady( FileEntry entry );
 
         public slots:
             // Entry points, connect to and invoke these slots to begin the game scanning process
             void addPath( QString path );
+
 
         private slots:
             // Handlers that move the process along once done

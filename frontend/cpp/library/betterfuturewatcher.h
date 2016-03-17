@@ -24,18 +24,18 @@ namespace Library {
 
         void setFuture( const QFuture<FileList> &future, int index );
 
-        QFutureWatcher<FileList> &futureWatcher();
+        const QFutureWatcher<FileList> &futureWatcher();
 
         int listIndex() const;
         void adjustIndex( int pivot );
 
     signals:
         void finished( BetterFutureWatcher *watcher  );
-        void progress( qreal progress );
+        void progressChanged( int progress );
 
     public slots:
         void slotInterceptFinished();
-
+        void slotForwardProgress( int progress );
 
     private:
         QFutureWatcher<FileList> mWatcher;

@@ -471,7 +471,7 @@ void LibraryModel::handleInsertGame( const GameData importData ) {
 }
 */
 
-void LibraryModel::setProgress( const qreal progress ) {
+void LibraryModel::setProgress( const int progress ) {
     if( progress == qmlProgress ) {
         return;
     }
