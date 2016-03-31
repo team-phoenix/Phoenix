@@ -83,13 +83,17 @@ include( deployment.pri )
                cpp/library/model/platformsmodel.cpp \
                cpp/library/cuefile.cpp \
                cpp/library/fileinfo/archivefile.cpp \
-    cpp/library/betterfuturewatcher.cpp \
-    cpp/library/scanner/gamehasher.cpp \
-    cpp/library/scanner/mapfunctor.cpp \
-    cpp/library/scanner/reducefunctor.cpp \
-    cpp/library/scanner/filterfunctor.cpp \
-    cpp/library/scanner/scannerutil.cpp \
-    cpp/library/scanner/librarytypes.cpp
+               cpp/library/betterfuturewatcher.cpp \
+               cpp/library/scanner/gamehasher.cpp \
+               cpp/library/scanner/mapfunctor.cpp \
+               cpp/library/scanner/reducefunctor.cpp \
+               cpp/library/scanner/filterfunctor.cpp \
+               cpp/library/scanner/scannerutil.cpp \
+               cpp/library/scanner/librarytypes.cpp \
+               cpp/library/model/sqlthreadedmodel.cpp \
+               cpp/library/model/sqlmodel.cpp \
+               cpp/library/model/sqlcolumn.cpp \
+               cpp/library/model/databasesettings.cpp
 
     HEADERS += cpp/library/gamelauncher.h \
                cpp/library/imagecacher.h \
@@ -108,13 +112,17 @@ include( deployment.pri )
                cpp/theme/phoenixtheme.h \
                cpp/library/cuefile.h \
                cpp/library/fileinfo/archivefile.h \
-    cpp/library/librarytypes.h \
-    cpp/library/betterfuturewatcher.h \
-    cpp/library/scanner/gamehasher.h \
-    cpp/library/scanner/mapfunctor.h \
-    cpp/library/scanner/reducefunctor.h \
-    cpp/library/scanner/filterfunctor.h \
-    cpp/library/scanner/scannerutil.h
+               cpp/library/librarytypes.h \
+               cpp/library/betterfuturewatcher.h \
+               cpp/library/scanner/gamehasher.h \
+               cpp/library/scanner/mapfunctor.h \
+               cpp/library/scanner/reducefunctor.h \
+               cpp/library/scanner/filterfunctor.h \
+               cpp/library/scanner/scannerutil.h \
+               cpp/library/model/sqlthreadedmodel.h \
+               cpp/library/model/sqlmodel.h \
+               cpp/library/model/sqlcolumn.h \
+               cpp/library/model/databasesettings.h
 
     PRECOMPILED_HEADER = cpp/frontendcommon.h
 
