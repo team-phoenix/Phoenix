@@ -1,5 +1,4 @@
-#ifndef LIBRARYMODEL_H
-#define LIBRARYMODEL_H
+#pragma once
 
 #include "frontendcommon.h"
 
@@ -8,7 +7,6 @@
 #include "logging.h"
 
 namespace Library {
-
     class LibraryModel : public QSqlTableModel {
             Q_OBJECT
             Q_PROPERTY( int count READ count NOTIFY countChanged )
@@ -21,7 +19,6 @@ namespace Library {
             Q_PROPERTY( bool insertCancelled READ insertCancelled )
 
         public:
-
             // GameImportData is used to import game files into the SQL database.
             // This is a a simple data grouping to simplify signals and slots
 
@@ -48,7 +45,7 @@ namespace Library {
             bool select() override;
             bool transaction();
 
-            //  QML Getters
+            // QML Getters
             int count() const;
             qreal progress() const;
             bool recursiveScan() const;
@@ -69,7 +66,6 @@ namespace Library {
             QHash<int, QByteArray> roleNames() const override;
 
         public slots:
-
             void setProgress( const int progress );
 
             // Removes 1 row from the SQL model.
@@ -120,7 +116,6 @@ namespace Library {
 
 
         private slots:
-
             // handleInsertGame runs on the main QML thread, and is
             // where the SQL query statement is created and executed.
             //void handleInsertGame( const GameData importData );
@@ -136,7 +131,6 @@ namespace Library {
             void handleProgressChanged();
 
         signals:
-
             void startScan();
             void appendScanPath( const QString filePath );
 
@@ -156,11 +150,9 @@ namespace Library {
             void signalInsertPaused( const bool paused );
 
         protected:
-
             QString selectStatement() const override;
 
         private:
-
             explicit LibraryModel( UserDatabase &db, QObject *parent = 0 );
             explicit LibraryModel( UserDatabase *db, QObject *parent = 0 );
 
@@ -196,5 +188,3 @@ namespace Library {
     };
 
 }
-
-#endif // LIBRARYMODEL_H

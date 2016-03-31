@@ -1,5 +1,4 @@
-#ifndef COLLECTIONSMODEL_H
-#define COLLECTIONSMODEL_H
+#pragma once
 
 #include "frontendcommon.h"
 
@@ -12,11 +11,9 @@
  */
 
 namespace Library {
-
     class CollectionsModel : public QSqlTableModel {
             Q_OBJECT
         public:
-
             using QSqlTableModel::setFilter;
 
             explicit CollectionsModel( QObject *parent = 0 );
@@ -25,7 +22,6 @@ namespace Library {
                 CollectionIDRole = Qt::UserRole + 1,
                 CollectionNameRole,
             };
-
             Q_ENUMS( CollectionRoles )
 
             virtual QHash<int, QByteArray> roleNames() const override;
@@ -44,16 +40,11 @@ namespace Library {
 
         private:
             explicit CollectionsModel( UserDatabase &db, QObject *parent = 0 );
-
             explicit CollectionsModel( UserDatabase *db, QObject *parent = 0 );
 
             UserDatabase *mLibraryDatabase;
             QHash<int, QByteArray> mRoleNames;
             QVariantList params;
             QHash<CollectionRoles, QVariant> filterParameterMap;
-
-
     };
 }
-
-#endif // COLLECTIONSMODEL_H

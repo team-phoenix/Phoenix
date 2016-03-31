@@ -16,7 +16,6 @@
  */
 
 namespace Library {
-
     class CoreModel : public QAbstractTableModel {
             Q_OBJECT
         public:
