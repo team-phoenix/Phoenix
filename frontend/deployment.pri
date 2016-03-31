@@ -19,7 +19,7 @@
 
     # Get the source and target's path
     # On Windows, the DOS qmake paths must be converted to Unix paths as the GNU coreutils we'll be using expect that
-    # The default prefix is a folder called "Phoenix" at the root of the build folder
+    # The default prefix is a folder called "dist" at the root of the build folder
     win32 {
         SOURCE_PATH = $$system( cygpath -u \"$$PWD\" )
         TARGET_PATH = $$system( cygpath -u \"$$OUT_PWD\" )
