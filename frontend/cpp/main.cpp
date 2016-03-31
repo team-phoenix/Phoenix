@@ -10,6 +10,7 @@
 #include "coremodel.h"
 #include "platformsmodel.h"
 #include "librarytypes.h"
+#include "sqlthreadedmodel.h"
 
 // Backend
 #include "control.h"
@@ -199,6 +200,12 @@ int main( int argc, char *argv[] ) {
     qRegisterMetaType<Library::FileEntry>( "FileEntry" );
 
     // Register our custom QML-accessable/instantiable objects
+    qmlRegisterType<SqlModel>( "vg.phoenix.models", 1, 0, "SqlModel" );
+    qmlRegisterType<SqlColumn>( "vg.phoenix.models", 1, 0, "SqlColumn" );
+    qmlRegisterType<SqlThreadedModel>( "vg.phoenix.models", 1, 0, "SqlThreadedModel" );
+    qmlRegisterType<DatabaseSettings>();
+    qRegisterMetaType<SqlModel::FilterType>( "SqlModel::FilterType" );
+
     qmlRegisterType<Library::PlatformsModel>( "vg.phoenix.models", 1, 0, "PlatformsModel" );
     qmlRegisterType<Library::CollectionsModel>( "vg.phoenix.models", 1, 0, "CollectionsModel" );
     qmlRegisterType<Library::LibraryModel>( "vg.phoenix.models", 1, 0, "LibraryModel" );
