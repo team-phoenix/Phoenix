@@ -1,5 +1,4 @@
 #include "coremodel.h"
-#include "libretromodel.h"
 
 using namespace Library;
 

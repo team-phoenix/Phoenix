@@ -9,7 +9,6 @@
 #include "librarymodel.h"
 #include "coremodel.h"
 #include "platformsmodel.h"
-#include "libretromodel.h"
 #include "librarytypes.h"
 
 // Backend
