@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QObject>
+#include "frontendcommon.h"
 
 // SqlColumn in used from QML. It represents an SQL column entry that is used
 // during an SQL CREATE TABLE statement and for referrencing the column in

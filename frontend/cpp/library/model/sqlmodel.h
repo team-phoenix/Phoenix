@@ -1,12 +1,9 @@
 #pragma once
 
+#include "frontendcommon.h"
+
 #include "sqlcolumn.h"
 #include "databasesettings.h"
-
-#include <QObject>
-#include <QSqlTableModel>
-#include <QQmlListProperty>
-#include <QUrl>
 
 const static QString filterValueKey = QStringLiteral( "bindValue" );
 const static QString filterStatementKey = QStringLiteral( "filter" );
@@ -90,7 +87,7 @@ class SqlModel : public QSqlTableModel {
         // 'clearFilter()' is called on the filtered column.
         void setFilter( const QString column
                         , const QVariant value
-                        , const FilterType type = FilterType::Like );
+                        , const SqlModel::FilterType type = FilterType::Like );
 
         // Removes an SQL filter on the query.
         void clearFilter( const QString column );

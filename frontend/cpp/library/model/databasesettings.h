@@ -1,8 +1,6 @@
 #pragma once
 
-#include <QObject>
-#include <QSql>
-#include <QDebug>
+#include "frontendcommon.h"
 
 // DatabaseSettings is a wrapper for setting the QSqlDatabase setters from QML.
 // This is exposed in the SqlModel under the Q_PROPERTY called "databaseSettings" and is a read only object.
@@ -73,7 +71,6 @@ class DatabaseSettings : public QObject {
 
         int mPort;
         NumericalPrecisionPolicy mNumericalPrecisionPolicy;
-
 };
 
 QDebug operator <<( QDebug d, const DatabaseSettings &db );

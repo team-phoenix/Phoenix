@@ -18,11 +18,10 @@ int SqlModel::tableRowIndex = -1;
 SqlModel::SqlModel( QObject *parent )
     : QSqlTableModel( parent ),
       mCacheModel( false ),
-      mAutoCreate( false )
-{
+      mAutoCreate( false ) {
 }
 
-void SqlModel::setRoleName( const int role, const QByteArray &value) {
+void SqlModel::setRoleName( const int role, const QByteArray &value ) {
     mRoleNames.insert( roleIndex( role ), value );
     mNameToRoleMap.insert( value, roleIndex( role ) );
 }
@@ -33,34 +32,41 @@ void SqlModel::openDatabase( const QString &connection, const QString &dbName, c
     Q_ASSERT( !dbAbsoluteFile.isEmpty() );
 
     QSqlDatabase db;
-    if ( QSqlDatabase::contains( dbName ) ) {
+
+    if( QSqlDatabase::contains( dbName ) ) {
         db = QSqlDatabase::database( dbName );
     } else {
         db = QSqlDatabase::addDatabase( connection, dbName );
         db.setDatabaseName( dbAbsoluteFile );
-        if ( !mDatabaseSettings.userName().isEmpty() ) {
+
+        if( !mDatabaseSettings.userName().isEmpty() ) {
             db.setUserName( mDatabaseSettings.userName() );
         }
-        if ( !mDatabaseSettings.password().isEmpty() ) {
+
+        if( !mDatabaseSettings.password().isEmpty() ) {
             db.setPassword( mDatabaseSettings.password() );
         }
-        if ( !mDatabaseSettings.connectionOptions().isEmpty() ) {
+
+        if( !mDatabaseSettings.connectionOptions().isEmpty() ) {
             db.setConnectOptions( mDatabaseSettings.connectionOptions() );
         }
-        if ( mDatabaseSettings.port() != INT_MIN ) {
-            db.setPort(  mDatabaseSettings.port() );
+
+        if( mDatabaseSettings.port() != INT_MIN ) {
+            db.setPort( mDatabaseSettings.port() );
         }
-        if ( !mDatabaseSettings.hostName().isEmpty() ) {
+
+        if( !mDatabaseSettings.hostName().isEmpty() ) {
             db.setHostName( mDatabaseSettings.hostName() );
         }
-        if ( mDatabaseSettings.numericalPrecisionPolicy() != DatabaseSettings::NumericalPrecisionPolicy::Default ) {
+
+        if( mDatabaseSettings.numericalPrecisionPolicy() != DatabaseSettings::NumericalPrecisionPolicy::Default ) {
             db.setNumericalPrecisionPolicy( static_cast<QSql::NumericalPrecisionPolicy>( mDatabaseSettings.numericalPrecisionPolicy() ) );
         }
     }
 
     qDebug( "Opening database %s", qPrintable( db.databaseName() ) );
 
-    if ( !db.isOpen() ) {
+    if( !db.isOpen() ) {
         bool o = db.open();
         Q_ASSERT( o );
     }
@@ -68,21 +74,24 @@ void SqlModel::openDatabase( const QString &connection, const QString &dbName, c
 
 bool SqlModel::addRow( const QVariantMap rowData ) {
 
-    QString statement = QStringLiteral( "INSERT INTO ") % tableName();
+    QString statement = QStringLiteral( "INSERT INTO " ) % tableName();
     QString colStatement = QStringLiteral( "(" );
-    QString valueStatement = QStringLiteral( " VALUES(");
+    QString valueStatement = QStringLiteral( " VALUES(" );
 
-    int i=0;
-    for ( const QString &col: rowData.keys() ) {
-        if ( i == rowData.size() - 1 ) {
+    int i = 0;
+
+    for( const QString &col : rowData.keys() ) {
+        if( i == rowData.size() - 1 ) {
             colStatement += col + QStringLiteral( ")" );
             valueStatement += QStringLiteral( "?);" );
         } else {
             colStatement += col + QStringLiteral( "," );
             valueStatement += QStringLiteral( "?," );
         }
+
         ++i;
     }
+
     statement += colStatement + valueStatement;
 
     QMap<int, QVariant> newCacheMap;
@@ -96,7 +105,7 @@ bool SqlModel::addRow( const QVariantMap rowData ) {
     query.prepare( statement );
 
 
-    for ( const QString &col: rowData.keys() ) {
+    for( const QString &col : rowData.keys() ) {
         const QVariant val = rowData.value( col );
         query.addBindValue( val );
         int code = mNameToRoleMap.value( col.toLocal8Bit(), -1 );
@@ -104,7 +113,7 @@ bool SqlModel::addRow( const QVariantMap rowData ) {
         newCacheMap.insert( code, val );
     }
 
-    if ( !query.exec() ) {
+    if( !query.exec() ) {
         qDebug() << Q_FUNC_INFO << query.lastError().text();
         bool r = db.rollback();
         Q_ASSERT( r );
@@ -117,7 +126,7 @@ bool SqlModel::addRow( const QVariantMap rowData ) {
 
     beginInsertRows( QModelIndex(), rowCount(),  rowCount() );
 
-    if ( cacheModel() ) {
+    if( cacheModel() ) {
         cachedModel.append( newCacheMap );
     }
 
@@ -145,7 +154,8 @@ bool SqlModel::deleteRow( int index, const QString column, const QVariant where 
 
     query.prepare( statement );
     query.addBindValue( where );
-    if ( !query.exec() ) {
+
+    if( !query.exec() ) {
         qDebug() << Q_FUNC_INFO << query.lastError().text();
         bool r = db.rollback();
         Q_ASSERT( r );
@@ -178,18 +188,19 @@ bool SqlModel::updateRow( int index, const QString column, const QVariant oldDat
     query.addBindValue( newData );
     query.addBindValue( oldData );
 
-    if ( !query.exec() ) {
+    if( !query.exec() ) {
         qCritical() << Q_FUNC_INFO << statement << "\n" << query.lastError().text();
         Q_ASSERT( false );
         return false;
     }
 
-    if ( cacheModel() ) {
+    if( cacheModel() ) {
         QMap<int, QVariant> map = cachedModel.at( index );
 
         map.insert( mNameToRoleMap.value( column.toLocal8Bit() ), newData );
         cachedModel.replace( index, map );
     }
+
     db.commit();
 
     // All this to update a row? really!?!?!
@@ -204,12 +215,13 @@ bool SqlModel::updateRow( int index, const QString column, const QVariant oldDat
 QString SqlModel::createFilter() {
 
     QString result;
-    for ( const QString &col : mFilterMap.keys() ) {
+
+    for( const QString &col : mFilterMap.keys() ) {
 
         QVariantHash hash = mFilterMap.value( col ).toHash();
         const QString statement = hash.value( filterStatementKey ).toString();
 
-        if ( !result.isEmpty() ) {
+        if( !result.isEmpty() ) {
             result += QStringLiteral( " AND " ) + statement;
         } else {
             result += statement;
@@ -223,7 +235,7 @@ void SqlModel::clearDatabase() {
 
     beginRemoveRows( QModelIndex(), 0, rowCount() );
 
-    if ( QSqlDatabase::contains( mDatabaseSettings.connectionName() ) ) {
+    if( QSqlDatabase::contains( mDatabaseSettings.connectionName() ) ) {
         QSqlDatabase db = QSqlDatabase::database( mDatabaseSettings.connectionName() );
         db.close();
     }
@@ -232,7 +244,7 @@ void SqlModel::clearDatabase() {
 
     cachedModel.clear();
 
-    if ( file.remove() ) {
+    if( file.remove() ) {
         openDatabase( mDatabaseSettings.driverType(), mDatabaseSettings.connectionName(), mDbAbsoluteFilePath );
         createTable();
     }
@@ -262,7 +274,7 @@ bool SqlModel::select() {
 
     query.prepare( s );
 
-    if ( !filter().isEmpty() ) {
+    if( !filter().isEmpty() ) {
         for( const QString &col : mFilterMap.keys() ) {
             const QVariantHash hash = mFilterMap.value( col ).toHash();
             query.addBindValue( hash.value( filterValueKey ) );
@@ -289,18 +301,19 @@ QString SqlModel::selectStatement() const {
 
     QString statement = QStringLiteral( "SELECT " );
 
-    for ( int i=0; i < mTableColumns.size(); ++i ) {
+    for( int i = 0; i < mTableColumns.size(); ++i ) {
 
         SqlColumn *col = mTableColumns[ i ];
         statement += col->name();
-        if ( i != mTableColumns.size() - 1 ) {
+
+        if( i != mTableColumns.size() - 1 ) {
             statement += QStringLiteral( ", " );
         }
     }
 
     statement += QStringLiteral( " FROM " ) % tableName();
 
-    if ( !filter().isEmpty() ) {
+    if( !filter().isEmpty() ) {
         statement += " WHERE " % filter();
     }
 
@@ -310,40 +323,35 @@ QString SqlModel::selectStatement() const {
 }
 
 QVariant SqlModel::data( const QModelIndex &index, int role ) const {
-    QVariant result = QSqlQueryModel::data( index, role);
+    QVariant result = QSqlQueryModel::data( index, role );
 
-    if ( role < Qt::UserRole || !mRoleNames.contains( role ) ) {
+    if( role < Qt::UserRole || !mRoleNames.contains( role ) ) {
         return result;
     }
 
-    int columnIdx = record().indexOf( mRoleNames.value( role  ) );
+    int columnIdx = record().indexOf( mRoleNames.value( role ) );
     return QSqlQueryModel::data( this->index( index.row(), columnIdx ), Qt::DisplayRole );
 
     return result;
 }
 
-bool SqlModel::cacheModel() const
-{
+bool SqlModel::cacheModel() const {
     return mCacheModel;
 }
 
-QString SqlModel::tableName() const
-{
+QString SqlModel::tableName() const {
     return mTableName;
 }
 
-QUrl SqlModel::fileLocation() const
-{
+QUrl SqlModel::fileLocation() const {
     return mFileLocation;
 }
 
-bool SqlModel::autoCreate() const
-{
+bool SqlModel::autoCreate() const {
     return mAutoCreate;
 }
 
-QQmlListProperty<SqlColumn> SqlModel::tableColumns()
-{
+QQmlListProperty<SqlColumn> SqlModel::tableColumns() {
     return QQmlListProperty<SqlColumn>( this
                                         , Q_NULLPTR
                                         , &appendTableRow
@@ -352,7 +360,7 @@ QQmlListProperty<SqlColumn> SqlModel::tableColumns()
                                         , Q_NULLPTR );
 }
 
-void SqlModel::appendTableRow(QQmlListProperty<SqlColumn> *list, SqlColumn *row) {
+void SqlModel::appendTableRow( QQmlListProperty<SqlColumn> *list, SqlColumn *row ) {
     tableRowIndex++;
 
     SqlModel *model = qobject_cast<SqlModel *>( list->object );
@@ -363,12 +371,12 @@ void SqlModel::appendTableRow(QQmlListProperty<SqlColumn> *list, SqlColumn *row)
 
 }
 
-void SqlModel::setCacheModel(const bool cache) {
+void SqlModel::setCacheModel( const bool cache ) {
     mCacheModel = cache;
     emit cacheModelChanged();
 }
 
-void SqlModel::setTableName(const QString tableName) {
+void SqlModel::setTableName( const QString tableName ) {
     mTableName = tableName;
     emit tableNameChanged();
 }
@@ -378,17 +386,17 @@ void SqlModel::setFileLocation( const QUrl location ) {
     emit fileLocationChanged();
 }
 
-void SqlModel::setAutoCreate(const bool create) {
+void SqlModel::setAutoCreate( const bool create ) {
     mAutoCreate = create;
     emit autoCreateChanged();
 }
 
-void SqlModel::setFilter(const QString column, const QVariant value, const SqlModel::FilterType type) {
+void SqlModel::setFilter( const QString column, const QVariant value, const SqlModel::FilterType type ) {
 
     QString tableColumn = mTableName + QStringLiteral( "." ) % column;
-    QString comparison = ( type == FilterType::Like ) ? QStringLiteral( "LIKE" ) : QStringLiteral( "=");
+    QString comparison = ( type == FilterType::Like ) ? QStringLiteral( "LIKE" ) : QStringLiteral( "=" );
 
-    QString filterVal = tableColumn % QStringLiteral( " " ) % comparison % QStringLiteral( " ?") ;
+    QString filterVal = tableColumn % QStringLiteral( " " ) % comparison % QStringLiteral( " ?" ) ;
     QVariantHash h;
 
     h.insert( filterValueKey, value.toString() );
@@ -399,7 +407,7 @@ void SqlModel::setFilter(const QString column, const QVariant value, const SqlMo
     QSqlTableModel::setFilter( newFilter );
 }
 
-void SqlModel::clearFilter(const QString column) {
+void SqlModel::clearFilter( const QString column ) {
     QString tableColumn = mTableName + QStringLiteral( "." ) % column;
 
     if( mFilterMap.remove( tableColumn ) == 0 ) {
@@ -417,13 +425,14 @@ void SqlModel::finishModelConstruction() {
     Q_ASSERT( !fileLocation().isEmpty() );
 
     QString dbFile = fileLocation().toString();
-    if ( dbFile.startsWith( QStringLiteral( "qrc:" ) ) ) {
+
+    if( dbFile.startsWith( QStringLiteral( "qrc:" ) ) ) {
         dbFile = dbFile.remove( QStringLiteral( "qrc:" ) );
-    } else if ( dbFile.startsWith( QStringLiteral( "file:" ) ) ) {
+    } else if( dbFile.startsWith( QStringLiteral( "file:" ) ) ) {
         dbFile = dbFile.remove( QStringLiteral( "file:" ) );
     }
 
-    if ( mDatabaseSettings.connectionName().isEmpty() ) {
+    if( mDatabaseSettings.connectionName().isEmpty() ) {
         mDatabaseSettings.setConnectionName( dbFile );
         qWarning() << "connectionName wasn't set! Multiple connections to"
                    << dbFile << "may share connection names. Prefer to set it!";
@@ -437,11 +446,12 @@ void SqlModel::finishModelConstruction() {
 
     QString statement = QStringLiteral( "SELECT " );
 
-    for ( int i=0; i < mTableColumns.size(); ++i ) {
+    for( int i = 0; i < mTableColumns.size(); ++i ) {
 
         SqlColumn *col = mTableColumns[ i ];
         statement += col->name();
-        if ( i != mTableColumns.size() - 1 ) {
+
+        if( i != mTableColumns.size() - 1 ) {
             statement += QStringLiteral( ", " );
         }
     }
@@ -449,21 +459,22 @@ void SqlModel::finishModelConstruction() {
     statement += QStringLiteral( " FROM " ) % tableName() % QStringLiteral( ";" );
     beginResetModel();
 
-    if ( cacheModel() ) {
+    if( cacheModel() ) {
         QSqlQuery query( QSqlDatabase::database( mDatabaseSettings.connectionName() ) );
 
         qDebug() << statement;
 
-        if ( query.exec( statement ) ) {
+        if( query.exec( statement ) ) {
 
-            while ( query.next() ) {
+            while( query.next() ) {
 
                 QMap<int, QVariant> map;
-                for ( int i=0; i < mTableColumns.size(); ++i ) {
+
+                for( int i = 0; i < mTableColumns.size(); ++i ) {
                     map.insert( roleIndex( i ), query.value( i ) );
                 }
 
-                if ( !map.isEmpty() ) {
+                if( !map.isEmpty() ) {
                     cachedModel.append( map );
                 }
 
@@ -490,17 +501,18 @@ void SqlModel::createTable() {
                         % tableName()
                         % QStringLiteral( "(" );
 
-    for ( int i=0; i < mTableColumns.size(); ++i ) {
+    for( int i = 0; i < mTableColumns.size(); ++i ) {
         SqlColumn *col = mTableColumns[ i ];
         statement += col->name() + " " + col->type();
-        if ( i == mTableColumns.size() - 1 ) {
+
+        if( i == mTableColumns.size() - 1 ) {
             statement += QStringLiteral( ");" );
         } else {
             statement += QStringLiteral( ", " );
         }
     }
 
-    if ( !query.exec( statement )  ) {
+    if( !query.exec( statement ) ) {
         qCritical() << Q_FUNC_INFO << query.lastError().text();
         Q_ASSERT( false );
     }

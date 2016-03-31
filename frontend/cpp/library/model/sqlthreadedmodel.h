@@ -1,10 +1,8 @@
 #pragma once
 
-#include "sqlmodel.h"
+#include "frontendcommon.h"
 
-#include <QObject>
-#include <QAbstractTableModel>
-#include <QThread>
+#include "sqlmodel.h"
 
 // SqlThreadedModel is a threaded SQL model that keeps track of and
 // forwards slot function calls to an internal SqlModel. In other words, it is a
@@ -99,7 +97,7 @@ class SqlThreadedModel : public QAbstractTableModel {
         // but is still empty of rows.
         void clearDatabase();
 
-    private Q_SLOTS:
+    private slots:
         // ~[!!] Slots that connect to the internal SqlModel and
         // repeat 'beginResetModel' and 'endResetModel' to update the view attached
         // to this thread.
