@@ -121,7 +121,8 @@ Item {
                     FileDialog {
                         id: fileDialog;
                         selectFolder: true;
-                        onAccepted: { contentArea.contentLibraryModel.scanFolder( fileUrl ); }
+                        // FIXME: Hook up to something
+                        // onAccepted: { contentArea.contentLibraryModel.scanFolder( fileUrl ); }
                     }
 
                     // Returns first match

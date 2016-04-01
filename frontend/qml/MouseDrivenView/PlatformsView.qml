@@ -22,7 +22,7 @@ PhxScrollView {
         spacing: 0;
         model: SqlThreadedModel {
             id: sqlModel;
-            fileLocation: PhxPaths.qmlMetadataLocation() + "libretro.sqlite";
+            fileLocation: PhxPaths.qmlMetadataLocation() + '/' + "libretro.sqlite";
             tableName: "system";
             autoCreate: false;
             databaseSettings {
@@ -83,7 +83,7 @@ PhxScrollView {
                     onCurrentIndexChanged:
                         if( listView.currentIndex === -1 ) {
                             // Always use UUID
-                            contentArea.contentLibraryModel.clearFilter( "games", "system" );
+                            contentArea.contentLibraryModel.clearFilter( "system" );
                     }
                 }
 
@@ -165,7 +165,7 @@ PhxScrollView {
                 onCurrentIndexChanged:
                     if( listView.currentIndex === index ) {
                         // Always use UUID
-                        contentArea.contentLibraryModel.setFilter( "games", "system", UUID );
+                        contentArea.contentLibraryModel.setFilter( "system", UUID );
                 }
             }
 

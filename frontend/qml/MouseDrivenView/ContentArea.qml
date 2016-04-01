@@ -5,9 +5,10 @@ import QtQuick.Layouts 1.2
 import QtQuick.Window 2.0
 import QtGraphicalEffects 1.0
 
-import vg.phoenix.models 1.0
-import vg.phoenix.themes 1.0
 import vg.phoenix.backend 1.0
+import vg.phoenix.models 1.0
+import vg.phoenix.paths 1.0
+import vg.phoenix.themes 1.0
 
 Rectangle {
     id: contentArea;
@@ -58,7 +59,7 @@ Rectangle {
                     interval: 300;
                     running: false;
                     repeat: false;
-                    onTriggered: { libraryModel.setFilter( "games", "title", "%" + searchBar.text + "%" ); }
+                    onTriggered: { libraryModel.setFilter( "title", "%" + searchBar.text + "%" ); }
                 }
                 onTextChanged: searchTimer.restart();
             }
@@ -242,18 +243,32 @@ Rectangle {
         }
     }
 
-    LibraryModel {
+    SqlModel {
         id: libraryModel;
-        function dragEvent( drag ) { if ( drag.hasUrls ) { handleDraggedUrls( drag.urls ); } }
-        function dropEvent( drop ) { handleDroppedUrls(); }
-        function containsEvent() { handleContainsDrag( rootDropArea.containsDrag ); }
 
-        Component.onCompleted: {
-            rootDropArea.onEntered.connect( dragEvent );
-            rootDropArea.onDropped.connect( dropEvent );
-            rootDropArea.onContainsDragChanged.connect( containsEvent );
-            libraryModel.startGameScannerThread();
+        databaseSettings {
+            connectionName: "LIBRARYMODEL";
         }
+
+        fileLocation: PhxPaths.qmlUserDataLocation() + '/' + "userdata.sqlite";
+
+        autoCreate: true;
+
+        tableName: "games";
+
+        SqlColumn { name: "rowIndex"; type: "INTEGER PRIMARY KEY AUTOINCREMENT"; }
+        SqlColumn { name: "title"; type: "TEXT NOT NULL"; }
+        SqlColumn { name: "system"; type: "TEXT"; }
+        SqlColumn { name: "region"; type: "TEXT"; }
+        SqlColumn { name: "goodtoolsCode"; type: "TEXT"; }
+        SqlColumn { name: "timePlayed"; type: "DATETIME"; }
+        SqlColumn { name: "artworkUrl"; type: "TEXT"; }
+        SqlColumn { name: "coreFilePath"; type: "TEXT"; }
+        SqlColumn { name: "absolutePath"; type: "TEXT"; }
+        SqlColumn { name: "absoluteFilePath"; type: "TEXT UNIQUE NOT NULL"; }
+        SqlColumn { name: "crc32Checksum"; type: "TEXT"; }
+
+        Component.onCompleted: { libraryModel.finishModelConstruction(); }
     }
 
     property bool currentlySuspended: typeof root.gameViewObject === 'undefined' ?
