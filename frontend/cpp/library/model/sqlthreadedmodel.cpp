@@ -10,8 +10,9 @@ SqlThreadedModel::SqlThreadedModel(QObject *parent)
     connect( &mModel, SIGNAL(modelReset()), this, SLOT(resetModel()) );
 
     mModel.moveToThread( &mModelThread );
-    mModelThread.start();
+    Q_ASSERT( mModel.thread() != QThread::currentThread() );
 
+    mModelThread.start();
 }
 
 SqlThreadedModel::~SqlThreadedModel() {
@@ -82,7 +83,7 @@ void SqlThreadedModel::resetModel() {
 
 void SqlThreadedModel::setFilter(const QString column, const QVariant value, const SqlModel::FilterType type)
 {
-    QMetaObject::invokeMethod( &mModel, "setFilter", Q_ARG( QString, column )
+    QMetaObject::invokeMethod( &mModel, "setFilter", Qt::QueuedConnection, Q_ARG( QString, column )
                                , Q_ARG( QVariant, value )
                                , Q_ARG( SqlModel::FilterType, type ) );
 }

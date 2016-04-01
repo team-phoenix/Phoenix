@@ -128,9 +128,6 @@ class SqlModel : public QSqlTableModel {
         QVariantHash mFilterMap;
         QList< QMap<int, QVariant> >cachedModel;
 
-
-        static int tableRowIndex;
-
         // [!!] Helpers
         void createTable();
         QString createFilter();

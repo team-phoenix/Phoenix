@@ -243,7 +243,7 @@ Rectangle {
         }
     }
 
-    SqlModel {
+    SqlThreadedModel {
         id: libraryModel;
 
         databaseSettings {
@@ -268,7 +268,12 @@ Rectangle {
         SqlColumn { name: "absoluteFilePath"; type: "TEXT UNIQUE NOT NULL"; }
         SqlColumn { name: "crc32Checksum"; type: "TEXT"; }
 
-        Component.onCompleted: { libraryModel.finishModelConstruction(); }
+        Component.onCompleted: {
+            libraryModel.finishModelConstruction();
+           // for ( var i=1; i < 500; i++ ) {
+            //    libraryModel.addRow({ "absoluteFilePath": "/home/lee/shit" + Math.random() + ".sfc", "title": "SHIT" + i })
+            //}
+        }
     }
 
     property bool currentlySuspended: typeof root.gameViewObject === 'undefined' ?

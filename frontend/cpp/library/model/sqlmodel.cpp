@@ -13,12 +13,16 @@
 #include <QDir>
 #include <QFile>
 
-int SqlModel::tableRowIndex = -1;
-
 SqlModel::SqlModel( QObject *parent )
     : QSqlTableModel( parent ),
       mCacheModel( false ),
       mAutoCreate( false ) {
+
+    connect( this, &SqlModel::modelReset, this, [this]() {
+        while ( canFetchMore( ) ) {
+            fetchMore();
+        }
+    });
 }
 
 void SqlModel::setRoleName( const int role, const QByteArray &value ) {
@@ -361,14 +365,11 @@ QQmlListProperty<SqlColumn> SqlModel::tableColumns() {
 }
 
 void SqlModel::appendTableRow( QQmlListProperty<SqlColumn> *list, SqlColumn *row ) {
-    tableRowIndex++;
-
     SqlModel *model = qobject_cast<SqlModel *>( list->object );
     Q_ASSERT( model );
 
-    model->setRoleName( tableRowIndex, row->name().toLocal8Bit() );
+    model->setRoleName( model->mTableColumns.size(), row->name().toLocal8Bit() );
     model->mTableColumns.append( row );
-
 }
 
 void SqlModel::setCacheModel( const bool cache ) {
@@ -418,8 +419,6 @@ void SqlModel::clearFilter( const QString column ) {
 }
 
 void SqlModel::finishModelConstruction() {
-
-    SqlModel::tableRowIndex = -1;
 
     Q_ASSERT( !tableName().isEmpty() );
     Q_ASSERT( !fileLocation().isEmpty() );
