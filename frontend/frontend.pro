@@ -126,7 +126,6 @@ include( deployment.pri )
     cpp/library/scanner/mapfunctor.h \
     cpp/library/scanner/reducefunctor.h \
     cpp/library/scanner/scannerutil.h \
-    cpp/theme/phoenixtheme.h \
 
     PRECOMPILED_HEADER = cpp/frontendcommon.h
 
