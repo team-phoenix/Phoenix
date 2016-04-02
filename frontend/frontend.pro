@@ -129,12 +129,13 @@ include( deployment.pri )
 
     PRECOMPILED_HEADER = cpp/frontendcommon.h
 
-    RESOURCES += qml/qml.qrc \
-                 qml/Theme/theme.qrc \
-                 qml/assets/assets.qrc \
-                 qml/BigPicture/bigpicture.qrc \
-                 qml/MouseDrivenView/mousedrivenview.qrc \
-                 qml/GameView/gameview.qrc
+    RESOURCES += \
+    qml/qml.qrc \
+    qml/Theme/theme.qrc \
+    qml/assets/assets.qrc \
+    qml/BigPicture/bigpicture.qrc \
+    qml/MouseDrivenView/mousedrivenview.qrc \
+    qml/GameView/gameview.qrc \
 
 ##
 ## Linker settings
