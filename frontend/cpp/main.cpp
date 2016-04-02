@@ -11,6 +11,8 @@
 #include "platformsmodel.h"
 #include "librarytypes.h"
 #include "sqlthreadedmodel.h"
+#include "gamehasher.h"
+#include "gamehashercontroller.h"
 
 // Backend
 #include "control.h"
@@ -183,7 +185,6 @@ int main( int argc, char *argv[] ) {
     QObject::connect( &engine, &QQmlApplicationEngine::quit, &app, &QGuiApplication::quit );
 
     // Register our custom types for use within QML
-    // VideoItem::registerTypes();
     qmlRegisterType<CmdLineArgs>( "vg.phoenix.backend", 1, 0, "CmdLineArgs" );
     qmlRegisterType<VideoOutput>( "vg.phoenix.backend", 1, 0, "VideoOutput" );
     qmlRegisterType<CoreControlProxy>( "vg.phoenix.backend", 1, 0, "CoreControl" );
@@ -216,7 +217,15 @@ int main( int argc, char *argv[] ) {
     // Register our custom QML-accessable objects and instantiate them here
     qmlRegisterSingletonType( QUrl( "qrc:/PhxTheme.qml" ), "vg.phoenix.themes", 1, 0, "PhxTheme" );
     qmlRegisterSingletonType<Library::PhxPaths>( "vg.phoenix.paths", 1, 0, "PhxPaths", PhxPathsSingletonProviderCallback );
+    qmlRegisterSingletonType<Library::PhxPaths>( "vg.phoenix.scanner", 1, 0, "GameHasherController", GameHasherControllerSingletonProviderCallback );
 
+    // Register our game scanner types
+    qRegisterMetaType<Library::FileEntry>( "Library::FileEntry" );
+    qRegisterMetaType<Library::FileEntry>( "FileEntry" );
+    qRegisterMetaType<Library::FileList>( "Library::FileList" );
+    qRegisterMetaType<Library::FileList>( "FileList" );
+    qRegisterMetaType<Library::GameScannerResult>( "Library::GameScannerResult" );
+    qRegisterMetaType<Library::GameScannerResult>( "GameScannerResult" );
     //qRegisterMetaType<Library::GameData>( "GameData" );
 
     // Load the root QML object and everything under it

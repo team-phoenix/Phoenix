@@ -51,23 +51,24 @@ namespace Library {
                 NotYetScanned,
 
                 // Hit against game database by hash
-                // Implies that the system UUID is known too
+                // systemUUIDs contains one element
                 GameUUIDByHash,
 
                 // Hit against game database by filename matching
-                // Implies that the system UUID is known too
+                // systemUUIDs contains one element
                 GameUUIDByFilename,
 
                 // Hit against system database by extension (only one system uses the extension)
-                // systemUUIDs contains one element
+                // systemUUIDs contains one element, game UUID unknown
                 SystemUUIDKnown,
 
                 // Hit against system database by extension (multiple systems use the extension)
-                // systemUUIDs contains two or more elements
+                // systemUUIDs contains two or more elements, game UUID unknown
                 MultipleSystemUUIDs,
 
                 // Miss against game and system database
                 // Must be manually matched by user
+                // systemUUIDs is empty
                 SystemUUIDUnknown,
 
                 // Path is a .bin file that is listed in a valid .cue file. Paths marked with this value should not be scanned

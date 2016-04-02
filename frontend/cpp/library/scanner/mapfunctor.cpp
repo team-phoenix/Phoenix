@@ -108,9 +108,10 @@ bool MapFunctor::searchDatabase( const SearchReason reason, FileEntry &fileEntry
 
             while( libretroQuery.next() ) {
                 // Do not import games for systems that are disabled
-                // Leaving system name blank will make game scanner skip it
-
-                fileEntry.systemUUIDs.append( libretroQuery.value( 0 ).toString() );
+                // Leaving system name blank will make game importing code skip it
+                if( libretroQuery.value( 1 ).toInt() == 1 ) {
+                    fileEntry.systemUUIDs.append( libretroQuery.value( 0 ).toString() );
+                }
             }
 
             // Don't say anything about system UUIDs if we already have the game UUID
@@ -334,13 +335,13 @@ FileList MapFunctor::operator()( const QString &path ) {
 
     QFileInfo dir( path );
 
-    qCDebug( phxLibrary ) << "path: " << path;
+    // qCDebug( phxLibrary ) << "path: " << path;
 
     if( dir.isFile() ) {
         FileEntry entry;
         entry.filePath = path;
         resultList.append( entry );
-    } else {
+    } else if( dir.isDir() ) {
         // Path is a file system directory past this point
         QDir directory( path );
 

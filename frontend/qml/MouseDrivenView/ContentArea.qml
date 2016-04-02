@@ -247,7 +247,7 @@ Rectangle {
         id: libraryModel;
 
         databaseSettings {
-            connectionName: "LIBRARYMODEL";
+            connectionName: "USERDATA";
         }
 
         fileLocation: PhxPaths.qmlUserDataLocation() + '/' + "userdata.sqlite";

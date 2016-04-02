@@ -7,6 +7,7 @@ import QtQuick.Dialogs 1.2
 import vg.phoenix.models 1.0
 import vg.phoenix.themes 1.0
 import vg.phoenix.backend 1.0
+import vg.phoenix.scanner 1.0
 
 Item {
     Rectangle  {
@@ -120,9 +121,9 @@ Item {
 
                     FileDialog {
                         id: fileDialog;
-                        selectFolder: true;
-                        // FIXME: Hook up to something
-                        // onAccepted: { contentArea.contentLibraryModel.scanFolder( fileUrl ); }
+                        selectMultiple: true;
+                        title: "Select games to import into your library"
+                        onAccepted: { GameHasherController.scanForGames( fileUrls ); }
                     }
 
                     // Returns first match

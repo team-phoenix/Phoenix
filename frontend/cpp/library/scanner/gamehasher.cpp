@@ -22,7 +22,7 @@ void GameHasher::setProgress( int progress ) {
 }
 
 void GameHasher::addPath( QString path ) {
-    BetterFutureWatcher *watcher = new BetterFutureWatcher( nullptr );
+    BetterFutureWatcher *watcher = new BetterFutureWatcher();
     QStringList dirs = QStringList( path );
     QFuture<FileList> future = QtConcurrent::mappedReduced<FileList, QStringList>( dirs, MapFunctor( MapFunctor::One ), ReduceFunctor( ReduceFunctor::One ) );
 
@@ -32,6 +32,22 @@ void GameHasher::addPath( QString path ) {
 
     watcher->setFuture( future, mWatcherList.size() );
     mWatcherList.append( watcher );
+}
+
+void GameHasher::addPaths( QStringList paths ) {
+    BetterFutureWatcher *watcher = new BetterFutureWatcher();
+    QFuture<FileList> future = QtConcurrent::mappedReduced<FileList, QStringList>( paths, MapFunctor( MapFunctor::One ), ReduceFunctor( ReduceFunctor::One ) );
+
+    connect( watcher, &BetterFutureWatcher::finished, this, &GameHasher::stepOneFinished );
+
+    qCDebug( phxLibrary ) << "Began scan at" << QDateTime::currentDateTime();
+
+    watcher->setFuture( future, mWatcherList.size() );
+    mWatcherList.append( watcher );
+}
+
+void GameHasher::shutdown() {
+    QThread::currentThread()->quit();
 }
 
 void GameHasher::stepOneFinished( BetterFutureWatcher *betterWatcher ) {
@@ -143,20 +159,17 @@ void GameHasher::stepFourFinished( BetterFutureWatcher *betterWatcher ) {
 
     qCDebug( phxLibrary ) << "Results:";
 
-    int i = 0;
     for( const FileEntry &entry : fileList ) {
-        int progress = qFloor( ( i / static_cast<qreal>( mFilesProcessing ) ) * 100 );
-
         qCDebug( phxLibrary ) << entry;
-
-        emit fileReady( entry );
-        setProgress( progress );
-
-        i++;
-        mFilesProcessing -= i;
     }
 
+    //    mFilesProcessing -= fileList.size();
+    //    int progress = qFloor( ( fileList.size() / static_cast<qreal>( mFilesProcessing ) ) * 100 );
+    //    setProgress( progress );
+
     qCDebug( phxLibrary ) << "End of list";
+
+    emit scanCompleted( fileList );
 
     // Adjust stored index for each item in the list that has been moved by this list manipulation
     for( BetterFutureWatcher *b : mWatcherList ) {

@@ -26,7 +26,7 @@ PhxScrollView {
             tableName: "system";
             autoCreate: false;
             databaseSettings {
-                connectionName: "PLATFORMSVIEW";
+                connectionName: "LIBRETRO";
             }
 
             SqlColumn { name: "UUID"; type: "TEXT PRIMARY KEY"; }

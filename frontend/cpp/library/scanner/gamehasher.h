@@ -36,11 +36,15 @@ namespace Library {
         signals:
             void progressChanged( const int progress );
             void fileReady( FileEntry entry );
+            void scanCompleted( FileList results );
 
         public slots:
             // Entry points, connect to and invoke these slots to begin the game scanning process
             void addPath( QString path );
+            void addPaths( QStringList paths );
 
+            // Clean up and exit
+            void shutdown();
 
         private slots:
             // Handlers that move the process along once done

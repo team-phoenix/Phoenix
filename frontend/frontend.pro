@@ -66,63 +66,67 @@ include( deployment.pri )
     INCLUDEPATH += ../backend ../backend/consumer ../backend/core ../backend/input ../backend/role ../backend/util
     INCLUDEPATH += cpp cpp/library cpp/library/database cpp/library/fileinfo cpp/library/model cpp/library/scanner cpp/theme
 
-    SOURCES += cpp/main.cpp \
-               cpp/library/gamelauncher.cpp \
-               cpp/library/imagecacher.cpp \
-               cpp/library/phxpaths.cpp \
-               cpp/library/database/libretrodatabase.cpp \
-               cpp/library/database/metadatadatabase.cpp \
-               cpp/library/database/userdatabase.cpp \
-               cpp/library/fileinfo/biosfileinfo.cpp \
-               cpp/library/fileinfo/cryptohash.cpp \
-               cpp/library/fileinfo/cuefileinfo.cpp \
-               cpp/library/fileinfo/gamefileinfo.cpp \
-               cpp/library/model/collectionsmodel.cpp \
-               cpp/library/model/coremodel.cpp \
-               cpp/library/model/librarymodel.cpp \
-               cpp/library/model/platformsmodel.cpp \
-               cpp/library/cuefile.cpp \
-               cpp/library/fileinfo/archivefile.cpp \
-               cpp/library/betterfuturewatcher.cpp \
-               cpp/library/scanner/gamehasher.cpp \
-               cpp/library/scanner/mapfunctor.cpp \
-               cpp/library/scanner/reducefunctor.cpp \
-               cpp/library/scanner/filterfunctor.cpp \
-               cpp/library/scanner/scannerutil.cpp \
-               cpp/library/scanner/librarytypes.cpp \
-               cpp/library/model/sqlthreadedmodel.cpp \
-               cpp/library/model/sqlmodel.cpp \
-               cpp/library/model/sqlcolumn.cpp \
-               cpp/library/model/databasesettings.cpp
+    SOURCES += \
+    cpp/library/betterfuturewatcher.cpp \
+    cpp/library/cuefile.cpp \
+    cpp/library/database/libretrodatabase.cpp \
+    cpp/library/database/metadatadatabase.cpp \
+    cpp/library/database/userdatabase.cpp \
+    cpp/library/fileinfo/archivefile.cpp \
+    cpp/library/fileinfo/biosfileinfo.cpp \
+    cpp/library/fileinfo/cryptohash.cpp \
+    cpp/library/fileinfo/cuefileinfo.cpp \
+    cpp/library/fileinfo/gamefileinfo.cpp \
+    cpp/library/gamelauncher.cpp \
+    cpp/library/imagecacher.cpp \
+    cpp/library/model/collectionsmodel.cpp \
+    cpp/library/model/coremodel.cpp \
+    cpp/library/model/databasesettings.cpp \
+    cpp/library/model/librarymodel.cpp \
+    cpp/library/model/platformsmodel.cpp \
+    cpp/library/model/sqlcolumn.cpp \
+    cpp/library/model/sqlmodel.cpp \
+    cpp/library/model/sqlthreadedmodel.cpp \
+    cpp/library/phxpaths.cpp \
+    cpp/library/scanner/filterfunctor.cpp \
+    cpp/library/scanner/gamehasher.cpp \
+    cpp/library/scanner/gamehashercontroller.cpp \
+    cpp/library/scanner/librarytypes.cpp \
+    cpp/library/scanner/mapfunctor.cpp \
+    cpp/library/scanner/reducefunctor.cpp \
+    cpp/library/scanner/scannerutil.cpp \
+    cpp/main.cpp \
 
-    HEADERS += cpp/library/gamelauncher.h \
-               cpp/library/imagecacher.h \
-               cpp/library/phxpaths.h \
-               cpp/library/database/libretrodatabase.h \
-               cpp/library/database/metadatadatabase.h \
-               cpp/library/database/userdatabase.h \
-               cpp/library/fileinfo/biosfileinfo.h \
-               cpp/library/fileinfo/cryptohash.h \
-               cpp/library/fileinfo/cuefileinfo.h \
-               cpp/library/fileinfo/gamefileinfo.h \
-               cpp/library/model/collectionsmodel.h \
-               cpp/library/model/coremodel.h \
-               cpp/library/model/librarymodel.h \
-               cpp/library/model/platformsmodel.h \
-               cpp/theme/phoenixtheme.h \
-               cpp/library/cuefile.h \
-               cpp/library/fileinfo/archivefile.h \
-               cpp/library/librarytypes.h \
-               cpp/library/betterfuturewatcher.h \
-               cpp/library/scanner/gamehasher.h \
-               cpp/library/scanner/mapfunctor.h \
-               cpp/library/scanner/reducefunctor.h \
-               cpp/library/scanner/filterfunctor.h \
-               cpp/library/scanner/scannerutil.h \
-               cpp/library/model/sqlthreadedmodel.h \
-               cpp/library/model/sqlmodel.h \
-               cpp/library/model/sqlcolumn.h \
-               cpp/library/model/databasesettings.h
+    HEADERS += \
+    cpp/library/betterfuturewatcher.h \
+    cpp/library/cuefile.h \
+    cpp/library/database/libretrodatabase.h \
+    cpp/library/database/metadatadatabase.h \
+    cpp/library/database/userdatabase.h \
+    cpp/library/fileinfo/archivefile.h \
+    cpp/library/fileinfo/biosfileinfo.h \
+    cpp/library/fileinfo/cryptohash.h \
+    cpp/library/fileinfo/cuefileinfo.h \
+    cpp/library/fileinfo/gamefileinfo.h \
+    cpp/library/gamelauncher.h \
+    cpp/library/imagecacher.h \
+    cpp/library/librarytypes.h \
+    cpp/library/model/collectionsmodel.h \
+    cpp/library/model/coremodel.h \
+    cpp/library/model/databasesettings.h \
+    cpp/library/model/librarymodel.h \
+    cpp/library/model/platformsmodel.h \
+    cpp/library/model/sqlcolumn.h \
+    cpp/library/model/sqlmodel.h \
+    cpp/library/model/sqlthreadedmodel.h \
+    cpp/library/phxpaths.h \
+    cpp/library/scanner/filterfunctor.h \
+    cpp/library/scanner/gamehasher.h \
+    cpp/library/scanner/gamehashercontroller.h \
+    cpp/library/scanner/mapfunctor.h \
+    cpp/library/scanner/reducefunctor.h \
+    cpp/library/scanner/scannerutil.h \
+    cpp/theme/phoenixtheme.h \
 
     PRECOMPILED_HEADER = cpp/frontendcommon.h
 

@@ -37,6 +37,6 @@ void BetterFutureWatcher::slotForwardProgress( int progress ) {
     qreal val = progress / static_cast<qreal>( mWatcher.progressMaximum() );
     emit progressChanged( static_cast<int>( val * 100 ) );
 
-    qDebug() << "RESULT SIZE: " << mWatcher.future().resultCount();
+    // qDebug() << "RESULT SIZE: " << mWatcher.future().resultCount();
 
 }
