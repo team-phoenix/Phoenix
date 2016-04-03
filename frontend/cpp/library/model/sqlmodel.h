@@ -1,7 +1,7 @@
 #pragma once
 
 #include "frontendcommon.h"
-
+#include "librarytypes.h"
 #include "sqlcolumn.h"
 #include "databasesettings.h"
 
@@ -96,8 +96,11 @@ class SqlModel : public QSqlTableModel {
         // This is called in Component.OnCompleted.
         void finishModelConstruction();
 
-        // Inserts a new row into the sql model.
+        // Adds a new row into the sql model.
         bool addRow( const QVariantMap rowData );
+
+        // Adds multiple rows into the sql model.
+        bool addRows( const QVariantList rows );
 
         //Remove row from sql model.
         bool deleteRow( int index, const QString column, const QVariant where );
@@ -108,6 +111,10 @@ class SqlModel : public QSqlTableModel {
         // Deletes the database and resets the sql schema. The model is now initialized
         // but is still empty of rows.
         void clearDatabase();
+
+
+        // LibraryModel specific
+        bool addEntries( const FileList rows );
 
     private:
         QString mDbAbsoluteFilePath;

@@ -101,6 +101,11 @@ bool SqlThreadedModel::addRow(const QVariantMap rowData) {
     return true;
 }
 
+bool SqlThreadedModel::addRows(const QVariantList rows) {
+    QMetaObject::invokeMethod( &mModel, "addRows", Q_ARG( QVariantList, rows ) );
+    return true;
+}
+
 bool SqlThreadedModel::deleteRow(int index, const QString column, const QVariant absFilePath) {
     QMetaObject::invokeMethod( &mModel, "deleteRow", Q_ARG( int, index )
                                , Q_ARG( QString, column )
@@ -119,6 +124,11 @@ bool SqlThreadedModel::updateRow(int index, const QString column, const QVariant
 
 void SqlThreadedModel::clearDatabase() {
     QMetaObject::invokeMethod( &mModel, "clearDatabase" );
+}
+
+bool SqlThreadedModel::addEntries(FileList rows) {
+    QMetaObject::invokeMethod( &mModel, "addEntries", Q_ARG( FileList, rows ) );
+    return true;
 }
 
 void SqlThreadedModel::setCacheModel( const bool cache ) {

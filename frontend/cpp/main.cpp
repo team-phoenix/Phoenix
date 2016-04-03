@@ -217,7 +217,7 @@ int main( int argc, char *argv[] ) {
     // Register our custom QML-accessable objects and instantiate them here
     qmlRegisterSingletonType( QUrl( "qrc:/PhxTheme.qml" ), "vg.phoenix.themes", 1, 0, "PhxTheme" );
     qmlRegisterSingletonType<Library::PhxPaths>( "vg.phoenix.paths", 1, 0, "PhxPaths", PhxPathsSingletonProviderCallback );
-    qmlRegisterSingletonType<Library::PhxPaths>( "vg.phoenix.scanner", 1, 0, "GameHasherController", GameHasherControllerSingletonProviderCallback );
+    qmlRegisterSingletonType<GameHasherController>( "vg.phoenix.scanner", 1, 0, "GameHasherController", GameHasherControllerSingletonProviderCallback );
 
     // Register our game scanner types
     qRegisterMetaType<Library::FileEntry>( "Library::FileEntry" );

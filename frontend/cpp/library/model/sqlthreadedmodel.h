@@ -87,6 +87,8 @@ class SqlThreadedModel : public QAbstractTableModel {
         // Inserts a new row into the sql model.
         bool addRow( const QVariantMap rowData );
 
+        bool addRows( const QVariantList rows );
+
         //Remove row from sql model.
         bool deleteRow( int index, const QString column, const QVariant absFilePath );
 
@@ -96,6 +98,8 @@ class SqlThreadedModel : public QAbstractTableModel {
         // Deletes the database and resets the sql schema. The model is now initialized
         // but is still empty of rows.
         void clearDatabase();
+
+        bool addEntries( FileList rows );
 
     private slots:
         // ~[!!] Slots that connect to the internal SqlModel and

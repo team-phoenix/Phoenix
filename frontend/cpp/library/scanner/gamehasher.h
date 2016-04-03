@@ -37,6 +37,7 @@ namespace Library {
             void progressChanged( const int progress );
             void fileReady( FileEntry entry );
             void scanCompleted( FileList results );
+            void filesNeedAssignment( FileList results );
 
         public slots:
             // Entry points, connect to and invoke these slots to begin the game scanning process

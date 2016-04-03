@@ -1,15 +1,22 @@
 #include "gamehashercontroller.h"
 
+#include <QThread>
+
 GameHasherController::GameHasherController( QObject *parent ) : QObject( parent ),
     gameHasher( new GameHasher() ),
     gameHasherThread( new QThread() ) {
     // Set up GameHasher
     gameHasher->setObjectName( "GameHasher" );
     gameHasher->moveToThread( gameHasherThread );
+
     connect( gameHasherThread, &QThread::finished, gameHasher, &QObject::deleteLater );
     connect( this, &GameHasherController::shutdownGameHasher, gameHasher, &GameHasher::shutdown );
-    connect( gameHasher, &GameHasher::scanCompleted, this, &GameHasherController::processResults );
     connect( gameHasher, &GameHasher::scanCompleted, this, &GameHasherController::scanCompleted );
+    connect( gameHasher, &GameHasher::filesNeedAssignment, this, &GameHasherController::filesNeedAssignment );
+
+    // Used for testing the manual add mode.
+    // connect( gameHasher, &GameHasher::scanCompleted, this, &GameHasherController::filesNeedAssignment );
+
 
     gameHasherThread->setObjectName( "Game hasher thread" );
     gameHasherThread->start();

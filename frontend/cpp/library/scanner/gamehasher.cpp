@@ -153,23 +153,33 @@ void GameHasher::stepFourFinished( BetterFutureWatcher *betterWatcher ) {
     betterWatcher->deleteLater();
 
     qCDebug( phxLibrary ) << "Step four map reduce finished: " << fileList.size();
-
-
     qCDebug( phxLibrary ) << "Scan complete, finished scan at" << QDateTime::currentDateTime();
-
     qCDebug( phxLibrary ) << "Results:";
 
+    FileList manualModeList;
+    FileList knownFilesList;
     for( const FileEntry &entry : fileList ) {
         qCDebug( phxLibrary ) << entry;
+        if ( ( entry.scannerResult == GameScannerResult::MultipleSystemUUIDs
+               || entry.scannerResult == GameScannerResult::SystemUUIDUnknown ) ) {
+            manualModeList.append( entry );
+        } else {
+            knownFilesList.append( entry );
+        }
+    }
+
+    if ( !manualModeList.isEmpty() ) {
+        emit filesNeedAssignment( manualModeList );
+    } else if ( !knownFilesList.isEmpty() ) {
+        emit scanCompleted( knownFilesList );
     }
 
     //    mFilesProcessing -= fileList.size();
     //    int progress = qFloor( ( fileList.size() / static_cast<qreal>( mFilesProcessing ) ) * 100 );
     //    setProgress( progress );
 
-    qCDebug( phxLibrary ) << "End of list";
 
-    emit scanCompleted( fileList );
+    qCDebug( phxLibrary ) << "End of list";
 
     // Adjust stored index for each item in the list that has been moved by this list manipulation
     for( BetterFutureWatcher *b : mWatcherList ) {

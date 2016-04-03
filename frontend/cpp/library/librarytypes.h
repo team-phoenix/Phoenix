@@ -97,6 +97,32 @@ namespace Library {
 
             // Metadata attached to the game file, like artwork.
             GameMetaData gameMetadata;
+
+            /*
+             * SqlColumn { name: "rowIndex"; type: "INTEGER PRIMARY KEY AUTOINCREMENT"; }
+                SqlColumn { name: "title"; type: "TEXT NOT NULL"; }
+                SqlColumn { name: "system"; type: "TEXT"; }
+                SqlColumn { name: "region"; type: "TEXT"; }
+                SqlColumn { name: "goodtoolsCode"; type: "TEXT"; }
+                SqlColumn { name: "timePlayed"; type: "DATETIME"; }
+                SqlColumn { name: "artworkUrl"; type: "TEXT"; }
+                SqlColumn { name: "coreFilePath"; type: "TEXT"; }
+                SqlColumn { name: "absolutePath"; type: "TEXT"; }
+                SqlColumn { name: "absoluteFilePath"; type: "TEXT UNIQUE NOT NULL"; }
+                SqlColumn { name: "crc32Checksum"; type: "TEXT"; }
+             */
+
+            explicit operator QVariantMap() {
+                QVariantMap result;
+                result.insert( QStringLiteral( "title" ), gameMetadata.title );
+                result.insert( QStringLiteral( "system" ), systemUUIDs.first() );
+                result.insert( QStringLiteral( "region" ) , gameMetadata.region );
+                result.insert( QStringLiteral( "artworkUrl" ) , gameMetadata.frontArtwork );
+                result.insert( QStringLiteral( "absoluteFilePath" ) , filePath );
+                result.insert( QStringLiteral( "crc32Checksum" ) , crc32 );
+
+                return result;
+            }
     };
 
     bool operator==( const FileEntry left, const FileEntry right );

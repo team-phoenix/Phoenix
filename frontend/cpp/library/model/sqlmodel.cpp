@@ -83,7 +83,6 @@ bool SqlModel::addRow( const QVariantMap rowData ) {
     QString valueStatement = QStringLiteral( " VALUES(" );
 
     int i = 0;
-
     for( const QString &col : rowData.keys() ) {
         if( i == rowData.size() - 1 ) {
             colStatement += col + QStringLiteral( ")" );
@@ -105,9 +104,7 @@ bool SqlModel::addRow( const QVariantMap rowData ) {
     Q_ASSERT( t );
 
     QSqlQuery query( db );
-
     query.prepare( statement );
-
 
     for( const QString &col : rowData.keys() ) {
         const QVariant val = rowData.value( col );
@@ -135,9 +132,71 @@ bool SqlModel::addRow( const QVariantMap rowData ) {
     }
 
     endInsertRows();
-
     select();
 
+    return true;
+}
+
+bool SqlModel::addRows(const QVariantList rows) {
+
+    if ( rows.isEmpty() ) {
+        return false;
+    }
+
+    QString statement = QStringLiteral( "INSERT INTO " ) % tableName();
+    QString colStatement = QStringLiteral( "(" );
+    QString valueStatement = QStringLiteral( " VALUES(" );
+
+    int i = 0;
+
+    QVariantMap rowData = rows.first().toMap();
+    for( const QString &col : rowData.keys() ) {
+        if( i == rowData.size() - 1 ) {
+            colStatement += col + QStringLiteral( ")" );
+            valueStatement += QStringLiteral( "?);" );
+        } else {
+            colStatement += col + QStringLiteral( "," );
+            valueStatement += QStringLiteral( "?," );
+        }
+
+        ++i;
+    }
+
+    statement += colStatement + valueStatement;
+
+    QSqlDatabase db = QSqlDatabase::database( mDatabaseSettings.connectionName() );
+    bool t = db.transaction();
+
+    for ( int i=0; i < rows.size(); ++i ) {
+        QVariantMap rowData = rows.at( i ).toMap();
+        Q_ASSERT( t );
+
+        QSqlQuery query( db );
+        query.prepare( statement );
+
+        for( const QString &col : rowData.keys() ) {
+            const QVariant val = rowData.value( col );
+            query.addBindValue( val );
+            int code = mNameToRoleMap.value( col.toLocal8Bit(), -1 );
+            Q_ASSERT_X( code != -1, "SqlModel::addRow( const QVariantMap )", "column provided is not in the model." );
+        }
+
+        if( !query.exec() ) {
+            qDebug() << Q_FUNC_INFO << query.lastError().text();
+            bool r = db.rollback();
+            Q_ASSERT( r );
+            return false;
+        }
+    }
+
+
+    bool c = db.commit();
+    Q_ASSERT( c );
+
+    beginInsertRows( QModelIndex(), rowCount(),  rowCount() + rows.size() );
+
+    endInsertRows();
+    select();
 
     return true;
 }
@@ -257,6 +316,71 @@ void SqlModel::clearDatabase() {
 
     select();
 
+}
+
+bool SqlModel::addEntries( const FileList rows ) {
+
+    QString statement = QStringLiteral( "INSERT INTO " ) % tableName();
+    QString colStatement = QStringLiteral( "(" );
+    QString valueStatement = QStringLiteral( " VALUES(" );
+
+
+    {
+        QVariantMap rowData = QVariantMap( static_cast<FileEntry>( rows.first() ) );
+
+        int i = 0;
+        for( const QString &col : rowData.keys() ) {
+            if( i == rowData.size() - 1 ) {
+                colStatement += col + QStringLiteral( ")" );
+                valueStatement += QStringLiteral( "?);" );
+            } else {
+                colStatement += col + QStringLiteral( "," );
+                valueStatement += QStringLiteral( "?," );
+            }
+
+            ++i;
+        }
+    }
+
+    statement += colStatement + valueStatement;
+
+    QSqlDatabase db = QSqlDatabase::database( mDatabaseSettings.connectionName() );
+    bool t = db.transaction();
+
+    for ( int i=0; i < rows.size(); ++i ) {
+        QVariantMap rowData = QVariantMap( static_cast<FileEntry>( rows.at( i  ) ) );
+        Q_ASSERT( t );
+
+        QSqlQuery query( db );
+        query.prepare( statement );
+
+        for( const QString &col : rowData.keys() ) {
+            const QVariant val = rowData.value( col );
+            query.addBindValue( val );
+            int code = mNameToRoleMap.value( col.toLocal8Bit(), -1 );
+            Q_ASSERT_X( code != -1
+                        , "SqlModel::addRow( const QVariantMap )"
+                        , qPrintable( QString( "column[%1] provided is not in the model").arg( col ) ) );
+        }
+
+        if( !query.exec() ) {
+            qDebug() << Q_FUNC_INFO << query.lastError().text();
+            bool r = db.rollback();
+            Q_ASSERT( r );
+            return false;
+        }
+    }
+
+
+    bool c = db.commit();
+    Q_ASSERT( c );
+
+    beginInsertRows( QModelIndex(), rowCount(),  rowCount() + rows.size() );
+
+    endInsertRows();
+    select();
+
+    return true;
 }
 
 QHash<int, QByteArray> SqlModel::roleNames() const {

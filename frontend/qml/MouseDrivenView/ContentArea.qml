@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.2
 import QtQuick.Window 2.0
 import QtGraphicalEffects 1.0
 
+import vg.phoenix.scanner 1.0
 import vg.phoenix.backend 1.0
 import vg.phoenix.models 1.0
 import vg.phoenix.paths 1.0
@@ -270,9 +271,17 @@ Rectangle {
 
         Component.onCompleted: {
             libraryModel.finishModelConstruction();
-           // for ( var i=1; i < 500; i++ ) {
-            //    libraryModel.addRow({ "absoluteFilePath": "/home/lee/shit" + Math.random() + ".sfc", "title": "SHIT" + i })
-            //}
+
+            /*
+            var l = [];
+            for ( var i=1; i < 500; i++ ) {
+                l.push( { "absoluteFilePath": "/home/lee/shit" + i + ".sfc", "title": "SHIT" + i } );
+            }
+
+            libraryModel.addRows( l );
+            */
+
+            GameHasherController.scanCompleted.connect( libraryModel.addEntries );
         }
     }
 
@@ -306,6 +315,119 @@ Rectangle {
                 }
             }
         }
+
+
+        Item {
+            id: manualAddMode;
+            objectName: "ManualAddMode";
+            visible: !contentAreaStackView.currentObjectName.localeCompare( objectName );
+
+            Rectangle {
+                anchors.fill: parent;
+                color: "transparent";
+
+                ListView {
+                    id: tableView;
+                    anchors {
+                        fill: parent;
+                        margins: 100;
+                    }
+
+                    Rectangle {
+                        anchors {
+                            top: parent.top;
+                            right: parent.right;
+                        }
+
+                        color: "red";
+                        height: 25;
+                        width: height;
+                        radius: height / 2;
+
+                        Text {
+                            anchors.centerIn: parent;
+                            text: "Close";
+                            color: "white";
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent;
+                            onClicked: {
+                                contentAreaStackView.push( { item: boxartGridView, replace: true } );
+                            }
+                        }
+                    }
+
+                    delegate: Rectangle {
+                        width: 500;
+                        height: 50;
+                        color: index % 2 == 0 ? "gray" : "white";
+
+                        RowLayout {
+                            anchors.fill: parent;
+
+                            Text {
+                                text: title;
+                                anchors {
+                                    verticalCenter: parent.verticalCenter;
+                                }
+
+                            }
+
+                            Rectangle {
+                                anchors {
+                                    top: parent.top;
+                                    bottom: parent.bottom;
+                                }
+
+                                color: "orange";
+                            }
+
+                            Text {
+                                text: system;
+                                anchors {
+                                    verticalCenter: parent.verticalCenter;
+                                }
+
+                            }
+                        }
+                    }
+
+
+                    model: SqlThreadedModel {
+                        id: manualAddModeModel;
+                        tableName: "games";
+                        autoCreate: true;
+                        fileLocation: PhxPaths.qmlUserDataLocation() + "/manual_add_model.sqlite";
+
+                        databaseSettings {
+                            connectionName: "MANUAL_ADD_MODEL";
+                        }
+
+                        SqlColumn { name: "rowIndex"; type: "INTEGER PRIMARY KEY AUTOINCREMENT"; }
+                        SqlColumn { name: "title"; type: "TEXT NOT NULL"; }
+                        SqlColumn { name: "system"; type: "TEXT"; }
+                        SqlColumn { name: "region"; type: "TEXT"; }
+                        SqlColumn { name: "goodtoolsCode"; type: "TEXT"; }
+                        SqlColumn { name: "timePlayed"; type: "DATETIME"; }
+                        SqlColumn { name: "artworkUrl"; type: "TEXT"; }
+                        SqlColumn { name: "coreFilePath"; type: "TEXT"; }
+                        SqlColumn { name: "absolutePath"; type: "TEXT"; }
+                        SqlColumn { name: "absoluteFilePath"; type: "TEXT UNIQUE NOT NULL"; }
+                        SqlColumn { name: "crc32Checksum"; type: "TEXT"; }
+
+                        Component.onCompleted: {
+                            manualAddModeModel.finishModelConstruction();
+                            GameHasherController.filesNeedAssignment.connect( function ( result ) {
+                                manualAddModeModel.addEntries( result );
+                                contentAreaStackView.push( { item: manualAddMode, replace: true }  );
+                            });
+                        }
+                    }
+                }
+            }
+        }
+
 
         BoxartGridView {
             id: boxartGridView;

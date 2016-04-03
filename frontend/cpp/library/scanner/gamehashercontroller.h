@@ -1,8 +1,11 @@
 #pragma once
 
-#include "frontendcommon.h"
-
+#include "librarytypes.h"
 #include "gamehasher.h"
+
+#include <QObject>
+
+class QThread;
 
 class GameHasherController : public QObject {
         Q_OBJECT
@@ -13,6 +16,8 @@ class GameHasherController : public QObject {
     signals:
         // Scanning process complete
         void scanCompleted( FileList results );
+
+        void filesNeedAssignment( FileList results );
 
         // Used to tell GameHasher to shut down on program exit
         void shutdownGameHasher();
