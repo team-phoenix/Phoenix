@@ -290,7 +290,7 @@ Rectangle {
 
     StackView {
         id: contentAreaStackView;
-        initialItem: boxartGridView;
+        initialItem: manualAddMode//boxartGridView;
         anchors.fill: parent;
         anchors.bottomMargin: currentlySuspended ? gameSuspendedArea.height : 0;
 
@@ -321,6 +321,26 @@ Rectangle {
             id: manualAddMode;
             objectName: "ManualAddMode";
             visible: !contentAreaStackView.currentObjectName.localeCompare( objectName );
+
+            SqlThreadedModel {
+                id: tModel;
+                fileLocation: PhxPaths.qmlMetadataLocation() + '/' + "libretro.sqlite";
+                tableName: "system";
+                databaseSettings {
+                    connectionName: "MANUAL_ADD_MODE_LIBRETRO";
+                }
+
+                SqlColumn { name: "UUID"; type: "TEXT PRIMARY KEY"; }
+                SqlColumn { name: "friendlyName"; type: "TEXT"; }
+                SqlColumn { name: "shortName"; type: "TEXT"; }
+                SqlColumn { name: "manufacturer"; type: "TEXT"; }
+
+                Component.onCompleted: {
+                    tModel.finishModelConstruction();
+                    tModel.setFilter( "enabled", 1, SqlModel.Exact );
+                    //tModel.setFilter( "")
+                }
+            }
 
             Rectangle {
                 anchors.fill: parent;
@@ -359,18 +379,23 @@ Rectangle {
                     }
 
                     delegate: Rectangle {
-                        width: 500;
+                        width: parent.width * 0.8;
                         height: 50;
                         color: index % 2 == 0 ? "gray" : "white";
 
                         RowLayout {
                             anchors.fill: parent;
+                            anchors.leftMargin: 12;
+                            anchors.rightMargin: 12;
 
-                            Text {
+                            TextField {
+                                id: titleField;
                                 text: title;
+                                implicitWidth: 300;
                                 anchors {
                                     verticalCenter: parent.verticalCenter;
                                 }
+
 
                             }
 
@@ -383,12 +408,33 @@ Rectangle {
                                 color: "orange";
                             }
 
-                            Text {
-                                text: system;
+                            ComboBox {
+                                id: systemChoices;
                                 anchors {
                                     verticalCenter: parent.verticalCenter;
                                 }
+                                textRole: "UUID";
+                                implicitWidth: 250;
+                                model: tModel;
+                            }
 
+                            Button {
+                                anchors {
+                                    verticalCenter: parent.verticalCenter;
+                                }
+                                text: "Add To Library";
+                                onClicked: {
+                                    libraryModel.addRow( { "title": titleField.text
+                                                          , "system": systemChoices.currentText
+                                                          , "region": region
+                                                          , "artworkUrl": artworkUrl
+                                                          , "absoluteFilePath": absoluteFilePath
+                                                          , "crc32Checksum": crc32Checksum } );
+
+
+                                    tableView.model.deleteRow( index, "absoluteFilePath", absoluteFilePath );
+
+                                }
                             }
                         }
                     }

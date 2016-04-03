@@ -15,7 +15,7 @@ GameHasherController::GameHasherController( QObject *parent ) : QObject( parent 
     connect( gameHasher, &GameHasher::filesNeedAssignment, this, &GameHasherController::filesNeedAssignment );
 
     // Used for testing the manual add mode.
-    // connect( gameHasher, &GameHasher::scanCompleted, this, &GameHasherController::filesNeedAssignment );
+    //connect( gameHasher, &GameHasher::scanCompleted, this, &GameHasherController::filesNeedAssignment );
 
 
     gameHasherThread->setObjectName( "Game hasher thread" );
