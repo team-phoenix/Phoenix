@@ -251,7 +251,7 @@ Rectangle {
             connectionName: "USERDATA";
         }
 
-        fileLocation: PhxPaths.qmlUserDataLocation() + '/' + "userdata.sqlite";
+        fileLocation: PhxPaths.qmlUserDataLocation() + "/userdata.sqlite";
 
         autoCreate: true;
 

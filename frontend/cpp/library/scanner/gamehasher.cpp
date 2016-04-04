@@ -158,19 +158,31 @@ void GameHasher::stepFourFinished( BetterFutureWatcher *betterWatcher ) {
 
     FileList manualModeList;
     FileList knownFilesList;
+
     for( const FileEntry &entry : fileList ) {
         qCDebug( phxLibrary ) << entry;
-        if ( ( entry.scannerResult == GameScannerResult::MultipleSystemUUIDs
-               || entry.scannerResult == GameScannerResult::SystemUUIDUnknown ) ) {
-            manualModeList.append( entry );
-        } else {
-            knownFilesList.append( entry );
+
+        switch( entry.scannerResult ) {
+            case GameScannerResult::MultipleSystemUUIDs:
+                manualModeList.append( entry );
+                break;
+
+            case GameScannerResult::SystemUUIDUnknown:
+                break;
+
+            default:
+                knownFilesList.append( entry );
+                break;
         }
     }
 
-    if ( !manualModeList.isEmpty() ) {
+    qCDebug( phxLibrary ) << "End of list";
+    qCDebug( phxLibrary ) << "Games with one system UUID:" << knownFilesList.size();
+    qCDebug( phxLibrary ) << "Games with multiple system UUIDs:" << manualModeList.size();
+
+    if( !manualModeList.isEmpty() ) {
         emit filesNeedAssignment( manualModeList );
-    } else if ( !knownFilesList.isEmpty() ) {
+    } else if( !knownFilesList.isEmpty() ) {
         emit scanCompleted( knownFilesList );
     }
 
@@ -178,8 +190,6 @@ void GameHasher::stepFourFinished( BetterFutureWatcher *betterWatcher ) {
     //    int progress = qFloor( ( fileList.size() / static_cast<qreal>( mFilesProcessing ) ) * 100 );
     //    setProgress( progress );
 
-
-    qCDebug( phxLibrary ) << "End of list";
 
     // Adjust stored index for each item in the list that has been moved by this list manipulation
     for( BetterFutureWatcher *b : mWatcherList ) {

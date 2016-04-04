@@ -22,7 +22,7 @@ PhxScrollView {
         spacing: 0;
         model: SqlThreadedModel {
             id: sqlModel;
-            fileLocation: PhxPaths.qmlMetadataLocation() + '/' + "libretro.sqlite";
+            fileLocation: PhxPaths.qmlMetadataLocation() + "/libretro.sqlite";
             tableName: "system";
             autoCreate: false;
             databaseSettings {
@@ -82,13 +82,12 @@ PhxScrollView {
                     target: listView
                     onCurrentIndexChanged:
                         if( listView.currentIndex === -1 ) {
-                            // Always use UUID
                             contentArea.contentLibraryModel.clearFilter( "system" );
                     }
                 }
 
                 MarqueeText {
-                    id: platformText;
+                    id: allPlatformText;
                     anchors { verticalCenter: parent.verticalCenter; left: parent.left; right: parent.right; leftMargin: PhxTheme.common.menuItemMargin; rightMargin: PhxTheme.common.menuItemMargin; }
                     horizontalAlignment: Text.AlignLeft;
                     text: "All";
@@ -160,11 +159,11 @@ PhxScrollView {
             height: PhxTheme.common.menuItemHeight;
             anchors { left: parent.left; right: parent.right; }
 
+            // Change the libraryModel's (ContentArea.qml) system filter to the UUID of the currently selected system name
             Connections {
                 target: listView
                 onCurrentIndexChanged:
                     if( listView.currentIndex === index ) {
-                        // Always use UUID
                         contentArea.contentLibraryModel.setFilter( "system", UUID );
                 }
             }
