@@ -115,7 +115,7 @@ namespace Library {
             explicit operator QVariantMap() {
                 QVariantMap result;
                 result.insert( QStringLiteral( "title" ), gameMetadata.title );
-                result.insert( QStringLiteral( "system" ), systemUUIDs.first() );
+                result.insert( QStringLiteral( "system" ), systemUUIDs.isEmpty() ? "---" : systemUUIDs.first() );
                 result.insert( QStringLiteral( "region" ) , gameMetadata.region );
                 result.insert( QStringLiteral( "artworkUrl" ) , gameMetadata.frontArtwork );
                 result.insert( QStringLiteral( "absoluteFilePath" ) , filePath );

@@ -327,7 +327,7 @@ Rectangle {
                 fileLocation: PhxPaths.qmlMetadataLocation() + '/' + "libretro.sqlite";
                 tableName: "system";
                 databaseSettings {
-                    connectionName: "MANUAL_ADD_MODE_LIBRETRO";
+                    connectionName: "LIBRETRO";
                 }
 
                 SqlColumn { name: "UUID"; type: "TEXT PRIMARY KEY"; }

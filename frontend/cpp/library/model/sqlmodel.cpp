@@ -365,6 +365,7 @@ bool SqlModel::addEntries( const FileList rows ) {
 
         if( !query.exec() ) {
             qDebug() << Q_FUNC_INFO << query.lastError().text();
+            qDebug() << statement << rowData;
             bool r = db.rollback();
             Q_ASSERT( r );
             return false;
