@@ -96,10 +96,15 @@ bool MapFunctor::searchDatabase( const SearchReason reason, FileEntry &fileEntry
         case GetSystemUUID: {
             QSqlQuery libretroQuery( QSqlDatabase::database( QThread::currentThread()->objectName() % "libretro" ) );
 
-            libretroQuery.prepare( QString( "SELECT UUID FROM system "
-                                            "WHERE openvgdbSystemName = \'%1\' "
-                                            "AND enabled = 1 " )
+            libretroQuery.prepare( QString( "SELECT systemUUID FROM openVGDBToSystem "
+                                            "INNER JOIN system ON system.UUID = openVGDBToSystem.systemUUID "
+                                            "WHERE openVGDBToSystem.openvgdbSystemName = \'%1\' "
+                                            "AND system.enabled = 1 " )
                                    .arg( fileEntry.gameMetadata.openVGDBSystemUUID ) );
+
+            QString filePath = GameLauncher::trimmedGameNoExtract( fileEntry.filePath );
+            QFileInfo fileInfo( filePath );
+            QString extension = fileInfo.suffix();
 
             bool exec = libretroQuery.exec();
 
@@ -112,7 +117,7 @@ bool MapFunctor::searchDatabase( const SearchReason reason, FileEntry &fileEntry
             // Don't say anything about system UUIDs if we already have the game UUID
             if( !( fileEntry.scannerResult == GameScannerResult::GameUUIDByFilename
                    || fileEntry.scannerResult == GameScannerResult::GameUUIDByHash ) ) {
-                if( fileEntry.systemUUIDs.size() == 0 ) {
+                if( fileEntry.systemUUIDs.isEmpty() ) {
                     fileEntry.scannerResult = GameScannerResult::SystemUUIDUnknown;
                 } else {
                     fileEntry.scannerResult = fileEntry.systemUUIDs.size() == 1 ?
@@ -176,7 +181,7 @@ bool MapFunctor::searchDatabase( const SearchReason reason, FileEntry &fileEntry
                 fileEntry.systemUUIDs.append( libretroQuery.value( 0 ).toString() );
             }
 
-            return ( fileEntry.systemUUIDs.size() != 0 );
+            return ( !( fileEntry.systemUUIDs.isEmpty() ) );
         }
 
         case GetTitleByFilename: {

@@ -374,6 +374,52 @@ class SqlTableUpdater():
         "Sony - PlayStation": "Sony PlayStation",
     }
 
+    def getOpenVGDBToPhoenixMap(self):
+        return OrderedDict(sorted(self.openVGDBToPhoenixMap.items(), key=lambda t: t[0]))   
+
+    openVGDBToPhoenixMap = {
+        "3DO Interactive Multiplayer": "Panasonic - 3DO Interactive Multiplayer",
+        "Arcade": "Arcade",
+        "Atari 2600": "Atari - 2600",
+        "Atari 5200": "Atari - 5200",
+        "Atari 7800": "Atari - 7800",
+        "Atari Jaguar CD": "Atari - Jaguar",
+        "Atari Jaguar": "Atari - Jaguar",
+        "Atari Lynx": "Atari - Lynx",
+        "Bandai WonderSwan Color": "Bandai - WonderSwan Color",
+        "Bandai WonderSwan": "Bandai - WonderSwan",
+        "Coleco ColecoVision": "Coleco - ColecoVision",
+        "GCE Vectrex": "GCE - Vectrex",
+        "Intellivision": "Mattel - Intellivision",
+        "Magnavox Odyssey2": "Magnavox - Odyssey2",
+        "NEC PC Engine CD/TurboGrafx-CD": "NEC - PC Engine CD - TurboGrafx-CD",
+        "NEC PC Engine/TurboGrafx-16": "NEC - PC Engine - TurboGrafx 16",
+        "NEC PC-FX": "NEC - PC-FX - PC-FXGA",
+        "NEC SuperGrafx": "NEC - Super Grafx",
+        "Nintendo 64": "Nintendo - Nintendo 64",
+        "Nintendo DS": "Nintendo - Nintendo DS",
+        "Nintendo Entertainment System": "Nintendo - Nintendo Entertainment System",
+        "Nintendo Famicom Disk System": "Nintendo - Nintendo Entertainment System",
+        "Nintendo Game Boy Advance": "Nintendo - Game Boy Advance",
+        "Nintendo Game Boy Color": "Nintendo - Game Boy Color",
+        "Nintendo Game Boy": "Nintendo - Game Boy",
+        "Nintendo GameCube": "Nintendo - GameCube",
+        "Nintendo Super Nintendo Entertainment System": "Nintendo - Super Nintendo Entertainment System",
+        "Nintendo Virtual Boy": "Nintendo - Virtual Boy",
+        "Nintendo Wii": "Nintendo - Wii",
+        "Sega 32X": "Sega - 32X",
+        "Sega CD/Mega-CD": "Sega - Mega-CD",
+        "Sega Game Gear": "Sega - Game Gear",
+        "Sega Genesis/Mega Drive": "Sega - Mega Drive - Genesis",
+        "Sega Master System": "Sega - Master System - Mark III",
+        "Sega Saturn": "Sega - Saturn",
+        "Sega SG-1000": "Sega - SG-1000",
+        "SNK Neo Geo Pocket Color": "SNK - Neo Geo Pocket Color",
+        "SNK Neo Geo Pocket": "SNK - Neo Geo Pocket",
+        "Sony PlayStation Portable": "Sony - PlayStation Portable",
+        "Sony PlayStation": "Sony - PlayStation",
+    }
+
     def filterUnusedCores(self):
         for key in self.coreInfo["cores"].keys():
             if (

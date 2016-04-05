@@ -271,16 +271,6 @@ Rectangle {
 
         Component.onCompleted: {
             libraryModel.finishModelConstruction();
-
-            /*
-            var l = [];
-            for ( var i=1; i < 500; i++ ) {
-                l.push( { "absoluteFilePath": "/home/lee/shit" + i + ".sfc", "title": "SHIT" + i } );
-            }
-
-            libraryModel.addRows( l );
-            */
-
             GameHasherController.scanCompleted.connect( libraryModel.addEntries );
         }
     }
@@ -358,71 +348,72 @@ Rectangle {
                         anchors {
                             // margins: 100;
                         }
-                        height: parent.height;
-                        width: 620;
+                        anchors.fill: parent;
                         spacing: 3;
 
-                        header: Item {
-                            anchors { left: parent.left; right: parent.right; }
-                            height: 60;
-                            Text {
-                                id: headerText;
-                                anchors.top: parent.top; anchors.left: parent.left;
-                                width: parent.width;
-                                height: 30;
+                        header: RowLayout {
+                                    width: 640;
+                                    height: 60;
 
-                                verticalAlignment: Text.AlignVCenter;
-                                horizontalAlignment: Text.AlignLeft;
-                                text: "Manual Game Matching";
-                                color: "white";
-                                font {
-                                    pixelSize: 14;
-                                    family: PhxTheme.common.systemFontFamily;
-                                    bold: true;
+                                    // Instructions on how to operate this dialog box
+                                    Item {
+                                        Layout.fillWidth: true;
+                                        Layout.fillHeight: true;
+                                        Text {
+                                            id: headerText;
+                                            anchors.top: parent.top; anchors.left: parent.left;
+                                            width: parent.width;
+                                            height: 30;
+
+                                            verticalAlignment: Text.AlignVCenter;
+                                            horizontalAlignment: Text.AlignLeft;
+                                            text: "Manual Game Matching";
+                                            color: "white";
+                                            font {
+                                                pixelSize: 14;
+                                                family: PhxTheme.common.systemFontFamily;
+                                                bold: true;
+                                            }
+                                        }
+
+                                        Text {
+                                            anchors.top: headerText.bottom; anchors.left: parent.left;
+                                            width: parent.width;
+                                            height: 20;
+
+                                            verticalAlignment: Text.AlignVCenter;
+                                            horizontalAlignment: Text.AlignLeft;
+                                            text: "Phoenix was unable to determine the correct system for the following games. For each game in the list, choose the appropiate system.";
+                                            wrapMode: Text.WordWrap;
+                                            color: PhxTheme.common.baseFontColor;
+                                            font {
+                                                pixelSize: 10;
+                                                family: PhxTheme.common.systemFontFamily;
+                                                bold: true;
+                                            }
+                                        }
+                                    }
+
+                                    // A close button
+                                    Rectangle {
+                                        color: "red";
+                                        height: 35;
+                                        width: height;
+
+                                        Text {
+                                            anchors.centerIn: parent;
+                                            text: "Close";
+                                            color: "white";
+                                        }
+
+                                        MouseArea {
+                                            anchors.fill: parent;
+                                            onClicked: {
+                                                contentAreaStackView.push( { item: boxartGridView, replace: true } );
+                                            }
+                                        }
+                                    }
                                 }
-                            }
-
-                            Text {
-                                anchors.top: headerText.bottom; anchors.left: parent.left;
-                                width: parent.width;
-                                height: 20;
-
-                                verticalAlignment: Text.AlignVCenter;
-                                horizontalAlignment: Text.AlignLeft;
-                                text: "Phoenix was unable to determine the correct system for the following games. For each game in the list, choose the appropiate system.";
-                                wrapMode: Text.WordWrap;
-                                color: PhxTheme.common.baseFontColor;
-                                font {
-                                    pixelSize: 10;
-                                    family: PhxTheme.common.systemFontFamily;
-                                    bold: true;
-                                }
-                            }
-                        }
-
-                        Rectangle {
-                            anchors {
-                                top: parent.top;
-                                right: parent.right;
-                            }
-
-                            color: "red";
-                            height: 35;
-                            width: height;
-
-                            Text {
-                                anchors.centerIn: parent;
-                                text: "Close";
-                                color: "white";
-                            }
-
-                            MouseArea {
-                                anchors.fill: parent;
-                                onClicked: {
-                                    contentAreaStackView.push( { item: boxartGridView, replace: true } );
-                                }
-                            }
-                        }
 
                         delegate: Rectangle {
                             width: parent.width;

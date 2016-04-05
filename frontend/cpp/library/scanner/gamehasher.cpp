@@ -156,21 +156,28 @@ void GameHasher::stepFourFinished( BetterFutureWatcher *betterWatcher ) {
     qCDebug( phxLibrary ) << "Scan complete, finished scan at" << QDateTime::currentDateTime();
     qCDebug( phxLibrary ) << "Results:";
 
+    // Build these two lists from the result list then send them off via signals for further processing
     FileList manualModeList;
     FileList knownFilesList;
 
     for( const FileEntry &entry : fileList ) {
-        qCDebug( phxLibrary ) << entry;
-
         switch( entry.scannerResult ) {
             case GameScannerResult::MultipleSystemUUIDs:
+                qCDebug( phxLibrary ) << "manualModeList" << entry;
                 manualModeList.append( entry );
                 break;
 
+            // Ignore games that do not match any system by our scanner (including by extension)
+            // Also ignore games that match by game UUID but have their system UUID list empty (disabled system)
             case GameScannerResult::SystemUUIDUnknown:
                 break;
 
             default:
+                if( entry.systemUUIDs.isEmpty() ) {
+                    break;
+                }
+
+                qCDebug( phxLibrary ) << "knownFilesList" << entry;
                 knownFilesList.append( entry );
                 break;
         }
@@ -182,7 +189,9 @@ void GameHasher::stepFourFinished( BetterFutureWatcher *betterWatcher ) {
 
     if( !manualModeList.isEmpty() ) {
         emit filesNeedAssignment( manualModeList );
-    } else if( !knownFilesList.isEmpty() ) {
+    }
+
+    if( !knownFilesList.isEmpty() ) {
         emit scanCompleted( knownFilesList );
     }
 

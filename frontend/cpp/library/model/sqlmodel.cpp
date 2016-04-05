@@ -19,10 +19,10 @@ SqlModel::SqlModel( QObject *parent )
       mAutoCreate( false ) {
 
     connect( this, &SqlModel::modelReset, this, [this]() {
-        while ( canFetchMore( ) ) {
+        while( canFetchMore( ) ) {
             fetchMore();
         }
-    });
+    } );
 }
 
 void SqlModel::setRoleName( const int role, const QByteArray &value ) {
@@ -83,6 +83,7 @@ bool SqlModel::addRow( const QVariantMap rowData ) {
     QString valueStatement = QStringLiteral( " VALUES(" );
 
     int i = 0;
+
     for( const QString &col : rowData.keys() ) {
         if( i == rowData.size() - 1 ) {
             colStatement += col + QStringLiteral( ")" );
@@ -137,9 +138,9 @@ bool SqlModel::addRow( const QVariantMap rowData ) {
     return true;
 }
 
-bool SqlModel::addRows(const QVariantList rows) {
+bool SqlModel::addRows( const QVariantList rows ) {
 
-    if ( rows.isEmpty() ) {
+    if( rows.isEmpty() ) {
         return false;
     }
 
@@ -150,6 +151,7 @@ bool SqlModel::addRows(const QVariantList rows) {
     int i = 0;
 
     QVariantMap rowData = rows.first().toMap();
+
     for( const QString &col : rowData.keys() ) {
         if( i == rowData.size() - 1 ) {
             colStatement += col + QStringLiteral( ")" );
@@ -167,7 +169,7 @@ bool SqlModel::addRows(const QVariantList rows) {
     QSqlDatabase db = QSqlDatabase::database( mDatabaseSettings.connectionName() );
     bool t = db.transaction();
 
-    for ( int i=0; i < rows.size(); ++i ) {
+    for( int i = 0; i < rows.size(); ++i ) {
         QVariantMap rowData = rows.at( i ).toMap();
         Q_ASSERT( t );
 
@@ -324,11 +326,15 @@ bool SqlModel::addEntries( const FileList rows ) {
     QString colStatement = QStringLiteral( "(" );
     QString valueStatement = QStringLiteral( " VALUES(" );
 
+    qCDebug( phxLibrary ) << rows;
+    qCDebug( phxLibrary ) << "Adding" << rows.size() << "games to the database" << mFileLocation;
 
+    // Grab the column names from the QVariantMap factory function, create an insert statement from them
     {
         QVariantMap rowData = QVariantMap( static_cast<FileEntry>( rows.first() ) );
 
         int i = 0;
+
         for( const QString &col : rowData.keys() ) {
             if( i == rowData.size() - 1 ) {
                 colStatement += col + QStringLiteral( ")" );
@@ -346,10 +352,11 @@ bool SqlModel::addEntries( const FileList rows ) {
 
     QSqlDatabase db = QSqlDatabase::database( mDatabaseSettings.connectionName() );
     bool t = db.transaction();
+    Q_ASSERT( t );
 
-    for ( int i=0; i < rows.size(); ++i ) {
-        QVariantMap rowData = QVariantMap( static_cast<FileEntry>( rows.at( i  ) ) );
-        Q_ASSERT( t );
+    // For each row create an insert statement and bind the values of this statement to the current row's values and execute
+    for( int i = 0; i < rows.size(); ++i ) {
+        QVariantMap rowData = QVariantMap( static_cast<FileEntry>( rows.at( i ) ) );
 
         QSqlQuery query( db );
         query.prepare( statement );
@@ -360,10 +367,15 @@ bool SqlModel::addEntries( const FileList rows ) {
             int code = mNameToRoleMap.value( col.toLocal8Bit(), -1 );
             Q_ASSERT_X( code != -1
                         , "SqlModel::addRow( const QVariantMap )"
-                        , qPrintable( QString( "column[%1] provided is not in the model").arg( col ) ) );
+                        , qPrintable( QString( "column[%1] provided is not in the model" ).arg( col ) ) );
         }
 
         if( !query.exec() ) {
+            if( query.lastError().text().contains( "UNIQUE" ) ) {
+                qCDebug( phxLibrary ) << "Ignoring game already in library";
+                continue;
+            }
+
             qDebug() << Q_FUNC_INFO << query.lastError().text();
             qDebug() << statement << rowData;
             bool r = db.rollback();
@@ -372,11 +384,10 @@ bool SqlModel::addEntries( const FileList rows ) {
         }
     }
 
-
     bool c = db.commit();
     Q_ASSERT( c );
 
-    beginInsertRows( QModelIndex(), rowCount(),  rowCount() + rows.size() );
+    beginInsertRows( QModelIndex(), rowCount(), rowCount() + rows.size() );
 
     endInsertRows();
     select();

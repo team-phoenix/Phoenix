@@ -4,6 +4,7 @@
 #include "librarytypes.h"
 #include "sqlcolumn.h"
 #include "databasesettings.h"
+#include "logging.h"
 
 const static QString filterValueKey = QStringLiteral( "bindValue" );
 const static QString filterStatementKey = QStringLiteral( "filter" );
