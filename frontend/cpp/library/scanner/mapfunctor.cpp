@@ -36,8 +36,6 @@ bool MapFunctor::searchDatabase( const SearchReason reason, FileEntry &fileEntry
             QFileInfo file( GameLauncher::trimmedGameNoExtract( fileEntry.filePath ) );
             QString filename = file.fileName();
 
-            qCDebug( phxLibrary ) << filename;
-
             // Filename must be sanitized before being passed into an SQL query
             openVGDBQuery.prepare( QStringLiteral( "SELECT romID FROM " )
                                    % MetaDataDatabase::tableRoms
@@ -68,7 +66,7 @@ bool MapFunctor::searchDatabase( const SearchReason reason, FileEntry &fileEntry
                                                    "INNER JOIN SYSTEMS ON SYSTEMS.systemID = ROMs.systemID "
                                                    "INNER JOIN RELEASES ON RELEASES.romID = ROMs.romID "
                                                    "INNER JOIN REGIONS ON ROMs.regionID = REGIONS.regionID "
-                                                   "WHERE ROMs.romID = :romID" ) );
+                                                   "WHERE ROMs.romID = :romID " ) );
 
             openVGDBQuery.bindValue( QStringLiteral( ":romID" ), fileEntry.gameMetadata.romID );
 
@@ -98,8 +96,9 @@ bool MapFunctor::searchDatabase( const SearchReason reason, FileEntry &fileEntry
         case GetSystemUUID: {
             QSqlQuery libretroQuery( QSqlDatabase::database( QThread::currentThread()->objectName() % "libretro" ) );
 
-            libretroQuery.prepare( QString( "SELECT UUID, enabled FROM system "
-                                            "WHERE openvgdbSystemName = \'%1\'" )
+            libretroQuery.prepare( QString( "SELECT UUID FROM system "
+                                            "WHERE openvgdbSystemName = \'%1\' "
+                                            "AND enabled = 1 " )
                                    .arg( fileEntry.gameMetadata.openVGDBSystemUUID ) );
 
             bool exec = libretroQuery.exec();
@@ -107,11 +106,7 @@ bool MapFunctor::searchDatabase( const SearchReason reason, FileEntry &fileEntry
             Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( libretroQuery.lastError().text() % " -- " % libretroQuery.lastQuery() ) );
 
             while( libretroQuery.next() ) {
-                // Do not import games for systems that are disabled
-                // Leaving system name blank will make game importing code skip it
-                if( libretroQuery.value( 1 ).toInt() == 1 ) {
-                    fileEntry.systemUUIDs.append( libretroQuery.value( 0 ).toString() );
-                }
+                fileEntry.systemUUIDs.append( libretroQuery.value( 0 ).toString() );
             }
 
             // Don't say anything about system UUIDs if we already have the game UUID
@@ -161,9 +156,34 @@ bool MapFunctor::searchDatabase( const SearchReason reason, FileEntry &fileEntry
         }
 
         case GetSystemByExtension: {
-            QFileInfo file( fileEntry.filePath );
-            QString filename = GameLauncher::trimmedGameNoExtract( file.fileName() );
-            Q_UNUSED( filename );
+            QString filePath = GameLauncher::trimmedGameNoExtract( fileEntry.filePath );
+            QFileInfo fileInfo( filePath );
+            QString extension = fileInfo.completeSuffix();
+
+            QSqlQuery libretroQuery( QSqlDatabase::database( QThread::currentThread()->objectName() % "libretro" ) );
+
+            libretroQuery.prepare( QString( "SELECT system FROM extension "
+                                            "INNER JOIN system ON system.UUID = extension.system "
+                                            "WHERE extension.extension = \'%1\' "
+                                            "AND system.enabled = 1 " )
+                                   .arg( extension ) );
+
+            bool exec = libretroQuery.exec();
+
+            Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( libretroQuery.lastError().text() % " -- " % libretroQuery.lastQuery() ) );
+
+            while( libretroQuery.next() ) {
+                fileEntry.systemUUIDs.append( libretroQuery.value( 0 ).toString() );
+            }
+
+            return ( fileEntry.systemUUIDs.size() != 0 );
+        }
+
+        case GetTitleByFilename: {
+            QString filePath = GameLauncher::trimmedGameNoExtract( fileEntry.filePath );
+            QFileInfo fileInfo( filePath );
+            QString basename = fileInfo.baseName();
+            fileEntry.gameMetadata.title = basename;
             break;
         }
 
@@ -284,34 +304,41 @@ FileList MapFunctor::operator()( const FileEntry &entry ) {
             // Search by CRC32
             if( searchDatabase( GetROMIDByHash, entryCopy ) ) {
                 searchDatabase( GetMetadata, entryCopy );
+                searchDatabase( GetSystemUUID, entryCopy );
                 entryCopy.scannerResult = GameScannerResult::GameUUIDByHash;
             }
 
             // Search by filename
             else if( searchDatabase( GetROMIDByFilename, entryCopy ) ) {
                 searchDatabase( GetMetadata, entryCopy );
+                searchDatabase( GetSystemUUID, entryCopy );
                 entryCopy.scannerResult = GameScannerResult::GameUUIDByFilename;
             }
 
+            // The best we can do past this point is assign it a system and title it after its filename
+
             // Search by headers if filename matches
-            // The best we can do past this point is assign it a system
+            // TODO: Multiple systems for same header?
             else if( searchDatabase( GetSystemByHeader, entryCopy ) ) {
+                // TODO: Maybe get title from header? Probably only worth it for newer disk-based games whose devs
+                // cared about making the internal title look nice on-screen
+                searchDatabase( GetTitleByFilename, entryCopy );
                 entryCopy.scannerResult = GameScannerResult::SystemUUIDKnown;
             }
 
             // Search by extension
             else if( searchDatabase( GetSystemByExtension, entryCopy ) ) {
-                // TODO: Assign singular version of this if only one system uses this extension
-                entryCopy.scannerResult = GameScannerResult::MultipleSystemUUIDs;
+                searchDatabase( GetTitleByFilename, entryCopy );
+                if( entryCopy.systemUUIDs.size() == 1 ) {
+                    entryCopy.scannerResult = GameScannerResult::SystemUUIDKnown;
+                } else {
+                    entryCopy.scannerResult = GameScannerResult::MultipleSystemUUIDs;
+                }
             }
 
             else {
+                searchDatabase( GetTitleByFilename, entryCopy );
                 entryCopy.scannerResult = GameScannerResult::SystemUUIDUnknown;
-            }
-
-            // If we have the system UUID or ROM ID, fill out the Phoenix system UUID now
-            if( !( entryCopy.scannerResult == GameScannerResult::SystemUUIDUnknown ) ) {
-                searchDatabase( GetSystemUUID, entryCopy );
             }
 
             resultList.append( entryCopy );

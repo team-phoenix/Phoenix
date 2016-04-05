@@ -56,7 +56,8 @@ namespace Library {
                 GetSystemUUID,
                 GetEverything,
                 GetSystemByHeader,
-                GetSystemByExtension
+                GetSystemByExtension,
+                GetTitleByFilename
             };
 
             MapFunctor( const Step step );
