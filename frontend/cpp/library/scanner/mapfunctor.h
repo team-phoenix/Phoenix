@@ -54,7 +54,6 @@ namespace Library {
                 GetROMIDByFilename,
                 GetMetadata,
                 GetSystemUUID,
-                GetEverything,
                 GetSystemByHeader,
                 GetSystemByExtension,
                 GetTitleByFilename

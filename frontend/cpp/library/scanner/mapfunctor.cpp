@@ -98,13 +98,10 @@ bool MapFunctor::searchDatabase( const SearchReason reason, FileEntry &fileEntry
 
             libretroQuery.prepare( QString( "SELECT systemUUID FROM openVGDBToSystem "
                                             "INNER JOIN system ON system.UUID = openVGDBToSystem.systemUUID "
-                                            "WHERE openVGDBToSystem.openvgdbSystemName = \'%1\' "
-                                            "AND system.enabled = 1 " )
-                                   .arg( fileEntry.gameMetadata.openVGDBSystemUUID ) );
+                                            "WHERE openVGDBToSystem.openvgdbSystemName = :openvgdbSystemName "
+                                            "AND system.enabled = 1 " ) );
 
-            QString filePath = GameLauncher::trimmedGameNoExtract( fileEntry.filePath );
-            QFileInfo fileInfo( filePath );
-            QString extension = fileInfo.suffix();
+            libretroQuery.bindValue( QStringLiteral( ":openvgdbSystemName" ), fileEntry.gameMetadata.openVGDBSystemUUID );
 
             bool exec = libretroQuery.exec();
 
@@ -126,13 +123,6 @@ bool MapFunctor::searchDatabase( const SearchReason reason, FileEntry &fileEntry
             }
 
             break;
-        }
-
-        case GetEverything: {
-            bool a = searchDatabase( GetROMIDByHash, fileEntry );
-            bool c = searchDatabase( GetMetadata, fileEntry );
-            bool b = searchDatabase( GetSystemUUID, fileEntry );
-            return ( a && b && c );
         }
 
         case GetSystemByHeader: {
@@ -163,15 +153,16 @@ bool MapFunctor::searchDatabase( const SearchReason reason, FileEntry &fileEntry
         case GetSystemByExtension: {
             QString filePath = GameLauncher::trimmedGameNoExtract( fileEntry.filePath );
             QFileInfo fileInfo( filePath );
-            QString extension = fileInfo.completeSuffix();
+            QString extension = fileInfo.suffix();
 
             QSqlQuery libretroQuery( QSqlDatabase::database( QThread::currentThread()->objectName() % "libretro" ) );
 
             libretroQuery.prepare( QString( "SELECT system FROM extension "
                                             "INNER JOIN system ON system.UUID = extension.system "
-                                            "WHERE extension.extension = \'%1\' "
-                                            "AND system.enabled = 1 " )
-                                   .arg( extension ) );
+                                            "WHERE extension.extension = :extension "
+                                            "AND system.enabled = 1 " ) );
+
+            libretroQuery.bindValue( QStringLiteral( ":extension" ), extension );
 
             bool exec = libretroQuery.exec();
 
@@ -334,6 +325,7 @@ FileList MapFunctor::operator()( const FileEntry &entry ) {
             // Search by extension
             else if( searchDatabase( GetSystemByExtension, entryCopy ) ) {
                 searchDatabase( GetTitleByFilename, entryCopy );
+
                 if( entryCopy.systemUUIDs.size() == 1 ) {
                     entryCopy.scannerResult = GameScannerResult::SystemUUIDKnown;
                 } else {
