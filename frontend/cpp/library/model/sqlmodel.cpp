@@ -18,7 +18,7 @@ SqlModel::SqlModel( QObject *parent )
       mCacheModel( false ),
       mAutoCreate( false ) {
 
-    connect( this, &SqlModel::modelReset, this, [this]() {
+    connect( this, &SqlModel::modelReset, this, [this] {
         while( canFetchMore( ) ) {
             fetchMore();
         }
@@ -415,7 +415,7 @@ bool SqlModel::select() {
 
     query.prepare( s );
 
-    if( !filter().isEmpty() ) {
+    if( mSelectStatementOverride.isEmpty() && !filter().isEmpty() ) {
         for( const QString &col : mFilterMap.keys() ) {
             const QVariantHash hash = mFilterMap.value( col ).toHash();
             query.addBindValue( hash.value( filterValueKey ) );
@@ -439,6 +439,10 @@ bool SqlModel::select() {
 }
 
 QString SqlModel::selectStatement() const {
+
+    if ( !mSelectStatementOverride.isEmpty() ) {
+        return mSelectStatementOverride;
+    }
 
     QString statement = QStringLiteral( "SELECT " );
     for( int i = 0; i < mTableColumns.size(); ++i ) {
@@ -491,6 +495,10 @@ bool SqlModel::autoCreate() const {
     return mAutoCreate;
 }
 
+DatabaseSettings *SqlModel::databaseSettings() {
+    return &mDatabaseSettings;
+}
+
 QQmlListProperty<SqlColumn> SqlModel::tableColumns() {
     return QQmlListProperty<SqlColumn>( this
                                         , Q_NULLPTR
@@ -506,6 +514,18 @@ void SqlModel::appendTableRow( QQmlListProperty<SqlColumn> *list, SqlColumn *row
 
     model->setRoleName( model->mTableColumns.size(), row->name().toLocal8Bit() );
     model->mTableColumns.append( row );
+}
+
+bool SqlModel::attachDatabase(const QString dbFile, const QString alias) {
+    QSqlDatabase db = QSqlDatabase::database( mDatabaseSettings.connectionName() );
+    QSqlQuery query( db );
+
+    if ( !query.exec( QString("ATTACH DATABASE '%1' as %2;").arg( dbFile, alias ) ) ) {
+        qDebug() << Q_FUNC_INFO << query.lastError().text();
+        Q_ASSERT( false );
+        return false;
+    }
+    return true;
 }
 
 void SqlModel::setOrderBy( const QStringList columns, const SqlModel::OrderBy order ) {
@@ -542,6 +562,11 @@ void SqlModel::setFileLocation( const QUrl location ) {
 void SqlModel::setAutoCreate( const bool create ) {
     mAutoCreate = create;
     emit autoCreateChanged();
+}
+
+void SqlModel::setSelectStatement(const QString statement) {
+    mSelectStatementOverride = statement;
+    emit selectStatementChanged();
 }
 
 void SqlModel::setFilter( const QString column, const QVariant value, const SqlModel::FilterType type ) {

@@ -24,6 +24,7 @@ class SqlThreadedModel : public QAbstractTableModel {
 
         Q_PROPERTY( QString tableName READ tableName WRITE setTableName NOTIFY tableNameChanged )
         Q_PROPERTY( QUrl fileLocation READ fileLocation WRITE setFileLocation NOTIFY fileLocationChanged )
+        Q_PROPERTY( QString selectStatement READ selectStatement WRITE setSelectStatement NOTIFY selectStatementChanged )
 
         Q_PROPERTY( DatabaseSettings *databaseSettings READ databaseSettings )
         Q_PROPERTY( QQmlListProperty<SqlColumn> tableColumns READ tableColumns )
@@ -48,6 +49,7 @@ class SqlThreadedModel : public QAbstractTableModel {
         QUrl fileLocation() const;
         bool autoCreate() const;
         DatabaseSettings *databaseSettings();
+        QString selectStatement() const;
         // ~[!!]
 
         // [!!] QML Q_PROPERTY ( Setters )
@@ -55,6 +57,8 @@ class SqlThreadedModel : public QAbstractTableModel {
         void setTableName( const QString tableName );
         void setFileLocation( const QUrl location );
         void setAutoCreate( const bool create );
+        void setSelectStatement( const QString statement );
+
         // ~[!!]
 
         // [!!] QML QQmlListProperties ( Hooks )
@@ -68,9 +72,12 @@ class SqlThreadedModel : public QAbstractTableModel {
         void tableNameChanged();
         void fileLocationChanged();
         void autoCreateChanged();
+        void selectStatementChanged();
         // ~[!!]
 
     public slots:
+
+        bool attachDatabase( const QString dbFile, const QString alias );
 
         void setOrderBy( const QStringList columns, const SqlModel::OrderBy order );
 

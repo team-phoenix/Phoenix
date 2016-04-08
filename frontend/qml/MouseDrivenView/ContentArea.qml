@@ -254,6 +254,7 @@ Rectangle {
         fileLocation: PhxPaths.qmlUserDataLocation() + "/userdata.sqlite";
 
         autoCreate: true;
+        //selectStatement: "SELECT * FROM games ORDER BY title DESC";
 
         tableName: "games";
 
@@ -273,6 +274,7 @@ Rectangle {
             libraryModel.setOrderBy( "title", SqlModel.ASC );
             libraryModel.finishModelConstruction();
             GameHasherController.scanCompleted.connect( libraryModel.addEntries );
+            libraryModel.attachDatabase( "C:/msys64/home/leewee/Phoenix/frontend/metadata/libretro.sqlite", "libretro" );
         }
     }
 

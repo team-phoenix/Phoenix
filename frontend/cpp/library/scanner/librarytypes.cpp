@@ -23,8 +23,7 @@ QDebug Library::operator<<( QDebug debug, const FileEntry &entry ) {
                                        "\tcrc32 = %2\n"
                                        "\thasHashCached = %3\n"
                                        "\tgameUUID = %4\n"
-                                   ).
-                                   arg( entry.filePath )
+                                   ).arg( entry.filePath )
                                    .arg( entry.crc32 )
                                    .arg( entry.hasHashCached )
                                    .arg( entry.gameUUID )

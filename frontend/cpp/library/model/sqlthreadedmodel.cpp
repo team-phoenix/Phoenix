@@ -64,6 +64,11 @@ DatabaseSettings *SqlThreadedModel::databaseSettings() {
     return mModel.databaseSettings();
 }
 
+QString SqlThreadedModel::selectStatement() const
+{
+    return mModel.selectStatement();
+}
+
 QQmlListProperty<SqlColumn> SqlThreadedModel::tableColumns()
 {
     return mModel.tableColumns();
@@ -73,9 +78,15 @@ void SqlThreadedModel::appendTableRow(QQmlListProperty<SqlColumn> *list, SqlColu
     SqlModel::appendTableRow( list, row );
 }
 
+bool SqlThreadedModel::attachDatabase(const QString dbFile, const QString alias) {
+    QMetaObject::invokeMethod( &mModel, "attachDatabase", Q_ARG( const QString, dbFile)
+                                                        , Q_ARG( const QString, alias) );
+    return true;
+}
+
 void SqlThreadedModel::setOrderBy(const QStringList columns, const SqlModel::OrderBy order) {
-    QMetaObject::invokeMethod( &mModel, "setOrderBy", Q_ARG( QStringList, columns )
-                                                    , Q_ARG( SqlModel::OrderBy, order ) );
+    QMetaObject::invokeMethod( &mModel, "setOrderBy", Q_ARG( const QStringList, columns )
+                                                    , Q_ARG( const SqlModel::OrderBy, order ) );
 }
 
 void SqlThreadedModel::aboutToResetModel() {
@@ -154,4 +165,9 @@ void SqlThreadedModel::setFileLocation( const QUrl location ) {
 void SqlThreadedModel::setAutoCreate(const bool create) {
     mModel.setAutoCreate( create );
     emit autoCreateChanged();
+}
+
+void SqlThreadedModel::setSelectStatement(const QString statement) {
+    mModel.setSelectStatement( statement );
+    emit selectStatementChanged();
 }

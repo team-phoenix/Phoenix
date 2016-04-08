@@ -16,6 +16,7 @@ class SqlModel : public QSqlTableModel {
 
         Q_PROPERTY( QString tableName READ tableName WRITE setTableName NOTIFY tableNameChanged )
         Q_PROPERTY( QUrl fileLocation READ fileLocation WRITE setFileLocation NOTIFY fileLocationChanged )
+        Q_PROPERTY( QString selectStatement READ selectStatement WRITE setSelectStatement NOTIFY selectStatementChanged )
 
         Q_PROPERTY( DatabaseSettings *databaseSettings READ databaseSettings )
 
@@ -58,9 +59,7 @@ class SqlModel : public QSqlTableModel {
 
         // !![WARNING]!!
         // Only meant to be accessed from QML, this is not a deletable pointer!
-        DatabaseSettings *databaseSettings() {
-            return &mDatabaseSettings;
-        }
+        DatabaseSettings *databaseSettings();
         // ~!![WARNING]!!
 
         // ~[!!]
@@ -71,6 +70,8 @@ class SqlModel : public QSqlTableModel {
         void setConnectionName( const QString name );
         void setFileLocation( const QUrl location );
         void setAutoCreate( const bool create );
+        void setSelectStatement( const QString statement );
+
         // ~[!!]
 
         // [!!] QML QQmlListProperties ( Hooks )
@@ -88,8 +89,11 @@ class SqlModel : public QSqlTableModel {
         void connectionNameChanged();
         void fileLocationChanged();
         void autoCreateChanged();
+        void selectStatementChanged();
 
     public slots:
+
+        bool attachDatabase( const QString dbFile, const QString alias );
 
         void setOrderBy( const QStringList columns, const SqlModel::OrderBy order );
 
@@ -136,6 +140,7 @@ class SqlModel : public QSqlTableModel {
         QUrl mFileLocation;
         bool mAutoCreate;
         QString mOrderBy;
+        QString mSelectStatementOverride;
 
         // No need to delete, is parented to model.
         DatabaseSettings mDatabaseSettings;
