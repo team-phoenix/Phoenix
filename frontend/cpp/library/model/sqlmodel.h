@@ -33,6 +33,12 @@ class SqlModel : public QSqlTableModel {
         };
         Q_ENUMS( FilterType )
 
+        enum class OrderBy {
+            ASC = 0,
+            DESC,
+        };
+        Q_ENUMS( OrderBy )
+
         SqlModel( QObject *parent = nullptr );
 
         void setRoleName( const int role, const QByteArray &value );
@@ -84,6 +90,9 @@ class SqlModel : public QSqlTableModel {
         void autoCreateChanged();
 
     public slots:
+
+        void setOrderBy( const QStringList columns, const SqlModel::OrderBy order );
+
         // Sets an SQL filter on the query. The added filter will remain until
         // 'clearFilter()' is called on the filtered column.
         void setFilter( const QString column
@@ -126,6 +135,7 @@ class SqlModel : public QSqlTableModel {
         QString mConnectionName;
         QUrl mFileLocation;
         bool mAutoCreate;
+        QString mOrderBy;
 
         // No need to delete, is parented to model.
         DatabaseSettings mDatabaseSettings;

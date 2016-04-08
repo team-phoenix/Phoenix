@@ -71,6 +71,10 @@ class SqlThreadedModel : public QAbstractTableModel {
         // ~[!!]
 
     public slots:
+
+        void setOrderBy( const QStringList columns, const SqlModel::OrderBy order );
+
+
         // Sets an SQL filter on the query. The added filter will remain until
         // 'clearFilter()' is called on the filtered column.
         void setFilter( const QString column

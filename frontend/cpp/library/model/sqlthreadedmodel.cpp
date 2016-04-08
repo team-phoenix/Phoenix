@@ -73,6 +73,11 @@ void SqlThreadedModel::appendTableRow(QQmlListProperty<SqlColumn> *list, SqlColu
     SqlModel::appendTableRow( list, row );
 }
 
+void SqlThreadedModel::setOrderBy(const QStringList columns, const SqlModel::OrderBy order) {
+    QMetaObject::invokeMethod( &mModel, "setOrderBy", Q_ARG( QStringList, columns )
+                                                    , Q_ARG( SqlModel::OrderBy, order ) );
+}
+
 void SqlThreadedModel::aboutToResetModel() {
     beginResetModel();
 }

@@ -23,6 +23,7 @@ SqlModel::SqlModel( QObject *parent )
             fetchMore();
         }
     } );
+
 }
 
 void SqlModel::setRoleName( const int role, const QByteArray &value ) {
@@ -440,7 +441,6 @@ bool SqlModel::select() {
 QString SqlModel::selectStatement() const {
 
     QString statement = QStringLiteral( "SELECT " );
-
     for( int i = 0; i < mTableColumns.size(); ++i ) {
 
         SqlColumn *col = mTableColumns[ i ];
@@ -452,11 +452,11 @@ QString SqlModel::selectStatement() const {
     }
 
     statement += QStringLiteral( " FROM " ) % tableName();
-
     if( !filter().isEmpty() ) {
         statement += " WHERE " % filter();
     }
 
+    statement += mOrderBy;
     statement += QStringLiteral( ";" );
 
     return statement;
@@ -506,6 +506,22 @@ void SqlModel::appendTableRow( QQmlListProperty<SqlColumn> *list, SqlColumn *row
 
     model->setRoleName( model->mTableColumns.size(), row->name().toLocal8Bit() );
     model->mTableColumns.append( row );
+}
+
+void SqlModel::setOrderBy( const QStringList columns, const SqlModel::OrderBy order ) {
+    if ( columns.isEmpty() ) {
+        return;
+    }
+    mOrderBy = QStringLiteral( " ORDER BY " );
+    for ( int i=0; i < columns.size(); ++i ) {
+        mOrderBy += columns[i];
+        if ( i < columns.size() - 1 ) {
+            mOrderBy += QStringLiteral( "," );
+        }
+    }
+
+    mOrderBy += (order == SqlModel::OrderBy::ASC) ? QStringLiteral( " ASC" ) : QStringLiteral( " DESC" );
+
 }
 
 void SqlModel::setCacheModel( const bool cache ) {

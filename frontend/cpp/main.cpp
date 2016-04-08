@@ -206,6 +206,7 @@ int main( int argc, char *argv[] ) {
     qmlRegisterType<SqlThreadedModel>( "vg.phoenix.models", 1, 0, "SqlThreadedModel" );
     qmlRegisterType<DatabaseSettings>();
     qRegisterMetaType<SqlModel::FilterType>( "SqlModel::FilterType" );
+    qRegisterMetaType<SqlModel::OrderBy>( "SqlModel::OrderBy" );
 
     qmlRegisterType<Library::PlatformsModel>( "vg.phoenix.models", 1, 0, "PlatformsModel" );
     qmlRegisterType<Library::CollectionsModel>( "vg.phoenix.models", 1, 0, "CollectionsModel" );

@@ -270,6 +270,7 @@ Rectangle {
         SqlColumn { name: "crc32Checksum"; type: "TEXT"; }
 
         Component.onCompleted: {
+            libraryModel.setOrderBy( "title", SqlModel.ASC );
             libraryModel.finishModelConstruction();
             GameHasherController.scanCompleted.connect( libraryModel.addEntries );
         }
