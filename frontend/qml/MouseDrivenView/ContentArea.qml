@@ -274,7 +274,7 @@ Rectangle {
             libraryModel.setOrderBy( "title", SqlModel.ASC );
             libraryModel.finishModelConstruction();
             GameHasherController.scanCompleted.connect( libraryModel.addEntries );
-            libraryModel.attachDatabase( "C:/msys64/home/leewee/Phoenix/frontend/metadata/libretro.sqlite", "libretro" );
+            //libraryModel.attachDatabase( "/home/path/to/database.sqlite", "an_alias" );
         }
     }
 
