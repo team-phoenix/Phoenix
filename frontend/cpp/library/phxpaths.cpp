@@ -185,6 +185,6 @@ void PhxPaths::initPaths() {
 QObject *PhxPathsSingletonProviderCallback( QQmlEngine *engine, QJSEngine *scriptEngine ) {
     Q_UNUSED( scriptEngine )
 
-    static Library::PhxPaths phxPaths( engine );
-    return &phxPaths;
+    Library::PhxPaths *phxPaths = new Library::PhxPaths( engine );
+    return phxPaths;
 }

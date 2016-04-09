@@ -133,6 +133,7 @@ void GameHasher::stepThreeFinished( BetterFutureWatcher *betterWatcher ) {
     QFuture<FileList> future = QtConcurrent::mappedReduced<FileList, FileList>( fileList, MapFunctor( MapFunctor::Four ), ReduceFunctor( ReduceFunctor::Four ) );
 
     connect( watcher, &BetterFutureWatcher::finished, this, &GameHasher::stepFourFinished );
+    connect( watcher, &BetterFutureWatcher::progressChanged, this, &GameHasher::progressChanged );
 
     watcher->setFuture( future, mWatcherList.size() );
     mWatcherList.append( watcher );
@@ -194,6 +195,8 @@ void GameHasher::stepFourFinished( BetterFutureWatcher *betterWatcher ) {
     if( !knownFilesList.isEmpty() ) {
         emit scanCompleted( knownFilesList );
     }
+
+    emit progressChanged( 0 );
 
     //    mFilesProcessing -= fileList.size();
     //    int progress = qFloor( ( fileList.size() / static_cast<qreal>( mFilesProcessing ) ) * 100 );

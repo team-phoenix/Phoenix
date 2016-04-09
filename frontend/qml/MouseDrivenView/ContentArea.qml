@@ -283,7 +283,7 @@ Rectangle {
 
     StackView {
         id: contentAreaStackView;
-        initialItem: manualAddModeComponent;
+        initialItem: boxartGridView;
         anchors.fill: parent;
         anchors.bottomMargin: currentlySuspended ? gameSuspendedArea.height : 0;
 

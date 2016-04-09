@@ -93,6 +93,41 @@ Item {
                 }
             }
 
+            Rectangle {
+                Layout.fillWidth: true;
+                visible: GameHasherController.running;
+                color: "red";
+
+                height: 50;
+
+                Column {
+                    anchors {
+                        fill: parent;
+                        topMargin: 6;
+                    }
+
+                    Text {
+                        anchors {
+                            horizontalCenter: parent.horizontalCenter;
+                        }
+                        text: "Importing Games";
+                    }
+
+                    ProgressBar {
+                        height: 12;
+                        value: GameHasherController.progress;
+                        minimumValue: 0;
+                        maximumValue: 100;
+                        anchors {
+                            left: parent.left;
+                            right: parent.right;
+                            leftMargin: 12;
+                            rightMargin: 12;
+                        }
+                    }
+                }
+            }
+
             Item {
                 id: bottomRowContainer;
                 height: 65;

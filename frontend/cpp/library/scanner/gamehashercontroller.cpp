@@ -4,7 +4,10 @@
 
 GameHasherController::GameHasherController( QObject *parent ) : QObject( parent ),
     gameHasher( new GameHasher() ),
-    gameHasherThread( new QThread() ) {
+    gameHasherThread( new QThread() ),
+    mProgress( 0 ),
+    mRunning( false )
+{
     // Set up GameHasher
     gameHasher->setObjectName( "GameHasher" );
     gameHasher->moveToThread( gameHasherThread );
@@ -13,6 +16,7 @@ GameHasherController::GameHasherController( QObject *parent ) : QObject( parent 
     connect( this, &GameHasherController::shutdownGameHasher, gameHasher, &GameHasher::shutdown );
     connect( gameHasher, &GameHasher::scanCompleted, this, &GameHasherController::scanCompleted );
     connect( gameHasher, &GameHasher::filesNeedAssignment, this, &GameHasherController::filesNeedAssignment );
+    connect( gameHasher, &GameHasher::progressChanged, this, &GameHasherController::setProgress );
 
     // Used for testing the manual add mode.
     //connect( gameHasher, &GameHasher::scanCompleted, this, &GameHasherController::filesNeedAssignment );
@@ -44,6 +48,11 @@ GameHasherController::GameHasherController( QObject *parent ) : QObject( parent 
     } );
 }
 
+int GameHasherController::progress() const
+{
+    return mProgress;
+}
+
 void GameHasherController::scanForGames( QList<QUrl> urls ) {
     QStringList paths;
 
@@ -52,6 +61,7 @@ void GameHasherController::scanForGames( QList<QUrl> urls ) {
     }
 
     qCDebug( phxLibrary ) << "Sending" << urls.size() << "paths to GameHasher";
+    setRunning( true );
     QMetaObject::invokeMethod( gameHasher, "addPaths", Qt::QueuedConnection, Q_ARG( QStringList, paths ) );
 }
 
@@ -92,6 +102,14 @@ void GameHasherController::processResults( FileList results ) {
             qDebug( phxLibrary ) << "SQL Insertion Error: " << query.lastError().text() << query.lastQuery();
         }
     }
+}
+
+void GameHasherController::setProgress( const int progress ) {
+    mProgress = progress;
+    if ( progress == 100 ) {
+        setRunning( false );
+    }
+    emit progressChanged();
 }
 
 QObject *GameHasherControllerSingletonProviderCallback( QQmlEngine *engine, QJSEngine *scriptEngine ) {
