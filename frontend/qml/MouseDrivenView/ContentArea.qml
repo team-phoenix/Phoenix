@@ -399,14 +399,18 @@ Rectangle {
 
                                     // A close button
                                     Rectangle {
-                                        color: "red";
+                                        color: "transparent";
                                         height: 35;
                                         width: height;
 
-                                        Text {
-                                            anchors.centerIn: parent;
-                                            text: "Close";
-                                            color: "white";
+                                        Image {
+                                            id: closeButton;
+                                            anchors.verticalCenter: parent.verticalCenter;
+                                            height: 12;
+                                            width: 12;
+
+                                            sourceSize { height: height; width: width; }
+                                            source: "close.svg";
                                         }
 
                                         MouseArea {
