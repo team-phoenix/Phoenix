@@ -73,20 +73,16 @@ include( deployment.pri )
     cpp/library/database/metadatadatabase.cpp \
     cpp/library/database/userdatabase.cpp \
     cpp/library/fileinfo/archivefile.cpp \
-    cpp/library/fileinfo/biosfileinfo.cpp \
     cpp/library/fileinfo/cryptohash.cpp \
-    cpp/library/fileinfo/cuefileinfo.cpp \
-    cpp/library/fileinfo/gamefileinfo.cpp \
     cpp/library/gamelauncher.cpp \
     cpp/library/imagecacher.cpp \
     cpp/library/model/collectionsmodel.cpp \
-    cpp/library/model/coremodel.cpp \
     cpp/library/model/databasesettings.cpp \
     cpp/library/model/librarymodel.cpp \
-    cpp/library/model/platformsmodel.cpp \
     cpp/library/model/sqlcolumn.cpp \
     cpp/library/model/sqlmodel.cpp \
     cpp/library/model/sqlthreadedmodel.cpp \
+    cpp/library/model/coremodel.cpp \
     cpp/library/phxpaths.cpp \
     cpp/library/scanner/filterfunctor.cpp \
     cpp/library/scanner/gamehasher.cpp \
@@ -95,7 +91,7 @@ include( deployment.pri )
     cpp/library/scanner/mapfunctor.cpp \
     cpp/library/scanner/reducefunctor.cpp \
     cpp/library/scanner/scannerutil.cpp \
-    cpp/main.cpp \
+    cpp/main.cpp
 
     HEADERS += \
     cpp/library/betterfuturewatcher.h \
@@ -104,28 +100,24 @@ include( deployment.pri )
     cpp/library/database/metadatadatabase.h \
     cpp/library/database/userdatabase.h \
     cpp/library/fileinfo/archivefile.h \
-    cpp/library/fileinfo/biosfileinfo.h \
     cpp/library/fileinfo/cryptohash.h \
-    cpp/library/fileinfo/cuefileinfo.h \
-    cpp/library/fileinfo/gamefileinfo.h \
     cpp/library/gamelauncher.h \
     cpp/library/imagecacher.h \
     cpp/library/librarytypes.h \
     cpp/library/model/collectionsmodel.h \
-    cpp/library/model/coremodel.h \
     cpp/library/model/databasesettings.h \
     cpp/library/model/librarymodel.h \
-    cpp/library/model/platformsmodel.h \
     cpp/library/model/sqlcolumn.h \
     cpp/library/model/sqlmodel.h \
     cpp/library/model/sqlthreadedmodel.h \
+    cpp/library/model/coremodel.h \
     cpp/library/phxpaths.h \
     cpp/library/scanner/filterfunctor.h \
     cpp/library/scanner/gamehasher.h \
     cpp/library/scanner/gamehashercontroller.h \
     cpp/library/scanner/mapfunctor.h \
     cpp/library/scanner/reducefunctor.h \
-    cpp/library/scanner/scannerutil.h \
+    cpp/library/scanner/scannerutil.h
 
     PRECOMPILED_HEADER = cpp/frontendcommon.h
 
@@ -135,7 +127,7 @@ include( deployment.pri )
     qml/assets/assets.qrc \
     qml/BigPicture/bigpicture.qrc \
     qml/MouseDrivenView/mousedrivenview.qrc \
-    qml/GameView/gameview.qrc \
+    qml/GameView/gameview.qrc
 
 ##
 ## Linker settings

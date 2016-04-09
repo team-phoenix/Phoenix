@@ -5,10 +5,9 @@
 #include "imagecacher.h"
 #include "metadatadatabase.h"
 #include "libretrodatabase.h"
+#include "coremodel.h"
 #include "collectionsmodel.h"
 #include "librarymodel.h"
-#include "coremodel.h"
-#include "platformsmodel.h"
 #include "librarytypes.h"
 #include "sqlthreadedmodel.h"
 #include "gamehasher.h"
@@ -208,7 +207,6 @@ int main( int argc, char *argv[] ) {
     qRegisterMetaType<SqlModel::FilterType>( "SqlModel::FilterType" );
     qRegisterMetaType<SqlModel::OrderBy>( "SqlModel::OrderBy" );
 
-    qmlRegisterType<Library::PlatformsModel>( "vg.phoenix.models", 1, 0, "PlatformsModel" );
     qmlRegisterType<Library::CollectionsModel>( "vg.phoenix.models", 1, 0, "CollectionsModel" );
     qmlRegisterType<Library::LibraryModel>( "vg.phoenix.models", 1, 0, "LibraryModel" );
     qmlRegisterType<Library::CoreModel>( "vg.phoenix.models", 1, 0, "CoreModel" );

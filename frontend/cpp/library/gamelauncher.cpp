@@ -13,34 +13,8 @@ const QString GameLauncher::getDefaultCore( const QString system ) {
     // Let the constructor run so it'll make sure default cores are set for any new systems that might not have had their
     // defaults written to the user database yet because the user has not opened that settings page
     // Ugly hack or good idea?
-    CoreModel *model = new CoreModel();
-    delete model;
 
-    const static QString statement = QStringLiteral( "SELECT defaultCore FROM defaultCores WHERE system = ?" );
-    QSqlQuery query = QSqlQuery( UserDatabase::instance()->database() );
-    query.prepare( statement );
-    query.addBindValue( system );
 
-    bool exec = query.exec();
-    Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( query.lastError().text() ) );
-
-    QString defaultCore;
-
-    if( query.first() ) {
-        defaultCore = query.value( 0 ).toString();
-    }
-
-#if defined( Q_OS_WIN )
-    defaultCore = PhxPaths::coreLocation() % QStringLiteral( "/" ) % defaultCore % QStringLiteral( ".dll" );
-#endif
-#if defined( Q_OS_MAC )
-    defaultCore = PhxPaths::coreLocation() % QStringLiteral( "/" ) % defaultCore % QStringLiteral( ".dylib" );
-#endif
-#if defined( Q_OS_LINUX )
-    defaultCore = PhxPaths::coreLocation() % QStringLiteral( "/" ) % defaultCore % QStringLiteral( ".so" );
-#endif
-
-    return defaultCore;
 }
 
 bool GameLauncher::verify( const QString system, QString rom ) {

@@ -182,11 +182,9 @@ void PhxPaths::initPaths() {
 }
 
 // Instantiate PhxPaths for QML use as a singleton object
-// FIXME: Need to destroy it somehow?
 QObject *PhxPathsSingletonProviderCallback( QQmlEngine *engine, QJSEngine *scriptEngine ) {
     Q_UNUSED( scriptEngine )
 
-    Library::PhxPaths *phxPaths = new Library::PhxPaths( engine );
-
-    return phxPaths;
+    static Library::PhxPaths phxPaths( engine );
+    return &phxPaths;
 }
