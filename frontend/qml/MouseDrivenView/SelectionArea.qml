@@ -10,245 +10,257 @@ import vg.phoenix.themes 1.0
 import vg.phoenix.backend 1.0
 import vg.phoenix.scanner 1.0
 
-Item {
-    Rectangle  {
-        id: selectionArea;
-        anchors.fill: parent;
-        color: PhxTheme.common.primaryBackgroundColor;
+Rectangle  {
+    id: selectionArea;
+    color: PhxTheme.common.primaryBackgroundColor;
 
-        Row { anchors { top: parent.top; bottom: parent.bottom; right: parent.right; } }
+    // The main attraction: a StackView that holds a list of something, whether that something is a type of
+    // console, settings category, or whatever else
+    StackView {
+        id: sectionsAreaStackView;
+        initialItem: platformsView;
+        anchors { left: parent.left; right: parent.right; top: parent.top; bottom: bottomRowContainer.top; }
 
-        ColumnLayout {
-            id: selectionColumnLayout;
-            anchors.fill: parent;
-            spacing: 0;
+        property string currentObjectName: currentItem === null ? "" : currentItem.objectName;
 
-            // The main attraction: a StackView that holds a list of something, whether that something is a type of
-            // console, settings category, or whatever else
-            StackView {
-                id: sectionsAreaStackView;
-                Layout.fillHeight: true;
-                Layout.fillWidth: true;
-                initialItem: platformsView;
+        PlatformsView {
+            id: platformsView;
+            objectName: "PlatformsView";
+            visible: !sectionsAreaStackView.currentObjectName.localeCompare( objectName );
+            enabled: visible;
+        }
 
-                property string currentObjectName: currentItem === null ? "" : currentItem.objectName;
+        CollectionsView {
+            id: collectionsView;
+            objectName: "CollectionsView";
+            visible: !sectionsAreaStackView.currentObjectName.localeCompare( objectName );
+            enabled: visible;
+        }
 
-                PlatformsView {
-                    id: platformsView;
-                    objectName: "PlatformsView";
-                    visible: !sectionsAreaStackView.currentObjectName.localeCompare( objectName );
-                    enabled: visible;
-                }
+        SettingsView {
+            id: settingsView;
+            objectName: "SettingsView";
+            visible: !sectionsAreaStackView.currentObjectName.localeCompare( objectName );
+            enabled: visible;
+        }
 
-                CollectionsView {
-                    id: collectionsView;
-                    objectName: "CollectionsView";
-                    visible: !sectionsAreaStackView.currentObjectName.localeCompare( objectName );
-                    enabled: visible;
-                }
-
-                SettingsView {
-                    id: settingsView;
-                    objectName: "SettingsView";
-                    visible: !sectionsAreaStackView.currentObjectName.localeCompare( objectName );
-                    enabled: visible;
-                }
-
-                delegate: StackViewDelegate {
-                    function transitionFinished(properties) {
-                        properties.exitItem.opacity = 1
-                        properties.exitItem.y = 0;
-                    }
-
-                    pushTransition: StackViewTransition {
-                        PropertyAnimation {
-                            target: enterItem
-                            property: "opacity"
-                            from: 0
-                            to: 1
-                        }
-
-                        PropertyAnimation {
-                            target: exitItem
-                            property: "opacity"
-                            from: 1
-                            to: 0
-                        }
-
-                        PropertyAnimation {
-                            target: enterItem
-                            property: "y"
-                            from: enterItem.height;
-                            to: 0;
-                            easing.type: Easing.InOutExpo
-                        }
-
-                        PropertyAnimation {
-                            target: exitItem
-                            property: "y"
-                            from: 0;
-                            to: exitItem.height;
-                            easing.type: Easing.InOutExpo
-                        }
-                    }
-                }
+        delegate: StackViewDelegate {
+            function transitionFinished(properties) {
+                properties.exitItem.opacity = 1
+                properties.exitItem.y = 0;
             }
 
-            // IMPORTING GAMES
-            Rectangle {
-                Layout.fillWidth: true;
-                visible: GameHasherController.running;
-                color: PhxTheme.common.tertiaryBackgroundColor;
-                height: 40;
-
-                Column {
-                    anchors { fill: parent; topMargin: 6; }
-
-                    Text {
-                        anchors { horizontalCenter: parent.horizontalCenter; }
-                        text: "Importing Games";
-                        color: "white";
-                    }
-
-                    ProgressBar {
-                        height: 6;
-                        value: GameHasherController.progress;
-                        minimumValue: 0;
-                        maximumValue: 100;
-                        anchors { left: parent.left; right: parent.right; leftMargin: 12; rightMargin: 12; }
-
-                        style: ProgressBarStyle {
-                            background: Rectangle {
-                                radius: parent.height;
-                                color: "white";
-                                border.width: 0;
-                            }
-                            progress: Rectangle {
-                                radius: parent.height;
-                                color: PhxTheme.common.menuItemHighlight;
-                                border.width: 0;
-                            }
-                        }
-                    }
-                }
-            }
-
-            Item {
-                id: bottomRowContainer;
-                height: 65;
-                anchors { left: parent.left; right: parent.right; }
-
-                // Added number: number of extra buttons past ListView
-                property real delegateWidth: width / ( listView.count + 1 );
-
-                // The buttons along the bottom that control the sectionsAreaStackView
-                // @disable-check M300
-                PhxListView {
-                    id: listView;
-                    anchors { top: parent.top; bottom: parent.bottom; left: parent.left; }
-                    width: parent.width - parent.delegateWidth;
-                    spacing: 0;
-                    orientation: ListView.Horizontal;
-
-                    model: ListModel {
-                        ListElement { bgColor: "white"; label: "Games"; imageSource: "games.svg";
-                            leftPane: "PlatformsView"; rightPane: "BoxartGridView"; }
-                        ListElement { bgColor: "white"; label: "Favorites"; imageSource: "collections.svg";
-                            leftPane: "CollectionsView"; rightPane: "BoxartGridView"; }
-                        ListElement { bgColor: "white"; label: "Settings"; imageSource: "settings.svg";
-                            leftPane: "SettingsView"; rightPane: "LibrarySettingsView"; }
-                    }
-
-                    FileDialog {
-                        id: fileDialog;
-                        selectMultiple: true;
-                        title: "Select games to import into your library"
-                        onAccepted: { GameHasherController.scanForGames( fileUrls ); }
-                    }
-
-                    // Returns first match
-                    function getObjectByName( name, parentObject ) {
-                        for( var i = 0; i < parentObject.children.length; i++ ) {
-                            if( !parentObject.children[ i ].objectName.localeCompare( name ) )
-                                return parentObject.children[ i ];
-                        }
-                        return null;
-                    }
-
-                    // Change the selectionArea and contentArea stack views if they're not already set to the given objects
-                    function changePlaces( leftPane, rightPane ) {
-
-                        // Happens during startup/shutdown
-                        if( sectionsAreaStackView.currentItem === null ) return;
-
-                        if ( sectionsAreaStackView.currentItem.objectName.localeCompare( leftPane ) ) {
-                            sectionsAreaStackView.push( getObjectByName( leftPane, sectionsAreaStackView ) );
-                            if( contentArea.contentStackView.currentItem.objectName.localeCompare( rightPane ) ) {
-                                contentArea.contentStackView.push( getObjectByName( rightPane, contentArea.contentStackView ) );
-                            }
-                        }
-                    }
-
-                    delegate: Item {
-                        anchors { top: parent.top; bottom: parent.bottom; }
-                        width: bottomRowContainer.delegateWidth;
-
-                        Image {
-                            anchors { centerIn: parent; }
-                            width: 24;
-                            height: 24;
-
-                            source: imageSource;
-                            sourceSize { width: width; height: height; }
-
-                            opacity: index === listView.currentIndex ? 1.0 : 0.5;
-                        }
-
-                        // If the index now points to this particular delegate, manipulate the stackview to match its role
-                        Connections {
-                            target: listView;
-                            onCurrentIndexChanged: {
-                                if( listView.currentIndex === index ) {
-                                    listView.changePlaces( leftPane, rightPane );
-                                }
-                            }
-                        }
-
-                        MouseArea {
-                            anchors.fill: parent;
-                            onClicked: listView.currentIndex = index;
-                        }
-                    }
+            pushTransition: StackViewTransition {
+                PropertyAnimation {
+                    target: enterItem
+                    property: "opacity"
+                    from: 0
+                    to: 1
                 }
 
-                Rectangle {
-                    width: parent.delegateWidth;
-                    anchors { top: parent.top; bottom: parent.bottom; left: listView.right; }
+                PropertyAnimation {
+                    target: exitItem
+                    property: "opacity"
+                    from: 1
+                    to: 0
+                }
 
-                    color: "transparent";
-                    border.color: activeFocus ? PhxTheme.common.menuItemHighlight : "transparent";
-                    border.width: 2;
+                PropertyAnimation {
+                    target: enterItem
+                    property: "y"
+                    from: enterItem.height;
+                    to: 0;
+                    easing.type: Easing.InOutExpo
+                }
 
-                    activeFocusOnTab: true;
-
-                    Image {
-                        id: addGameButton;
-                        anchors { centerIn: parent; }
-                        width: 24;
-                        height: 24;
-
-                        source: "add.svg";
-                        sourceSize { width: width; height: height; }
-
-                        opacity: 0.5;
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent;
-                        onClicked: fileDialog.open();
-                    }
+                PropertyAnimation {
+                    target: exitItem
+                    property: "y"
+                    from: 0;
+                    to: exitItem.height;
+                    easing.type: Easing.InOutExpo
                 }
             }
         }
     }
+
+    Item {
+        id: bottomRowContainer;
+        anchors { left: parent.left; right: parent.right; bottom: parent.bottom; }
+        height: bottomRowHeight + ( running ? scanProgressHeight : 0 );
+        Behavior on height { NumberAnimation { easing.type: Easing.InOutExpo; duration: 1000; } }
+
+        property int scanProgressHeight: 50;
+        property int bottomRowHeight: 65;
+
+        property bool running: GameHasherController.running;
+
+        // A progress indicator for the game scanner
+        Rectangle {
+            anchors { left: parent.left; right: parent.right; }
+
+            color: PhxTheme.common.tertiaryBackgroundColor;
+
+            height: bottomRowContainer.scanProgressHeight;
+
+            y: parent.running ? 0 : bottomRowContainer.scanProgressHeight;
+            Behavior on y { NumberAnimation { easing.type: Easing.InOutExpo; duration: 1000; } }
+
+            Column {
+                anchors {
+                    fill: parent;
+                    topMargin: 9;
+                }
+                spacing: 6;
+
+                Text {
+                    anchors {
+                        horizontalCenter: parent.horizontalCenter;
+                    }
+                    text: "Importing Games";
+                    color: "white";
+                }
+                ProgressBar {
+                    height: 6;
+                    value: GameHasherController.progress;
+                    minimumValue: 0;
+                    maximumValue: 500;
+                    anchors { left: parent.left; right: parent.right; leftMargin: 12; rightMargin: 12; }
+
+                    style: ProgressBarStyle {
+                        background: Rectangle {
+                            color: "white";
+                            border.width: 0;
+                        }
+                        progress: Rectangle {
+                            color: PhxTheme.common.menuItemHighlight;
+                            border.width: 0;
+                        }
+                    }
+                }
+            }
+        }
+
+        Rectangle {
+            id: listViewContainer;
+            height: bottomRowContainer.bottomRowHeight;
+            color: PhxTheme.common.primaryBackgroundColor;
+            anchors { left: parent.left; right: parent.right; bottom: parent.bottom; }
+
+            // Added number: number of extra buttons past ListView
+            property real delegateWidth: parent.width / ( listView.count + 1 );
+
+            // The buttons along the bottom that control the sectionsAreaStackView
+            // @disable-check M300
+            PhxListView {
+                id: listView;
+                anchors { bottom: parent.bottom; left: parent.left; }
+                width: parent.width - parent.delegateWidth;
+                height: bottomRowContainer.bottomRowHeight;
+                spacing: 0;
+                orientation: ListView.Horizontal;
+
+                model: ListModel {
+                    ListElement { bgColor: "white"; label: "Games"; imageSource: "games.svg";
+                        leftPane: "PlatformsView"; rightPane: "BoxartGridView"; }
+                    ListElement { bgColor: "white"; label: "Favorites"; imageSource: "collections.svg";
+                        leftPane: "CollectionsView"; rightPane: "BoxartGridView"; }
+                    ListElement { bgColor: "white"; label: "Settings"; imageSource: "settings.svg";
+                        leftPane: "SettingsView"; rightPane: "LibrarySettingsView"; }
+                }
+
+                // Returns first match
+                function getObjectByName( name, parentObject ) {
+                    for( var i = 0; i < parentObject.children.length; i++ ) {
+                        if( !parentObject.children[ i ].objectName.localeCompare( name ) )
+                            return parentObject.children[ i ];
+                    }
+                    return null;
+                }
+
+                // Change the selectionArea and contentArea stack views if they're not already set to the given objects
+                function changePlaces( leftPane, rightPane ) {
+
+                    // Happens during startup/shutdown
+                    if( sectionsAreaStackView.currentItem === null ) return;
+
+                    if ( sectionsAreaStackView.currentItem.objectName.localeCompare( leftPane ) ) {
+                        sectionsAreaStackView.push( getObjectByName( leftPane, sectionsAreaStackView ) );
+                        if( contentArea.contentStackView.currentItem.objectName.localeCompare( rightPane ) ) {
+                            contentArea.contentStackView.push( getObjectByName( rightPane, contentArea.contentStackView ) );
+                        }
+                    }
+                }
+
+                delegate: Item {
+                    anchors { top: parent.top; bottom: parent.bottom; }
+                    width: listViewContainer.delegateWidth;
+
+                    Image {
+                        anchors { centerIn: parent; }
+                        width: 24;
+                        height: 24;
+
+                        source: imageSource;
+                        sourceSize { width: width; height: height; }
+
+                        opacity: index === listView.currentIndex ? 1.0 : 0.5;
+                    }
+
+                    // If the index now points to this particular delegate, manipulate the stackview to match its role
+                    Connections {
+                        target: listView;
+                        onCurrentIndexChanged: {
+                            if( listView.currentIndex === index ) {
+                                listView.changePlaces( leftPane, rightPane );
+                            }
+                        }
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent;
+                        onClicked: listView.currentIndex = index;
+                    }
+                }
+            }
+
+            Rectangle {
+                width: parent.delegateWidth;
+                anchors { top: listView.top; bottom: listView.bottom; left: listView.right; }
+
+                color: "transparent";
+                border.color: activeFocus ? PhxTheme.common.menuItemHighlight : "transparent";
+                border.width: 2;
+
+                activeFocusOnTab: true;
+
+                FileDialog {
+                    id: fileDialog;
+                    selectMultiple: true;
+                    title: "Select games to import into your library"
+                    onAccepted: { GameHasherController.scanForGames( fileUrls ); }
+                }
+
+                Image {
+                    id: addGameButton;
+                    anchors { centerIn: parent; }
+                    width: 24;
+                    height: 24;
+
+                    source: "add.svg";
+                    sourceSize { width: width; height: height; }
+
+                    opacity: 0.5;
+                }
+
+                MouseArea {
+                    anchors.fill: parent;
+                    onClicked: fileDialog.open();
+                }
+            }
+
+        }
+    }
+
 }
+

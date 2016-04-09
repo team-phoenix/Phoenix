@@ -106,7 +106,7 @@ void GameHasherController::processResults( FileList results ) {
 
 void GameHasherController::setProgress( const int progress ) {
     mProgress = progress;
-    if ( progress == 100 ) {
+    if ( progress == 500 ) {
         setRunning( false );
     }
     emit progressChanged();
