@@ -1,5 +1,6 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.4
+import QtQuick.Controls.Styles 1.4
 import QtGraphicalEffects 1.0
 import QtQuick.Layouts 1.2
 import QtQuick.Dialogs 1.2
@@ -93,36 +94,40 @@ Item {
                 }
             }
 
+            // IMPORTING GAMES
             Rectangle {
                 Layout.fillWidth: true;
                 visible: GameHasherController.running;
-                color: "red";
-
-                height: 50;
+                color: PhxTheme.common.tertiaryBackgroundColor;
+                height: 40;
 
                 Column {
-                    anchors {
-                        fill: parent;
-                        topMargin: 6;
-                    }
+                    anchors { fill: parent; topMargin: 6; }
 
                     Text {
-                        anchors {
-                            horizontalCenter: parent.horizontalCenter;
-                        }
+                        anchors { horizontalCenter: parent.horizontalCenter; }
                         text: "Importing Games";
+                        color: "white";
                     }
 
                     ProgressBar {
-                        height: 12;
+                        height: 6;
                         value: GameHasherController.progress;
                         minimumValue: 0;
                         maximumValue: 100;
-                        anchors {
-                            left: parent.left;
-                            right: parent.right;
-                            leftMargin: 12;
-                            rightMargin: 12;
+                        anchors { left: parent.left; right: parent.right; leftMargin: 12; rightMargin: 12; }
+
+                        style: ProgressBarStyle {
+                            background: Rectangle {
+                                radius: parent.height;
+                                color: "white";
+                                border.width: 0;
+                            }
+                            progress: Rectangle {
+                                radius: parent.height;
+                                color: PhxTheme.common.menuItemHighlight;
+                                border.width: 0;
+                            }
                         }
                     }
                 }

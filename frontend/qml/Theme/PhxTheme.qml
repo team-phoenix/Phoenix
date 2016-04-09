@@ -37,6 +37,7 @@ QtObject {
         property color baseBackgroundColor:      "#FFFFFF"; // Black or White
         property color primaryBackgroundColor:   "#1E2024"; // Sidebar
         property color secondaryBackgroundColor: "#141619"; // Content (Grid)
+        property color tertiaryBackgroundColor:  "#21272E"; // Progress Box Background
 
         // SUSPENDED GAME AREA
         property int suspendedGameFontSize: 13;
