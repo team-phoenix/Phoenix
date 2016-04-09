@@ -76,6 +76,7 @@ include( deployment.pri )
     cpp/library/fileinfo/cryptohash.cpp \
     cpp/library/gamelauncher.cpp \
     cpp/library/imagecacher.cpp \
+    cpp/library/librarytypes.cpp \
     cpp/library/model/collectionsmodel.cpp \
     cpp/library/model/databasesettings.cpp \
     cpp/library/model/librarymodel.cpp \
@@ -87,7 +88,6 @@ include( deployment.pri )
     cpp/library/scanner/filterfunctor.cpp \
     cpp/library/scanner/gamehasher.cpp \
     cpp/library/scanner/gamehashercontroller.cpp \
-    cpp/library/scanner/librarytypes.cpp \
     cpp/library/scanner/mapfunctor.cpp \
     cpp/library/scanner/reducefunctor.cpp \
     cpp/library/scanner/scannerutil.cpp \
