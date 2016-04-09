@@ -178,7 +178,7 @@ bool MapFunctor::searchDatabase( const SearchReason reason, FileEntry &fileEntry
         case GetTitleByFilename: {
             QString filePath = GameLauncher::trimmedGameNoExtract( fileEntry.filePath );
             QFileInfo fileInfo( filePath );
-            QString basename = fileInfo.baseName();
+            QString basename = fileInfo.completeBaseName();
             fileEntry.gameMetadata.title = basename;
             break;
         }
