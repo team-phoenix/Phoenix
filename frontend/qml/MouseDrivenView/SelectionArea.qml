@@ -88,90 +88,100 @@ Rectangle  {
         id: bottomRowContainer;
         anchors { left: parent.left; right: parent.right; bottom: parent.bottom; }
         height: bottomRowHeight + ( running ? scanProgressHeight : 0 );
+
         Behavior on height { NumberAnimation { easing.type: Easing.InOutExpo; duration: 1000; } }
 
         property int scanProgressHeight: 50;
         property int bottomRowHeight: 65;
-
         property bool running: GameHasherController.running;
 
         // A progress indicator for the game scanner
         Rectangle {
             anchors { left: parent.left; right: parent.right; }
-
             color: PhxTheme.common.tertiaryBackgroundColor;
-
+            width: 250;
             height: bottomRowContainer.scanProgressHeight;
-
             y: parent.running ? 0 : bottomRowContainer.scanProgressHeight;
+
             Behavior on y { NumberAnimation { easing.type: Easing.InOutExpo; duration: 1000; } }
 
-            Column {
-                anchors {
-                    fill: parent;
-                    topMargin: 9;
+            Rectangle {
+                anchors { top: parent.top; right: parent.right; left: parent.left; }
+                color: "transparent";
+                width: parent.width;
+                height: parent.height/2;
+
+                // RESUME - PAUSE
+                /*
+                Rectangle {
+                    color: "transparent";
+                    width: 20;
+                    height: 20;
+
+                    Image {
+                        anchors { centerIn: parent; }
+                        width: 10;
+                        height: 10;
+                        source: GameHasherController.paused ? "resume.svg" : "pause2.svg";
+                        ourceSize { width: width; height: height; }
+                     }
+
+                     MouseArea {
+                        anchors.fill: parent;
+                        onClicked: { GameHasherController.paused ? GameHasherController.resume() : GameHasherController.pause(); }
+                    }
                 }
-                spacing: 6;
+                */
+
+                // CANCEL
+                Rectangle {
+                    anchors { top: parent.top; right: parent.right; topMargin: 8; rightMargin: 8; }
+                    color: "transparent";
+                    width: 8;
+                    height: width;
+
+                    Image {
+                        anchors.centerIn: parent;
+                        width: parent.width;
+                        height: parent.height;
+                        source: "close.svg";
+                        sourceSize { width: width; height: height; }
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent;
+                        onClicked: { GameHasherController.cancel(); }
+                    }
+                }
 
                 Text {
-                    anchors {
-                        horizontalCenter: parent.horizontalCenter;
-                    }
+                    anchors.centerIn: parent;
                     text: "Importing Games";
                     color: "white";
                 }
+            }
 
-                Row {
-                    anchors {
-                        left: parent.left;
-                        right: parent.right;
-                    }
+            Rectangle {
+                anchors { bottom: parent.bottom; right: parent.right; left: parent.left; }
+                color: "transparent";
+                width: parent.width;
+                height: parent.height/2;
 
-                    ProgressBar {
-                        height: 6;
-                        value: GameHasherController.progress;
-                        minimumValue: 0;
-                        maximumValue: 500;
-                        anchors {
-                            verticalCenter: parent.verticalCenter;
-                        }
+                ProgressBar {
+                    anchors { left: parent.left; right: parent.right; leftMargin: 25; rightMargin: 25; }
+                    width: parent.width * 0.6;
+                    height: 6;
+                    value: GameHasherController.progress;
+                    minimumValue: 0;
+                    maximumValue: 500;
 
-                        width: parent.width * 0.6;
-
-                        //anchors { left: parent.left; right: parent.right; leftMargin: 12; rightMargin: 12; }
-
-                        style: ProgressBarStyle {
-                            background: Rectangle {
-                                color: "white";
-                                border.width: 0;
-                            }
-                            progress: Rectangle {
-                                color: PhxTheme.common.menuItemHighlight;
-                                border.width: 0;
-                            }
-                        }
-                    }
-
-                    Button {
-                        text: GameHasherController.paused ? "resume" : "pause";
-                        anchors {
-                            verticalCenter: parent.verticalCenter;
-                        }
-                        onClicked: GameHasherController.paused ? GameHasherController.resume() : GameHasherController.pause();
-                    }
-
-                    Button {
-                        text: "cancel";
-                        anchors {
-                            verticalCenter: parent.verticalCenter;
-                        }
-                        onClicked: GameHasherController.cancel();
+                    style: ProgressBarStyle {
+                        background: Rectangle { color: "white"; border.width: 0; }
+                        progress: Rectangle { color: PhxTheme.common.menuItemHighlight; border.width: 0; }
                     }
                 }
-
-
-
             }
+
         }
 
         Rectangle {

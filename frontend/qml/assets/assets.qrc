@@ -44,5 +44,7 @@
         <file>default.svg</file>
         <file>core.svg</file>
         <file>swap.svg</file>
+        <file>resume.svg</file>
+        <file>pause2.svg</file>
     </qresource>
 </RCC>
