@@ -281,17 +281,31 @@ Rectangle {
                     MouseArea {
                         anchors.fill: parent;
                         onClicked: {
-                            coreControl.stateChanged.connect( stateCallback );
-                            coreControl.pause();
+                            // If running, ensure the game is paused while the fullscreen transition happens
+                            // Only really applies to OS X
+                            if( gameView.running ) {
+                                coreControl.stateChanged.connect( stateCallback );
+                                coreControl.pause();
+                            }
+
+                            // Otherwise, just do the transition
+                            else {
+                                toggleFullscreen();
+                            }
                         }
 
+                        // Called when the game (on a separate thread) finally pauses
                         function stateCallback( newState ) {
                             coreControl.stateChanged.disconnect( stateCallback );
+                            toggleFullscreen();
+                            coreControl.play();
+                        }
+
+                        function toggleFullscreen() {
                             if ( root.visibility === Window.FullScreen )
                                 root.visibility = Window.Windowed;
                             else if ( root.visibility & ( Window.Windowed | Window.Maximized ) )
                                 root.visibility = Window.FullScreen;
-                            coreControl.play();
                         }
                     }
                 }
