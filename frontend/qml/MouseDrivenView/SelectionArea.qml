@@ -120,24 +120,57 @@ Rectangle  {
                     text: "Importing Games";
                     color: "white";
                 }
-                ProgressBar {
-                    height: 6;
-                    value: GameHasherController.progress;
-                    minimumValue: 0;
-                    maximumValue: 500;
-                    anchors { left: parent.left; right: parent.right; leftMargin: 12; rightMargin: 12; }
 
-                    style: ProgressBarStyle {
-                        background: Rectangle {
-                            color: "white";
-                            border.width: 0;
+                Row {
+                    anchors {
+                        left: parent.left;
+                        right: parent.right;
+                    }
+
+                    ProgressBar {
+                        height: 6;
+                        value: GameHasherController.progress;
+                        minimumValue: 0;
+                        maximumValue: 500;
+                        anchors {
+                            verticalCenter: parent.verticalCenter;
                         }
-                        progress: Rectangle {
-                            color: PhxTheme.common.menuItemHighlight;
-                            border.width: 0;
+
+                        width: parent.width * 0.6;
+
+                        //anchors { left: parent.left; right: parent.right; leftMargin: 12; rightMargin: 12; }
+
+                        style: ProgressBarStyle {
+                            background: Rectangle {
+                                color: "white";
+                                border.width: 0;
+                            }
+                            progress: Rectangle {
+                                color: PhxTheme.common.menuItemHighlight;
+                                border.width: 0;
+                            }
                         }
                     }
+
+                    Button {
+                        text: GameHasherController.paused ? "resume" : "pause";
+                        anchors {
+                            verticalCenter: parent.verticalCenter;
+                        }
+                        onClicked: GameHasherController.paused ? GameHasherController.resume() : GameHasherController.pause();
+                    }
+
+                    Button {
+                        text: "cancel";
+                        anchors {
+                            verticalCenter: parent.verticalCenter;
+                        }
+                        onClicked: GameHasherController.cancel();
+                    }
                 }
+
+
+
             }
         }
 

@@ -30,9 +30,6 @@ namespace Library {
         public:
             explicit GameHasher( QObject *parent = 0 );
 
-            qreal progress() const;
-            void setProgress( int progress );
-
         signals:
             void progressChanged( const int progress );
             void fileReady( FileEntry entry );
@@ -43,6 +40,12 @@ namespace Library {
             // Entry points, connect to and invoke these slots to begin the game scanning process
             void addPath( QString path );
             void addPaths( QStringList paths );
+
+            void pause();
+
+            void cancel();
+
+            void resume();
 
             // Clean up and exit
             void shutdown();
@@ -62,9 +65,6 @@ namespace Library {
             // Copies of the main list from step 2 for use by step 3
             // Indexed by betterFutureWatcher addresses
             QMap<BetterFutureWatcher *, FileList> mainLists;
-
-            qreal mTotalProgess;
-            int mFilesProcessing;
 
             // Helpers
             static QString getLastExecutedQuery( const QSqlQuery &query );

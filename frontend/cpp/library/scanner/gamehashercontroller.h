@@ -8,30 +8,26 @@
 class QThread;
 
 class GameHasherController : public QObject {
-        Q_OBJECT
-        Q_PROPERTY( int progress READ progress WRITE setProgress NOTIFY progressChanged )
-        Q_PROPERTY( bool running READ running WRITE setRunning NOTIFY runningChanged )
+    Q_OBJECT
+    Q_PROPERTY( int progress READ progress WRITE setProgress NOTIFY progressChanged )
+    Q_PROPERTY( bool running READ running WRITE setRunning NOTIFY runningChanged )
+    Q_PROPERTY( bool paused READ paused NOTIFY pausedChanged )
 
     public:
         explicit GameHasherController( QObject *parent = 0 );
 
         int progress() const;
-        bool running() const
-        {
-            return mRunning;
-        }
+        bool running() const;
+        bool paused() const;
 
-        void setRunning( const bool running ) {
-            mRunning = running;
-            emit runningChanged();
-        }
-
-
+        void setRunning( const bool running );
+        void setPaused( const bool paused );
 
     signals:
 
         void progressChanged();
         void runningChanged();
+        void pausedChanged();
 
         // Scanning process complete
         void scanCompleted( FileList results );
@@ -50,11 +46,22 @@ class GameHasherController : public QObject {
 
         void setProgress( const int progress );
 
+        // Pauses the current scan, and waits for a resume.
+        void pause();
+
+
+        // Resumes a paused scan.
+        void resume();
+
+        // Cancels and discards the current scan completely.
+        void cancel();
+
     private:
         GameHasher *gameHasher;
         QThread *gameHasherThread;
         int mProgress;
         bool mRunning;
+        bool mPaused;
 };
 
 // Instantiate an singleton instance of GameHasherController for QML's use (needed to call static members)

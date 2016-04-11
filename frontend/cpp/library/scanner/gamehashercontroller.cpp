@@ -6,7 +6,8 @@ GameHasherController::GameHasherController( QObject *parent ) : QObject( parent 
     gameHasher( new GameHasher() ),
     gameHasherThread( new QThread() ),
     mProgress( 0 ),
-    mRunning( false )
+    mRunning( false ),
+    mPaused( false )
 {
     // Set up GameHasher
     gameHasher->setObjectName( "GameHasher" );
@@ -51,6 +52,26 @@ GameHasherController::GameHasherController( QObject *parent ) : QObject( parent 
 int GameHasherController::progress() const
 {
     return mProgress;
+}
+
+bool GameHasherController::running() const
+{
+    return mRunning;
+}
+
+bool GameHasherController::paused() const
+{
+    return mPaused;
+}
+
+void GameHasherController::setRunning(const bool running) {
+    mRunning = running;
+    emit runningChanged();
+}
+
+void GameHasherController::setPaused(const bool paused) {
+    mPaused = paused;
+    emit pausedChanged();
 }
 
 void GameHasherController::scanForGames( QList<QUrl> urls ) {
@@ -110,6 +131,22 @@ void GameHasherController::setProgress( const int progress ) {
         setRunning( false );
     }
     emit progressChanged();
+}
+
+void GameHasherController::pause() {
+    QMetaObject::invokeMethod( gameHasher, "pause" );
+    setPaused( true );
+}
+
+void GameHasherController::resume() {
+    QMetaObject::invokeMethod( gameHasher, "resume" );
+    setPaused( false );
+}
+
+void GameHasherController::cancel() {
+    QMetaObject::invokeMethod( gameHasher, "cancel" );
+    setProgress( 0 );
+    setRunning( false );
 }
 
 QObject *GameHasherControllerSingletonProviderCallback( QQmlEngine *engine, QJSEngine *scriptEngine ) {

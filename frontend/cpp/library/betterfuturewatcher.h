@@ -24,7 +24,7 @@ namespace Library {
 
         void setFuture( const QFuture<FileList> &future, int index );
 
-        const QFutureWatcher<FileList> &futureWatcher();
+        QFutureWatcher<FileList> &futureWatcher();
 
         int listIndex() const;
         void adjustIndex( int pivot );

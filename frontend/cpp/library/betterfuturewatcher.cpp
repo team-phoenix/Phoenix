@@ -15,7 +15,7 @@ void BetterFutureWatcher::setFuture( const QFuture<FileList> &future, int index 
     mListIndex = index;
 }
 
-const QFutureWatcher<FileList> &BetterFutureWatcher::futureWatcher() {
+QFutureWatcher<FileList> &BetterFutureWatcher::futureWatcher() {
     return mWatcher;
 }
 

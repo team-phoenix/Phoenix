@@ -3,22 +3,8 @@
 using namespace Library;
 
 GameHasher::GameHasher( QObject *parent )
-    : QObject( parent ),
-      mTotalProgess( 0.0 ),
-      mFilesProcessing( 0 ) {
-
-}
-
-qreal GameHasher::progress() const {
-    return mTotalProgess;
-}
-
-void GameHasher::setProgress( int progress ) {
-    mTotalProgess = progress;
-
-    if( progress % 5 == 0 || progress == 100 ) {
-        emit progressChanged( mTotalProgess );
-    }
+    : QObject( parent )
+{
 }
 
 void GameHasher::addPath( QString path ) {
@@ -46,11 +32,36 @@ void GameHasher::addPaths( QStringList paths ) {
     mWatcherList.append( watcher );
 }
 
+void GameHasher::pause() {
+    for ( BetterFutureWatcher *watcher : mWatcherList ) {
+        watcher->futureWatcher().pause();
+    }
+}
+
+void GameHasher::cancel() {
+    for ( int i=0; i < mWatcherList.size(); ++i ) {
+        BetterFutureWatcher *watcher = mWatcherList[ i ];
+        watcher->futureWatcher().cancel();
+        delete watcher;
+        mWatcherList.removeAt( i );
+    }
+
+}
+
+void GameHasher::resume() {
+    for ( BetterFutureWatcher *watcher : mWatcherList ) {
+        watcher->futureWatcher().resume();
+    }
+}
+
 void GameHasher::shutdown() {
     QThread::currentThread()->quit();
 }
 
 void GameHasher::stepOneFinished( BetterFutureWatcher *betterWatcher ) {
+    if (  betterWatcher->futureWatcher().isCanceled() ) {
+        return;
+    }
     FileList fileList = betterWatcher->futureWatcher().result();
 
     qCDebug( phxLibrary ) << "Step one finished. " << fileList.size();
@@ -75,6 +86,9 @@ void GameHasher::stepOneFinished( BetterFutureWatcher *betterWatcher ) {
 }
 
 void GameHasher::stepTwoFinished( BetterFutureWatcher *betterWatcher ) {
+    if (  betterWatcher->futureWatcher().isCanceled() ) {
+        return;
+    }
     FileList fileList = betterWatcher->futureWatcher().result();
 
     int pivot = betterWatcher->listIndex();
@@ -104,6 +118,10 @@ void GameHasher::stepTwoFinished( BetterFutureWatcher *betterWatcher ) {
 }
 
 void GameHasher::stepThreeFinished( BetterFutureWatcher *betterWatcher ) {
+    if (  betterWatcher->futureWatcher().isCanceled() ) {
+        return;
+    }
+
     FileList binList = betterWatcher->futureWatcher().result();
 
     // Convert main FileList to a set (mainSet)
@@ -119,8 +137,6 @@ void GameHasher::stepThreeFinished( BetterFutureWatcher *betterWatcher ) {
 
     // Convert mainSet back to a list
     FileList fileList = mainSet.toList();
-
-    mFilesProcessing += fileList.size();
 
     // Basic cleanup, do not call 'delete', use 'deleteLater';
     int pivot = betterWatcher->listIndex();
@@ -145,6 +161,10 @@ void GameHasher::stepThreeFinished( BetterFutureWatcher *betterWatcher ) {
 }
 
 void GameHasher::stepFourFinished( BetterFutureWatcher *betterWatcher ) {
+    if (  betterWatcher->futureWatcher().isCanceled() ) {
+        return;
+    }
+
     FileList fileList = betterWatcher->futureWatcher().result();
 
     int pivot = betterWatcher->listIndex();
@@ -195,13 +215,7 @@ void GameHasher::stepFourFinished( BetterFutureWatcher *betterWatcher ) {
     if( !knownFilesList.isEmpty() ) {
         emit scanCompleted( knownFilesList );
     }
-
     emit progressChanged( 0 );
-
-    //    mFilesProcessing -= fileList.size();
-    //    int progress = qFloor( ( fileList.size() / static_cast<qreal>( mFilesProcessing ) ) * 100 );
-    //    setProgress( progress );
-
 
     // Adjust stored index for each item in the list that has been moved by this list manipulation
     for( BetterFutureWatcher *b : mWatcherList ) {
