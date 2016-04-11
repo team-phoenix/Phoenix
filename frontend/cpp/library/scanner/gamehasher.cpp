@@ -3,8 +3,7 @@
 using namespace Library;
 
 GameHasher::GameHasher( QObject *parent )
-    : QObject( parent )
-{
+    : QObject( parent ) {
 }
 
 void GameHasher::addPath( QString path ) {
@@ -33,15 +32,16 @@ void GameHasher::addPaths( QStringList paths ) {
 }
 
 void GameHasher::pause() {
-    for ( BetterFutureWatcher *watcher : mWatcherList ) {
+    for( BetterFutureWatcher *watcher : mWatcherList ) {
         watcher->futureWatcher().pause();
     }
 }
 
 void GameHasher::cancel() {
-    for ( int i=0; i < mWatcherList.size(); ++i ) {
+    for( int i = 0; i < mWatcherList.size(); ++i ) {
         BetterFutureWatcher *watcher = mWatcherList[ i ];
         watcher->futureWatcher().cancel();
+        watcher->futureWatcher().waitForFinished();
         delete watcher;
         mWatcherList.removeAt( i );
     }
@@ -49,25 +49,44 @@ void GameHasher::cancel() {
 }
 
 void GameHasher::resume() {
-    for ( BetterFutureWatcher *watcher : mWatcherList ) {
+    for( BetterFutureWatcher *watcher : mWatcherList ) {
         watcher->futureWatcher().resume();
     }
 }
 
 void GameHasher::shutdown() {
+    if( mWatcherList.size() > 0 ) {
+        qCDebug( phxLibrary ) << "Canceling active scan(s)";
+        cancel();
+    } else {
+        qCDebug( phxLibrary ) << "No scan active, continuing";
+    }
+
     QThread::currentThread()->quit();
+
+    qCDebug( phxLibrary ) << "Fully unloaded";
 }
 
 void GameHasher::stepOneFinished( BetterFutureWatcher *betterWatcher ) {
-    if (  betterWatcher->futureWatcher().isCanceled() ) {
+    if( betterWatcher->futureWatcher().isCanceled() ) {
+        int pivot = betterWatcher->listIndex();
+        mWatcherList.removeAt( pivot );
+        betterWatcher->deleteLater();
+
+        // Adjust stored index for each item in the list that has been moved by this list manipulation
+        for( BetterFutureWatcher *b : mWatcherList ) {
+            b->adjustIndex( pivot );
+        }
         return;
     }
+
     FileList fileList = betterWatcher->futureWatcher().result();
 
     qCDebug( phxLibrary ) << "Step one finished. " << fileList.size();
 
-    // Basic cleanup, do not call 'delete', use 'deleteLater';
-    mWatcherList.removeAt( betterWatcher->listIndex() );
+    // Grab this betterWatcher's index for use later, then remove it from the list and delete it when convenient
+    int pivot = betterWatcher->listIndex();
+    mWatcherList.removeAt( pivot );
     betterWatcher->deleteLater();
 
     // No point in starting for an empty list. Abort!!!
@@ -83,17 +102,30 @@ void GameHasher::stepOneFinished( BetterFutureWatcher *betterWatcher ) {
 
     watcher->setFuture( future, mWatcherList.size() );
     mWatcherList.append( watcher );
+
+    // Adjust stored index for each item in the list that has been moved by this list manipulation
+    for( BetterFutureWatcher *b : mWatcherList ) {
+        b->adjustIndex( pivot );
+    }
 }
 
 void GameHasher::stepTwoFinished( BetterFutureWatcher *betterWatcher ) {
-    if (  betterWatcher->futureWatcher().isCanceled() ) {
+    if( betterWatcher->futureWatcher().isCanceled() ) {
+        int pivot = betterWatcher->listIndex();
+        mWatcherList.removeAt( pivot );
+        betterWatcher->deleteLater();
+
+        // Adjust stored index for each item in the list that has been moved by this list manipulation
+        for( BetterFutureWatcher *b : mWatcherList ) {
+            b->adjustIndex( pivot );
+        }
         return;
     }
+
     FileList fileList = betterWatcher->futureWatcher().result();
 
+    // Grab this betterWatcher's index for use later, then remove it from the list and delete it when convenient
     int pivot = betterWatcher->listIndex();
-
-    // Basic cleanup, do not call 'delete', use 'deleteLater';
     mWatcherList.removeAt( pivot );
     betterWatcher->deleteLater();
 
@@ -118,7 +150,15 @@ void GameHasher::stepTwoFinished( BetterFutureWatcher *betterWatcher ) {
 }
 
 void GameHasher::stepThreeFinished( BetterFutureWatcher *betterWatcher ) {
-    if (  betterWatcher->futureWatcher().isCanceled() ) {
+    if( betterWatcher->futureWatcher().isCanceled() ) {
+        int pivot = betterWatcher->listIndex();
+        mWatcherList.removeAt( pivot );
+        betterWatcher->deleteLater();
+
+        // Adjust stored index for each item in the list that has been moved by this list manipulation
+        for( BetterFutureWatcher *b : mWatcherList ) {
+            b->adjustIndex( pivot );
+        }
         return;
     }
 
@@ -138,7 +178,7 @@ void GameHasher::stepThreeFinished( BetterFutureWatcher *betterWatcher ) {
     // Convert mainSet back to a list
     FileList fileList = mainSet.toList();
 
-    // Basic cleanup, do not call 'delete', use 'deleteLater';
+    // Grab this betterWatcher's index for use later, then remove it from the list and delete it when convenient
     int pivot = betterWatcher->listIndex();
     mWatcherList.removeAt( pivot );
     betterWatcher->deleteLater();
@@ -161,15 +201,22 @@ void GameHasher::stepThreeFinished( BetterFutureWatcher *betterWatcher ) {
 }
 
 void GameHasher::stepFourFinished( BetterFutureWatcher *betterWatcher ) {
-    if (  betterWatcher->futureWatcher().isCanceled() ) {
+    if( betterWatcher->futureWatcher().isCanceled() ) {
+        int pivot = betterWatcher->listIndex();
+        mWatcherList.removeAt( pivot );
+        betterWatcher->deleteLater();
+
+        // Adjust stored index for each item in the list that has been moved by this list manipulation
+        for( BetterFutureWatcher *b : mWatcherList ) {
+            b->adjustIndex( pivot );
+        }
         return;
     }
 
     FileList fileList = betterWatcher->futureWatcher().result();
 
+    // Grab this betterWatcher's index for use later, then remove it from the list and delete it when convenient
     int pivot = betterWatcher->listIndex();
-
-    // Basic cleanup, do not call 'delete', use 'deleteLater'
     mWatcherList.removeAt( pivot );
     betterWatcher->deleteLater();
 
@@ -215,6 +262,7 @@ void GameHasher::stepFourFinished( BetterFutureWatcher *betterWatcher ) {
     if( !knownFilesList.isEmpty() ) {
         emit scanCompleted( knownFilesList );
     }
+
     emit progressChanged( 0 );
 
     // Adjust stored index for each item in the list that has been moved by this list manipulation
