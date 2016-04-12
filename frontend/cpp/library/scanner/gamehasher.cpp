@@ -244,44 +244,6 @@ void GameHasher::handleProgressValueChanged( int progress ) {
     emit progressChanged( qFloor( ( progress / static_cast<qreal>( mFilesProcessings ) ) * 500 ) );
 }
 
-QString GameHasher::getLastExecutedQuery( const QSqlQuery &query ) {
-    QString sql = query.executedQuery();
-    int nbBindValues = query.boundValues().size();
-
-    for( int i = 0, j = 0; j < nbBindValues; ) {
-        int s = sql.indexOf( QLatin1Char( '\'' ), i );
-        i = sql.indexOf( QLatin1Char( '?' ), i );
-
-        if( i < 1 ) {
-            break;
-        }
-
-        if( s < i && s > 0 ) {
-            i = sql.indexOf( QLatin1Char( '\'' ), s + 1 ) + 1;
-
-            if( i < 2 ) {
-                break;
-            }
-        } else {
-            const QVariant &var = query.boundValue( j );
-            QSqlField field( QLatin1String( "" ), var.type() );
-
-            if( var.isNull() ) {
-                field.clear();
-            } else {
-                field.setValue( var );
-            }
-
-            QString formatV = query.driver()->formatValue( field );
-            sql.replace( i, 1, formatV );
-            i += formatV.length();
-            ++j;
-        }
-    }
-
-    return sql;
-}
-
 GameHasher::ListWatcher *GameHasher::takeFinished(QList<ListWatcher *> &list) {
     ListWatcher *result = nullptr;
     for( int i=0; i < list.size(); ++i ) {

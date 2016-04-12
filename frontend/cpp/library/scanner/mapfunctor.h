@@ -77,8 +77,6 @@ namespace Library {
 
         private:
             Step mStep;
-
-            QString getLastExecutedQuery( const QSqlQuery &query );
     };
 }
 

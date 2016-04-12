@@ -127,6 +127,8 @@ namespace Library {
 
     bool operator==( const FileEntry left, const FileEntry right );
 
+    QString getLastExecutedQuery( const QSqlQuery &query );
+
     inline uint qHash( const FileEntry &key ) {
         return qHash( key.filePath );
     }
