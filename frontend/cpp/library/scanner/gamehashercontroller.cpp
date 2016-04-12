@@ -1,4 +1,6 @@
 #include "gamehashercontroller.h"
+#include "logging.h"
+#include "userdatabase.h"
 
 #include <QThread>
 
@@ -18,6 +20,7 @@ GameHasherController::GameHasherController( QObject *parent ) : QObject( parent 
     connect( gameHasher, &GameHasher::scanCompleted, this, &GameHasherController::scanCompleted );
     connect( gameHasher, &GameHasher::filesNeedAssignment, this, &GameHasherController::filesNeedAssignment );
     connect( gameHasher, &GameHasher::progressChanged, this, &GameHasherController::setProgress );
+    connect( gameHasher, &GameHasher::running, this, &GameHasherController::setRunning );
 
     // Used for testing the manual add mode.
     //connect( gameHasher, &GameHasher::scanCompleted, this, &GameHasherController::filesNeedAssignment );
@@ -64,12 +67,12 @@ bool GameHasherController::paused() const
     return mPaused;
 }
 
-void GameHasherController::setRunning(const bool running) {
+void GameHasherController::setRunning( bool running) {
     mRunning = running;
     emit runningChanged();
 }
 
-void GameHasherController::setPaused(const bool paused) {
+void GameHasherController::setPaused( bool paused) {
     mPaused = paused;
     emit pausedChanged();
 }
@@ -82,7 +85,6 @@ void GameHasherController::scanForGames( QList<QUrl> urls ) {
     }
 
     qCDebug( phxLibrary ) << "Sending" << urls.size() << "paths to GameHasher";
-    setRunning( true );
     QMetaObject::invokeMethod( gameHasher, "addPaths", Qt::QueuedConnection, Q_ARG( QStringList, paths ) );
 }
 
@@ -115,7 +117,7 @@ void GameHasherController::processResults( FileList results ) {
         query.addBindValue( result.gameMetadata.title );
         query.addBindValue( result.systemUUIDs.first() );
         query.addBindValue( result.filePath );
-        query.addBindValue( "0:00" );
+        query.addBindValue( QStringLiteral( "0:00" ) );
         query.addBindValue( result.crc32 );
         query.addBindValue( result.gameMetadata.frontArtwork );
 
@@ -125,11 +127,8 @@ void GameHasherController::processResults( FileList results ) {
     }
 }
 
-void GameHasherController::setProgress( const int progress ) {
+void GameHasherController::setProgress( int progress ) {
     mProgress = progress;
-    if ( progress == 500 ) {
-        setRunning( false );
-    }
     emit progressChanged();
 }
 
@@ -145,14 +144,10 @@ void GameHasherController::resume() {
 
 void GameHasherController::cancel() {
     QMetaObject::invokeMethod( gameHasher, "cancel" );
-    setProgress( 0 );
-    setRunning( false );
 }
 
 QObject *GameHasherControllerSingletonProviderCallback( QQmlEngine *engine, QJSEngine *scriptEngine ) {
     Q_UNUSED( scriptEngine )
-
     GameHasherController *gameHasherController = new GameHasherController( engine );
-
     return gameHasherController;
 }

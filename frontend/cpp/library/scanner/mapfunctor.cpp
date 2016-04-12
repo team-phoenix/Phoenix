@@ -9,7 +9,7 @@ MapFunctor::MapFunctor( const Step step )
 
 bool MapFunctor::searchDatabase( const SearchReason reason, FileEntry &fileEntry ) {
     switch( reason ) {
-        case GetROMIDByHash: {
+        case SearchReason::GetROMIDByHash: {
             QSqlQuery openVGDBQuery( QSqlDatabase::database( QThread::currentThread()->objectName() % "openvgdb" ) );
 
             Q_ASSERT( fileEntry.hasHashCached );
@@ -31,7 +31,7 @@ bool MapFunctor::searchDatabase( const SearchReason reason, FileEntry &fileEntry
             break;
         }
 
-        case GetROMIDByFilename: {
+        case SearchReason::GetROMIDByFilename: {
             QSqlQuery openVGDBQuery( QSqlDatabase::database( QThread::currentThread()->objectName() % "openvgdb" ) );
             QFileInfo file( GameLauncher::trimmedGameNoExtract( fileEntry.filePath ) );
             QString filename = file.fileName();
@@ -54,7 +54,7 @@ bool MapFunctor::searchDatabase( const SearchReason reason, FileEntry &fileEntry
             break;
         }
 
-        case GetMetadata: {
+        case SearchReason::GetMetadata: {
             Q_ASSERT( fileEntry.gameMetadata.romID != -1 );
 
             QSqlQuery openVGDBQuery( QSqlDatabase::database( QThread::currentThread()->objectName() % "openvgdb" ) );
@@ -93,7 +93,7 @@ bool MapFunctor::searchDatabase( const SearchReason reason, FileEntry &fileEntry
             break;
         }
 
-        case GetSystemUUID: {
+        case SearchReason::GetSystemUUID: {
             QSqlQuery libretroQuery( QSqlDatabase::database( QThread::currentThread()->objectName() % "libretro" ) );
 
             libretroQuery.prepare( QString( "SELECT systemUUID FROM openVGDBToSystem "
@@ -125,7 +125,7 @@ bool MapFunctor::searchDatabase( const SearchReason reason, FileEntry &fileEntry
             break;
         }
 
-        case GetSystemByHeader: {
+        case SearchReason::GetSystemByHeader: {
             //if ( fileEntry.scannerResult == GameScannerResult::)
             /*
             HeaderData headerData;
@@ -150,7 +150,7 @@ bool MapFunctor::searchDatabase( const SearchReason reason, FileEntry &fileEntry
             break;
         }
 
-        case GetSystemByExtension: {
+        case SearchReason::GetSystemByExtension: {
             QString filePath = GameLauncher::trimmedGameNoExtract( fileEntry.filePath );
             QFileInfo fileInfo( filePath );
             QString extension = fileInfo.suffix();
@@ -175,7 +175,7 @@ bool MapFunctor::searchDatabase( const SearchReason reason, FileEntry &fileEntry
             return ( !( fileEntry.systemUUIDs.isEmpty() ) );
         }
 
-        case GetTitleByFilename: {
+        case SearchReason::GetTitleByFilename: {
             QString filePath = GameLauncher::trimmedGameNoExtract( fileEntry.filePath );
             QFileInfo fileInfo( filePath );
             QString basename = fileInfo.completeBaseName();
@@ -195,7 +195,7 @@ FileList MapFunctor::operator()( const FileEntry &entry ) {
     FileList resultList;
 
     switch( mStep ) {
-        case Two: {
+        case Step::Two: {
             setBackgroundIOPriority();
 
             QFileInfo info( entry.filePath );
@@ -227,7 +227,7 @@ FileList MapFunctor::operator()( const FileEntry &entry ) {
             break;
         }
 
-        case Three: {
+        case Step::Three: {
             setBackgroundIOPriority();
 
             // If we've found a .cue file, enumerate all the .bin files within and add their paths to the result list
@@ -248,7 +248,7 @@ FileList MapFunctor::operator()( const FileEntry &entry ) {
             break;
         }
 
-        case Four: {
+        case Step::Four: {
             setBackgroundIOPriority();
 
             FileEntry entryCopy = entry;
@@ -298,16 +298,16 @@ FileList MapFunctor::operator()( const FileEntry &entry ) {
             // A match by extension will give us 1 or 2+ systems
 
             // Search by CRC32
-            if( searchDatabase( GetROMIDByHash, entryCopy ) ) {
-                searchDatabase( GetMetadata, entryCopy );
-                searchDatabase( GetSystemUUID, entryCopy );
+            if( searchDatabase( SearchReason::GetROMIDByHash, entryCopy ) ) {
+                searchDatabase( SearchReason::GetMetadata, entryCopy );
+                searchDatabase( SearchReason::GetSystemUUID, entryCopy );
                 entryCopy.scannerResult = GameScannerResult::GameUUIDByHash;
             }
 
             // Search by filename
-            else if( searchDatabase( GetROMIDByFilename, entryCopy ) ) {
-                searchDatabase( GetMetadata, entryCopy );
-                searchDatabase( GetSystemUUID, entryCopy );
+            else if( searchDatabase( SearchReason::GetROMIDByFilename, entryCopy ) ) {
+                searchDatabase( SearchReason::GetMetadata, entryCopy );
+                searchDatabase( SearchReason::GetSystemUUID, entryCopy );
                 entryCopy.scannerResult = GameScannerResult::GameUUIDByFilename;
             }
 
@@ -315,16 +315,16 @@ FileList MapFunctor::operator()( const FileEntry &entry ) {
 
             // Search by headers if filename matches
             // TODO: Multiple systems for same header?
-            else if( searchDatabase( GetSystemByHeader, entryCopy ) ) {
+            else if( searchDatabase( SearchReason::GetSystemByHeader, entryCopy ) ) {
                 // TODO: Maybe get title from header? Probably only worth it for newer disk-based games whose devs
                 // cared about making the internal title look nice on-screen
-                searchDatabase( GetTitleByFilename, entryCopy );
+                searchDatabase( SearchReason::GetTitleByFilename, entryCopy );
                 entryCopy.scannerResult = GameScannerResult::SystemUUIDKnown;
             }
 
             // Search by extension
-            else if( searchDatabase( GetSystemByExtension, entryCopy ) ) {
-                searchDatabase( GetTitleByFilename, entryCopy );
+            else if( searchDatabase( SearchReason::GetSystemByExtension, entryCopy ) ) {
+                searchDatabase( SearchReason::GetTitleByFilename, entryCopy );
 
                 if( entryCopy.systemUUIDs.size() == 1 ) {
                     entryCopy.scannerResult = GameScannerResult::SystemUUIDKnown;
@@ -334,7 +334,7 @@ FileList MapFunctor::operator()( const FileEntry &entry ) {
             }
 
             else {
-                searchDatabase( GetTitleByFilename, entryCopy );
+                searchDatabase( SearchReason::GetTitleByFilename, entryCopy );
                 entryCopy.scannerResult = GameScannerResult::SystemUUIDUnknown;
             }
 

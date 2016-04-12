@@ -1,19 +1,9 @@
 #pragma once
 
-#include "frontendcommon.h"
-
-#include "archivefile.h"
-#include "betterfuturewatcher.h"
-#include "cryptohash.h"
-#include "cuefile.h"
 #include "librarytypes.h"
-#include "libretrodatabase.h"
-#include "metadatadatabase.h"
-#include "phxpaths.h"
 
-#include "mapfunctor.h"
-#include "filterfunctor.h"
-#include "reducefunctor.h"
+#include <QFutureWatcher>
+
 
 namespace Library {
 
@@ -24,14 +14,18 @@ namespace Library {
     // GameHasher efficiently hashes a set of files as passed to it with the add______() family of slots, automatically
     // passing the results to the next stage, GameMatcher
 
+
     class GameHasher : public QObject {
             Q_OBJECT
-
         public:
-            explicit GameHasher( QObject *parent = 0 );
+            using ListWatcher = QFutureWatcher<FileList>;
+            using ScopedWatcher = QScopedPointer<ListWatcher, QScopedPointerDeleteLater>;
+
+            explicit GameHasher( QObject *parent = nullptr );
 
         signals:
-            void progressChanged( const int progress );
+            void running( bool );
+            void progressChanged( int progress );
             void fileReady( FileEntry entry );
             void scanCompleted( FileList results );
             void filesNeedAssignment( FileList results );
@@ -42,9 +36,7 @@ namespace Library {
             void addPaths( QStringList paths );
 
             void pause();
-
             void cancel();
-
             void resume();
 
             // Clean up and exit
@@ -52,21 +44,36 @@ namespace Library {
 
         private slots:
             // Handlers that move the process along once done
-            void stepOneFinished( BetterFutureWatcher *betterWatcher );
-            void stepTwoFinished( BetterFutureWatcher *betterWatcher );
-            void stepThreeFinished( BetterFutureWatcher *betterWatcher );
+            void stepOneFinished();
+            void stepTwoFinished();
+            void stepThreeFinished();
             // TODO: Pass results onto GameMatcher
-            void stepFourFinished( BetterFutureWatcher *betterWatcher );
+            void stepFourFinished();
+
+            void handleProgressRangeChanged( int min, int max );
+            void handleProgressValueChanged( int progress );
 
         private:
-            // Our custom way of keeping track of various scanning sessions via these sessions' watchers (BetterFutureWatchers)
-            QList<BetterFutureWatcher *> mWatcherList;
+            // Our custom way of keeping track of various scanning sessions via these sessions' watchers (ListWatcher)
+            QList<ListWatcher *> mWatcherList;
 
             // Copies of the main list from step 2 for use by step 3
-            // Indexed by betterFutureWatcher addresses
-            QMap<BetterFutureWatcher *, FileList> mainLists;
+            // Indexed by the ListWatcher addresses
+            QMap<ListWatcher *, FileList> mainLists;
+
+            int mFilesProcessings;
 
             // Helpers
             static QString getLastExecutedQuery( const QSqlQuery &query );
+            ListWatcher *takeFinished( QList<GameHasher::ListWatcher *> &list );
+
+            inline void connectProgress( ListWatcher *watcher );
+
     };
+
+    void GameHasher::connectProgress( ListWatcher *watcher ) {
+        connect( watcher, &ListWatcher::progressValueChanged, this, &GameHasher::handleProgressValueChanged );
+        connect( watcher, &ListWatcher::progressRangeChanged, this, &GameHasher::handleProgressRangeChanged );
+    }
+
 }

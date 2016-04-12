@@ -20,8 +20,8 @@ class GameHasherController : public QObject {
         bool running() const;
         bool paused() const;
 
-        void setRunning( const bool running );
-        void setPaused( const bool paused );
+        void setRunning( bool running );
+        void setPaused( bool paused );
 
     signals:
 
@@ -44,7 +44,7 @@ class GameHasherController : public QObject {
         // Internal communication between GameHasher and GameHasherController
         void processResults( FileList results );
 
-        void setProgress( const int progress );
+        void setProgress( int progress );
 
         // Pauses the current scan, and waits for a resume.
         void pause();

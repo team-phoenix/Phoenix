@@ -67,7 +67,6 @@ include( deployment.pri )
     INCLUDEPATH += cpp cpp/library cpp/library/database cpp/library/fileinfo cpp/library/model cpp/library/scanner cpp/theme
 
     SOURCES += \
-    cpp/library/betterfuturewatcher.cpp \
     cpp/library/cuefile.cpp \
     cpp/library/database/libretrodatabase.cpp \
     cpp/library/database/metadatadatabase.cpp \
@@ -94,7 +93,6 @@ include( deployment.pri )
     cpp/main.cpp
 
     HEADERS += \
-    cpp/library/betterfuturewatcher.h \
     cpp/library/cuefile.h \
     cpp/library/database/libretrodatabase.h \
     cpp/library/database/metadatadatabase.h \

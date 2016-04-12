@@ -1,56 +1,74 @@
 #include "gamehasher.h"
 
+#include "archivefile.h"
+#include "cryptohash.h"
+#include "cuefile.h"
+#include "libretrodatabase.h"
+#include "metadatadatabase.h"
+#include "phxpaths.h"
+
+#include "mapfunctor.h"
+#include "filterfunctor.h"
+#include "reducefunctor.h"
+
 using namespace Library;
 
 GameHasher::GameHasher( QObject *parent )
-    : QObject( parent ) {
+    : QObject( parent ),
+      mFilesProcessings( 0 )
+{
 }
 
 void GameHasher::addPath( QString path ) {
-    BetterFutureWatcher *watcher = new BetterFutureWatcher();
+    emit running( true );
     QStringList dirs = QStringList( path );
-    QFuture<FileList> future = QtConcurrent::mappedReduced<FileList, QStringList>( dirs, MapFunctor( MapFunctor::One ), ReduceFunctor( ReduceFunctor::One ) );
 
-    connect( watcher, &BetterFutureWatcher::finished, this, &GameHasher::stepOneFinished );
+    QFuture<FileList> future = QtConcurrent::mappedReduced<FileList, QStringList>( dirs
+                                                                                   , MapFunctor( MapFunctor::Step::One )
+                                                                                   , ReduceFunctor( ReduceFunctor::Step::One ) );
+    ListWatcher *watcher = new ListWatcher;
+    connect( watcher, &ListWatcher::finished, this, &GameHasher::stepOneFinished );
 
     qCDebug( phxLibrary ) << "Began scan at" << QDateTime::currentDateTime();
 
-    watcher->setFuture( future, mWatcherList.size() );
+    watcher->setFuture( future );
     mWatcherList.append( watcher );
 }
 
 void GameHasher::addPaths( QStringList paths ) {
-    BetterFutureWatcher *watcher = new BetterFutureWatcher();
-    QFuture<FileList> future = QtConcurrent::mappedReduced<FileList, QStringList>( paths, MapFunctor( MapFunctor::One ), ReduceFunctor( ReduceFunctor::One ) );
+    emit running( true );
 
-    connect( watcher, &BetterFutureWatcher::finished, this, &GameHasher::stepOneFinished );
+    QFuture<FileList> future = QtConcurrent::mappedReduced<FileList, QStringList>( paths
+                                                                                   , MapFunctor( MapFunctor::Step::One )
+                                                                                   , ReduceFunctor( ReduceFunctor::Step::One ) );
+    ListWatcher *watcher = new ListWatcher;
+    connect( watcher, &ListWatcher::finished, this, &GameHasher::stepOneFinished );
 
     qCDebug( phxLibrary ) << "Began scan at" << QDateTime::currentDateTime();
 
-    watcher->setFuture( future, mWatcherList.size() );
+    watcher->setFuture( future );
     mWatcherList.append( watcher );
 }
 
 void GameHasher::pause() {
-    for( BetterFutureWatcher *watcher : mWatcherList ) {
-        watcher->futureWatcher().pause();
+    for( ListWatcher *watcher : mWatcherList ) {
+        watcher->pause();
     }
 }
 
 void GameHasher::cancel() {
-    for( int i = 0; i < mWatcherList.size(); ++i ) {
-        BetterFutureWatcher *watcher = mWatcherList[ i ];
-        watcher->futureWatcher().cancel();
-        watcher->futureWatcher().waitForFinished();
-        delete watcher;
-        mWatcherList.removeAt( i );
+    for( int i=0; i < mWatcherList.size(); ++i ) {
+        ScopedWatcher watcher( mWatcherList.takeAt( i ) );
+        watcher->cancel();
+        watcher->waitForFinished();
     }
-
+    emit running( false );
+    emit progressChanged( 0 );
 }
 
 void GameHasher::resume() {
-    for( BetterFutureWatcher *watcher : mWatcherList ) {
-        watcher->futureWatcher().resume();
+    for( ListWatcher *watcher : mWatcherList ) {
+        watcher->resume();
     }
 }
 
@@ -67,27 +85,15 @@ void GameHasher::shutdown() {
     qCDebug( phxLibrary ) << "Fully unloaded";
 }
 
-void GameHasher::stepOneFinished( BetterFutureWatcher *betterWatcher ) {
-    if( betterWatcher->futureWatcher().isCanceled() ) {
-        int pivot = betterWatcher->listIndex();
-        mWatcherList.removeAt( pivot );
-        betterWatcher->deleteLater();
-
-        // Adjust stored index for each item in the list that has been moved by this list manipulation
-        for( BetterFutureWatcher *b : mWatcherList ) {
-            b->adjustIndex( pivot );
-        }
+void GameHasher::stepOneFinished() {
+    ScopedWatcher watcher( takeFinished( mWatcherList ) );
+    if( watcher.isNull() ) {
         return;
     }
 
-    FileList fileList = betterWatcher->futureWatcher().result();
+    FileList fileList = watcher->result();
 
     qCDebug( phxLibrary ) << "Step one finished. " << fileList.size();
-
-    // Grab this betterWatcher's index for use later, then remove it from the list and delete it when convenient
-    int pivot = betterWatcher->listIndex();
-    mWatcherList.removeAt( pivot );
-    betterWatcher->deleteLater();
 
     // No point in starting for an empty list. Abort!!!
     if( fileList.isEmpty() ) {
@@ -95,78 +101,55 @@ void GameHasher::stepOneFinished( BetterFutureWatcher *betterWatcher ) {
     }
 
     // Start step two
-    BetterFutureWatcher *watcher = new BetterFutureWatcher( nullptr );
-    QFuture<FileList> future = QtConcurrent::mappedReduced<FileList, FileList>( fileList, MapFunctor( MapFunctor::Two ), ReduceFunctor( ReduceFunctor::Two ) );
+    ListWatcher *newWatcher = new ListWatcher;
+    QFuture<FileList> future = QtConcurrent::mappedReduced<FileList, FileList>( fileList
+                                                                                , MapFunctor( MapFunctor::Step::Two )
+                                                                                , ReduceFunctor( ReduceFunctor::Step::Two ) );
 
-    connect( watcher, &BetterFutureWatcher::finished, this, &GameHasher::stepTwoFinished );
+    connect( newWatcher, &ListWatcher::finished, this, &GameHasher::stepTwoFinished );
 
-    watcher->setFuture( future, mWatcherList.size() );
-    mWatcherList.append( watcher );
+    newWatcher->setFuture( future );
+    mWatcherList.append( newWatcher );
 
-    // Adjust stored index for each item in the list that has been moved by this list manipulation
-    for( BetterFutureWatcher *b : mWatcherList ) {
-        b->adjustIndex( pivot );
-    }
 }
 
-void GameHasher::stepTwoFinished( BetterFutureWatcher *betterWatcher ) {
-    if( betterWatcher->futureWatcher().isCanceled() ) {
-        int pivot = betterWatcher->listIndex();
-        mWatcherList.removeAt( pivot );
-        betterWatcher->deleteLater();
-
-        // Adjust stored index for each item in the list that has been moved by this list manipulation
-        for( BetterFutureWatcher *b : mWatcherList ) {
-            b->adjustIndex( pivot );
-        }
+void GameHasher::stepTwoFinished() {
+    ScopedWatcher watcher( takeFinished( mWatcherList ) );
+    if( watcher.isNull() ) {
         return;
     }
 
-    FileList fileList = betterWatcher->futureWatcher().result();
-
-    // Grab this betterWatcher's index for use later, then remove it from the list and delete it when convenient
-    int pivot = betterWatcher->listIndex();
-    mWatcherList.removeAt( pivot );
-    betterWatcher->deleteLater();
+    FileList fileList = watcher->result();
 
     qCDebug( phxLibrary ) << "Step two finished." << fileList.size();
 
     // Start step three
-    BetterFutureWatcher *watcher = new BetterFutureWatcher( nullptr );
-    QFuture<FileList> future = QtConcurrent::mappedReduced<FileList, FileList>( fileList, MapFunctor( MapFunctor::Three ), ReduceFunctor( ReduceFunctor::Three ) );
+    ListWatcher *newWatcher = new ListWatcher;
+    QFuture<FileList> future = QtConcurrent::mappedReduced<FileList, FileList>( fileList
+                                                                                , MapFunctor( MapFunctor::Step::Three )
+                                                                                , ReduceFunctor( ReduceFunctor::Step::Three ) );
 
     // Make a copy of the list for step 3 to use once it's done
-    mainLists[ watcher ] = fileList;
+    mainLists[ newWatcher ] = fileList;
 
-    connect( watcher, &BetterFutureWatcher::finished, this, &GameHasher::stepThreeFinished );
+    connect( newWatcher, &ListWatcher::finished, this, &GameHasher::stepThreeFinished );
 
-    watcher->setFuture( future, mWatcherList.size() );
-    mWatcherList.append( watcher );
+    newWatcher->setFuture( future );
+    mWatcherList.append( newWatcher );
 
-    // Adjust stored index for each item in the list that has been moved by this list manipulation
-    for( BetterFutureWatcher *b : mWatcherList ) {
-        b->adjustIndex( pivot );
-    }
 }
 
-void GameHasher::stepThreeFinished( BetterFutureWatcher *betterWatcher ) {
-    if( betterWatcher->futureWatcher().isCanceled() ) {
-        int pivot = betterWatcher->listIndex();
-        mWatcherList.removeAt( pivot );
-        betterWatcher->deleteLater();
-
-        // Adjust stored index for each item in the list that has been moved by this list manipulation
-        for( BetterFutureWatcher *b : mWatcherList ) {
-            b->adjustIndex( pivot );
-        }
+void GameHasher::stepThreeFinished() {
+    ScopedWatcher watcher( takeFinished( mWatcherList ) );
+    if( watcher.isNull() ) {
         return;
     }
 
-    FileList binList = betterWatcher->futureWatcher().result();
+    FileList binList = watcher->result();
 
     // Convert main FileList to a set (mainSet)
-    QSet<FileEntry> mainSet = QSet<FileEntry>::fromList( mainLists[ betterWatcher ] );
-    mainLists.remove( betterWatcher );
+    QSet<FileEntry> mainSet = QSet<FileEntry>::fromList( mainLists[ watcher.data() ] );
+    mainLists.remove( watcher.data() );
 
     // Convert returned fileList to a set (binSet)
     QSet<FileEntry> binSet = QSet<FileEntry>::fromList( binList );
@@ -178,47 +161,29 @@ void GameHasher::stepThreeFinished( BetterFutureWatcher *betterWatcher ) {
     // Convert mainSet back to a list
     FileList fileList = mainSet.toList();
 
-    // Grab this betterWatcher's index for use later, then remove it from the list and delete it when convenient
-    int pivot = betterWatcher->listIndex();
-    mWatcherList.removeAt( pivot );
-    betterWatcher->deleteLater();
-
     qCDebug( phxLibrary ) << "Step three finished. " << fileList.size();
 
-    BetterFutureWatcher *watcher = new BetterFutureWatcher( nullptr );
-    QFuture<FileList> future = QtConcurrent::mappedReduced<FileList, FileList>( fileList, MapFunctor( MapFunctor::Four ), ReduceFunctor( ReduceFunctor::Four ) );
+    ListWatcher *newWatcher = new ListWatcher;
+    QFuture<FileList> future = QtConcurrent::mappedReduced<FileList, FileList>( fileList
+                                                                                , MapFunctor( MapFunctor::Step::Four )
+                                                                                , ReduceFunctor( ReduceFunctor::Step::Four ) );
 
-    connect( watcher, &BetterFutureWatcher::finished, this, &GameHasher::stepFourFinished );
-    connect( watcher, &BetterFutureWatcher::progressChanged, this, &GameHasher::progressChanged );
+    connect( newWatcher, &ListWatcher::finished, this, &GameHasher::stepFourFinished );
+    connectProgress( newWatcher );
 
-    watcher->setFuture( future, mWatcherList.size() );
-    mWatcherList.append( watcher );
+    newWatcher->setFuture( future );
+    mWatcherList.append( newWatcher );
 
-    // Adjust stored index for each item in the list that has been moved by this list manipulation
-    for( BetterFutureWatcher *b : mWatcherList ) {
-        b->adjustIndex( pivot );
-    }
 }
 
-void GameHasher::stepFourFinished( BetterFutureWatcher *betterWatcher ) {
-    if( betterWatcher->futureWatcher().isCanceled() ) {
-        int pivot = betterWatcher->listIndex();
-        mWatcherList.removeAt( pivot );
-        betterWatcher->deleteLater();
-
-        // Adjust stored index for each item in the list that has been moved by this list manipulation
-        for( BetterFutureWatcher *b : mWatcherList ) {
-            b->adjustIndex( pivot );
-        }
+void GameHasher::stepFourFinished() {
+    ScopedWatcher watcher( takeFinished( mWatcherList ) );
+    if ( watcher.isNull() ) {
         return;
     }
 
-    FileList fileList = betterWatcher->futureWatcher().result();
-
-    // Grab this betterWatcher's index for use later, then remove it from the list and delete it when convenient
-    int pivot = betterWatcher->listIndex();
-    mWatcherList.removeAt( pivot );
-    betterWatcher->deleteLater();
+    FileList fileList = watcher->result();
+    mFilesProcessings -= fileList.size();
 
     qCDebug( phxLibrary ) << "Step four map reduce finished: " << fileList.size();
     qCDebug( phxLibrary ) << "Scan complete, finished scan at" << QDateTime::currentDateTime();
@@ -231,7 +196,7 @@ void GameHasher::stepFourFinished( BetterFutureWatcher *betterWatcher ) {
     for( const FileEntry &entry : fileList ) {
         switch( entry.scannerResult ) {
             case GameScannerResult::MultipleSystemUUIDs:
-                qCDebug( phxLibrary ) << "manualModeList" << entry;
+                //qCDebug( phxLibrary ) << "manualModeList" << entry;
                 manualModeList.append( entry );
                 break;
 
@@ -245,7 +210,6 @@ void GameHasher::stepFourFinished( BetterFutureWatcher *betterWatcher ) {
                     break;
                 }
 
-                qCDebug( phxLibrary ) << "knownFilesList" << entry;
                 knownFilesList.append( entry );
                 break;
         }
@@ -263,12 +227,21 @@ void GameHasher::stepFourFinished( BetterFutureWatcher *betterWatcher ) {
         emit scanCompleted( knownFilesList );
     }
 
-    emit progressChanged( 0 );
-
-    // Adjust stored index for each item in the list that has been moved by this list manipulation
-    for( BetterFutureWatcher *b : mWatcherList ) {
-        b->adjustIndex( pivot );
+    if ( mWatcherList.isEmpty() ) {
+        Q_ASSERT( mFilesProcessings == 0 );
+        emit running( false );
+        emit progressChanged( 0 );
     }
+
+}
+
+void GameHasher::handleProgressRangeChanged( int min, int max ) {
+    Q_UNUSED( min );
+    mFilesProcessings += max;
+}
+
+void GameHasher::handleProgressValueChanged( int progress ) {
+    emit progressChanged( qFloor( ( progress / static_cast<qreal>( mFilesProcessings ) ) * 500 ) );
 }
 
 QString GameHasher::getLastExecutedQuery( const QSqlQuery &query ) {
@@ -307,4 +280,18 @@ QString GameHasher::getLastExecutedQuery( const QSqlQuery &query ) {
     }
 
     return sql;
+}
+
+GameHasher::ListWatcher *GameHasher::takeFinished(QList<ListWatcher *> &list) {
+    ListWatcher *result = nullptr;
+    for( int i=0; i < list.size(); ++i ) {
+        ListWatcher *watcher = list[ i ];
+        if ( watcher->isFinished() ) {
+            result = watcher;
+            list.removeAt( i );
+            break;
+        }
+    }
+
+    return result;
 }
