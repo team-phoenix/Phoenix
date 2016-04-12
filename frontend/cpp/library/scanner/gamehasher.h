@@ -63,7 +63,6 @@ namespace Library {
             int mFilesProcessings;
 
             // Helpers
-            static QString getLastExecutedQuery( const QSqlQuery &query );
             ListWatcher *takeFinished( QList<GameHasher::ListWatcher *> &list );
 
             inline void connectProgress( ListWatcher *watcher );
