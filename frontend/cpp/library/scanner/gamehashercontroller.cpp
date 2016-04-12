@@ -9,8 +9,7 @@ GameHasherController::GameHasherController( QObject *parent ) : QObject( parent 
     gameHasherThread( new QThread() ),
     mProgress( 0 ),
     mRunning( false ),
-    mPaused( false )
-{
+    mPaused( false ) {
     // Set up GameHasher
     gameHasher->setObjectName( "GameHasher" );
     gameHasher->moveToThread( gameHasherThread );
@@ -25,9 +24,9 @@ GameHasherController::GameHasherController( QObject *parent ) : QObject( parent 
     // Used for testing the manual add mode.
     //connect( gameHasher, &GameHasher::scanCompleted, this, &GameHasherController::filesNeedAssignment );
 
-    connect( gameHasher, &GameHasher::scanCompleted, this, [ = ] ( FileList results ) {
+    connect( gameHasher, &GameHasher::scanCompleted, this, [ = ]( FileList results ) {
         qCDebug( phxLibrary ) << "scanCompleted from GameHasher," << results.size();
-    });
+    } );
 
 
     gameHasherThread->setObjectName( "Game hasher thread" );
@@ -52,27 +51,24 @@ GameHasherController::GameHasherController( QObject *parent ) : QObject( parent 
     } );
 }
 
-int GameHasherController::progress() const
-{
+int GameHasherController::progress() const {
     return mProgress;
 }
 
-bool GameHasherController::running() const
-{
+bool GameHasherController::running() const {
     return mRunning;
 }
 
-bool GameHasherController::paused() const
-{
+bool GameHasherController::paused() const {
     return mPaused;
 }
 
-void GameHasherController::setRunning( bool running) {
+void GameHasherController::setRunning( bool running ) {
     mRunning = running;
     emit runningChanged();
 }
 
-void GameHasherController::setPaused( bool paused) {
+void GameHasherController::setPaused( bool paused ) {
     mPaused = paused;
     emit pausedChanged();
 }

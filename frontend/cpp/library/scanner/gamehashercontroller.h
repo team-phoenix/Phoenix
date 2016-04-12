@@ -8,10 +8,10 @@
 class QThread;
 
 class GameHasherController : public QObject {
-    Q_OBJECT
-    Q_PROPERTY( int progress READ progress WRITE setProgress NOTIFY progressChanged )
-    Q_PROPERTY( bool running READ running WRITE setRunning NOTIFY runningChanged )
-    Q_PROPERTY( bool paused READ paused NOTIFY pausedChanged )
+        Q_OBJECT
+        Q_PROPERTY( int progress READ progress WRITE setProgress NOTIFY progressChanged )
+        Q_PROPERTY( bool running READ running WRITE setRunning NOTIFY runningChanged )
+        Q_PROPERTY( bool paused READ paused NOTIFY pausedChanged )
 
     public:
         explicit GameHasherController( QObject *parent = 0 );

@@ -68,7 +68,6 @@ LibraryModel::LibraryModel( UserDatabase &db, QObject *parent )
 
     // Listen to the Worker Thread.
    // connect( &mGameScannerThread, &QThread::started, &mGameScanner, &GameScannerOld::eventLoopStarted );
-    connect( this, &LibraryModel::appendScanPath, &mGameHasher, &GameHasher::addPath );
     connect( &mGameHasher, &GameHasher::fileReady, this, &LibraryModel::handleFileReady );
     connect( &mGameHasher, &GameHasher::progressChanged, this, &LibraryModel::setProgress );
     connect( this, &LibraryModel::progressChanged, this, &LibraryModel::handleProgressChanged );

@@ -30,8 +30,7 @@ namespace Library {
             void filesNeedAssignment( FileList results );
 
         public slots:
-            // Entry points, connect to and invoke these slots to begin the game scanning process
-            void addPath( QString path );
+            // Entry point, connect to and invoke this slot to begin the game scanning process
             void addPaths( QStringList paths );
 
             void pause();
@@ -49,29 +48,39 @@ namespace Library {
             // TODO: Pass results onto GameMatcher
             void stepFourFinished();
 
-            void handleProgressRangeChanged( int min, int max );
             void handleProgressValueChanged( int progress );
 
         private:
-            // Our custom way of keeping track of various scanning sessions via these sessions' watchers (ListWatcher)
+            // A list of watchers, each of which monitors a pipeline as it performs operations on its list
             QList<ListWatcher *> mWatcherList;
 
             // Copies of the main list from step 2 for use by step 3
             // Indexed by the ListWatcher addresses
             QMap<ListWatcher *, FileList> mainLists;
 
-            int mFilesProcessings;
+            // Progress monitoring
 
-            // Helpers
-            ListWatcher *takeFinished( QList<GameHasher::ListWatcher *> &list );
+            struct progressTuple {
+                // 0-based
+                int step;
+
+                // [0.0, 1.0]
+                qreal progress;
+
+                // Total number of files to process (this copy needed when key points to deleted memory)
+                int total;
+            };
+
+            // Tracks the progress of each pipeline (each active pipeline will be represented by exactly one entry in this map)
+            QMap<ListWatcher *, progressTuple> progressMap;
 
             inline void connectProgress( ListWatcher *watcher );
 
+            // Remove oldWatcher from progressMap and add newWatcher with 0.0 progress and the given step
+            void resetProgress( ListWatcher *oldWatcher, ListWatcher *newWatcher, int step );
+
+            // Helpers
+
+            ListWatcher *takeFinished( QList<GameHasher::ListWatcher *> &list );
     };
-
-    void GameHasher::connectProgress( ListWatcher *watcher ) {
-        connect( watcher, &ListWatcher::progressValueChanged, this, &GameHasher::handleProgressValueChanged );
-        connect( watcher, &ListWatcher::progressRangeChanged, this, &GameHasher::handleProgressRangeChanged );
-    }
-
 }

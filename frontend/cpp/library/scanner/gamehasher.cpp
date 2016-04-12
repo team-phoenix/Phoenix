@@ -16,40 +16,32 @@ using namespace Library;
 using ScopedWatcher = QScopedPointer<GameHasher::ListWatcher, QScopedPointerDeleteLater>;
 
 GameHasher::GameHasher( QObject *parent )
-    : QObject( parent ),
-      mFilesProcessings( 0 )
-{
-}
-
-void GameHasher::addPath( QString path ) {
-    emit running( true );
-    QStringList dirs = QStringList( path );
-
-    QFuture<FileList> future = QtConcurrent::mappedReduced<FileList, QStringList>( dirs
-                                                                                   , MapFunctor( MapFunctor::Step::One )
-                                                                                   , ReduceFunctor( ReduceFunctor::Step::One ) );
-    ListWatcher *watcher = new ListWatcher;
-    connect( watcher, &ListWatcher::finished, this, &GameHasher::stepOneFinished );
-
-    qCDebug( phxLibrary ) << "Began scan at" << QDateTime::currentDateTime();
-
-    watcher->setFuture( future );
-    mWatcherList.append( watcher );
+    : QObject( parent ) {
 }
 
 void GameHasher::addPaths( QStringList paths ) {
     emit running( true );
 
     QFuture<FileList> future = QtConcurrent::mappedReduced<FileList, QStringList>( paths
-                                                                                   , MapFunctor( MapFunctor::Step::One )
-                                                                                   , ReduceFunctor( ReduceFunctor::Step::One ) );
+                               , MapFunctor( MapFunctor::Step::One )
+                               , ReduceFunctor( ReduceFunctor::Step::One ) );
     ListWatcher *watcher = new ListWatcher;
     connect( watcher, &ListWatcher::finished, this, &GameHasher::stepOneFinished );
+    connectProgress( watcher );
 
     qCDebug( phxLibrary ) << "Began scan at" << QDateTime::currentDateTime();
 
     watcher->setFuture( future );
+
+    // Reset progress monitoring if there's nothing already being scanned
+    if( mWatcherList.isEmpty() ) {
+        emit progressChanged( 0 );
+    }
+
     mWatcherList.append( watcher );
+
+    // Begin progress monitoring this pipeline
+    resetProgress( nullptr, watcher, 0 );
 }
 
 void GameHasher::pause() {
@@ -59,11 +51,12 @@ void GameHasher::pause() {
 }
 
 void GameHasher::cancel() {
-    for( int i=0; i < mWatcherList.size(); ++i ) {
+    for( int i = 0; i < mWatcherList.size(); ++i ) {
         ScopedWatcher watcher( mWatcherList.takeAt( i ) );
         watcher->cancel();
         watcher->waitForFinished();
     }
+
     emit running( false );
     emit progressChanged( 0 );
 }
@@ -89,6 +82,7 @@ void GameHasher::shutdown() {
 
 void GameHasher::stepOneFinished() {
     ScopedWatcher watcher( takeFinished( mWatcherList ) );
+
     if( watcher.isNull() ) {
         return;
     }
@@ -105,18 +99,20 @@ void GameHasher::stepOneFinished() {
     // Start step two
     ListWatcher *newWatcher = new ListWatcher;
     QFuture<FileList> future = QtConcurrent::mappedReduced<FileList, FileList>( fileList
-                                                                                , MapFunctor( MapFunctor::Step::Two )
-                                                                                , ReduceFunctor( ReduceFunctor::Step::Two ) );
+                               , MapFunctor( MapFunctor::Step::Two )
+                               , ReduceFunctor( ReduceFunctor::Step::Two ) );
 
     connect( newWatcher, &ListWatcher::finished, this, &GameHasher::stepTwoFinished );
+    connectProgress( newWatcher );
 
     newWatcher->setFuture( future );
     mWatcherList.append( newWatcher );
-
+    resetProgress( watcher.data(), newWatcher, 1 );
 }
 
 void GameHasher::stepTwoFinished() {
     ScopedWatcher watcher( takeFinished( mWatcherList ) );
+
     if( watcher.isNull() ) {
         return;
     }
@@ -128,21 +124,23 @@ void GameHasher::stepTwoFinished() {
     // Start step three
     ListWatcher *newWatcher = new ListWatcher;
     QFuture<FileList> future = QtConcurrent::mappedReduced<FileList, FileList>( fileList
-                                                                                , MapFunctor( MapFunctor::Step::Three )
-                                                                                , ReduceFunctor( ReduceFunctor::Step::Three ) );
+                               , MapFunctor( MapFunctor::Step::Three )
+                               , ReduceFunctor( ReduceFunctor::Step::Three ) );
 
     // Make a copy of the list for step 3 to use once it's done
     mainLists[ newWatcher ] = fileList;
 
     connect( newWatcher, &ListWatcher::finished, this, &GameHasher::stepThreeFinished );
+    connectProgress( newWatcher );
 
     newWatcher->setFuture( future );
     mWatcherList.append( newWatcher );
-
+    resetProgress( watcher.data(), newWatcher, 2 );
 }
 
 void GameHasher::stepThreeFinished() {
     ScopedWatcher watcher( takeFinished( mWatcherList ) );
+
     if( watcher.isNull() ) {
         return;
     }
@@ -167,25 +165,25 @@ void GameHasher::stepThreeFinished() {
 
     ListWatcher *newWatcher = new ListWatcher;
     QFuture<FileList> future = QtConcurrent::mappedReduced<FileList, FileList>( fileList
-                                                                                , MapFunctor( MapFunctor::Step::Four )
-                                                                                , ReduceFunctor( ReduceFunctor::Step::Four ) );
+                               , MapFunctor( MapFunctor::Step::Four )
+                               , ReduceFunctor( ReduceFunctor::Step::Four ) );
 
     connect( newWatcher, &ListWatcher::finished, this, &GameHasher::stepFourFinished );
     connectProgress( newWatcher );
 
     newWatcher->setFuture( future );
     mWatcherList.append( newWatcher );
-
+    resetProgress( watcher.data(), newWatcher, 3 );
 }
 
 void GameHasher::stepFourFinished() {
     ScopedWatcher watcher( takeFinished( mWatcherList ) );
-    if ( watcher.isNull() ) {
+
+    if( watcher.isNull() ) {
         return;
     }
 
     FileList fileList = watcher->result();
-    mFilesProcessings -= fileList.size();
 
     qCDebug( phxLibrary ) << "Step four map reduce finished: " << fileList.size();
     qCDebug( phxLibrary ) << "Scan complete, finished scan at" << QDateTime::currentDateTime();
@@ -229,31 +227,73 @@ void GameHasher::stepFourFinished() {
         emit scanCompleted( knownFilesList );
     }
 
-    if ( mWatcherList.isEmpty() ) {
-        Q_ASSERT( mFilesProcessings == 0 );
+    // Keep on the map so its 100% progress is retained
+    progressMap[ watcher.data() ].progress = 1.0;
+
+    if( mWatcherList.isEmpty() ) {
+        progressMap.clear();
         emit running( false );
-        emit progressChanged( 0 );
     }
 
 }
 
-void GameHasher::handleProgressRangeChanged( int min, int max ) {
-    Q_UNUSED( min );
-    mFilesProcessings += max;
-}
-
 void GameHasher::handleProgressValueChanged( int progress ) {
-    emit progressChanged( qFloor( ( progress / static_cast<qreal>( mFilesProcessings ) ) * 500 ) );
+    // Grab the ListWatcher that invoked this slot
+    ListWatcher *watcher = dynamic_cast<ListWatcher *>( sender() );
+
+    // Update this ListWatcher's progress in our map
+    progressMap[ watcher ].progress = ( qreal )progress / watcher->progressMaximum();
+
+    int totalFiles = 0;
+    int completedFiles = 0;
+
+    // Sum up all the progresses
+    // Do not dereference key, it may already be deleted!
+    for( ListWatcher *key : progressMap.keys() ) {
+        totalFiles += progressMap[ key ].total;
+        // Bias the completion amount by what step this pipeline is currently in
+        // completedFiles += progressMap[ key ].total
+        //                   * ( ( ( qreal )( progressMap[ key ].progress ) / 4.0 )
+        //                       + ( 0.25 * ( qreal )( progressMap[ key ].step ) ) );
+
+        // Only count step 4
+        completedFiles += progressMap[ key ].total
+                          * ( ( progressMap[ key ].step ) == 3
+                              ? ( qreal )( progressMap[ key ].progress )
+                              : 0.0 );
+    }
+
+    emit progressChanged( qFloor( ( ( qreal )completedFiles / ( qreal )totalFiles ) * 500.0 ) );
 }
 
-GameHasher::ListWatcher *GameHasher::takeFinished(QList<ListWatcher *> &list) {
+void Library::GameHasher::connectProgress( ListWatcher *watcher ) {
+    connect( watcher, &ListWatcher::progressValueChanged, this, &GameHasher::handleProgressValueChanged );
+}
+
+void GameHasher::resetProgress( ListWatcher *oldWatcher, ListWatcher *newWatcher, int step ) {
+    // Remove old watcher from map
+    if( oldWatcher ) {
+        progressMap.remove( oldWatcher );
+    }
+
+    // Add new watcher to list
+    if( newWatcher ) {
+        progressMap[ newWatcher ].step = step;
+        progressMap[ newWatcher ].progress = 0.0;
+        progressMap[ newWatcher ].total = newWatcher->progressMaximum();
+    }
+}
+
+GameHasher::ListWatcher *GameHasher::takeFinished( QList<ListWatcher *> &list ) {
     // Two ListWatchers will never be finished at the same time
     // because of the event loop. This is why we can just break out of the loop.
 
     ListWatcher *result = nullptr;
-    for( int i=0; i < list.size(); ++i ) {
+
+    for( int i = 0; i < list.size(); ++i ) {
         ListWatcher *watcher = list[ i ];
-        if ( watcher->isFinished() ) {
+
+        if( watcher->isFinished() ) {
             result = watcher;
             list.removeAt( i );
             break;
