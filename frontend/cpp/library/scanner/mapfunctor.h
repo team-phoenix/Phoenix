@@ -1,5 +1,4 @@
-#ifndef MAPFUNCTOR_H
-#define MAPFUNCTOR_H
+#pragma once
 
 #include "frontendcommon.h"
 
@@ -81,5 +80,3 @@ namespace Library {
             QString getLastExecutedQuery( const QSqlQuery &query );
     };
 }
-
-#endif // MAPFUNCTOR_H

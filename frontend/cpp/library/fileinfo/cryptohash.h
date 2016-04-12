@@ -1,5 +1,4 @@
-#ifndef CRYPTOHASH_H
-#define CRYPTOHASH_H
+#pragma once
 
 #include "frontendcommon.h"
 
@@ -31,6 +30,3 @@ namespace Library {
     };
 
 }
-
-
-#endif // CRYPTOHASH_H

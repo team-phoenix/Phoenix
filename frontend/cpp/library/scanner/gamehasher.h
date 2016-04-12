@@ -19,7 +19,6 @@ namespace Library {
             Q_OBJECT
         public:
             using ListWatcher = QFutureWatcher<FileList>;
-            using ScopedWatcher = QScopedPointer<ListWatcher, QScopedPointerDeleteLater>;
 
             explicit GameHasher( QObject *parent = nullptr );
 

@@ -13,6 +13,8 @@
 
 using namespace Library;
 
+using ScopedWatcher = QScopedPointer<GameHasher::ListWatcher, QScopedPointerDeleteLater>;
+
 GameHasher::GameHasher( QObject *parent )
     : QObject( parent ),
       mFilesProcessings( 0 )
@@ -283,6 +285,9 @@ QString GameHasher::getLastExecutedQuery( const QSqlQuery &query ) {
 }
 
 GameHasher::ListWatcher *GameHasher::takeFinished(QList<ListWatcher *> &list) {
+    // Two ListWatchers will never be finished at the same time
+    // because of the event loop. This is why we can just break out of the loop.
+
     ListWatcher *result = nullptr;
     for( int i=0; i < list.size(); ++i ) {
         ListWatcher *watcher = list[ i ];

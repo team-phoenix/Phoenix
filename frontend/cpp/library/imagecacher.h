@@ -1,5 +1,4 @@
-#ifndef IMAGECACHER_H
-#define IMAGECACHER_H
+#pragma once
 
 #include "frontendcommon.h"
 
@@ -59,5 +58,3 @@ namespace  Library {
             void identifierChanged();
     };
 }
-
-#endif // IMAGECACHER_H

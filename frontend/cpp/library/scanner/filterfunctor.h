@@ -1,5 +1,4 @@
-#ifndef FILTERFUNCTOR_H
-#define FILTERFUNCTOR_H
+#pragma once
 
 #include "librarytypes.h"
 
@@ -33,5 +32,3 @@ namespace Library {
     };
 
 }
-
-#endif // FILTERFUNCTOR_H

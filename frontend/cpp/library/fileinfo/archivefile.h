@@ -1,5 +1,4 @@
-#ifndef ARCHIVEFILE_H
-#define ARCHIVEFILE_H
+#pragma once
 
 #include "frontendcommon.h"
 
@@ -26,5 +25,3 @@ private:
 };
 
 Q_DECLARE_METATYPE( ArchiveFile::ParseData )
-
-#endif // ARCHIVEFILE_H

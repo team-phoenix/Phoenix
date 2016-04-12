@@ -1,5 +1,4 @@
-#ifndef REDUCEFUNCTOR_H
-#define REDUCEFUNCTOR_H
+#pragma once
 
 #include "frontendcommon.h"
 #include "logging.h"
@@ -27,5 +26,3 @@ namespace Library {
     };
 
 }
-
-#endif // REDUCEFUNCTOR_H
