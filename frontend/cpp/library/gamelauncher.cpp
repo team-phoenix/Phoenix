@@ -12,36 +12,43 @@ const QString GameLauncher::getDefaultCore( const QString system ) {
     Q_UNUSED( system )
 
     // Let the constructor run so it'll make sure default cores are set for any new systems that might not have had their
-        // defaults written to the user database yet because the user has not opened that settings page
-        // Ugly hack or good idea?
-        CoreModel *model = new CoreModel();
-        delete model;
+    // defaults written to the user database yet because the user has not opened that settings page
+    // Ugly hack or good idea?
+    CoreModel *model = new CoreModel();
+    delete model;
 
-        const static QString statement = QStringLiteral( "SELECT defaultCore FROM defaultCores WHERE system = ?" );
-        auto query = QSqlQuery( UserDatabase::instance()->database() );
-        query.prepare( statement );
-        query.addBindValue( system );
+    QString connectionName = QThread::currentThread()->objectName() % QStringLiteral( "userdata" );
+    QSqlDatabase userDatabase = QSqlDatabase::addDatabase( QStringLiteral( "QSQLITE" ), connectionName );
 
-        auto exec = query.exec();
-        Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( query.lastError().text() ) );
+    if( !userDatabase.isOpen() ) {
+        userDatabase.setDatabaseName( PhxPaths::userDataLocation() % QStringLiteral( "/userdata.sqlite" ) );
+        Q_ASSERT( userDatabase.open() );
+    }
 
-        QString defaultCore;
+    QSqlQuery query = QSqlQuery( userDatabase );
+    query.prepare( QStringLiteral( "SELECT defaultCore FROM defaultCores WHERE system = :system" ) );
+    query.bindValue( QStringLiteral( ":system" ), system );
 
-        if( query.first() ) {
-            defaultCore = query.value( 0 ).toString();
-        }
+    auto exec = query.exec();
+    Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( query.lastError().text() ) );
 
-    #if defined( Q_OS_WIN )
-        defaultCore = PhxPaths::coreLocation() % QStringLiteral( "/" ) % defaultCore % QStringLiteral( ".dll" );
-    #endif
-    #if defined( Q_OS_MAC )
-        defaultCore = PhxPaths::coreLocation() % QStringLiteral( "/" ) % defaultCore % QStringLiteral( ".dylib" );
-    #endif
-    #if defined( Q_OS_LINUX )
-        defaultCore = PhxPaths::coreLocation() % QStringLiteral( "/" ) % defaultCore % QStringLiteral( ".so" );
-    #endif
+    QString defaultCore;
 
-    return defaultCore ;
+    if( query.first() ) {
+        defaultCore = query.value( 0 ).toString();
+    }
+
+#if defined( Q_OS_WIN )
+    defaultCore = PhxPaths::coreLocation() % QStringLiteral( "/" ) % defaultCore % QStringLiteral( ".dll" );
+#endif
+#if defined( Q_OS_MAC )
+    defaultCore = PhxPaths::coreLocation() % QStringLiteral( "/" ) % defaultCore % QStringLiteral( ".dylib" );
+#endif
+#if defined( Q_OS_LINUX )
+    defaultCore = PhxPaths::coreLocation() % QStringLiteral( "/" ) % defaultCore % QStringLiteral( ".so" );
+#endif
+
+    return defaultCore;
 
 }
 

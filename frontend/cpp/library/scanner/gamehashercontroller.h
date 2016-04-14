@@ -41,9 +41,6 @@ class GameHasherController : public QObject {
         // Begins the scanning process. Once done, scanCompleted() be emitted with the results
         void scanForGames( QList<QUrl> urls );
 
-        // Internal communication between GameHasher and GameHasherController
-        void processResults( FileList results );
-
         void setProgress( int progress );
 
         // Pauses the current scan, and waits for a resume.

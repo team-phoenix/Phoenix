@@ -3,8 +3,6 @@
 
 #include "frontendcommon.h"
 
-#include "userdatabase.h"
-#include "libretrodatabase.h"
 #include "logging.h"
 #include "phxpaths.h"
 
@@ -20,11 +18,6 @@ class GameLauncher : public QObject {
 
         static QString trimmedGame( QString game );
         static QString trimmedGameNoExtract( QString game );
-
-
-    private:
-
-
 };
 
 #endif // GAMELAUNCHER_H

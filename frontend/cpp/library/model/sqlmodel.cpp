@@ -327,7 +327,7 @@ bool SqlModel::addEntries( const FileList rows ) {
     QString colStatement = QStringLiteral( "(" );
     QString valueStatement = QStringLiteral( " VALUES(" );
 
-    qCDebug( phxLibrary ) << rows;
+    // qCDebug( phxLibrary ) << rows;
     qCDebug( phxLibrary ) << "Adding" << rows.size() << "games to the database" << mFileLocation;
 
     // Grab the column names from the QVariantMap factory function, create an insert statement from them
@@ -355,6 +355,8 @@ bool SqlModel::addEntries( const FileList rows ) {
     bool t = db.transaction();
     Q_ASSERT( t );
 
+    int ignoredGames = 0;
+
     // For each row create an insert statement and bind the values of this statement to the current row's values and execute
     for( int i = 0; i < rows.size(); ++i ) {
         QVariantMap rowData = QVariantMap( static_cast<FileEntry>( rows.at( i ) ) );
@@ -373,7 +375,8 @@ bool SqlModel::addEntries( const FileList rows ) {
 
         if( !query.exec() ) {
             if( query.lastError().text().contains( "UNIQUE" ) ) {
-                qCDebug( phxLibrary ) << "Ignoring game already in library";
+                // qCDebug( phxLibrary ) << "Ignoring game already in library";
+                ignoredGames++;
                 continue;
             }
 
@@ -384,6 +387,8 @@ bool SqlModel::addEntries( const FileList rows ) {
             return false;
         }
     }
+
+    if( ignoredGames ) qCDebug( phxLibrary ) << "Ignored" << ignoredGames << "games already in library";
 
     bool c = db.commit();
     Q_ASSERT( c );

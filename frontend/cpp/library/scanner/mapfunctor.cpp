@@ -14,9 +14,8 @@ bool MapFunctor::searchDatabase( const SearchReason reason, FileEntry &fileEntry
 
             Q_ASSERT( fileEntry.hasHashCached );
 
-            openVGDBQuery.prepare( QStringLiteral( "SELECT romID FROM " )
-                                   % MetaDataDatabase::tableRoms
-                                   % QStringLiteral( " WHERE romHashCRC LIKE :mCrc32Checksum" ) );
+            openVGDBQuery.prepare( QStringLiteral( "SELECT romID FROM ROMs " )
+                                   % QStringLiteral( "WHERE romHashCRC LIKE :mCrc32Checksum" ) );
 
             openVGDBQuery.bindValue( QStringLiteral( ":mCrc32Checksum" ), fileEntry.crc32 );
 
@@ -37,9 +36,8 @@ bool MapFunctor::searchDatabase( const SearchReason reason, FileEntry &fileEntry
             QString filename = file.fileName();
 
             // Filename must be sanitized before being passed into an SQL query
-            openVGDBQuery.prepare( QStringLiteral( "SELECT romID FROM " )
-                                   % MetaDataDatabase::tableRoms
-                                   % QStringLiteral( " WHERE romFileName = :romFileName" ) );
+            openVGDBQuery.prepare( QStringLiteral( "SELECT romID FROM ROMs " )
+                                   % QStringLiteral( "WHERE romFileName = :romFileName" ) );
 
             openVGDBQuery.bindValue( QStringLiteral( ":romFileName" ), filename );
 
@@ -270,12 +268,13 @@ FileList MapFunctor::operator()( const FileEntry &entry ) {
 
                 thread->setObjectName( name % QString::number( i ) % QStringLiteral( " " ) );
 
-                LibretroDatabase::addConnection( thread->objectName() % "libretro" );
-                MetaDataDatabase::addConnection( thread->objectName() % "openvgdb" );
+                QSqlDatabase libretroDB = QSqlDatabase::addDatabase( QStringLiteral( "QSQLITE" ), thread->objectName() % QStringLiteral( "libretro" ) );
+                QSqlDatabase openVGDB = QSqlDatabase::addDatabase( QStringLiteral( "QSQLITE" ), thread->objectName() % QStringLiteral( "openvgdb" ) );
+
+                libretroDB.setDatabaseName( PhxPaths::metadataLocation() % QStringLiteral( "/libretro.sqlite" ) );
+                openVGDB.setDatabaseName( PhxPaths::metadataLocation() % QStringLiteral( "/openvgdb.sqlite" ) );
 
                 // Test the connection
-                QSqlDatabase libretroDB = QSqlDatabase::database( thread->objectName() % "libretro" );
-                QSqlDatabase openVGDB = QSqlDatabase::database( thread->objectName() % "openvgdb" );
                 Q_ASSERT( libretroDB.open() );
                 Q_ASSERT( openVGDB.open() );
 

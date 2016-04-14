@@ -3,11 +3,7 @@
 // Library
 #include "gamelauncher.h"
 #include "imagecacher.h"
-#include "metadatadatabase.h"
-#include "libretrodatabase.h"
 #include "coremodel.h"
-#include "collectionsmodel.h"
-#include "librarymodel.h"
 #include "librarytypes.h"
 #include "sqlthreadedmodel.h"
 #include "gamehasher.h"
@@ -145,7 +141,7 @@ int main( int argc, char *argv[] ) {
     // Uncomment this to enable the message handler for debugging and stack tracing
     // qInstallMessageHandler( phoenixDebugMessageHandler );
 
-    QThread::currentThread()->setObjectName( "Main/QML thread" );
+    QThread::currentThread()->setObjectName( "Main/QML thread " );
 
     // Handles stuff with the windowing system
     QGuiApplication app( argc, argv );
@@ -176,10 +172,6 @@ int main( int argc, char *argv[] ) {
     qInstallMessageHandler( phoenixDebugMessageLog );
 #endif
 
-    // Add database handles to the SQL database list.
-    Library::MetaDataDatabase::addDatabase();
-    Library::LibretroDatabase::addDatabase();
-
     // Necessary to quit properly from QML
     QObject::connect( &engine, &QQmlApplicationEngine::quit, &app, &QGuiApplication::quit );
 
@@ -207,8 +199,6 @@ int main( int argc, char *argv[] ) {
     qRegisterMetaType<SqlModel::FilterType>( "SqlModel::FilterType" );
     qRegisterMetaType<SqlModel::OrderBy>( "SqlModel::OrderBy" );
 
-    qmlRegisterType<Library::CollectionsModel>( "vg.phoenix.models", 1, 0, "CollectionsModel" );
-    qmlRegisterType<Library::LibraryModel>( "vg.phoenix.models", 1, 0, "LibraryModel" );
     qmlRegisterType<Library::CoreModel>( "vg.phoenix.models", 1, 0, "CoreModel" );
     qmlRegisterType<Library::ImageCacher>( "vg.phoenix.cache", 1, 0, "ImageCacher" );
     qmlRegisterType<GameLauncher>( "vg.phoenix.launcher", 1, 0, "GameLauncher" );

@@ -3,12 +3,9 @@
 #include "archivefile.h"
 #include "cryptohash.h"
 #include "cuefile.h"
-#include "libretrodatabase.h"
-#include "metadatadatabase.h"
 #include "phxpaths.h"
 
 #include "mapfunctor.h"
-#include "filterfunctor.h"
 #include "reducefunctor.h"
 
 using namespace Library;
@@ -252,15 +249,15 @@ void GameHasher::handleProgressValueChanged( int progress ) {
     for( ListWatcher *key : progressMap.keys() ) {
         totalFiles += progressMap[ key ].total;
         // Bias the completion amount by what step this pipeline is currently in
-        // completedFiles += progressMap[ key ].total
-        //                   * ( ( ( qreal )( progressMap[ key ].progress ) / 4.0 )
-        //                       + ( 0.25 * ( qreal )( progressMap[ key ].step ) ) );
+        completedFiles += progressMap[ key ].total
+                          * ( ( ( qreal )( progressMap[ key ].progress ) / 4.0 )
+                              + ( 0.25 * ( qreal )( progressMap[ key ].step ) ) );
 
         // Only count step 4
-        completedFiles += progressMap[ key ].total
-                          * ( ( progressMap[ key ].step ) == 3
-                              ? ( qreal )( progressMap[ key ].progress )
-                              : 0.0 );
+        // completedFiles += progressMap[ key ].total
+        //                   * ( ( progressMap[ key ].step ) == 3
+        //                       ? ( qreal )( progressMap[ key ].progress )
+        //                       : 0.0 );
     }
 
     emit progressChanged( qFloor( ( ( qreal )completedFiles / ( qreal )totalFiles ) * 500.0 ) );
