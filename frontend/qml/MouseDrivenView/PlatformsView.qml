@@ -19,6 +19,8 @@ PhxScrollView {
 
         currentIndex: -1;
 
+        onCurrentIndexChanged: console.log( "index changed to " + currentIndex );
+
         spacing: 0;
         model: SqlThreadedModel {
             id: sqlModel;
@@ -29,7 +31,7 @@ PhxScrollView {
                 connectionName: "LIBRETRO";
             }
 
-            SqlColumn { name: "UUID"; type: "TEXT PRIMARY KEY"; }
+            SqlColumn { name: "UUID"; type: "TEXT"; }
             SqlColumn { name: "friendlyName"; type: "TEXT"; }
             SqlColumn { name: "shortName"; type: "TEXT"; }
             SqlColumn { name: "manufacturer"; type: "TEXT"; }
@@ -166,6 +168,11 @@ PhxScrollView {
                     if( listView.currentIndex === index ) {
                         contentArea.contentLibraryModel.setFilter( "system", UUID );
                 }
+            }
+
+            Component.onCompleted: {
+                console.log( index );
+                console.log( "\"" + UUID + "\", \"" + manufacturer + "\", \"" + friendlyName + "\"" );
             }
 
             MarqueeText {

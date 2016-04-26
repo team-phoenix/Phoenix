@@ -472,15 +472,17 @@ QString SqlModel::selectStatement() const {
 }
 
 QVariant SqlModel::data( const QModelIndex &index, int role ) const {
-    QVariant result = QSqlQueryModel::data( index, role );
+    qDebug() << index.row() << index.column();
+    if( !index.isValid() ){
+        return QVariant();
+    }
 
     if( role < Qt::UserRole || !mRoleNames.contains( role ) ) {
-        return result;
+        return QSqlQueryModel::data( index, role );
     }
 
     int columnIdx = record().indexOf( mRoleNames.value( role ) );
-    return QSqlQueryModel::data( this->index( index.row(), columnIdx ), Qt::DisplayRole );
-
+    QVariant result = QSqlQueryModel::data( this->index( index.row(), columnIdx ), Qt::DisplayRole );
     return result;
 }
 
