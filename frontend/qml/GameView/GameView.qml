@@ -31,6 +31,7 @@ Rectangle {
             this.videoOutput = videoOutput;
             this.inputManager = root.inputManager;
 
+            // Immediately launch a game if the command line was invoked
             // If this is set everything else should be, too
             if( commandLineSource[ "type" ] ) {
                 // Prevent user from clicking on anything while the transition occurs

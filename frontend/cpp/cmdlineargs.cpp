@@ -23,25 +23,27 @@ QVariantMap parseCommandLine( QCoreApplication &app ) {
         map[ "type" ] = "libretro";
 
         if( !parser.value( "core" ).isEmpty() ) {
-            map[ "core" ] = parser.value( "core" );
+            // Clean up the file path given from the user
+            map[ "core" ] = QFileInfo( parser.value( "core" ) ).canonicalFilePath();
         } else {
             qWarning() << "A game must be specified";
             parser.showHelp();
         }
 
         if( !parser.value( "game" ).isEmpty() ) {
-            map[ "game" ] = parser.value( "game" );
+            // Clean up the file path given from the user
+            map[ "game" ] = QFileInfo( parser.value( "game" ) ).canonicalFilePath();
         } else {
             qWarning() << "A game must be specified";
             parser.showHelp();
         }
 
-        if( !QFile::exists( parser.value( "core" ) ) ) {
+        if( !QFileInfo::exists( parser.value( "core" ) ) ) {
             qWarning() << "Core file does not exist!";
             parser.showHelp();
         }
 
-        if( !QFile::exists( parser.value( "game" ) ) ) {
+        if( !QFileInfo::exists( parser.value( "game" ) ) ) {
             qWarning() << "Game file does not exist!";
             parser.showHelp();
         }
