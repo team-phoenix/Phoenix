@@ -85,7 +85,8 @@ include( deployment.pri )
     cpp/library/scanner/reducefunctor.cpp \
     cpp/library/scanner/scannerutil.cpp \
     cpp/main.cpp \
-    cpp/library/database/databasehelper.cpp
+    cpp/library/database/databasehelper.cpp \
+    cpp/cmdlineargs.cpp
 
     HEADERS += \
     cpp/library/cuefile.h \
@@ -106,7 +107,9 @@ include( deployment.pri )
     cpp/library/scanner/reducefunctor.h \
     cpp/library/scanner/scannerutil.h \
     cpp/frontendcommon.h \
-    cpp/library/database/databasehelper.h
+    cpp/library/database/databasehelper.h \
+    cpp/cmdlineargs.h \
+    cpp/debughelper.h \
 
     RESOURCES += \
     qml/qml.qrc \

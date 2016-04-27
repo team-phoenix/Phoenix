@@ -31,17 +31,42 @@ Rectangle {
             this.videoOutput = videoOutput;
             this.inputManager = root.inputManager;
 
-            if ( root.cmdLineArgs.coreFound() && root.cmdLineArgs.gameFound() ) {
-                var dict = {};
-                dict["type"] = "libretro";
-                dict["core"] = root.cmdLineArgs.coreName;
-                dict["game"] = root.cmdLineArgs.gameName;
+            // If this is set everything else should be, too
+            if( commandLineSource[ "type" ] ) {
+                // Prevent user from clicking on anything while the transition occurs
+                root.disableMouseClicks();
 
+                // Don't check the mouse until the transition's done
+                rootMouseArea.hoverEnabled = false;
+
+                // Let the user know we're thinking!
+                rootMouseArea.cursorShape = Qt.WaitCursor;
+
+                // Set window title to game title
+                root.title = "Loading - " + commandLineSource[ "title" ];
+
+                // Set up the packet of information to pass to CoreControl
+                var dict = {};
+                dict[ "type" ] = "libretro";
+                dict[ "core" ] = commandLineSource[ "core" ];
+                dict[ "game" ] = commandLineSource[ "game" ];
+                dict[ "systemPath" ] = PhxPaths.qmlFirmwareLocation();
+                dict[ "savePath" ] = PhxPaths.qmlSaveLocation();
+
+                // Extra stuff
+                title = commandLineSource[ "title" ];
+                dict[ "title" ] = title;
+                dict[ "system" ] = "";
+                dict[ "artworkURL" ] = "";
+
+                // Assign the source
                 coreControl.source = dict;
 
                 // Connect the next callback in the chain to be called once the load begins/ends
                 coreControl.stateChanged.connect( root.stateChangedCallback );
 
+                // Begin the load
+                // Execution will continue in stateChangedCallback() once CoreControl changes state
                 coreControl.load();
             }
         }

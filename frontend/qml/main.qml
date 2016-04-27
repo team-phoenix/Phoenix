@@ -17,10 +17,6 @@ ApplicationWindow {
     height: Screen.height * 0.7;
     color: "black";
 
-    property CmdLineArgs cmdLineArgs: CmdLineArgs {
-
-    }
-
     function stateChangedCallback( newState ) {
         console.log( "stateChangedCallback(" + newState + ")" );
 

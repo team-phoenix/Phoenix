@@ -26,6 +26,7 @@
 #include "logging.h"
 #include "phxpaths.h"
 #include "controlhelper.h"
+#include "debughelper.h"
 
 using namespace Library;
 
@@ -33,108 +34,7 @@ using namespace Library;
 #define xstr(s) str(s)
 #define str(s) #s
 
-// This is used to get the stack trace behind whatever debug message you want to diagnose
-// Simply change the message string below to whatever you want (partial string matching), set the breakpoint
-// and uncomment the first line in main()
-void phoenixDebugMessageHandler( QtMsgType type, const QMessageLogContext &context, const QString &msg ) {
-
-    // Change this QString to reflect the message you want to get a stack trace for
-    if( QString( msg ).contains( QStringLiteral( "YOUR MESSAGE HERE" ) ) ) {
-
-        // Put a breakpoint over this line...
-        int breakPointOnThisLine( 0 );
-
-        // ...and not this one
-        Q_UNUSED( breakPointOnThisLine );
-
-    }
-
-    QByteArray localMsg = msg.toLocal8Bit();
-
-    switch( type ) {
-
-        case QtDebugMsg:
-            fprintf( stderr, "Debug: %s (%s:%u, %s)\n",
-                     localMsg.constData(), context.file, context.line, context.function );
-            break;
-
-        case QtInfoMsg:
-            fprintf( stderr, "Info: %s (%s:%u, %s)\n",
-                     localMsg.constData(), context.file, context.line, context.function );
-            break;
-
-        case QtWarningMsg:
-            fprintf( stderr, "Warning: %s (%s:%u, %s)\n",
-                     localMsg.constData(), context.file, context.line, context.function );
-            break;
-
-        case QtCriticalMsg:
-            fprintf( stderr, "Critical: %s (%s:%u, %s)\n",
-                     localMsg.constData(), context.file, context.line, context.function );
-            break;
-
-        case QtFatalMsg:
-            fprintf( stderr, "Fatal: %s (%s:%u, %s)\n",
-                     localMsg.constData(), context.file, context.line, context.function );
-            abort();
-            break;
-
-        default:
-            break;
-
-    }
-
-}
-
-FILE *logFP = nullptr;
-
-// Alternate version, writes to file
-void phoenixDebugMessageLog( QtMsgType type, const QMessageLogContext &context, const QString &msg ) {
-
-    QByteArray localMsg = msg.toLocal8Bit();
-
-    switch( type ) {
-
-        case QtDebugMsg:
-            fprintf( logFP, "Debug: %s (%s:%u, %s)\n",
-                     localMsg.constData(), context.file, context.line, context.function );
-            break;
-
-        case QtInfoMsg:
-            fprintf( logFP, "Info: %s (%s:%u, %s)\n",
-                     localMsg.constData(), context.file, context.line, context.function );
-            break;
-
-        case QtWarningMsg:
-            fprintf( logFP, "Warning: %s (%s:%u, %s)\n",
-                     localMsg.constData(), context.file, context.line, context.function );
-            break;
-
-        case QtCriticalMsg:
-            fprintf( logFP, "Critical: %s (%s:%u, %s)\n",
-                     localMsg.constData(), context.file, context.line, context.function );
-            break;
-
-        case QtFatalMsg:
-            fprintf( logFP, "Fatal: %s (%s:%u, %s)\n",
-                     localMsg.constData(), context.file, context.line, context.function );
-            abort();
-            break;
-
-        default:
-            break;
-
-    }
-
-    // Print to console too, just in case
-    phoenixDebugMessageHandler( type, context, msg );
-
-}
-
 int main( int argc, char *argv[] ) {
-
-    CmdLineArgs::checkArgs( argc, argv );
-
     // Init controller db file for backend
     Q_INIT_RESOURCE( controllerdb );
 
@@ -145,6 +45,8 @@ int main( int argc, char *argv[] ) {
 
     // Handles stuff with the windowing system
     QGuiApplication app( argc, argv );
+
+    QVariantMap commandLineSource = parseCommandLine( app );
 
     // The engine that runs our QML-based UI
     QQmlApplicationEngine engine;
@@ -176,7 +78,6 @@ int main( int argc, char *argv[] ) {
     QObject::connect( &engine, &QQmlApplicationEngine::quit, &app, &QGuiApplication::quit );
 
     // Register our custom types for use within QML
-    qmlRegisterType<CmdLineArgs>( "vg.phoenix.backend", 1, 0, "CmdLineArgs" );
     qmlRegisterType<VideoOutput>( "vg.phoenix.backend", 1, 0, "VideoOutput" );
     qmlRegisterType<CoreControlProxy>( "vg.phoenix.backend", 1, 0, "CoreControl" );
     qmlRegisterUncreatableType<ControlHelper>( "vg.phoenix.backend", 1, 0, "Control", "Control or its subclasses cannot be instantiated from QML." );
@@ -216,6 +117,9 @@ int main( int argc, char *argv[] ) {
     qRegisterMetaType<Library::GameScannerResult>( "Library::GameScannerResult" );
     qRegisterMetaType<Library::GameScannerResult>( "GameScannerResult" );
     //qRegisterMetaType<Library::GameData>( "GameData" );
+
+    // Give the QML engine our command line args
+    engine.rootContext()->setContextProperty( "commandLineSource", commandLineSource );
 
     // Load the root QML object and everything under it
     engine.load( QUrl( QStringLiteral( "qrc:/main.qml" ) ) );
