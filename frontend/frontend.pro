@@ -63,7 +63,7 @@ include( deployment.pri )
     INCLUDEPATH += ../externals/quazip/quazip
 
     # Include our stuff
-    INCLUDEPATH += ../backend ../backend/consumer ../backend/core ../backend/input ../backend/role ../backend/util
+    INCLUDEPATH += ../backend ../backend/consumer ../backend/core ../backend/input ../backend/pipeline ../backend/role ../backend/util
     INCLUDEPATH += cpp cpp/library cpp/library/database cpp/library/fileinfo cpp/library/model cpp/library/scanner cpp/theme
 
     SOURCES += \
