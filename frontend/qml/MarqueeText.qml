@@ -27,8 +27,11 @@ Item {
     property bool running: false;
     property double pixelsPerFrame: 1;
     property bool bold: false;
+    property bool forward: true;
 
     property bool finishedAnimating: true;
+
+    property bool debug: false;
 
     // Updated on demand, not via a property binding
     property double animationDuration: 0;
@@ -53,6 +56,13 @@ Item {
     // Handle bold toggling affecting width of text
     onBoldChanged: handleSituationChanged();
 
+    onStateChanged: if( debug ) {
+                        console.log( state );
+                    }
+    // Some extra transformations for reverse mode
+    transform: Rotation { origin.x: width / 2; origin.y: height / 2; axis { x: 0; y: 1; z: 0 } angle: forward ? 0 : 180 }
+    property int reverseX: forward ? 0 : textWidth - width;
+
     // Deal with either needsMarqueeAtAll or running having changed
     function handleSituationChanged() {
         if( needsMarqueeAtAll ) beginAnimation();
@@ -63,8 +73,14 @@ Item {
     function beginAnimation() {
         finishedAnimating = false;
         animationDuration = 1 / pixelsPerFrame * 1000 * ( textWidth / 60 );
-        animationElapsedTime = animationDuration * ( 1.0 - ( text2.x / ( textWidth + spacing ) ) );
-        animationRemainingTime = animationDuration * ( text2.x / ( textWidth + spacing ) );
+        animationElapsedTime = animationDuration * ( 1.0 - ( ( text2.x - reverseX ) / ( textWidth + spacing ) ) );
+        animationRemainingTime = animationDuration * ( ( text2.x - reverseX ) / ( textWidth + spacing ) );
+        if( debug ) {
+            console.log( "~~~~state = " + state );
+            console.trace();
+            console.log( "beginAnimation(), elapsed = " + animationElapsedTime
+                        + " remaining = " + animationRemainingTime );
+        }
 
         // We need to begin animating:
         if( running )
@@ -72,9 +88,16 @@ Item {
 
         // We need to stop animating:
 
+        // If we were already idle, we're done, keep it that way
+        // Simulate the state change *to* idle by calling endAnimation() immediately
+        // Fixes an issue where handleSituationChanged() then beginAnimation() is called when this Component finishes instantiating
+        else if( state === "idle" ) {
+            endAnimation();
+        }
+
         // If text2 is more than halfway through its journey, just finish it
-        else if( text2.x < ( textWidth + spacing ) / 2 )
-                state = "resetLeft";
+        else if( text2.x - reverseX < ( textWidth + spacing ) / 2 )
+            state = "resetLeft";
 
         // Otherwise, retreat!
         else
@@ -128,11 +151,11 @@ Item {
             to: "fullLoop";
             SequentialAnimation {
                 loops: Animation.Infinite;
-                PropertyAction { target: text1; property: "x"; value: 0; }
-                PropertyAction { target: text2; property: "x"; value: textWidth + spacing; }
+                PropertyAction { target: text1; property: "x"; value: 0 + reverseX; }
+                PropertyAction { target: text2; property: "x"; value: textWidth + spacing + reverseX; }
                 ParallelAnimation {
-                    PropertyAnimation { target: text1; duration: animationDuration; property: "x"; to: -textWidth - spacing; }
-                    PropertyAnimation { target: text2; duration: animationDuration; property: "x"; to: 0; }
+                    PropertyAnimation { target: text1; duration: animationDuration; property: "x"; to: -textWidth - spacing + reverseX; }
+                    PropertyAnimation { target: text2; duration: animationDuration; property: "x"; to: 0 + reverseX; }
                 }
             }
         },
@@ -142,8 +165,8 @@ Item {
             to: "partialLoop";
             SequentialAnimation {
                 ParallelAnimation {
-                    PropertyAnimation { target: text1; duration: animationRemainingTime < 0 ? 0 : animationRemainingTime; property: "x"; to: -textWidth - spacing; }
-                    PropertyAnimation { target: text2; duration: animationRemainingTime < 0 ? 0 : animationRemainingTime; property: "x"; to: 0; }
+                    PropertyAnimation { target: text1; duration: animationRemainingTime < 10 ? 10 : animationRemainingTime; property: "x"; to: -textWidth - spacing + reverseX; }
+                    PropertyAnimation { target: text2; duration: animationRemainingTime < 10 ? 10 : animationRemainingTime; property: "x"; to: 0 + reverseX; }
                 }
             }
             onRunningChanged: {
@@ -157,12 +180,16 @@ Item {
             to: "resetLeft";
             SequentialAnimation {
                 ParallelAnimation {
-                    PropertyAnimation { target: text1; easing.type: Easing.OutQuad; duration: animationRemainingTime < 0 ? 0 : animationRemainingTime; property: "x"; to: -textWidth - spacing; }
-                    PropertyAnimation { target: text2; easing.type: Easing.OutQuad; duration: animationRemainingTime < 0 ? 0 : animationRemainingTime; property: "x"; to: 0; }
+                    PropertyAnimation { target: text1; easing.type: Easing.OutQuad; duration: animationRemainingTime < 10 ? 10 : animationRemainingTime; property: "x"; to: -textWidth - spacing + reverseX; }
+                    PropertyAnimation { target: text2; easing.type: Easing.OutQuad; duration: animationRemainingTime < 10 ? 10 : animationRemainingTime; property: "x"; to: 0 + reverseX; }
                 }
+                PropertyAction { target: marqueeTextRoot; property: "finishedAnimating"; value: true; }
                 PropertyAction { target: text1; property: "x"; value: 0; }
                 PropertyAction { target: text2; property: "x"; value: textWidth + spacing; }
-                PropertyAction { target: marqueeTextRoot; property: "finishedAnimating"; value: true; }
+            }
+            onRunningChanged: {
+                if ( ( state === "resetLeft" ) && ( !running ) )
+                    marqueeTextRoot.state = "idle";
             }
         },
 
@@ -171,10 +198,16 @@ Item {
             to: "resetRight";
             SequentialAnimation {
                 ParallelAnimation {
-                    PropertyAnimation { target: text1; easing.type: Easing.OutQuad; duration: animationElapsedTime < 0 ? 0 : animationElapsedTime; property: "x"; to: 0; }
-                    PropertyAnimation { target: text2; easing.type: Easing.OutQuad; duration: animationElapsedTime < 0 ? 0 : animationElapsedTime; property: "x"; to: textWidth + spacing; }
+                    PropertyAnimation { target: text1; easing.type: Easing.OutQuad; duration: animationElapsedTime < 10 ? 10 : animationElapsedTime; property: "x"; to: 0 + reverseX; }
+                    PropertyAnimation { target: text2; easing.type: Easing.OutQuad; duration: animationElapsedTime < 10 ? 10 : animationElapsedTime; property: "x"; to: textWidth + spacing + reverseX; }
                 }
                 PropertyAction { target: marqueeTextRoot; property: "finishedAnimating"; value: true; }
+                PropertyAction { target: text1; property: "x"; value: 0; }
+                PropertyAction { target: text2; property: "x"; value: textWidth + spacing; }
+            }
+            onRunningChanged: {
+                if ( ( state === "resetRight" ) && ( !running ) )
+                    marqueeTextRoot.state = "idle";
             }
         }
 
@@ -186,8 +219,10 @@ Item {
         width: parent.width;
         x: 0;
 
-        elide: running || !finishedAnimating ? Text.ElideNone : Text.ElideRight;
+        elide: running || !finishedAnimating ? Text.ElideNone : ( forward ? Text.ElideRight : Text.ElideLeft );
         horizontalAlignment: needsMarqueeAtAll ? undefined : parent.horizontalAlignment;
+
+        transform: Rotation { origin.x: width / 2; origin.y: height / 2; axis { x: 0; y: 1; z: 0 } angle: forward ? 0 : 180 }
 
         text: parent.text;
         color: parent.color;
@@ -203,6 +238,8 @@ Item {
 
         // Stay out of the way unless needed
         x: needsMarqueeAtAll ? textWidth + spacing : parent.width + spacing;
+
+        transform: Rotation { origin.x: width / 2; origin.y: height / 2; axis { x: 0; y: 1; z: 0 } angle: forward ? 0 : 180 }
 
         text: parent.text;
         color: parent.color;

@@ -1,4 +1,6 @@
 #include "gamelauncher.h"
+#include "coremodel.h"
+#include "archivefile.h"
 
 using namespace Library;
 
@@ -7,6 +9,7 @@ GameLauncher::GameLauncher( QObject *parent ) :
 }
 
 const QString GameLauncher::getDefaultCore( const QString system ) {
+    Q_UNUSED( system )
 
     // Let the constructor run so it'll make sure default cores are set for any new systems that might not have had their
     // defaults written to the user database yet because the user has not opened that settings page
@@ -14,10 +17,17 @@ const QString GameLauncher::getDefaultCore( const QString system ) {
     CoreModel *model = new CoreModel();
     delete model;
 
-    const static QString statement = QStringLiteral( "SELECT defaultCore FROM defaultCores WHERE system = ?" );
-    auto query = QSqlQuery( UserDatabase::instance()->database() );
-    query.prepare( statement );
-    query.addBindValue( system );
+    QString connectionName = QThread::currentThread()->objectName() % QStringLiteral( "userdata" );
+    QSqlDatabase userDatabase = QSqlDatabase::addDatabase( QStringLiteral( "QSQLITE" ), connectionName );
+
+    if( !userDatabase.isOpen() ) {
+        userDatabase.setDatabaseName( PhxPaths::userDataLocation() % QStringLiteral( "/userdata.sqlite" ) );
+        Q_ASSERT( userDatabase.open() );
+    }
+
+    QSqlQuery query = QSqlQuery( userDatabase );
+    query.prepare( QStringLiteral( "SELECT defaultCore FROM defaultCores WHERE system = :system" ) );
+    query.bindValue( QStringLiteral( ":system" ), system );
 
     auto exec = query.exec();
     Q_ASSERT_X( exec, Q_FUNC_INFO, qPrintable( query.lastError().text() ) );
@@ -38,7 +48,8 @@ const QString GameLauncher::getDefaultCore( const QString system ) {
     defaultCore = PhxPaths::coreLocation() % QStringLiteral( "/" ) % defaultCore % QStringLiteral( ".so" );
 #endif
 
-    return std::move( defaultCore );
+    return defaultCore;
+
 }
 
 bool GameLauncher::verify( const QString system, QString rom ) {
@@ -66,7 +77,7 @@ QString GameLauncher::trimmedGame( QString game ) {
         game.remove( QStringLiteral( "cue://" ) );
     } else if( game.startsWith( QStringLiteral( "zip://" ) ) ) {
         game.remove( QStringLiteral( "zip://" ) );
-        auto nameList = game.split( Library::ArchiveFileInfo::delimiter() );
+        auto nameList = game.split( QStringLiteral( "|||" ) );
 
         auto baseDestName = nameList.at( 1 );
 
@@ -75,6 +86,24 @@ QString GameLauncher::trimmedGame( QString game ) {
         qDebug() << "temp dir: " << game;
         qDebug() << "return: " << JlCompress::extractFile( nameList.first(), nameList.at( 1 ), game );
 
+    }
+
+    return game;
+}
+
+QString GameLauncher::trimmedGameNoExtract( QString game ) {
+
+    if( game.startsWith( QStringLiteral( "file://" ) ) ) {
+        game.remove( QStringLiteral( "file://" ) );
+    } else if( game.startsWith( QStringLiteral( "cue://" ) ) ) {
+        game.remove( QStringLiteral( "cue://" ) );
+    } else if( game.startsWith( QStringLiteral( "zip://" ) ) ) {
+        game.remove( QStringLiteral( "zip://" ) );
+        auto nameList = game.split( QStringLiteral( "|||" ) );
+
+        auto baseDestName = nameList.at( 1 );
+
+        game = QDir::tempPath() + "/" + baseDestName;
     }
 
     return game;

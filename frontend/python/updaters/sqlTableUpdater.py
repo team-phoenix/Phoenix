@@ -72,12 +72,14 @@ class SqlTableUpdater():
         systems.sort()
         return systems
 
-    # TODO: Place this information into an entirely separate database
     # This map defines all Libretro-based systems that Phoenix supports. If it isn't in here, it isn't supported by Phoenix!
+    # TODO: Place this information into an entirely separate database
+    # WARNING: Do NOT change Phoenix UUIDs (1st column), even if there are spelling mistakes. Change friendlyName if you really need to.
+    phoenixSystemDatabase = {
     # friendlyName: North American console name without manufacturer
     # shortName: Abbreviation (typically 3 letters)
     # enabled: True iff a core is available, Phoenix can run it, and the game scanner can find it (extensions set)
-    phoenixSystemDatabase = {
+    
         # Everything else
         "Arcade":                                           {"enabled": True,  "defaultCore": "mame_libretro",                      "friendlyName": "",                    "shortName": "", "manufacturer": "(Various)"       },
 
@@ -121,13 +123,13 @@ class SqlTableUpdater():
         "Hartung - Game Master":                            {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Hartung"         },
         "LeapFrog - Leapster Learning Game System":         {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "LeapFrog"        },
         "Magnavox - Odyssey2":                              {"enabled": True,  "defaultCore": "o2em_libretro",                      "friendlyName": u"Odyssey²",           "shortName": "", "manufacturer": "Magnavox"        },
-        "Microsoft - MSX 2":                                {"enabled": True,  "defaultCore": "bluemsx_libretro",                   "friendlyName": "",                    "shortName": "", "manufacturer": "Microsoft"       },
+        "Microsoft - MSX 2":                                {"enabled": True,  "defaultCore": "bluemsx_libretro",                   "friendlyName": "MSX2",                "shortName": "", "manufacturer": "Microsoft"       },
         "Microsoft - MSX":                                  {"enabled": True,  "defaultCore": "bluemsx_libretro",                   "friendlyName": "",                    "shortName": "", "manufacturer": "Microsoft"       },
         #"Microsoft - XBOX 360 (DLC)":                      {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Microsoft"       },
         #"Microsoft - XBOX 360 (Games on Demand)":          {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Microsoft"       },
         #"Microsoft - XBOX 360 (Title Updates)":            {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Microsoft"       },
         "NEC - PC Engine - TurboGrafx 16":                  {"enabled": True,  "defaultCore": "mednafen_pce_fast_libretro",         "friendlyName": "TurboGrafx 16",       "shortName": "", "manufacturer": "NEC"             },
-        "NEC - Super Grafx":                                {"enabled": True,  "defaultCore": "mednafen_supergrafx_libretro",       "friendlyName": "",                    "shortName": "", "manufacturer": "NEC"             },
+        "NEC - Super Grafx":                                {"enabled": True,  "defaultCore": "mednafen_supergrafx_libretro",       "friendlyName": "SuperGrafx",          "shortName": "", "manufacturer": "NEC"             },
         #"Nintendo - Famicom Disk System":                  {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Nintendo"        },
         "Nintendo - Game Boy Advance (e-Cards)":            {"enabled": True,  "defaultCore": "vbam_libretro",                      "friendlyName": "",                    "shortName": "", "manufacturer": "Nintendo"        },
         "Nintendo - Game Boy Advance":                      {"enabled": True,  "defaultCore": "vbam_libretro",                      "friendlyName": "",                    "shortName": "", "manufacturer": "Nintendo"        },
@@ -184,7 +186,7 @@ class SqlTableUpdater():
         "Commodore - Amiga CD32":                           {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Commodore"       },
         "Commodore - Amiga CDTV":                           {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Commodore"       },
         "Fujitsu - FM Towns series":                        {"enabled": True,  "defaultCore": "mess2014_libretro",                  "friendlyName": "",                    "shortName": "", "manufacturer": "Fujitsu"         },
-        "IBM PC compatible":                                {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "(Various)"       },
+        "IBM PC compatible":                                {"enabled": False, "defaultCore": "",                                   "friendlyName": "PC",                  "shortName": "", "manufacturer": "(Various)"       },
         "Mattel - HyperScan":                               {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Mattel"          },
         "Microsoft - Xbox":                                 {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Microsoft"       },
         "Namco / Sega / Nintendo - Triforce":               {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Sega"            },
@@ -244,9 +246,11 @@ class SqlTableUpdater():
         "CPC":                                                      {"Amstrad - CPC"},
         "DOS":                                                      {"DOS"},
         "GCE - Vectrex":                                            {"GCE - Vectrex"},
+        "IBM PC compatible":                                        {"IBM PC compatible"},
         "Magnavox - Odyssey2":                                      {"Magnavox - Odyssey2"},
         "MAME":                                                     {"Arcade"},
         "Microsoft - MSX 2":                                        {"Microsoft - MSX 2"},
+        "Microsoft - MSX2":                                         {"Microsoft - MSX 2"},
         "Microsoft - MSX":                                          {"Microsoft - MSX"},
 
         # MESS and UME
@@ -282,6 +286,7 @@ class SqlTableUpdater():
 
         "NEC - PC Engine - TurboGrafx 16":                          {"NEC - PC Engine - TurboGrafx 16"},
         "NEC - Super Grafx":                                        {"NEC - Super Grafx"},
+        "NEC - PC Engine SuperGrafx":                               {"NEC - Super Grafx"},
         "Neo Geo":                                                  {"SNK - Neo Geo"},
         "Nintendo - Famicom Disk System":                           {"Nintendo - Nintendo Entertainment System"},
         "Nintendo - Game & Watch":                                  {"Nintendo - Game & Watch"},
@@ -298,11 +303,14 @@ class SqlTableUpdater():
         "Nintendo - Super Nintendo Entertainment System":           {"Nintendo - Super Nintendo Entertainment System"},
         "Nintendo - Virtual Boy":                                   {"Nintendo - Virtual Boy"},
         "Nintendo - Wii":                                           {"Nintendo - Wii"},
+        "PC":                                                       {"IBM PC compatible"},
         "PC-FX":                                                    {"NEC - PC-FX - PC-FXGA"},
         "Sega - 32X":                                               {"Sega - 32X"},
+        "Sega - Dreamcast":                                         {"Sega - Dreamcast"},
         "Sega - Game Gear":                                         {"Sega - Game Gear"},
         "Sega - Master System - Mark III":                          {"Sega - Master System - Mark III"},
         "Sega - Mega Drive - Genesis":                              {"Sega - Mega Drive - Genesis"},
+        "Sega - NAOMI":                                             {"Sega - Naomi"},
         "Sega - PICO":                                              {"Sega - PICO"},
         "Sega - Saturn":                                            {"Sega - Saturn"},
         "Sega - SG-1000":                                           {"Sega - SG-1000"},
@@ -364,6 +372,52 @@ class SqlTableUpdater():
         "SNK - Neo Geo Pocket": "SNK Neo Geo Pocket",
         "Sony - PlayStation Portable": "Sony PlayStation Portable",
         "Sony - PlayStation": "Sony PlayStation",
+    }
+
+    def getOpenVGDBToPhoenixMap(self):
+        return OrderedDict(sorted(self.openVGDBToPhoenixMap.items(), key=lambda t: t[0]))   
+
+    openVGDBToPhoenixMap = {
+        "3DO Interactive Multiplayer": "Panasonic - 3DO Interactive Multiplayer",
+        "Arcade": "Arcade",
+        "Atari 2600": "Atari - 2600",
+        "Atari 5200": "Atari - 5200",
+        "Atari 7800": "Atari - 7800",
+        "Atari Jaguar CD": "Atari - Jaguar",
+        "Atari Jaguar": "Atari - Jaguar",
+        "Atari Lynx": "Atari - Lynx",
+        "Bandai WonderSwan Color": "Bandai - WonderSwan Color",
+        "Bandai WonderSwan": "Bandai - WonderSwan",
+        "Coleco ColecoVision": "Coleco - ColecoVision",
+        "GCE Vectrex": "GCE - Vectrex",
+        "Intellivision": "Mattel - Intellivision",
+        "Magnavox Odyssey2": "Magnavox - Odyssey2",
+        "NEC PC Engine CD/TurboGrafx-CD": "NEC - PC Engine CD - TurboGrafx-CD",
+        "NEC PC Engine/TurboGrafx-16": "NEC - PC Engine - TurboGrafx 16",
+        "NEC PC-FX": "NEC - PC-FX - PC-FXGA",
+        "NEC SuperGrafx": "NEC - Super Grafx",
+        "Nintendo 64": "Nintendo - Nintendo 64",
+        "Nintendo DS": "Nintendo - Nintendo DS",
+        "Nintendo Entertainment System": "Nintendo - Nintendo Entertainment System",
+        "Nintendo Famicom Disk System": "Nintendo - Nintendo Entertainment System",
+        "Nintendo Game Boy Advance": "Nintendo - Game Boy Advance",
+        "Nintendo Game Boy Color": "Nintendo - Game Boy Color",
+        "Nintendo Game Boy": "Nintendo - Game Boy",
+        "Nintendo GameCube": "Nintendo - GameCube",
+        "Nintendo Super Nintendo Entertainment System": "Nintendo - Super Nintendo Entertainment System",
+        "Nintendo Virtual Boy": "Nintendo - Virtual Boy",
+        "Nintendo Wii": "Nintendo - Wii",
+        "Sega 32X": "Sega - 32X",
+        "Sega CD/Mega-CD": "Sega - Mega-CD",
+        "Sega Game Gear": "Sega - Game Gear",
+        "Sega Genesis/Mega Drive": "Sega - Mega Drive - Genesis",
+        "Sega Master System": "Sega - Master System - Mark III",
+        "Sega Saturn": "Sega - Saturn",
+        "Sega SG-1000": "Sega - SG-1000",
+        "SNK Neo Geo Pocket Color": "SNK - Neo Geo Pocket Color",
+        "SNK Neo Geo Pocket": "SNK - Neo Geo Pocket",
+        "Sony PlayStation Portable": "Sony - PlayStation Portable",
+        "Sony PlayStation": "Sony - PlayStation",
     }
 
     def filterUnusedCores(self):

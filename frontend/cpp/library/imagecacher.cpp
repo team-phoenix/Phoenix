@@ -71,21 +71,19 @@ void ImageCacher::setCachedUrl( const QUrl url ) {
 void ImageCacher::handleRequest( QNetworkReply *reply ) {
 
     if( !reply->error() ) {
-        auto imageBytes = reply->readAll();
+        QByteArray imageBytes = reply->readAll();
 
         QFile file( PhxPaths::coverArtCacheLocation() + '/' + identifier() + "." + mImageType );
 
         if( file.open( QIODevice::WriteOnly ) ) {
 
-            if( file.write( std::move( imageBytes ) ) == -1 ) {
+            if( file.write( imageBytes ) == -1 ) {
                 qCWarning( phxLibrary ) << "Couldn't cache " << identifier() << "to" << PhxPaths::coverArtCacheLocation();
             }
 
             else {
-                setCachedUrl( std::move( QUrl( qmlFilePrefix + reply->property( "cachedAbsoluteFilePath" ).toString() ) ) );
+                setCachedUrl( QUrl( qmlFilePrefix + reply->property( "cachedAbsoluteFilePath" ).toString() ) );
             }
-
-            file.close();
 
         }
 

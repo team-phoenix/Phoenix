@@ -2,10 +2,6 @@
 #define COREMODEL_H
 
 #include "frontendcommon.h"
-
-#include "userdatabase.h"
-#include "libretrodatabase.h"
-#include "frontendcommon.h"
 #include "phxpaths.h"
 
 /*
@@ -16,7 +12,6 @@
  */
 
 namespace Library {
-
     class CoreModel : public QAbstractTableModel {
             Q_OBJECT
         public:
@@ -50,14 +45,27 @@ namespace Library {
             bool coreExists( QString defaultCore );
 
         protected:
+            // Role names used from within QML to access this model's data
             QHash<int, QByteArray> mRoleNames;
+
+            // List of all available systems, serves as indicies for the maps below
             QStringList systemList;
             QStringList systemFriendlyNameList;
+
+            // Core lists indexed by given system
             QMap<QString, QStringList> systemToCoresMap;
+
+            // Core lists indexed by given system, cores that are the default are marked with a label: "(default)"
             QMap<QString, QStringList> systemToCoreFriendlyNamesMap;
-            QMap<QString, int> currentCoreIndex;
+
+            // Contains default core for each system
+            QMap<QString, QString> systemToDefaultCoreMap;
+
+            // Index of the default core in the given system's core list, generated from systemToDefaultCoreMap
             QMap<QString, int> defaultCoreIndex;
-            QMap<QString, QString> defaultCoreList;
+
+            // Index of user's choice for current core in the given system's core list
+            QMap<QString, int> currentCoreIndex;
     };
 
 }

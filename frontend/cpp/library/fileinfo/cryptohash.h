@@ -1,5 +1,4 @@
-#ifndef CRYPTOHASH_H
-#define CRYPTOHASH_H
+#pragma once
 
 #include "frontendcommon.h"
 
@@ -20,6 +19,8 @@ namespace Library {
 
             bool addData( QIODevice *device );
 
+            bool addData( const QString &filePath );
+
             QByteArray result() const;
 
         private:
@@ -29,6 +30,3 @@ namespace Library {
     };
 
 }
-
-
-#endif // CRYPTOHASH_H

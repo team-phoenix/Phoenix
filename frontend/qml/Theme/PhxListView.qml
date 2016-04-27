@@ -17,7 +17,7 @@ ListView {
 
     signal doShowAnimation();
     onCurrentIndexChanged: {
-        currentItemOffset = orientation === ListView.Vertical ? currentItem.y : currentItem.x;
+        currentItemOffset = ( ( listView.currentItem === null ) ? 0 : orientation === ListView.Vertical ? currentItem.y : currentItem.x );
         listView.doShowAnimation();
     }
 
@@ -26,15 +26,15 @@ ListView {
 
     highlight: Rectangle {
         id: highlighter;
-        width:  orientation === ListView.Vertical   ? ( listView.activeFocus ? growOnFocusValue : 4 ) : listView.currentItem.width;
-        height: orientation === ListView.Horizontal ? ( listView.activeFocus ? growOnFocusValue : 4 ) : listView.currentItem.height;
+        width:  orientation === ListView.Vertical   ? ( listView.activeFocus ? growOnFocusValue : 4 ) : ( ( listView.currentItem === null ) ? 0 : listView.currentItem.width );
+        height: orientation === ListView.Horizontal ? ( listView.activeFocus ? growOnFocusValue : 4 ) : ( ( listView.currentItem === null ) ? 0 : listView.currentItem.height );
         color: highlighterColor;
 
         Behavior on width { PropertyAnimation { duration: 200; } }
         Behavior on height { PropertyAnimation { duration: 200; } }
 
-        anchors.left: orientation === ListView.Vertical ? parent.left : undefined;
-        anchors.bottom: orientation === ListView.Horizontal ? parent.bottom : undefined;
+        anchors.left: ( listView.currentItem === null ) ? undefined : ( orientation === ListView.Vertical ) ? parent.left : undefined;
+        anchors.bottom: ( listView.currentItem === null ) ? undefined : ( orientation === ListView.Horizontal ) ? parent.bottom : undefined;
 
         Connections {
             target: listView;

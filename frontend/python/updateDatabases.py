@@ -7,6 +7,7 @@ from updaters.sqldatabase import SqlDatabase
 from updaters.updateSystem import SystemUpdater
 from updaters.updateCore import CoreUpdater
 from updaters.updateSystemToCore import SystemToCoreUpdater
+from updaters.updateOpenVGDBToSystem import OpenVGDBToSystemUpdater
 from updaters.updateExtension import ExtensionUpdater
 from updaters.updateFirmware import FirmwareUpdater
 from updaters.updateRomHeaderOffset import RomHeaderOffsetUpdater
@@ -26,6 +27,9 @@ if __name__ == "__main__":
 
     systemToCore = SystemToCoreUpdater(tableName="systemToCore", coreInfo=info)
     systemToCore.updateTable()
+
+    openVGDBToSystem = OpenVGDBToSystemUpdater(tableName="openVGDBToSystem", coreInfo=info)
+    openVGDBToSystem.updateTable()
 
     extensions = ExtensionUpdater(tableName="extension", coreInfo=info)
     extensions.updateTable()

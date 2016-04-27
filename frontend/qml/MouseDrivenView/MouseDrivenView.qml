@@ -9,6 +9,8 @@ import vg.phoenix.themes 1.0
 import vg.phoenix.backend 1.0
 
 Item {
+    layer.enabled: true;
+
     DropArea {
         id: rootDropArea;
         anchors.fill: parent;

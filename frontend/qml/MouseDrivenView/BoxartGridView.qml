@@ -8,6 +8,7 @@ import vg.phoenix.cache 1.0
 import vg.phoenix.backend 1.0
 import vg.phoenix.themes 1.0
 import vg.phoenix.paths 1.0
+import vg.phoenix.models 1.0
 
 FocusScope {
     id: boxartGridBackground;
@@ -43,16 +44,15 @@ FocusScope {
 
             Component.onCompleted: {
                 // Try to get the library to give us an accurate picture of how tall the GridView really is
-                libraryModel.updateCount();
+                //libraryModel.updateCount();
 
                 // Sort in order
-                libraryModel.sort( 1, Qt.AscendingOrder );
+                //libraryModel.sort( 1, Qt.AscendingOrder );
 
-                // Grab focus for ourselves
+                // Grab keyboard focus, this is the object that we decided gets focus initially
                 forceActiveFocus();
             }
 
-            // Our own custom model, defined in librarymodel.cpp
             model: libraryModel;
 
             // If the grid's width is less than the maxCellWidth, get
@@ -166,7 +166,6 @@ FocusScope {
                     hoverEnabled: true;
                     onClicked: { gridView.currentIndex = index; gridView.forceActiveFocus(); }
                     onDoubleClicked: launchGame();
-
                 }
 
                 ColumnLayout {

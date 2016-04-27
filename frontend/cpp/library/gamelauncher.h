@@ -3,12 +3,8 @@
 
 #include "frontendcommon.h"
 
-#include "coremodel.h"
-#include "userdatabase.h"
-#include "libretrodatabase.h"
 #include "logging.h"
 #include "phxpaths.h"
-#include "archivefileinfo.h"
 
 class GameLauncher : public QObject {
         Q_OBJECT
@@ -16,16 +12,12 @@ class GameLauncher : public QObject {
         explicit GameLauncher( QObject *parent = 0 );
 
     public slots:
-        const QString getDefaultCore( const QString system );
+        static const QString getDefaultCore( const QString system );
 
-        bool verify( const QString system, QString rom );
+        static bool verify( const QString system, QString rom );
 
-        QString trimmedGame( QString game );
-
-
-    private:
-
-
+        static QString trimmedGame( QString game );
+        static QString trimmedGameNoExtract( QString game );
 };
 
 #endif // GAMELAUNCHER_H

@@ -1,5 +1,4 @@
-#ifndef IMAGECACHER_H
-#define IMAGECACHER_H
+#pragma once
 
 #include "frontendcommon.h"
 
@@ -13,6 +12,7 @@ namespace  Library {
 #else
     static const QString qmlFilePrefix = QStringLiteral( "file://" );
 #endif
+
     class ImageCacher : public QObject {
             Q_OBJECT
 
@@ -58,5 +58,3 @@ namespace  Library {
             void identifierChanged();
     };
 }
-
-#endif // IMAGECACHER_H

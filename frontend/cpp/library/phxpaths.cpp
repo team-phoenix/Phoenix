@@ -93,15 +93,13 @@ void PhxPaths::initPaths() {
     PhxPaths::mBinLocation = QCoreApplication::applicationDirPath();
 
     // Determine whether or not we're portable
-    QString portableFilename = PhxPaths::mBinLocation % '/' % "PHOENIX-PORTABLE";
-    QFile file( portableFilename );
-    mPortableMode = file.exists();
+    QString portableFilename = PhxPaths::mBinLocation % '/' % QStringLiteral( "PHOENIX-PORTABLE" );
 
-    if( mPortableMode ) {
+    if( QFile::exists( portableFilename ) ) {
         qCDebug( phxLibrary ) << "Portable mode";
         PhxPaths::mResourceLocation = PhxPaths::mBinLocation;
         PhxPaths::mCoreLocation = PhxPaths::mBinLocation % '/' % QStringLiteral( "Cores" );
-        PhxPaths::mMetadataLocation = PhxPaths::mBinLocation % '/' % QStringLiteral( "Metadata" ) % '/';
+        PhxPaths::mMetadataLocation = PhxPaths::mBinLocation % '/' % QStringLiteral( "Metadata" );
 
         PhxPaths::mUserDataLocation = PhxPaths::mBinLocation % '/' % QStringLiteral( "User Data" );
 
@@ -184,11 +182,9 @@ void PhxPaths::initPaths() {
 }
 
 // Instantiate PhxPaths for QML use as a singleton object
-// FIXME: Need to destroy it somehow?
 QObject *PhxPathsSingletonProviderCallback( QQmlEngine *engine, QJSEngine *scriptEngine ) {
     Q_UNUSED( scriptEngine )
 
     Library::PhxPaths *phxPaths = new Library::PhxPaths( engine );
-
     return phxPaths;
 }

@@ -5,9 +5,11 @@ import QtQuick.Layouts 1.2
 import QtQuick.Window 2.0
 import QtGraphicalEffects 1.0
 
-import vg.phoenix.models 1.0
-import vg.phoenix.themes 1.0
+import vg.phoenix.scanner 1.0
 import vg.phoenix.backend 1.0
+import vg.phoenix.models 1.0
+import vg.phoenix.paths 1.0
+import vg.phoenix.themes 1.0
 
 Rectangle {
     id: contentArea;
@@ -58,7 +60,7 @@ Rectangle {
                     interval: 300;
                     running: false;
                     repeat: false;
-                    onTriggered: { libraryModel.setFilter( "games", "title", "%" + searchBar.text + "%" ); }
+                    onTriggered: { libraryModel.setFilter( "title", "%" + searchBar.text + "%" ); }
                 }
                 onTextChanged: searchTimer.restart();
             }
@@ -242,17 +244,37 @@ Rectangle {
         }
     }
 
-    LibraryModel {
+    SqlThreadedModel {
         id: libraryModel;
-        function dragEvent( drag ) { if ( drag.hasUrls ) { handleDraggedUrls( drag.urls ); } }
-        function dropEvent( drop ) { handleDroppedUrls(); }
-        function containsEvent() { handleContainsDrag( rootDropArea.containsDrag ); }
+
+        databaseSettings {
+            connectionName: "USERDATA";
+        }
+
+        fileLocation: PhxPaths.qmlUserDataLocation() + "/userdata.sqlite";
+
+        autoCreate: true;
+        //selectStatement: "SELECT * FROM games ORDER BY title DESC";
+
+        tableName: "games";
+
+        SqlColumn { name: "rowIndex"; type: "INTEGER PRIMARY KEY AUTOINCREMENT"; }
+        SqlColumn { name: "title"; type: "TEXT NOT NULL"; }
+        SqlColumn { name: "system"; type: "TEXT"; }
+        SqlColumn { name: "region"; type: "TEXT"; }
+        SqlColumn { name: "goodtoolsCode"; type: "TEXT"; }
+        SqlColumn { name: "timePlayed"; type: "DATETIME"; }
+        SqlColumn { name: "artworkUrl"; type: "TEXT"; }
+        SqlColumn { name: "coreFilePath"; type: "TEXT"; }
+        SqlColumn { name: "absolutePath"; type: "TEXT"; }
+        SqlColumn { name: "absoluteFilePath"; type: "TEXT UNIQUE NOT NULL"; }
+        SqlColumn { name: "crc32Checksum"; type: "TEXT"; }
 
         Component.onCompleted: {
-            rootDropArea.onEntered.connect( dragEvent );
-            rootDropArea.onDropped.connect( dropEvent );
-            rootDropArea.onContainsDragChanged.connect( containsEvent );
-            libraryModel.startGameScannerThread();
+            libraryModel.setOrderBy( "title", SqlModel.ASC );
+            libraryModel.finishModelConstruction();
+            GameHasherController.scanCompleted.connect( libraryModel.addEntries );
+            //libraryModel.attachDatabase( "/home/path/to/database.sqlite", "an_alias" );
         }
     }
 
@@ -283,6 +305,242 @@ Rectangle {
                     property: "opacity";
                     from: 1;
                     to: 0;
+                }
+            }
+        }
+
+        Component {
+            id: manualAddModeComponent;
+            Item {
+                id: manualAddMode;
+                objectName: "ManualAddMode";
+                visible: !contentAreaStackView.currentObjectName.localeCompare( objectName );
+                enabled: visible;
+                anchors {
+                    top: parent.top; bottom: parent.bottom; left: parent.left;
+                    topMargin: headerArea.height; leftMargin: 30;
+                }
+
+                SqlThreadedModel {
+                    id: tModel;
+                    fileLocation: PhxPaths.qmlMetadataLocation() + "/libretro.sqlite";
+                    tableName: "system";
+                    databaseSettings {
+                        connectionName: "LIBRETRO";
+                    }
+
+                    SqlColumn { name: "UUID"; type: "TEXT PRIMARY KEY"; }
+                    SqlColumn { name: "friendlyName"; type: "TEXT"; }
+                    SqlColumn { name: "shortName"; type: "TEXT"; }
+                    SqlColumn { name: "manufacturer"; type: "TEXT"; }
+
+                    Component.onCompleted: {
+                        tModel.finishModelConstruction();
+                        tModel.setFilter( "enabled", 1, SqlModel.Exact );
+                        //tModel.setFilter( "")
+                    }
+                }
+
+                // @disable-check M300
+                PhxScrollView {
+                    anchors.fill: parent;
+
+                    // @disable-check M300
+                    PhxListView {
+                        id: tableView;
+                        anchors {
+                            // margins: 100;
+                        }
+                        anchors.fill: parent;
+                        spacing: 3;
+
+                        header: RowLayout {
+                                    width: 640;
+                                    height: 60;
+
+                                    // Instructions on how to operate this dialog box
+                                    Item {
+                                        Layout.fillWidth: true;
+                                        Layout.fillHeight: true;
+                                        Text {
+                                            id: headerText;
+                                            anchors.top: parent.top; anchors.left: parent.left;
+                                            width: parent.width;
+                                            height: 30;
+
+                                            verticalAlignment: Text.AlignVCenter;
+                                            horizontalAlignment: Text.AlignLeft;
+                                            text: "Manual Game Matching";
+                                            color: "white";
+                                            font {
+                                                pixelSize: 14;
+                                                family: PhxTheme.common.systemFontFamily;
+                                                bold: true;
+                                            }
+                                        }
+
+                                        Text {
+                                            anchors.top: headerText.bottom; anchors.left: parent.left;
+                                            width: parent.width;
+                                            height: 20;
+
+                                            verticalAlignment: Text.AlignVCenter;
+                                            horizontalAlignment: Text.AlignLeft;
+                                            text: "Phoenix was unable to determine the correct system for the following games. For each game in the list, choose the appropiate system.";
+                                            wrapMode: Text.WordWrap;
+                                            color: PhxTheme.common.baseFontColor;
+                                            font {
+                                                pixelSize: 10;
+                                                family: PhxTheme.common.systemFontFamily;
+                                                bold: true;
+                                            }
+                                        }
+                                    }
+
+                                    // A close button
+                                    Rectangle {
+                                        color: "transparent";
+                                        height: 35;
+                                        width: height;
+
+                                        Image {
+                                            id: closeButton;
+                                            anchors.verticalCenter: parent.verticalCenter;
+                                            height: 12;
+                                            width: 12;
+
+                                            sourceSize { height: height; width: width; }
+                                            source: "close.svg";
+                                        }
+
+                                        MouseArea {
+                                            anchors.fill: parent;
+                                            onClicked: {
+                                                contentAreaStackView.push( { item: boxartGridView, replace: true } );
+                                            }
+                                        }
+                                    }
+                                }
+
+                        delegate: Rectangle {
+                            width: parent.width;
+                            height: 35;
+                            color: "transparent";
+
+                            MouseArea {
+                                id: mouseArea;
+                                anchors.fill: parent;
+                                hoverEnabled: true;
+                            }
+
+                            RowLayout {
+                                anchors.fill: parent;
+                                anchors.leftMargin: 12;
+                                anchors.rightMargin: 12;
+
+                                MarqueeText {
+                                    id: filePath;
+                                    width: 200;
+                                    height: 20;
+                                    text: absoluteFilePath;
+                                    spacing: 50;
+                                    color: PhxTheme.common.highlighterFontColor;
+                                    fontSize: PhxTheme.common.baseFontSize;
+                                    running: index === tableView.currentIndex || mouseArea.containsMouse;
+                                    pixelsPerFrame: 2;
+                                    forward: false;
+                                }
+
+                                TextField {
+                                    id: titleField;
+                                    text: title;
+                                    implicitWidth: 150;
+                                    anchors {
+                                        verticalCenter: parent.verticalCenter;
+                                    }
+                                }
+
+                                Rectangle {
+                                    anchors {
+                                        top: parent.top;
+                                        bottom: parent.bottom;
+                                    }
+
+                                    color: "orange";
+                                }
+
+                                ComboBox {
+                                    id: systemChoices;
+                                    anchors {
+                                        verticalCenter: parent.verticalCenter;
+                                    }
+                                    textRole: "UUID";
+                                    implicitWidth: 250;
+                                    height: parent.height;
+                                    model: tModel;
+
+                                    style: ComboBoxStyle {
+                                        background: Rectangle {
+                                            implicitHeight: control.height;
+                                            implicitWidth: control.width;
+                                            color: "#FFFFFF";
+                                        }
+                                        font: PhxTheme.common.systemFontFamily;
+                                    }
+                                }
+
+                                Button {
+                                    anchors {
+                                        verticalCenter: parent.verticalCenter;
+                                    }
+                                    text: "Add To Library";
+                                    onClicked: {
+                                        libraryModel.addRow( { "title": titleField.text
+                                                              , "system": systemChoices.currentText
+                                                              , "region": region
+                                                              , "artworkUrl": artworkUrl
+                                                              , "absoluteFilePath": absoluteFilePath
+                                                              , "crc32Checksum": crc32Checksum } );
+
+
+                                        tableView.model.deleteRow( index, "absoluteFilePath", absoluteFilePath );
+
+                                    }
+                                }
+                            }
+                        }
+
+                        model: SqlThreadedModel {
+                            id: manualAddModeModel;
+                            tableName: "games";
+                            autoCreate: true;
+                            fileLocation: PhxPaths.qmlUserDataLocation() + "/manual_add_model.sqlite";
+
+                            databaseSettings {
+                                connectionName: "MANUAL_ADD_MODEL";
+                            }
+
+                            SqlColumn { name: "rowIndex"; type: "INTEGER PRIMARY KEY AUTOINCREMENT"; }
+                            SqlColumn { name: "title"; type: "TEXT NOT NULL"; }
+                            SqlColumn { name: "system"; type: "TEXT"; }
+                            SqlColumn { name: "region"; type: "TEXT"; }
+                            SqlColumn { name: "goodtoolsCode"; type: "TEXT"; }
+                            SqlColumn { name: "timePlayed"; type: "DATETIME"; }
+                            SqlColumn { name: "artworkUrl"; type: "TEXT"; }
+                            SqlColumn { name: "coreFilePath"; type: "TEXT"; }
+                            SqlColumn { name: "absolutePath"; type: "TEXT"; }
+                            SqlColumn { name: "absoluteFilePath"; type: "TEXT UNIQUE NOT NULL"; }
+                            SqlColumn { name: "crc32Checksum"; type: "TEXT"; }
+
+                            Component.onCompleted: {
+                                manualAddModeModel.finishModelConstruction();
+                                GameHasherController.filesNeedAssignment.connect( function ( result ) {
+                                    manualAddModeModel.addEntries( result );
+                                    contentAreaStackView.push( { item: manualAddMode, replace: true }  );
+                                });
+                            }
+                        }
+                    }
                 }
             }
         }

@@ -2,14 +2,12 @@
 
 // Library
 #include "gamelauncher.h"
-#include "gamescanner.h"
 #include "imagecacher.h"
-#include "metadatadatabase.h"
-#include "libretrodatabase.h"
-#include "collectionsmodel.h"
-#include "librarymodel.h"
 #include "coremodel.h"
-#include "platformsmodel.h"
+#include "librarytypes.h"
+#include "sqlthreadedmodel.h"
+#include "gamehasher.h"
+#include "gamehashercontroller.h"
 
 // Backend
 #include "control.h"
@@ -28,6 +26,8 @@
 #include "logging.h"
 #include "phxpaths.h"
 #include "controlhelper.h"
+
+using namespace Library;
 
 // Version string helper
 #define xstr(s) str(s)
@@ -141,7 +141,7 @@ int main( int argc, char *argv[] ) {
     // Uncomment this to enable the message handler for debugging and stack tracing
     // qInstallMessageHandler( phoenixDebugMessageHandler );
 
-    QThread::currentThread()->setObjectName( "Main thread" );
+    QThread::currentThread()->setObjectName( "Main/QML thread " );
 
     // Handles stuff with the windowing system
     QGuiApplication app( argc, argv );
@@ -172,15 +172,10 @@ int main( int argc, char *argv[] ) {
     qInstallMessageHandler( phoenixDebugMessageLog );
 #endif
 
-    // Open connections to the SQL databases.
-    Library::LibretroDatabase::open();
-    Library::MetaDataDatabase::open();
-
-    // Necessary to quit properly
+    // Necessary to quit properly from QML
     QObject::connect( &engine, &QQmlApplicationEngine::quit, &app, &QGuiApplication::quit );
 
     // Register our custom types for use within QML
-    // VideoItem::registerTypes();
     qmlRegisterType<CmdLineArgs>( "vg.phoenix.backend", 1, 0, "CmdLineArgs" );
     qmlRegisterType<VideoOutput>( "vg.phoenix.backend", 1, 0, "VideoOutput" );
     qmlRegisterType<CoreControlProxy>( "vg.phoenix.backend", 1, 0, "CoreControl" );
@@ -194,10 +189,16 @@ int main( int argc, char *argv[] ) {
     qRegisterMetaType<QStringMap>();
     qRegisterMetaType<ProducerFormat>();
 
+    qRegisterMetaType<Library::FileEntry>( "FileEntry" );
+
     // Register our custom QML-accessable/instantiable objects
-    qmlRegisterType<Library::PlatformsModel>( "vg.phoenix.models", 1, 0, "PlatformsModel" );
-    qmlRegisterType<Library::CollectionsModel>( "vg.phoenix.models", 1, 0, "CollectionsModel" );
-    qmlRegisterType<Library::LibraryModel>( "vg.phoenix.models", 1, 0, "LibraryModel" );
+    qmlRegisterType<SqlModel>( "vg.phoenix.models", 1, 0, "SqlModel" );
+    qmlRegisterType<SqlColumn>( "vg.phoenix.models", 1, 0, "SqlColumn" );
+    qmlRegisterType<SqlThreadedModel>( "vg.phoenix.models", 1, 0, "SqlThreadedModel" );
+    qmlRegisterType<DatabaseSettings>();
+    qRegisterMetaType<SqlModel::FilterType>( "SqlModel::FilterType" );
+    qRegisterMetaType<SqlModel::OrderBy>( "SqlModel::OrderBy" );
+
     qmlRegisterType<Library::CoreModel>( "vg.phoenix.models", 1, 0, "CoreModel" );
     qmlRegisterType<Library::ImageCacher>( "vg.phoenix.cache", 1, 0, "ImageCacher" );
     qmlRegisterType<GameLauncher>( "vg.phoenix.launcher", 1, 0, "GameLauncher" );
@@ -205,8 +206,16 @@ int main( int argc, char *argv[] ) {
     // Register our custom QML-accessable objects and instantiate them here
     qmlRegisterSingletonType( QUrl( "qrc:/PhxTheme.qml" ), "vg.phoenix.themes", 1, 0, "PhxTheme" );
     qmlRegisterSingletonType<Library::PhxPaths>( "vg.phoenix.paths", 1, 0, "PhxPaths", PhxPathsSingletonProviderCallback );
+    qmlRegisterSingletonType<GameHasherController>( "vg.phoenix.scanner", 1, 0, "GameHasherController", GameHasherControllerSingletonProviderCallback );
 
-    qRegisterMetaType<Library::GameData>( "GameData" );
+    // Register our game scanner types
+    qRegisterMetaType<Library::FileEntry>( "Library::FileEntry" );
+    qRegisterMetaType<Library::FileEntry>( "FileEntry" );
+    qRegisterMetaType<Library::FileList>( "Library::FileList" );
+    qRegisterMetaType<Library::FileList>( "FileList" );
+    qRegisterMetaType<Library::GameScannerResult>( "Library::GameScannerResult" );
+    qRegisterMetaType<Library::GameScannerResult>( "GameScannerResult" );
+    //qRegisterMetaType<Library::GameData>( "GameData" );
 
     // Load the root QML object and everything under it
     engine.load( QUrl( QStringLiteral( "qrc:/main.qml" ) ) );
@@ -218,7 +227,6 @@ int main( int argc, char *argv[] ) {
         gameControllerDBFile.open( QIODevice::ReadWrite );
         QTextStream stream( &gameControllerDBFile );
         stream << "# Insert your custom definitions here" << endl;
-        gameControllerDBFile.close();
     }
 
     // Set InputManager's custom controller DB file
@@ -231,7 +239,7 @@ int main( int argc, char *argv[] ) {
     // Run the app and write return code to the log file if in release mode
 #ifdef QT_NO_DEBUG
     int ret = app.exec();
-    fprintf( logFP, "Returned %d", ret );
+    fprintf( logFP, "Returned %d\n", ret );
     fclose( logFP );
     return ret;
 #else

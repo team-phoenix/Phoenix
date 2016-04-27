@@ -2,6 +2,9 @@
 #define xstr(s) str(s)
 #define str(s) #s
 
+// Define this file as utf-8
+#pragma code_page(65001)
+
 IDI_ICON1 ICON DISCARDABLE "phoenix.ico"
 
 1 VERSIONINFO
@@ -20,7 +23,7 @@ BEGIN
             VALUE "FileDescription", "Phoenix"
             VALUE "FileVersion", xstr(PHOENIX_VER_STR)
             VALUE "InternalName", "Phoenix"
-            VALUE "LegalCopyright", "Copyright (c) 2015 Team Phoenix -- Licensed under GPLv2"
+            VALUE "LegalCopyright", "Copyright ©2016 Team Phoenix -- Licensed under GPLv2"
             VALUE "OriginalFilename", "Phoenix.exe"
             VALUE "ProductName", "Phoenix"
             VALUE "ProductVersion", xstr(PHOENIX_VER_STR)
