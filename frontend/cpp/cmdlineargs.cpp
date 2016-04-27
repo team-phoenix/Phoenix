@@ -7,9 +7,9 @@
 QVariantMap parseCommandLine( QCoreApplication &app ) {
     QCommandLineParser parser;
     parser.addOptions( {
-        { { "c", "core" }, "Set the Libretro core", "Core path" },
-        { { "g", "game" }, "Set the Libretro game", "Game path" },
-        { "libretro", "Run a game in Libretro mode. Choose a core with -c and a game with -g" }
+        { "libretro", "Run a game in Libretro mode. Choose a core with -c and a game with -g" },
+        { { "c", "core" }, "Set the Libretro core", "core path" },
+        { { "g", "game" }, "Set the Libretro game", "game path" },
     } );
     parser.addVersionOption();
     parser.addHelpOption();
@@ -49,6 +49,8 @@ QVariantMap parseCommandLine( QCoreApplication &app ) {
         // Grab filename, use as title
         QFileInfo fileInfo( parser.value( "game" ) );
         map[ "title" ] = fileInfo.completeBaseName();
+    } else if( app.arguments().length() == 1 ) {
+        // Let this through
     } else {
         qWarning() << "A mode must be specified";
         parser.showHelp();
