@@ -472,7 +472,6 @@ QString SqlModel::selectStatement() const {
 }
 
 QVariant SqlModel::data( const QModelIndex &index, int role ) const {
-    qDebug() << index.row() << index.column();
     if( !index.isValid() ){
         return QVariant();
     }

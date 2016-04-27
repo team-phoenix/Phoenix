@@ -19,8 +19,6 @@ PhxScrollView {
 
         currentIndex: -1;
 
-        onCurrentIndexChanged: console.log( "index changed to " + currentIndex );
-
         spacing: 0;
         model: SqlThreadedModel {
             id: sqlModel;
@@ -168,11 +166,6 @@ PhxScrollView {
                     if( listView.currentIndex === index ) {
                         contentArea.contentLibraryModel.setFilter( "system", UUID );
                 }
-            }
-
-            Component.onCompleted: {
-                console.log( index );
-                console.log( "\"" + UUID + "\", \"" + manufacturer + "\", \"" + friendlyName + "\"" );
             }
 
             MarqueeText {
