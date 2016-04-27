@@ -193,6 +193,11 @@ Rectangle {
         radius: 64;
     }
 
+    VideoOutputNode {
+        id: videoOutputNode;
+        videoOutput: videoOutput;
+    }
+
     // QML-based video output module
     VideoOutput {
         id: videoOutput;
