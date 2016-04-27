@@ -10,18 +10,20 @@
 #include "gamehashercontroller.h"
 
 // Backend
+#include "cmdlineargs.h"
+#include "consumer.h"
 #include "control.h"
 #include "controllable.h"
-#include "producer.h"
-#include "consumer.h"
-#include "corecontrolproxy.h"
-#include "corecontrol.h"
-#include "inputmanager.h"
 #include "core.h"
+#include "corecontrol.h"
+#include "corecontrolproxy.h"
+#include "gameconsole.h"
+#include "inputmanager.h"
 #include "libretrocore.h"
+#include "metaoutput.h"
+#include "producer.h"
 #include "videooutput.h"
 #include "videooutputnode.h"
-#include "cmdlineargs.h"
 
 // Misc
 #include "logging.h"
@@ -81,13 +83,16 @@ int main( int argc, char *argv[] ) {
     // Register our custom types for use within QML
     qmlRegisterType<VideoOutputNode>( "vg.phoenix.backend", 1, 0, "VideoOutputNode" );
     qmlRegisterType<VideoOutput>( "vg.phoenix.backend", 1, 0, "VideoOutput" );
-    qmlRegisterType<CoreControlProxy>( "vg.phoenix.backend", 1, 0, "CoreControl" );
+    qmlRegisterType<MetaOutput>( "vg.phoenix.backend", 1, 0, "MetaOutput" );
+    qmlRegisterType<GameConsole>( "vg.phoenix.backend", 1, 0, "CoreControl" );
     qmlRegisterUncreatableType<ControlHelper>( "vg.phoenix.backend", 1, 0, "Control", "Control or its subclasses cannot be instantiated from QML." );
     InputManager::registerTypes();
 
     // Needed for connecting signals/slots
     qRegisterMetaType<Control::State>( "Control::State" );
     qRegisterMetaType<ControlHelper::State>( "ControlHelper::State" );
+    qRegisterMetaType<Node::Command>( "Command" );
+    qRegisterMetaType<Node::DataType>( "DataType" );
     qRegisterMetaType<size_t>( "size_t" );
     qRegisterMetaType<QStringMap>();
     qRegisterMetaType<ProducerFormat>();

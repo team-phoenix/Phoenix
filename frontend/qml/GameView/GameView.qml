@@ -18,10 +18,15 @@ Rectangle {
     property bool running: coreControl.state === Control.PLAYING;
     property alias coreState: coreControl.state;
     property alias coreControl: coreControl;
+    property alias metaOutput: metaOutput;
     property alias videoOutput: videoOutput;
     property bool showBar: true;
     property string title: "";
     property string artworkURL: "";
+
+    MetaOutput {
+        id: metaOutput;
+    }
 
     // Object that handles the running game session
 
@@ -29,7 +34,7 @@ Rectangle {
         id: coreControl;
         Component.onCompleted: {
             this.videoOutput = videoOutput;
-            this.inputManager = root.inputManager;
+            this.metaOutput = metaOutput;
 
             // Immediately launch a game if the command line was invoked
             // If this is set everything else should be, too
