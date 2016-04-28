@@ -1,7 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file>BigPictureView.qml</file>
-        <file>SectionButton.qml</file>
-        <file>InfoBar.qml</file>
-    </qresource>
-</RCC>
