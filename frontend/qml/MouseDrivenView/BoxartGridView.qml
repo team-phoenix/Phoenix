@@ -152,7 +152,7 @@ FocusScope {
                         root.gameViewObject.coreControl.source = dict;
 
                         // Connect the next callback in the chain to be called once the load begins/ends
-                        root.gameViewObject.coreControl.stateChanged.connect( root.stateChangedCallback );
+                        root.gameViewObject.controlOutput.stateChanged.connect( root.stateChangedCallback );
 
                         // Begin the load
                         // Execution will continue in stateChangedCallback() once CoreControl changes state

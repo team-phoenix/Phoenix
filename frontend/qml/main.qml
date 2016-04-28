@@ -17,18 +17,20 @@ ApplicationWindow {
     height: Screen.height * 0.7;
     color: "black";
 
+    // A callback that should be used to launch a game once the load has been invoked
+    // Connect to controlOutput's stateChanged() signal
     function stateChangedCallback( newState ) {
-        console.log( "stateChangedCallback(" + newState + ")" );
-
         // Nothing to do, the load has begun
-        if( newState === Control.LOADING ) {
+        if( newState === Node.Loading ) {
+            console.log( "Core has begun loading." );
             return;
         }
 
         // Load complete, start game and hide library
-        if( newState === Control.PAUSED ) {
+        if( newState === Node.Paused ) {
+            console.log( "Core loaded. Beginning emulation." );
             // Disconnect this callback once it's been used where we want it to be used
-            root.gameViewObject.coreControl.stateChanged.disconnect( stateChangedCallback );
+            root.gameViewObject.controlOutput.stateChanged.disconnect( stateChangedCallback );
 
             root.gameViewObject.coreControl.play();
 
@@ -37,7 +39,6 @@ ApplicationWindow {
             return;
         }
     }
-
 
     property int defaultMinHeight: 600;
     property int defaultMinWidth: 900;
@@ -60,7 +61,11 @@ ApplicationWindow {
         gamepadControlsFrontend: true;
     }
 
-    property var gameViewObject: null;
+    property alias gameViewObject: gameView;
+
+    property var globalGamepadProperty: GlobalGamepad {
+        id: globalGamepad;
+    }
 
     function resetTitle() { title = ""; }
 
@@ -75,7 +80,7 @@ ApplicationWindow {
 
         Component.onCompleted: {
             root.disableMouseClicks();
-            root.gameViewObject = push( { item: gameView } );
+            push( { item: gameView } );
             push( { item: mouseDrivenView, properties: { opacity: 0 } } );
         }
 
@@ -158,6 +163,7 @@ ApplicationWindow {
             popTransition: gameTransition;
         }
 
+        property alias gameView: gameView;
         GameView {
             id: gameView;
             objectName: "GameView";

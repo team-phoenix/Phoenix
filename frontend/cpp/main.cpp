@@ -15,12 +15,11 @@
 #include "control.h"
 #include "controllable.h"
 #include "core.h"
-#include "corecontrol.h"
-#include "corecontrolproxy.h"
 #include "gameconsole.h"
+#include "globalgamepad.h"
 #include "inputmanager.h"
 #include "libretrocore.h"
-#include "metaoutput.h"
+#include "controloutput.h"
 #include "producer.h"
 #include "videooutput.h"
 #include "videooutputnode.h"
@@ -83,7 +82,8 @@ int main( int argc, char *argv[] ) {
     // Register our custom types for use within QML
     qmlRegisterType<VideoOutputNode>( "vg.phoenix.backend", 1, 0, "VideoOutputNode" );
     qmlRegisterType<VideoOutput>( "vg.phoenix.backend", 1, 0, "VideoOutput" );
-    qmlRegisterType<MetaOutput>( "vg.phoenix.backend", 1, 0, "MetaOutput" );
+    qmlRegisterType<ControlOutput>( "vg.phoenix.backend", 1, 0, "ControlOutput" );
+    qmlRegisterType<GlobalGamepad>( "vg.phoenix.backend", 1, 0, "GlobalGamepad" );
     qmlRegisterType<GameConsole>( "vg.phoenix.backend", 1, 0, "CoreControl" );
     qmlRegisterUncreatableType<ControlHelper>( "vg.phoenix.backend", 1, 0, "Control", "Control or its subclasses cannot be instantiated from QML." );
     InputManager::registerTypes();
@@ -93,6 +93,8 @@ int main( int argc, char *argv[] ) {
     qRegisterMetaType<ControlHelper::State>( "ControlHelper::State" );
     qRegisterMetaType<Node::Command>( "Command" );
     qRegisterMetaType<Node::DataType>( "DataType" );
+    qRegisterMetaType<Node::State>( "State" );
+    qmlRegisterUncreatableType<Node>( "vg.phoenix.backend", 1, 0, "Node", "Node or its subclasses cannot be instantiated from QML." );
     qRegisterMetaType<size_t>( "size_t" );
     qRegisterMetaType<QStringMap>();
     qRegisterMetaType<ProducerFormat>();

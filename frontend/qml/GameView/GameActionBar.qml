@@ -241,16 +241,16 @@ Rectangle {
                         console.log( "GameActionBar: Minimize (Pause game)" );
                         // These callbacks are necessary as the call to pause() is non-blocking, it just sends out a signal
                         // The callback will execute when it *actually* pauses
-                        coreControl.stateChanged.connect( pausedCallback );
+                        controlOutput.stateChanged.connect( pausedCallback );
                         coreControl.pause();
                     }
                     function pausedCallback( newState ) {
                         // console.log( "pausedCallback(" + newState + ")" );
-                        if( newState === Control.PAUSED ) {
+                        if( newState === Node.Paused ) {
 
                             // This callback is meant to be used until the pause goes through.
                             // Disconnect once it's done
-                            coreControl.stateChanged.disconnect( pausedCallback );
+                            controlOutput.stateChanged.disconnect( pausedCallback );
 
                             root.disableMouseClicks();
                             rootMouseArea.hoverEnabled = false;
@@ -284,7 +284,7 @@ Rectangle {
                             // If running, ensure the game is paused while the fullscreen transition happens
                             // Only really applies to OS X
                             if( gameView.running ) {
-                                coreControl.stateChanged.connect( stateCallback );
+                                controlOutput.stateChanged.connect( stateCallback );
                                 coreControl.pause();
                             }
 
@@ -296,7 +296,7 @@ Rectangle {
 
                         // Called when the game (on a separate thread) finally pauses
                         function stateCallback( newState ) {
-                            coreControl.stateChanged.disconnect( stateCallback );
+                            controlOutput.stateChanged.disconnect( stateCallback );
                             toggleFullscreen();
                             coreControl.play();
                         }
@@ -330,7 +330,7 @@ Rectangle {
                         console.log( "GameActionBar: Close game" );
 
                         // Do not transition back to the library until we've *fully* shut down (deleted threads)
-                        coreControl.stateChanged.connect( stoppedCallback );
+                        controlOutput.stateChanged.connect( stoppedCallback );
 
                         coreControl.stop();
 
@@ -340,8 +340,8 @@ Rectangle {
 
                     function stoppedCallback( newState ) {
                         console.log( "stoppedCallback(" + newState + ")" );
-                        if( newState === Control.STOPPED ) {
-                            coreControl.stateChanged.disconnect( stoppedCallback );
+                        if( newState === Node.Stopped ) {
+                            controlOutput.stateChanged.disconnect( stoppedCallback );
 
                             console.log( "Going to library" );
 

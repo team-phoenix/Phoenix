@@ -121,14 +121,14 @@ Rectangle {
                     rootMouseArea.hoverEnabled = true;
                     rootMouseArea.cursorShape = Qt.BusyCursor;
 
-                    root.gameViewObject.coreControl.stateChanged.connect( stoppedCallback );
+                    root.gameViewObject.controlOutput.stateChanged.connect( stoppedCallback );
                     root.gameViewObject.coreControl.stop();
                 }
 
                 function stoppedCallback( newState ) {
                     console.log( "stoppedCallback(" + newState + ")" );
-                    if( newState === Control.STOPPED ) {
-                        root.gameViewObject.coreControl.stateChanged.disconnect( stoppedCallback );
+                    if( newState === Node.Stopped ) {
+                        root.gameViewObject.controlOutput.stateChanged.disconnect( stoppedCallback );
 
                         root.resetTitle();
 

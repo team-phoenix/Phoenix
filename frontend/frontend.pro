@@ -115,9 +115,9 @@ include( deployment.pri )
     qml/qml.qrc \
     qml/Theme/theme.qrc \
     qml/assets/assets.qrc \
-    qml/BigPicture/bigpicture.qrc \
     qml/MouseDrivenView/mousedrivenview.qrc \
-    qml/GameView/gameview.qrc
+    qml/GameView/gameview.qrc \
+    qml/BigPicture/bigpicture.qrc
 
 ##
 ## Linker settings
