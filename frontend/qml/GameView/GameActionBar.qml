@@ -265,8 +265,14 @@ Rectangle {
 
             // Fullscreen
             Item {
+                id: fullscreenItem
                 anchors { top: parent.top; bottom: parent.bottom; }
                 width: 24;
+
+                Shortcut {
+                    sequence: StandardKey.FullScreen
+                    onActivated: fullscreenItem.prepareFullscreen()
+                }
 
                 Image {
                     anchors.centerIn: parent;
@@ -280,34 +286,37 @@ Rectangle {
                     source: screenIcon;
                     MouseArea {
                         anchors.fill: parent;
-                        onClicked: {
-                            // If running, ensure the game is paused while the fullscreen transition happens
-                            // Only really applies to OS X
-                            if( gameView.running ) {
-                                coreControl.stateChanged.connect( stateCallback );
-                                coreControl.pause();
-                            }
-
-                            // Otherwise, just do the transition
-                            else {
-                                toggleFullscreen();
-                            }
-                        }
-
-                        // Called when the game (on a separate thread) finally pauses
-                        function stateCallback( newState ) {
-                            coreControl.stateChanged.disconnect( stateCallback );
-                            toggleFullscreen();
-                            coreControl.play();
-                        }
-
-                        function toggleFullscreen() {
-                            if ( root.visibility === Window.FullScreen )
-                                root.visibility = Window.Windowed;
-                            else if ( root.visibility & ( Window.Windowed | Window.Maximized ) )
-                                root.visibility = Window.FullScreen;
-                        }
+                        onClicked: fullscreenItem.prepareFullscreen()
                     }
+                }
+
+
+                function prepareFullscreen() {
+                    // If running, ensure the game is paused while the fullscreen transition happens
+                    // Only really applies to OS X
+                    if( gameView.running ) {
+                        coreControl.stateChanged.connect( stateCallback );
+                        coreControl.pause();
+                    }
+
+                    // Otherwise, just do the transition
+                    else {
+                        toggleFullscreen();
+                    }
+                }
+
+                // Called when the game (on a separate thread) finally pauses
+                function stateCallback( newState ) {
+                    coreControl.stateChanged.disconnect( stateCallback );
+                    toggleFullscreen();
+                    coreControl.play();
+                }
+
+                function toggleFullscreen() {
+                    if ( root.visibility === Window.FullScreen )
+                        root.visibility = Window.Windowed;
+                    else if ( root.visibility & ( Window.Windowed | Window.Maximized ) )
+                        root.visibility = Window.FullScreen;
                 }
             }
 
