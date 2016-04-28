@@ -265,13 +265,13 @@ Rectangle {
 
             // Fullscreen
             Item {
-                id: fullscreenItem
+                id: fullscreenItem;
                 anchors { top: parent.top; bottom: parent.bottom; }
                 width: 24;
 
                 Shortcut {
-                    sequence: StandardKey.FullScreen
-                    onActivated: fullscreenItem.prepareFullscreen()
+                    sequence: StandardKey.FullScreen;
+                    onActivated: fullscreenItem.prepareFullscreen();
                 }
 
                 Image {
@@ -286,7 +286,7 @@ Rectangle {
                     source: screenIcon;
                     MouseArea {
                         anchors.fill: parent;
-                        onClicked: fullscreenItem.prepareFullscreen()
+                        onClicked: fullscreenItem.prepareFullscreen();
                     }
                 }
 
