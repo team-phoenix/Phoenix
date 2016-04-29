@@ -60,6 +60,7 @@ Item {
             }
         }
 
+        vsync: true;
         volume: 1.0;
 
         onSourceChanged: {
