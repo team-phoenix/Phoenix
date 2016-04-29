@@ -1,0 +1,242 @@
+import QtQuick 2.0
+import QtGraphicalEffects 1.0
+
+import vg.phoenix.backend 1.0
+import vg.phoenix.themes 1.0
+import vg.phoenix.launcher 1.0
+import vg.phoenix.paths 1.0
+
+Item {
+    anchors.fill: parent;
+
+    // Make gameManager's objects available from emulator directly
+    property alias controlOutput: gameConsole.controlOutput;
+    property alias gameConsole: gameConsole;
+    property alias globalGamepad: gameConsole.globalGamepad;
+    property alias videoOutput: videoOutput;
+
+    // A string that holds the title of the currently running game
+    property string title: "";
+
+    // A string that holds the URL for the front cover of the currently running game
+    property string artworkURL: "";
+
+    // Object that handles the running game session
+    GameConsole {
+        id: gameConsole;
+
+        // Load a game if set on launch
+        Component.onCompleted: {
+            // Immediately launch a game if the command line was invoked
+            // If this is set everything else should be, too
+            if( commandLineSource[ "type" ] === "libretro" ) {
+                // Set window title to game title
+                title = commandLineSource[ "title" ]
+                window.title = "Loading - " + title;
+
+                // Set up the packet of information to pass to CoreControl
+                var dict = {};
+                dict[ "type" ] = "libretro";
+                dict[ "core" ] = commandLineSource[ "core" ];
+                dict[ "game" ] = commandLineSource[ "game" ];
+                dict[ "systemPath" ] = PhxPaths.qmlFirmwareLocation();
+                dict[ "savePath" ] = PhxPaths.qmlSaveLocation();
+
+                // Extra stuff
+                // title = commandLineSource[ "title" ];
+                dict[ "title" ] = title;
+                dict[ "system" ] = "";
+                dict[ "artworkURL" ] = "";
+
+                // Assign the source
+                gameConsole.source = dict;
+
+                // Connect the next callback in the chain to be called once the load begins/ends
+                controlOutput.stateChanged.connect( stateChangedCallback );
+
+                // Begin the load
+                // Execution will continue in stateChangedCallback() once CoreControl changes state
+                gameConsole.load();
+            }
+        }
+
+        volume: 1.0;
+
+        onSourceChanged: {
+            title = source[ "title" ];
+            artworkURL = source[ "artworkURL" ];
+        }
+
+        globalGamepad: GlobalGamepad {
+            id: globalGamepad;
+        }
+
+        phoenixWindow: PhoenixWindowNode {
+            id: phoenixWindowNode;
+            phoenixWindow: window;
+        }
+
+        // A wrapper necessary to make VideoOutput part of the pipeline
+        videoOutput: VideoOutputNode {
+            id: videoOutputNode;
+            videoOutput: videoOutput;
+        }
+
+        // Object used to track state changes and misc properties set from the core
+        controlOutput: ControlOutput {
+            id: controlOutput;
+
+            // Use this to automatically play once loaded
+            property bool autoPlay: false;
+            property bool firstLaunch: true;
+
+            onStateChanged: {
+                switch( state ) {
+                    case Node.Stopped:
+                        videoOutput.opacity = 0.0;
+                        break;
+
+                    case Node.Loading:
+                        videoOutput.opacity = 0.0;
+                        break;
+
+                    case Node.Playing:
+                        window.title = title;
+
+                        // Show the game content
+                        videoOutput.opacity = 1.0;
+
+                        break;
+
+                    case Node.Paused:
+                        window.title = "Paused - " + title;
+                        if( firstLaunch ) {
+                            firstLaunch = false;
+                            if( autoPlay ) {
+                                console.log( "Autoplay activated" );
+                                gameConsole.play();
+                            }
+                        }
+
+                        videoOutput.opacity = 1.0;
+                        break;
+
+                    case Node.Unloading:
+                        window.title = "Unloading - " + title;
+                        firstLaunch = true;
+                        videoOutput.opacity = 0.0;
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+
+    // A blurred copy of the video that sits behind the real video as an effect
+    FastBlur {
+        id: blurEffect;
+        anchors.fill: parent;
+        source: videoOutput;
+        radius: 64;
+    }
+
+    // Custom video output module
+    VideoOutput {
+         id: videoOutput;
+         anchors.centerIn: parent;
+
+         // Scaling
+
+         // Info for the various modes
+         property real letterBoxHeight: parent.width / aspectRatio;
+         property real letterBoxWidth: parent.width;
+         property real pillBoxWidth: parent.height * aspectRatio;
+         property real pillBoxHeight: parent.height;
+         property bool pillBoxing: parent.width / parent.height / aspectRatio > 1.0;
+
+         // Fit mode (0): Maintain aspect ratio, fit all content within window, letterboxing/pillboxing as necessary
+         property real fitModeWidth: pillBoxing ? pillBoxWidth : letterBoxWidth;
+         property real fitModeHeight: pillBoxing ? pillBoxHeight : letterBoxHeight;
+
+         // Stretch mode (1): Fit to parent, ignore aspect ratio
+         property real stretchModeWidth: parent.width;
+         property real stretchModeHeight: parent.height;
+
+         // Fill mode (2): Maintian aspect ratio, fill window with content, cropping the remaining stuff
+         property real fillModeWidth: 0;
+         property real fillModeHeight: 0;
+
+         // Center mode (3): Show at core's native resolution
+         property real centerModeWidth: 0;
+         property real centerModeHeight: 0;
+
+         property int aspectMode: 0;
+
+         width: {
+             switch( aspectMode ) {
+                 case 0:
+                     width: fitModeWidth;
+                     break;
+                 case 1:
+                     width: stretchModeWidth;
+                     break;
+                 case 2:
+                     width: fillModeWidth;
+                     break;
+                 case 3:
+                     width: centerModeWidth;
+                     break;
+                 default:
+                     width: 0;
+                     break;
+             }
+         }
+         height: {
+             switch( aspectMode ) {
+                 case 0:
+                     height: fitModeHeight;
+                     break;
+                 case 1:
+                     height: stretchModeHeight;
+                     break;
+                 case 2:
+                     height: fillModeHeight;
+                     break;
+                 case 3:
+                     height: centerModeHeight;
+                     break;
+                 default:
+                     height: 0;
+                     break;
+             }
+         }
+
+         linearFiltering: false;
+         television: false;
+         ntsc: true;
+         widescreen: false;
+     }
+
+    // A callback that begins playing a game once loading is complete
+    // Disconnects itself from controlOutput once this is done
+    function stateChangedCallback( newState ) {
+        // Nothing to do, the load has begun
+        if( newState === Node.Loading ) {
+            console.log( "Core has begun loading." );
+            return;
+        }
+
+        // Load complete, start game and hide library
+        if( newState === Node.Paused ) {
+            console.log( "Core loaded. Beginning emulation." );
+            // Disconnect this callback once it's been used where we want it to be used
+            controlOutput.stateChanged.disconnect( stateChangedCallback );
+
+            gameConsole.play();
+
+            return;
+        }
+    }
+}

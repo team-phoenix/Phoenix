@@ -1,34 +1,36 @@
 #include "frontendcommon.h"
 
 // Library
-#include "gamelauncher.h"
-#include "imagecacher.h"
 #include "coremodel.h"
-#include "librarytypes.h"
-#include "sqlthreadedmodel.h"
 #include "gamehasher.h"
 #include "gamehashercontroller.h"
+#include "gamelauncher.h"
+#include "imagecacher.h"
+#include "librarytypes.h"
+#include "sqlthreadedmodel.h"
 
 // Backend
 #include "cmdlineargs.h"
 #include "consumer.h"
 #include "control.h"
 #include "controllable.h"
+#include "controloutput.h"
 #include "core.h"
 #include "gameconsole.h"
 #include "globalgamepad.h"
 #include "inputmanager.h"
 #include "libretrocore.h"
-#include "controloutput.h"
+#include "phoenixwindow.h"
+#include "phoenixwindownode.h"
 #include "producer.h"
 #include "videooutput.h"
 #include "videooutputnode.h"
 
 // Misc
-#include "logging.h"
-#include "phxpaths.h"
 #include "controlhelper.h"
 #include "debughelper.h"
+#include "logging.h"
+#include "phxpaths.h"
 
 using namespace Library;
 
@@ -37,6 +39,9 @@ using namespace Library;
 #define str(s) #s
 
 int main( int argc, char *argv[] ) {
+    // This is the most direct way to set the render loop type
+    putenv( ( char * )"QSG_RENDER_LOOP=threaded" );
+
     // Init controller db file for backend
     Q_INIT_RESOURCE( controllerdb );
 
@@ -80,24 +85,24 @@ int main( int argc, char *argv[] ) {
     QObject::connect( &engine, &QQmlApplicationEngine::quit, &app, &QGuiApplication::quit );
 
     // Register our custom types for use within QML
-    qmlRegisterType<VideoOutputNode>( "vg.phoenix.backend", 1, 0, "VideoOutputNode" );
-    qmlRegisterType<VideoOutput>( "vg.phoenix.backend", 1, 0, "VideoOutput" );
     qmlRegisterType<ControlOutput>( "vg.phoenix.backend", 1, 0, "ControlOutput" );
     qmlRegisterType<GlobalGamepad>( "vg.phoenix.backend", 1, 0, "GlobalGamepad" );
-    qmlRegisterType<GameConsole>( "vg.phoenix.backend", 1, 0, "CoreControl" );
+    qmlRegisterType<PhoenixWindow>( "vg.phoenix.backend", 1, 0, "PhoenixWindow" );
+    qmlRegisterType<PhoenixWindowNode>( "vg.phoenix.backend", 1, 0, "PhoenixWindowNode" );
+    qmlRegisterType<VideoOutput>( "vg.phoenix.backend", 1, 0, "VideoOutput" );
+    qmlRegisterType<VideoOutputNode>( "vg.phoenix.backend", 1, 0, "VideoOutputNode" );
+    qmlRegisterType<GameConsole>( "vg.phoenix.backend", 1, 0, "GameConsole" );
     qmlRegisterUncreatableType<ControlHelper>( "vg.phoenix.backend", 1, 0, "Control", "Control or its subclasses cannot be instantiated from QML." );
     InputManager::registerTypes();
 
     // Needed for connecting signals/slots
-    qRegisterMetaType<Control::State>( "Control::State" );
-    qRegisterMetaType<ControlHelper::State>( "ControlHelper::State" );
     qRegisterMetaType<Node::Command>( "Command" );
     qRegisterMetaType<Node::DataType>( "DataType" );
     qRegisterMetaType<Node::State>( "State" );
-    qmlRegisterUncreatableType<Node>( "vg.phoenix.backend", 1, 0, "Node", "Node or its subclasses cannot be instantiated from QML." );
-    qRegisterMetaType<size_t>( "size_t" );
     qRegisterMetaType<QStringMap>();
+    qRegisterMetaType<size_t>( "size_t" );
     qRegisterMetaType<ProducerFormat>();
+    qmlRegisterUncreatableType<Node>( "vg.phoenix.backend", 1, 0, "Node", "Node or its subclasses cannot be instantiated from QML." );
 
     qRegisterMetaType<Library::FileEntry>( "FileEntry" );
 
@@ -131,7 +136,7 @@ int main( int argc, char *argv[] ) {
     engine.rootContext()->setContextProperty( "commandLineSource", commandLineSource );
 
     // Load the root QML object and everything under it
-    engine.load( QUrl( QStringLiteral( "qrc:/main.qml" ) ) );
+    engine.load( QUrl( QStringLiteral( "qrc:/main/Phoenix.qml" ) ) );
 
     // Ensure custom controller DB file exists
     QFile gameControllerDBFile( Library::PhxPaths::userDataLocation() % '/' % QStringLiteral( "gamecontrollerdb.txt" ) );
@@ -143,11 +148,12 @@ int main( int argc, char *argv[] ) {
     }
 
     // Set InputManager's custom controller DB file
-    QQmlProperty prop( engine.rootObjects().first(), "inputManager.controllerDBFile" );
-    Q_ASSERT( prop.isValid() );
-    QString path = Library::PhxPaths::userDataLocation() % QStringLiteral( "/gamecontrollerdb.txt" );
-    QVariant pathVar( path );
-    prop.write( pathVar );
+    // FIXME: Use with GamepadManager
+    // QQmlProperty prop( engine.rootObjects().first(), "inputManager.controllerDBFile" );
+    // Q_ASSERT( prop.isValid() );
+    // QString path = Library::PhxPaths::userDataLocation() % QStringLiteral( "/gamecontrollerdb.txt" );
+    // QVariant pathVar( path );
+    // prop.write( pathVar );
 
     // Run the app and write return code to the log file if in release mode
 #ifdef QT_NO_DEBUG

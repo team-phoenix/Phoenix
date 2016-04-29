@@ -112,11 +112,11 @@ include( deployment.pri )
     cpp/debughelper.h \
 
     RESOURCES += \
-    qml/qml.qrc \
+    qml/qmlold.qrc \
     qml/Theme/theme.qrc \
-    qml/assets/assets.qrc \
     qml/MouseDrivenView/mousedrivenview.qrc \
     qml/GameView/gameview.qrc \
+    qml/qml.qrc
 
 ##
 ## Linker settings
