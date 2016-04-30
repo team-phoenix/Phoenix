@@ -51,7 +51,9 @@ PhoenixWindow {
 
     Library {
         id: library;
+        anchors.fill: parent;
     }
+
     // Make Library (and (TODO) its most important children) available globally
     property alias library: library;
 

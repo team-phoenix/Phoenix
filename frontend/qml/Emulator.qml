@@ -11,8 +11,11 @@ Item {
 
     // Make gameManager's objects available from emulator directly
     property alias controlOutput: gameConsole.controlOutput;
-    property alias gameConsole: gameConsole;
     property alias globalGamepad: gameConsole.globalGamepad;
+
+    // Make Emulator's objects available unqualified
+    property alias blurEffect: blurEffect;
+    property alias gameConsole: gameConsole;
     property alias videoOutput: videoOutput;
 
     // A string that holds the title of the currently running game
