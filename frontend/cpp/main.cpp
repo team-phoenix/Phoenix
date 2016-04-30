@@ -53,10 +53,14 @@ int main( int argc, char *argv[] ) {
     // Handles stuff with the windowing system
     QGuiApplication app( argc, argv );
 
-    QVariantMap commandLineSource = parseCommandLine( app );
-
     // The engine that runs our QML-based UI
     QQmlApplicationEngine engine;
+
+    // Parse command line args, store them here
+    QVariantMap commandLineSource = parseCommandLine( app );
+
+    // Give the QML engine our command line args
+    engine.rootContext()->setContextProperty( "commandLineSource", commandLineSource );
 
     // Set application metadata
     QGuiApplication::setApplicationDisplayName( QStringLiteral( "Phoenix" ) );
@@ -131,9 +135,6 @@ int main( int argc, char *argv[] ) {
     qRegisterMetaType<Library::GameScannerResult>( "Library::GameScannerResult" );
     qRegisterMetaType<Library::GameScannerResult>( "GameScannerResult" );
     //qRegisterMetaType<Library::GameData>( "GameData" );
-
-    // Give the QML engine our command line args
-    engine.rootContext()->setContextProperty( "commandLineSource", commandLineSource );
 
     // Load the root QML object and everything under it
     engine.load( QUrl( QStringLiteral( "qrc:/main/Phoenix.qml" ) ) );

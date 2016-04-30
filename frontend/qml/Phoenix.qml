@@ -49,13 +49,13 @@ PhoenixWindow {
     property alias globalGamepad: emulator.globalGamepad;
     property alias videoOutput: emulator.videoOutput;
 
-    Library {
-        id: library;
-        anchors.fill: parent;
-    }
+//    Library {
+//        id: library;
+//        anchors.fill: parent;
+//    }
 
-    // Make Library (and (TODO) its most important children) available globally
-    property alias library: library;
+//    // Make Library (and (TODO) its most important children) available globally
+//    property alias library: library;
 
     // Misc Window stuff
 
