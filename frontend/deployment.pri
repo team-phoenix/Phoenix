@@ -42,8 +42,9 @@
     }
 
     # Force the Phoenix binary to be relinked if the backend code has changed
-    win32: TARGETDEPS += ../backend/libphoenix-backend.dll.a ../externals/quazip/quazip/libquazip.a
-    !win32: TARGETDEPS += ../backend/libphoenix-backend.a ../externals/quazip/quazip/libquazip.a
+    win32: TARGETDEPS += ../backend/libphoenix-backend.dll ../externals/quazip/quazip/libquazip.a
+    macx: TARGETDEPS += ../backend/libphoenix-backend.dylib ../externals/quazip/quazip/libquazip.a
+    unix: !macx: TARGETDEPS += ../backend/libphoenix-backend.so ../externals/quazip/quazip/libquazip.a
 
     # Make sure it gets installed
     target.path = "$$PREFIX"
@@ -165,7 +166,7 @@
     # Backend plugin filename
     win32: backendpluginname = phoenix-backend.dll
     macx: backendpluginname = libphoenix-backend.dylib
-    unix: !macx: backendpluginfilenmae = libphoenix-backend.so
+    unix: !macx: backendpluginname = libphoenix-backend.so
 
     # Ideally these files should come from the build folder, however, qmake will not generate rules for them if they don't
     # already exist
