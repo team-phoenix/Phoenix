@@ -42,7 +42,7 @@
     }
 
     # Force the Phoenix binary to be relinked if the backend code has changed
-    win32: TARGETDEPS += ../backend/libphoenix-backend.dll ../externals/quazip/quazip/libquazip.a
+    win32: TARGETDEPS += ../backend/phoenix-backend.dll ../externals/quazip/quazip/libquazip.a
     macx: TARGETDEPS += ../backend/libphoenix-backend.dylib ../externals/quazip/quazip/libquazip.a
     unix: !macx: TARGETDEPS += ../backend/libphoenix-backend.so ../externals/quazip/quazip/libquazip.a
 
