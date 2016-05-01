@@ -1,6 +1,7 @@
 #include "coremodel.h"
 
 #include "databasehelper.h"
+#include "logging.h"
 
 #include <QtCore>
 #include <QtSql>

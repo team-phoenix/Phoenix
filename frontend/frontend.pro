@@ -86,7 +86,8 @@ include( deployment.pri )
     cpp/library/scanner/scannerutil.cpp \
     cpp/main.cpp \
     cpp/library/database/databasehelper.cpp \
-    cpp/cmdlineargs.cpp
+    cpp/cmdlineargs.cpp \
+    cpp/logging.cpp
 
     HEADERS += \
     cpp/library/cuefile.h \
@@ -110,6 +111,7 @@ include( deployment.pri )
     cpp/library/database/databasehelper.h \
     cpp/cmdlineargs.h \
     cpp/debughelper.h \
+    cpp/logging.h
 
     RESOURCES += \
     qml/qmlold.qrc \
@@ -141,9 +143,6 @@ include( deployment.pri )
 
     # Externals
     LIBS += -lquazip
-
-    # Our stuff
-    LIBS += -lphoenix-backend
 
     # SDL 2
     win32: LIBS += -lmingw32 -lSDL2main

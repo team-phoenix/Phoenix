@@ -1,6 +1,7 @@
 #include "gamelauncher.h"
 #include "coremodel.h"
 #include "archivefile.h"
+#include "logging.h"
 
 using namespace Library;
 

@@ -16,6 +16,7 @@
 #include "quazip.h"
 #include "JlCompress.h"
 #include "zlib.h"
+#include "logging.h"
 
 #endif
 

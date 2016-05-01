@@ -1,5 +1,7 @@
 #include "sqlmodel.h"
 
+#include "logging.h"
+
 #include <QDebug>
 
 #include <QSqlQuery>

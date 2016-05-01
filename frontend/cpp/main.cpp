@@ -1,6 +1,7 @@
 #include "frontendcommon.h"
 
 // Library
+#include "cmdlineargs.h"
 #include "coremodel.h"
 #include "gamehasher.h"
 #include "gamehashercontroller.h"
@@ -9,28 +10,11 @@
 #include "librarytypes.h"
 #include "sqlthreadedmodel.h"
 
-// Backend
-#include "cmdlineargs.h"
-#include "consumer.h"
-#include "control.h"
-#include "controllable.h"
-#include "controloutput.h"
-#include "core.h"
-#include "gameconsole.h"
-#include "globalgamepad.h"
-#include "inputmanager.h"
-#include "libretrocore.h"
-#include "phoenixwindow.h"
-#include "phoenixwindownode.h"
-#include "producer.h"
-#include "videooutput.h"
-#include "videooutputnode.h"
-
 // Misc
-#include "controlhelper.h"
 #include "debughelper.h"
-#include "logging.h"
 #include "phxpaths.h"
+#include "logging.h"
+
 
 using namespace Library;
 
@@ -42,9 +26,6 @@ int main( int argc, char *argv[] ) {
     // This is the most direct way to set the render loop type
     putenv( ( char * )"QSG_RENDER_LOOP=threaded" );
 
-    // Init controller db file for backend
-    Q_INIT_RESOURCE( controllerdb );
-
     // Uncomment this to enable the message handler for debugging and stack tracing
     // qInstallMessageHandler( phoenixDebugMessageHandler );
 
@@ -55,6 +36,9 @@ int main( int argc, char *argv[] ) {
 
     // The engine that runs our QML-based UI
     QQmlApplicationEngine engine;
+
+    // Set up the plugin directory path
+    engine.addImportPath( app.applicationDirPath() + QStringLiteral( "/Plugins" ) );
 
     // Parse command line args, store them here
     QVariantMap commandLineSource = parseCommandLine( app );
@@ -88,26 +72,6 @@ int main( int argc, char *argv[] ) {
     // Necessary to quit properly from QML
     QObject::connect( &engine, &QQmlApplicationEngine::quit, &app, &QGuiApplication::quit );
 
-    // Register our custom types for use within QML
-    qmlRegisterType<ControlOutput>( "vg.phoenix.backend", 1, 0, "ControlOutput" );
-    qmlRegisterType<GlobalGamepad>( "vg.phoenix.backend", 1, 0, "GlobalGamepad" );
-    qmlRegisterType<PhoenixWindow>( "vg.phoenix.backend", 1, 0, "PhoenixWindow" );
-    qmlRegisterType<PhoenixWindowNode>( "vg.phoenix.backend", 1, 0, "PhoenixWindowNode" );
-    qmlRegisterType<VideoOutput>( "vg.phoenix.backend", 1, 0, "VideoOutput" );
-    qmlRegisterType<VideoOutputNode>( "vg.phoenix.backend", 1, 0, "VideoOutputNode" );
-    qmlRegisterType<GameConsole>( "vg.phoenix.backend", 1, 0, "GameConsole" );
-    qmlRegisterUncreatableType<ControlHelper>( "vg.phoenix.backend", 1, 0, "Control", "Control or its subclasses cannot be instantiated from QML." );
-    InputManager::registerTypes();
-
-    // Needed for connecting signals/slots
-    qRegisterMetaType<Node::Command>( "Command" );
-    qRegisterMetaType<Node::DataType>( "DataType" );
-    qRegisterMetaType<Node::State>( "State" );
-    qRegisterMetaType<QStringMap>();
-    qRegisterMetaType<size_t>( "size_t" );
-    qRegisterMetaType<ProducerFormat>();
-    qmlRegisterUncreatableType<Node>( "vg.phoenix.backend", 1, 0, "Node", "Node or its subclasses cannot be instantiated from QML." );
-
     qRegisterMetaType<Library::FileEntry>( "FileEntry" );
 
     // Register our custom QML-accessable/instantiable objects
@@ -140,13 +104,14 @@ int main( int argc, char *argv[] ) {
     engine.load( QUrl( QStringLiteral( "qrc:/main/Phoenix.qml" ) ) );
 
     // Ensure custom controller DB file exists
-    QFile gameControllerDBFile( Library::PhxPaths::userDataLocation() % '/' % QStringLiteral( "gamecontrollerdb.txt" ) );
-
-    if( !gameControllerDBFile.exists() ) {
-        gameControllerDBFile.open( QIODevice::ReadWrite );
-        QTextStream stream( &gameControllerDBFile );
-        stream << "# Insert your custom definitions here" << endl;
-    }
+    // FIXME: Use with GamepadManager
+    // QFile gameControllerDBFile( Library::PhxPaths::userDataLocation() % '/' % QStringLiteral( "gamecontrollerdb.txt" ) );
+    //
+    // if( !gameControllerDBFile.exists() ) {
+    //     gameControllerDBFile.open( QIODevice::ReadWrite );
+    //     QTextStream stream( &gameControllerDBFile );
+    //     stream << "# Insert your custom definitions here" << endl;
+    // }
 
     // Set InputManager's custom controller DB file
     // FIXME: Use with GamepadManager

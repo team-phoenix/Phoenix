@@ -42,7 +42,8 @@
     }
 
     # Force the Phoenix binary to be relinked if the backend code has changed
-    TARGETDEPS += ../backend/libphoenix-backend.a ../externals/quazip/quazip/libquazip.a
+    win32: TARGETDEPS += ../backend/libphoenix-backend.dll.a ../externals/quazip/quazip/libquazip.a
+    !win32: TARGETDEPS += ../backend/libphoenix-backend.a ../externals/quazip/quazip/libquazip.a
 
     # Make sure it gets installed
     target.path = "$$PREFIX"
@@ -156,6 +157,35 @@
         # Make qmake aware that this target exists
         QMAKE_EXTRA_TARGETS += linuxdesktopentry
     }
+
+##
+## Copy the backend plugin file and its qmldir file into the build folder
+##
+
+    # Backend plugin filename
+    win32: backendpluginname = phoenix-backend.dll
+    macx: backendpluginname = libphoenix-backend.dylib
+    unix: !macx: backendpluginfilenmae = libphoenix-backend.so
+
+    # Ideally these files should come from the build folder, however, qmake will not generate rules for them if they don't
+    # already exist
+    backendplugin.depends += "$$OUT_PWD/../backend/$$backendpluginname"
+
+    # For the default target (...and anything that depends on it)
+    backendplugin.commands += mkdir -p \"$$TARGET_PATH/Plugins/vg/phoenix/backend\" &&\
+                       cp -p -f \"$$OUT_PWD/../backend/$$backendpluginname\" \"$$TARGET_PATH/Plugins/vg/phoenix/backend/$$backendpluginname\" &&\
+                       cp -p -f \"$$SOURCE_PATH/../backend/qmldir\" \"$$TARGET_PATH/Plugins/vg/phoenix/backend/qmldir\"
+    PRE_TARGETDEPS += backendplugin
+
+    # For make install
+    backendplugin.files += "$$OUT_PWD/../backend/$$backendpluginname" \
+                           "$$SOURCE_PATH/../backend/qmldir"
+    backendplugin.path = "$$PREFIX/Plugins/vg/phoenix/backend"
+    unix: backendplugin.path = "$$PREFIX/lib/phoenix/Plugins/vg/phoenix/backend"
+    INSTALLS += backendplugin
+
+    # Make qmake aware that this target exists
+    QMAKE_EXTRA_TARGETS += backendplugin
 
 ##
 ## On OS X, ignore all of the above when it comes to make install and just copy the whole .app folder verbatim

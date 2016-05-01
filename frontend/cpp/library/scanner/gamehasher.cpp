@@ -7,6 +7,7 @@
 
 #include "mapfunctor.h"
 #include "reducefunctor.h"
+#include "logging.h"
 
 using namespace Library;
 
