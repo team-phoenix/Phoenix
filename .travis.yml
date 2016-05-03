@@ -6,7 +6,7 @@ git:
 before_install:
   - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
   - git submodule update --init --recursive
-  - sudo add-apt-repository --yes ppa:beineri/opt-qt56
+  - sudo add-apt-repository --yes ppa:beineri/opt-qt56-trusty
   - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
   - sudo apt-get update -qq
   - sudo apt-get install -qq g++-4.8 libsamplerate0-dev
