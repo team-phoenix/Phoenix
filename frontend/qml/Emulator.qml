@@ -71,10 +71,13 @@ Item {
             artworkURL = source[ "artworkURL" ];
         }
 
+        // An object that emits signals based on the state of all connected controllers combined
+        // Use this to control the UI with any controller
         globalGamepad: GlobalGamepad {
             id: globalGamepad;
         }
 
+        // A wrapper necessary to make PhoenixWindow part of the pipeline
         phoenixWindow: PhoenixWindowNode {
             id: phoenixWindowNode;
             phoenixWindow: window;
@@ -148,80 +151,80 @@ Item {
 
     // Custom video output module
     VideoOutput {
-         id: videoOutput;
-         anchors.centerIn: parent;
+        id: videoOutput;
+        anchors.centerIn: parent;
 
-         // Scaling
+        // Scaling
 
-         // Info for the various modes
-         property real letterBoxHeight: parent.width / aspectRatio;
-         property real letterBoxWidth: parent.width;
-         property real pillBoxWidth: parent.height * aspectRatio;
-         property real pillBoxHeight: parent.height;
-         property bool pillBoxing: parent.width / parent.height / aspectRatio > 1.0;
+        // Info for the various modes
+        property real letterBoxHeight: parent.width / aspectRatio;
+        property real letterBoxWidth: parent.width;
+        property real pillBoxWidth: parent.height * aspectRatio;
+        property real pillBoxHeight: parent.height;
+        property bool pillBoxing: parent.width / parent.height / aspectRatio > 1.0;
 
-         // Fit mode (0): Maintain aspect ratio, fit all content within window, letterboxing/pillboxing as necessary
-         property real fitModeWidth: pillBoxing ? pillBoxWidth : letterBoxWidth;
-         property real fitModeHeight: pillBoxing ? pillBoxHeight : letterBoxHeight;
+        // Fit mode (0): Maintain aspect ratio, fit all content within window, letterboxing/pillboxing as necessary
+        property real fitModeWidth: pillBoxing ? pillBoxWidth : letterBoxWidth;
+        property real fitModeHeight: pillBoxing ? pillBoxHeight : letterBoxHeight;
 
-         // Stretch mode (1): Fit to parent, ignore aspect ratio
-         property real stretchModeWidth: parent.width;
-         property real stretchModeHeight: parent.height;
+        // Stretch mode (1): Fit to parent, ignore aspect ratio
+        property real stretchModeWidth: parent.width;
+        property real stretchModeHeight: parent.height;
 
-         // Fill mode (2): Maintian aspect ratio, fill window with content, cropping the remaining stuff
-         property real fillModeWidth: 0;
-         property real fillModeHeight: 0;
+        // Fill mode (2): Maintian aspect ratio, fill window with content, cropping the remaining stuff
+        property real fillModeWidth: 0;
+        property real fillModeHeight: 0;
 
-         // Center mode (3): Show at core's native resolution
-         property real centerModeWidth: 0;
-         property real centerModeHeight: 0;
+        // Center mode (3): Show at core's native resolution
+        property real centerModeWidth: 0;
+        property real centerModeHeight: 0;
 
-         property int aspectMode: 0;
+        property int aspectMode: 0;
 
-         width: {
-             switch( aspectMode ) {
-                 case 0:
-                     width: fitModeWidth;
-                     break;
-                 case 1:
-                     width: stretchModeWidth;
-                     break;
-                 case 2:
-                     width: fillModeWidth;
-                     break;
-                 case 3:
-                     width: centerModeWidth;
-                     break;
-                 default:
-                     width: 0;
-                     break;
-             }
-         }
-         height: {
-             switch( aspectMode ) {
-                 case 0:
-                     height: fitModeHeight;
-                     break;
-                 case 1:
-                     height: stretchModeHeight;
-                     break;
-                 case 2:
-                     height: fillModeHeight;
-                     break;
-                 case 3:
-                     height: centerModeHeight;
-                     break;
-                 default:
-                     height: 0;
-                     break;
-             }
-         }
+        width: {
+            switch( aspectMode ) {
+                case 0:
+                    width: fitModeWidth;
+                    break;
+                case 1:
+                    width: stretchModeWidth;
+                    break;
+                case 2:
+                    width: fillModeWidth;
+                    break;
+                case 3:
+                    width: centerModeWidth;
+                    break;
+                default:
+                    width: 0;
+                    break;
+            }
+        }
+        height: {
+            switch( aspectMode ) {
+                case 0:
+                    height: fitModeHeight;
+                    break;
+                case 1:
+                    height: stretchModeHeight;
+                    break;
+                case 2:
+                    height: fillModeHeight;
+                    break;
+                case 3:
+                    height: centerModeHeight;
+                    break;
+                default:
+                    height: 0;
+                    break;
+            }
+        }
 
-         linearFiltering: false;
-         television: false;
-         ntsc: true;
-         widescreen: false;
-     }
+        linearFiltering: false;
+        television: false;
+        ntsc: true;
+        widescreen: false;
+        }
 
     // A callback that begins playing a game once loading is complete
     // Disconnects itself from controlOutput once this is done

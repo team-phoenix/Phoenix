@@ -60,4 +60,5 @@
     <qresource prefix="/Util">
         <file>MarqueeText.qml</file>
     </qresource>
+    <qresource prefix="/Settings"/>
 </RCC>
