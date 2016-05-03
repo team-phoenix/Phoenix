@@ -15,7 +15,7 @@ include( deployment.pri )
 ## Compiler settings
 ##
 
-    CONFIG += c++11
+    CONFIG += c++14
 
     OBJECTS_DIR = obj
     MOC_DIR     = moc
