@@ -1,12 +1,13 @@
 #include "cmdlineargs.h"
+#include "logging.h"
 
 #include <QFile>
 #include <QFileInfo>
-#include <QDebug>
 
 QVariantMap parseCommandLine( QCoreApplication &app ) {
     QCommandLineParser parser;
     parser.addOptions( {
+        { "test", "Runs the UI in test mode." },
         { "libretro", "Run a game in Libretro mode. Choose a core with -c and a game with -g" },
         { { "c", "core" }, "Set the Libretro core", "core path" },
         { { "g", "game" }, "Set the Libretro game", "game path" },
@@ -19,6 +20,11 @@ QVariantMap parseCommandLine( QCoreApplication &app ) {
     QVariantMap map;
 
     // Set source based on type given, quit if none is set
+    if( parser.isSet( "test" ) ) {
+        map[ "mainSrc" ] = "TestUI.qml";
+    } else {
+        map[ "mainSrc" ] = "Phoenix.qml";
+    }
     if( parser.isSet( "libretro" ) ) {
         map[ "type" ] = "libretro";
 
@@ -54,8 +60,10 @@ QVariantMap parseCommandLine( QCoreApplication &app ) {
     } else if( app.arguments().length() == 1 ) {
         // Let this through
     } else {
-        qWarning() << "A mode must be specified";
-        parser.showHelp();
+        if ( map.isEmpty() ) {
+            qWarning() << "A mode must be specified";
+            parser.showHelp();
+        }
     }
 
     return map;

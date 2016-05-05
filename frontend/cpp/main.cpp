@@ -101,7 +101,8 @@ int main( int argc, char *argv[] ) {
     //qRegisterMetaType<Library::GameData>( "GameData" );
 
     // Load the root QML object and everything under it
-    engine.load( QUrl( QStringLiteral( "qrc:/main/Phoenix.qml" ) ) );
+    engine.load( QUrl( QStringLiteral( "qrc:/main/" )
+                       + commandLineSource[ QStringLiteral( "mainSrc" ) ].toString() ) );
 
     // Ensure custom controller DB file exists
     // FIXME: Use with GamepadManager

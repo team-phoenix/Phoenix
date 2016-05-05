@@ -49,6 +49,7 @@
     </qresource>
     <qresource prefix="/main">
         <file>Phoenix.qml</file>
+        <file>TestUI.qml</file>
     </qresource>
     <qresource prefix="/Emulator">
         <file>Emulator.qml</file>

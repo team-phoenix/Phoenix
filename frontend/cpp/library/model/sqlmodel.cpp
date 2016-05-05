@@ -2,8 +2,6 @@
 
 #include "logging.h"
 
-#include <QDebug>
-
 #include <QSqlQuery>
 #include <QSqlDatabase>
 #include <QSqlError>
