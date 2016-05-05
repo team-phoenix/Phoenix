@@ -123,6 +123,14 @@ include( deployment.pri )
 ##
 
     ##
+    ## General
+    ##
+
+    # Ensure that qDebug() messages and the like get written to stdout/stderr instead of the Windows debugger
+    # This will set the exe's subsystem to "console" instead of "windows"
+    win32: CONFIG( debug, debug|release ): CONFIG += console
+
+    ##
     ## Library paths
     ##
 
