@@ -7,8 +7,8 @@
 QVariantMap parseCommandLine( QCoreApplication &app ) {
     QCommandLineParser parser;
     parser.addOptions( {
-        { "test", "Runs the UI in test mode." },
-        { "libretro", "Run a game in Libretro mode. Choose a core with -c and a game with -g" },
+        { "test", "Runs the UI in test mode" },
+        { "libretro", "Use a Libretro core. Choose a core with -c and a game with -g" },
         { { "c", "core" }, "Set the Libretro core", "core path" },
         { { "g", "game" }, "Set the Libretro game", "game path" },
     } );
@@ -19,12 +19,13 @@ QVariantMap parseCommandLine( QCoreApplication &app ) {
 
     QVariantMap map;
 
-    // Set source based on type given, quit if none is set
     if( parser.isSet( "test" ) ) {
         map[ "mainSrc" ] = "TestUI.qml";
     } else {
         map[ "mainSrc" ] = "Phoenix.qml";
     }
+
+    // Libretro: Set up the map for Libretro if the option is passed
     if( parser.isSet( "libretro" ) ) {
         map[ "type" ] = "libretro";
 
@@ -32,7 +33,7 @@ QVariantMap parseCommandLine( QCoreApplication &app ) {
             // Clean up the file path given from the user
             map[ "core" ] = QFileInfo( parser.value( "core" ) ).canonicalFilePath();
         } else {
-            qWarning() << "A game must be specified";
+            qWarning() << "ERROR: A game must be specified";
             parser.showHelp();
         }
 
@@ -40,30 +41,27 @@ QVariantMap parseCommandLine( QCoreApplication &app ) {
             // Clean up the file path given from the user
             map[ "game" ] = QFileInfo( parser.value( "game" ) ).canonicalFilePath();
         } else {
-            qWarning() << "A game must be specified";
+            qWarning() << "ERROR: A game must be specified";
             parser.showHelp();
         }
 
         if( !QFileInfo::exists( parser.value( "core" ) ) ) {
-            qWarning() << "Core file does not exist!";
+            qWarning() << "ERROR: Core file does not exist!";
             parser.showHelp();
         }
 
         if( !QFileInfo::exists( parser.value( "game" ) ) ) {
-            qWarning() << "Game file does not exist!";
+            qWarning() << "ERROR: Game file does not exist!";
             parser.showHelp();
         }
 
         // Grab filename, use as title
         QFileInfo fileInfo( parser.value( "game" ) );
         map[ "title" ] = fileInfo.completeBaseName();
-    } else if( app.arguments().length() == 1 ) {
-        // Let this through
-    } else {
-        if ( map.isEmpty() ) {
-            qWarning() << "A mode must be specified";
-            parser.showHelp();
-        }
+    } else if( parser.isSet( "core" ) || parser.isSet( "game" ) ) {
+        // Libretro: Quit if there are Libretro arguments but the core type was not set to Libretro
+        qWarning() << "ERROR: --libretro must be specified if you intend to use a Libretro core";
+        parser.showHelp();
     }
 
     return map;
