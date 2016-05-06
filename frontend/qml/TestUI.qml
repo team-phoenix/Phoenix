@@ -319,6 +319,13 @@ PhoenixWindow {
         onActivated: toggleFullscreen();
     }
 
+    // FIXME: For testing
+    Shortcut {
+        autoRepeat: false;
+        sequence: "f";
+        onActivated: toggleFullscreen();
+    }
+
     function toggleFullscreen() {
         if( window.visibility === Window.FullScreen )
             window.visibility = Window.Windowed;
