@@ -1,6 +1,6 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.3
-import QtQuick.Layouts 1.1
+import QtQuick.Layouts 1.3
 import QtQuick.Window 2.2
 import QtGraphicalEffects 1.0
 
@@ -9,8 +9,10 @@ import vg.phoenix.themes 1.0
 import vg.phoenix.launcher 1.0
 import vg.phoenix.paths 1.0
 
+import "../"
 import "../Emulator"
 import "../Library"
+import "../Util"
 
 // Main window
 PhoenixWindow {
@@ -37,6 +39,7 @@ PhoenixWindow {
 
     // Elements of the Phoenix UI
 
+    property alias remapperModel: remapperModel;
     RemapperModel {
         id: remapperModel;
     }
@@ -58,56 +61,213 @@ PhoenixWindow {
                 Tab {
                     title: "Input";
                     Rectangle {
-                        color: "gray"
+                        color: PhxTheme.common.secondaryBackgroundColor;
+                        anchors.fill: parent;
 
-                        ScrollView {
-                            anchors {
-                                right: parent.right;
-                                top: parent.top;
-                                bottom: parent.bottom;
-                            }
-                            width: 300;
+                        RowLayout {
+                            id: row;
+                            anchors { top: parent.top; bottom: parent.bottom; horizontalCenter: parent.horizontalCenter; }
+                            spacing: 10;
 
-                            ListView {
+                            // Make the roles of listView's model available to all of Row's children
+                            property PhxListView listView: scrollView.listView;
+                            property Item currentItem: listView.currentItem;
+                            property string currentGUID: currentItem == null ? "" : currentItem.guidProxy;
+                            property var remapData: currentItem == null ? [] : currentItem.remapDataProxy;
+                            property bool available: currentItem == null ? false : currentItem.availableProxy;
+                            property bool pressed: currentItem == null ? false : currentItem.pressedProxy;
 
-                                orientation: ListView.Vertical;
+                            // A list of available GUIDs to remap
+                            PhxScrollView {
+                                id: scrollView;
 
-                                model: ListModel {
-                                    ListElement { name: "hello"; }
-                                    ListElement { name: "hello"; }
-                                    ListElement { name: "hello"; }
-                                    ListElement { name: "hello"; }
-                                    ListElement { name: "hello"; }
-                                }
+                                Layout.fillHeight: true;
+                                Layout.fillWidth: true;
+                                Layout.preferredWidth: 600;
 
-                                delegate: Item {
-                                    height: 15;
-                                    width: 100;
+                                // Make listView available from Row
+                                property PhxListView listView: listView;
+                                PhxListView {
+                                    id: listView
+                                    anchors.fill: parent;
 
-                                    Text {
-                                        text: name;
+                                    orientation: ListView.Vertical;
+
+                                    model: remapperModel;
+
+                                    Component.onCompleted: forceActiveFocus();
+
+                                    delegate: Item {
+                                        height: PhxTheme.common.menuItemHeight;
+                                        anchors { left: parent.left; right: parent.right; }
+
+                                        // Make these roles available outside the delegate Component
+                                        property string guidProxy: GUID;
+                                        property var remapDataProxy: remapData;
+                                        property bool availableProxy: available;
+                                        property bool pressedProxy: pressed;
+
+                                        MarqueeText {
+                                            id: platformText;
+                                            anchors { verticalCenter: parent.verticalCenter; left: parent.left; right: parent.right; leftMargin: PhxTheme.common.menuItemMargin; rightMargin: PhxTheme.common.menuItemMargin; }
+                                            horizontalAlignment: Text.AlignLeft;
+                                            text: friendlyName + " (" + GUID + ( available ? ")" : ")(disconnected)" );
+                                            fontSize: PhxTheme.common.baseFontSize + 1;
+                                            color: available ? PhxTheme.common.menuSelectedColor : PhxTheme.selectionArea.baseFontColor;
+                                            spacing: 40;
+                                            running: listView.currentIndex === index || mouseArea.containsMouse;
+                                            pixelsPerFrame: 2.0;
+                                            bold: index === listView.currentIndex;
+                                        }
+
+                                        Rectangle {
+                                            anchors.verticalCenter: parent.verticalCenter;
+                                            anchors.left: platformText.right;
+                                            width: 8;
+                                            height: PhxTheme.common.menuItemHeight - 5;
+                                            color: pressed ? PhxTheme.common.successColor : PhxTheme.common.errorColor;
+                                        }
+
+                                        MouseArea {
+                                            id: mouseArea;
+                                            anchors.fill: parent;
+                                            hoverEnabled: true;
+                                            onClicked: if( listView.currentIndex !== index && !remapperModel.remapMode ) listView.currentIndex = index;
+                                        }
                                     }
                                 }
                             }
-                        }
 
+                            // Remapping data
+                            GridLayout {
+                                id: grid;
+
+                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop;
+                                Layout.fillWidth: true;
+                                Layout.preferredWidth: 400;
+
+                                columns: 4;
+                                rowSpacing: 10;
+                                columnSpacing: 10;
+
+                                property color textColor: row.available ? "white" : "gray";
+
+                                // Face buttons
+                                Text {
+                                    color: grid.textColor;
+                                    text: "A: " + row.remapData[ "A" ];
+                                    Layout.column: 0; Layout.row: 0;
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemap( row.currentGUID, "A" ); }
+                                }
+                                Text {
+                                    color: grid.textColor;
+                                    text: "B: " + row.remapData[ "B" ];
+                                    Layout.column: 0; Layout.row: 1;
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemap( row.currentGUID, "B" ); }
+                                }
+                                Text {
+                                    color: grid.textColor;
+                                    text: "X: " + row.remapData[ "X" ];
+                                    Layout.column: 0; Layout.row: 2;
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemap( row.currentGUID, "X" ); }
+                                }
+                                Text {
+                                    color: grid.textColor;
+                                    text: "Y: " + row.remapData[ "Y" ];
+                                    Layout.column: 0; Layout.row: 3;
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemap( row.currentGUID, "Y" ); }
+                                }
+
+                                // DPad
+                                Text {
+                                    color: grid.textColor;
+                                    text: "Up: " + row.remapData[ "Up" ];
+                                    Layout.column: 1; Layout.row: 0;
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemap( row.currentGUID, "Up" ); }
+                                }
+                                Text {
+                                    color: grid.textColor;
+                                    text: "Down: " + row.remapData[ "Down" ];
+                                    Layout.column: 1; Layout.row: 1;
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemap( row.currentGUID, "Down" ); }
+                                }
+                                Text {
+                                    color: grid.textColor;
+                                    text: "Left: " + row.remapData[ "Left" ];
+                                    Layout.column: 1; Layout.row: 2;
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemap( row.currentGUID, "Left" ); }
+                                }
+                                Text {
+                                    color: grid.textColor;
+                                    text: "Right: " + row.remapData[ "Right" ];
+                                    Layout.column: 1; Layout.row: 3;
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemap( row.currentGUID, "Right" ); }
+                                }
+
+                                // Center buttons
+                                Text {
+                                    color: grid.textColor;
+                                    text: "Back: " + row.remapData[ "Back" ];
+                                    Layout.column: 2; Layout.row: 0;
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemap( row.currentGUID, "Back" ); }
+                                }
+                                Text {
+                                    color: grid.textColor;
+                                    text: "Guide: " + row.remapData[ "Guide" ];
+                                    Layout.column: 2; Layout.row: 1;
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemap( row.currentGUID, "Guide" ); }
+                                }
+                                Text {
+                                    color: grid.textColor;
+                                    text: "Start: " + row.remapData[ "Start" ];
+                                    Layout.column: 2; Layout.row: 2;
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemap( row.currentGUID, "Start" ); }
+                                }
+
+                                // Shoulder buttons
+                                Text {
+                                    color: grid.textColor;
+                                    text: "L: " + row.remapData[ "L" ];
+                                    Layout.column: 3; Layout.row: 0;
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemap( row.currentGUID, "L" ); }
+                                }
+                                Text {
+                                    color: grid.textColor;
+                                    text: "R: " + row.remapData[ "R" ];
+                                    Layout.column: 3; Layout.row: 1;
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemap( row.currentGUID, "R" ); }
+                                }
+                                Text {
+                                    color: grid.textColor;
+                                    text: "L3: " + row.remapData[ "L3" ];
+                                    Layout.column: 3; Layout.row: 2;
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemap( row.currentGUID, "L3" ); }
+                                }
+                                Text {
+                                    color: grid.textColor;
+                                    text: "R3: " + row.remapData[ "R3" ];
+                                    Layout.column: 3; Layout.row: 3;
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemap( row.currentGUID, "R3" ); }
+                                }
+                            }
+                        }
                     }
                 }
+
                 Tab {
                     title: "Audio"
                     Rectangle {
                         color: "gray"
                     }
                 }
+
                 Tab {
                     title: "Video"
                     Rectangle {
                         color: "gray"
                     }
                 }
-
             }
-
         }
 
         Emulator {

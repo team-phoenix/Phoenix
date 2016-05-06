@@ -21,6 +21,22 @@ ListView {
         listView.doShowAnimation();
     }
 
+    Connections {
+        target: currentItem;
+        onXChanged: {
+            if( orientation === ListView.Horizontal ) {
+                currentItemOffset = currentItem.x;
+                listView.doShowAnimation();
+            }
+        }
+        onYChanged: {
+            if( orientation === ListView.Vertical ) {
+                currentItemOffset = currentItem.y;
+                listView.doShowAnimation();
+            }
+        }
+    }
+
     highlightFollowsCurrentItem: false;
     property color highlighterColor: PhxTheme.common.menuItemHighlight;
 

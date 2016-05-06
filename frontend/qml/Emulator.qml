@@ -7,11 +7,6 @@ import vg.phoenix.launcher 1.0
 import vg.phoenix.paths 1.0
 
 Item {
-    //anchors.fill: parent;
-
-    height: 500;
-    width: 500;
-
     // Make gameManager's objects available from emulator directly
     property alias controlOutput: gameConsole.controlOutput;
     property alias globalGamepad: gameConsole.globalGamepad;
