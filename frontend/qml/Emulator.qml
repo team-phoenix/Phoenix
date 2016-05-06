@@ -32,7 +32,7 @@ Item {
             // If this is set everything else should be, too
             if( commandLineSource[ "type" ] === "libretro" ) {
                 // Set window title to game title
-                title = commandLineSource[ "title" ]
+                title = commandLineSource[ "title" ];
                 window.title = "Loading - " + title;
 
                 // Set up the packet of information to pass to CoreControl
@@ -53,7 +53,7 @@ Item {
                 gameConsole.source = dict;
 
                 // Connect the next callback in the chain to be called once the load begins/ends
-                controlOutput.stateChanged.connect( stateChangedCallback );
+                //controlOutput.stateChanged.connect( stateChangedCallback );
 
                 // Begin the load
                 // Execution will continue in stateChangedCallback() once CoreControl changes state
@@ -92,8 +92,8 @@ Item {
             id: controlOutput;
 
             // Use this to automatically play once loaded
-            property bool autoPlay: false;
-            property bool firstLaunch: true;
+            property bool autoPlay: true;
+            property bool initialPauseNotYetDone: true;
 
             onStateChanged: {
                 switch( state ) {
@@ -115,25 +115,28 @@ Item {
 
                     case Node.Paused:
                         window.title = "Paused - " + title;
-                        if( firstLaunch ) {
-                            firstLaunch = false;
-                            if( autoPlay ) {
-                                console.log( "Autoplay activated" );
-                                gameConsole.play();
-                            }
-                        }
-
+                        handleAutoPlay();
                         videoOutput.opacity = 1.0;
                         break;
 
                     case Node.Unloading:
                         window.title = "Unloading - " + title;
-                        firstLaunch = true;
+                        initialPauseNotYetDone = true;
                         videoOutput.opacity = 0.0;
                         break;
 
                     default:
                         break;
+                }
+            }
+
+            function handleAutoPlay() {
+                if( initialPauseNotYetDone ) {
+                    initialPauseNotYetDone = false;
+                    if( autoPlay ) {
+                        console.log( "Autoplay activated" );
+                        gameConsole.play();
+                    }
                 }
             }
         }

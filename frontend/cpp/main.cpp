@@ -24,7 +24,7 @@ using namespace Library;
 
 int main( int argc, char *argv[] ) {
     // This is the most direct way to set the render loop type
-    putenv( ( char * )"QSG_RENDER_LOOP=threaded" );
+    putenv( const_cast<char *>( "QSG_RENDER_LOOP=threaded" ) );
 
     // Uncomment this to enable the message handler for debugging and stack tracing
     // qInstallMessageHandler( phoenixDebugMessageHandler );
@@ -132,5 +132,4 @@ int main( int argc, char *argv[] ) {
     // Otherwise, just run it normally
     return app.exec();
 #endif
-
 }

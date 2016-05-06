@@ -60,6 +60,7 @@ PhoenixWindow {
                 anchors.fill: parent;
                 Tab {
                     title: "Input";
+                    anchors.fill: parent;
                     Rectangle {
                         color: PhxTheme.common.secondaryBackgroundColor;
                         anchors.fill: parent;
@@ -255,16 +256,20 @@ PhoenixWindow {
                 }
 
                 Tab {
-                    title: "Audio"
+                    title: "Audio";
+                    anchors.fill: parent;
                     Rectangle {
-                        color: "gray"
+                        anchors.fill: parent;
+                        color: PhxTheme.common.secondaryBackgroundColor;
                     }
                 }
 
                 Tab {
-                    title: "Video"
+                    title: "Video";
+                    anchors.fill: parent;
                     Rectangle {
-                        color: "gray"
+                        anchors.fill: parent;
+                        color: PhxTheme.common.secondaryBackgroundColor;
                     }
                 }
             }
@@ -284,14 +289,12 @@ PhoenixWindow {
         }
     }
 
-
-
     // Make Emulator and its most important children available globally
-    //property alias emulator: emulator;
-//    property alias controlOutput: emulator.controlOutput;
-//    property alias gameConsole: emulator.gameConsole;
-//    property alias globalGamepad: emulator.globalGamepad;
-//    property alias videoOutput: emulator.videoOutput;
+    property alias emulator: emulator;
+    property alias controlOutput: emulator.controlOutput;
+    property alias gameConsole: emulator.gameConsole;
+    property alias globalGamepad: emulator.globalGamepad;
+    property alias videoOutput: emulator.videoOutput;
 
 //    Library {
 //        id: library;
