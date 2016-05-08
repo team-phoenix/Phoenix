@@ -112,7 +112,7 @@ PhoenixWindow {
                                             id: platformText;
                                             anchors { verticalCenter: parent.verticalCenter; left: parent.left; right: parent.right; leftMargin: PhxTheme.common.menuItemMargin; rightMargin: PhxTheme.common.menuItemMargin; }
                                             horizontalAlignment: Text.AlignLeft;
-                                            text: friendlyName + " (" + GUID + ( available ? ")" : ")(disconnected)" );
+                                            text: friendlyName + ( GUID !== "" ? ( " (" + GUID + ( available ? ")" : ")(disconnected)" ) ) : "" );
                                             fontSize: PhxTheme.common.baseFontSize + 1;
                                             color: available ? PhxTheme.common.menuSelectedColor : PhxTheme.selectionArea.baseFontColor;
                                             spacing: 40;
@@ -179,7 +179,7 @@ PhoenixWindow {
                                     MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemap( row.currentGUID, "Y" ); }
                                 }
 
-                                // DPad
+                                // D-Pad
                                 Text {
                                     color: grid.textColor;
                                     text: "Up: " + row.remapData[ "Up" ];
