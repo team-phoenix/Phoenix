@@ -158,25 +158,25 @@ PhoenixWindow {
                                     color: grid.textColor;
                                     text: "A: " + row.remapData[ "A" ];
                                     Layout.column: 0; Layout.row: 0;
-                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemap( row.currentGUID, "A" ); }
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "A" ); }
                                 }
                                 Text {
                                     color: grid.textColor;
                                     text: "B: " + row.remapData[ "B" ];
                                     Layout.column: 0; Layout.row: 1;
-                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemap( row.currentGUID, "B" ); }
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "B" ); }
                                 }
                                 Text {
                                     color: grid.textColor;
                                     text: "X: " + row.remapData[ "X" ];
                                     Layout.column: 0; Layout.row: 2;
-                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemap( row.currentGUID, "X" ); }
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "X" ); }
                                 }
                                 Text {
                                     color: grid.textColor;
                                     text: "Y: " + row.remapData[ "Y" ];
                                     Layout.column: 0; Layout.row: 3;
-                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemap( row.currentGUID, "Y" ); }
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "Y" ); }
                                 }
 
                                 // D-Pad
@@ -184,25 +184,25 @@ PhoenixWindow {
                                     color: grid.textColor;
                                     text: "Up: " + row.remapData[ "Up" ];
                                     Layout.column: 1; Layout.row: 0;
-                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemap( row.currentGUID, "Up" ); }
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "Up" ); }
                                 }
                                 Text {
                                     color: grid.textColor;
                                     text: "Down: " + row.remapData[ "Down" ];
                                     Layout.column: 1; Layout.row: 1;
-                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemap( row.currentGUID, "Down" ); }
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "Down" ); }
                                 }
                                 Text {
                                     color: grid.textColor;
                                     text: "Left: " + row.remapData[ "Left" ];
                                     Layout.column: 1; Layout.row: 2;
-                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemap( row.currentGUID, "Left" ); }
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "Left" ); }
                                 }
                                 Text {
                                     color: grid.textColor;
                                     text: "Right: " + row.remapData[ "Right" ];
                                     Layout.column: 1; Layout.row: 3;
-                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemap( row.currentGUID, "Right" ); }
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "Right" ); }
                                 }
 
                                 // Center buttons
@@ -210,19 +210,19 @@ PhoenixWindow {
                                     color: grid.textColor;
                                     text: "Back: " + row.remapData[ "Back" ];
                                     Layout.column: 2; Layout.row: 0;
-                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemap( row.currentGUID, "Back" ); }
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "Back" ); }
                                 }
                                 Text {
                                     color: grid.textColor;
                                     text: "Guide: " + row.remapData[ "Guide" ];
                                     Layout.column: 2; Layout.row: 1;
-                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemap( row.currentGUID, "Guide" ); }
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "Guide" ); }
                                 }
                                 Text {
                                     color: grid.textColor;
                                     text: "Start: " + row.remapData[ "Start" ];
                                     Layout.column: 2; Layout.row: 2;
-                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemap( row.currentGUID, "Start" ); }
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "Start" ); }
                                 }
 
                                 // Shoulder buttons
@@ -230,25 +230,25 @@ PhoenixWindow {
                                     color: grid.textColor;
                                     text: "L: " + row.remapData[ "L" ];
                                     Layout.column: 3; Layout.row: 0;
-                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemap( row.currentGUID, "L" ); }
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "L" ); }
                                 }
                                 Text {
                                     color: grid.textColor;
                                     text: "R: " + row.remapData[ "R" ];
                                     Layout.column: 3; Layout.row: 1;
-                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemap( row.currentGUID, "R" ); }
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "R" ); }
                                 }
                                 Text {
                                     color: grid.textColor;
                                     text: "L3: " + row.remapData[ "L3" ];
                                     Layout.column: 3; Layout.row: 2;
-                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemap( row.currentGUID, "L3" ); }
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "L3" ); }
                                 }
                                 Text {
                                     color: grid.textColor;
                                     text: "R3: " + row.remapData[ "R3" ];
                                     Layout.column: 3; Layout.row: 3;
-                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemap( row.currentGUID, "R3" ); }
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "R3" ); }
                                 }
                             }
                         }
