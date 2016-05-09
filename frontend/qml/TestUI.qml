@@ -59,6 +59,15 @@ PhoenixWindow {
             TabView {
                 anchors.fill: parent;
                 Tab {
+                    title: "General";
+
+                    Rectangle {
+                        color: PhxTheme.common.secondaryBackgroundColor;
+                        anchors.fill: parent;
+                    }
+                }
+
+                Tab {
                     title: "Input";
                     anchors.fill: parent;
                     Rectangle {
