@@ -22,10 +22,13 @@ include( deployment.pri )
     RCC_DIR     = rcc
     UI_DIR      = gui
 
+    # Build with debugging info
+    DEFINES += QT_MESSAGELOGCONTEXT
+
     # Version info
     win32: {
         # Grab current git tag (will be appended with revision hash if not on the commit the tag is tagged to)
-        VERSION = $$system( C:\msys64\usr\bin\git describe )
+        VERSION = $$system( git describe )
 
         # Strip v from beginning of tag
         VERSION_TUPLE_1 = $$replace( VERSION, v,  )
@@ -123,14 +126,6 @@ include( deployment.pri )
 ##
 ## Linker settings
 ##
-
-    ##
-    ## General
-    ##
-
-    # Ensure that qDebug() messages and the like get written to stdout/stderr instead of the Windows debugger
-    # This will set the exe's subsystem to "console" instead of "windows"
-    win32: CONFIG( debug, debug|release ): CONFIG += console
 
     ##
     ## Library paths

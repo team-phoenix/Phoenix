@@ -1,5 +1,7 @@
 #include "frontendcommon.h"
 
+#include "debughelper.h"
+
 // Library
 #include "cmdlineargs.h"
 #include "coremodel.h"
@@ -11,7 +13,6 @@
 #include "sqlthreadedmodel.h"
 
 // Misc
-#include "debughelper.h"
 #include "phxpaths.h"
 #include "logging.h"
 
@@ -23,35 +24,23 @@ using namespace Library;
 #define str(s) #s
 
 int main( int argc, char *argv[] ) {
-    // This is the most direct way to set the render loop type
-    putenv( const_cast<char *>( "QSG_RENDER_LOOP=threaded" ) );
+    // Set some environment variables here
+    {
+        // This is the most direct way to set the render loop type
+        putenv( const_cast<char *>( "QSG_RENDER_LOOP=threaded" ) );
+    }
 
-    // Uncomment this to enable the message handler for debugging and stack tracing
-    // qInstallMessageHandler( phoenixDebugMessageHandler );
+    // Use a custom message printing setup
+    {
+        qSetMessagePattern( phoenixCustomDebugOutputFormat );
+        qInstallMessageHandler( phoenixDebugMessageHandler );
+    }
 
-    QThread::currentThread()->setObjectName( "Main/QML thread " );
-
-    // Handles stuff with the windowing system
+    // Runs the main thread's event loop and handles messages from the windowing system
     QGuiApplication app( argc, argv );
-
-    // The engine that runs our QML-based UI
-    QQmlApplicationEngine engine;
-
-    // Set up the plugin directory path
-    engine.addImportPath( app.applicationDirPath() + QStringLiteral( "/Plugins" ) );
 
     // Parse command line args, store them here
     QVariantMap commandLineSource = parseCommandLine( app );
-
-    // Give the QML engine our command line args
-    engine.rootContext()->setContextProperty( "commandLineSource", commandLineSource );
-
-    // Set application metadata
-    QGuiApplication::setApplicationDisplayName( QStringLiteral( "Phoenix" ) );
-    QGuiApplication::setApplicationName( QStringLiteral( "Phoenix" ) );
-    QGuiApplication::setApplicationVersion( QStringLiteral( xstr( PHOENIX_VERSION_STR ) ) );
-    QGuiApplication::setOrganizationName( QStringLiteral( "Team Phoenix" ) );
-    QGuiApplication::setOrganizationDomain( QStringLiteral( "phoenix.vg" ) );
 
     // Figure out the right paths for the environment, and create user storage folders if not already there
     Library::PhxPaths::initPaths();
@@ -69,8 +58,29 @@ int main( int argc, char *argv[] ) {
     qInstallMessageHandler( phoenixDebugMessageLog );
 #endif
 
+    // Print the version once we've set up debug logging
+    qDebug().noquote() << "Phoenix" << QStringLiteral( xstr( PHOENIX_VER_STR ) );
+
+    QThread::currentThread()->setObjectName( "Main/QML thread " );
+
+    // The engine that runs our QML-based UI
+    QQmlApplicationEngine engine;
+
+    // Set up the plugin directory path
+    engine.addImportPath( app.applicationDirPath() + QStringLiteral( "/Plugins" ) );
+
+    // Give the QML engine our command line args
+    engine.rootContext()->setContextProperty( "commandLineSource", commandLineSource );
+
     // Necessary to quit properly from QML
     QObject::connect( &engine, &QQmlApplicationEngine::quit, &app, &QGuiApplication::quit );
+
+    // Set application metadata
+    QGuiApplication::setApplicationDisplayName( QStringLiteral( "Phoenix" ) );
+    QGuiApplication::setApplicationName( QStringLiteral( "Phoenix" ) );
+    QGuiApplication::setApplicationVersion( QStringLiteral( xstr( PHOENIX_VER_STR ) ) );
+    QGuiApplication::setOrganizationName( QStringLiteral( "Team Phoenix" ) );
+    QGuiApplication::setOrganizationDomain( QStringLiteral( "phoenix.vg" ) );
 
     qRegisterMetaType<Library::FileEntry>( "FileEntry" );
 
@@ -100,10 +110,6 @@ int main( int argc, char *argv[] ) {
     qRegisterMetaType<Library::GameScannerResult>( "GameScannerResult" );
     //qRegisterMetaType<Library::GameData>( "GameData" );
 
-    // Load the root QML object and everything under it
-    engine.load( QUrl( QStringLiteral( "qrc:/main/" )
-                       + commandLineSource[ QStringLiteral( "mainSrc" ) ].toString() ) );
-
     // Ensure custom controller DB file exists
     // FIXME: Use with GamepadManager
     // QFile gameControllerDBFile( Library::PhxPaths::userDataLocation() % '/' % QStringLiteral( "gamecontrollerdb.txt" ) );
@@ -122,14 +128,19 @@ int main( int argc, char *argv[] ) {
     // QVariant pathVar( path );
     // prop.write( pathVar );
 
-    // Run the app and write return code to the log file if in release mode
+    // Load the root QML object and everything under it
+    engine.load( QUrl( QStringLiteral( "qrc:/main/" )
+                       + commandLineSource[ QStringLiteral( "mainSrc" ) ].toString() ) );
+
+    // Begin main event loop
+    // Once it returns, write return code to the log file if in release mode
 #ifdef QT_NO_DEBUG
     int ret = app.exec();
     fprintf( logFP, "Returned %d\n", ret );
     fclose( logFP );
     return ret;
 #else
-    // Otherwise, just run it normally
+    // Otherwise, just start it
     return app.exec();
 #endif
 }
