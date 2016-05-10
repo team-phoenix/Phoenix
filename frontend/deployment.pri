@@ -211,17 +211,17 @@
 ## Debugging info
 ##
 
-    win32 {
-        !build_pass: message( PWD_NATIVE: $$PWD_NATIVE )
-        !build_pass: message( OUT_PWD_NATIVE: $$OUT_PWD_NATIVE )
-    }
-    !build_pass: message( PWD_UNIX: $$PWD_UNIX )
-    !build_pass: message( OUT_PWD_UNIX: $$OUT_PWD_UNIX )
-    !build_pass: message( TARGET: $$TARGET )
-    macx {
-        !build_pass: message( OSX_BUNDLE_PATH: $$OSX_BUNDLE_PATH )
-        !build_pass: message( OSX_BINARY_PATH_PREFIX: $$OSX_BINARY_PATH_PREFIX )
-    }
-    win32 {
-        !build_pass: message( PREFIX: $$PREFIX )
-    }
+#    win32 {
+#        !build_pass: message( PWD_NATIVE: $$PWD_NATIVE )
+#        !build_pass: message( OUT_PWD_NATIVE: $$OUT_PWD_NATIVE )
+#    }
+#    !build_pass: message( PWD_UNIX: $$PWD_UNIX )
+#    !build_pass: message( OUT_PWD_UNIX: $$OUT_PWD_UNIX )
+#    !build_pass: message( TARGET: $$TARGET )
+#    macx {
+#        !build_pass: message( OSX_BUNDLE_PATH: $$OSX_BUNDLE_PATH )
+#        !build_pass: message( OSX_BINARY_PATH_PREFIX: $$OSX_BINARY_PATH_PREFIX )
+#    }
+#    win32 {
+#        !build_pass: message( PREFIX: $$PREFIX )
+#    }
