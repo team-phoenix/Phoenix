@@ -44,6 +44,11 @@ PhoenixWindow {
         id: remapperModel;
     }
 
+    property alias libretroVariableModel: libretroVariableModel;
+    LibretroVariableModel {
+        id: libretroVariableModel;
+    }
+
     ColumnLayout {
         spacing: 0;
         anchors.fill: parent;
@@ -64,6 +69,87 @@ PhoenixWindow {
                     Rectangle {
                         color: PhxTheme.common.secondaryBackgroundColor;
                         anchors.fill: parent;
+
+                        ScrollView {
+                            anchors.fill: parent;
+
+                        ListView {
+                            orientation: ListView.Vertical;
+                            model: libretroVariableModel;
+
+                            delegate: Item {
+                                height: 25;
+                                width: 300;
+
+                                Row {
+                                    anchors.fill: parent;
+
+                                    Rectangle {
+                                        anchors {
+                                            top: parent.top;
+                                            bottom: parent.bottom;
+                                        }
+                                        width: 200;
+
+                                        color: "red";
+
+                                        Text {
+                                            anchors.centerIn: parent;
+                                            text: key;
+                                        }
+                                    }
+
+                                    Rectangle {
+                                        anchors {
+                                            top: parent.top;
+                                            bottom: parent.bottom;
+                                        }
+                                        width: 200;
+
+                                        color: "yellow";
+
+                                        Text {
+                                            anchors.centerIn: parent;
+                                            text: description;
+                                        }
+                                    }
+
+                                    Rectangle {
+                                        anchors {
+                                            top: parent.top;
+                                            bottom: parent.bottom;
+                                        }
+                                        width: 100;
+                                        color: "blue";
+
+                                        ComboBox {
+                                            anchors.centerIn: parent;
+                                            model: choices;
+
+                                            // ComboBox is really weird; this is some bad hack, please remove
+                                            // if a better solution is found.
+                                            property bool clicked: false;
+                                            onActivated: {
+                                                clicked = true;
+                                            }
+                                            onCurrentTextChanged: {
+                                                if ( clicked ) {
+                                                    console.log( "TEXTCHANGE: " + currentText );
+                                                    libretroVariableModel.updateVariable( key, currentText );
+                                                    clicked = false;
+                                                }
+                                            }
+                                        }
+
+
+
+                                    }
+
+                                }
+                            }
+                        }
+                        }
+
                     }
                 }
 
@@ -293,6 +379,7 @@ PhoenixWindow {
             }
 
             Component.onCompleted: {
+                emulator.gameConsole.variableModel = window.libretroVariableModel;
                 emulator.gameConsole.remapperModel = remapperModel;
             }
         }
