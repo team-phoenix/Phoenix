@@ -18,8 +18,14 @@ import "../Util"
 PhoenixWindow {
     id: window;
     visible: true;
-    x: Screen.width / 2 - width / 2;
-    y: Screen.height / 2 - height / 2;
+
+    Component.onCompleted: {
+        // Centers the window with a single shot assignment
+        // while still allowing for resize.
+        x = Screen.width / 2 - width / 2;
+        y = Screen.height / 2 - height / 2;
+    }
+
     width: Screen.width * 0.7;
     height: Screen.height * 0.7;
     color: "black";
