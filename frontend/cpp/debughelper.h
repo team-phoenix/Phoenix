@@ -11,7 +11,7 @@ const QString phoenixCustomDebugOutputFormat = QStringLiteral(
             "%{if-warning}W %{endif}"
             "%{if-critical}C %{endif}"
             "%{if-fatal}F %{endif}"
-            "%{time hh:mm:ss:zzz} %{category}: %{message} "
+            "%{time hh:mm:ss:zzz} %{function}():%{line}: %{message} "
             //"%{if-debug}\n               [%{file}:%{line} %{function}()]"/*\n%{backtrace depth=20 separator=\"\n\"}*/"%{endif}"
             //"%{if-info}\n               [%{file}:%{line} %{function}()]"/*\n%{backtrace depth=20 separator=\"\n\"}*/"%{endif}"
             "%{if-warning}\n               [%{file}:%{line} %{function}()]"/*\n%{backtrace depth=20 separator=\"\n\"}*/"%{endif}"
