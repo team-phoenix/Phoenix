@@ -61,6 +61,7 @@ Item {
             }
         }
 
+        aspectRatioMode: 0;
         vsync: true;
         volume: 1.0;
 
@@ -173,50 +174,39 @@ Item {
         property real stretchModeHeight: parent.height;
 
         // Fill mode (2): Maintian aspect ratio, fill window with content, cropping the remaining stuff
+        // TODO
         property real fillModeWidth: 0;
         property real fillModeHeight: 0;
 
         // Center mode (3): Show at core's native resolution
+        // TODO
         property real centerModeWidth: 0;
         property real centerModeHeight: 0;
 
-        property int aspectMode: 0;
+        onAspectModeChanged: calculateSize();
+        Component.onCompleted: calculateSize();
 
-        width: {
+        function calculateSize() {
             switch( aspectMode ) {
                 case 0:
-                    width: fitModeWidth;
+                    width = Qt.binding( function() { return fitModeWidth; } );
+                    height = Qt.binding( function() { return fitModeHeight; } );
                     break;
                 case 1:
-                    width: stretchModeWidth;
+                    width = Qt.binding( function() { return stretchModeWidth; } );
+                    height = Qt.binding( function() { return stretchModeHeight; } );
                     break;
                 case 2:
-                    width: fillModeWidth;
+                    width = Qt.binding( function() { return fillModeWidth; } );
+                    height = Qt.binding( function() { return fillModeHeight; } );
                     break;
                 case 3:
-                    width: centerModeWidth;
+                    width = Qt.binding( function() { return centerModeWidth; } );
+                    height = Qt.binding( function() { return centerModeHeight; } );
                     break;
                 default:
-                    width: 0;
-                    break;
-            }
-        }
-        height: {
-            switch( aspectMode ) {
-                case 0:
-                    height: fitModeHeight;
-                    break;
-                case 1:
-                    height: stretchModeHeight;
-                    break;
-                case 2:
-                    height: fillModeHeight;
-                    break;
-                case 3:
-                    height: centerModeHeight;
-                    break;
-                default:
-                    height: 0;
+                    width = 0;
+                    height = 0;
                     break;
             }
         }
