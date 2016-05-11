@@ -64,6 +64,7 @@ Item {
         aspectRatioMode: 0;
         vsync: true;
         volume: 1.0;
+        userDataLocation: PhxPaths.qmlUserDataLocation();
 
         onSourceChanged: {
             title = source[ "title" ];
