@@ -79,83 +79,69 @@ PhoenixWindow {
                         ScrollView {
                             anchors.fill: parent;
 
-                        ListView {
-                            orientation: ListView.Vertical;
-                            model: libretroVariableModel;
+                            ListView {
+                                orientation: ListView.Vertical;
+                                model: libretroVariableModel;
 
-                            delegate: Item {
-                                height: 25;
-                                width: 300;
+                                delegate: Item {
+                                    height: 25;
+                                    width: 300;
 
-                                Row {
-                                    anchors.fill: parent;
+                                    Row {
+                                        anchors.fill: parent;
 
-                                    Rectangle {
-                                        anchors {
-                                            top: parent.top;
-                                            bottom: parent.bottom;
-                                        }
-                                        width: 200;
-
-                                        color: "red";
-
-                                        Text {
-                                            anchors.centerIn: parent;
-                                            text: key;
-                                        }
-                                    }
-
-                                    Rectangle {
-                                        anchors {
-                                            top: parent.top;
-                                            bottom: parent.bottom;
-                                        }
-                                        width: 200;
-
-                                        color: "yellow";
-
-                                        Text {
-                                            anchors.centerIn: parent;
-                                            text: description;
-                                        }
-                                    }
-
-                                    Rectangle {
-                                        anchors {
-                                            top: parent.top;
-                                            bottom: parent.bottom;
-                                        }
-                                        width: 100;
-                                        color: "blue";
-
-                                        ComboBox {
-                                            anchors.centerIn: parent;
-                                            model: choices;
-
-                                            // ComboBox is really weird; this is some bad hack, please remove
-                                            // if a better solution is found.
-                                            property bool clicked: false;
-                                            onActivated: {
-                                                clicked = true;
+                                        Rectangle {
+                                            anchors {
+                                                top: parent.top;
+                                                bottom: parent.bottom;
                                             }
-                                            onCurrentTextChanged: {
-                                                if ( clicked ) {
-                                                    console.log( "TEXTCHANGE: " + currentText );
+                                            width: 200;
+
+                                            color: "red";
+
+                                            Text {
+                                                anchors.centerIn: parent;
+                                                text: key;
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            anchors {
+                                                top: parent.top;
+                                                bottom: parent.bottom;
+                                            }
+                                            width: 200;
+
+                                            color: "yellow";
+
+                                            Text {
+                                                anchors.centerIn: parent;
+                                                text: description;
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            anchors {
+                                                top: parent.top;
+                                                bottom: parent.bottom;
+                                            }
+                                            width: 300;
+                                            color: "blue";
+
+                                            ComboBox {
+                                                anchors.centerIn: parent;
+                                                model: choices;
+                                                width: 280;
+
+                                                onCurrentTextChanged: {
                                                     libretroVariableModel.updateVariable( key, currentText );
-                                                    clicked = false;
                                                 }
                                             }
                                         }
-
-
-
                                     }
-
                                 }
                             }
                         }
-                        }
-
                     }
                 }
 
