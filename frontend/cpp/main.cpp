@@ -27,7 +27,7 @@ int main( int argc, char *argv[] ) {
     // Set some environment variables here
     {
         // This is the most direct way to set the render loop type
-        putenv( const_cast<char *>( "QSG_RENDER_LOOP=basic" ) );
+        putenv( const_cast<char *>( "QSG_RENDER_LOOP=threaded" ) );
     }
 
     // Use a custom message printing setup
