@@ -28,7 +28,7 @@ include( deployment.pri )
     # Version info
     win32: {
         # Grab current git tag (will be appended with revision hash if not on the commit the tag is tagged to)
-        VERSION = $$system( git describe )
+        VERSION = $$system( git describe --dirty )
 
         # Strip v from beginning of tag
         VERSION_TUPLE_1 = $$replace( VERSION, v,  )
@@ -42,7 +42,7 @@ include( deployment.pri )
     }
 
     unix: {
-        VERSION = $$system( git describe )
+        VERSION = $$system( git describe --dirty )
         DEFINES += PHOENIX_VER_STR=\"$$VERSION\"
     }
 

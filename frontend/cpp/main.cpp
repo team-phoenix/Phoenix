@@ -110,24 +110,6 @@ int main( int argc, char *argv[] ) {
     qRegisterMetaType<Library::GameScannerResult>( "GameScannerResult" );
     //qRegisterMetaType<Library::GameData>( "GameData" );
 
-    // Ensure custom controller DB file exists
-    // FIXME: Use with GamepadManager
-    // QFile gameControllerDBFile( Library::PhxPaths::userDataLocation() % '/' % QStringLiteral( "gamecontrollerdb.txt" ) );
-    //
-    // if( !gameControllerDBFile.exists() ) {
-    //     gameControllerDBFile.open( QIODevice::ReadWrite );
-    //     QTextStream stream( &gameControllerDBFile );
-    //     stream << "# Insert your custom definitions here" << endl;
-    // }
-
-    // Set InputManager's custom controller DB file
-    // FIXME: Use with GamepadManager
-    // QQmlProperty prop( engine.rootObjects().first(), "inputManager.controllerDBFile" );
-    // Q_ASSERT( prop.isValid() );
-    // QString path = Library::PhxPaths::userDataLocation() % QStringLiteral( "/gamecontrollerdb.txt" );
-    // QVariant pathVar( path );
-    // prop.write( pathVar );
-
     // Load the root QML object and everything under it
     engine.load( QUrl( QStringLiteral( "qrc:/main/" )
                        + commandLineSource[ QStringLiteral( "mainSrc" ) ].toString() ) );

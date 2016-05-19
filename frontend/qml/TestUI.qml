@@ -69,81 +69,6 @@ PhoenixWindow {
 
             TabView {
                 anchors.fill: parent;
-                Tab {
-                    title: "General";
-
-                    Rectangle {
-                        color: PhxTheme.common.secondaryBackgroundColor;
-                        anchors.fill: parent;
-
-                        ScrollView {
-                            anchors.fill: parent;
-
-                            ListView {
-                                orientation: ListView.Vertical;
-                                model: libretroVariableModel;
-
-                                delegate: Item {
-                                    height: 25;
-                                    width: 300;
-
-                                    Row {
-                                        anchors.fill: parent;
-
-                                        Rectangle {
-                                            anchors {
-                                                top: parent.top;
-                                                bottom: parent.bottom;
-                                            }
-                                            width: 200;
-
-                                            color: "red";
-
-                                            Text {
-                                                anchors.centerIn: parent;
-                                                text: key;
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            anchors {
-                                                top: parent.top;
-                                                bottom: parent.bottom;
-                                            }
-                                            width: 200;
-
-                                            color: "yellow";
-
-                                            Text {
-                                                anchors.centerIn: parent;
-                                                text: description;
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            anchors {
-                                                top: parent.top;
-                                                bottom: parent.bottom;
-                                            }
-                                            width: 300;
-                                            color: "blue";
-
-                                            ComboBox {
-                                                anchors.centerIn: parent;
-                                                model: choices;
-                                                width: 280;
-
-                                                onCurrentTextChanged: {
-                                                    libretroVariableModel.updateVariable( key, currentText );
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
 
                 Tab {
                     title: "Input";
@@ -232,7 +157,7 @@ PhoenixWindow {
 
                                 Layout.alignment: Qt.AlignLeft | Qt.AlignTop;
                                 Layout.fillWidth: true;
-                                Layout.preferredWidth: 400;
+                                Layout.preferredWidth: 600;
 
                                 columns: 4;
                                 rowSpacing: 10;
@@ -243,99 +168,211 @@ PhoenixWindow {
                                 // Face buttons
                                 Text {
                                     color: grid.textColor;
-                                    text: "A: " + row.remapData[ "A" ];
+                                    text: "A: " + row.remapData[ "a" ];
                                     Layout.column: 0; Layout.row: 0;
-                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "A" ); }
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "a" ); }
                                 }
                                 Text {
                                     color: grid.textColor;
-                                    text: "B: " + row.remapData[ "B" ];
+                                    text: "B: " + row.remapData[ "b" ];
                                     Layout.column: 0; Layout.row: 1;
-                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "B" ); }
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "b" ); }
                                 }
                                 Text {
                                     color: grid.textColor;
-                                    text: "X: " + row.remapData[ "X" ];
+                                    text: "X: " + row.remapData[ "x" ];
                                     Layout.column: 0; Layout.row: 2;
-                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "X" ); }
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "x" ); }
                                 }
                                 Text {
                                     color: grid.textColor;
-                                    text: "Y: " + row.remapData[ "Y" ];
+                                    text: "Y: " + row.remapData[ "y" ];
                                     Layout.column: 0; Layout.row: 3;
-                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "Y" ); }
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "y" ); }
                                 }
 
                                 // D-Pad
                                 Text {
                                     color: grid.textColor;
-                                    text: "Up: " + row.remapData[ "Up" ];
+                                    text: "Up: " + row.remapData[ "dpup" ];
                                     Layout.column: 1; Layout.row: 0;
-                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "Up" ); }
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "dpup" ); }
                                 }
                                 Text {
                                     color: grid.textColor;
-                                    text: "Down: " + row.remapData[ "Down" ];
+                                    text: "Down: " + row.remapData[ "dpdown" ];
                                     Layout.column: 1; Layout.row: 1;
-                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "Down" ); }
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "dpdown" ); }
                                 }
                                 Text {
                                     color: grid.textColor;
-                                    text: "Left: " + row.remapData[ "Left" ];
+                                    text: "Left: " + row.remapData[ "dpleft" ];
                                     Layout.column: 1; Layout.row: 2;
-                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "Left" ); }
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "dpleft" ); }
                                 }
                                 Text {
                                     color: grid.textColor;
-                                    text: "Right: " + row.remapData[ "Right" ];
+                                    text: "Right: " + row.remapData[ "dpright" ];
                                     Layout.column: 1; Layout.row: 3;
-                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "Right" ); }
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "dpright" ); }
                                 }
 
                                 // Center buttons
                                 Text {
                                     color: grid.textColor;
-                                    text: "Back: " + row.remapData[ "Back" ];
+                                    text: "Back: " + row.remapData[ "back" ];
                                     Layout.column: 2; Layout.row: 0;
-                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "Back" ); }
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "back" ); }
                                 }
                                 Text {
                                     color: grid.textColor;
-                                    text: "Guide: " + row.remapData[ "Guide" ];
+                                    text: "Guide: " + row.remapData[ "guide" ];
                                     Layout.column: 2; Layout.row: 1;
-                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "Guide" ); }
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "guide" ); }
                                 }
                                 Text {
                                     color: grid.textColor;
-                                    text: "Start: " + row.remapData[ "Start" ];
+                                    text: "Start: " + row.remapData[ "start" ];
                                     Layout.column: 2; Layout.row: 2;
-                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "Start" ); }
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "start" ); }
                                 }
 
                                 // Shoulder buttons
                                 Text {
                                     color: grid.textColor;
-                                    text: "L: " + row.remapData[ "L" ];
+                                    text: "L: " + row.remapData[ "leftshoulder" ];
                                     Layout.column: 3; Layout.row: 0;
-                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "L" ); }
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "leftshoulder" ); }
                                 }
                                 Text {
                                     color: grid.textColor;
-                                    text: "R: " + row.remapData[ "R" ];
+                                    text: "R: " + row.remapData[ "rightshoulder" ];
                                     Layout.column: 3; Layout.row: 1;
-                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "R" ); }
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "rightshoulder" ); }
                                 }
                                 Text {
                                     color: grid.textColor;
-                                    text: "L3: " + row.remapData[ "L3" ];
+                                    text: "L2: " + row.remapData[ "lefttrigger" ];
                                     Layout.column: 3; Layout.row: 2;
-                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "L3" ); }
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "lefttrigger" ); }
                                 }
                                 Text {
                                     color: grid.textColor;
-                                    text: "R3: " + row.remapData[ "R3" ];
+                                    text: "R2: " + row.remapData[ "righttrigger" ];
                                     Layout.column: 3; Layout.row: 3;
-                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "R3" ); }
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "righttrigger" ); }
+                                }
+                                Text {
+                                    color: grid.textColor;
+                                    text: "L3: " + row.remapData[ "leftstick" ];
+                                    Layout.column: 3; Layout.row: 4;
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "leftstick" ); }
+                                }
+                                Text {
+                                    color: grid.textColor;
+                                    text: "R3: " + row.remapData[ "rightstick" ];
+                                    Layout.column: 3; Layout.row: 5;
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "rightstick" ); }
+                                }
+                                Text {
+                                    color: grid.textColor;
+                                    text: "Left analog X: " + row.remapData[ "leftx" ];
+                                    Layout.column: 4; Layout.row: 0;
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "leftx" ); }
+                                }
+                                Text {
+                                    color: grid.textColor;
+                                    text: "Left analog Y: " + row.remapData[ "lefty" ];
+                                    Layout.column: 4; Layout.row: 1;
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "lefty" ); }
+                                }
+                                Text {
+                                    color: grid.textColor;
+                                    text: "Right analog X: " + row.remapData[ "rightx" ];
+                                    Layout.column: 4; Layout.row: 2;
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "rightx" ); }
+                                }
+                                Text {
+                                    color: grid.textColor;
+                                    text: "Right analog Y: " + row.remapData[ "righty" ];
+                                    Layout.column: 4; Layout.row: 3;
+                                    MouseArea { anchors.fill: parent; onClicked: if( row.available ) remapperModel.beginRemapping( row.currentGUID, "righty" ); }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                Tab {
+                    title: "Settings";
+
+                    Rectangle {
+                        color: PhxTheme.common.secondaryBackgroundColor;
+                        anchors.fill: parent;
+
+                        ScrollView {
+                            anchors.fill: parent;
+
+                            ListView {
+                                orientation: ListView.Vertical;
+                                model: libretroVariableModel;
+
+                                delegate: Item {
+                                    height: 25;
+                                    width: 300;
+
+                                    Row {
+                                        anchors.fill: parent;
+
+                                        Rectangle {
+                                            anchors {
+                                                top: parent.top;
+                                                bottom: parent.bottom;
+                                            }
+                                            width: 200;
+
+                                            color: "red";
+
+                                            Text {
+                                                anchors.centerIn: parent;
+                                                text: key;
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            anchors {
+                                                top: parent.top;
+                                                bottom: parent.bottom;
+                                            }
+                                            width: 200;
+
+                                            color: "yellow";
+
+                                            Text {
+                                                anchors.centerIn: parent;
+                                                text: description;
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            anchors {
+                                                top: parent.top;
+                                                bottom: parent.bottom;
+                                            }
+                                            width: 300;
+                                            color: "blue";
+
+                                            ComboBox {
+                                                anchors.centerIn: parent;
+                                                model: choices;
+                                                width: 280;
+
+                                                onCurrentTextChanged: {
+                                                    libretroVariableModel.updateVariable( key, currentText );
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
