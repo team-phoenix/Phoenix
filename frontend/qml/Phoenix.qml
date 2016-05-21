@@ -35,11 +35,57 @@ PhoenixWindow {
         onActivated: gameConsole.vsync = gameConsole.vsync ? false : true;
     }
 
+    // FIXME: For testing
+    // Toggle pause
+    Shortcut {
+        autoRepeat: false;
+        sequence: "g";
+        onActivated: {
+            if( controlOutput.state === Node.Playing ) {
+                gameConsole.pause();
+            } else if( controlOutput.state === Node.Paused ) {
+                gameConsole.play();
+            }
+        }
+    }
+
+    // FIXME: For testing
+    // Stop the running game
+    Shortcut {
+        autoRepeat: false;
+        sequence: "h";
+        onActivated: {
+            if( controlOutput.state === Node.Playing || controlOutput.state === Node.Paused ) {
+                gameConsole.stop();
+            }
+        }
+    }
+
+    // FIXME: For testing
+    // Reload the game
+    Shortcut {
+        autoRepeat: false;
+        sequence: "t";
+        onActivated: {
+            if( controlOutput.state === Node.Stopped ) {
+                gameConsole.play();
+            }
+        }
+    }
+
     // Elements of the Phoenix UI
 
+    // A flexible multi-system emulator controlled via gameConsole, providing state updates via controlOutput
+    // and controller input data via globalGamepad
     Emulator {
         id: emulator;
         anchors.fill: parent;
+
+        // FIXME: Cleaner way to do this
+        Component.onCompleted: {
+            emulator.gameConsole.variableModel = window.libretroVariableModel;
+            emulator.gameConsole.remapperModel = remapperModel;
+        }
     }
 
     // Make Emulator and its most important children available globally
@@ -49,13 +95,35 @@ PhoenixWindow {
     property alias globalGamepad: emulator.globalGamepad;
     property alias videoOutput: emulator.videoOutput;
 
-//    Library {
-//        id: library;
-//        anchors.fill: parent;
-//    }
+    // The user's game library
+    Library {
+        id: library;
+        anchors.fill: parent;
 
-//    // Make Library (and (TODO) its most important children) available globally
-//    property alias library: library;
+        // Accept input only if we are stopped
+        enabled: controlOutput.state === Node.Stopped;
+        opacity: enabled ? 1.0 : 0.0;
+
+        Behavior on opacity {
+            NumberAnimation { duration: 500; }
+        }
+    }
+
+    // Make Library (and (TODO) its most important children) available globally
+    property alias library: library;
+
+    // Settings
+    // TODO: Move to Settings.qml
+
+    property alias remapperModel: remapperModel;
+    RemapperModel {
+        id: remapperModel;
+    }
+
+    property alias libretroVariableModel: libretroVariableModel;
+    LibretroVariableModel {
+        id: libretroVariableModel;
+    }
 
     // Misc Window stuff
 
@@ -69,6 +137,14 @@ PhoenixWindow {
     Shortcut {
         autoRepeat: false;
         sequence: "Alt+Return";
+        onActivated: toggleFullscreen();
+    }
+
+
+    // FIXME: For testing
+    Shortcut {
+        autoRepeat: false;
+        sequence: "f";
         onActivated: toggleFullscreen();
     }
 
