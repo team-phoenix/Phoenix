@@ -25,6 +25,9 @@
 // Make sure that SDL.h is included *after* all other includes in main.cpp
 // The other half of the fix is in frontend.pro
 // http://blog.debao.me/2013/07/link-confilict-between-sdl-and-qt-under-windows/
+
+// #define main qMain
+#undef main
 #include "SDL.h"
 
 using namespace Library;
