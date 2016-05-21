@@ -57,7 +57,7 @@ Item {
 
                 // Begin the load
                 // Execution will continue in stateChangedCallback() once CoreControl changes state
-                gameConsole.load();
+                gameConsole.play();
             }
         }
 

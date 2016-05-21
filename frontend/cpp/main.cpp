@@ -2,6 +2,10 @@
 
 #include "debughelper.h"
 
+#ifdef Q_OS_WIN
+#include <io.h>
+#endif
+
 // Library
 #include "cmdlineargs.h"
 #include "coremodel.h"
@@ -16,6 +20,12 @@
 #include "phxpaths.h"
 #include "logging.h"
 
+// SDL2/Qt main() conflict fix
+// Use SDL2's SDL_main() instead of Qt's qMain()
+// Make sure that SDL.h is included *after* all other includes in main.cpp
+// The other half of the fix is in frontend.pro
+// http://blog.debao.me/2013/07/link-confilict-between-sdl-and-qt-under-windows/
+#include "SDL.h"
 
 using namespace Library;
 
@@ -54,7 +64,7 @@ int main( int argc, char *argv[] ) {
     // If this fails... how would we know? :)
     logFile.open( QIODevice::WriteOnly | QIODevice::Text );
     int logFD = logFile.handle();
-    logFP = fdopen( dup( logFD ), "w" );
+    logFP = fdopen( _dup( logFD ), "w" );
     qInstallMessageHandler( phoenixDebugMessageLog );
 #endif
 
