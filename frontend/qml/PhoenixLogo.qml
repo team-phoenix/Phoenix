@@ -44,7 +44,7 @@ Item {
             ScriptAction { script: phoenixLogoBlurAnimation.stop(); }
             ParallelAnimation {
                 PropertyAction { target: phoenixLogoBlur; property: "radius"; value: 64; }
-                PropertyAnimation { target: logoContainer; property: "scale"; easing.type: Easing.OutSine; from: 1.0; to: 0.75; duration: logoContainer.animationSpeed; }
+                PropertyAnimation { target: logoContainer; property: "scale"; from: 1.0; to: 0.75; duration: logoContainer.animationSpeed; }
             }
             ScriptAction { script: phoenixLogoBlurAnimation.restart(); }
         }
