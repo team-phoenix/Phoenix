@@ -201,13 +201,18 @@ MouseArea {
         cursorShape = showCursor ? Qt.ArrowCursor : Qt.BlankCursor;
     }
 
-    onMouseXChanged: hideTimer.start();
-    onMouseYChanged: hideTimer.start();
+    onMouseXChanged: hideTimer.restart();
+    onMouseYChanged: hideTimer.restart();
 
     property Timer hideTimer: Timer {
         interval: 1500;
     }
 
+    // Reset the timer on state change
+    Connections {
+        target: phoenix;
+        onStateChanged: hideTimer.restart();
+    }
 
     // Double-click to go fullscreen
     onDoubleClicked: window.toggleFullscreen();
