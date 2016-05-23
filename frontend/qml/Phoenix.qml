@@ -49,7 +49,7 @@ PhoenixWindow {
             if( state === "" ) {
                 state = "Stopped";
             }
-            logoEffect.doAnimation();
+            logoEffect.doReverseAnimation();
         }
 
         onStateChanged: {
@@ -68,7 +68,6 @@ PhoenixWindow {
                 PropertyChanges { target: frontend; enabled: true; explicit: true; }
                 PropertyChanges { target: frontend; opacity: 1.0; scale: 1.0; }
                 PropertyChanges { target: logoEffect; opacity: 0.0; scale: 0.5; }
-                PropertyChanges { target: mouseArea; cursorShape: Qt.ArrowCursor; }
                 PropertyChanges { target: window; title: "Library"; explicit: true; }
             },
 
@@ -78,12 +77,12 @@ PhoenixWindow {
             State {
                 name: "Loading";
 
+                PropertyChanges { target: busyCursor; enabled: true; }
                 PropertyChanges { target: emulator; scale: 1.0; }
-                PropertyChanges { target: mouseArea; cursorShape: Qt.BusyCursor; }
                 PropertyChanges { target: window; title: "Loading - " + emulator.title; explicit: true; }
 
                 StateChangeScript { script: gameConsole.play(); }
-                StateChangeScript { script: logoEffect.doAnimation(); }
+                StateChangeScript { script: logoEffect.doReverseAnimation(); }
             },
 
             // Emulation active
@@ -93,8 +92,7 @@ PhoenixWindow {
 
                 PropertyChanges { target: emulator; enabled: true; explicit: true; }
                 PropertyChanges { target: emulator; scale: 1.0; }
-                PropertyChanges { target: logoEffect; opacity: 0.0; scale: 0.5; }
-                PropertyChanges { target: mouseArea; cursorShape: Qt.BlankCursor; }
+                PropertyChanges { target: logoEffect; opacity: 0.0; scale: 1.0 / 0.75; }
                 PropertyChanges { target: window; title: /*"Playing - " +*/  emulator.title; explicit: true; }
 
                 StateChangeScript { script: gameConsole.play(); }
@@ -107,8 +105,7 @@ PhoenixWindow {
 
                 PropertyChanges { target: emulator; enabled: true; explicit: true; }
                 PropertyChanges { target: emulator; scale: 1.0; }
-                PropertyChanges { target: logoEffect; opacity: 0.0; scale: 0.5; }
-                PropertyChanges { target: mouseArea; cursorShape: Qt.BlankCursor; }
+                PropertyChanges { target: logoEffect; opacity: 0.0; scale: 1.0 / 0.75; }
                 PropertyChanges { target: window; title: "Paused - " + emulator.title; explicit: true; }
 
                 StateChangeScript { script: gameConsole.pause(); }
@@ -119,8 +116,8 @@ PhoenixWindow {
             State {
                 name: "Unloading";
 
+                PropertyChanges { target: busyCursor; enabled: true; }
                 PropertyChanges { target: emulator; scale: 1.0; }
-                PropertyChanges { target: mouseArea; cursorShape: Qt.BusyCursor; }
                 PropertyChanges { target: window; title: "Unloading - " + emulator.title; explicit: true; }
 
                 StateChangeScript { script: gameConsole.stop(); }
@@ -131,8 +128,9 @@ PhoenixWindow {
             // Next: Minimized
             State {
                 name: "Minimizing";
+
+                PropertyChanges { target: busyCursor; enabled: true; }
                 PropertyChanges { target: frontend; opacity: 1.0; scale: 1.0; }
-                PropertyChanges { target: mouseArea; cursorShape: Qt.BusyCursor; }
                 PropertyChanges { target: window; title: /*"Minimizing - " +*/ emulator.title; explicit: true; }
 
                 StateChangeScript { script: logoEffect.doAnimation(); }
@@ -142,10 +140,10 @@ PhoenixWindow {
             // Next: Restoring, Unloading
             State {
                 name: "Minimized";
+
                 PropertyChanges { target: logoEffect; opacity: 0.0; scale: 0.5; }
                 PropertyChanges { target: frontend; enabled: true; explicit: true; }
                 PropertyChanges { target: frontend; opacity: 1.0; scale: 1.0; }
-                PropertyChanges { target: mouseArea; cursorShape: Qt.ArrowCursor; }
                 PropertyChanges { target: window; title: "Minimized - " + emulator.title; explicit: true; }
             },
 
@@ -153,11 +151,12 @@ PhoenixWindow {
             // Next: Paused
             State {
                 name: "Restoring";
+
                 PropertyChanges { target: emulator; scale: 1.0; }
-                PropertyChanges { target: mouseArea; cursorShape: Qt.BusyCursor; }
+                PropertyChanges { target: busyCursor; enabled: true; }
                 PropertyChanges { target: window; title: /*"Restoring - " +*/ emulator.title; explicit: true; }
 
-                StateChangeScript { script: logoEffect.doAnimation(); }
+                StateChangeScript { script: logoEffect.doReverseAnimation(); }
             },
 
             // Unload the game without hiding the library
@@ -165,23 +164,23 @@ PhoenixWindow {
             State {
                 name: "SilentlyUnloading";
 
+                PropertyChanges { target: busyCursor; enabled: true; }
                 PropertyChanges { target: frontend; opacity: 1.0; }
                 PropertyChanges { target: logoEffect; opacity: 0.0; scale: 0.5; }
-                PropertyChanges { target: mouseArea; cursorShape: Qt.BusyCursor; }
                 PropertyChanges { target: window; title: "Unloading - " + emulator.title; explicit: true; }
 
                 StateChangeScript { script: gameConsole.stop(); }
             }
         ]
 
-        property int transitionDuration: 333;
+        property int transitionDuration: 250;
         //property string transitionProperties: "opacity,scale";
 
         // Interpolate property changes
         transitions: Transition {
             id: defaultTransition;
             PropertyAnimation { property: "opacity"; duration: phoenix.transitionDuration; }
-            PropertyAnimation { property: "scale"; easing.type: Easing.InOutSine; duration: phoenix.transitionDuration; }
+            PropertyAnimation { property: "scale"; /*easing.type: Easing.InOutSine;*/ duration: phoenix.transitionDuration; }
         }
     }
 
@@ -291,71 +290,62 @@ PhoenixWindow {
     }
 
     // Phoenix UI
-    // The entire UI is wrapped with a mouse area that allows us to globally set the mouse cursor and detect
-    // mouse move events
-    MouseArea {
-        id: mouseArea;
+
+    // A flexible multi-system emulator controlled via gameConsole, providing state updates via controlOutput
+    // and controller input data via globalGamepad
+    // Internally called the "backend"
+    Emulator {
+        id: emulator;
         anchors.fill: parent;
 
-        acceptedButtons: Qt.NoButton;
-        hoverEnabled: true;
+        //opacity: 1.0;
+        scale: 0.85;
 
-        // A flexible multi-system emulator controlled via gameConsole, providing state updates via controlOutput
-        // and controller input data via globalGamepad
-        // Internally called the "backend"
-        Emulator {
-            id: emulator;
-            anchors.fill: parent;
+        //onEnabledChanged: console.log( "Emulator enabled = " + enabled );
+        enabled: false;
 
-            //opacity: 1.0;
-            scale: 0.85;
-
-            //onEnabledChanged: console.log( "Emulator enabled = " + enabled );
-            enabled: false;
-
-            // FIXME: Cleaner way to do this
-            Component.onCompleted: {
-                emulator.gameConsole.variableModel = window.libretroVariableModel;
-                emulator.gameConsole.remapperModel = remapperModel;
-            }
+        // FIXME: Cleaner way to do this
+        Component.onCompleted: {
+            emulator.gameConsole.variableModel = window.libretroVariableModel;
+            emulator.gameConsole.remapperModel = remapperModel;
         }
+    }
 
-        // The main interface of Phoenix
-        Frontend {
-            id: frontend;
-            anchors.fill: parent;
+    // The main interface of Phoenix
+    Frontend {
+        id: frontend;
+        anchors.fill: parent;
 
-            opacity: 0.0;
-            scale: 1.15;
+        opacity: 0.0;
+        scale: 1.0 / 0.85;
 
-            layer.enabled: true;
+        layer.enabled: true;
 
-            //onEnabledChanged: console.log( "Library enabled = " + enabled );
-            enabled: false;
+        //onEnabledChanged: console.log( "Library enabled = " + enabled );
+        enabled: false;
+    }
+
+    // Settings
+    // TODO: Move to Settings.qml
+    Item {
+        id: settings;
+        RemapperModel {
+            id: remapperModel;
         }
-
-        // Settings
-        // TODO: Move to Settings.qml
-        Item {
-            id: settings;
-            RemapperModel {
-                id: remapperModel;
-            }
-            LibretroVariableModel {
-                id: libretroVariableModel;
-            }
+        LibretroVariableModel {
+            id: libretroVariableModel;
         }
+    }
 
-        // A cool logo effect
-        PhoenixLogo {
-            id: logoEffect;
-            anchors.centerIn: parent;
-            width: 150;
-            height: 150;
-            // Default, must match the value set when this logo should be hidden (Stopped, Paused, Playing, Minimized)
-            scale: 0.5;
-            animationSpeed: phoenix.transitionDuration;
-        }
+    // A cool logo effect
+    PhoenixLogo {
+        id: logoEffect;
+        anchors.centerIn: parent;
+        width: 150;
+        height: 150;
+        // Default, must match the value set when this logo should be hidden (Stopped, Paused, Playing, Minimized)
+        scale: 0.5;
+        animationSpeed: phoenix.transitionDuration;
     }
 
     // Make Emulator and its most important children available globally
@@ -373,6 +363,18 @@ PhoenixWindow {
     property alias libretroVariableModel: libretroVariableModel;
 
     // Misc Window stuff
+
+    // A MouseArea that lets us override the cursor
+    MouseArea {
+        id: busyCursor;
+        anchors.fill: parent;
+
+        // Only turned on when needed
+        enabled: false;
+
+        acceptedButtons: Qt.NoButton;
+        cursorShape: enabled ? Qt.BusyCursor : undefined;
+    }
 
     // Fullscreen shortcuts
     Shortcut {

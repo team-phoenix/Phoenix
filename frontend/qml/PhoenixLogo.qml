@@ -12,7 +12,16 @@ Item {
     property alias phoenixLogo: phoenixLogo;
     property alias phoenixLogoAnimation: phoenixLogoAnimation;
 
-    function doAnimation() { phoenixLogoAnimation.restart(); }
+    function doAnimation() {
+        from = 1.0;
+        to = 0.75;
+        phoenixLogoAnimation.restart();
+    }
+    function doReverseAnimation() {
+        from = 0.75;
+        to = 1.0;
+        phoenixLogoAnimation.restart();
+    }
     property bool running: phoenixLogoAnimation.running;
 
     property int animationSpeed: 250;
@@ -41,13 +50,16 @@ Item {
         sourceSize { height: height; width: width; }
     }
 
+    property real from: 1.0;
+    property real to: 0.75;
+
     ParallelAnimation {
         id: phoenixLogoAnimation;
         SequentialAnimation {
             ScriptAction { script: phoenixLogoBlurAnimation.stop(); }
             ParallelAnimation {
                 PropertyAction { target: phoenixLogoBlur; property: "radius"; value: 64; }
-                PropertyAnimation { target: logoContainer; property: "scale"; from: 1.0; to: 0.75; duration: logoContainer.animationSpeed; }
+                PropertyAnimation { target: logoContainer; property: "scale"; from: logoContainer.from; to: logoContainer.to; duration: logoContainer.animationSpeed; }
             }
             ScriptAction { script: phoenixLogoBlurAnimation.restart(); }
         }

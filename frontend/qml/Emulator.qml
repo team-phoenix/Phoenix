@@ -204,11 +204,11 @@ MouseArea {
         cursorShape = showCursor ? Qt.ArrowCursor : Qt.BlankCursor;
     }
 
-    onMouseXChanged: hideTimer.restart();
-    onMouseYChanged: hideTimer.restart();
+    onPositionChanged: hideTimer.restart();
 
     property Timer hideTimer: Timer {
         interval: 1500;
+        running: true;
     }
 
     // Reset the timer on state change
