@@ -12,15 +12,19 @@ import vg.phoenix.paths 1.0
 Item {
     MouseArea {
         anchors.fill: parent;
+        id: libraryContainer;
 
         RowLayout {
-            anchors.fill: parent;
+            anchors.top: parent.top;
+            anchors.bottom: minimizedGame.top;
+            width: parent.width;
             spacing: 0;
 
             Sidebar {
                 id: sidebar;
                 anchors { top: parent.top; bottom: parent.bottom; }
                 width: PhxTheme.common.menuWidth;
+                clip: true;
             }
 
             Rectangle {
@@ -32,13 +36,18 @@ Item {
         }
 
         onClicked: console.log( "Clicked" );
+        property bool showMinimizedGame: phoenix.state === "Minimizing" || phoenix.state === "Minimized";
 
-        MinimizedGame {
+        Item {
             id: minimizedGame;
-            // Make sure it appears during the transition, too
-            visible: phoenix.state === "Minimized" || phoenix.state === "Minimizing" || phoenix.state === "Restoring";
             anchors { bottom: parent.bottom; left: parent.left; right: parent.right; }
-            height: 65;
+            height: libraryContainer.showMinimizedGame ? 65 : 0;
+            Behavior on height { PropertyAnimation { duration: 250; } }
+
+            MinimizedGame {
+                anchors { top: parent.top; left: parent.left; right: parent.right; }
+                height: 65;
+            }
         }
     }
 }

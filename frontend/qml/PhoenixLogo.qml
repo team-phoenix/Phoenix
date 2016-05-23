@@ -53,7 +53,7 @@ Item {
     SequentialAnimation {
         id: phoenixLogoBlurAnimation;
         loops: Animation.Infinite;
-        PropertyAnimation { target: phoenixLogoBlur; property: "radius"; to: 64; duration: 2000; easing.type: Easing.InOutSine; }
         PropertyAnimation { target: phoenixLogoBlur; property: "radius"; to: 32; duration: 2000; easing.type: Easing.InOutSine; }
+        PropertyAnimation { target: phoenixLogoBlur; property: "radius"; to: 64; duration: 2000; easing.type: Easing.InOutSine; }
     }
 }

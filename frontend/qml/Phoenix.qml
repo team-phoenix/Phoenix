@@ -53,8 +53,8 @@ PhoenixWindow {
         }
 
         onStateChanged: {
-            console.log( "QML state changed to " + state );
-            console.trace();
+            //console.log( "QML state changed to " + state );
+            //console.trace();
         }
 
         // All possible states
@@ -66,7 +66,7 @@ PhoenixWindow {
                 name: "Stopped";
 
                 PropertyChanges { target: library; enabled: true; explicit: true; }
-                PropertyChanges { target: library; opacity: 1.0; }
+                PropertyChanges { target: library; opacity: 1.0; scale: 1.0; }
                 PropertyChanges { target: logoEffect; opacity: 0.0; scale: 0.5; }
                 PropertyChanges { target: mouseArea; cursorShape: Qt.ArrowCursor; }
                 PropertyChanges { target: window; title: "Library"; explicit: true; }
@@ -78,6 +78,7 @@ PhoenixWindow {
             State {
                 name: "Loading";
 
+                PropertyChanges { target: emulator; scale: 1.0; }
                 PropertyChanges { target: mouseArea; cursorShape: Qt.BusyCursor; }
                 PropertyChanges { target: window; title: "Loading - " + emulator.title; explicit: true; }
 
@@ -91,6 +92,7 @@ PhoenixWindow {
                 name: "Playing";
 
                 PropertyChanges { target: emulator; enabled: true; explicit: true; }
+                PropertyChanges { target: emulator; scale: 1.0; }
                 PropertyChanges { target: logoEffect; opacity: 0.0; scale: 0.5; }
                 PropertyChanges { target: mouseArea; cursorShape: Qt.BlankCursor; }
                 PropertyChanges { target: window; title: /*"Playing - " +*/  emulator.title; explicit: true; }
@@ -104,6 +106,7 @@ PhoenixWindow {
                 name: "Paused";
 
                 PropertyChanges { target: emulator; enabled: true; explicit: true; }
+                PropertyChanges { target: emulator; scale: 1.0; }
                 PropertyChanges { target: logoEffect; opacity: 0.0; scale: 0.5; }
                 PropertyChanges { target: mouseArea; cursorShape: Qt.BlankCursor; }
                 PropertyChanges { target: window; title: "Paused - " + emulator.title; explicit: true; }
@@ -116,6 +119,7 @@ PhoenixWindow {
             State {
                 name: "Unloading";
 
+                PropertyChanges { target: emulator; scale: 1.0; }
                 PropertyChanges { target: mouseArea; cursorShape: Qt.BusyCursor; }
                 PropertyChanges { target: window; title: "Unloading - " + emulator.title; explicit: true; }
 
@@ -127,20 +131,20 @@ PhoenixWindow {
             // Next: Minimized
             State {
                 name: "Minimizing";
-                PropertyChanges { target: library; opacity: 1.0; }
+                PropertyChanges { target: library; opacity: 1.0; scale: 1.0; }
                 PropertyChanges { target: mouseArea; cursorShape: Qt.BusyCursor; }
                 PropertyChanges { target: window; title: /*"Minimizing - " +*/ emulator.title; explicit: true; }
 
                 StateChangeScript { script: phoenixLogoAnimation.restart(); }
             },
 
-            // The library is shown and a game is paused
+            // The library is shown and the game is paused
             // Next: Restoring, Unloading
             State {
                 name: "Minimized";
                 PropertyChanges { target: logoEffect; opacity: 0.0; scale: 0.5; }
                 PropertyChanges { target: library; enabled: true; explicit: true; }
-                PropertyChanges { target: library; opacity: 1.0; }
+                PropertyChanges { target: library; opacity: 1.0; scale: 1.0; }
                 PropertyChanges { target: mouseArea; cursorShape: Qt.ArrowCursor; }
                 PropertyChanges { target: window; title: "Minimized - " + emulator.title; explicit: true; }
             },
@@ -149,6 +153,7 @@ PhoenixWindow {
             // Next: Paused
             State {
                 name: "Restoring";
+                PropertyChanges { target: emulator; scale: 1.0; }
                 PropertyChanges { target: mouseArea; cursorShape: Qt.BusyCursor; }
                 PropertyChanges { target: window; title: /*"Restoring - " +*/ emulator.title; explicit: true; }
 
@@ -169,13 +174,14 @@ PhoenixWindow {
             }
         ]
 
-        property int transitionDuration: 250;
-        property string transitionProperties: "opacity,scale";
+        property int transitionDuration: 333;
+        //property string transitionProperties: "opacity,scale";
 
         // Interpolate property changes
         transitions: Transition {
             id: defaultTransition;
-            PropertyAnimation { properties: phoenix.transitionProperties; duration: phoenix.transitionDuration; }
+            PropertyAnimation { property: "opacity"; duration: phoenix.transitionDuration; }
+            PropertyAnimation { property: "scale"; easing.type: Easing.InOutSine; duration: phoenix.transitionDuration; }
         }
     }
 
@@ -301,7 +307,10 @@ PhoenixWindow {
             id: emulator;
             anchors.fill: parent;
 
-            onEnabledChanged: console.log( "Emulator enabled = " + enabled );
+            //opacity: 1.0;
+            scale: 0.85;
+
+            //onEnabledChanged: console.log( "Emulator enabled = " + enabled );
             enabled: false;
 
             // FIXME: Cleaner way to do this
@@ -315,9 +324,13 @@ PhoenixWindow {
         Library {
             id: library;
             anchors.fill: parent;
-            opacity: 0.0;
 
-            onEnabledChanged: console.log( "Library enabled = " + enabled );
+            opacity: 0.0;
+            scale: 1.15;
+
+            layer.enabled: true;
+
+            //onEnabledChanged: console.log( "Library enabled = " + enabled );
             enabled: false;
         }
 
@@ -427,8 +440,12 @@ PhoenixWindow {
         autoRepeat: false;
         sequence: "h";
         onActivated: {
-            if( phoenix.state === "Playing" || phoenix.state === "Paused" || phoenix.state === "Minimized" ) {
+            if( phoenix.state === "Playing" || phoenix.state === "Paused" ) {
                 phoenix.state = "Unloading";
+            }
+
+            if( phoenix.state === "Minimized" ) {
+                phoenix.state = "SilentlyUnloading";
             }
         }
     }

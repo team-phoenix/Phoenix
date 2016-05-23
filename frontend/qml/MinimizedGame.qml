@@ -18,7 +18,6 @@ import "../Util"
 Rectangle {
     id: gameSuspendedArea;
     color: PhxTheme.common.gameSuspendedBackgroundColor;
-    opacity: .95;
 
     Row {
         anchors { top: parent.top; bottom: parent.bottom; left: parent.left; }

@@ -166,6 +166,9 @@ MouseArea {
             }
         }
 
+        Behavior on width { PropertyAnimation { duration: 250; } }
+        Behavior on height { PropertyAnimation { duration: 250; } }
+
         linearFiltering: false;
         television: false;
         ntsc: true;
