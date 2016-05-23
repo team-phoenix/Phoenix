@@ -58,6 +58,7 @@
     <qresource prefix="/Library">
         <file>Library.qml</file>
         <file>Sidebar.qml</file>
+        <file>MinimizedGame.qml</file>
     </qresource>
     <qresource prefix="/Util">
         <file>MarqueeText.qml</file>

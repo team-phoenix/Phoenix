@@ -69,7 +69,7 @@ PhoenixWindow {
                 PropertyChanges { target: library; opacity: 1.0; }
                 PropertyChanges { target: logoEffect; opacity: 0.0; scale: 0.5; }
                 PropertyChanges { target: mouseArea; cursorShape: Qt.ArrowCursor; }
-                PropertyChanges { target: window; title: "Stopped - " + emulator.title; explicit: true; }
+                PropertyChanges { target: window; title: "Library"; explicit: true; }
             },
 
             // A game has been selected, begin the load
@@ -129,7 +129,7 @@ PhoenixWindow {
                 name: "Minimizing";
                 PropertyChanges { target: library; opacity: 1.0; }
                 PropertyChanges { target: mouseArea; cursorShape: Qt.BusyCursor; }
-                PropertyChanges { target: window; title: "Minimizing - " + emulator.title; explicit: true; }
+                PropertyChanges { target: window; title: /*"Minimizing - " +*/ emulator.title; explicit: true; }
 
                 StateChangeScript { script: phoenixLogoAnimation.restart(); }
             },
@@ -149,11 +149,23 @@ PhoenixWindow {
             // Next: Paused
             State {
                 name: "Restoring";
-                PropertyChanges { target: library; opacity: 0.0; }
                 PropertyChanges { target: mouseArea; cursorShape: Qt.BusyCursor; }
-                PropertyChanges { target: window; title: "Restoring - " + emulator.title; explicit: true; }
+                PropertyChanges { target: window; title: /*"Restoring - " +*/ emulator.title; explicit: true; }
 
                 StateChangeScript { script: phoenixLogoAnimation.restart(); }
+            },
+
+            // Unload the game without hiding the library
+            // Next: Stopped
+            State {
+                name: "SilentlyUnloading";
+
+                PropertyChanges { target: library; opacity: 1.0; }
+                PropertyChanges { target: logoEffect; opacity: 0.0; scale: 0.5; }
+                PropertyChanges { target: mouseArea; cursorShape: Qt.BusyCursor; }
+                PropertyChanges { target: window; title: "Unloading - " + emulator.title; explicit: true; }
+
+                StateChangeScript { script: gameConsole.stop(); }
             }
         ]
 
@@ -256,6 +268,17 @@ PhoenixWindow {
             onRunningChanged: {
                 if( phoenix.state === "Restoring" && phoenixLogoAnimation.running === false ) {
                     phoenix.state = "Paused";
+                }
+            }
+        }
+
+        // SilentlyUnloading -> Stopped
+        // Let the user choose another game once the previous one unloads
+        Connections {
+            target: controlOutput;
+            onStateChanged: {
+                if( phoenix.state === "SilentlyUnloading" && controlOutput.state === Node.Stopped ) {
+                    phoenix.state = "Stopped";
                 }
             }
         }

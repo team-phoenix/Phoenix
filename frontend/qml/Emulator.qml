@@ -196,7 +196,7 @@ MouseArea {
 
     // Auto-hide the cursor
     hoverEnabled: true;
-    property bool showCursor: hideTimer.running || actionBarMouseArea.containsMouse || phoenix.state === "Paused";
+    property bool showCursor: hideTimer.running || actionBarMouseArea.containsMouse || phoenix.state !== "Playing";
     onShowCursorChanged: {
         cursorShape = showCursor ? Qt.ArrowCursor : Qt.BlankCursor;
     }
