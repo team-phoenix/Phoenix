@@ -53,6 +53,7 @@
     </qresource>
     <qresource prefix="/Emulator">
         <file>Emulator.qml</file>
+        <file>ActionBar.qml</file>
     </qresource>
     <qresource prefix="/Library">
         <file>Library.qml</file>
@@ -60,6 +61,7 @@
     </qresource>
     <qresource prefix="/Util">
         <file>MarqueeText.qml</file>
+        <file>PhoenixLogo.qml</file>
     </qresource>
     <qresource prefix="/Settings"/>
 </RCC>

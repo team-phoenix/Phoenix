@@ -34,7 +34,7 @@ GameHasherController::GameHasherController( QObject *parent ) : QObject( parent 
         qCInfo( phxLibrary ) << ">>>>>>>> User requested app to close, shutting down GameHasher (waiting up to 30 seconds)...";
         qDebug() << "";
 
-        // Shut down coreControl (calls gameHasherThread->exit() too)
+        // Shut down gameHasher (calls gameHasherThread->exit() too)
         emit shutdownGameHasher();
 
         // Shut down thread, block until it finishes
