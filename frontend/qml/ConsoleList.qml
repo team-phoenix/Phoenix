@@ -159,7 +159,7 @@ PhxScrollView {
             height: PhxTheme.common.menuItemHeight;
             anchors { left: parent.left; right: parent.right; }
 
-            // Change the libraryModel's (ContentArea.qml) system filter to the UUID of the currently selected system name
+            // Change the libraryModel's (Library.qml) system filter to the UUID of the currently selected system name
             Connections {
                 target: listView
                 onCurrentIndexChanged:

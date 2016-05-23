@@ -56,10 +56,11 @@
         <file>ActionBar.qml</file>
     </qresource>
     <qresource prefix="/Library">
-        <file>Library.qml</file>
+        <file>Frontend.qml</file>
         <file>Sidebar.qml</file>
         <file>MinimizedGame.qml</file>
         <file>ConsoleList.qml</file>
+        <file>Library.qml</file>
     </qresource>
     <qresource prefix="/Util">
         <file>MarqueeText.qml</file>

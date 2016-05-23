@@ -49,7 +49,7 @@ PhoenixWindow {
             if( state === "" ) {
                 state = "Stopped";
             }
-            phoenixLogoAnimation.restart();
+            logoEffect.doAnimation();
         }
 
         onStateChanged: {
@@ -65,8 +65,8 @@ PhoenixWindow {
             State {
                 name: "Stopped";
 
-                PropertyChanges { target: library; enabled: true; explicit: true; }
-                PropertyChanges { target: library; opacity: 1.0; scale: 1.0; }
+                PropertyChanges { target: frontend; enabled: true; explicit: true; }
+                PropertyChanges { target: frontend; opacity: 1.0; scale: 1.0; }
                 PropertyChanges { target: logoEffect; opacity: 0.0; scale: 0.5; }
                 PropertyChanges { target: mouseArea; cursorShape: Qt.ArrowCursor; }
                 PropertyChanges { target: window; title: "Library"; explicit: true; }
@@ -83,7 +83,7 @@ PhoenixWindow {
                 PropertyChanges { target: window; title: "Loading - " + emulator.title; explicit: true; }
 
                 StateChangeScript { script: gameConsole.play(); }
-                StateChangeScript { script: phoenixLogoAnimation.restart(); }
+                StateChangeScript { script: logoEffect.doAnimation(); }
             },
 
             // Emulation active
@@ -124,18 +124,18 @@ PhoenixWindow {
                 PropertyChanges { target: window; title: "Unloading - " + emulator.title; explicit: true; }
 
                 StateChangeScript { script: gameConsole.stop(); }
-                StateChangeScript { script: phoenixLogoAnimation.restart(); }
+                StateChangeScript { script: logoEffect.doAnimation(); }
             },
 
             // Show the library without unloading the game
             // Next: Minimized
             State {
                 name: "Minimizing";
-                PropertyChanges { target: library; opacity: 1.0; scale: 1.0; }
+                PropertyChanges { target: frontend; opacity: 1.0; scale: 1.0; }
                 PropertyChanges { target: mouseArea; cursorShape: Qt.BusyCursor; }
                 PropertyChanges { target: window; title: /*"Minimizing - " +*/ emulator.title; explicit: true; }
 
-                StateChangeScript { script: phoenixLogoAnimation.restart(); }
+                StateChangeScript { script: logoEffect.doAnimation(); }
             },
 
             // The library is shown and the game is paused
@@ -143,8 +143,8 @@ PhoenixWindow {
             State {
                 name: "Minimized";
                 PropertyChanges { target: logoEffect; opacity: 0.0; scale: 0.5; }
-                PropertyChanges { target: library; enabled: true; explicit: true; }
-                PropertyChanges { target: library; opacity: 1.0; scale: 1.0; }
+                PropertyChanges { target: frontend; enabled: true; explicit: true; }
+                PropertyChanges { target: frontend; opacity: 1.0; scale: 1.0; }
                 PropertyChanges { target: mouseArea; cursorShape: Qt.ArrowCursor; }
                 PropertyChanges { target: window; title: "Minimized - " + emulator.title; explicit: true; }
             },
@@ -157,7 +157,7 @@ PhoenixWindow {
                 PropertyChanges { target: mouseArea; cursorShape: Qt.BusyCursor; }
                 PropertyChanges { target: window; title: /*"Restoring - " +*/ emulator.title; explicit: true; }
 
-                StateChangeScript { script: phoenixLogoAnimation.restart(); }
+                StateChangeScript { script: logoEffect.doAnimation(); }
             },
 
             // Unload the game without hiding the library
@@ -165,7 +165,7 @@ PhoenixWindow {
             State {
                 name: "SilentlyUnloading";
 
-                PropertyChanges { target: library; opacity: 1.0; }
+                PropertyChanges { target: frontend; opacity: 1.0; }
                 PropertyChanges { target: logoEffect; opacity: 0.0; scale: 0.5; }
                 PropertyChanges { target: mouseArea; cursorShape: Qt.BusyCursor; }
                 PropertyChanges { target: window; title: "Unloading - " + emulator.title; explicit: true; }
@@ -212,8 +212,8 @@ PhoenixWindow {
 
             // Change to Playing if the animation's done and we're done loading
             Connections {
-                target: phoenixLogoAnimation;
-                onRunningChanged: { loadChecker.animationCompleteFlag = !phoenixLogoAnimation.running; }
+                target: logoEffect;
+                onRunningChanged: { loadChecker.animationCompleteFlag = !logoEffect.running; }
             }
 
             // Set a flag if we're done loading but the animation isn't done
@@ -245,8 +245,8 @@ PhoenixWindow {
 
             // Change to Playing if the animation's done and we're done loading
             Connections {
-                target: phoenixLogoAnimation;
-                onRunningChanged: { unloadChecker.animationCompleteFlag = !phoenixLogoAnimation.running; }
+                target: logoEffect;
+                onRunningChanged: { unloadChecker.animationCompleteFlag = !logoEffect.running; }
             }
 
             // Set a flag if we're done loading but the animation isn't done
@@ -259,9 +259,9 @@ PhoenixWindow {
         // Minimizing -> Minimized
         // Change to Minimized once the animation completes
         Connections {
-            target: phoenixLogoAnimation;
+            target: logoEffect;
             onRunningChanged: {
-                if( phoenix.state === "Minimizing" && phoenixLogoAnimation.running === false ) {
+                if( phoenix.state === "Minimizing" && logoEffect.running === false ) {
                     phoenix.state = "Minimized";
                 }
             }
@@ -270,9 +270,9 @@ PhoenixWindow {
         // Restoring -> Paused
         // Change to Paused once the animation completes
         Connections {
-            target: phoenixLogoAnimation;
+            target: logoEffect;
             onRunningChanged: {
-                if( phoenix.state === "Restoring" && phoenixLogoAnimation.running === false ) {
+                if( phoenix.state === "Restoring" && logoEffect.running === false ) {
                     phoenix.state = "Paused";
                 }
             }
@@ -290,9 +290,8 @@ PhoenixWindow {
         }
     }
 
-    // Elements of the Phoenix UI
-
-    // The entire program is wrapped with a mouse area that allows us to globally set the mouse cursor and detect
+    // Phoenix UI
+    // The entire UI is wrapped with a mouse area that allows us to globally set the mouse cursor and detect
     // mouse move events
     MouseArea {
         id: mouseArea;
@@ -303,6 +302,7 @@ PhoenixWindow {
 
         // A flexible multi-system emulator controlled via gameConsole, providing state updates via controlOutput
         // and controller input data via globalGamepad
+        // Internally called the "backend"
         Emulator {
             id: emulator;
             anchors.fill: parent;
@@ -320,9 +320,9 @@ PhoenixWindow {
             }
         }
 
-        // The user's game library
-        Library {
-            id: library;
+        // The main interface of Phoenix
+        Frontend {
+            id: frontend;
             anchors.fill: parent;
 
             opacity: 0.0;
@@ -357,6 +357,7 @@ PhoenixWindow {
             animationSpeed: phoenix.transitionDuration;
         }
     }
+
     // Make Emulator and its most important children available globally
     property alias emulator: emulator;
     property alias controlOutput: emulator.controlOutput;
@@ -364,16 +365,12 @@ PhoenixWindow {
     property alias globalGamepad: emulator.globalGamepad;
     property alias videoOutput: emulator.videoOutput;
 
-    // Make Library and its most important children available globally
-    property alias library: library;
+    // Make Frontend and its most important children available globally
+    property alias frontend: frontend;
 
     // Make Settings and its most important children available globally
     property alias remapperModel: remapperModel;
     property alias libretroVariableModel: libretroVariableModel;
-
-    // Make PhoenixLogo and its most important children available globally
-    property alias phoenixLogo: logoEffect.phoenixLogo;
-    property alias phoenixLogoAnimation: logoEffect.phoenixLogoAnimation;
 
     // Misc Window stuff
 

@@ -12,6 +12,9 @@ Item {
     property alias phoenixLogo: phoenixLogo;
     property alias phoenixLogoAnimation: phoenixLogoAnimation;
 
+    function doAnimation() { phoenixLogoAnimation.restart(); }
+    property bool running: phoenixLogoAnimation.running;
+
     property int animationSpeed: 250;
 
     // Glow effect for the logo
