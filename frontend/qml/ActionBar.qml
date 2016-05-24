@@ -191,15 +191,19 @@ Item {
                     onClicked: {
                         // off -> 16:9
                         if( !videoOutput.television ) {
+                            videoOutput.enableAnimation = true;
                             videoOutput.television = true;
                             videoOutput.widescreen = true;
+                            videoOutput.enableAnimation = false;
                             tvLabel.source = "../tv169.svg";
                             return;
                         }
                         // 16:9 -> off
                         if( videoOutput.television && videoOutput.widescreen ) {
+                            videoOutput.enableAnimation = true;
                             videoOutput.television = false;
                             videoOutput.widescreen = false;
+                            videoOutput.enableAnimation = false;
                             tvLabel.source = "../tv.svg"
                             return;
                         }

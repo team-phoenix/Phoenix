@@ -166,8 +166,10 @@ MouseArea {
             }
         }
 
-        Behavior on width { PropertyAnimation { duration: 250; } }
-        Behavior on height { PropertyAnimation { duration: 250; } }
+
+        property bool enableAnimation: false;
+        Behavior on width { enabled: videoOutput.enableAnimation; PropertyAnimation { duration: 250; } }
+        Behavior on height { enabled: videoOutput.enableAnimation; PropertyAnimation { duration: 250; } }
 
         linearFiltering: false;
         television: false;
