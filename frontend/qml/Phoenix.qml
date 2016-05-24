@@ -44,6 +44,9 @@ PhoenixWindow {
     StateGroup {
         id: phoenix;
 
+        // Set to true to immediately load a game after going to Stopped (be sure the source is set)
+        property bool autoLoadFlag: false;
+
         // Intiailly we should show the library view
         Component.onCompleted: {
             if( state === "" ) {
@@ -165,7 +168,7 @@ PhoenixWindow {
                 name: "SilentlyUnloading";
 
                 PropertyChanges { target: busyCursor; enabled: true; }
-                PropertyChanges { target: frontend; opacity: 1.0; }
+                PropertyChanges { target: frontend; opacity: 1.0; scale: 1.0; }
                 PropertyChanges { target: logoEffect; opacity: 0.0; scale: 0.5; }
                 PropertyChanges { target: window; title: "Unloading - " + emulator.title; explicit: true; }
 
@@ -279,11 +282,17 @@ PhoenixWindow {
 
         // SilentlyUnloading -> Stopped
         // Let the user choose another game once the previous one unloads
+        // Immediately load a new game if the auto load flag is set
         Connections {
             target: controlOutput;
             onStateChanged: {
                 if( phoenix.state === "SilentlyUnloading" && controlOutput.state === Node.Stopped ) {
-                    phoenix.state = "Stopped";
+                    if( phoenix.autoLoadFlag ) {
+                        phoenix.autoLoadFlag = false;
+                        phoenix.state = "Loading";
+                    } else {
+                        phoenix.state = "Stopped";
+                    }
                 }
             }
         }

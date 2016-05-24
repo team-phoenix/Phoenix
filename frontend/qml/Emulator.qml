@@ -179,6 +179,8 @@ MouseArea {
         widescreen: false;
     }
 
+    property string core: typeof gameConsole.source[ "core" ] === 'undefined' ? "" : gameConsole.source[ "core" ];
+
     // Wrapper around ActionBar, lets us track when the user hovers over it
     MouseArea {
         id: actionBarMouseArea;
@@ -189,25 +191,61 @@ MouseArea {
         width: 350;
         height: 45;
 
+        // A hint on how to hide the action bar (for touch mode)
+        Text {
+            id: actionBarHint;
+            anchors.horizontalCenter: parent.horizontalCenter;
+            anchors.bottom: actionBar.top;
+            width: contentWidth * 2;
+            height: contentHeight * 2;
+
+            opacity: actionBar.opacity;
+            visible: core.indexOf( "desmume" ) > -1;
+
+            verticalAlignment: Text.AlignVCenter;
+            horizontalAlignment: Text.AlignHCenter;
+            text: "(Right-click to hide)";
+            color: "white";
+            style: Text.Outline;
+            styleColor: "black";
+
+            font {
+                pixelSize: 12;
+                family: PhxTheme.common.systemFontFamily;
+            }
+        }
+
         // In-game controls
         ActionBar {
             id: actionBar;
             anchors.fill: parent;
 
             opacity: showCursor ? 1.0 : 0.0;
+            enabled: showCursor;
 
             // Hide the ActionBar when the mouse doesn't cover it
             Behavior on opacity { PropertyAnimation { duration: 250; } }
         }
     }
 
+    // Right-click controllable toggle for touch mode
+    acceptedButtons: Qt.LeftButton | Qt.RightButton;
+    property bool touchModeShowActionBar: true;
+    onClicked: if( ( mouse.button === Qt.RightButton ) && ( core.indexOf( "desmume" ) > -1 ) ) {
+                   touchModeShowActionBar = touchModeShowActionBar ? false : true;
+               }
+
     // Auto-hide the cursor
     hoverEnabled: true;
-    property bool showCursor: hideTimer.running || actionBarMouseArea.containsMouse || phoenix.state !== "Playing";
+    property bool showCursor: core.indexOf( "desmume" ) > -1 ? ( touchModeShowActionBar )
+                              : ( hideTimer.running || actionBarMouseArea.containsMouse || phoenix.state !== "Playing" );
+
+    // Don't hide cursor if we're in touch mode
     onShowCursorChanged: {
-        cursorShape = showCursor ? Qt.ArrowCursor : Qt.BlankCursor;
+        cursorShape = showCursor || ( core.indexOf( "desmume" ) > -1 ) ? Qt.ArrowCursor : Qt.BlankCursor;
     }
 
+    // Reset the timer whenever the mouse moves
     onPositionChanged: hideTimer.restart();
 
     property Timer hideTimer: Timer {
@@ -222,5 +260,6 @@ MouseArea {
     }
 
     // Double-click to go fullscreen
-    onDoubleClicked: window.toggleFullscreen();
+    onDoubleClicked: if( ( mouse.button === Qt.LeftButton ) && !( core.indexOf( "desmume" ) > -1 ) )
+                         window.toggleFullscreen();
 }

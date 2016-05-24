@@ -45,7 +45,7 @@ Rectangle {
                     height: 48;
                     visible: true;
                     asynchronous: true;
-                    source: emulator.artworkURL === "" ? "qrc:/Assets/noartwork.png" : root.gameViewObject.artworkURL;
+                    source: emulator.artworkURL === "" ? "qrc:/Assets/noartwork.png" : emulator.artworkURL;
                     sourceSize { height: height; width: width; }
                     fillMode: Image.PreserveAspectFit;
                 }

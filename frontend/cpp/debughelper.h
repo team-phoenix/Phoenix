@@ -23,7 +23,7 @@ const QString phoenixCustomDebugOutputFormat = QStringLiteral(
 // Simply change the message string below to whatever you want (partial string matching) and set the breakpoint
 void phoenixDebugMessageHandler( QtMsgType type, const QMessageLogContext &context, const QString &msg ) {
     // Change this QString to reflect the message you want to get a stack trace for
-    if( QString( msg ).contains( QStringLiteral( "Your message here!" ) ) ) {
+    if( QString( msg ).contains( QStringLiteral( "No file name specified" ) ) ) {
 
         // Put a breakpoint over this line...
         int breakPointOnThisLine( 0 );

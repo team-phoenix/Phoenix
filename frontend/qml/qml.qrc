@@ -59,8 +59,10 @@
     <qresource prefix="/Frontend">
         <file>Sidebar.qml</file>
         <file>MinimizedGame.qml</file>
-        <file>ConsoleList.qml</file>
         <file>Library.qml</file>
+        <file>SystemList.qml</file>
+        <file>GameGrid.qml</file>
+        <file>Header.qml</file>
     </qresource>
     <qresource prefix="/Util">
         <file>MarqueeText.qml</file>

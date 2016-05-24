@@ -10,48 +10,40 @@ import vg.phoenix.models 1.0
 import vg.phoenix.themes 1.0
 import vg.phoenix.scanner 1.0
 
-import "qrc:/"
+import "../"
 import "qrc:/Assets"
 import "qrc:/Util"
 import "qrc:/Frontend"
 
 Rectangle  {
-    color: PhxTheme.common.primaryBackgroundColor;
-
     // The main attraction: a StackView that holds a list of something, that something being a type of
     // console, settings category, or whatever else
     property alias stackView: stackView;
     StackView {
         id: stackView;
-        initialItem: consoleList;
+        initialItem: systemList;
         anchors { left: parent.left; right: parent.right; top: parent.top; bottom: bottomRowContainer.top; }
 
         property string currentObjectName: currentItem === null ? "" : currentItem.objectName;
 
-        ConsoleList {
-            id: consoleList;
-            objectName: "ConsoleList";
-            //visible: !stackView.currentObjectName.localeCompare( objectName );
-            //enabled: visible;
+        SystemList {
+            id: systemList;
+            objectName: "SystemList";
         }
 
         CollectionsView {
             id: collectionsView;
             objectName: "CollectionsView";
-            //visible: !stackView.currentObjectName.localeCompare( objectName );
-            //enabled: visible;
         }
 
         SettingsView {
             id: settingsView;
             objectName: "SettingsView";
-            //visible: !stackView.currentObjectName.localeCompare( objectName );
-            //enabled: visible;
         }
 
         delegate: StackViewDelegate {
             function transitionFinished(properties) {
-                properties.exitItem.opacity = 1
+                properties.exitItem.opacity = 1;
                 properties.exitItem.y = 0;
             }
 
@@ -208,7 +200,7 @@ Rectangle  {
 
                 model: ListModel {
                     ListElement { bgColor: "white"; label: "Games"; imageSource: "qrc:/Assets/games.svg";
-                        leftPane: "ConsoleList"; rightPane: "BoxartGridView"; }
+                        leftPane: "SystemList"; rightPane: "BoxartGridView"; }
                     ListElement { bgColor: "white"; label: "Favorites"; imageSource: "qrc:/Assets/collections.svg";
                         leftPane: "CollectionsView"; rightPane: "BoxartGridView"; }
                     ListElement { bgColor: "white"; label: "Settings"; imageSource: "qrc:/Assets/settings.svg";

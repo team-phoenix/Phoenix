@@ -26,17 +26,37 @@ Item {
                 anchors { top: parent.top; bottom: parent.bottom; }
                 width: PhxTheme.common.menuWidth;
                 clip: true;
+
+                color: PhxTheme.common.primaryBackgroundColor;
             }
 
-            Library {
-                id: library;
-                color: PhxTheme.common.secondaryBackgroundColor;
+            Rectangle {
                 anchors { top: parent.top; bottom: parent.bottom; }
                 Layout.fillWidth: true;
+
+                color: PhxTheme.common.secondaryBackgroundColor;
+
+                ColumnLayout {
+                    anchors.fill: parent;
+                    spacing: 0;
+
+                    Header {
+                        id: header;
+                        anchors { left: parent.left; right: parent.right; }
+                        height: 70;
+                    }
+
+                    Library {
+                        id: library;
+                        Layout.fillHeight: true;
+                        anchors { left: parent.left; right: parent.right; }
+
+                        property alias searchBar: header.searchBar;
+                        property alias zoomSlider: header.zoomSlider;
+                    }
+                }
             }
         }
-
-        onClicked: console.log( "Clicked" );
 
         // Wrap MinimizedGame with an Item so we can squash the Item without resizing MinimizedGame's contents
         Item {
