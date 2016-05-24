@@ -81,7 +81,7 @@ PhoenixWindow {
                 name: "Loading";
 
                 PropertyChanges { target: busyCursor; enabled: true; }
-                PropertyChanges { target: emulator; scale: 1.0; }
+                PropertyChanges { target: emulator; opacity: 1.0; scale: 1.0; }
                 PropertyChanges { target: window; title: "Loading - " + emulator.title; explicit: true; }
 
                 StateChangeScript { script: gameConsole.play(); }
@@ -94,7 +94,7 @@ PhoenixWindow {
                 name: "Playing";
 
                 PropertyChanges { target: emulator; enabled: true; explicit: true; }
-                PropertyChanges { target: emulator; scale: 1.0; }
+                PropertyChanges { target: emulator; opacity: 1.0; scale: 1.0; }
                 PropertyChanges { target: logoEffect; opacity: 0.0; scale: 1.0 / 0.75; }
                 PropertyChanges { target: window; title: /*"Playing - " +*/  emulator.title; explicit: true; }
 
@@ -107,7 +107,7 @@ PhoenixWindow {
                 name: "Paused";
 
                 PropertyChanges { target: emulator; enabled: true; explicit: true; }
-                PropertyChanges { target: emulator; scale: 1.0; }
+                PropertyChanges { target: emulator; opacity: 1.0; scale: 1.0; }
                 PropertyChanges { target: logoEffect; opacity: 0.0; scale: 1.0 / 0.75; }
                 PropertyChanges { target: window; title: "Paused - " + emulator.title; explicit: true; }
 
@@ -120,7 +120,7 @@ PhoenixWindow {
                 name: "Unloading";
 
                 PropertyChanges { target: busyCursor; enabled: true; }
-                PropertyChanges { target: emulator; scale: 1.0; }
+                PropertyChanges { target: emulator; opacity: 1.0; scale: 1.0; }
                 PropertyChanges { target: window; title: "Unloading - " + emulator.title; explicit: true; }
 
                 StateChangeScript { script: gameConsole.stop(); }
@@ -155,7 +155,7 @@ PhoenixWindow {
             State {
                 name: "Restoring";
 
-                PropertyChanges { target: emulator; scale: 1.0; }
+                PropertyChanges { target: emulator; opacity: 1.0; scale: 1.0; }
                 PropertyChanges { target: busyCursor; enabled: true; }
                 PropertyChanges { target: window; title: /*"Restoring - " +*/ emulator.title; explicit: true; }
 
@@ -307,7 +307,7 @@ PhoenixWindow {
         id: emulator;
         anchors.fill: parent;
 
-        //opacity: 1.0;
+        opacity: 0.0;
         scale: 0.85;
 
         //onEnabledChanged: console.log( "Emulator enabled = " + enabled );
