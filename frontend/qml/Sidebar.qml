@@ -10,10 +10,10 @@ import vg.phoenix.models 1.0
 import vg.phoenix.themes 1.0
 import vg.phoenix.scanner 1.0
 
-import "../"
-import "../Assets"
-import "../Util"
-import "../Frontend"
+import "qrc:/"
+import "qrc:/Assets"
+import "qrc:/Util"
+import "qrc:/Frontend"
 
 Rectangle  {
     color: PhxTheme.common.primaryBackgroundColor;
@@ -149,7 +149,7 @@ Rectangle  {
                         anchors.centerIn: parent;
                         width: parent.width;
                         height: parent.height;
-                        source: "../Assets/close.svg";
+                        source: "qrc:/Assets/close.svg";
                         sourceSize { width: width; height: height; }
                     }
 
@@ -207,11 +207,11 @@ Rectangle  {
                 orientation: ListView.Horizontal;
 
                 model: ListModel {
-                    ListElement { bgColor: "white"; label: "Games"; imageSource: "../Assets/games.svg";
+                    ListElement { bgColor: "white"; label: "Games"; imageSource: "qrc:/Assets/games.svg";
                         leftPane: "ConsoleList"; rightPane: "BoxartGridView"; }
-                    ListElement { bgColor: "white"; label: "Favorites"; imageSource: "../Assets/collections.svg";
+                    ListElement { bgColor: "white"; label: "Favorites"; imageSource: "qrc:/Assets/collections.svg";
                         leftPane: "CollectionsView"; rightPane: "BoxartGridView"; }
-                    ListElement { bgColor: "white"; label: "Settings"; imageSource: "../Assets/settings.svg";
+                    ListElement { bgColor: "white"; label: "Settings"; imageSource: "qrc:/Assets/settings.svg";
                         leftPane: "SettingsView"; rightPane: "LibrarySettingsView"; }
                 }
 
@@ -293,7 +293,7 @@ Rectangle  {
                     width: 24;
                     height: 24;
 
-                    source: "../Assets/add.svg";
+                    source: "qrc:/Assets/add.svg";
                     sourceSize { width: width; height: height; }
 
                     opacity: 0.5;

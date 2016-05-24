@@ -45,7 +45,7 @@ Item {
         anchors.centerIn: parent;
         width: parent.width;
         height: parent.height;
-        source: "../Assets/phoenix.png";
+        source: "qrc:/Assets/phoenix.png";
         opacity: 1.0;
         sourceSize { height: height; width: width; }
     }

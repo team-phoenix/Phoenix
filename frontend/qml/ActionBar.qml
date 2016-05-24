@@ -41,7 +41,7 @@ Item {
                     anchors.margins: 10;
                     width: parent.width;
                     sourceSize { height: height; width: width; }
-                    source: phoenix.state === "Playing" ? qsTr( "../Assets/pause.svg" ) : qsTr( "../Assets/play.svg" );
+                    source: phoenix.state === "Playing" ? qsTr( "qrc:/Assets/pause.svg" ) : qsTr( "qrc:/Assets/play.svg" );
                 }
 
                 MouseArea {
@@ -71,9 +71,9 @@ Item {
 
                             // Volume Icon changer
                             property string volumeIcon: {
-                                if( gameConsole.volume <= 1.0 && gameConsole.volume > 0.5 ) { volumeIcon: "../Assets/volume.svg"; }
-                                if( gameConsole.volume <= 0.5 && gameConsole.volume > 0.0 ) { volumeIcon: "../Assets/volumehalf.svg"; }
-                                if( gameConsole.volume == 0 ) { volumeIcon: "../Assets/volumemute.svg"; }
+                                if( gameConsole.volume <= 1.0 && gameConsole.volume > 0.5 ) { volumeIcon: "qrc:/Assets/volume.svg"; }
+                                if( gameConsole.volume <= 0.5 && gameConsole.volume > 0.0 ) { volumeIcon: "qrc:/Assets/volumehalf.svg"; }
+                                if( gameConsole.volume == 0 ) { volumeIcon: "qrc:/Assets/volumemute.svg"; }
                             }
 
                             sourceSize { height: height; width: width; }
@@ -161,7 +161,7 @@ Item {
                     width: 24;
                     height: 24;
                     sourceSize { height: height; width: width; }
-                    source: "../Assets/blur.svg";
+                    source: "qrc:/Assets/blur.svg";
                 }
 
                 MouseArea {
@@ -181,7 +181,7 @@ Item {
                     id: tvLabel;
                     anchors.fill: parent;
                     anchors.margins: 4;
-                    source: "../Assets/tv.svg"
+                    source: "qrc:/Assets/tv.svg"
                     smooth: false;
                     sourceSize { height: height; width: width; }
                 }
@@ -195,7 +195,7 @@ Item {
                             videoOutput.television = true;
                             videoOutput.widescreen = true;
                             videoOutput.enableAnimation = false;
-                            tvLabel.source = "../Assets/tv169.svg";
+                            tvLabel.source = "qrc:/Assets/tv169.svg";
                             return;
                         }
                         // 16:9 -> off
@@ -204,7 +204,7 @@ Item {
                             videoOutput.television = false;
                             videoOutput.widescreen = false;
                             videoOutput.enableAnimation = false;
-                            tvLabel.source = "../Assets/tv.svg"
+                            tvLabel.source = "qrc:/Assets/tv.svg"
                             return;
                         }
                     }
@@ -221,7 +221,7 @@ Item {
                     anchors.centerIn: parent;
                     anchors.margins: 10;
                     width: parent.width;
-                    source: "../Assets/minimize.svg";
+                    source: "qrc:/Assets/minimize.svg";
                     sourceSize { height: height; width: width; }
                 }
 
@@ -253,8 +253,8 @@ Item {
                     width: 18;
                     sourceSize { height: height; width: width; }
                     property string screenIcon: {
-                        if ( window.visibility === Window.FullScreen ) screenIcon: "../Assets/window.svg";
-                        else if ( window.visibility === Window.Windowed | Window.Maximized ) screenIcon: "../Assets/fullscreen.svg";
+                        if ( window.visibility === Window.FullScreen ) screenIcon: "qrc:/Assets/window.svg";
+                        else if ( window.visibility === Window.Windowed | Window.Maximized ) screenIcon: "qrc:/Assets/fullscreen.svg";
                     }
                     source: screenIcon;
                     MouseArea {
@@ -273,7 +273,7 @@ Item {
                     anchors.centerIn: parent;
                     anchors.margins: 10;
                     width: parent.width;
-                    source: "../Assets/shutdown.svg";
+                    source: "qrc:/Assets/shutdown.svg";
                     sourceSize { height: height; width: width; }
                 }
 

@@ -9,7 +9,7 @@ import vg.phoenix.themes 1.0
 import vg.phoenix.launcher 1.0
 import vg.phoenix.paths 1.0
 
-import "../Frontend"
+import "qrc:/Frontend"
 
 Item {
     MouseArea {

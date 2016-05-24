@@ -9,10 +9,10 @@ import vg.phoenix.themes 1.0
 import vg.phoenix.launcher 1.0
 import vg.phoenix.paths 1.0
 
-import "../"
-import "../Emulator"
-import "../Frontend"
-import "../Util"
+import "qrc:/"
+import "qrc:/Emulator"
+import "qrc:/Frontend"
+import "qrc:/Util"
 
 // Main window
 PhoenixWindow {

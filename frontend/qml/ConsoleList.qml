@@ -8,9 +8,9 @@ import vg.phoenix.models 1.0
 import vg.phoenix.themes 1.0
 import vg.phoenix.paths 1.0
 
-import "../"
-import "../Util"
-import "../Frontend"
+import "qrc:/"
+import "qrc:/Util"
+import "qrc:/Frontend"
 
 PhxScrollView {
     PhxListView {
