@@ -10,7 +10,7 @@ import vg.phoenix.paths 1.0
 
 import "../"
 import "../Util"
-import "../Library"
+import "../Frontend"
 
 PhxScrollView {
     PhxListView {

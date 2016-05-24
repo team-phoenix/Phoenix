@@ -1,62 +1,62 @@
 <RCC>
-    <qresource prefix="/">
-        <file>collections.svg</file>
-        <file>settings.svg</file>
-        <file>add.svg</file>
-        <file>search.svg</file>
-        <file>playstationController.svg</file>
-        <file>phoenix.png</file>
-        <file>close.svg</file>
-        <file>play.svg</file>
-        <file>games.svg</file>
-        <file>suspend.svg</file>
-        <file>pause.svg</file>
-        <file>shutdown.svg</file>
-        <file>games.png</file>
-        <file>volume.svg</file>
-        <file>volumehalf.svg</file>
-        <file>volumemute.svg</file>
-        <file>minimize.svg</file>
-        <file>fullscreen.svg</file>
-        <file>del.svg</file>
-        <file>window.svg</file>
-        <file>bg.svg</file>
-        <file>noartwork.png</file>
-        <file>systems/Nintendo.svg</file>
-        <file>add2.svg</file>
-        <file>bg0.png</file>
-        <file>bg3.png</file>
-        <file>bg2.png</file>
-        <file>bg1.svg</file>
-        <file>systems/Game Boy.svg</file>
-        <file>systems/Game Boy Advance.svg</file>
-        <file>systems/Nintendo DS.svg</file>
-        <file>systems/Game Boy Color.svg</file>
-        <file>systems/All.svg</file>
-        <file>bg-t.jpg</file>
-        <file>systems/Super Nintendo.svg</file>
-        <file>systems/Nintendo 64.svg</file>
-        <file>systems/Sony PlayStation.svg</file>
-        <file>blur.svg</file>
-        <file>tv.svg</file>
-        <file>tv43.svg</file>
-        <file>tv169.svg</file>
-        <file>default.svg</file>
-        <file>core.svg</file>
-        <file>swap.svg</file>
-        <file>resume.svg</file>
-        <file>pause2.svg</file>
+    <qresource prefix="/Assets">
+        <file alias="collections.svg">assets/collections.svg</file>
+        <file alias="settings.svg">assets/settings.svg</file>
+        <file alias="add.svg">assets/add.svg</file>
+        <file alias="search.svg">assets/search.svg</file>
+        <file alias="playstationController.svg">assets/playstationController.svg</file>
+        <file alias="phoenix.png">assets/phoenix.png</file>
+        <file alias="close.svg">assets/close.svg</file>
+        <file alias="play.svg">assets/play.svg</file>
+        <file alias="games.svg">assets/games.svg</file>
+        <file alias="suspend.svg">assets/suspend.svg</file>
+        <file alias="pause.svg">assets/pause.svg</file>
+        <file alias="shutdown.svg">assets/shutdown.svg</file>
+        <file alias="games.png">assets/games.png</file>
+        <file alias="volume.svg">assets/volume.svg</file>
+        <file alias="volumehalf.svg">assets/volumehalf.svg</file>
+        <file alias="volumemute.svg">assets/volumemute.svg</file>
+        <file alias="minimize.svg">assets/minimize.svg</file>
+        <file alias="fullscreen.svg">assets/fullscreen.svg</file>
+        <file alias="del.svg">assets/del.svg</file>
+        <file alias="window.svg">assets/window.svg</file>
+        <file alias="bg.svg">assets/bg.svg</file>
+        <file alias="noartwork.png">assets/noartwork.png</file>
+        <file alias="Nintendo.svg">assets/systems/Nintendo.svg</file>
+        <file alias="add2.svg">assets/add2.svg</file>
+        <file alias="bg0.png">assets/bg0.png</file>
+        <file alias="bg3.png">assets/bg3.png</file>
+        <file alias="bg2.png">assets/bg2.png</file>
+        <file alias="bg1.svg">assets/bg1.svg</file>
+        <file alias="Game Boy.svg">assets/systems/Game Boy.svg</file>
+        <file alias="Game Boy Advance.svg">assets/systems/Game Boy Advance.svg</file>
+        <file alias="Nintendo DS.svg">assets/systems/Nintendo DS.svg</file>
+        <file alias="Game Boy Color.svg">assets/systems/Game Boy Color.svg</file>
+        <file alias="All.svg">assets/systems/All.svg</file>
+        <file alias="bg-t.jpg">assets/bg-t.jpg</file>
+        <file alias="Super Nintendo.svg">assets/systems/Super Nintendo.svg</file>
+        <file alias="Nintendo 64.svg">assets/systems/Nintendo 64.svg</file>
+        <file alias="Sony PlayStation.svg">assets/systems/Sony PlayStation.svg</file>
+        <file alias="blur.svg">assets/blur.svg</file>
+        <file alias="tv.svg">assets/tv.svg</file>
+        <file alias="tv43.svg">assets/tv43.svg</file>
+        <file alias="tv169.svg">assets/tv169.svg</file>
+        <file alias="default.svg">assets/default.svg</file>
+        <file alias="core.svg">assets/core.svg</file>
+        <file alias="swap.svg">assets/swap.svg</file>
+        <file alias="resume.svg">assets/resume.svg</file>
+        <file alias="pause2.svg">assets/pause2.svg</file>
     </qresource>
-    <qresource prefix="/main">
+    <qresource prefix="/Phoenix">
         <file>Phoenix.qml</file>
         <file>TestUI.qml</file>
+        <file>Frontend.qml</file>
+        <file>Emulator.qml</file>
     </qresource>
     <qresource prefix="/Emulator">
-        <file>Emulator.qml</file>
         <file>ActionBar.qml</file>
     </qresource>
-    <qresource prefix="/Library">
-        <file>Frontend.qml</file>
+    <qresource prefix="/Frontend">
         <file>Sidebar.qml</file>
         <file>MinimizedGame.qml</file>
         <file>ConsoleList.qml</file>

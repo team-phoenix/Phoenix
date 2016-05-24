@@ -11,8 +11,9 @@ import vg.phoenix.themes 1.0
 import vg.phoenix.scanner 1.0
 
 import "../"
+import "../Assets"
 import "../Util"
-import "../Library"
+import "../Frontend"
 
 Rectangle  {
     color: PhxTheme.common.primaryBackgroundColor;
@@ -148,7 +149,7 @@ Rectangle  {
                         anchors.centerIn: parent;
                         width: parent.width;
                         height: parent.height;
-                        source: "../close.svg";
+                        source: "../Assets/close.svg";
                         sourceSize { width: width; height: height; }
                     }
 
@@ -206,11 +207,11 @@ Rectangle  {
                 orientation: ListView.Horizontal;
 
                 model: ListModel {
-                    ListElement { bgColor: "white"; label: "Games"; imageSource: "../games.svg";
+                    ListElement { bgColor: "white"; label: "Games"; imageSource: "../Assets/games.svg";
                         leftPane: "ConsoleList"; rightPane: "BoxartGridView"; }
-                    ListElement { bgColor: "white"; label: "Favorites"; imageSource: "../collections.svg";
+                    ListElement { bgColor: "white"; label: "Favorites"; imageSource: "../Assets/collections.svg";
                         leftPane: "CollectionsView"; rightPane: "BoxartGridView"; }
-                    ListElement { bgColor: "white"; label: "Settings"; imageSource: "../settings.svg";
+                    ListElement { bgColor: "white"; label: "Settings"; imageSource: "../Assets/settings.svg";
                         leftPane: "SettingsView"; rightPane: "LibrarySettingsView"; }
                 }
 
@@ -292,7 +293,7 @@ Rectangle  {
                     width: 24;
                     height: 24;
 
-                    source: "../add.svg";
+                    source: "../Assets/add.svg";
                     sourceSize { width: width; height: height; }
 
                     opacity: 0.5;

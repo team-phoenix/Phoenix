@@ -11,7 +11,7 @@ import vg.phoenix.models 1.0
 import vg.phoenix.themes 1.0
 import vg.phoenix.backend 1.0
 
-import "../Library"
+import "../Frontend"
 import "../Util"
 
 // Suspended game section
@@ -45,7 +45,7 @@ Rectangle {
                     height: 48;
                     visible: true;
                     asynchronous: true;
-                    source: emulator.artworkURL === "" ? "../noartwork.png" : root.gameViewObject.artworkURL;
+                    source: emulator.artworkURL === "" ? "../Assets/noartwork.png" : root.gameViewObject.artworkURL;
                     sourceSize { height: height; width: width; }
                     fillMode: Image.PreserveAspectFit;
                 }
@@ -92,7 +92,7 @@ Rectangle {
                 anchors.centerIn: parent;
                 width: 14;
                 height: 14;
-                source: "../close.svg";
+                source: "../Assets/close.svg";
                 sourceSize { height: height; width: width; }
             }
 

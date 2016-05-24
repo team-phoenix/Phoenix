@@ -11,7 +11,7 @@ import vg.phoenix.paths 1.0
 
 import "../"
 import "../Emulator"
-import "../Library"
+import "../Frontend"
 import "../Util"
 
 // Main window

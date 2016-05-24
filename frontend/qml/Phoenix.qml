@@ -10,7 +10,7 @@ import vg.phoenix.launcher 1.0
 import vg.phoenix.paths 1.0
 
 import "../Emulator"
-import "../Library"
+import "../Frontend"
 import "../Util"
 
 // Main window

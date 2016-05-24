@@ -6,6 +6,8 @@ import vg.phoenix.themes 1.0
 import vg.phoenix.launcher 1.0
 import vg.phoenix.paths 1.0
 
+import "../Emulator"
+
 MouseArea {
     // Make GameConsole's objects available from Emulator directly
     property alias controlOutput: gameConsole.controlOutput;

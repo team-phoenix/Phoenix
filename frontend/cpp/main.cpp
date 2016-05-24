@@ -124,7 +124,7 @@ int main( int argc, char *argv[] ) {
     //qRegisterMetaType<Library::GameData>( "GameData" );
 
     // Load the root QML object and everything under it
-    engine.load( QUrl( QStringLiteral( "qrc:/main/" )
+    engine.load( QUrl( QStringLiteral( "qrc:/Phoenix/" )
                        + commandLineSource[ QStringLiteral( "mainSrc" ) ].toString() ) );
 
     // Begin main event loop
