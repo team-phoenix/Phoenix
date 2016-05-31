@@ -109,6 +109,7 @@ Item {
                         onValueChanged: gameConsole.volume = value;
                         stepSize: 0.01;
                         activeFocusOnPress: true;
+                        focus: false;
                         tickmarksEnabled: false;
 
                         style: SliderStyle {

@@ -62,11 +62,15 @@
         <file>Library.qml</file>
         <file>SystemList.qml</file>
         <file>GameGrid.qml</file>
-        <file>Header.qml</file>
+        <file>LibraryHeader.qml</file>
     </qresource>
     <qresource prefix="/Util">
         <file>MarqueeText.qml</file>
         <file>PhoenixLogo.qml</file>
     </qresource>
-    <qresource prefix="/Settings"/>
+    <qresource prefix="/Settings">
+        <file>LibretroCoreSettings.qml</file>
+        <file>SettingsList.qml</file>
+        <file>InputSettings.qml</file>
+    </qresource>
 </RCC>

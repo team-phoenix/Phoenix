@@ -14,6 +14,7 @@ import vg.phoenix.themes 1.0
 import "../"
 
 Item {
+    property alias libraryModel: libraryModel;
     SqlThreadedModel {
         id: libraryModel;
 

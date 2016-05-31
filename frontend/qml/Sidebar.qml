@@ -14,70 +14,60 @@ import "../"
 import "qrc:/Assets"
 import "qrc:/Util"
 import "qrc:/Frontend"
+import "qrc:/Settings"
 
-Rectangle  {
-    // The main attraction: a StackView that holds a list of something, that something being a type of
-    // console, settings category, or whatever else
-    property alias stackView: stackView;
-    StackView {
-        id: stackView;
-        initialItem: systemList;
-        anchors { left: parent.left; right: parent.right; top: parent.top; bottom: bottomRowContainer.top; }
+Rectangle {
+    property Item currentItem;
 
-        property string currentObjectName: currentItem === null ? "" : currentItem.objectName;
+    // All 3 lists the sidebar can show
+    // Only one is enabled and visible at any given time
+    // Set with currentItem
+    Item {
+        anchors.top: parent.top;
+        anchors.bottom: bottomRowContainer.top;
+        anchors.left: parent.left;
+        anchors.right: parent.right;
 
         SystemList {
             id: systemList;
-            objectName: "SystemList";
+
+            width: parent.width;
+            height: parent.height;
+
+            enabled: opacity === 1.0;
+
+            opacity: currentItem === this ? 1.0 : 0.0;
+            Behavior on opacity { PropertyAnimation { } }
+            y: currentItem === this ? 0 : parent.height;
+            Behavior on y { PropertyAnimation { easing.type: Easing.InOutExpo; } }
         }
 
         CollectionsView {
             id: collectionsView;
-            objectName: "CollectionsView";
+
+            width: parent.width;
+            height: parent.height;
+
+            enabled: opacity === 1.0;
+
+            opacity: currentItem === this ? 1.0 : 0.0;
+            Behavior on opacity { PropertyAnimation { } }
+            y: currentItem === this ? 0 : parent.height;
+            Behavior on y { PropertyAnimation { easing.type: Easing.InOutExpo; } }
         }
 
-        SettingsView {
-            id: settingsView;
-            objectName: "SettingsView";
-        }
+        SettingsList {
+            id: settingsList;
 
-        delegate: StackViewDelegate {
-            function transitionFinished(properties) {
-                properties.exitItem.opacity = 1;
-                properties.exitItem.y = 0;
-            }
+            width: parent.width;
+            height: parent.height;
 
-            pushTransition: StackViewTransition {
-                PropertyAnimation {
-                    target: enterItem
-                    property: "opacity";
-                    from: 0;
-                    to: 1;
-                }
+            enabled: opacity === 1.0;
 
-                PropertyAnimation {
-                    target: exitItem;
-                    property: "opacity";
-                    from: 1;
-                    to: 0;
-                }
-
-                PropertyAnimation {
-                    target: enterItem
-                    property: "y"
-                    from: enterItem.height;
-                    to: 0;
-                    easing.type: Easing.InOutExpo;
-                }
-
-                PropertyAnimation {
-                    target: exitItem
-                    property: "y"
-                    from: 0;
-                    to: exitItem.height;
-                    easing.type: Easing.InOutExpo;
-                }
-            }
+            opacity: currentItem === this ? 1.0 : 0.0;
+            Behavior on opacity { PropertyAnimation { } }
+            y: currentItem === this ? 0 : parent.height;
+            Behavior on y { PropertyAnimation { easing.type: Easing.InOutExpo; } }
         }
     }
 
@@ -162,7 +152,7 @@ Rectangle  {
                 anchors { bottom: parent.bottom; right: parent.right; left: parent.left; }
                 color: "transparent";
                 width: parent.width;
-                height: parent.height/2;
+                height: parent.height / 2;
 
                 ProgressBar {
                     anchors { left: parent.left; right: parent.right; leftMargin: 25; rightMargin: 25; }
@@ -186,10 +176,10 @@ Rectangle  {
             color: PhxTheme.common.primaryBackgroundColor;
             anchors { left: parent.left; right: parent.right; bottom: parent.bottom; }
 
-            // Added number: number of extra buttons past ListView
+            // The "+ 1" represents the number of extra buttons to the right of the ListView
             property real delegateWidth: parent.width / ( listView.count + 1 );
 
-            // The buttons along the bottom that control the stackView
+            // The buttons along the bottom that control which list is currently visible
             PhxListView {
                 id: listView;
                 anchors { bottom: parent.bottom; left: parent.left; }
@@ -198,37 +188,14 @@ Rectangle  {
                 spacing: 0;
                 orientation: ListView.Horizontal;
 
+                // FIXME: Use ids/properties as leftPane/rightPane roles once QTBUG-44079 is fixed
                 model: ListModel {
-                    ListElement { bgColor: "white"; label: "Games"; imageSource: "qrc:/Assets/games.svg";
-                        leftPane: "SystemList"; rightPane: "BoxartGridView"; }
-                    ListElement { bgColor: "white"; label: "Favorites"; imageSource: "qrc:/Assets/collections.svg";
-                        leftPane: "CollectionsView"; rightPane: "BoxartGridView"; }
-                    ListElement { bgColor: "white"; label: "Settings"; imageSource: "qrc:/Assets/settings.svg";
-                        leftPane: "SettingsView"; rightPane: "LibrarySettingsView"; }
+                    ListElement { bgColor: "white"; label: "Games"; imageSource: "qrc:/Assets/games.svg"; }
+                    ListElement { bgColor: "white"; label: "Favorites"; imageSource: "qrc:/Assets/collections.svg"; }
+                    ListElement { bgColor: "white"; label: "Settings"; imageSource: "qrc:/Assets/settings.svg"; }
                 }
 
-                // Returns first match
-                function getObjectByName( name, parentObject ) {
-                    for( var i = 0; i < parentObject.children.length; i++ ) {
-                        if( !parentObject.children[ i ].objectName.localeCompare( name ) )
-                            return parentObject.children[ i ];
-                    }
-                    return null;
-                }
-
-                // Change the selectionArea and contentArea stack views if they're not already set to the given objects
-                function changePlaces( leftPane, rightPane ) {
-
-                    // Happens during startup/shutdown
-                    if( stackView.currentItem === null ) return;
-
-                    if ( stackView.currentItem.objectName.localeCompare( leftPane ) ) {
-                        stackView.push( getObjectByName( leftPane, stackView ) );
-                        //if( contentArea.contentStackView.currentItem.objectName.localeCompare( rightPane ) ) {
-                        //    contentArea.contentStackView.push( getObjectByName( rightPane, contentArea.contentStackView ) );
-                        //}
-                    }
-                }
+                Component.onCompleted: currentIndex = 2;
 
                 delegate: Item {
                     anchors { top: parent.top; bottom: parent.bottom; }
@@ -245,12 +212,28 @@ Rectangle  {
                         opacity: index === listView.currentIndex ? 1.0 : 0.5;
                     }
 
-                    // If the index now points to this particular delegate, manipulate the stackview to match its role
+                    // If the index now points to this particular delegate, change the current list accordingly
                     Connections {
                         target: listView;
                         onCurrentIndexChanged: {
                             if( listView.currentIndex === index ) {
-                                listView.changePlaces( leftPane, rightPane );
+                                // FIXME: Remove this once QTBUG-44079 is fixed (check ListModel above)
+                                switch( index ) {
+                                case 0:
+                                    currentItem = systemList;
+                                    mainArea.currentItem = library;
+                                    break;
+                                case 1:
+                                    currentItem = collectionsView;
+                                    mainArea.currentItem = library;
+                                    break;
+                                case 2:
+                                    currentItem = settingsList;
+                                    mainArea.currentItem = settingsList.defaultPage;
+                                    break;
+                                default:
+                                    break;
+                                }
                             }
                         }
                     }
@@ -263,14 +246,21 @@ Rectangle  {
             }
 
             Rectangle {
+                id: addButtonHighlight;
                 width: parent.delegateWidth;
                 anchors { top: listView.top; bottom: listView.bottom; left: listView.right; }
 
                 color: "transparent";
-                border.color: activeFocus ? PhxTheme.common.menuItemHighlight : "transparent";
+                border.color: activeFocus || fileDialog.visible ? PhxTheme.common.menuItemHighlight : "transparent";
                 border.width: 2;
 
                 activeFocusOnTab: true;
+                Keys.onPressed: {
+                    if( event.key === Qt.Key_Enter || event.key === Qt.Key_Return ) {
+                        fileDialog.open();
+                        event.accepted = true;
+                    }
+                }
 
                 FileDialog {
                     id: fileDialog;
@@ -288,12 +278,16 @@ Rectangle  {
                     source: "qrc:/Assets/add.svg";
                     sourceSize { width: width; height: height; }
 
-                    opacity: 0.5;
+                    opacity: fileDialog.visible ? 1.0 : 0.5;
+
                 }
 
                 MouseArea {
                     anchors.fill: parent;
-                    onClicked: fileDialog.open();
+                    onClicked: {
+                        addButtonHighlight.focus = true;
+                        fileDialog.open();
+                    }
                 }
             }
         }

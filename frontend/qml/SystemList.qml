@@ -82,7 +82,7 @@ PhxScrollView {
                     target: listView
                     onCurrentIndexChanged:
                         if( listView.currentIndex === -1 ) {
-                            contentArea.contentLibraryModel.clearFilter( "system" );
+                            library.libraryModel.clearFilter( "system" );
                     }
                 }
 
@@ -104,12 +104,7 @@ PhxScrollView {
                     anchors.fill: parent;
                     hoverEnabled: true;
 
-                    onClicked: {
-                        if ( !contentArea.contentStackView.currentItem.objectName.localeCompare( "ConsoleList" ) )
-                            contentArea.contentStackView.push( { item: contentArea.boxartGrid, replace: true } );
-
-                        if( listView.currentIndex !== -1 ) listView.currentIndex = -1;
-                    }
+                    onClicked: if( listView.currentIndex !== -1 ) listView.currentIndex = -1;
                 }
 
                 // The highlighter from PhxListView, hard-coded for a vertical list and to only appear when index is -1
@@ -164,7 +159,7 @@ PhxScrollView {
                 target: listView
                 onCurrentIndexChanged:
                     if( listView.currentIndex === index ) {
-                        //library.libraryModel.setFilter( "system", UUID );
+                        library.libraryModel.setFilter( "system", UUID );
                 }
             }
 
@@ -187,12 +182,7 @@ PhxScrollView {
                 anchors.fill: parent;
                 hoverEnabled: true;
 
-                onClicked: {
-                    if ( !sidebar.stackView.currentItem.objectName.localeCompare( "ConsoleList" ) )
-                        //sidebar.stackView.push( { item: contentArea.boxartGrid, replace: true } );
-
-                    if( listView.currentIndex !== index ) listView.currentIndex = index;
-                }
+                onClicked: if( listView.currentIndex !== index ) listView.currentIndex = index;
             }
         }
     }

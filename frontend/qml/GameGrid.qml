@@ -46,9 +46,13 @@ FocusScope {
 
                 // Grab keyboard focus, this is the object that we decided gets focus initially
                 forceActiveFocus();
+
+                model = libraryModel;
+
+                if( libraryModel.rowCount() > 0 ) currentIndex = 0;
             }
 
-            model: libraryModel;
+            //model: libraryModel;
 
             // If the grid's width is less than the maxCellWidth, get
             // the grid to scale the size of the grid items, so that the transition looks really
@@ -67,17 +71,17 @@ FocusScope {
             // Is the model working properly?
 
             // Define some transition animations
-            property Transition transition: Transition { NumberAnimation { properties: "x,y"; duration: 250; } }
-            property Transition transitionX: Transition { NumberAnimation { properties: "x"; duration: 250; } }
+            //property Transition transition: Transition { NumberAnimation { properties: "x,y"; duration: 250; } }
+            //property Transition transitionX: Transition { NumberAnimation { properties: "x"; duration: 250; } }
 
-//             add: transition;
-//             addDisplaced: transition;
-//             displaced: transition;
-//             move: transition;
-//             moveDisplaced: transition;
-//             populate: transitionX;
-//             remove: transition;
-//             removeDisplaced: transition;
+            //add: transition;
+            //addDisplaced: transition;
+            //displaced: transition;
+            //move: transition;
+            //moveDisplaced: transition;
+            //populate: transitionX;
+            //remove: transition;
+            //removeDisplaced: transition;
 
             // Behavior on contentY { SmoothedAnimation { duration: 250; } }
 
@@ -94,192 +98,189 @@ FocusScope {
 //                    lastY = contentY;
 //            }
 
-            delegate: Loader {
-                asynchronous: true;
-                sourceComponent: Item {
-                    id: gridItem;
-                    width: gameGrid.cellWidth - scrollView.addToMargins; height: gameGrid.cellHeight;
-                    anchors.rightMargin: scrollView.addToMargins;
+            delegate: Item {
+                id: gridItem;
+                width: gameGrid.cellWidth - scrollView.addToMargins; height: gameGrid.cellHeight;
+                anchors.rightMargin: scrollView.addToMargins;
 
-                    Keys.onPressed: {
-                        if( event.key === Qt.Key_Enter || event.key === Qt.Key_Return ) {
-                            launchGame();
-                        }
+                Keys.onPressed: {
+                    if( event.key === Qt.Key_Enter || event.key === Qt.Key_Return ) {
+                        launchGame();
+                    }
+                }
+
+                function launchGame() {
+                    var core = coreFilePath;
+                    if ( core === "" ) {
+                        core = gameLauncher.getDefaultCore( system );
                     }
 
-                    function launchGame() {
-                        var core = coreFilePath;
-                        if ( core === "" ) {
-                            core = gameLauncher.getDefaultCore( system );
+                    var game = gameLauncher.trimmedGame( absoluteFilePath );
+
+                    if ( gameLauncher.verify( core, game ) ) {
+                        // Set up the packet of information to pass to GameConsole
+                        var dict = {};
+                        dict[ "type" ] = "libretro";
+                        dict[ "core" ] = core;
+                        dict[ "game" ] = game;
+                        dict[ "systemPath" ] = PhxPaths.qmlFirmwareLocation();
+                        dict[ "savePath" ] = PhxPaths.qmlSaveLocation();
+
+                        // Extra stuff
+                        dict[ "title" ] = title;
+                        dict[ "system" ] = system;
+                        dict[ "artworkURL" ] = imageCacher.cachedUrl;
+
+                        // Assign the source
+                        gameConsole.source = dict;
+
+                        // Begin loading
+
+                        // TODO: Ask user if they want to do this?
+                        if( phoenix.state === "Minimized" ) {
+                            phoenix.autoLoadFlag = true;
+                            phoenix.state = "SilentlyUnloading";
                         }
 
-                        var game = gameLauncher.trimmedGame( absoluteFilePath );
+                        else
+                            phoenix.state = "Loading";
+                    }
+                }
 
-                        if ( gameLauncher.verify( core, game ) ) {
-                            // Set up the packet of information to pass to GameConsole
-                            var dict = {};
-                            dict[ "type" ] = "libretro";
-                            dict[ "core" ] = core;
-                            dict[ "game" ] = game;
-                            dict[ "systemPath" ] = PhxPaths.qmlFirmwareLocation();
-                            dict[ "savePath" ] = PhxPaths.qmlSaveLocation();
+                MouseArea {
+                    id: gridItemMouseArea;
+                    anchors.fill: parent;
+                    hoverEnabled: true;
+                    onClicked: { gameGrid.currentIndex = index; gameGrid.forceActiveFocus(); }
+                    onDoubleClicked: launchGame();
+                }
 
-                            // Extra stuff
-                            dict[ "title" ] = title;
-                            dict[ "system" ] = system;
-                            dict[ "artworkURL" ] = imageCacher.cachedUrl;
+                ColumnLayout {
+                    spacing: 13;
+                    anchors {
+                        fill: parent;
+                        topMargin: gameGrid.itemMargin; bottomMargin: gameGrid.itemMargin;
+                        leftMargin: gameGrid.itemMargin; rightMargin: gameGrid.itemMargin;
+                    }
 
-                            // Assign the source
-                            gameConsole.source = dict;
+                    property alias gridItemMouseArea: gridItemMouseArea;
 
-                            // Begin loading
+                    Rectangle {
+                        id: gridItemImageContainer;
+                        color: "transparent";
+                        Layout.fillHeight: true;
+                        Layout.fillWidth: true;
 
-                            // TODO: Ask user if they want to do this?
-                            if( phoenix.state === "Minimized" ) {
-                                phoenix.autoLoadFlag = true;
-                                phoenix.state = "SilentlyUnloading";
+                        Image {
+                            id: gridItemImage;
+                            height: parent.height;
+                            anchors { top: parent.top; left: parent.left; right: parent.right; bottom: parent.bottom; leftMargin: -1; }
+                            visible: true;
+                            asynchronous: true;
+                            source: imageCacher.cachedUrl == "" ? "qrc:/Assets/noartwork.png" : imageCacher.cachedUrl;
+                            sourceSize { height: zoomSlider.maximumValue; width: zoomSlider.maximumValue; }
+                            verticalAlignment: Image.AlignBottom;
+                            fillMode: Image.PreserveAspectFit;
+
+                            onStatusChanged: {
+                                if ( status == Image.Error ) {
+                                    console.log( "Error in " + source );
+                                    gridItemImage.source = "qrc:/Assets/noartwork.png";
+                                }
+
+                                // This is not triggered when source is an empty string
+                                if ( status == Image.Null ) {
+                                    console.log( "No image available for " + title );
+                                }
                             }
 
-                            else
-                                phoenix.state = "Loading";
+                            BusyIndicator {
+                                anchors.fill: parent;
+                                anchors.margins: 8;
+                                running: parent.status === Image.Loading;
+                            }
+
+                            // BoxArt: Glass line effect
+                            Rectangle {
+                                anchors { bottom: parent.bottom; bottomMargin: parent.paintedHeight - 1; horizontalCenter: parent.horizontalCenter; }
+                                width: parent.paintedWidth ;
+                                height: 1;
+                                color: Qt.rgba( 255,255,255,.25 );
+                            }
+
+                            // BoxArt: Outer Border
+                            Rectangle {
+                                anchors { bottom: parent.bottom; topMargin: -border.width; bottomMargin: -border.width; leftMargin: -border.width; rightMargin: -border.width; horizontalCenter: parent.horizontalCenter; }
+                                id: imageBackground;
+                                z: gridItemImage.z - 1;
+                                height: parent.paintedHeight + border.width * 2;
+                                width: parent.paintedWidth + border.width * 2;
+                                border.color: index === gameGrid.currentIndex && gameGrid.activeFocus ? PhxTheme.common.boxartSelectedBorderColor : PhxTheme.common.boxartNormalBorderColor;
+                                border.width: 2 + ( zoomSlider.value / 50 );
+                                color: "transparent";
+                                radius: 3;
+                            }
+
+                            ImageCacher {
+                                id: imageCacher;
+                                imageUrl: artworkUrl;
+                                identifier: crc32Checksum;
+                                Component.onCompleted: cache();
+                            }
                         }
                     }
 
-                    MouseArea {
-                        id: gridItemMouseArea;
-                        anchors.fill: parent;
-                        hoverEnabled: true;
-                        onClicked: { gameGrid.currentIndex = index; gameGrid.forceActiveFocus(); }
-                        onDoubleClicked: launchGame();
+                    // A label for the game's title
+                    MarqueeText {
+                        id: titleText;
+                        Layout.fillWidth: true;
+                        height: 20;
+                        text: title;
+                        spacing: zoomSlider.value / 10;
+                        color: PhxTheme.common.highlighterFontColor;
+                        fontSize: PhxTheme.common.baseFontSize;
+                        running: index === gameGrid.currentIndex && gameGrid.activeFocus || gridItemMouseArea.containsMouse;
+                        pixelsPerFrame: zoomSlider.value / 100;
+
+                        Connections {
+                            target: gameGrid;
+                            onCellWidthChanged: titleText.handleSituationChanged();
+                        }
                     }
 
-                    ColumnLayout {
-                        spacing: 13;
+                    // For debugging the above MarqueeText
+                    // Text {
+                    //     text: titleText.state;
+                    //     anchors.top: titleText.bottom;
+                    //     color: "red";
+                    //     Layout.fillWidth: true;
+                    //     horizontalAlignment: Text.AlignHCenter;
+                    //     elide: Text.ElideRight;
+                    // }
+
+                    /*Text {
+                        id: platformText;
                         anchors {
-                            fill: parent;
-                            topMargin: gameGrid.itemMargin; bottomMargin: gameGrid.itemMargin;
-                            leftMargin: gameGrid.itemMargin; rightMargin: gameGrid.itemMargin;
+                            top: titleText.bottom;
+                            topMargin: 0;
                         }
 
-                        property alias gridItemMouseArea: gridItemMouseArea;
-
-                        Rectangle {
-                            id: gridItemImageContainer;
-                            color: "transparent";
-                            Layout.fillHeight: true;
-                            Layout.fillWidth: true;
-
-                            Image {
-                                id: gridItemImage;
-                                height: parent.height;
-                                anchors { top: parent.top; left: parent.left; right: parent.right; bottom: parent.bottom; leftMargin: -1; }
-                                visible: true;
-                                asynchronous: true;
-                                source: imageCacher.cachedUrl == "" ? "qrc:/Assets/noartwork.png" : imageCacher.cachedUrl;
-                                sourceSize { height: zoomSlider.maximumValue; width: zoomSlider.maximumValue; }
-                                verticalAlignment: Image.AlignBottom;
-                                fillMode: Image.PreserveAspectFit;
-
-                                onStatusChanged: {
-                                    if ( status == Image.Error ) {
-                                        console.log( "Error in " + source );
-                                        gridItemImage.source = "qrc:/Assets/noartwork.png";
-                                    }
-
-                                    // This is not triggered when source is an empty string
-                                    if ( status == Image.Null ) {
-                                        console.log( "No image available for " + title );
-                                    }
-                                }
-
-                                BusyIndicator {
-                                    anchors.fill: parent;
-                                    anchors.margins: 8;
-                                    running: parent.status === Image.Loading;
-                                }
-
-                                // BoxArt: Glass line effect
-                                Rectangle {
-                                    anchors { bottom: parent.bottom; bottomMargin: parent.paintedHeight - 1; horizontalCenter: parent.horizontalCenter; }
-                                    width: parent.paintedWidth ;
-                                    height: 1;
-                                    color: Qt.rgba( 255,255,255,.25 );
-                                }
-
-                                // BoxArt: Outer Border
-                                Rectangle {
-                                    anchors { bottom: parent.bottom; topMargin: -border.width; bottomMargin: -border.width; leftMargin: -border.width; rightMargin: -border.width; horizontalCenter: parent.horizontalCenter; }
-                                    id: imageBackground;
-                                    z: gridItemImage.z - 1;
-                                    height: parent.paintedHeight + border.width * 2;
-                                    width: parent.paintedWidth + border.width * 2;
-                                    border.color: index === gameGrid.currentIndex && gameGrid.activeFocus ? PhxTheme.common.boxartSelectedBorderColor : PhxTheme.common.boxartNormalBorderColor;
-                                    border.width: 2 + ( zoomSlider.value / 50 );
-                                    color: "transparent";
-                                    radius: 3;
-                                }
-
-                                ImageCacher {
-                                    id: imageCacher;
-                                    imageUrl: artworkUrl;
-                                    identifier: crc32Checksum;
-                                    Component.onCompleted: cache();
-                                }
-                            }
-                        }
-
-                        // A label for the game's title
-                        MarqueeText {
-                            id: titleText;
-                            Layout.fillWidth: true;
-                            height: 20;
-                            text: title;
-                            spacing: zoomSlider.value / 10;
-                            color: PhxTheme.common.highlighterFontColor;
-                            fontSize: PhxTheme.common.baseFontSize;
-                            running: index === gameGrid.currentIndex && gameGrid.activeFocus || gridItemMouseArea.containsMouse;
-                            pixelsPerFrame: zoomSlider.value / 100;
-
-                            Connections {
-                                target: gameGrid;
-                                onCellWidthChanged: titleText.handleSituationChanged();
-                            }
-                        }
-
-                        // For debugging the above MarqueeText
-                        // Text {
-                        //     text: titleText.state;
-                        //     anchors.top: titleText.bottom;
-                        //     color: "red";
-                        //     Layout.fillWidth: true;
-                        //     horizontalAlignment: Text.AlignHCenter;
-                        //     elide: Text.ElideRight;
-                        // }
-
-                        /*Text {
-                            id: platformText;
-                            anchors {
-                                top: titleText.bottom;
-                                topMargin: 0;
-                            }
-
-                            text: system;
-                            color: PhxTheme.common.baseFontColor;
-                            Layout.fillWidth: true;
-                            elide: Text.ElideRight;
-                        }
-                        Text {
-                            id: absPath;
-                            anchors {
-                                top: platformText.bottom;
-
-                            }
-                            text: sha1; // absolutePath
-                            color: PhxTheme.common.baseFontColor;
-                            Layout.fillWidth: true;
-                            elide: Text.ElideMiddle;
-                        }*/
+                        text: system;
+                        color: PhxTheme.common.baseFontColor;
+                        Layout.fillWidth: true;
+                        elide: Text.ElideRight;
                     }
+                    Text {
+                        id: absPath;
+                        anchors {
+                            top: platformText.bottom;
+
+                        }
+                        text: sha1; // absolutePath
+                        color: PhxTheme.common.baseFontColor;
+                        Layout.fillWidth: true;
+                        elide: Text.ElideMiddle;
+                    }*/
                 }
             }
         }
