@@ -11,7 +11,22 @@ import "qrc:/Util"
 
 PhxScrollView {
     // Change to reflect index 0 of settingsModel
-    property Item defaultPage: libretroCoreSettings;
+    property Item defaultItem: libretroCoreSettings;
+    property int currentIndex: listView.currentIndex;
+
+    function indexChanged( index ) {
+        switch( index ) {
+            case 0:
+                mainArea.currentItem = libretroCoreSettings;
+                break;
+            case 1:
+                mainArea.currentItem = inputSettings;
+                break;
+            default:
+                break;
+        }
+    }
+
     PhxListView {
         id: listView;
         anchors.fill: parent;
@@ -72,16 +87,7 @@ PhxScrollView {
                 target: listView;
                 onCurrentIndexChanged: {
                     if( listView.currentIndex === index && sidebar.currentItem === settingsList ) {
-                        switch( index ) {
-                            case 0:
-                                mainArea.currentItem = libretroCoreSettings;
-                                break;
-                            case 1:
-                                mainArea.currentItem = inputSettings;
-                                break;
-                            default:
-                                break;
-                        }
+                        indexChanged( index );
                     }
                 }
             }

@@ -229,7 +229,7 @@ Rectangle {
                                     break;
                                 case 2:
                                     currentItem = settingsList;
-                                    mainArea.currentItem = settingsList.defaultPage;
+                                    settingsList.indexChanged( settingsList.currentIndex );
                                     break;
                                 default:
                                     break;
