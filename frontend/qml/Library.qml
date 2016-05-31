@@ -15,6 +15,7 @@ import "../"
 
 Item {
     property alias libraryModel: libraryModel;
+
     SqlThreadedModel {
         id: libraryModel;
 

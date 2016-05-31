@@ -42,7 +42,7 @@ Item {
                 interval: 300;
                 running: false;
                 repeat: false;
-                onTriggered: { libraryModel.setFilter( "title", "%" + searchBar.text + "%" ); }
+                onTriggered: { library.libraryModel.setFilter( "title", "%" + searchBar.text + "%" ); }
             }
             onTextChanged: searchTimer.restart();
         }
