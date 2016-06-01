@@ -24,7 +24,7 @@ Item {
         color: "#FFF";
         width: 250;
         radius: height / 2;
-        height: 30;
+        height: parent.height * 0.75;
         border.color: searchBar.activeFocus ? PhxTheme.common.menuItemHighlight : "transparent";
         border.width: 2;
 
@@ -49,7 +49,7 @@ Item {
 
         Image {
             anchors { right: parent.right; rightMargin: 10; verticalCenter: parent.verticalCenter; }
-            width: 20;
+            width: parent.height * 0.6;
             height: width;
             sourceSize { height: height; width: width; }
             source: searchBar.text === "" ? "qrc:/Assets/search.svg" : "qrc:/Assets/del.svg";
@@ -88,7 +88,7 @@ Item {
             id: zoomSlider;
             anchors { verticalCenter: parent.verticalCenter; }
             width: 100;
-            height: 30;
+            height: parent.height;
             minimumValue: 100;
             maximumValue: 450;
             value: 150;
@@ -152,78 +152,10 @@ Item {
         // Spacer
         Item { width: 12; height: 12; }
 
-        // Fullscreen
-        Rectangle {
-            anchors.verticalCenter: parent.verticalCenter;
-            height: 32;
-            width: height;
-            color: fullscreenButton.activeFocus ? PhxTheme.common.menuItemHighlight : "transparent";
-            radius: width * 0.5;
-
-            Image {
-                id: fullscreenButton;
-                anchors.centerIn: parent;
-                height: window.visibility === Window.FullScreen ? 18 : 24;
-                width: height;
-
-                sourceSize { height: height; width: width; }
-
-                property string screenIcon: {
-                    if ( window.visibility === Window.FullScreen ) screenIcon: "qrc:/Assets/window.svg";
-                    else if ( window.visibility === Window.Windowed | Window.Maximized ) screenIcon: "qrc:/Assets/fullscreen.svg";
-                }
-                source: screenIcon;
-
-                activeFocusOnTab: true;
-
-                MouseArea {
-                    anchors.fill: parent;
-                    onClicked: window.toggleFullscreen();
-                }
-
-                Keys.onPressed: {
-                    if( event.key === Qt.Key_Enter || event.key === Qt.Key_Return ) {
-                        window.toggleFullscreen();
-                        event.accepted = true;
-                    }
-                }
-            }
+        WindowControls {
+            height: parent.height;
+            width: 75;
         }
 
-
-        // Close
-        Image {
-            id: closeButton;
-            anchors.verticalCenter: parent.verticalCenter;
-            height: 14;
-            width: 14;
-
-            visible: window.visibility === Window.FullScreen;
-            enabled: visible;
-
-            activeFocusOnTab: enabled;
-
-            sourceSize { height: height; width: width; }
-            source: "qrc:/Assets/close.svg";
-
-            MouseArea {
-                anchors.fill: parent;
-                onClicked: Qt.quit();
-            }
-
-            Keys.onPressed: {
-                if( event.key === Qt.Key_Enter || event.key === Qt.Key_Return ) {
-                    Qt.quit();
-                    event.accepted = true;
-                }
-            }
-
-            Rectangle {
-                anchors.fill: parent;
-                color: "transparent";
-                border.color: closeButton.activeFocus ? PhxTheme.common.menuItemHighlight : "transparent";
-                border.width: 2;
-            }
-        }
     }
 }

@@ -63,6 +63,7 @@
         <file>SystemList.qml</file>
         <file>GameGrid.qml</file>
         <file>LibraryHeader.qml</file>
+        <file>WindowControls.qml</file>
     </qresource>
     <qresource prefix="/Util">
         <file>MarqueeText.qml</file>

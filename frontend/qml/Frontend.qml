@@ -67,7 +67,7 @@ Rectangle {
                         LibraryHeader {
                             id: header;
                             anchors { left: parent.left; right: parent.right; }
-                            height: 70;
+                            height: 35;
                         }
 
                         Library {
