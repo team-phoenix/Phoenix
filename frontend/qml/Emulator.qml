@@ -92,94 +92,112 @@ MouseArea {
         }
     }
 
-    // A blurred copy of the video that sits behind the real video as an effect
-    FastBlur {
-        id: blurEffect;
+    // A portion of this wrapper (the area the ActionBar overlaps) will be rendered into a texture so we can
+    // apply a blur effect to it
+    Item {
+        id: videoOutputWrapper;
         anchors.fill: parent;
-        source: videoOutput;
-        radius: 64;
-        opacity: videoOutput.opacity;
-    }
 
-    // Make sure something gets drawn when VideoOutput itself isn't being drawn
-    Rectangle {
-        anchors.fill: videoOutput;
-        opacity: videoOutput.opacity;
-        color: "black";
-    }
-
-    // Custom video output module
-    VideoOutput {
-        id: videoOutput;
-        anchors.centerIn: parent;
-
-        // Scaling
-
-        // Info for the various modes
-        property real letterBoxHeight: parent.width / aspectRatio;
-        property real letterBoxWidth: parent.width;
-        property real pillBoxWidth: parent.height * aspectRatio;
-        property real pillBoxHeight: parent.height;
-        property bool pillBoxing: parent.width / parent.height / aspectRatio > 1.0;
-
-        // Fit mode (0): Maintain aspect ratio, fit all content within window, letterboxing/pillboxing as necessary
-        property real fitModeWidth: pillBoxing ? pillBoxWidth : letterBoxWidth;
-        property real fitModeHeight: pillBoxing ? pillBoxHeight : letterBoxHeight;
-
-        // Stretch mode (1): Fit to parent, ignore aspect ratio
-        property real stretchModeWidth: parent.width;
-        property real stretchModeHeight: parent.height;
-
-        // Fill mode (2): Maintian aspect ratio, fill window with content, cropping the remaining stuff
-        // TODO
-        property real fillModeWidth: 0;
-        property real fillModeHeight: 0;
-
-        // Center mode (3): Show at core's native resolution
-        // TODO
-        property real centerModeWidth: 0;
-        property real centerModeHeight: 0;
-
-        onAspectModeChanged: calculateSize();
-        Component.onCompleted: calculateSize();
-
-        function calculateSize() {
-            switch( aspectMode ) {
-                case 0:
-                    width = Qt.binding( function() { return fitModeWidth; } );
-                    height = Qt.binding( function() { return fitModeHeight; } );
-                    break;
-                case 1:
-                    width = Qt.binding( function() { return stretchModeWidth; } );
-                    height = Qt.binding( function() { return stretchModeHeight; } );
-                    break;
-                case 2:
-                    width = Qt.binding( function() { return fillModeWidth; } );
-                    height = Qt.binding( function() { return fillModeHeight; } );
-                    break;
-                case 3:
-                    width = Qt.binding( function() { return centerModeWidth; } );
-                    height = Qt.binding( function() { return centerModeHeight; } );
-                    break;
-                default:
-                    width = 0;
-                    height = 0;
-                    break;
-            }
+        // A blurred copy of the video that sits behind the real video as an effect
+        FastBlur {
+            id: blurEffect;
+            anchors.fill: parent;
+            source: videoOutput;
+            radius: 64;
+            opacity: videoOutput.opacity;
         }
 
+        // Make sure something gets drawn when VideoOutput itself isn't being drawn
+        Rectangle {
+            anchors.fill: videoOutput;
+            opacity: videoOutput.opacity;
+            color: "black";
+        }
 
-        property bool enableAnimation: false;
-        Behavior on width { enabled: videoOutput.enableAnimation; PropertyAnimation { duration: 250; } }
-        Behavior on height { enabled: videoOutput.enableAnimation; PropertyAnimation { duration: 250; } }
+        // Custom video output module
+        VideoOutput {
+            id: videoOutput;
+            anchors.centerIn: parent;
 
-        linearFiltering: false;
-        television: false;
-        ntsc: true;
-        widescreen: false;
+            // Scaling
+
+            // Info for the various modes
+            property real letterBoxHeight: parent.width / aspectRatio;
+            property real letterBoxWidth: parent.width;
+            property real pillBoxWidth: parent.height * aspectRatio;
+            property real pillBoxHeight: parent.height;
+            property bool pillBoxing: parent.width / parent.height / aspectRatio > 1.0;
+
+            // Fit mode (0): Maintain aspect ratio, fit all content within window, letterboxing/pillboxing as necessary
+            property real fitModeWidth: pillBoxing ? pillBoxWidth : letterBoxWidth;
+            property real fitModeHeight: pillBoxing ? pillBoxHeight : letterBoxHeight;
+
+            // Stretch mode (1): Fit to parent, ignore aspect ratio
+            property real stretchModeWidth: parent.width;
+            property real stretchModeHeight: parent.height;
+
+            // Fill mode (2): Maintian aspect ratio, fill window with content, cropping the remaining stuff
+            // TODO
+            property real fillModeWidth: 0;
+            property real fillModeHeight: 0;
+
+            // Center mode (3): Show at core's native resolution
+            // TODO
+            property real centerModeWidth: 0;
+            property real centerModeHeight: 0;
+
+            onAspectModeChanged: calculateSize();
+            Component.onCompleted: calculateSize();
+
+            function calculateSize() {
+                switch( aspectMode ) {
+                    case 0:
+                        width = Qt.binding( function() { return fitModeWidth; } );
+                        height = Qt.binding( function() { return fitModeHeight; } );
+                        break;
+                    case 1:
+                        width = Qt.binding( function() { return stretchModeWidth; } );
+                        height = Qt.binding( function() { return stretchModeHeight; } );
+                        break;
+                    case 2:
+                        width = Qt.binding( function() { return fillModeWidth; } );
+                        height = Qt.binding( function() { return fillModeHeight; } );
+                        break;
+                    case 3:
+                        width = Qt.binding( function() { return centerModeWidth; } );
+                        height = Qt.binding( function() { return centerModeHeight; } );
+                        break;
+                    default:
+                        width = 0;
+                        height = 0;
+                        break;
+                }
+            }
+
+            property bool enableAnimation: false;
+            Behavior on width { enabled: videoOutput.enableAnimation; PropertyAnimation { duration: 250; } }
+            Behavior on height { enabled: videoOutput.enableAnimation; PropertyAnimation { duration: 250; } }
+
+            linearFiltering: false;
+            television: false;
+            ntsc: true;
+            widescreen: false;
+        }
     }
 
     property string core: typeof gameConsole.source[ "core" ] === 'undefined' ? "" : gameConsole.source[ "core" ];
+
+    // This will sample the area of videoItemWrapper that this ActionBar overlaps so we can apply a blur effect to it
+    // This must be a sibling of videoItemWrapper to ensure we're using the right coordinate system
+    ShaderEffectSource {
+        id: videoOutputClip;
+        width: 350;
+        height: 45;
+        visible: false;
+        sourceItem: videoOutputWrapper;
+        sourceRect: Qt.rect( actionBarCoords.x, actionBarCoords.y, actionBarMouseArea.width, actionBarMouseArea.height );
+        property point actionBarCoords: mapToItem( videoOutputWrapper, actionBarMouseArea.x, actionBarMouseArea.y );
+    }
 
     // Wrapper around ActionBar, lets us track when the user hovers over it
     MouseArea {
@@ -191,40 +209,55 @@ MouseArea {
         width: 350;
         height: 45;
 
-        // A hint on how to hide the action bar (for touch mode)
-        Text {
-            id: actionBarHint;
-            anchors.horizontalCenter: parent.horizontalCenter;
-            anchors.bottom: actionBar.top;
-            width: contentWidth * 2;
-            height: contentHeight * 2;
+        layer.enabled: true;
 
-            opacity: actionBar.opacity;
-            visible: core.indexOf( "desmume" ) > -1;
-
-            verticalAlignment: Text.AlignVCenter;
-            horizontalAlignment: Text.AlignHCenter;
-            text: "(Right-click to hide)";
-            color: "white";
-            style: Text.Outline;
-            styleColor: "black";
-
-            font {
-                pixelSize: 12;
-                family: PhxTheme.common.systemFontFamily;
-            }
-        }
-
-        // In-game controls
-        ActionBar {
-            id: actionBar;
+        Rectangle {
             anchors.fill: parent;
+            color: "black";
 
             opacity: showCursor ? 1.0 : 0.0;
             enabled: showCursor;
 
             // Hide the ActionBar when the mouse doesn't cover it
             Behavior on opacity { PropertyAnimation { duration: 250; } }
+
+            // A hint on how to hide the action bar (for touch mode)
+            Text {
+                id: actionBarHint;
+                anchors.horizontalCenter: parent.horizontalCenter;
+                anchors.bottom: actionBar.top;
+                width: contentWidth * 2;
+                height: contentHeight * 2;
+
+                opacity: actionBar.opacity;
+                visible: core.indexOf( "desmume" ) > -1;
+
+                verticalAlignment: Text.AlignVCenter;
+                horizontalAlignment: Text.AlignHCenter;
+                text: "(Right-click to hide)";
+                color: "white";
+                style: Text.Outline;
+                styleColor: "black";
+
+                font {
+                    pixelSize: 12;
+                    family: PhxTheme.common.systemFontFamily;
+                }
+            }
+
+            // A frosty glass background of the VideoOutput behind this
+            FastBlur {
+                anchors.fill: parent;
+                source: videoOutputClip;
+                radius: 64;
+                opacity: 0.5;
+            }
+
+            // In-game controls
+            ActionBar {
+                id: actionBar;
+                anchors.fill: parent;
+            }
         }
     }
 

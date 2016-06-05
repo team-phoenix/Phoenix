@@ -41,8 +41,6 @@ PhxScrollView {
             // ListElement { section: "Audio"; }
         }
 
-        Component.onCompleted: currentIndex = 1;
-
         header: Item {
             height: PhxTheme.common.menuTitleHeight;
             anchors { left: parent.left; right: parent.right; }

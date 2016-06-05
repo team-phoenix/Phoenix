@@ -1,41 +1,44 @@
 import QtQuick 2.6
+import QtQuick.Layouts 1.2
 import QtQuick.Window 2.0
 
 import vg.phoenix.themes 1.0
 
 Item {
-    id: windowControls;
-    property alias spacing: controlRow.spacing;
+    property int combinedWidth: fullscreenButtonContainer.fullscreenButtonWidth +
+                                ( window.visibility === Window.FullScreen ?
+                                     controlsRow.spacing + closeButton.closeButtonWidth : 0 );
 
-    Row {
-        id: controlRow;
+    RowLayout {
+        id: controlsRow;
         spacing: 12;
-        //anchors.fill: parent;
-        anchors {
-            right: parent.right;
-        }
+        anchors.top: parent.top;
+        anchors.bottom: parent.bottom;
 
         // Fullscreen
         Rectangle {
-            anchors.verticalCenter: parent.verticalCenter;
-            height: windowControls.height + 2;
-            width: windowControls.height;
+            id: fullscreenButtonContainer;
+            property int fullscreenButtonWidth: window.visibility === Window.FullScreen ? 18 : 24;
+
+            Layout.preferredHeight: fullscreenButtonWidth;
+            Layout.preferredWidth: fullscreenButtonWidth;
+
             color: fullscreenButton.activeFocus ? PhxTheme.common.menuItemHighlight : "transparent";
             radius: width * 0.5;
 
             Image {
                 id: fullscreenButton;
-                anchors.centerIn: parent;
-                height: window.visibility === Window.FullScreen ? 18 : 24;
-                width: height;
+                anchors.top: parent.top;
+                anchors.bottom: parent.bottom;
+                width: parent.width;
 
-                sourceSize { height: height; width: width; }
+                sourceSize { width: width; height: height; }
 
+                source: screenIcon;
                 property string screenIcon: {
                     if ( window.visibility === Window.FullScreen ) screenIcon: "qrc:/Assets/window.svg";
                     else if ( window.visibility === Window.Windowed | Window.Maximized ) screenIcon: "qrc:/Assets/fullscreen.svg";
                 }
-                source: screenIcon;
 
                 activeFocusOnTab: true;
 
@@ -53,13 +56,14 @@ Item {
             }
         }
 
-
         // Close
         Image {
             id: closeButton;
-            anchors.verticalCenter: parent.verticalCenter;
-            height: 14;
-            width: height;
+
+            property int closeButtonWidth: 14;
+
+            Layout.preferredHeight: closeButtonWidth;
+            Layout.preferredWidth: closeButtonWidth;
 
             visible: window.visibility === Window.FullScreen;
             enabled: visible;
@@ -88,6 +92,5 @@ Item {
                 border.width: 2;
             }
         }
-
     }
 }

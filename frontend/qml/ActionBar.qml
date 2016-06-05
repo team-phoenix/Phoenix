@@ -9,11 +9,9 @@ import vg.phoenix.themes 1.0
 
 Item {
     // Background
-    Rectangle {
+    Item {
         width: parent.width;
         height: 45;
-        color: Qt.rgba( 0, 0, 0, 0.75 );
-        radius: 1;
 
         // Top accent (thin white bar)
         Rectangle {

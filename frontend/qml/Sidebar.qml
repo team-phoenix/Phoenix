@@ -195,8 +195,6 @@ Rectangle {
                     ListElement { bgColor: "white"; label: "Settings"; imageSource: "qrc:/Assets/settings.svg"; }
                 }
 
-                Component.onCompleted: currentIndex = 2;
-
                 delegate: Item {
                     anchors { top: parent.top; bottom: parent.bottom; }
                     width: listViewContainer.delegateWidth;

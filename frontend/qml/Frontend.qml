@@ -1,6 +1,6 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.4
-import QtQuick.Layouts 1.1
+import QtQuick.Layouts 1.2
 import QtQuick.Window 2.2
 import QtGraphicalEffects 1.0
 
@@ -46,6 +46,7 @@ Rectangle {
 
                 property Item currentItem;
 
+                // The various Items that can occupy the main area (the part of the frontend that isn't the sidebar)
                 Item {
                     id: library;
                     property alias libraryModel: libraryComponent.libraryModel;
@@ -66,14 +67,17 @@ Rectangle {
 
                         LibraryHeader {
                             id: header;
-                            anchors { left: parent.left; right: parent.right; }
-                            height: 35;
+                            Layout.fillWidth: true;
+                            Layout.topMargin: PhxTheme.common.menuItemHeight;
+                            Layout.leftMargin: 30;
+                            Layout.rightMargin: 30;
+                            Layout.preferredHeight: 35;
                         }
 
                         Library {
                             id: libraryComponent;
+                            Layout.fillWidth: true;
                             Layout.fillHeight: true;
-                            anchors { left: parent.left; right: parent.right; }
 
                             property alias header: header;
                             property alias searchBar: header.searchBar;

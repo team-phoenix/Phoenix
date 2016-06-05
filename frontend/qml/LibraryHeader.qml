@@ -20,7 +20,7 @@ Item {
     property alias zoomSlider: zoomSlider;
 
     Rectangle {
-        anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 30; }
+        anchors { verticalCenter: parent.verticalCenter; left: parent.left; }
         color: "#FFF";
         width: 250;
         radius: height / 2;
@@ -60,15 +60,14 @@ Item {
         }
     }
 
-    Row {
-        anchors { verticalCenter: parent.verticalCenter; right: parent.right; rightMargin: 30; }
+    RowLayout {
+        anchors { top: parent.top; bottom: parent.bottom; right: parent.right; }
         spacing: 12;
 
         // Small rectangle
         Item {
-            anchors { verticalCenter: parent.verticalCenter; }
-            width: 12;
-            height: parent.height;
+            Layout.fillHeight: true;
+            Layout.preferredWidth: 12;
 
             Rectangle {
                 anchors { verticalCenter: parent.verticalCenter; right: parent.right; }
@@ -86,9 +85,9 @@ Item {
 
         Slider {
             id: zoomSlider;
-            anchors { verticalCenter: parent.verticalCenter; }
-            width: 100;
-            height: parent.height;
+            Layout.preferredWidth: 100;
+            Layout.fillHeight: true;
+
             minimumValue: 100;
             maximumValue: 450;
             value: 150;
@@ -131,9 +130,8 @@ Item {
 
         // Large rectangle
         Item {
-            anchors { verticalCenter: parent.verticalCenter; }
-            width: 12;
-            height: parent.height;
+            Layout.fillHeight: true;
+            Layout.preferredWidth: 12;
 
             Rectangle {
                 anchors { verticalCenter: parent.verticalCenter; }
@@ -149,12 +147,15 @@ Item {
             }
         }
 
-        // Spacer
-        Item { width: 12; height: 12; }
+        // A spacer
+        Item {
+            Layout.preferredHeight: 1;
+            Layout.preferredWidth: 1;
+        }
 
         WindowControls {
-            height: parent.height;
-            width: 75;
+            Layout.fillHeight: true;
+            Layout.preferredWidth: combinedWidth;
         }
 
     }
