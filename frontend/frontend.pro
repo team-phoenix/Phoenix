@@ -61,7 +61,7 @@ include( ../backend/msvc.pri )
     win32: gcc:  INCLUDEPATH += C:/msys64/mingw64/include C:/msys64/mingw64/include/SDL2 # MSYS2
     macx:        INCLUDEPATH += /usr/local/include /usr/local/include/SDL2               # Homebrew
     macx:        INCLUDEPATH += /usr/local/include /opt/local/include/SDL2               # MacPorts
-    unix:        INCLUDEPATH += /usr/include /usr/include/SDL2                           # Linux
+    unix:  INCLUDEPATH += /usr/include/SDL2                                        # Linux
 
     # Include externals
     DEFINES += QUAZIP_STATIC
