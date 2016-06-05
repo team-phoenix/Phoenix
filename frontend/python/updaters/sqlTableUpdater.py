@@ -139,7 +139,7 @@ class SqlTableUpdater():
         "Nintendo - New Nintendo 3DS":                      {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Nintendo"        },
         #"Nintendo - Nintendo 3DS (DLC)":                   {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Nintendo"        },
         "Nintendo - Nintendo 3DS":                          {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Nintendo"        },
-        "Nintendo - Nintendo 64":                           {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Nintendo"        },
+        "Nintendo - Nintendo 64":                           {"enabled": True,  "defaultCore": "mupen64plus_libretro",               "friendlyName": "",                    "shortName": "", "manufacturer": "Nintendo"        },
         #"Nintendo - Nintendo DS (Download Play) (BETA)":   {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Nintendo"        },
         "Nintendo - Nintendo DS":                           {"enabled": True,  "defaultCore": "desmume_libretro",                   "friendlyName": "",                    "shortName": "", "manufacturer": "Nintendo"        },
         #"Nintendo - Nintendo DSi (DLC)":                   {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Nintendo"        },
@@ -171,7 +171,7 @@ class SqlTableUpdater():
         #"Sony - PlayStation Portable (PSX2PSP)":           {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Sony"            },
         #"Sony - PlayStation Portable (UMD Music)":         {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Sony"            },
         #"Sony - PlayStation Portable (UMD Video)":         {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Sony"            },
-        "Sony - PlayStation Portable":                      {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Sony"            },
+        "Sony - PlayStation Portable":                      {"enabled": True,  "defaultCore": "ppsspp_libretro",                    "friendlyName": "",                    "shortName": "", "manufacturer": "Sony"            },
         "Tiger - Game.com":                                 {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Tiger"           },
         "Tiger - Gizmondo":                                 {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Tiger"           },
         "VTech - CreatiVision":                             {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "VTech"           },
@@ -204,7 +204,7 @@ class SqlTableUpdater():
         "Sega - Lindbergh":                                 {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Sega"            },
         "Sega - Mega-CD":                                   {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Sega"            },
         "Sega - Naomi":                                     {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Sega"            },  
-        "Sega - Saturn":                                    {"enabled": False, "defaultCore": "yabause_libretro",                   "friendlyName": "",                    "shortName": "", "manufacturer": "Sega"            },
+        "Sega - Saturn":                                    {"enabled": True,  "defaultCore": "yabause_libretro",                   "friendlyName": "",                    "shortName": "", "manufacturer": "Sega"            },
         "SNK - Neo Geo CD":                                 {"enabled": True,  "defaultCore": "mess2014_libretro",                  "friendlyName": "",                    "shortName": "", "manufacturer": "SNK"             },
         "Sony - PlayStation 2":                             {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Sony"            },
         "Sony - PlayStation":                               {"enabled": True,  "defaultCore": "mednafen_psx_libretro",              "friendlyName": "",                    "shortName": "", "manufacturer": "Sony"            },
@@ -454,14 +454,8 @@ class SqlTableUpdater():
                 # or "vecx_libretro" == key
                 # or "virtualjaguar_libretro" == key 
 
-                # 3D cores (not supported yet)
-                 "desmume_libretro" == key
-                 or "dolphin_libretro" == key
-                 or "mupen64plus_libretro" == key
-                 or "ppsspp_libretro" == key
-
                 # ARM cores
-                 or "pcsx" in key
+                 "pcsx" in key
                  or "pocketsnes_libretro" == key
 
                  ):
