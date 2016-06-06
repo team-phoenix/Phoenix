@@ -23,7 +23,8 @@ const QString GameLauncher::getDefaultCore( const QString system ) {
 
     if( !userDatabase.isOpen() ) {
         userDatabase.setDatabaseName( PhxPaths::userDataLocation() % QStringLiteral( "/userdata.sqlite" ) );
-        Q_ASSERT( userDatabase.open() );
+        userDatabase.open();
+        Q_ASSERT( userDatabase.isOpen() );
     }
 
     QSqlQuery query = QSqlQuery( userDatabase );
@@ -50,7 +51,6 @@ const QString GameLauncher::getDefaultCore( const QString system ) {
 #endif
 
     return defaultCore;
-
 }
 
 bool GameLauncher::verify( const QString system, QString rom ) {

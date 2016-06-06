@@ -24,7 +24,8 @@ QSqlDatabase Library::getLibretroDatabase() {
 
     if( !libretroDatabase.isOpen() ) {
         libretroDatabase.setDatabaseName( PhxPaths::metadataLocation() % QStringLiteral( "/libretro.sqlite" ) );
-        Q_ASSERT( libretroDatabase.open() );
+        libretroDatabase.open();
+        Q_ASSERT( libretroDatabase.isOpen() );
     }
 
     return libretroDatabase;
@@ -47,7 +48,8 @@ QSqlDatabase Library::getUserDatabase() {
     // Open if not already opened
     if( !userDatabase.isOpen() ) {
         userDatabase.setDatabaseName( PhxPaths::userDataLocation() % QStringLiteral( "/userdata.sqlite" ) );
-        Q_ASSERT( userDatabase.open() );
+        userDatabase.open();
+        Q_ASSERT( userDatabase.isOpen() );
     }
 
     // Check if schema is set up, initialize it if it's not
