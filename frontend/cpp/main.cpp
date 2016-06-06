@@ -81,6 +81,9 @@ int main( int argc, char *argv[] ) {
 
     // Set up the plugin directory path
     engine.addImportPath( app.applicationDirPath() + QStringLiteral( "/Plugins" ) );
+#ifdef Q_OS_LINUX
+    engine.addImportPath( QStringLiteral( "/usr/lib/phoenix/Plugins" ) );
+#endif
 
     // Give the QML engine our command line args
     engine.rootContext()->setContextProperty( "commandLineSource", commandLineSource );
