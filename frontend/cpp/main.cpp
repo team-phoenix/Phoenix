@@ -67,7 +67,11 @@ int main( int argc, char *argv[] ) {
     // If this fails... how would we know? :)
     logFile.open( QIODevice::WriteOnly | QIODevice::Text );
     int logFD = logFile.handle();
+#if defined( Q_OS_WIN )
     logFP = fdopen( _dup( logFD ), "w" );
+#else
+    logFP = fdopen( dup( logFD ), "w" );
+#endif
     qInstallMessageHandler( phoenixDebugMessageLog );
 #endif
 
@@ -81,7 +85,7 @@ int main( int argc, char *argv[] ) {
 
     // Set up the plugin directory path
     engine.addImportPath( app.applicationDirPath() + QStringLiteral( "/Plugins" ) );
-#ifdef Q_OS_LINUX
+#if defined( Q_OS_LINUX )
     engine.addImportPath( QStringLiteral( "/usr/lib/phoenix/Plugins" ) );
 #endif
 
