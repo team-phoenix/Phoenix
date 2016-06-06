@@ -279,7 +279,7 @@ Rectangle {
     }
 
     property bool currentlySuspended: typeof root.gameViewObject === 'undefined' ?
-                                      false : root.gameViewObject.coreControl.state === Control.PAUSED;
+                                      false : root.gameViewObject.controlOutput.state === Node.Paused;
 
     StackView {
         id: contentAreaStackView;

@@ -1,6 +1,5 @@
 #include "sqlthreadedmodel.h"
-
-#include <QDebug>
+#include "logging.h"
 
 SqlThreadedModel::SqlThreadedModel(QObject *parent)
     : QAbstractTableModel( parent ),

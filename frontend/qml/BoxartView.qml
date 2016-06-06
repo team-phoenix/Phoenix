@@ -10,36 +10,29 @@ import vg.phoenix.themes 1.0
 import vg.phoenix.paths 1.0
 import vg.phoenix.models 1.0
 
+import "../Util"
+
 FocusScope {
     id: boxartGridBackground;
 
     // @disable-check M300
-    DropdownMenu { id: dropDownMenu; }
-
-    property alias gridView: gridView;
+    //DropdownMenu { id: dropDownMenu; }
 
     // @disable-check M300
-    PhxScrollView {
+    ScrollView {
         id: scrollView;
-        anchors { fill: parent; topMargin: headerArea.height; }
+        anchors { fill: parent; topMargin: 25; }
 
         // How much do you add to each grid entry's width so that the sum of a row's widths equal the GridView's width?
         property double addToMargins: 0;
 
-        // Don't set the actual binding until we're fully initalized. You'll get binding loop warnings otherwise
-        Component.onCompleted: {
-            addToMargins = Qt.binding( function() {
-                return contentItem.width % contentArea.contentSlider.value
-                        / Math.floor( contentItem.width / contentArea.contentSlider.value );
-            } );
-        }
 
         // @disable-check M300
-        PhxGridView {
+        GridView {
             id: gridView;
             anchors {
                 top: parent.top; bottom: parent.bottom; left: parent.left; right: parent.right;
-                leftMargin: searchBar.anchors.leftMargin; rightMargin: leftMargin;
+                leftMargin: 25; rightMargin: leftMargin;
             }
 
             Component.onCompleted: {
@@ -53,13 +46,46 @@ FocusScope {
                 forceActiveFocus();
             }
 
-            model: libraryModel;
+            model: SqlThreadedModel {
+                id: libraryModel;
+
+                databaseSettings {
+                    connectionName: "USERDATA";
+                }
+
+                fileLocation: PhxPaths.qmlUserDataLocation() + "/userdata.sqlite";
+
+                autoCreate: true;
+                //selectStatement: "SELECT * FROM games ORDER BY title DESC";
+
+                tableName: "games";
+
+                SqlColumn { name: "rowIndex"; type: "INTEGER PRIMARY KEY AUTOINCREMENT"; }
+                SqlColumn { name: "title"; type: "TEXT NOT NULL"; }
+                SqlColumn { name: "system"; type: "TEXT"; }
+                SqlColumn { name: "region"; type: "TEXT"; }
+                SqlColumn { name: "goodtoolsCode"; type: "TEXT"; }
+                SqlColumn { name: "timePlayed"; type: "DATETIME"; }
+                SqlColumn { name: "artworkUrl"; type: "TEXT"; }
+                SqlColumn { name: "coreFilePath"; type: "TEXT"; }
+                SqlColumn { name: "absolutePath"; type: "TEXT"; }
+                SqlColumn { name: "absoluteFilePath"; type: "TEXT UNIQUE NOT NULL"; }
+                SqlColumn { name: "crc32Checksum"; type: "TEXT"; }
+
+                Component.onCompleted: {
+                    libraryModel.setOrderBy( "title", SqlModel.ASC );
+                    libraryModel.finishModelConstruction();
+                    GameHasherController.scanCompleted.connect( libraryModel.addEntries );
+                    //libraryModel.attachDatabase( "/home/path/to/database.sqlite", "an_alias" );
+                }
+            }
 
             // If the grid's width is less than the maxCellWidth, get
             // the grid to scale the size of the grid items, so that the transition looks really
             // seamless.
-            cellWidth: cellHeight + scrollView.addToMargins;
-            cellHeight: contentArea.contentSlider.value;
+            cellWidth: 400;
+            cellHeight: 400;
+            //cellHeight: contentArea.contentSlider.value;
 
             // Smoothly animate the cells getting resized by the slider
             Behavior on cellHeight { NumberAnimation { duration: 200; } }
@@ -114,26 +140,27 @@ FocusScope {
                 function launchGame() {
                     var core = coreFilePath;
                     if ( core === "" ) {
-                        core = gameLauncher.getDefaultCore( system )
+                        console.log( "Core must be set")
+                        //core = gameLauncher.getDefaultCore( system )
                     }
 
-                    var game = gameLauncher.trimmedGame( absoluteFilePath );
+                    //var game = gameLauncher.trimmedGame( absoluteFilePath );
 
-                    if ( gameLauncher.verify( core, game ) ) {
+                    //if ( gameLauncher.verify( core, game ) ) {
 
                         // Prevent user from clicking on anything while the transition occurs
-                        root.disableMouseClicks();
+                        //root.disableMouseClicks();
 
                         // Don't check the mouse until the transition's done
-                        rootMouseArea.hoverEnabled = false;
+                        //rootMouseArea.hoverEnabled = false;
 
                         // Let the user know we're thinking!
-                        rootMouseArea.cursorShape = Qt.WaitCursor;
+                        //rootMouseArea.cursorShape = Qt.WaitCursor;
 
                         // Set window title to game title
-                        root.title = "Loading - " + title;
+                        //root.title = "Loading - " + title;
                         console.log( title );
-                        console.log( root.title );
+                        //console.log( root.title );
 
                         // Set up the packet of information to pass to CoreControl
                         var dict = {};
@@ -149,15 +176,15 @@ FocusScope {
                         dict[ "artworkURL" ] = imageCacher.cachedUrl;
 
                         // Assign the source
-                        root.gameViewObject.coreControl.source = dict;
+                        //root.gameViewObject.coreControl.source = dict;
 
                         // Connect the next callback in the chain to be called once the load begins/ends
-                        root.gameViewObject.controlOutput.stateChanged.connect( root.stateChangedCallback );
+                        //root.gameViewObject.controlOutput.stateChanged.connect( root.stateChangedCallback );
 
                         // Begin the load
                         // Execution will continue in stateChangedCallback() once CoreControl changes state
-                        root.gameViewObject.coreControl.load();
-                    }
+                        //root.gameViewObject.coreControl.load();
+                    //}
                 }
 
                 MouseArea {
@@ -191,7 +218,7 @@ FocusScope {
                             visible: true;
                             asynchronous: true;
                             source: imageCacher.cachedUrl == "" ? "noartwork.png" : imageCacher.cachedUrl;
-                            sourceSize { height: contentArea.contentSlider.maximumValue; width: contentArea.contentSlider.maximumValue; }
+                            sourceSize { height: 300; width: 300; }
                             verticalAlignment: Image.AlignBottom;
                             fillMode: Image.PreserveAspectFit;
 

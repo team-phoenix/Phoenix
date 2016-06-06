@@ -15,22 +15,19 @@ Rectangle {
     color: PhxTheme.common.gameViewBackgroundColor;
 
     // Automatically set by VideoItem, true if a game is loaded and unpaused
-    property bool running: coreControl.state === Control.PLAYING;
-    property alias coreState: coreControl.state;
+    property bool running: controlOutput.state === Node.Playing;
+    property alias coreState: controlOutput.state;
     property alias coreControl: coreControl;
+    property alias controlOutput: coreControl.controlOutput;
     property alias videoOutput: videoOutput;
     property bool showBar: true;
     property string title: "";
     property string artworkURL: "";
 
     // Object that handles the running game session
-
     CoreControl {
         id: coreControl;
         Component.onCompleted: {
-            this.videoOutput = videoOutput;
-            this.inputManager = root.inputManager;
-
             // Immediately launch a game if the command line was invoked
             // If this is set everything else should be, too
             if( commandLineSource[ "type" ] ) {
@@ -64,7 +61,7 @@ Rectangle {
                 coreControl.source = dict;
 
                 // Connect the next callback in the chain to be called once the load begins/ends
-                coreControl.stateChanged.connect( root.stateChangedCallback );
+                controlOutput.stateChanged.connect( root.stateChangedCallback );
 
                 // Begin the load
                 // Execution will continue in stateChangedCallback() once CoreControl changes state
@@ -75,70 +72,78 @@ Rectangle {
         vsync: false;
         volume: gameActionBar.volumeValue;
 
-        // Use this to automatically play once loaded
-        property bool autoPlay: false;
-        property bool firstLaunch: true;
-
         onSourceChanged: {
             title = source[ "title" ];
             artworkURL = source[ "artworkURL" ];
             root.touchMode = source[ "core" ].indexOf( "desmume" ) > -1;
         }
 
-        onStateChanged: {
-            switch( state ) {
-                case Control.STOPPED:
-                    videoOutput.opacity = 0.0;
-                    resetCursor();
-                    cursorTimer.stop();
-                    showBar = true;
-                    break;
+        globalGamepad: globalGamepad;
+        videoOutput: videoOutputNode;
 
-                case Control.LOADING:
-                    videoOutput.opacity = 0.0;
-                    resetCursor();
-                    cursorTimer.stop();
-                    break;
+        // Object used to track state changes and misc properties set from the core
+        controlOutput: ControlOutput {
+            id: controlOutput;
 
-                case Control.PLAYING:
-                    root.title = title;
+            // Use this to automatically play once loaded
+            property bool autoPlay: false;
+            property bool firstLaunch: true;
 
-                    rootMouseArea.cursorShape = Qt.BlankCursor;
+            onStateChanged: {
+                switch( state ) {
+                    case Node.Stopped:
+                        videoOutput.opacity = 0.0;
+                        resetCursor();
+                        cursorTimer.stop();
+                        showBar = true;
+                        break;
 
-                    // Show the game content
-                    videoOutput.opacity = 1.0;
+                    case Node.Loading:
+                        videoOutput.opacity = 0.0;
+                        resetCursor();
+                        cursorTimer.stop();
+                        break;
 
-                    // Let the window be resized even smaller than the default minimum size according to the aspect ratio
-                    root.minimumWidth = Math.min( root.defaultMinWidth, root.defaultMinWidth / videoOutput.aspectRatio / 2 );
-                    root.minimumHeight = Math.min( root.defaultMinHeight, root.defaultMinHeight / videoOutput.aspectRatio / 2 );
+                    case Node.Playing:
+                        root.title = title;
 
-                    break;
+                        rootMouseArea.cursorShape = Qt.BlankCursor;
 
-                case Control.PAUSED:
-                    root.title = "Paused - " + title;
-                    if( firstLaunch ) {
-                        firstLaunch = false;
-                        if( autoPlay ) {
-                            console.log( "Autoplay activated" );
-                            play();
+                        // Show the game content
+                        videoOutput.opacity = 1.0;
+
+                        // Let the window be resized even smaller than the default minimum size according to the aspect ratio
+                        root.minimumWidth = Math.min( root.defaultMinWidth, root.defaultMinWidth / videoOutput.aspectRatio / 2 );
+                        root.minimumHeight = Math.min( root.defaultMinHeight, root.defaultMinHeight / videoOutput.aspectRatio / 2 );
+
+                        break;
+
+                    case Node.Paused:
+                        root.title = "Paused - " + title;
+                        if( firstLaunch ) {
+                            firstLaunch = false;
+                            if( autoPlay ) {
+                                console.log( "Autoplay activated" );
+                                play();
+                            }
                         }
-                    }
 
-                    videoOutput.opacity = 1.0;
-                    resetCursor();
-                    cursorTimer.stop();
-                    break;
+                        videoOutput.opacity = 1.0;
+                        resetCursor();
+                        cursorTimer.stop();
+                        break;
 
-                case Control.UNLOADING:
-                    root.title = "Unloading - " + title;
-                    firstLaunch = true;
-                    videoOutput.opacity = 0.0;
-                    resetCursor();
-                    cursorTimer.stop();
-                    break;
+                    case Node.Unloading:
+                        root.title = "Unloading - " + title;
+                        firstLaunch = true;
+                        videoOutput.opacity = 0.0;
+                        resetCursor();
+                        cursorTimer.stop();
+                        break;
 
-                default:
-                    break;
+                    default:
+                        break;
+                }
             }
         }
     }
@@ -191,6 +196,11 @@ Rectangle {
         anchors.fill: parent;
         source: videoOutput;
         radius: 64;
+    }
+
+    VideoOutputNode {
+        id: videoOutputNode;
+        videoOutput: videoOutput;
     }
 
     // QML-based video output module
@@ -341,9 +351,9 @@ Rectangle {
         opacity: {
             if( root.touchMode ) {
                 opacity: 0.0;
-                if( gameView.showBar || gameView.coreState === Control.PAUSED ) opacity: 1.0;
+                if( gameView.showBar || gameView.coreState === Node.Paused ) opacity: 1.0;
             } else {
-                if( ( gameView.coreState === Control.PAUSED || cursorTimer.running || gameActionBarMouseArea.containsMouse )
+                if( ( gameView.coreState === Node.Paused || cursorTimer.running || gameActionBarMouseArea.containsMouse )
                     && ( !layoutStackView.transitioning ) ) {
                     opacity: 1.0
                 } else {
@@ -362,7 +372,7 @@ Rectangle {
         height: contentHeight * 2;
 
         opacity: gameActionBar.opacity;
-        visible: root.touchMode && gameView.coreState === Control.PLAYING;
+        visible: root.touchMode && gameView.coreState === Node.Paused;
         enabled: visible;
 
         verticalAlignment: Text.AlignVCenter;

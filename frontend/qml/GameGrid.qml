@@ -6,22 +6,18 @@ import QtGraphicalEffects 1.0
 
 import vg.phoenix.cache 1.0
 import vg.phoenix.backend 1.0
-import vg.phoenix.themes 1.0
-import vg.phoenix.paths 1.0
+import vg.phoenix.launcher 1.0
 import vg.phoenix.models 1.0
+import vg.phoenix.paths 1.0
+import vg.phoenix.themes 1.0
+
+import "../"
+import "qrc:/Util"
 
 FocusScope {
-    id: boxartGridBackground;
-
-    // @disable-check M300
-    DropdownMenu { id: dropDownMenu; }
-
-    property alias gridView: gridView;
-
-    // @disable-check M300
     PhxScrollView {
         id: scrollView;
-        anchors { fill: parent; topMargin: headerArea.height; }
+        anchors.fill: parent;
 
         // How much do you add to each grid entry's width so that the sum of a row's widths equal the GridView's width?
         property double addToMargins: 0;
@@ -29,16 +25,15 @@ FocusScope {
         // Don't set the actual binding until we're fully initalized. You'll get binding loop warnings otherwise
         Component.onCompleted: {
             addToMargins = Qt.binding( function() {
-                return contentItem.width % contentArea.contentSlider.value
-                        / Math.floor( contentItem.width / contentArea.contentSlider.value );
+                return contentItem.width % zoomSlider.value
+                        / Math.floor( contentItem.width / zoomSlider.value );
             } );
         }
 
-        // @disable-check M300
         PhxGridView {
-            id: gridView;
+            id: gameGrid;
             anchors {
-                top: parent.top; bottom: parent.bottom; left: parent.left; right: parent.right;
+                fill: parent;
                 leftMargin: searchBar.anchors.leftMargin; rightMargin: leftMargin;
             }
 
@@ -51,19 +46,23 @@ FocusScope {
 
                 // Grab keyboard focus, this is the object that we decided gets focus initially
                 forceActiveFocus();
+
+                model = libraryModel;
+
+                if( libraryModel.rowCount() > 0 ) currentIndex = 0;
             }
 
-            model: libraryModel;
+            //model: libraryModel;
 
             // If the grid's width is less than the maxCellWidth, get
             // the grid to scale the size of the grid items, so that the transition looks really
             // seamless.
             cellWidth: cellHeight + scrollView.addToMargins;
-            cellHeight: contentArea.contentSlider.value;
+            cellHeight: zoomSlider.value;
 
             // Smoothly animate the cells getting resized by the slider
-            Behavior on cellHeight { NumberAnimation { duration: 200; } }
-            // Behavior on cellWidth { NumberAnimation { duration: 200; } } // FIXME: This looks too awkward to keep (try moving the slider)
+            //Behavior on cellHeight { NumberAnimation { duration: 200; } }
+            //Behavior on cellWidth { NumberAnimation { duration: 200; } } // FIXME: This looks too awkward to keep (try moving the slider)
 
             // Minimum amount of spacing between grid entries
             property int itemMargin: 16;
@@ -72,37 +71,36 @@ FocusScope {
             // Is the model working properly?
 
             // Define some transition animations
-            // property Transition transition: Transition { NumberAnimation { properties: "x,y"; duration: 250; } }
-            // property Transition transitionX: Transition { NumberAnimation { properties: "x"; duration: 250; } }
+            //property Transition transition: Transition { NumberAnimation { properties: "x,y"; duration: 250; } }
+            //property Transition transitionX: Transition { NumberAnimation { properties: "x"; duration: 250; } }
 
-            // add: transition;
-            // addDisplaced: transition;
-            // displaced: transition;
-            // move: transition;
-            // moveDisplaced: transition;
-            // populate: transitionX;
-            // remove: transition;
-            // removeDisplaced: transition;
+            //add: transition;
+            //addDisplaced: transition;
+            //displaced: transition;
+            //move: transition;
+            //moveDisplaced: transition;
+            //populate: transitionX;
+            //remove: transition;
+            //removeDisplaced: transition;
 
             // Behavior on contentY { SmoothedAnimation { duration: 250; } }
 
-            // A work around for the view resetting back to 0 whenever a game is imported
-            property real lastY: 0;
+            // A workaround for the view resetting back to 0 whenever a game is imported
+//            property real lastY: 0;
 
-            onContentYChanged: {
-                if (contentY == 0) {
-                    // console.log( contentY );
-                    if ( Math.round( lastY ) !== 0.0 ) {
-                        contentY = lastY;
-                    }
-                }
-                else
-                    lastY = contentY;
-            }
+//            onContentYChanged: {
+//                if (contentY == 0) {
+//                    if ( Math.round( lastY ) !== 0.0 ) {
+//                        contentY = lastY;
+//                    }
+//                }
+//                else
+//                    lastY = contentY;
+//            }
 
             delegate: Item {
                 id: gridItem;
-                width: gridView.cellWidth - scrollView.addToMargins; height: gridView.cellHeight;
+                width: gameGrid.cellWidth - scrollView.addToMargins; height: gameGrid.cellHeight;
                 anchors.rightMargin: scrollView.addToMargins;
 
                 Keys.onPressed: {
@@ -114,28 +112,13 @@ FocusScope {
                 function launchGame() {
                     var core = coreFilePath;
                     if ( core === "" ) {
-                        core = gameLauncher.getDefaultCore( system )
+                        core = gameLauncher.getDefaultCore( system );
                     }
 
                     var game = gameLauncher.trimmedGame( absoluteFilePath );
 
                     if ( gameLauncher.verify( core, game ) ) {
-
-                        // Prevent user from clicking on anything while the transition occurs
-                        root.disableMouseClicks();
-
-                        // Don't check the mouse until the transition's done
-                        rootMouseArea.hoverEnabled = false;
-
-                        // Let the user know we're thinking!
-                        rootMouseArea.cursorShape = Qt.WaitCursor;
-
-                        // Set window title to game title
-                        root.title = "Loading - " + title;
-                        console.log( title );
-                        console.log( root.title );
-
-                        // Set up the packet of information to pass to CoreControl
+                        // Set up the packet of information to pass to GameConsole
                         var dict = {};
                         dict[ "type" ] = "libretro";
                         dict[ "core" ] = core;
@@ -149,14 +132,18 @@ FocusScope {
                         dict[ "artworkURL" ] = imageCacher.cachedUrl;
 
                         // Assign the source
-                        root.gameViewObject.coreControl.source = dict;
+                        gameConsole.source = dict;
 
-                        // Connect the next callback in the chain to be called once the load begins/ends
-                        root.gameViewObject.controlOutput.stateChanged.connect( root.stateChangedCallback );
+                        // Begin loading
 
-                        // Begin the load
-                        // Execution will continue in stateChangedCallback() once CoreControl changes state
-                        root.gameViewObject.coreControl.load();
+                        // TODO: Ask user if they want to do this?
+                        if( phoenix.state === "Minimized" ) {
+                            phoenix.autoLoadFlag = true;
+                            phoenix.state = "SilentlyUnloading";
+                        }
+
+                        else
+                            phoenix.state = "Loading";
                     }
                 }
 
@@ -164,16 +151,16 @@ FocusScope {
                     id: gridItemMouseArea;
                     anchors.fill: parent;
                     hoverEnabled: true;
-                    onClicked: { gridView.currentIndex = index; gridView.forceActiveFocus(); }
+                    onClicked: { gameGrid.currentIndex = index; gameGrid.forceActiveFocus(); }
                     onDoubleClicked: launchGame();
                 }
 
                 ColumnLayout {
                     spacing: 13;
                     anchors {
-                        top: parent.top; bottom: parent.bottom; left: parent.left; right: parent.right;
-                        topMargin: gridView.itemMargin; bottomMargin: gridView.itemMargin;
-                        leftMargin: gridView.itemMargin; rightMargin: gridView.itemMargin;
+                        fill: parent;
+                        topMargin: gameGrid.itemMargin; bottomMargin: gameGrid.itemMargin;
+                        leftMargin: gameGrid.itemMargin; rightMargin: gameGrid.itemMargin;
                     }
 
                     property alias gridItemMouseArea: gridItemMouseArea;
@@ -190,15 +177,15 @@ FocusScope {
                             anchors { top: parent.top; left: parent.left; right: parent.right; bottom: parent.bottom; leftMargin: -1; }
                             visible: true;
                             asynchronous: true;
-                            source: imageCacher.cachedUrl == "" ? "noartwork.png" : imageCacher.cachedUrl;
-                            sourceSize { height: contentArea.contentSlider.maximumValue; width: contentArea.contentSlider.maximumValue; }
+                            source: imageCacher.cachedUrl == "" ? "qrc:/Assets/noartwork.png" : imageCacher.cachedUrl;
+                            sourceSize { height: zoomSlider.maximumValue; width: zoomSlider.maximumValue; }
                             verticalAlignment: Image.AlignBottom;
                             fillMode: Image.PreserveAspectFit;
 
                             onStatusChanged: {
                                 if ( status == Image.Error ) {
                                     console.log( "Error in " + source );
-                                    gridItemImage.source = "noartwork.png";
+                                    gridItemImage.source = "qrc:/Assets/noartwork.png";
                                 }
 
                                 // This is not triggered when source is an empty string
@@ -207,24 +194,19 @@ FocusScope {
                                 }
                             }
 
+                            BusyIndicator {
+                                anchors.fill: parent;
+                                anchors.margins: 8;
+                                running: parent.status === Image.Loading;
+                            }
+
                             // BoxArt: Glass line effect
                             Rectangle {
                                 anchors { bottom: parent.bottom; bottomMargin: parent.paintedHeight - 1; horizontalCenter: parent.horizontalCenter; }
                                 width: parent.paintedWidth ;
                                 height: 1;
-                                color: Qt.rgba(255,255,255,.25);
+                                color: Qt.rgba( 255,255,255,.25 );
                             }
-
-                            /* BoxArt: Inner Border
-                            Rectangle {
-                                anchors { bottom: parent.bottom; topMargin: -border.width; bottomMargin: -border.width; leftMargin: -border.width; rightMargin: -border.width; horizontalCenter: parent.horizontalCenter; }
-                                z: gridItemImage.z + 1;
-                                height: parent.paintedHeight + border.width;
-                                width: parent.paintedWidth + border.width;
-                                border.color: Qt.rgba(0,0,0,.75);
-                                border.width: 1;
-                                color: "transparent";
-                            } */
 
                             // BoxArt: Outer Border
                             Rectangle {
@@ -233,24 +215,11 @@ FocusScope {
                                 z: gridItemImage.z - 1;
                                 height: parent.paintedHeight + border.width * 2;
                                 width: parent.paintedWidth + border.width * 2;
-                                border.color: index === gridView.currentIndex && gridView.activeFocus ? PhxTheme.common.boxartSelectedBorderColor : PhxTheme.common.boxartNormalBorderColor;
-                                border.width: 2 + ( contentArea.contentSlider.value / 50 );
+                                border.color: index === gameGrid.currentIndex && gameGrid.activeFocus ? PhxTheme.common.boxartSelectedBorderColor : PhxTheme.common.boxartNormalBorderColor;
+                                border.width: 2 + ( zoomSlider.value / 50 );
                                 color: "transparent";
                                 radius: 3;
                             }
-
-                            /* BoxArt Shadow
-                            RectangularGlow {
-                                anchors.bottom: parent.bottom;
-                                anchors.horizontalCenter: parent.horizontalCenter;
-                                height: parent.paintedHeight;
-                                width: parent.paintedWidth;
-                                glowRadius: 1+(contentArea.contentSlider.value/50);
-                                spread: .1;
-                                color: "#50000000";
-                                cornerRadius: glowRadius;
-                                z: imageBackground.z - 1;
-                            } */
 
                             ImageCacher {
                                 id: imageCacher;
@@ -258,12 +227,7 @@ FocusScope {
                                 identifier: crc32Checksum;
                                 Component.onCompleted: cache();
                             }
-
-                            // ToolTip Title
-                            // ToolTipArea { text: title; tip {  x: 0; y: parent.width + 24; } }
-
                         }
-
                     }
 
                     // A label for the game's title
@@ -272,14 +236,14 @@ FocusScope {
                         Layout.fillWidth: true;
                         height: 20;
                         text: title;
-                        spacing: contentArea.contentSlider.value / 10;
+                        spacing: zoomSlider.value / 10;
                         color: PhxTheme.common.highlighterFontColor;
                         fontSize: PhxTheme.common.baseFontSize;
-                        running: index === gridView.currentIndex && gridView.activeFocus || gridItemMouseArea.containsMouse;
-                        pixelsPerFrame: contentArea.contentSlider.value / 100;
+                        running: index === gameGrid.currentIndex && gameGrid.activeFocus || gridItemMouseArea.containsMouse;
+                        pixelsPerFrame: zoomSlider.value / 100;
 
                         Connections {
-                            target: gridView;
+                            target: gameGrid;
                             onCellWidthChanged: titleText.handleSituationChanged();
                         }
                     }

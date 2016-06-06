@@ -1,5 +1,7 @@
 #include "imagecacher.h"
 
+#include "logging.h"
+
 using namespace Library;
 
 ImageCacher::ImageCacher( QObject *parent )

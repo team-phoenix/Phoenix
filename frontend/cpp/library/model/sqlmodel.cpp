@@ -1,6 +1,6 @@
 #include "sqlmodel.h"
 
-#include <QDebug>
+#include "logging.h"
 
 #include <QSqlQuery>
 #include <QSqlDatabase>

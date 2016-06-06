@@ -1,5 +1,7 @@
 #include "phxpaths.h"
 
+#include "logging.h"
+
 using namespace Library;
 
 bool PhxPaths::mPortableMode = false;

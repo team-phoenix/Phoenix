@@ -7,27 +7,11 @@ import QtGraphicalEffects 1.0
 import vg.phoenix.backend 1.0
 import vg.phoenix.themes 1.0
 
-Rectangle {
-    id: gameActionBar;
-    color: "transparent";
-
-    property int volumeValue: 1.0;
-
-    // Volume Icon changer
-    property string volumeIcon: {
-        if( volumeSlider.value <= 1.0 && volumeSlider.value > 0.5 ) { volumeIcon: "volume.svg"; }
-        if( volumeSlider.value <= 0.5 && volumeSlider.value > 0.0 ) { volumeIcon: "volumehalf.svg"; }
-        if( volumeSlider.value == 0 ) { volumeIcon: "volumemute.svg"; }
-    }
-
-    Behavior on opacity { PropertyAnimation { duration: 250; } }
-
+Item {
     // Background
-    Rectangle {
+    Item {
         width: parent.width;
         height: 45;
-        color: Qt.rgba( 0, 0, 0, 0.75 );
-        radius: 1;
 
         // Top accent (thin white bar)
         Rectangle {
@@ -55,15 +39,13 @@ Rectangle {
                     anchors.margins: 10;
                     width: parent.width;
                     sourceSize { height: height; width: width; }
-                    source: gameView.running ? qsTr( "pause.svg" ) : qsTr( "play.svg" );
+                    source: phoenix.state === "Playing" ? qsTr( "qrc:/Assets/pause.svg" ) : qsTr( "qrc:/Assets/play.svg" );
                 }
 
                 MouseArea {
                     anchors.fill: parent;
-                    onClicked: {
-                        if( gameView.running ) { coreControl.pause(); }
-                        else { coreControl.play(); }
-                    }
+                    // TODO: Check if pausable
+                    onClicked: phoenix.state = phoenix.state === "Paused" ? "Playing" : "Paused";
                 }
             }
 
@@ -78,20 +60,38 @@ Rectangle {
                         id: volIcon;
                         anchors { top: parent.top; bottom: parent.bottom; margins: 10; }
                         width: 28;
-                        color: "transparent"
+                        color: "transparent";
 
                         Image {
                             anchors.centerIn: parent;
                             width: parent.width;
-                            source: gameActionBar.volumeIcon;
+                            source: volumeIcon;
+
+                            // Volume Icon changer
+                            property string volumeIcon: {
+                                if( gameConsole.volume <= 1.0 && gameConsole.volume > 0.5 ) { volumeIcon: "qrc:/Assets/volume.svg"; }
+                                if( gameConsole.volume <= 0.5 && gameConsole.volume > 0.0 ) { volumeIcon: "qrc:/Assets/volumehalf.svg"; }
+                                if( gameConsole.volume == 0 ) { volumeIcon: "qrc:/Assets/volumemute.svg"; }
+                            }
+
                             sourceSize { height: height; width: width; }
                         }
 
                         MouseArea {
                             anchors.fill: parent;
+                            property real savedVolume: 0.0;
                             onClicked: {
-                                if ( volumeValue == 1) { volumeValue = 0; }
-                                else { volumeValue = 1; }
+                                // Mute
+                                if( savedVolume === 0.0 ) {
+                                    savedVolume = volumeSlider.value;
+                                    volumeSlider.value = 0.0;
+                                }
+
+                                // Unmute
+                                else {
+                                    volumeSlider.value = savedVolume;
+                                    savedVolume = 0.0;
+                                }
                             }
                         }
                     }
@@ -100,14 +100,15 @@ Rectangle {
                         id: volumeSlider;
                         anchors { verticalCenter: parent.verticalCenter; }
                         width: 55;
-                        height: gameActionBar.height;
+                        height: parent.height;
                         minimumValue: 0;
                         maximumValue: 1;
-                        value: volumeValue;
+                        value: gameConsole.volume;
+                        onValueChanged: gameConsole.volume = value;
                         stepSize: 0.01;
                         activeFocusOnPress: true;
+                        focus: false;
                         tickmarksEnabled: false;
-                        onValueChanged: { coreControl.volume = value; }
 
                         style: SliderStyle {
                             handle: Item {
@@ -123,20 +124,7 @@ Rectangle {
                             }
                         }
                     }
-                    move: Transition { NumberAnimation { properties: "y"; duration: 1000 } }
                 }
-
-                // FIXME: Non functional, rootMouseArea and gameActionBarMouseArea eat hover events
-                /*MouseArea {
-                    anchors.fill: parent;
-                    hoverEnabled: true;
-                    onEntered: {
-                        volumeSlider.visible = !volumeSlider.visible;
-                    }
-                    onExited: {
-                        volumeSlider.opacity = !volumeSlider.visible;
-                    }
-                }*/
             }
 
             /*/ Settings
@@ -153,11 +141,17 @@ Rectangle {
                     style: ButtonStyle { background: Rectangle { color: "transparent"; } }
                 }
             } */
+        }
+
+        // Right side
+        Row {
+            anchors { top: parent.top; bottom: parent.bottom; right: parent.right; }
+            anchors.rightMargin: 12;
 
             // Blur
             Rectangle {
                 anchors { top: parent.top; bottom: parent.bottom; }
-                color: "transparent"
+                color: "transparent";
                 width: 40;
 
                 Image {
@@ -166,23 +160,14 @@ Rectangle {
                     width: 24;
                     height: 24;
                     sourceSize { height: height; width: width; }
-                    source: "blur.svg";
+                    source: "qrc:/Assets/blur.svg";
                 }
 
                 MouseArea {
                     anchors.fill: parent;
-                    onClicked: {
-                        if( blurEffect.visible ) { blurEffect.visible = false; }
-                        else if( !blurEffect.visible ) { blurEffect.visible = true; }
-                    }
+                    onClicked: emulator.blurEffect.visible = emulator.blurEffect.visible ? false : true;
                 }
             }
-        }
-
-        // Right side
-        Row {
-            anchors { top: parent.top; bottom: parent.bottom; right: parent.right; }
-            anchors.rightMargin: 12;
 
             // Toggle TV mode
             Item {
@@ -195,7 +180,7 @@ Rectangle {
                     id: tvLabel;
                     anchors.fill: parent;
                     anchors.margins: 4;
-                    source: "tv.svg"
+                    source: "qrc:/Assets/tv.svg"
                     smooth: false;
                     sourceSize { height: height; width: width; }
                 }
@@ -205,16 +190,20 @@ Rectangle {
                     onClicked: {
                         // off -> 16:9
                         if( !videoOutput.television ) {
+                            videoOutput.enableAnimation = true;
                             videoOutput.television = true;
                             videoOutput.widescreen = true;
-                            tvLabel.source = "tv169.svg";
+                            videoOutput.enableAnimation = false;
+                            tvLabel.source = "qrc:/Assets/tv169.svg";
                             return;
                         }
                         // 16:9 -> off
                         if( videoOutput.television && videoOutput.widescreen ) {
+                            videoOutput.enableAnimation = true;
                             videoOutput.television = false;
                             videoOutput.widescreen = false;
-                            tvLabel.source = "tv.svg"
+                            videoOutput.enableAnimation = false;
+                            tvLabel.source = "qrc:/Assets/tv.svg"
                             return;
                         }
                     }
@@ -231,33 +220,21 @@ Rectangle {
                     anchors.centerIn: parent;
                     anchors.margins: 10;
                     width: parent.width;
-                    source: "minimize.svg";
+                    source: "qrc:/Assets/minimize.svg";
                     sourceSize { height: height; width: width; }
                 }
 
                 MouseArea {
                     anchors.fill: parent;
                     onClicked: {
-                        console.log( "GameActionBar: Minimize (Pause game)" );
-                        // These callbacks are necessary as the call to pause() is non-blocking, it just sends out a signal
-                        // The callback will execute when it *actually* pauses
-                        controlOutput.stateChanged.connect( pausedCallback );
-                        coreControl.pause();
-                    }
-                    function pausedCallback( newState ) {
-                        // console.log( "pausedCallback(" + newState + ")" );
-                        if( newState === Node.Paused ) {
+                        // Pause if we're playing
+                        if( phoenix.state === "Playing" ) {
+                            phoenix.state = "Paused";
+                        }
 
-                            // This callback is meant to be used until the pause goes through.
-                            // Disconnect once it's done
-                            controlOutput.stateChanged.disconnect( pausedCallback );
-
-                            root.disableMouseClicks();
-                            rootMouseArea.hoverEnabled = false;
-                            resetCursor();
-                            resetWindowSize();
-                            layoutStackView.push( mouseDrivenView );
-
+                        // We either just paused or we were already paused
+                        if( phoenix.state === "Paused" ) {
+                            phoenix.state = "Minimizing";
                         }
                     }
                 }
@@ -269,54 +246,20 @@ Rectangle {
                 anchors { top: parent.top; bottom: parent.bottom; }
                 width: 24;
 
-                Shortcut {
-                    sequence: StandardKey.FullScreen;
-                    onActivated: fullscreenItem.prepareFullscreen();
-                }
-
                 Image {
                     anchors.centerIn: parent;
                     height: 18;
                     width: 18;
                     sourceSize { height: height; width: width; }
                     property string screenIcon: {
-                        if ( root.visibility === Window.FullScreen ) screenIcon: "window.svg";
-                        else if ( root.visibility === Window.Windowed | Window.Maximized ) screenIcon: "fullscreen.svg";
+                        if ( window.visibility === Window.FullScreen ) screenIcon: "qrc:/Assets/window.svg";
+                        else if ( window.visibility === Window.Windowed | Window.Maximized ) screenIcon: "qrc:/Assets/fullscreen.svg";
                     }
                     source: screenIcon;
                     MouseArea {
                         anchors.fill: parent;
-                        onClicked: fullscreenItem.prepareFullscreen();
+                        onClicked: window.toggleFullscreen();
                     }
-                }
-
-
-                function prepareFullscreen() {
-                    // If running, ensure the game is paused while the fullscreen transition happens
-                    // Only really applies to OS X
-                    if( gameView.running ) {
-                                controlOutput.stateChanged.connect( stateCallback );
-                        coreControl.pause();
-                    }
-
-                    // Otherwise, just do the transition
-                    else {
-                        toggleFullscreen();
-                    }
-                }
-
-                // Called when the game (on a separate thread) finally pauses
-                function stateCallback( newState ) {
-                            controlOutput.stateChanged.disconnect( stateCallback );
-                    toggleFullscreen();
-                    coreControl.play();
-                }
-
-                function toggleFullscreen() {
-                    if ( root.visibility === Window.FullScreen )
-                        root.visibility = Window.Windowed;
-                    else if ( root.visibility & ( Window.Windowed | Window.Maximized ) )
-                        root.visibility = Window.FullScreen;
                 }
             }
 
@@ -329,37 +272,14 @@ Rectangle {
                     anchors.centerIn: parent;
                     anchors.margins: 10;
                     width: parent.width;
-                    source: "shutdown.svg";
+                    source: "qrc:/Assets/shutdown.svg";
                     sourceSize { height: height; width: width; }
                 }
 
                 MouseArea {
                     anchors.fill: parent;
                     onClicked: {
-                        console.log( "GameActionBar: Close game" );
-
-                        // Do not transition back to the library until we've *fully* shut down (deleted threads)
-                        controlOutput.stateChanged.connect( stoppedCallback );
-
-                        coreControl.stop();
-
-                        // Let the user know we're thinking!
-                        rootMouseArea.cursorShape = Qt.BusyCursor;
-                    }
-
-                    function stoppedCallback( newState ) {
-                        console.log( "stoppedCallback(" + newState + ")" );
-                        if( newState === Node.Stopped ) {
-                            controlOutput.stateChanged.disconnect( stoppedCallback );
-
-                            console.log( "Going to library" );
-
-                            root.resetWindowSize();
-                            root.resetTitle();
-                            root.disableMouseClicks();
-                            rootMouseArea.hoverEnabled = false;
-                            layoutStackView.push( mouseDrivenView );
-                        }
+                        phoenix.state = "Unloading";
                     }
                 }
             }
