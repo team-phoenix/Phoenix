@@ -10,7 +10,7 @@ before_install:
   - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
   - sudo apt-get update -qq
   - sudo apt-get install -qq g++-4.8 libsamplerate0-dev
-  - sudo apt-get install -qq -y qt56base qt56declarative qt56imageformats qt56location qt56multimedia qt56quickcontrols qt56script qt56tools qt56translations libsdl2-dev
+  - sudo apt-get install -qq -y qt56base qt56declarative qt56imageformats qt56location qt56multimedia qt56quickcontrols qt56script qt56svg qt56tools qt56translations libsdl2-dev
   - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
 script:
   - source /opt/qt56/bin/qt56-env.sh
