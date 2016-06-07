@@ -16,6 +16,8 @@
 #include "librarytypes.h"
 #include "sqlthreadedmodel.h"
 
+#include "backendplugin.h"
+
 // Misc
 #include "phxpaths.h"
 #include "logging.h"
@@ -83,10 +85,17 @@ int main( int argc, char *argv[] ) {
     // The engine that runs our QML-based UI
     QQmlApplicationEngine engine;
 
+    // Load the backend plugin immediately if we're using static Qt or simply inform the QML engine where to find the shared
+    // library and qmldir file if using the normal shared Qt
+#if defined( PHXSTATIC )
+    BackendPlugin plugin;
+    plugin.registerTypes( "vg.phoenix.backend" );
+#else
     // Set up the plugin directory path
     engine.addImportPath( app.applicationDirPath() + QStringLiteral( "/Plugins" ) );
 #if defined( Q_OS_LINUX )
     engine.addImportPath( QStringLiteral( "/usr/lib/phoenix/Plugins" ) );
+#endif
 #endif
 
     // Give the QML engine our command line args
