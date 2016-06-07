@@ -90,6 +90,7 @@ int main( int argc, char *argv[] ) {
 #if defined( PHXSTATIC )
     BackendPlugin plugin;
     plugin.registerTypes( "vg.phoenix.backend" );
+    Q_INIT_RESOURCE( input );
 #else
     // Set up the plugin directory path
     engine.addImportPath( app.applicationDirPath() + QStringLiteral( "/Plugins" ) );
