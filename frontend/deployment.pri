@@ -11,6 +11,7 @@
 
     macx {
         ICON = phoenix.icns
+        QMAKE_TARGET_BUNDLE_PREFIX = vg.phoenix
     }
 
 ##
