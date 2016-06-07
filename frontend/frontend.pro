@@ -64,6 +64,7 @@ include( ../backend/msvc.pri )
     # Include libraries
     win32: msvc: INCLUDEPATH += $$SAMPLERATEBASE\include                                 # Manually built. Check msvc.pri
     win32: gcc:  INCLUDEPATH += C:/msys64/mingw64/include C:/msys64/mingw64/include/SDL2 # MSYS2
+    win32: gcc:  INCLUDEPATH += /usr/lib/mxe/usr/x86_64-w64-mingw32.static/include/SDL2  # MXE (MinGW)
     macx:        INCLUDEPATH += /usr/local/include /usr/local/include/SDL2               # Homebrew
     macx:        INCLUDEPATH += /opt/local/include /opt/local/include/SDL2               # MacPorts
     unix:        INCLUDEPATH += /usr/include/SDL2                                        # Linux
@@ -184,3 +185,6 @@ include( ../backend/msvc.pri )
     msvc: {
         LIBS += libsamplerate-0.lib
     }
+
+    # Some extra libraries for MinGW cross compiling
+    defined( PHX_CROSS_COMPILE, var ): LIBS += -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -luuid

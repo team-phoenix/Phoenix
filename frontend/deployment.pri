@@ -19,17 +19,7 @@
     PWD_NATIVE = $$PWD
     OUT_PWD_NATIVE = $$OUT_PWD
 
-    # On Windows, the native DOS-style paths must be converted to Unix paths as the GNU coreutils we'll be using expect that
-    # The default prefix is a folder called "dist" at the root of the build folder
-    win32 {
-        PWD_UNIX = $$system( cygpath -u \"$$PWD_NATIVE\" )
-        OUT_PWD_UNIX = $$system( cygpath -u \"$$OUT_PWD_NATIVE\" )
-
-        isEmpty( PREFIX ) { PREFIX = $$system( cygpath -u \"$$OUT_PWD_NATIVE\..\dist\" ) }
-        else { PREFIX = $$system( cygpath -u \"$$PREFIX\" ) }
-    }
-
-    !win32 {
+    !win32 | defined( PHX_CROSS_COMPILE, var ) {
         PWD_UNIX = $$PWD_NATIVE
         OUT_PWD_UNIX = $$OUT_PWD_NATIVE
 
@@ -39,6 +29,16 @@
         macx: OSX_BUNDLE_PATH = "$$sprintf( "%1/%2.app", $$OUT_PWD_NATIVE, $$TARGET )"
         macx: OUT_PWD_UNIX = "$$OSX_BUNDLE_PATH/Contents/MacOS"
         macx: OSX_BINARY_PATH_PREFIX = "$$sprintf( "%1/%2.app", $$PREFIX, $$TARGET )/Contents/MacOS"
+    }
+
+    # On Windows, the native DOS-style paths must be converted to Unix paths as the GNU coreutils we'll be using expect that
+    # The default prefix is a folder called "dist" at the root of the build folder
+    else {
+        PWD_UNIX = $$system( cygpath -u \"$$PWD_NATIVE\" )
+        OUT_PWD_UNIX = $$system( cygpath -u \"$$OUT_PWD_NATIVE\" )
+
+        isEmpty( PREFIX ) { PREFIX = $$system( cygpath -u \"$$OUT_PWD_NATIVE\..\dist\" ) }
+        else { PREFIX = $$system( cygpath -u \"$$PREFIX\" ) }
     }
 
     # Force the Phoenix binary to be relinked if the backend code has changed
