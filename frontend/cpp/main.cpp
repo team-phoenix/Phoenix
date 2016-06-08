@@ -54,6 +54,16 @@ int main( int argc, char *argv[] ) {
     // Runs the main thread's event loop and handles messages from the windowing system
     QGuiApplication app( argc, argv );
 
+#if defined( Q_OS_WIN )
+    // Add the MinGW directory to PATH
+    QString path( getenv( "PATH" ) );
+    path.prepend( "/MinGW;" );
+    path.prepend( QCoreApplication::applicationDirPath() );
+    path.prepend( "PATH=" );
+    QByteArray pathByteArray = path.toLocal8Bit();
+    putenv( pathByteArray.data() );
+#endif
+
     // Parse command line args, store them here
     QVariantMap commandLineSource = parseCommandLine( app );
 
