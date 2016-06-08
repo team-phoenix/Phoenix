@@ -52,9 +52,6 @@ include( ../backend/msvc.pri )
         DEFINES += PHOENIX_VER_STR=\"$$VERSION\"
     }
 
-    # FIXME: Remove once newer Qt versions make this unnecessary
-    macx: QMAKE_MAC_SDK = macosx10.11
-
     # SDL2/Qt main() conflict fix
     # Make sure that SDL.h is included *after* all other includes in main.cpp
     # http://blog.debao.me/2013/07/link-confilict-between-sdl-and-qt-under-windows/
