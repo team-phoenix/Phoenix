@@ -165,7 +165,7 @@ Item {
 
                 MouseArea {
                     anchors.fill: parent;
-                    onClicked: emulator.blurEffect.visible = emulator.blurEffect.visible ? false : true;
+                    onClicked: emulator.blurEffect.desiredOpacity = emulator.blurEffect.desiredOpacity === 0.0 ? 1.0 : 0.0;
                 }
             }
 

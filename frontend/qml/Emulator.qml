@@ -104,7 +104,9 @@ MouseArea {
             anchors.fill: parent;
             source: videoOutput;
             radius: 64;
-            opacity: videoOutput.opacity;
+            opacity: desiredOpacity === 1.0 ? videoOutput.opacity : desiredOpacity;
+            property real desiredOpacity: 1.0;
+            Behavior on desiredOpacity { PropertyAnimation { duration: 250; } }
         }
 
         // Make sure something gets drawn when VideoOutput itself isn't being drawn
@@ -199,6 +201,30 @@ MouseArea {
         property point actionBarCoords: mapToItem( videoOutputWrapper, actionBarMouseArea.x, actionBarMouseArea.y );
     }
 
+    // A hint on how to hide the action bar (for touch mode)
+    Text {
+        id: actionBarHint;
+        anchors.horizontalCenter: parent.horizontalCenter;
+        anchors.bottom: actionBarMouseArea.top;
+        width: contentWidth * 2;
+        height: contentHeight * 2;
+
+        opacity: actionBarBlackRectangle.opacity;
+        visible: core.indexOf( "desmume" ) > -1;
+
+        verticalAlignment: Text.AlignVCenter;
+        horizontalAlignment: Text.AlignHCenter;
+        text: "(Right-click to hide)";
+        color: "white";
+        style: Text.Outline;
+        styleColor: "black";
+
+        font {
+            pixelSize: 12;
+            family: PhxTheme.common.systemFontFamily;
+        }
+    }
+
     // Wrapper around ActionBar, lets us track when the user hovers over it
     MouseArea {
         id: actionBarMouseArea;
@@ -212,6 +238,7 @@ MouseArea {
         layer.enabled: true;
 
         Rectangle {
+            id: actionBarBlackRectangle;
             anchors.fill: parent;
             color: "black";
 
@@ -220,30 +247,6 @@ MouseArea {
 
             // Hide the ActionBar when the mouse doesn't cover it
             Behavior on opacity { PropertyAnimation { duration: 250; } }
-
-            // A hint on how to hide the action bar (for touch mode)
-            Text {
-                id: actionBarHint;
-                anchors.horizontalCenter: parent.horizontalCenter;
-                anchors.bottom: actionBar.top;
-                width: contentWidth * 2;
-                height: contentHeight * 2;
-
-                opacity: actionBar.opacity;
-                visible: core.indexOf( "desmume" ) > -1;
-
-                verticalAlignment: Text.AlignVCenter;
-                horizontalAlignment: Text.AlignHCenter;
-                text: "(Right-click to hide)";
-                color: "white";
-                style: Text.Outline;
-                styleColor: "black";
-
-                font {
-                    pixelSize: 12;
-                    family: PhxTheme.common.systemFontFamily;
-                }
-            }
 
             // A frosty glass background of the VideoOutput behind this
             FastBlur {
