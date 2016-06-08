@@ -93,7 +93,7 @@ class SqlTableUpdater():
         "DOS":                                              {"enabled": True,  "defaultCore": "dosbox_libretro",                    "friendlyName": "",                    "shortName": "", "manufacturer": "(Various)"       },
         "Mattel - Intellivision":                           {"enabled": True,  "defaultCore": "mess2014_libretro",                  "friendlyName": "",                    "shortName": "", "manufacturer": "Mattel"          },
         "Nintendo - Game & Watch":                          {"enabled": True,  "defaultCore": "gw_libretro",                        "friendlyName": "",                    "shortName": "", "manufacturer": "Nintendo"        },
-        "Sinclair - ZX81":                                  {"enabled": True,  "defaultCore": "81-libretro",                        "friendlyName": "",                    "shortName": "", "manufacturer": "Sinclair"        },
+        "Sinclair - ZX81":                                  {"enabled": True,  "defaultCore": "81_libretro",                        "friendlyName": "",                    "shortName": "", "manufacturer": "Sinclair"        },
         "SNK - Neo Geo":                                    {"enabled": True,  "defaultCore": "mess2014_libretro",                  "friendlyName": "",                    "shortName": "", "manufacturer": "SNK"             },
 
         # No-Intro, both official and non-official (ROM-based games)
