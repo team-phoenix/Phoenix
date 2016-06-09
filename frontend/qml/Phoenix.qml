@@ -410,12 +410,6 @@ PhoenixWindow {
     }
 
     // FIXME: For testing
-//    MouseArea{
-//        anchors.fill: parent;
-//        onDoubleClicked: toggleFullscreen();
-//    }
-
-    // FIXME: For testing
     Shortcut {
         autoRepeat: false;
         sequence: "v";
@@ -432,65 +426,6 @@ PhoenixWindow {
                 phoenix.state = "Paused";
             } else if( phoenix.state === "Paused" ) {
                 phoenix.state = "Playing";
-            }
-        }
-    }
-
-    // FIXME: For testing
-    // Stop the running game
-    Shortcut {
-        autoRepeat: false;
-        sequence: "h";
-        onActivated: {
-            if( phoenix.state === "Playing" || phoenix.state === "Paused" ) {
-                phoenix.state = "Unloading";
-            }
-
-            if( phoenix.state === "Minimized" ) {
-                phoenix.state = "SilentlyUnloading";
-            }
-        }
-    }
-
-    // FIXME: For testing
-    // Load the game
-    Shortcut {
-        autoRepeat: false;
-        sequence: "t";
-        onActivated: {
-            if( phoenix.state === "Stopped" || phoenix.state === "" ) {
-                phoenix.state = "Loading";
-            }
-        }
-    }
-
-
-    // FIXME: For testing
-    // Minimize
-    Shortcut {
-        autoRepeat: false;
-        sequence: "y";
-        onActivated: {
-            // Pause if we're playing
-            if( phoenix.state === "Playing" ) {
-                phoenix.state = "Paused";
-            }
-
-            // We either just paused or we were already paused
-            if( phoenix.state === "Paused" ) {
-                phoenix.state = "Minimizing";
-            }
-        }
-    }
-
-    // FIXME: For testing
-    // Restore
-    Shortcut {
-        autoRepeat: false;
-        sequence: "j";
-        onActivated: {
-            if( phoenix.state === "Minimized" ) {
-                phoenix.state = "Restoring";
             }
         }
     }
