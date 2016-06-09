@@ -388,7 +388,9 @@ bool SqlModel::addEntries( const FileList rows ) {
         }
     }
 
-    if( ignoredGames ) qCDebug( phxLibrary ) << "Ignored" << ignoredGames << "games already in library";
+    if( ignoredGames ) {
+        qCDebug( phxLibrary ) << "Ignored" << ignoredGames << "games already in library";
+    }
 
     bool c = db.commit();
     Q_ASSERT( c );
@@ -445,11 +447,12 @@ bool SqlModel::select() {
 
 QString SqlModel::selectStatement() const {
 
-    if ( !mSelectStatementOverride.isEmpty() ) {
+    if( !mSelectStatementOverride.isEmpty() ) {
         return mSelectStatementOverride;
     }
 
     QString statement = QStringLiteral( "SELECT " );
+
     for( int i = 0; i < mTableColumns.size(); ++i ) {
 
         SqlColumn *col = mTableColumns[ i ];
@@ -461,6 +464,7 @@ QString SqlModel::selectStatement() const {
     }
 
     statement += QStringLiteral( " FROM " ) % tableName();
+
     if( !filter().isEmpty() ) {
         statement += " WHERE " % filter();
     }
@@ -472,7 +476,7 @@ QString SqlModel::selectStatement() const {
 }
 
 QVariant SqlModel::data( const QModelIndex &index, int role ) const {
-    if( !index.isValid() ){
+    if( !index.isValid() ) {
         return QVariant();
     }
 
@@ -522,31 +526,35 @@ void SqlModel::appendTableRow( QQmlListProperty<SqlColumn> *list, SqlColumn *row
     model->mTableColumns.append( row );
 }
 
-bool SqlModel::attachDatabase(const QString dbFile, const QString alias) {
+bool SqlModel::attachDatabase( const QString dbFile, const QString alias ) {
     QSqlDatabase db = QSqlDatabase::database( mDatabaseSettings.connectionName() );
     QSqlQuery query( db );
 
-    if ( !query.exec( QString("ATTACH DATABASE '%1' as %2;").arg( dbFile, alias ) ) ) {
+    if( !query.exec( QString( "ATTACH DATABASE '%1' as %2;" ).arg( dbFile, alias ) ) ) {
         qDebug() << Q_FUNC_INFO << query.lastError().text();
         Q_ASSERT( false );
         return false;
     }
+
     return true;
 }
 
 void SqlModel::setOrderBy( const QStringList columns, const SqlModel::OrderBy order ) {
-    if ( columns.isEmpty() ) {
+    if( columns.isEmpty() ) {
         return;
     }
+
     mOrderBy = QStringLiteral( " ORDER BY " );
-    for ( int i=0; i < columns.size(); ++i ) {
+
+    for( int i = 0; i < columns.size(); ++i ) {
         mOrderBy += columns[i];
-        if ( i < columns.size() - 1 ) {
+
+        if( i < columns.size() - 1 ) {
             mOrderBy += QStringLiteral( "," );
         }
     }
 
-    mOrderBy += (order == SqlModel::OrderBy::ASC) ? QStringLiteral( " ASC" ) : QStringLiteral( " DESC" );
+    mOrderBy += ( order == SqlModel::OrderBy::ASC ) ? QStringLiteral( " ASC" ) : QStringLiteral( " DESC" );
 
 }
 
@@ -570,7 +578,7 @@ void SqlModel::setAutoCreate( const bool create ) {
     emit autoCreateChanged();
 }
 
-void SqlModel::setSelectStatement(const QString statement) {
+void SqlModel::setSelectStatement( const QString statement ) {
     mSelectStatementOverride = statement;
     emit selectStatementChanged();
 }

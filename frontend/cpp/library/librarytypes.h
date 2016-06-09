@@ -46,7 +46,7 @@ namespace Library {
             ~FileEntry() {}
 
             // Extra data that holds the result of the game scanner
-            enum GameScannerResult{
+            enum GameScannerResult {
                 // Default value, not yet scanned
                 NotYetScanned,
 

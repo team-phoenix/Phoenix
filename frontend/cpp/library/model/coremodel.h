@@ -38,8 +38,8 @@ namespace Library {
 
         public slots:
             // Immediately save new default core to user db
-            void save(const QString system, const QString newCurrentCore );
-            void save(const QString system, int newCurrentCoreIndex );
+            void save( const QString system, const QString newCurrentCore );
+            void save( const QString system, int newCurrentCoreIndex );
 
             // Check that the given core exists on the filesystem where it should be
             bool coreExists( QString defaultCore );

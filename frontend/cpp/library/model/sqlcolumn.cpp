@@ -1,18 +1,15 @@
 #include "sqlcolumn.h"
 
 SqlColumn::SqlColumn( QObject *parent )
-    : QObject(parent)
-{
+    : QObject( parent ) {
 
 }
 
-QString SqlColumn::name() const
-{
+QString SqlColumn::name() const {
     return mName;
 }
 
-QString SqlColumn::type() const
-{
+QString SqlColumn::type() const {
     return mType;
 }
 

@@ -45,9 +45,10 @@ bool CryptoHash::addData( QIODevice *device ) {
     return device->atEnd();
 }
 
-bool CryptoHash::addData(const QString &filePath) {
+bool CryptoHash::addData( const QString &filePath ) {
     QFile file( filePath );
-    if ( file.open( QIODevice::ReadOnly ) ) {
+
+    if( file.open( QIODevice::ReadOnly ) ) {
         return addData( &file );
     }
 
@@ -59,16 +60,16 @@ QByteArray CryptoHash::result() const {
     QByteArray _result;
 
     switch( mHash ) {
-    case Hash::Crc32:
-        _result = QByteArray::number( static_cast<qulonglong>( mCrc32Result ), 16 );
-        break;
+        case Hash::Crc32:
+            _result = QByteArray::number( static_cast<qulonglong>( mCrc32Result ), 16 );
+            break;
 
-    case Hash::Sha1:
-        break;
+        case Hash::Sha1:
+            break;
 
-    default:
-        Q_UNREACHABLE();
-        break;
+        default:
+            Q_UNREACHABLE();
+            break;
     }
 
     return _result.toUpper();

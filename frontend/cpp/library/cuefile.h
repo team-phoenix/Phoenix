@@ -4,16 +4,15 @@
 #include <QStringList>
 #include <QString>
 
-class CueFile
-{
-public:
-    CueFile();
+class CueFile {
+    public:
+        CueFile();
 
-    static QStringList parse( const QString &filePath );
+        static QStringList parse( const QString &filePath );
 
-private:
-    static const QString delimiter();
-    static const QString prefix();
+    private:
+        static const QString delimiter();
+        static const QString prefix();
 
 };
 
