@@ -1,13 +1,13 @@
 Phoenix
 =======
 
-A super-slick libretro frontend powered by Qt 5. Dead-simple to use, Phoenix features both a powerful library system to organize your classic game collection, along with a set of up-to-date emulators to play them right within the app!
+A multi-system emulator and library manager designed to be both powerful and easy to use. Powered by Qt 5 and Libretro, it is available on Windows, OS X and Linux. Free now and forever under GPL v2.
 
 We've designed Phoenix with the hope that it'll be perfect for everyone, whether you're someone who hardly plays videogames, a hardcore gamer, a speedrunner, or even a homebrew programmer!
 
 [![Build Status](https://secure.travis-ci.org/team-phoenix/Phoenix.png)](http://travis-ci.org/team-phoenix/Phoenix)
 
-<b>Phoenix is still in early development. Don't expect everything to work!<b>
+<b>Phoenix is still in early development. Expect crashes!<b>
 
 ![Screenshot](https://github.com/team-phoenix/Designs/raw/gh-pages/Screenshots/screen.png)
 
