@@ -92,15 +92,17 @@
 
     # Everywhere else, copy the structure verbatim into the prefix
     !macx {
+        TARGET_NAME=$$TARGET
+        defined( PHX_CROSS_COMPILE, var ): TARGET_NAME = $${TARGET}.exe
         # Phoenix executable and the file that sets it to portable mode
         portable.commands += mkdir -p \"$$PREFIX/\" &&\
-                             cp -p -f \"$$OUT_PWD_UNIX/$$TARGET\" \"$$PREFIX/$$TARGET\" &&\
+                             cp -p -f \"$$OUT_PWD_UNIX/$$TARGET_NAME\" \"$$PREFIX/$$TARGET_NAME\" &&\
                              cp -p -f \"$$OUT_PWD_UNIX/$$PORTABLE_FILENAME\" \"$$PREFIX/$$PORTABLE_FILENAME\" &&\
 
         # Metadata databases
         portable.commands += mkdir -p \"$$PREFIX/Metadata/\" &&\
-                             cp -p -f \"$$OUT_PWD_UNIX/metadata/openvgdb.sqlite\" \"$$PREFIX/Metadata/openvgdb.sqlite\" &&\
-                             cp -p -f \"$$OUT_PWD_UNIX/metadata/libretro.sqlite\" \"$$PREFIX/Metadata/libretro.sqlite\"
+                             cp -p -f \"$$OUT_PWD_UNIX/Metadata/openvgdb.sqlite\" \"$$PREFIX/Metadata/openvgdb.sqlite\" &&\
+                             cp -p -f \"$$OUT_PWD_UNIX/Metadata/libretro.sqlite\" \"$$PREFIX/Metadata/libretro.sqlite\"
     }
 
 ##
