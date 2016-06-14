@@ -43,6 +43,9 @@ namespace DebugHandler {
         QuaZipFile zipFile( &zip );
         zipFile.open( QuaZipFile::WriteOnly, QuaZipNewInfo( info.baseName() + ".log" ) );
         zipFile.write( logFile.readAll() );
+
+        // Must remove the old file, or we are just wasting space.
+        logFile.remove();
     }
 
     void messageHandler(QtMsgType type, const QMessageLogContext& context, const QString& msg) {
