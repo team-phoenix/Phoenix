@@ -28,6 +28,8 @@ class SqlModel : public QSqlTableModel {
         Q_CLASSINFO( "DefaultProperty", "tableColumns" )
 
     public:
+        using QSqlTableModel::setFilter;
+
         enum class FilterType {
             Exact = 0,
             Like,

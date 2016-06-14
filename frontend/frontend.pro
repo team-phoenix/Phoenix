@@ -118,8 +118,8 @@ include( ../backend/msvc.pri )
     cpp/frontendcommon.h \
     cpp/library/database/databasehelper.h \
     cpp/cmdlineargs.h \
-    cpp/debughelper.h \
-    cpp/logging.h
+    cpp/logging.h \
+    cpp/debughandler.h
 
     RESOURCES += \
     qml/qmlold.qrc \

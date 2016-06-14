@@ -1,7 +1,5 @@
 #include "frontendcommon.h"
 
-#include "debughelper.h"
-
 #ifdef Q_OS_WIN
 #include <io.h>
 #endif
@@ -17,6 +15,8 @@
 #include "sqlthreadedmodel.h"
 
 #include "backendplugin.h"
+
+#include "debughandler.h"
 
 // Misc
 #include "phxpaths.h"
@@ -47,8 +47,8 @@ int main( int argc, char *argv[] ) {
 
     // Use a custom message printing setup
     {
-        qSetMessagePattern( phoenixCustomDebugOutputFormat );
-        qInstallMessageHandler( phoenixDebugMessageHandler );
+        qSetMessagePattern( DebugHandler::messageFormat() );
+        DebugHandler::install( DebugHandler::messageHandler );
     }
 
     // Runs the main thread's event loop and handles messages from the windowing system
@@ -72,19 +72,13 @@ int main( int argc, char *argv[] ) {
 
     // For release builds, write to a log file along with the console
 #ifdef QT_NO_DEBUG
-    QFile logFile( Library::PhxPaths::userDataLocation() % '/' % QStringLiteral( "Logs" ) % '/' %
-                   QDateTime::currentDateTime().toString( QStringLiteral( "ddd MMM d yyyy - h mm ss AP" ) ) %
-                   QStringLiteral( ".log" ) );
 
-    // If this fails... how would we know? :)
-    logFile.open( QIODevice::WriteOnly | QIODevice::Text );
-    int logFD = logFile.handle();
-#if defined( Q_OS_WIN )
-    logFP = fdopen( _dup( logFD ), "w" );
-#else
-    logFP = fdopen( dup( logFD ), "w" );
-#endif
-    qInstallMessageHandler( phoenixDebugMessageLog );
+    const QString logFile = Library::PhxPaths::userDataLocation() % '/' % QStringLiteral( "Logs" ) % '/' %
+                            QDateTime::currentDateTime().toString( QStringLiteral( "ddd MMM d yyyy - h mm ss AP" ) ) %
+                            QStringLiteral( ".zip" );
+
+    DebugHandler::install( logFile, DebugHandler::messageLog );
+
 #endif
 
     // Print the version once we've set up debug logging
@@ -156,13 +150,12 @@ int main( int argc, char *argv[] ) {
 
     // Begin main event loop
     // Once it returns, write return code to the log file if in release mode
+
+    int exec = app.exec();
+
 #ifdef QT_NO_DEBUG
-    int ret = app.exec();
-    fprintf( logFP, "Returned %d\n", ret );
-    fclose( logFP );
-    return ret;
-#else
-    // Otherwise, just start it
-    return app.exec();
+    qDebug() << "Returned" << exec;
 #endif
+
+    return exec;
 }
