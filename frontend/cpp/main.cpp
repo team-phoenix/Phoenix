@@ -75,7 +75,7 @@ int main( int argc, char *argv[] ) {
 
     const QString logFile = Library::PhxPaths::userDataLocation() % '/' % QStringLiteral( "Logs" ) % '/' %
                             QDateTime::currentDateTime().toString( QStringLiteral( "ddd MMM d yyyy - h mm ss AP" ) ) %
-                            QStringLiteral( ".zip" );
+                            QStringLiteral( ".log" );
 
     DebugHandler::install( logFile, DebugHandler::messageLog );
 
@@ -155,6 +155,7 @@ int main( int argc, char *argv[] ) {
 
 #ifdef QT_NO_DEBUG
     qDebug() << "Returned" << exec;
+    DebugHandler::archive();
 #endif
 
     return exec;

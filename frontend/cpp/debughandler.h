@@ -7,52 +7,45 @@
 #include <QMutex>
 #include <QMutexLocker>
 #include <QFileInfo>
+#include <QFile>
 
-#include <memory>
+#include "quazip.h"
+#include "quazipfile.h"
 
-#include <quazip.h>
-#include <quazipfile.h>
-
+static QString logFilePath;
+static QFile logFile;
 static QMutex mutex;
-static std::unique_ptr<QuaZip> zipArchive;
-static std::unique_ptr<QuaZipFile> logZipFile;
 
 namespace DebugHandler {
 
-    QString messageFormat() {
-        return QStringLiteral(
-                    "%{if-debug}D %{endif}"
-                    "%{if-info}I %{endif}"
-                    "%{if-warning}W %{endif}"
-                    "%{if-critical}C %{endif}"
-                    "%{if-fatal}F %{endif}"
-                    "%{time hh:mm:ss:zzz} %{function}():%{line}: %{message} "
-                    //"%{if-debug}\n               [%{file}:%{line} %{function}()]"/*\n%{backtrace depth=20 separator=\"\n\"}*/"%{endif}"
-                    //"%{if-info}\n               [%{file}:%{line} %{function}()]"/*\n%{backtrace depth=20 separator=\"\n\"}*/"%{endif}"
-                    "%{if-warning}\n               [%{file}:%{line} %{function}()]"/*\n%{backtrace depth=20 separator=\"\n\"}*/"%{endif}"
-                                                                                                                               "%{if-critical}\n               [%{file}:%{line} %{function}()]"/*\n%{backtrace depth=20 separator=\"\n\"}*/"%{endif}"
-                                                                                                                                                                                                                                           "%{if-fatal}\n               [%{file}:%{line} %{function}()]"/*\n%{backtrace depth=20 separator=\"\n\"}*/"%{endif}"
-        );
-    }
-
-    void install(QtMessageHandler handler) {
+    void install( QtMessageHandler handler ) {
         qInstallMessageHandler( handler );
     }
 
-    void install(const QString &logFile, QtMessageHandler handler) {
-        if ( !zipArchive ) {
-            zipArchive = std::make_unique<QuaZip>( logFile );
-            zipArchive->open( QuaZip::Mode::mdCreate );
-
-
-            logZipFile = std::make_unique<QuaZipFile>( zipArchive.get() );
-            logZipFile->open( QuaZipFile::WriteOnly, QuaZipNewInfo( QFileInfo( logFile ).baseName() + ".log" ) );
+    void install( const QString &filePath, QtMessageHandler handler ) {
+        if ( !logFile.isOpen() ) {
+            logFilePath = filePath;
+            logFile.setFileName( filePath );
+            logFile.open( QIODevice::ReadWrite | QIODevice::Text );
+            install( handler );
         }
-
-        install( handler );
     }
 
-    void messageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
+    void archive() {
+
+        // The file is positioned at the end, we must return it to the start to read from it.
+        logFile.seek( 0 );
+        QFileInfo info( logFilePath );
+
+        QuaZip zip( info.canonicalPath() + "/" + info.baseName() + ".zip" );
+        zip.open( QuaZip::Mode::mdCreate );
+
+        QuaZipFile zipFile( &zip );
+        zipFile.open( QuaZipFile::WriteOnly, QuaZipNewInfo( info.baseName() + ".log" ) );
+        zipFile.write( logFile.readAll() );
+    }
+
+    void messageHandler(QtMsgType type, const QMessageLogContext& context, const QString& msg) {
         QMutexLocker locker( &mutex );
         Q_UNUSED( locker );
 
@@ -85,7 +78,7 @@ namespace DebugHandler {
         fflush( stdout );
     }
 
-    void messageLog(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
+    void messageLog(QtMsgType type, const QMessageLogContext& context, const QString& msg) {
         QMutexLocker locker( &mutex );
 
         // Adapted from Qt 5.6.0 source
@@ -97,12 +90,12 @@ namespace DebugHandler {
             return;
         }
 
-        if( msg.isEmpty() ) {
-            logZipFile->write( QByteArray( "\n" ) );
-        } else {
-            logZipFile->write( logMessage.toLocal8Bit() );
-            logZipFile->write( QByteArray( "\n" ) );
+        if( !msg.isEmpty() ) {
+            logFile.write( logMessage.toLocal8Bit() );
         }
+
+        logFile.write( "\n" );
+        logFile.flush();
 
         // We need to manually unlock, because 'messageHandler' relocks the mutex.
         locker.unlock();
@@ -110,6 +103,21 @@ namespace DebugHandler {
         // Print to console too, just in case
         messageHandler( type, context, msg );
     }
+
+    QString messageFormat() {
+        return QStringLiteral(
+                "%{if-debug}D %{endif}"
+                "%{if-info}I %{endif}"
+                "%{if-warning}W %{endif}"
+                "%{if-critical}C %{endif}"
+                "%{if-fatal}F %{endif}"
+                "%{time hh:mm:ss:zzz} %{function}():%{line}: %{message} "
+                //"%{if-debug}\n               [%{file}:%{line} %{function}()]"/*\n%{backtrace depth=20 separator=\"\n\"}*/"%{endif}"
+                //"%{if-info}\n               [%{file}:%{line} %{function}()]"/*\n%{backtrace depth=20 separator=\"\n\"}*/"%{endif}"
+                "%{if-warning}\n               [%{file}:%{line} %{function}()]"/*\n%{backtrace depth=20 separator=\"\n\"}*/"%{endif}"
+                "%{if-critical}\n               [%{file}:%{line} %{function}()]"/*\n%{backtrace depth=20 separator=\"\n\"}*/"%{endif}"
+                "%{if-fatal}\n               [%{file}:%{line} %{function}()]"/*\n%{backtrace depth=20 separator=\"\n\"}*/"%{endif}"
+                );
+    }
+
 }
-
-
