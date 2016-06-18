@@ -6,14 +6,14 @@ git:
 before_install:
   - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
   - git submodule update --init --recursive
-  - sudo add-apt-repository --yes ppa:beineri/opt-qt56-trusty
+  - sudo add-apt-repository --yes ppa:beineri/opt-qt57-trusty
   - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
   - sudo apt-get update -qq
   - sudo apt-get install -qq g++-4.8 libsamplerate0-dev
-  - sudo apt-get install -qq -y qt56base qt56declarative qt56imageformats qt56location qt56multimedia qt56quickcontrols qt56script qt56svg qt56tools qt56translations libsdl2-dev
+  - sudo apt-get install -qq -y qt57base qt57declarative qt57imageformats qt57location qt57multimedia qt57quickcontrols qt57script qt57svg qt57tools qt57translations libsdl2-dev
   - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
 script:
-  - source /opt/qt56/bin/qt56-env.sh
+  - source /opt/qt57/bin/qt57-env.sh
   - mkdir phoenix-build
   - cd phoenix-build
   - qmake ..
