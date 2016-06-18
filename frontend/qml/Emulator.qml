@@ -9,13 +9,12 @@ import vg.phoenix.paths 1.0
 import "qrc:/Emulator"
 
 MouseArea {
-    // Make GameConsole's objects available from Emulator directly
-    property alias controlOutput: gameConsole.controlOutput;
-    property alias globalGamepad: gameConsole.globalGamepad;
 
     // Make Emulator's objects available unqualified
     property alias blurEffect: blurEffect;
+    property alias controlOutput: controlOutput;
     property alias gameConsole: gameConsole;
+    property alias globalGamepad: globalGamepad;
     property alias videoOutput: videoOutput;
 
     // A string that holds the title of the currently running game
@@ -25,69 +24,70 @@ MouseArea {
     // A string that holds the URL for the front cover of the currently running game
     property string artworkURL: "";
 
-    // Object that handles the running game session
-    GameConsole {
-        id: gameConsole;
+    // The QML-owned pipeline tree nodes
+    Item {
+        // Object that handles the running game session
+        GameConsole {
+            id: gameConsole;
 
-        // Load a game if set on launch
-        Component.onCompleted: {
-            // Immediately launch a game if the command line was invoked
-            // If this is set everything else should be, too
-            if( commandLineSource[ "type" ] === "libretro" ) {
-                // Track the game's title
-                title = commandLineSource[ "title" ];
+            // Load a game if set on launch
+            Component.onCompleted: {
+                // Immediately launch a game if the command line was invoked
+                // If this is set everything else should be, too
+                if( commandLineSource[ "type" ] === "libretro" ) {
+                    // Track the game's title
+                    title = commandLineSource[ "title" ];
 
-                // Set up the packet of information to pass to GameConsole
-                var dict = {};
-                dict[ "type" ] = "libretro";
-                dict[ "core" ] = commandLineSource[ "core" ];
-                dict[ "game" ] = commandLineSource[ "game" ];
-                dict[ "systemPath" ] = PhxPaths.qmlFirmwareLocation();
-                dict[ "savePath" ] = PhxPaths.qmlSaveLocation();
+                    // Set up the packet of information to pass to GameConsole
+                    var dict = {};
+                    dict[ "type" ] = "libretro";
+                    dict[ "core" ] = commandLineSource[ "core" ];
+                    dict[ "game" ] = commandLineSource[ "game" ];
+                    dict[ "systemPath" ] = PhxPaths.qmlFirmwareLocation();
+                    dict[ "savePath" ] = PhxPaths.qmlSaveLocation();
 
-                // Extra stuff
-                dict[ "title" ] = title;
-                dict[ "system" ] = "";
-                dict[ "artworkURL" ] = "";
+                    // Extra stuff
+                    dict[ "title" ] = title;
+                    dict[ "system" ] = "";
+                    dict[ "artworkURL" ] = "";
 
-                // Assign the source
-                gameConsole.source = dict;
+                    // Assign the source
+                    gameConsole.source = dict;
 
-                // Begin the load
-                phoenix.state = "Loading";
+                    // Begin the load
+                    phoenix.state = "Loading";
+                }
             }
-        }
 
-        aspectRatioMode: 0;
-        vsync: true;
-        volume: 1.0;
-        userDataLocation: PhxPaths.qmlUserDataLocation();
+            aspectRatioMode: 0;
+            vsync: true;
+            volume: 1.0;
+            userDataLocation: PhxPaths.qmlUserDataLocation();
 
-        onSourceChanged: {
-            title = source[ "title" ];
-            artworkURL = source[ "artworkURL" ];
+            onSourceChanged: {
+                title = source[ "title" ];
+                artworkURL = source[ "artworkURL" ];
+            }
         }
 
         // An object that emits signals based on the state of all connected controllers combined
         // Use this to control the UI with any controller
-        globalGamepad: GlobalGamepad {
+        GlobalGamepad {
             id: globalGamepad;
         }
 
         // A wrapper necessary to make PhoenixWindow part of the pipeline
-        phoenixWindow: PhoenixWindowNode {
+        PhoenixWindowNode {
             id: phoenixWindowNode;
-            phoenixWindow: window;
         }
 
         // A wrapper necessary to make VideoOutput part of the pipeline
-        videoOutput: VideoOutputNode {
+        VideoOutputNode {
             id: videoOutputNode;
-            videoOutput: videoOutput;
         }
 
         // Object used to track state changes and misc properties set from the core
-        controlOutput: ControlOutput {
+        ControlOutput {
             id: controlOutput;
         }
     }
