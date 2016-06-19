@@ -306,12 +306,6 @@ PhoenixWindow {
 
         //onEnabledChanged: console.log( "Emulator enabled = " + enabled );
         enabled: false;
-
-        // FIXME: Cleaner way to do this
-        Component.onCompleted: {
-            emulator.gameConsole.variableModel = window.libretroVariableModel;
-            emulator.gameConsole.remapperModel = remapperModel;
-        }
     }
 
     // The main interface of Phoenix
