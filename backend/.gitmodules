@@ -1,3 +1,0 @@
-[submodule "input/SDL_GameControllerDB"]
-	path = input/SDL_GameControllerDB
-	url = https://github.com/team-phoenix/SDL_GameControllerDB.git
