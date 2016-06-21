@@ -13,7 +13,7 @@ include( msvc.pri )
     # Undefine this for gcc (MINGW), it's not necessary
     gcc: CONFIG -= debug_and_release debug_and_release_target
 
-    CONFIG += plugin qt
+    CONFIG += plugin qt static
 
     TEMPLATE = lib
 

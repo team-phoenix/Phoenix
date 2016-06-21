@@ -43,15 +43,9 @@
     }
 
     # Force the Phoenix binary to be relinked if the backend code has changed
-    !CONFIG( static, static ) {
-        win32: TARGETDEPS += ../backend/phoenix-backend.dll ../externals/quazip/quazip/libquazip.a
-        macx: TARGETDEPS += ../backend/libphoenix-backend.dylib ../externals/quazip/quazip/libquazip.a
-        unix: !macx: TARGETDEPS += ../backend/libphoenix-backend.so ../externals/quazip/quazip/libquazip.a
-    } else {
-        win32: TARGETDEPS += ../backend/libphoenix-backend.a ../externals/quazip/quazip/libquazip.a
-        macx: TARGETDEPS += ../backend/libphoenix-backend.a ../externals/quazip/quazip/libquazip.a
-        unix: !macx: TARGETDEPS += ../backend/libphoenix-backend.a ../externals/quazip/quazip/libquazip.a
-    }
+    win32: TARGETDEPS += ../backend/libphoenix-backend.a ../externals/quazip/quazip/libquazip.a
+    macx: TARGETDEPS += ../backend/libphoenix-backend.a ../externals/quazip/quazip/libquazip.a
+    unix: !macx: TARGETDEPS += ../backend/libphoenix-backend.a ../externals/quazip/quazip/libquazip.a
 
     # Make sure it gets installed
     target.path = "$$PREFIX"
@@ -166,43 +160,6 @@
 
         # Make qmake aware that this target exists
         QMAKE_EXTRA_TARGETS += linuxdesktopentry
-    }
-
-##
-## Backend plugin
-##
-
-    # Only used when doing a shared build
-    !CONFIG( static, static ) {
-        # Backend plugin filename
-        win32: backendpluginname = phoenix-backend.dll
-        macx: backendpluginname = libphoenix-backend.dylib
-        unix: !macx: backendpluginname = libphoenix-backend.so
-        backend_plugin_uri = vg/phoenix/backend
-
-        # Ideally these files should come from the build folder, however, qmake will not generate rules for them if they don't
-        # already exist
-        backendplugin.depends += "$$OUT_PWD_NATIVE/../backend/$$backendpluginname"
-
-        macx: build_folder = $$OUT_PWD_NATIVE
-        !macx: build_folder = $$OUT_PWD_UNIX
-
-        # For the default target (...and anything that depends on it)
-        # The shared library comes from the build folder while the qmldir file comes from the source folder
-        backendplugin.commands += mkdir -p \"$$OUT_PWD_UNIX/Plugins/$$backend_plugin_uri\" &&\
-                                  cp -p -f \"$$build_folder/../backend/$$backendpluginname\" \"$$OUT_PWD_UNIX/Plugins/$$backend_plugin_uri/$$backendpluginname\" &&\
-                                  cp -p -f \"$$PWD_UNIX/../backend/qmldir\" \"$$OUT_PWD_UNIX/Plugins/$$backend_plugin_uri/qmldir\"
-        PRE_TARGETDEPS += backendplugin
-
-        # For make install
-        backendplugin.files += "$$OUT_PWD_NATIVE/../backend/$$backendpluginname" \
-                               "$$PWD_UNIX/../backend/qmldir"
-        backendplugin.path = "$$PREFIX/Plugins/$$backend_plugin_uri"
-        unix: backendplugin.path = "$$PREFIX/lib/phoenix/Plugins/$$backend_plugin_uri"
-        INSTALLS += backendplugin
-
-        # Make qmake aware that this target exists
-        QMAKE_EXTRA_TARGETS += backendplugin
     }
 
 ##

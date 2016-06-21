@@ -26,11 +26,6 @@ include( ../backend/msvc.pri )
     # Build with debugging info
     DEFINES += QT_MESSAGELOGCONTEXT
 
-    # Let the C++ code know whether we're linking statically or not
-    CONFIG( static, static ) {
-        DEFINES += PHXSTATIC
-    }
-
     # Version info
     win32: {
         # Grab current git tag (will be appended with revision hash if not on the commit the tag is tagged to)
@@ -163,12 +158,7 @@ include( ../backend/msvc.pri )
     ## Libraries
     ##
 
-    # Always link quazip statically
-    LIBS += -lquazip
-
-    # Use phoenix-backend.a if we're using static Qt
-    # Static Qt will force the backend to be built statically (as static Qt doesn't support loadable plugins)
-    CONFIG( static, static ): LIBS += -lphoenix-backend
+    LIBS += -lquazip -lphoenix-backend
 
     !msvc {
         # SDL 2
