@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/input">
+        <file alias="gamecontrollerdb.txt">SDL_GameControllerDB/gamecontrollerdb.txt</file>
+    </qresource>
+</RCC>
