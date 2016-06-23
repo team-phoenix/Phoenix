@@ -7,7 +7,8 @@ import QtQuick.Layouts 1.2
 import vg.phoenix.themes 1.0
 
 import "../"
-import "qrc:/Util"
+import "../Util"
+import "../Theme"
 
 PhxScrollView {
     // Change to reflect index 0 of settingsModel

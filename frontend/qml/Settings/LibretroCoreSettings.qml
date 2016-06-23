@@ -8,29 +8,36 @@ import vg.phoenix.models 1.0
 import vg.phoenix.paths 1.0
 import vg.phoenix.themes 1.0
 
-Item {
-    id: librarySettingsView;
+import "../"
+import "../Theme"
 
+Item {
     Item {
         anchors {
             top: parent.top; bottom: parent.bottom; left: parent.left;
-            topMargin: headerArea.height; leftMargin: 30;
+            /*topMargin: headerArea.height;*/ leftMargin: 30;
         }
         width: 620;
         property int verticalMargin: 10;
 
         // A handy clickable link that takes you straight to the core folder
-        Item {
+        Rectangle {
             id: pathHelper;
             anchors { top: parent.top; horizontalCenter: parent.horizontalCenter; }
             anchors.topMargin: parent.verticalMargin;
             height: 30;
             width: parent.width;
 
+            color: "transparent";
+            border.color: activeFocus ? PhxTheme.common.menuItemHighlight : "transparent";
+            border.width: 2;
+
+            activeFocusOnTab: true;
+
             Image {
                 anchors { right: pathHelperText.left; rightMargin: 8; }
                 anchors.verticalCenter: pathHelper.verticalCenter;
-                source: "core.svg";
+                source: "../Assets/core.svg";
                 smooth: false;
             }
 
@@ -52,14 +59,15 @@ Item {
             }
 
             MouseArea {
+                id: hintMouseArea;
                 anchors.fill: parent;
                 onClicked: {
                     Qt.openUrlExternally( "file:///" + PhxPaths.qmlCoreLocation() );
                 }
 
                 hoverEnabled: true;
-                onEntered: { rootMouseArea.cursorShape = Qt.PointingHandCursor; }
-                onExited: { rootMouseArea.cursorShape = Qt.ArrowCursor; }
+                onEntered: { hintMouseArea.cursorShape = Qt.PointingHandCursor; }
+                onExited: { hintMouseArea.cursorShape = Qt.ArrowCursor; }
             }
         }
 
@@ -238,7 +246,7 @@ Item {
                             visible: comboBox.currentIndex !== defaultCoreIndex;
                             enabled: visible;
                             sourceSize { width: width; height: height; }
-                            source: "default.svg";
+                            source: "../Assets/default.svg";
                             fillMode: Image.PreserveAspectFit;
 
                             MouseArea {

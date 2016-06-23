@@ -8,11 +8,12 @@ import vg.phoenix.models 1.0
 import vg.phoenix.themes 1.0
 import vg.phoenix.paths 1.0
 
-// @disable-check M300
-PhxScrollView {
-    id: platformsView;
+import "../"
+import "../Util"
+import "../Frontend"
+import "../Theme"
 
-    // @disable-check M300
+PhxScrollView {
     PhxListView {
         id: listView;
         anchors.fill: parent;
@@ -82,7 +83,7 @@ PhxScrollView {
                     target: listView
                     onCurrentIndexChanged:
                         if( listView.currentIndex === -1 ) {
-                            contentArea.contentLibraryModel.clearFilter( "system" );
+                            library.libraryModel.clearFilter( "system" );
                     }
                 }
 
@@ -104,12 +105,7 @@ PhxScrollView {
                     anchors.fill: parent;
                     hoverEnabled: true;
 
-                    onClicked: {
-                        if ( !contentArea.contentStackView.currentItem.objectName.localeCompare( "PlatformsView" ) )
-                            contentArea.contentStackView.push( { item: contentArea.boxartGrid, replace: true } );
-
-                        if( listView.currentIndex !== -1 ) listView.currentIndex = -1;
-                    }
+                    onClicked: if( listView.currentIndex !== -1 ) listView.currentIndex = -1;
                 }
 
                 // The highlighter from PhxListView, hard-coded for a vertical list and to only appear when index is -1
@@ -159,12 +155,12 @@ PhxScrollView {
             height: PhxTheme.common.menuItemHeight;
             anchors { left: parent.left; right: parent.right; }
 
-            // Change the libraryModel's (ContentArea.qml) system filter to the UUID of the currently selected system name
+            // Change the libraryModel's (Library.qml) system filter to the UUID of the currently selected system name
             Connections {
                 target: listView
                 onCurrentIndexChanged:
                     if( listView.currentIndex === index ) {
-                        contentArea.contentLibraryModel.setFilter( "system", UUID );
+                        library.libraryModel.setFilter( "system", UUID );
                 }
             }
 
@@ -177,22 +173,17 @@ PhxScrollView {
                 fontSize: PhxTheme.common.baseFontSize + 1;
                 color: index === listView.currentIndex ? PhxTheme.common.menuSelectedColor : PhxTheme.selectionArea.baseFontColor;
                 spacing: 40;
-                running: index === listView.currentIndex || mouseArea.containsMouse;
+                running: index === listView.currentIndex || delegateMouseArea.containsMouse;
                 pixelsPerFrame: 2.0;
                 bold: index === listView.currentIndex;
             }
 
             MouseArea {
-                id: mouseArea;
+                id: delegateMouseArea;
                 anchors.fill: parent;
                 hoverEnabled: true;
 
-                onClicked: {
-                    if ( !contentArea.contentStackView.currentItem.objectName.localeCompare( "PlatformsView" ) )
-                        contentArea.contentStackView.push( { item: contentArea.boxartGrid, replace: true } );
-
-                    if( listView.currentIndex !== index ) listView.currentIndex = index;
-                }
+                onClicked: if( listView.currentIndex !== index ) listView.currentIndex = index;
             }
         }
     }

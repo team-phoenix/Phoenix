@@ -36,8 +36,8 @@ Item {
 
                 source: screenIcon;
                 property string screenIcon: {
-                    if ( window.visibility === Window.FullScreen ) screenIcon: "qrc:/Assets/window.svg";
-                    else if ( window.visibility === Window.Windowed | Window.Maximized ) screenIcon: "qrc:/Assets/fullscreen.svg";
+                    if ( window.visibility === Window.FullScreen ) screenIcon: "../Assets/window.svg";
+                    else if ( window.visibility === Window.Windowed | Window.Maximized ) screenIcon: "../Assets/fullscreen.svg";
                 }
 
                 activeFocusOnTab: true;
@@ -71,7 +71,7 @@ Item {
             activeFocusOnTab: enabled;
 
             sourceSize { height: height; width: width; }
-            source: "qrc:/Assets/close.svg";
+            source: "../Assets/close.svg";
 
             MouseArea {
                 anchors.fill: parent;

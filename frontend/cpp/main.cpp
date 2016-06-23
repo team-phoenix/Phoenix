@@ -28,9 +28,11 @@
 // The other half of the fix is in frontend.pro
 // http://blog.debao.me/2013/07/link-confilict-between-sdl-and-qt-under-windows/
 
+#if defined( Q_OS_WIN )
 // #define main qMain
 #undef main
 #include "SDL.h"
+#endif
 
 using namespace Library;
 
@@ -122,9 +124,13 @@ int main( int argc, char *argv[] ) {
     qmlRegisterType<GameLauncher>( "vg.phoenix.launcher", 1, 0, "GameLauncher" );
 
     // Register our custom QML-accessable objects and instantiate them here
-    qmlRegisterSingletonType( QUrl( "qrc:/PhxTheme.qml" ), "vg.phoenix.themes", 1, 0, "PhxTheme" );
-    qmlRegisterSingletonType<Library::PhxPaths>( "vg.phoenix.paths", 1, 0, "PhxPaths", PhxPathsSingletonProviderCallback );
-    qmlRegisterSingletonType<GameHasherController>( "vg.phoenix.scanner", 1, 0, "GameHasherController", GameHasherControllerSingletonProviderCallback );
+    QUrl themeURL = "file://" + Library::PhxPaths::resourceLocation() + "/QML/Phoenix/Theme" + "/PhxTheme.qml";
+    qmlRegisterSingletonType( themeURL, "vg.phoenix.themes", 1, 0, "PhxTheme" );
+
+    qmlRegisterSingletonType<Library::PhxPaths>(
+                "vg.phoenix.paths", 1, 0, "PhxPaths", PhxPathsSingletonProviderCallback );
+    qmlRegisterSingletonType<GameHasherController>(
+                "vg.phoenix.scanner", 1, 0, "GameHasherController", GameHasherControllerSingletonProviderCallback );
 
     // Register our game scanner types
     qRegisterMetaType<Library::FileEntry>( "Library::FileEntry" );
@@ -136,8 +142,8 @@ int main( int argc, char *argv[] ) {
     //qRegisterMetaType<Library::GameData>( "GameData" );
 
     // Load the root QML object and everything under it
-    engine.load( QUrl( QStringLiteral( "qrc:/Phoenix/" )
-                       + commandLineSource[ QStringLiteral( "mainSrc" ) ].toString() ) );
+    engine.load( QUrl( Library::PhxPaths::resourceLocation() + "/QML/Phoenix/Phoenix/" +
+                       commandLineSource[ QStringLiteral( "mainSrc" ) ].toString() ) );
 
     // Begin main event loop
     // Once it returns, write return code to the log file if in release mode

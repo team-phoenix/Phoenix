@@ -9,6 +9,8 @@ import vg.phoenix.paths 1.0
 import vg.phoenix.themes 1.0
 
 import "../"
+import "../Theme"
+import "../Util"
 
 Rectangle {
     color: PhxTheme.common.secondaryBackgroundColor;

@@ -12,7 +12,8 @@ import vg.phoenix.paths 1.0
 import vg.phoenix.themes 1.0
 
 import "../"
-import "qrc:/Util"
+import "../Util"
+import "../Theme"
 
 FocusScope {
     PhxScrollView {
@@ -177,7 +178,7 @@ FocusScope {
                             anchors { top: parent.top; left: parent.left; right: parent.right; bottom: parent.bottom; leftMargin: -1; }
                             visible: true;
                             asynchronous: true;
-                            source: imageCacher.cachedUrl == "" ? "qrc:/Assets/noartwork.png" : imageCacher.cachedUrl;
+                            source: imageCacher.cachedUrl == "" ? "../Assets/noartwork.png" : imageCacher.cachedUrl;
                             sourceSize { height: zoomSlider.maximumValue; width: zoomSlider.maximumValue; }
                             verticalAlignment: Image.AlignBottom;
                             fillMode: Image.PreserveAspectFit;
@@ -185,7 +186,7 @@ FocusScope {
                             onStatusChanged: {
                                 if ( status == Image.Error ) {
                                     console.log( "Error in " + source );
-                                    gridItemImage.source = "qrc:/Assets/noartwork.png";
+                                    gridItemImage.source = "../Assets/noartwork.png";
                                 }
 
                                 // This is not triggered when source is an empty string

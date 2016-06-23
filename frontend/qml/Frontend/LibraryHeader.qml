@@ -11,9 +11,10 @@ import vg.phoenix.launcher 1.0
 import vg.phoenix.paths 1.0
 
 import "../"
-import "qrc:/Emulator"
-import "qrc:/Frontend"
-import "qrc:/Util"
+import "../Emulator"
+import "../Frontend"
+import "../Util"
+import "../Theme"
 
 Item {
     property alias searchBar: searchBar;
@@ -52,7 +53,7 @@ Item {
             width: parent.height * 0.6;
             height: width;
             sourceSize { height: height; width: width; }
-            source: searchBar.text === "" ? "qrc:/Assets/search.svg" : "qrc:/Assets/del.svg";
+            source: searchBar.text === "" ? "../Assets/search.svg" : "../Assets/del.svg";
             MouseArea {
                 anchors.fill: parent;
                 onClicked: searchBar.text = "";

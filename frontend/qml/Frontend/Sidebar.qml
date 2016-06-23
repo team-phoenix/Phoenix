@@ -11,10 +11,10 @@ import vg.phoenix.themes 1.0
 import vg.phoenix.scanner 1.0
 
 import "../"
-import "qrc:/Assets"
-import "qrc:/Util"
-import "qrc:/Frontend"
-import "qrc:/Settings"
+import "../Util"
+import "../Frontend"
+import "../Settings"
+import "../Theme"
 
 Rectangle {
     property Item currentItem;
@@ -42,19 +42,19 @@ Rectangle {
             Behavior on y { PropertyAnimation { easing.type: Easing.InOutExpo; } }
         }
 
-        CollectionsView {
-            id: collectionsView;
+//        CollectionsView {
+//            id: collectionsView;
 
-            width: parent.width;
-            height: parent.height;
+//            width: parent.width;
+//            height: parent.height;
 
-            enabled: opacity === 1.0;
+//            enabled: opacity === 1.0;
 
-            opacity: currentItem === this ? 1.0 : 0.0;
-            Behavior on opacity { PropertyAnimation { } }
-            y: currentItem === this ? 0 : parent.height;
-            Behavior on y { PropertyAnimation { easing.type: Easing.InOutExpo; } }
-        }
+//            opacity: currentItem === this ? 1.0 : 0.0;
+//            Behavior on opacity { PropertyAnimation { } }
+//            y: currentItem === this ? 0 : parent.height;
+//            Behavior on y { PropertyAnimation { easing.type: Easing.InOutExpo; } }
+//        }
 
         SettingsList {
             id: settingsList;
@@ -131,7 +131,7 @@ Rectangle {
                         anchors.centerIn: parent;
                         width: parent.width;
                         height: parent.height;
-                        source: "qrc:/Assets/close.svg";
+                        source: "../Assets/close.svg";
                         sourceSize { width: width; height: height; }
                     }
 
@@ -190,9 +190,9 @@ Rectangle {
 
                 // FIXME: Use ids/properties as leftPane/rightPane roles once QTBUG-44079 is fixed
                 model: ListModel {
-                    ListElement { bgColor: "white"; label: "Games"; imageSource: "qrc:/Assets/games.svg"; }
-                    ListElement { bgColor: "white"; label: "Favorites"; imageSource: "qrc:/Assets/collections.svg"; }
-                    ListElement { bgColor: "white"; label: "Settings"; imageSource: "qrc:/Assets/settings.svg"; }
+                    ListElement { bgColor: "white"; label: "Games"; imageSource: "../Assets/games.svg"; }
+                    ListElement { bgColor: "white"; label: "Favorites"; imageSource: "../Assets/collections.svg"; }
+                    ListElement { bgColor: "white"; label: "Settings"; imageSource: "../Assets/settings.svg"; }
                 }
 
                 delegate: Item {
@@ -273,7 +273,7 @@ Rectangle {
                     width: 24;
                     height: 24;
 
-                    source: "qrc:/Assets/add.svg";
+                    source: "../Assets/add.svg";
                     sourceSize { width: width; height: height; }
 
                     opacity: fileDialog.visible ? 1.0 : 0.5;
