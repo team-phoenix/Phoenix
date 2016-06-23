@@ -4,8 +4,12 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Window 2.0
 import QtGraphicalEffects 1.0
 
-import vg.phoenix.backend 1.0
-import vg.phoenix.themes 1.0
+import Phoenix.Backend 1.0
+
+import Phoenix.Frontend 1.0
+import Phoenix.Settings 1.0
+import Phoenix.Theme 1.0
+import Phoenix.Util 1.0
 
 Item {
     // Background

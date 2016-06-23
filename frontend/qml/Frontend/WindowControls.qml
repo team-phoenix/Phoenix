@@ -2,7 +2,11 @@ import QtQuick 2.6
 import QtQuick.Layouts 1.2
 import QtQuick.Window 2.0
 
-import vg.phoenix.themes 1.0
+
+import Phoenix.Emulator 1.0
+import Phoenix.Settings 1.0
+import Phoenix.Theme 1.0
+import Phoenix.Util 1.0
 
 Item {
     property int combinedWidth: fullscreenButtonContainer.fullscreenButtonWidth +

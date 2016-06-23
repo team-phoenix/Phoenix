@@ -1,5 +1,4 @@
 import QtQuick 2.5
-import vg.phoenix.themes 1.0
 
 // Set properties here that all ListViews used within Phoenix will set anyway.
 

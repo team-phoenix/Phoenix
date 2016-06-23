@@ -4,14 +4,13 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.1
 import QtGraphicalEffects 1.0
 
-import vg.phoenix.models 1.0
-import vg.phoenix.themes 1.0
-import vg.phoenix.paths 1.0
+import Phoenix.Models 1.0
+import Phoenix.Paths 1.0
 
-import "../"
-import "../Util"
-import "../Frontend"
-import "../Theme"
+import Phoenix.Emulator 1.0
+import Phoenix.Settings 1.0
+import Phoenix.Theme 1.0
+import Phoenix.Util 1.0
 
 PhxScrollView {
     PhxListView {

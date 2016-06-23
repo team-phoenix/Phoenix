@@ -4,11 +4,11 @@ import QtQuick.Controls.Styles 1.4
 import QtGraphicalEffects 1.0
 import QtQuick.Layouts 1.2
 
-import vg.phoenix.themes 1.0
 
-import "../"
-import "../Util"
-import "../Theme"
+import Phoenix.Emulator 1.0
+import Phoenix.Frontend 1.0
+import Phoenix.Theme 1.0
+import Phoenix.Util 1.0
 
 PhxScrollView {
     // Change to reflect index 0 of settingsModel

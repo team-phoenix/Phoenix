@@ -93,8 +93,15 @@ int main( int argc, char *argv[] ) {
 
     // Init the backend
     BackendPlugin plugin;
-    plugin.registerTypes( "vg.phoenix.backend" );
+    plugin.registerTypes( "Phoenix.Backend" );
     Q_INIT_RESOURCE( controllerdb );
+
+    // Set up the QML import paths
+    // Set up the plugin directory path
+    engine.addImportPath( app.applicationDirPath() + QStringLiteral( "/QML" ) );
+#if defined( Q_OS_LINUX )
+    engine.addImportPath( QStringLiteral( "/usr/lib/phoenix/QML" ) );
+#endif
 
     // Give the QML engine our command line args
     engine.rootContext()->setContextProperty( "commandLineSource", commandLineSource );
@@ -112,25 +119,21 @@ int main( int argc, char *argv[] ) {
     qRegisterMetaType<Library::FileEntry>( "FileEntry" );
 
     // Register our custom QML-accessable/instantiable objects
-    qmlRegisterType<SqlModel>( "vg.phoenix.models", 1, 0, "SqlModel" );
-    qmlRegisterType<SqlColumn>( "vg.phoenix.models", 1, 0, "SqlColumn" );
-    qmlRegisterType<SqlThreadedModel>( "vg.phoenix.models", 1, 0, "SqlThreadedModel" );
+    qmlRegisterType<SqlModel>( "Phoenix.Models", 1, 0, "SqlModel" );
+    qmlRegisterType<SqlColumn>( "Phoenix.Models", 1, 0, "SqlColumn" );
+    qmlRegisterType<SqlThreadedModel>( "Phoenix.Models", 1, 0, "SqlThreadedModel" );
     qmlRegisterType<DatabaseSettings>();
     qRegisterMetaType<SqlModel::FilterType>( "SqlModel::FilterType" );
     qRegisterMetaType<SqlModel::OrderBy>( "SqlModel::OrderBy" );
 
-    qmlRegisterType<Library::CoreModel>( "vg.phoenix.models", 1, 0, "CoreModel" );
-    qmlRegisterType<Library::ImageCacher>( "vg.phoenix.cache", 1, 0, "ImageCacher" );
-    qmlRegisterType<GameLauncher>( "vg.phoenix.launcher", 1, 0, "GameLauncher" );
-
-    // Register our custom QML-accessable objects and instantiate them here
-    QUrl themeURL = "file://" + Library::PhxPaths::resourceLocation() + "/QML/Phoenix/Theme" + "/PhxTheme.qml";
-    qmlRegisterSingletonType( themeURL, "vg.phoenix.themes", 1, 0, "PhxTheme" );
+    qmlRegisterType<Library::CoreModel>( "Phoenix.Models", 1, 0, "CoreModel" );
+    qmlRegisterType<Library::ImageCacher>( "vg.Phoenix.Cache", 1, 0, "ImageCacher" );
+    qmlRegisterType<GameLauncher>( "Phoenix.Launcher", 1, 0, "GameLauncher" );
 
     qmlRegisterSingletonType<Library::PhxPaths>(
-                "vg.phoenix.paths", 1, 0, "PhxPaths", PhxPathsSingletonProviderCallback );
+                "Phoenix.Paths", 1, 0, "PhxPaths", PhxPathsSingletonProviderCallback );
     qmlRegisterSingletonType<GameHasherController>(
-                "vg.phoenix.scanner", 1, 0, "GameHasherController", GameHasherControllerSingletonProviderCallback );
+                "Phoenix.Scanner", 1, 0, "GameHasherController", GameHasherControllerSingletonProviderCallback );
 
     // Register our game scanner types
     qRegisterMetaType<Library::FileEntry>( "Library::FileEntry" );

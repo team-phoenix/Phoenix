@@ -5,16 +5,14 @@ import QtGraphicalEffects 1.0
 import QtQuick.Layouts 1.2
 import QtQuick.Dialogs 1.2
 
-import vg.phoenix.backend 1.0
-import vg.phoenix.models 1.0
-import vg.phoenix.themes 1.0
-import vg.phoenix.scanner 1.0
+import Phoenix.Backend 1.0
+import Phoenix.Models 1.0
+import Phoenix.Scanner 1.0
 
-import "../"
-import "../Util"
-import "../Frontend"
-import "../Settings"
-import "../Theme"
+import Phoenix.Emulator 1.0
+import Phoenix.Settings 1.0
+import Phoenix.Theme 1.0
+import Phoenix.Util 1.0
 
 Rectangle {
     property Item currentItem;

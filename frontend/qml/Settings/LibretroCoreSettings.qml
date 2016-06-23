@@ -4,12 +4,13 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.2
 import QtGraphicalEffects 1.0
 
-import vg.phoenix.models 1.0
-import vg.phoenix.paths 1.0
-import vg.phoenix.themes 1.0
+import Phoenix.Models 1.0
+import Phoenix.Paths 1.0
 
-import "../"
-import "../Theme"
+import Phoenix.Emulator 1.0
+import Phoenix.Frontend 1.0
+import Phoenix.Theme 1.0
+import Phoenix.Util 1.0
 
 Item {
     Item {

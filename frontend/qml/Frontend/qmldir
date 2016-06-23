@@ -1,0 +1,8 @@
+module Phoenix.Frontend
+GameGrid 1.0 GameGrid.qml
+Library 1.0 Library.qml
+LibraryHeader 1.0 LibraryHeader.qml
+MinimizedGame 1.0 MinimizedGame.qml
+Sidebar 1.0 Sidebar.qml
+SystemList 1.0 SystemList.qml
+WindowControls 1.0 WindowControls.qml

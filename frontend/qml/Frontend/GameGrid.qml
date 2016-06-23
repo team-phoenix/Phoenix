@@ -4,16 +4,16 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.2
 import QtGraphicalEffects 1.0
 
-import vg.phoenix.cache 1.0
-import vg.phoenix.backend 1.0
-import vg.phoenix.launcher 1.0
-import vg.phoenix.models 1.0
-import vg.phoenix.paths 1.0
-import vg.phoenix.themes 1.0
+import vg.Phoenix.Cache 1.0
+import Phoenix.Backend 1.0
+import Phoenix.Launcher 1.0
+import Phoenix.Models 1.0
+import Phoenix.Paths 1.0
 
-import "../"
-import "../Util"
-import "../Theme"
+import Phoenix.Emulator 1.0
+import Phoenix.Settings 1.0
+import Phoenix.Theme 1.0
+import Phoenix.Util 1.0
 
 FocusScope {
     PhxScrollView {

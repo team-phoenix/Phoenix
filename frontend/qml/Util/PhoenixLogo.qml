@@ -1,10 +1,9 @@
 import QtQuick 2.0
 import QtGraphicalEffects 1.0
 
-import vg.phoenix.backend 1.0
-import vg.phoenix.themes 1.0
-import vg.phoenix.launcher 1.0
-import vg.phoenix.paths 1.0
+import Phoenix.Backend 1.0
+import Phoenix.Launcher 1.0
+import Phoenix.Paths 1.0
 
 // A cool logo effect
 Item {
