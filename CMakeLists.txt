@@ -1,7 +1,28 @@
 cmake_minimum_required( VERSION 2.8 )
-set( CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_CURRENT_SOURCE_DIR}/frontend )
+set( CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/externals/cmake/modules ${CMAKE_CURRENT_SOURCE_DIR}/frontend )
 
 project( Phoenix )
+
+##
+## Misc
+##
+
+# Find and include all folders that contain .h files in the entire project
+file( GLOB_RECURSE inc_files *.h )
+set( DIR_LIST "" )
+
+foreach( inc_file ${inc_files} )
+    get_filename_component( inc_path ${inc_file} PATH )
+    list( APPEND DIR_LIST ${inc_path} )
+endforeach()
+
+list( REMOVE_DUPLICATES DIR_LIST )
+include_directories( ${DIR_LIST} )
+
+# For debugging
+#foreach( inc_path ${DIR_LIST} )
+#    message( ${inc_path} )
+#endforeach()
 
 ##
 ## Frontend
@@ -14,6 +35,34 @@ include( frontend/CMakeLists.txt )
 ##
 
 include( backend/CMakeLists.txt )
+
+##
+## Externals
+##
+
+find_package( libsamplerate REQUIRED )
+find_package( quazip REQUIRED )
+find_package( SDL2 REQUIRED )
+find_package( zlib REQUIRED )
+
+include_directories( ${LIBSAMPLERATE_INCLUDE_DIR} )
+include_directories( ${QUAZIP_INCLUDE_DIR} )
+include_directories( ${SDL2_INCLUDE_DIR} )
+include_directories( ${ZLIB_INCLUDE_DIR} )
+
+list( APPEND EXTERNAL_LIBRARIES
+    ${LIBSAMPLERATE_LIBRARY}
+    ${QUAZIP_LIBRARIES}
+    ${SDL2_LIBRARY}
+    ${SDL2_SDLMAIN_LIBRARY}
+    ${ZLIB_LIBRARY_RELEASE}
+)
+
+# FIXME: For some reason this is necessary on OS X?
+if( APPLE )
+    find_library( FOUNDATION Foundation )
+    list( APPEND EXTERNAL_LIBRARIES ${FOUNDATION} )
+endif()
 
 ##
 ## Qt
@@ -35,56 +84,33 @@ set( CMAKE_AUTORCC ON )
 set( QT_LIBRARIES Qt5::Concurrent Qt5::Core Qt5::Multimedia Qt5::Network Qt5::Qml Qt5::Quick Qt5::Sql Qt5::Svg )
 
 ##
-## Externals
-##
-
-find_package( quazip REQUIRED )
-find_package( SDL2 REQUIRED )
-find_package( samplerate REQUIRED )
-find_package( zlib REQUIRED )
-
-include_directories( ${QUAZIP_INCLUDE_DIRS} )
-include_directories( ${SAMPLERATE_INCLUDE_DIR} )
-include_directories( ${SDL2_INCLUDE_DIRS} )
-
-list( APPEND EXTERNAL_LIBRARIES quazip SDL2 samplerate z )
-
-# FIXME: For some reason this is necessary on OS X?
-if( APPLE )
-    find_library( FOUNDATION Foundation )
-    list( APPEND EXTERNAL_LIBRARIES ${FOUNDATION} )
-endif()
-
-##
-## Deployment
-##
-
-file( WRITE ${CMAKE_CURRENT_BINARY_DIR}/PHOENIX_PORTABLE "" )
-#set( OSX_ICON_FILES ${CMAKE_CURRENT_SOURCE_DIR}/frontend/phoenix.icns )
-#set_source_files_properties( ${OSX_ICON_FILES} PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
-
-##
 ## Compiler
 ##
 
 set( CMAKE_CXX_STANDARD 11 )
 
-# Find and include all folders that contain .h files in the entire project
-file( GLOB_RECURSE inc_files *.h )
-set( DIR_LIST "" )
+##
+## App metadata (icons, version, etc.)
+##
 
-foreach( inc_file ${inc_files} )
-    get_filename_component( inc_path ${inc_file} PATH )
-    list( APPEND DIR_LIST ${inc_path} )
-endforeach()
+# TODO: Put in a better place
+# TODO: Portable/installed mode
+file( WRITE ${CMAKE_CURRENT_BINARY_DIR}/PHOENIX-PORTABLE "" )
 
-list( REMOVE_DUPLICATES DIR_LIST )
-include_directories( ${DIR_LIST} )
+# Embed git tag in file
+set( PHOENIX_VER_TUPLE 0.0.1 )
+string( REPLACE "." "," PHOENIX_VER_TUPLE ${PHOENIX_VER_TUPLE} )
+set( PHOENIX_VER_STR "0.0.1-pre-alpha" )
+configure_file( version.h.in version.h @ONLY )
 
-# For debugging
-#foreach( inc_path ${DIR_LIST} )
-#    message( ${inc_path} )
-#endforeach()
+# Windows
+set( WIN_RC_FILE ${CMAKE_CURRENT_SOURCE_DIR}/frontend/phoenix.rc )
+list( APPEND WIN_DEPLOYMENT ${WIN_RC_FILE} )
+
+# OS X
+set( OSX_ICON_FILES ${CMAKE_CURRENT_SOURCE_DIR}/frontend/phoenix.icns )
+set_source_files_properties( ${OSX_ICON_FILES} PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
+list( APPEND OSX_DEPLOYMENT ${OSX_ICON_FILES} )
 
 ##
 ## Linker stuff
@@ -92,10 +118,11 @@ include_directories( ${DIR_LIST} )
 
 add_executable(
     Phoenix
-    #MACOSX_BUNDLE ${OSX_ICON_FILES}
+    ${WIN_DEPLOYMENT}
+    #MACOSX_BUNDLE ${OSX_DEPLOYMENT}
     ${BACKEND_QRC_LIST}
     ${FRONTEND_CONTENT}
     ${SRC_LIST}
 )
 
-target_link_libraries( ${PROJECT_NAME} ${EXTERNAL_LIBRARIES} ${QT_LIBRARIES} )
+target_link_libraries( Phoenix ${EXTERNAL_LIBRARIES} ${QT_LIBRARIES} )

@@ -9,7 +9,7 @@
 
 // Nodes
 #include "audiooutput.h"
-#include "sdlmanager.h"
+#include "SDLmanager.h"
 #include "controloutput.h"
 #include "globalgamepad.h"
 #include "libretroloader.h"
@@ -19,7 +19,7 @@
 #include "phoenixwindownode.h"
 #include "remapper.h"
 #include "remappermodel.h"
-#include "sdlunloader.h"
+#include "SDLunloader.h"
 #include "videooutput.h"
 #include "videooutputnode.h"
 

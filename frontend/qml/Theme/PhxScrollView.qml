@@ -38,6 +38,8 @@
 **
 ****************************************************************************/
 
+import Phoenix.Theme 1.0
+
 /*
    PhxScrollView extends the scrollbar example by having the scrollbar handles automatically show on mouseover
    in addition to showing while scrolling. The handles will be visible for a minimum of 2 seconds once made to

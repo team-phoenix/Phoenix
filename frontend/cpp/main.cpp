@@ -1,9 +1,5 @@
 #include "frontendcommon.h"
 
-#ifdef Q_OS_WIN
-#include <io.h>
-#endif
-
 // Library
 #include "cmdlineargs.h"
 #include "coremodel.h"
@@ -21,13 +17,13 @@
 // Misc
 #include "phxpaths.h"
 #include "logging.h"
+#include "version.h"
 
 // SDL2/Qt main() conflict fix
 // Use SDL2's SDL_main() instead of Qt's qMain()
 // Make sure that SDL.h is included *after* all other includes in main.cpp
 // The other half of the fix is in frontend.pro
 // http://blog.debao.me/2013/07/link-confilict-between-sdl-and-qt-under-windows/
-
 #if defined( Q_OS_WIN )
 // #define main qMain
 #undef main
@@ -35,10 +31,6 @@
 #endif
 
 using namespace Library;
-
-// Version string helper
-#define xstr(s) str(s)
-#define str(s) #s
 
 int main( int argc, char *argv[] ) {
     // Set some environment variables here
@@ -58,12 +50,9 @@ int main( int argc, char *argv[] ) {
 
 #if defined( Q_OS_WIN )
     // Add the MinGW directory to PATH
-    QString path( getenv( "PATH" ) );
-    path.prepend( "/MinGW;" );
-    path.prepend( QCoreApplication::applicationDirPath() );
-    path.prepend( "PATH=" );
-    QByteArray pathByteArray = path.toLocal8Bit();
-    putenv( pathByteArray.data() );
+    QString path( qgetenv( "PATH" ) );
+    QString correctedPath = QCoreApplication::applicationDirPath() + "/MinGW;" + path;
+    qputenv( "PATH", correctedPath.toLocal8Bit() );
 #endif
 
     // Parse command line args, store them here
@@ -84,7 +73,7 @@ int main( int argc, char *argv[] ) {
 #endif
 
     // Print the version once we've set up debug logging
-    qDebug().noquote() << "Phoenix" << QStringLiteral( xstr( PHOENIX_VER_STR ) );
+    qDebug().noquote() << "Phoenix" << PHOENIX_VER_STR;
 
     QThread::currentThread()->setObjectName( "Main/QML thread " );
 
@@ -98,7 +87,7 @@ int main( int argc, char *argv[] ) {
 
     // Set up the QML import paths
     // Set up the plugin directory path
-    engine.addImportPath( app.applicationDirPath() + QStringLiteral( "/QML" ) );
+    engine.addImportPath( app.applicationDirPath() + "/QML" );
 #if defined( Q_OS_LINUX )
     engine.addImportPath( QStringLiteral( "/usr/lib/phoenix/QML" ) );
 #endif
@@ -110,11 +99,11 @@ int main( int argc, char *argv[] ) {
     QObject::connect( &engine, &QQmlApplicationEngine::quit, &app, &QGuiApplication::quit );
 
     // Set application metadata
-    QGuiApplication::setApplicationDisplayName( QStringLiteral( "Phoenix" ) );
-    QGuiApplication::setApplicationName( QStringLiteral( "Phoenix" ) );
-    QGuiApplication::setApplicationVersion( QStringLiteral( xstr( PHOENIX_VER_STR ) ) );
-    QGuiApplication::setOrganizationName( QStringLiteral( "Team Phoenix" ) );
-    QGuiApplication::setOrganizationDomain( QStringLiteral( "phoenix.vg" ) );
+    QGuiApplication::setApplicationDisplayName( "Phoenix" );
+    QGuiApplication::setApplicationName( "Phoenix" );
+    QGuiApplication::setApplicationVersion( PHOENIX_VER_STR );
+    QGuiApplication::setOrganizationName( "Team Phoenix" );
+    QGuiApplication::setOrganizationDomain( "phoenix.vg" );
 
     qRegisterMetaType<Library::FileEntry>( "FileEntry" );
 
@@ -131,9 +120,9 @@ int main( int argc, char *argv[] ) {
     qmlRegisterType<GameLauncher>( "Phoenix.Launcher", 1, 0, "GameLauncher" );
 
     qmlRegisterSingletonType<Library::PhxPaths>(
-                "Phoenix.Paths", 1, 0, "PhxPaths", PhxPathsSingletonProviderCallback );
+        "Phoenix.Paths", 1, 0, "PhxPaths", PhxPathsSingletonProviderCallback );
     qmlRegisterSingletonType<GameHasherController>(
-                "Phoenix.Scanner", 1, 0, "GameHasherController", GameHasherControllerSingletonProviderCallback );
+        "Phoenix.Scanner", 1, 0, "GameHasherController", GameHasherControllerSingletonProviderCallback );
 
     // Register our game scanner types
     qRegisterMetaType<Library::FileEntry>( "Library::FileEntry" );
@@ -145,8 +134,8 @@ int main( int argc, char *argv[] ) {
     //qRegisterMetaType<Library::GameData>( "GameData" );
 
     // Load the root QML object and everything under it
-    engine.load( QUrl( Library::PhxPaths::resourceLocation() + "/QML/Phoenix/Phoenix/" +
-                       commandLineSource[ QStringLiteral( "mainSrc" ) ].toString() ) );
+    engine.load( QDir::toNativeSeparators( Library::PhxPaths::resourceLocation() + "/QML/Phoenix/Phoenix/" +
+                                           commandLineSource[ "mainSrc" ].toString() ) );
 
     // Begin main event loop
     // Once it returns, write return code to the log file if in release mode

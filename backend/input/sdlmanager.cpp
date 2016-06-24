@@ -1,4 +1,4 @@
-#include "sdlmanager.h"
+#include "SDLmanager.h"
 
 #include <QByteArray>
 #include <QDateTime>

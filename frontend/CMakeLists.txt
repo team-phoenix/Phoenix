@@ -54,7 +54,7 @@ foreach( filepath_full ${FRONTEND_QML} ${FRONTEND_QMLDIR} ${FRONTEND_ASSETS} )
     string( CONCAT filepath_relative_out QML/Phoenix/ ${first_letter} ${other_letters} )
 
     # Debug
-    message( ${filepath_relative_in} " -> " ${filepath_relative_out} )
+    #message( ${filepath_relative_in} " -> " ${filepath_relative_out} )
 
     configure_file( ${filepath_relative_in} ${filepath_relative_out} COPYONLY )
 endforeach()
@@ -63,6 +63,7 @@ endforeach()
 ## qt.conf
 ##
 
+# FIXME: Only use if you're gonna copy all the distributable stuff too
 #configure_file( frontend/qt.conf qt.conf COPYONLY )
 
 ##
