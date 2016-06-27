@@ -9,8 +9,8 @@
 #include <QFileInfo>
 #include <QFile>
 
-#include "quazip.h"
-#include "quazipfile.h"
+#include <quazip.h>
+#include <quazipfile.h>
 
 static QString logFilePath;
 static QFile logFile;

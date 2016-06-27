@@ -29,8 +29,8 @@
 // http://blog.debao.me/2013/07/link-confilict-between-sdl-and-qt-under-windows/
 
 // #define main qMain
-#undef main
-#include "SDL.h"
+//#undef main
+//#include "SDL.h"
 
 using namespace Library;
 

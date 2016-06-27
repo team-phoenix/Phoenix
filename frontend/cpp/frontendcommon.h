@@ -13,8 +13,8 @@
 
 #include <memory>
 
-#include "quazip.h"
-#include "JlCompress.h"
+#include <quazip.h>
+#include <JlCompress.h>
 #include "zlib.h"
 #include "logging.h"
 
