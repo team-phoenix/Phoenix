@@ -1,46 +1,21 @@
 ##
 ## Source files
-## 
+##
 
-list( APPEND SRC_LIST 
-        backend/backendplugin.cpp
-        backend/consumer/audiobuffer.cpp
-        backend/consumer/audiooutput.cpp
-        backend/consumer/videooutput.cpp
-        backend/consumer/videooutputnode.cpp
-        backend/control/controloutput.cpp
-        backend/control/gameconsole.cpp
-        backend/core/core.cpp
-        backend/core/libretrocore.cpp
-        backend/core/libretroloader.cpp
-        backend/core/libretrorunner.cpp
-        backend/core/libretrosymbols.cpp
-        backend/core/libretrovariable.cpp
-        backend/core/libretrovariableforwarder.cpp
-        backend/core/libretrovariablemodel.cpp
-        backend/input/gamepadstate.cpp
-        backend/input/globalgamepad.cpp
-        backend/input/keyboardstate.cpp
-        backend/input/mousestate.cpp
-        backend/input/remapper.cpp
-        backend/input/remappermodel.cpp
-        backend/input/sdlmanager.cpp
-        backend/input/sdlunloader.cpp
-        backend/pipeline/node.cpp
-        backend/util/logging.cpp
-        backend/util/microtimer.cpp
-        backend/util/phoenixwindow.cpp
-        backend/util/phoenixwindownode.cpp
+include( ${CMAKE_CURRENT_LIST_DIR}/consumer/CMakeLists.txt )
+include( ${CMAKE_CURRENT_LIST_DIR}/control/CMakeLists.txt )
+include( ${CMAKE_CURRENT_LIST_DIR}/core/CMakeLists.txt )
+include( ${CMAKE_CURRENT_LIST_DIR}/input/CMakeLists.txt )
+include( ${CMAKE_CURRENT_LIST_DIR}/pipeline/CMakeLists.txt )
+include( ${CMAKE_CURRENT_LIST_DIR}/util/CMakeLists.txt )
+
+target_sources( ${PROJECT_NAME} 
+	PRIVATE
+	${CMAKE_CURRENT_LIST_DIR}/backendplugin.cpp
+
+	PUBLIC
+	${CMAKE_CURRENT_LIST_DIR}/backendcommon.h
+	${CMAKE_CURRENT_LIST_DIR}/backendplugin.h
 )
 
-# Only applies to OS X
-if( APPLE )
-    list( APPEND SRC_LIST 
-        backend/util/osxhelper.mm
-    )
-endif()
-
-# Embed the default controller database into the executable
-set( BACKEND_QRC_LIST
-    backend/input/controllerdb.qrc
-)
+target_include_directories( ${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_LIST_DIR}" )
