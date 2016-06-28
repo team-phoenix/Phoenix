@@ -11,9 +11,11 @@ include( ${CMAKE_CURRENT_LIST_DIR}/util/CMakeLists.txt )
 
 target_sources( ${PROJECT_NAME}
 	PRIVATE
+	${CMAKE_CURRENT_LIST_DIR}/backendloader.cpp
 	${CMAKE_CURRENT_LIST_DIR}/backendplugin.cpp
 
 	PUBLIC
+	${CMAKE_CURRENT_LIST_DIR}/backendloader.h
 	${CMAKE_CURRENT_LIST_DIR}/backendplugin.h
 )
 

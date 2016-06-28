@@ -59,6 +59,36 @@ if( APPLE )
 	target_link_libraries( ${PROJECT_NAME} ${FOUNDATION} )
 endif()
 
+find_package( GStreamer REQUIRED COMPONENTS
+	gstreamer-app gstreamer-audio gstreamer-fft gstreamer-gl
+	gstreamer-mpegts gstreamer-pbutils gstreamer-tag gstreamer-video )
+target_link_libraries( ${PROJECT_NAME}
+	${GSTREAMER_LIBRARIES} ${GSTREAMER_APP_LIBRARIES} ${GSTREAMER_AUDIO_LIBRARIES}
+	${GSTREAMER_FFT_LIBRARIES} ${GSTREAMER_GL_LIBRARIES} ${GSTREAMER_MPEGTS_LIBRARIES}
+	${GSTREAMER_PBUTILS_LIBRARIES} ${GSTREAMER_TAG_LIBRARIES} ${GSTREAMER_VIDEO_LIBRARIES} )
+target_include_directories( ${PROJECT_NAME}
+	PUBLIC
+	${GSTREAMER_INCLUDE_DIRS} ${GSTREAMER_APP_INCLUDE_DIRS}	${GSTREAMER_AUDIO_INCLUDE_DIRS}
+	${GSTREAMER_FFT_INCLUDE_DIRS} ${GSTREAMER_GL_INCLUDE_DIRS} ${GSTREAMER_MPEGTS_INCLUDE_DIRS}
+	${GSTREAMER_PBUTILS_INCLUDE_DIRS} ${GSTREAMER_TAG_INCLUDE_DIRS} ${GSTREAMER_VIDEO_INCLUDE_DIRS} )
+
+find_package( GLIB REQUIRED COMPONENTS gio gobject gmodule gthread )
+target_link_libraries( ${PROJECT_NAME} ${GLIB_LIBRARIES} ${GLIB_GIO_LIBRARIES}
+	${GLIB_GOBJECT_LIBRARIES} ${GLIB_GMODULE_LIBRARIES} ${GLIB_GTHREAD_LIBRARIES} )
+target_include_directories( ${PROJECT_NAME} PUBLIC ${GLIB_INCLUDE_DIRS} )
+
+find_package( LibXml2 REQUIRED )
+target_link_libraries( ${PROJECT_NAME} ${LIBXML2_LIBRARIES} )
+target_include_directories( ${PROJECT_NAME} PUBLIC ${LIBXML2_INCLUDE_DIR} )
+
+find_package( Intl REQUIRED )
+target_link_libraries( ${PROJECT_NAME} ${Intl_LIBRARIES} )
+target_include_directories( ${PROJECT_NAME} PUBLIC ${Intl_INCLUDE_DIRS} )
+
+find_package( Iconv REQUIRED )
+target_link_libraries( ${PROJECT_NAME} ${ICONV_LIBRARIES} )
+target_include_directories( ${PROJECT_NAME} PUBLIC ${ICONV_INCLUDE_DIRS} )
+
 ##
 ## Compiler
 ##

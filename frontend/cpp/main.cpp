@@ -11,6 +11,7 @@
 #include "sqlthreadedmodel.h"
 
 #include "backendplugin.h"
+#include "backendloader.h"
 
 #include "debughandler.h"
 
@@ -36,7 +37,7 @@ int main( int argc, char *argv[] ) {
     // Set some environment variables here
     {
         // This is the most direct way to set the render loop type
-        qputenv( "QSG_RENDER_LOOP", "threaded" );
+        //qputenv( "QSG_RENDER_LOOP", "threaded" );
     }
 
     // Use a custom message printing setup
@@ -44,6 +45,9 @@ int main( int argc, char *argv[] ) {
         qSetMessagePattern( DebugHandler::messageFormat() );
         DebugHandler::install( DebugHandler::messageHandler );
     }
+
+    // Init the backend
+    backendInit( argc, argv );
 
     // Runs the main thread's event loop and handles messages from the windowing system
     QGuiApplication app( argc, argv );
