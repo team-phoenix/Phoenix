@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+	<dict>
+		<key>NSPrincipalClass</key>
+			<string>NSApplication</string>
+		<key>CFBundleIconFile</key>
+			<string>phoenix.icns</string>
+		<key>CFBundlePackageType</key>
+			<string>APPL</string>
+		<key>CFBundleGetInfoString</key>
+			<string>©2016 Team Phoenix. Licenced under GPL v2</string>
+		<key>CFBundleSignature</key>
+			<string>????</string>
+		<key>CFBundleExecutable</key>
+			<string>Phoenix</string>
+		<key>CFBundleIdentifier</key>
+			<string>vg.phoenix.Phoenix</string>
+	</dict>
+</plist>

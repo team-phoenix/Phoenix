@@ -1,6 +1,6 @@
 #include <windows.h>
-#define xstr(s) str(s)
-#define str(s) #s
+
+#include "version.h"
 
 // Define this file as utf-8
 #pragma code_page(65001)
@@ -21,12 +21,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Team Phoenix"
             VALUE "FileDescription", "Phoenix"
-            VALUE "FileVersion", xstr(PHOENIX_VER_STR)
+            VALUE "FileVersion", PHOENIX_VER_STR
             VALUE "InternalName", "Phoenix"
             VALUE "LegalCopyright", "Copyright ©2016 Team Phoenix -- Licensed under GPLv2"
             VALUE "OriginalFilename", "Phoenix.exe"
             VALUE "ProductName", "Phoenix"
-            VALUE "ProductVersion", xstr(PHOENIX_VER_STR)
+            VALUE "ProductVersion", PHOENIX_VER_STR
         END
     END
     BLOCK "VarFileInfo"

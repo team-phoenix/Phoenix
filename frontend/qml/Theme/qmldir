@@ -1,0 +1,8 @@
+module Phoenix.Theme
+PhxComboBox 1.0 PhxComboBox.qml
+PhxGridView 1.0 PhxGridView.qml
+PhxListView 1.0 PhxListView.qml
+PhxScrollBar 1.0 PhxScrollBar.qml
+PhxScrollView 1.0 PhxScrollView.qml
+PhxSearchBar 1.0 PhxSearchBar.qml
+singleton PhxTheme 1.0 PhxTheme.qml

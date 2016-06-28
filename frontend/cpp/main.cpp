@@ -1,9 +1,5 @@
 #include "frontendcommon.h"
 
-#ifdef Q_OS_WIN
-#include <io.h>
-#endif
-
 // Library
 #include "cmdlineargs.h"
 #include "coremodel.h"
@@ -21,22 +17,20 @@
 // Misc
 #include "phxpaths.h"
 #include "logging.h"
+#include "version.h"
 
 // SDL2/Qt main() conflict fix
 // Use SDL2's SDL_main() instead of Qt's qMain()
 // Make sure that SDL.h is included *after* all other includes in main.cpp
 // The other half of the fix is in frontend.pro
 // http://blog.debao.me/2013/07/link-confilict-between-sdl-and-qt-under-windows/
-
+#if defined( Q_OS_WIN )
 // #define main qMain
 #undef main
 #include "SDL.h"
+#endif
 
 using namespace Library;
-
-// Version string helper
-#define xstr(s) str(s)
-#define str(s) #s
 
 int main( int argc, char *argv[] ) {
     // Set some environment variables here
@@ -56,12 +50,9 @@ int main( int argc, char *argv[] ) {
 
 #if defined( Q_OS_WIN )
     // Add the MinGW directory to PATH
-    QString path( getenv( "PATH" ) );
-    path.prepend( "/MinGW;" );
-    path.prepend( QCoreApplication::applicationDirPath() );
-    path.prepend( "PATH=" );
-    QByteArray pathByteArray = path.toLocal8Bit();
-    putenv( pathByteArray.data() );
+    QString path( qgetenv( "PATH" ) );
+    QString correctedPath = QCoreApplication::applicationDirPath() + "/MinGW;" + path;
+    qputenv( "PATH", correctedPath.toLocal8Bit() );
 #endif
 
     // Parse command line args, store them here
@@ -82,7 +73,7 @@ int main( int argc, char *argv[] ) {
 #endif
 
     // Print the version once we've set up debug logging
-    qDebug().noquote() << "Phoenix" << QStringLiteral( xstr( PHOENIX_VER_STR ) );
+    qDebug().noquote() << "Phoenix" << PHOENIX_VER_STR;
 
     QThread::currentThread()->setObjectName( "Main/QML thread " );
 
@@ -91,8 +82,15 @@ int main( int argc, char *argv[] ) {
 
     // Init the backend
     BackendPlugin plugin;
-    plugin.registerTypes( "vg.phoenix.backend" );
-    Q_INIT_RESOURCE( controllerdb );
+    plugin.registerTypes( "Phoenix.Backend" );
+    Q_INIT_RESOURCE( backend_input_controllerdb );
+
+    // Set up the QML import paths
+    // Set up the plugin directory path
+    engine.addImportPath( app.applicationDirPath() + "/QML" );
+#if defined( Q_OS_LINUX )
+    engine.addImportPath( QStringLiteral( "/usr/lib/phoenix/QML" ) );
+#endif
 
     // Give the QML engine our command line args
     engine.rootContext()->setContextProperty( "commandLineSource", commandLineSource );
@@ -101,30 +99,30 @@ int main( int argc, char *argv[] ) {
     QObject::connect( &engine, &QQmlApplicationEngine::quit, &app, &QGuiApplication::quit );
 
     // Set application metadata
-    QGuiApplication::setApplicationDisplayName( QStringLiteral( "Phoenix" ) );
-    QGuiApplication::setApplicationName( QStringLiteral( "Phoenix" ) );
-    QGuiApplication::setApplicationVersion( QStringLiteral( xstr( PHOENIX_VER_STR ) ) );
-    QGuiApplication::setOrganizationName( QStringLiteral( "Team Phoenix" ) );
-    QGuiApplication::setOrganizationDomain( QStringLiteral( "phoenix.vg" ) );
+    QGuiApplication::setApplicationDisplayName( "Phoenix" );
+    QGuiApplication::setApplicationName( "Phoenix" );
+    QGuiApplication::setApplicationVersion( PHOENIX_VER_STR );
+    QGuiApplication::setOrganizationName( "Team Phoenix" );
+    QGuiApplication::setOrganizationDomain( "phoenix.vg" );
 
     qRegisterMetaType<Library::FileEntry>( "FileEntry" );
 
     // Register our custom QML-accessable/instantiable objects
-    qmlRegisterType<SqlModel>( "vg.phoenix.models", 1, 0, "SqlModel" );
-    qmlRegisterType<SqlColumn>( "vg.phoenix.models", 1, 0, "SqlColumn" );
-    qmlRegisterType<SqlThreadedModel>( "vg.phoenix.models", 1, 0, "SqlThreadedModel" );
+    qmlRegisterType<SqlModel>( "Phoenix.Models", 1, 0, "SqlModel" );
+    qmlRegisterType<SqlColumn>( "Phoenix.Models", 1, 0, "SqlColumn" );
+    qmlRegisterType<SqlThreadedModel>( "Phoenix.Models", 1, 0, "SqlThreadedModel" );
     qmlRegisterType<DatabaseSettings>();
     qRegisterMetaType<SqlModel::FilterType>( "SqlModel::FilterType" );
     qRegisterMetaType<SqlModel::OrderBy>( "SqlModel::OrderBy" );
 
-    qmlRegisterType<Library::CoreModel>( "vg.phoenix.models", 1, 0, "CoreModel" );
-    qmlRegisterType<Library::ImageCacher>( "vg.phoenix.cache", 1, 0, "ImageCacher" );
-    qmlRegisterType<GameLauncher>( "vg.phoenix.launcher", 1, 0, "GameLauncher" );
+    qmlRegisterType<Library::CoreModel>( "Phoenix.Models", 1, 0, "CoreModel" );
+    qmlRegisterType<Library::ImageCacher>( "vg.Phoenix.Cache", 1, 0, "ImageCacher" );
+    qmlRegisterType<GameLauncher>( "Phoenix.Launcher", 1, 0, "GameLauncher" );
 
-    // Register our custom QML-accessable objects and instantiate them here
-    qmlRegisterSingletonType( QUrl( "qrc:/PhxTheme.qml" ), "vg.phoenix.themes", 1, 0, "PhxTheme" );
-    qmlRegisterSingletonType<Library::PhxPaths>( "vg.phoenix.paths", 1, 0, "PhxPaths", PhxPathsSingletonProviderCallback );
-    qmlRegisterSingletonType<GameHasherController>( "vg.phoenix.scanner", 1, 0, "GameHasherController", GameHasherControllerSingletonProviderCallback );
+    qmlRegisterSingletonType<Library::PhxPaths>(
+        "Phoenix.Paths", 1, 0, "PhxPaths", PhxPathsSingletonProviderCallback );
+    qmlRegisterSingletonType<GameHasherController>(
+        "Phoenix.Scanner", 1, 0, "GameHasherController", GameHasherControllerSingletonProviderCallback );
 
     // Register our game scanner types
     qRegisterMetaType<Library::FileEntry>( "Library::FileEntry" );
@@ -136,8 +134,8 @@ int main( int argc, char *argv[] ) {
     //qRegisterMetaType<Library::GameData>( "GameData" );
 
     // Load the root QML object and everything under it
-    engine.load( QUrl( QStringLiteral( "qrc:/Phoenix/" )
-                       + commandLineSource[ QStringLiteral( "mainSrc" ) ].toString() ) );
+    engine.load( QDir::toNativeSeparators( Library::PhxPaths::resourceLocation() + "/QML/Phoenix/Phoenix/" +
+                                           commandLineSource[ "mainSrc" ].toString() ) );
 
     // Begin main event loop
     // Once it returns, write return code to the log file if in release mode

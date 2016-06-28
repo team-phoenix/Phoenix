@@ -2,6 +2,8 @@ import QtQuick 2.3
 import QtQuick.Controls 1.4
 pragma Singleton
 
+import Phoenix.Theme 1.0
+
 QtObject {
     property color normalFontColor: "#F1F1F1";
 

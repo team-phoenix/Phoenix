@@ -1,0 +1,4 @@
+module Phoenix.Settings
+InputSettings 1.0 InputSettings.qml
+LibretroCoreSettings 1.0 LibretroCoreSettings.qml
+SettingsList 1.0 SettingsList.qml

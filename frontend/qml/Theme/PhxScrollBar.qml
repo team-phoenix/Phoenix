@@ -40,6 +40,8 @@
 
 import QtQuick 2.5
 
+import Phoenix.Theme 1.0
+
 Item {
     id: scrollBar
 
