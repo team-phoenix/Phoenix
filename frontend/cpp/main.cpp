@@ -46,24 +46,16 @@ int main( int argc, char *argv[] ) {
         DebugHandler::install( DebugHandler::messageHandler );
     }
 
-    // Init the backend
-    backendInit( argc, argv );
-
     // Runs the main thread's event loop and handles messages from the windowing system
     QGuiApplication app( argc, argv );
 
 #if defined( Q_OS_WIN )
     // Add the MinGW directory to PATH
+    // This is for Libretro cores on Windows
     QString path( qgetenv( "PATH" ) );
     QString correctedPath = QCoreApplication::applicationDirPath() + "/MinGW;" + path;
     qputenv( "PATH", correctedPath.toLocal8Bit() );
 #endif
-
-    // Parse command line args, store them here
-    QVariantMap commandLineSource = parseCommandLine( app );
-
-    // Figure out the right paths for the environment, and create user storage folders if not already there
-    Library::PhxPaths::initPaths();
 
     // For release builds, write to a log file along with the console
 #ifdef QT_NO_DEBUG
@@ -76,8 +68,13 @@ int main( int argc, char *argv[] ) {
 
 #endif
 
-    // Print the version once we've set up debug logging
     qDebug().noquote() << "Phoenix" << PHOENIX_VER_STR;
+
+    // Parse command line args, store them here
+    QVariantMap commandLineSource = parseCommandLine( app );
+
+    // Figure out the right paths for the environment, and create user storage folders if not already there
+    Library::PhxPaths::initPaths();
 
     QThread::currentThread()->setObjectName( "Main/QML thread " );
 
@@ -88,6 +85,7 @@ int main( int argc, char *argv[] ) {
     BackendPlugin plugin;
     plugin.registerTypes( "Phoenix.Backend" );
     Q_INIT_RESOURCE( backend_input_controllerdb );
+    backendInit( argc, argv );
 
     // Set up the QML import paths
     // Set up the plugin directory path
