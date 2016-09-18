@@ -6,7 +6,7 @@ A multi-system emulator and library manager designed to be both powerful and eas
 We've designed Phoenix with the hope that it'll be perfect for everyone, whether you're someone who hardly plays videogames, a hardcore gamer, a speedrunner, or even a homebrew programmer!
 
 [![Build Status](https://secure.travis-ci.org/team-phoenix/Phoenix.png)](http://travis-ci.org/team-phoenix/Phoenix)
-[![Join the chat at https://gitter.im/team-phoenix/Phoenix](https://badges.gitter.im/team-phoenix/Phoenix.svg)](https://gitter.im/team-phoenix/Phoenix?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Chat](https://img.shields.io/badge/chat-on%20Discord-7289da.svg)](https://discord.gg/P9jh3)
 
 <b>Phoenix is still in early development. Expect crashes!<b>
 
