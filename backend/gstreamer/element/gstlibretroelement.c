@@ -83,17 +83,19 @@ enum {
  *
  * describe the real formats here.
  */
-static GstStaticPadTemplate sink_factory = GST_STATIC_PAD_TEMPLATE( "sink",
-        GST_PAD_SINK,
-        GST_PAD_ALWAYS,
-        GST_STATIC_CAPS( "ANY" )
-                                                                  );
+static GstStaticPadTemplate sink_factory = GST_STATIC_PAD_TEMPLATE(
+            "sink",
+            GST_PAD_SINK,
+            GST_PAD_ALWAYS,
+            GST_STATIC_CAPS( "ANY" )
+        );
 
-static GstStaticPadTemplate src_factory = GST_STATIC_PAD_TEMPLATE( "src",
-        GST_PAD_SRC,
-        GST_PAD_ALWAYS,
-        GST_STATIC_CAPS( "ANY" )
-                                                                 );
+static GstStaticPadTemplate src_factory = GST_STATIC_PAD_TEMPLATE(
+            "src",
+            GST_PAD_SRC,
+            GST_PAD_ALWAYS,
+            GST_STATIC_CAPS( "ANY" )
+        );
 
 #define gst_libretro_element_parent_class parent_class
 G_DEFINE_TYPE( GstLibretroElement, gst_libretro_element, GST_TYPE_ELEMENT );
@@ -109,8 +111,7 @@ static GstFlowReturn gst_libretro_element_chain( GstPad *pad, GstObject *parent,
 /* GObject vmethod implementations */
 
 /* initialize the libretroelement's class */
-static void
-gst_libretro_element_class_init( GstLibretroElementClass *klass ) {
+static void gst_libretro_element_class_init( GstLibretroElementClass *klass ) {
     GObjectClass *gobject_class;
     GstElementClass *gstelement_class;
 
@@ -120,15 +121,22 @@ gst_libretro_element_class_init( GstLibretroElementClass *klass ) {
     gobject_class->set_property = gst_libretro_element_set_property;
     gobject_class->get_property = gst_libretro_element_get_property;
 
-    g_object_class_install_property( gobject_class, PROP_SILENT,
-                                     g_param_spec_boolean( "silent", "Silent", "Produce verbose output ?",
-                                             FALSE, G_PARAM_READWRITE ) );
+    g_object_class_install_property(
+        gobject_class,
+        PROP_SILENT,
+        g_param_spec_boolean(
+            "silent", "Silent", "Produce verbose output ?",
+            FALSE, G_PARAM_READWRITE
+        )
+    );
 
-    gst_element_class_set_details_simple( gstelement_class,
-                                          "LibretroElement",
-                                          "FIXME:Generic",
-                                          "FIXME:Generic Template Element",
-                                          "athairus <athairus@gmail.com>" );
+    gst_element_class_set_details_simple(
+        gstelement_class,
+        "LibretroElement",
+        "FIXME:Generic",
+        "A Libretro core. Accepts input and outputs audio, video and haptic feedback.",
+        "athairus <athairus@gmail.com>"
+    );
 
     gst_element_class_add_pad_template( gstelement_class,
                                         gst_static_pad_template_get( &src_factory ) );
@@ -141,13 +149,18 @@ gst_libretro_element_class_init( GstLibretroElementClass *klass ) {
  * set pad calback functions
  * initialize instance structure
  */
-static void
-gst_libretro_element_init( GstLibretroElement *filter ) {
+static void gst_libretro_element_init( GstLibretroElement *filter ) {
     filter->sinkpad = gst_pad_new_from_static_template( &sink_factory, "sink" );
-    gst_pad_set_event_function( filter->sinkpad,
-                                GST_DEBUG_FUNCPTR( gst_libretro_element_sink_event ) );
-    gst_pad_set_chain_function( filter->sinkpad,
-                                GST_DEBUG_FUNCPTR( gst_libretro_element_chain ) );
+    gst_pad_set_event_function(
+        filter->sinkpad,
+        GST_DEBUG_FUNCPTR( gst_libretro_element_sink_event )
+    );
+
+    gst_pad_set_chain_function(
+        filter->sinkpad,
+        GST_DEBUG_FUNCPTR( gst_libretro_element_chain )
+    );
+
     GST_PAD_SET_PROXY_CAPS( filter->sinkpad );
     gst_element_add_pad( GST_ELEMENT( filter ), filter->sinkpad );
 
@@ -158,9 +171,8 @@ gst_libretro_element_init( GstLibretroElement *filter ) {
     filter->silent = FALSE;
 }
 
-static void
-gst_libretro_element_set_property( GObject *object, guint prop_id,
-                                   const GValue *value, GParamSpec *pspec ) {
+static void gst_libretro_element_set_property( GObject *object, guint prop_id,
+        const GValue *value, GParamSpec *pspec ) {
     GstLibretroElement *filter = GST_LIBRETROELEMENT( object );
 
     switch( prop_id ) {
@@ -174,9 +186,8 @@ gst_libretro_element_set_property( GObject *object, guint prop_id,
     }
 }
 
-static void
-gst_libretro_element_get_property( GObject *object, guint prop_id,
-                                   GValue *value, GParamSpec *pspec ) {
+static void gst_libretro_element_get_property( GObject *object, guint prop_id,
+        GValue *value, GParamSpec *pspec ) {
     GstLibretroElement *filter = GST_LIBRETROELEMENT( object );
 
     switch( prop_id ) {
@@ -193,8 +204,8 @@ gst_libretro_element_get_property( GObject *object, guint prop_id,
 /* GstElement vmethod implementations */
 
 /* this function handles sink events */
-static gboolean
-gst_libretro_element_sink_event( GstPad *pad, GstObject *parent, GstEvent *event ) {
+static gboolean gst_libretro_element_sink_event( GstPad *pad, GstObject *parent,
+        GstEvent *event ) {
     GstLibretroElement *filter;
     gboolean ret;
 
@@ -226,8 +237,8 @@ gst_libretro_element_sink_event( GstPad *pad, GstObject *parent, GstEvent *event
 /* chain function
  * this function does the actual processing
  */
-static GstFlowReturn
-gst_libretro_element_chain( GstPad *pad, GstObject *parent, GstBuffer *buf ) {
+static GstFlowReturn gst_libretro_element_chain( GstPad *pad, GstObject *parent,
+                                                 GstBuffer *buf ) {
     GstLibretroElement *filter;
 
     filter = GST_LIBRETROELEMENT( parent );
@@ -245,8 +256,7 @@ gst_libretro_element_chain( GstPad *pad, GstObject *parent, GstBuffer *buf ) {
  * initialize the plug-in itself
  * register the element factories and other features
  */
-static gboolean
-libretroelement_init( GstPlugin *libretroelement ) {
+static gboolean libretroelement_init( GstPlugin *libretroelement ) {
     /* debug category for fltering log messages
      *
      * exchange the string 'Template libretroelement' with your description
@@ -264,7 +274,7 @@ libretroelement_init( GstPlugin *libretroelement ) {
  * compile this code. GST_PLUGIN_DEFINE needs PACKAGE to be defined.
  */
 #ifndef PACKAGE
-#define PACKAGE "myfirstlibretroelement"
+#define PACKAGE "phoenix"
 #endif
 
 /* gstreamer looks for this structure to register libretroelements
@@ -275,7 +285,7 @@ GST_PLUGIN_DEFINE(
     GST_VERSION_MAJOR,
     GST_VERSION_MINOR,
     libretroelement,
-    "Template libretroelement",
+    "A Libretro core. Accepts input and outputs audio, video and haptic feedback.",
     libretroelement_init,
     PHOENIX_VER_STR,
     "LGPL",
