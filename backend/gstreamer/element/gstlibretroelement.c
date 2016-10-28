@@ -262,7 +262,7 @@ static gboolean libretroelement_init( GstPlugin *libretroelement ) {
      * exchange the string 'Template libretroelement' with your description
      */
     GST_DEBUG_CATEGORY_INIT( gst_libretro_element_debug, "libretroelement",
-                             0, "Template libretroelement" );
+                             0, "A Libretro core. Accepts input and outputs audio, video and haptic feedback." );
 
     return gst_element_register( libretroelement, "libretroelement", GST_RANK_NONE,
                                  GST_TYPE_LIBRETROELEMENT );
@@ -284,11 +284,11 @@ static gboolean libretroelement_init( GstPlugin *libretroelement ) {
 GST_PLUGIN_DEFINE(
     GST_VERSION_MAJOR,
     GST_VERSION_MINOR,
-    libretroelement,
+    "libretroelement",
     "A Libretro core. Accepts input and outputs audio, video and haptic feedback.",
     libretroelement_init,
     PHOENIX_VER_STR,
-    "LGPL",
-    "GStreamer",
-    "http://gstreamer.net/"
+    "GPL",
+    "Phoenix",
+    "https://phoenix.vg/"
 )
