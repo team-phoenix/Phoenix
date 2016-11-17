@@ -1,9 +1,9 @@
-# coding=utf-8
+import os
 
 from collections import OrderedDict
 from sqldatabase import SqlDatabase
 from retrieve_core_info import retrieveCoreInfo
-import os
+
 
 # Root class that all SQL table updaters derive from
 class SqlTableUpdater():
@@ -20,27 +20,26 @@ class SqlTableUpdater():
     def updateTable(self):
         pass
 
-
-    def updateColumns(self, database, additionalStatement = ""):
+    def updateColumns(self, database, additionalStatement: str = ""):
 
         if not self.dbFileExists:
-            database.createTable(self.tableName, self.columnsDict, additionalStatement )
+            database.createTable(self.tableName, self.columnsDict, additionalStatement)
         else:
             try:
                 database.deleteTable(self.tableName)
             except:
-                database.createTable(self.tableName, self.columnsDict, additionalStatement )
+                database.createTable(self.tableName, self.columnsDict, additionalStatement)
 
     def __del__(self):
         print("Updated " + self.tableName + " table.")
 
-    def libretroSystemList(self): 
+    def libretroSystemList(self):
         systems = []
         for k, v in self.coreInfo['cores'].iteritems():
 
             if "categories" not in v or v["categories"] != "Emulator":
                 continue
-            
+
             if "database" in v:
                 name = v["database"].split("|")
 
@@ -54,11 +53,11 @@ class SqlTableUpdater():
                     ## "MAME"
                     #if len(tup) == 1:
                     #    systems.append(tup[0])
-                    #    
+                    #
                     ## Nearly every one
                     #elif len(tup) == 2:
                     #    systems.append(tup[1])
-                    #    
+                    #
                     ## Sega - Master System - Mark III
                     ## Sega - Mega Drive - Genesis
                     #elif len(tup) == 3:
@@ -79,7 +78,7 @@ class SqlTableUpdater():
     # friendlyName: North American console name without manufacturer
     # shortName: Abbreviation (typically 3 letters)
     # enabled: True iff a core is available, Phoenix can run it, and the game scanner can find it (extensions set)
-    
+
         # Everything else
         "Arcade":                                           {"enabled": False, "defaultCore": "mame_libretro",                      "friendlyName": "",                    "shortName": "", "manufacturer": "(Various)"       },
 
@@ -177,7 +176,7 @@ class SqlTableUpdater():
         "VTech - CreatiVision":                             {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "VTech"           },
         "VTech - V.Smile":                                  {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "VTech"           },
         "Watara - Supervision":                             {"enabled": True,  "defaultCore": "mess2014_libretro",                  "friendlyName": "",                    "shortName": "", "manufacturer": "Watara"          },
- 
+
         # Redump.org (disc-based games)
         "Apple - Macintosh":                                {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Apple"           },
         "Bandai - Playdia":                                 {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Bandai"          },
@@ -203,7 +202,7 @@ class SqlTableUpdater():
         "Sega - Dreamcast":                                 {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Sega"            },
         "Sega - Lindbergh":                                 {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Sega"            },
         "Sega - Mega-CD":                                   {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Sega"            },
-        "Sega - Naomi":                                     {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Sega"            },  
+        "Sega - Naomi":                                     {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Sega"            },
         "Sega - Saturn":                                    {"enabled": True,  "defaultCore": "yabause_libretro",                   "friendlyName": "",                    "shortName": "", "manufacturer": "Sega"            },
         "SNK - Neo Geo CD":                                 {"enabled": False, "defaultCore": "mess2014_libretro",                  "friendlyName": "",                    "shortName": "", "manufacturer": "SNK"             },
         "Sony - PlayStation 2":                             {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Sony"            },
@@ -211,18 +210,18 @@ class SqlTableUpdater():
         "VTech - V.Flash":                                  {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "VTech"           },
 
         # Seventh-generation consoles (circa 2005)
-        "Microsoft - Xbox 360":                             {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Microsoft"       }, 
-        "Nintendo - Wii":                                   {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Nintendo"        }, 
-        "Sony - PlayStation 3":                             {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Sony"            }, 
-    
+        "Microsoft - Xbox 360":                             {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Microsoft"       },
+        "Nintendo - Wii":                                   {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Nintendo"        },
+        "Sony - PlayStation 3":                             {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Sony"            },
+
         # Eighth-generation consoles (circa 2012)
-        "Microsoft - Xbox One":                             {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Microsoft"       }, 
-        "Nintendo - Wii U":                                 {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Nintendo"        }, 
+        "Microsoft - Xbox One":                             {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Microsoft"       },
+        "Nintendo - Wii U":                                 {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Nintendo"        },
         "Sony - PlayStation 4":                             {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Sony"            },
         }
 
     def phoenixSystems(self):
-        return OrderedDict(sorted(self.phoenixSystemDatabase.items(), key=lambda t: t[0]))              
+        return OrderedDict(sorted(self.phoenixSystemDatabase.items(), key=lambda t: t[0]))
 
     def libretroToPhoenix(self, libretroSystem):
         return self.libretroToPhoenixMap[libretroSystem]
@@ -282,7 +281,7 @@ class SqlTableUpdater():
                                                                      "SNK - Neo Geo CD",
                                                                      "SNK - Neo Geo",
                                                                      "Watara - Supervision",
-                                                                    }, 
+                                                                    },
 
         "NEC - PC Engine - TurboGrafx 16":                          {"NEC - PC Engine - TurboGrafx 16"},
         "NEC - Super Grafx":                                        {"NEC - Super Grafx"},
@@ -375,7 +374,7 @@ class SqlTableUpdater():
     }
 
     def getOpenVGDBToPhoenixMap(self):
-        return OrderedDict(sorted(self.openVGDBToPhoenixMap.items(), key=lambda t: t[0]))   
+        return OrderedDict(sorted(self.openVGDBToPhoenixMap.items(), key=lambda t: t[0]))
 
     openVGDBToPhoenixMap = {
         "3DO Interactive Multiplayer": "Panasonic - 3DO Interactive Multiplayer",
@@ -425,7 +424,7 @@ class SqlTableUpdater():
             if (
 
                 # No reason specified
-                #"4do_libretro" == key 
+                #"4do_libretro" == key
                 # or "81_libretro" == key
                 # or "bluemsx_libretro" == key
                 # or "bsnes_accuracy_libretro" == key
@@ -435,8 +434,8 @@ class SqlTableUpdater():
                 # or "catsfc_libretro" == key
                 # or "dosbox_libretro" == key
                 # or "emux_chip8_libretro" == key
-                # or "fb_alpha_cps1_libretro" == key 
-                # or "fb_alpha_cps2_libretro" == key 
+                # or "fb_alpha_cps1_libretro" == key
+                # or "fb_alpha_cps2_libretro" == key
                 # or "fmsx_libretro" == key
                 # or "gpsp_libretro" == key
                 # or "gw_libretro" == key
@@ -452,7 +451,7 @@ class SqlTableUpdater():
                 # or "puae_libretro" == key
                 # or "ume2014_libretro" == key
                 # or "vecx_libretro" == key
-                # or "virtualjaguar_libretro" == key 
+                # or "virtualjaguar_libretro" == key
 
                 # ARM cores
                  "pcsx" in key

@@ -1,18 +1,22 @@
 from sqlTableUpdater import SqlTableUpdater
 from sqldatabase import SqlDatabase
 
+
 class SystemToCoreUpdater(SqlTableUpdater):
 
-    def __init__(self, tableName="", tableColumns=[], coreInfo={}):
-        if len(tableColumns) == 0:
-            tableColumns = ( 
-                             ("system", "TEXT" ),
-                             ("core", "TEXT"),
-                           )
-        SqlTableUpdater.__init__(self, tableName, tableColumns, coreInfo)
+    def __init__(self, tableName: str = None, tableColumns: list = None, coreInfo: dict = None):
+        if not tableColumns:
+            tableColumns = (
+                ("system", "TEXT"),
+                ("core", "TEXT"),
+            )
+        if not coreInfo:
+            coreInfo = {}
+
+        super().__init__(tableName if tableName else "", tableColumns, coreInfo)
 
     def updateTable(self):
-    
+
         with SqlDatabase(self.dbFile, autoCommit=True) as db:
             self.updateColumns(db)
 
@@ -25,7 +29,7 @@ class SystemToCoreUpdater(SqlTableUpdater):
                 # Ignore anything that isn't an emulator
                 if "categories" not in v or v["categories"] != "Emulator":
                     continue
-                
+
                 # Get the list of systems (Libretro IDs) this core supports
                 systems = []
                 if "database" in v:
@@ -57,14 +61,11 @@ class SystemToCoreUpdater(SqlTableUpdater):
                             if row == "core":
                                 values.append(k)
 
-
                         db.insert(self.tableName, self.columnsDict.keys(), values)
 
 if __name__ == "__main__":
 
     from collections import OrderedDict
-    
+
     updater = SystemToCoreUpdater("systemToCore", columns)
     updater.updateTable()
-
-
