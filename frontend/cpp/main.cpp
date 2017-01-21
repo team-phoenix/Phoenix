@@ -46,7 +46,7 @@ int main( int argc, char *argv[] ) {
     }
 
     // Runs the main thread's event loop and handles messages from the windowing system
-    QGuiApplication app( argc, argv );
+    QApplication app( argc, argv );
 
 #if defined( Q_OS_WIN )
     // Add the MinGW directory to PATH
