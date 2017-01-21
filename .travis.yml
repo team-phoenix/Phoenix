@@ -10,10 +10,10 @@ before_install:
   - sudo apt-get install -qq g++-4.8 libsamplerate0-dev libquazip0-dev
   - sudo apt-get install -qq -y qt57base qt57declarative qt57imageformats qt57location qt57multimedia qt57quickcontrols qt57script qt57svg qt57tools qt57translations libsdl2-dev
   - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
-  - wget https://cmake.org/files/v3.6/cmake-3.6.0-rc3-Linux-x86_64.sh
-  - chmod +x cmake-3.6.0-rc3-Linux-x86_64.sh
+  - wget https://cmake.org/files/v3.7/cmake-3.7.2-Linux-x86_64.sh
+  - chmod +x cmake-3.7.2-Linux-x86_64.sh
   - mkdir cmake-bin
-  - ./cmake-3.6.0-rc3-Linux-x86_64.sh --skip-license --prefix=`pwd`/cmake-bin
+  - ./cmake-3.7.2-Linux-x86_64.sh --skip-license --prefix=`pwd`/cmake-bin
 script:
   - source /opt/qt57/bin/qt57-env.sh
   - mkdir phoenix-build
