@@ -83,7 +83,7 @@ int main( int argc, char *argv[] ) {
     // Init the backend
     BackendPlugin plugin;
     plugin.registerTypes( "Phoenix.Backend" );
-    Q_INIT_RESOURCE( backend_input_controllerdb );
+    Q_INIT_RESOURCE( controllerdb );
 
     // Set up the QML import paths
     // Set up the plugin directory path
