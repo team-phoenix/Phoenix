@@ -4,6 +4,7 @@
 #ifdef __cplusplus
 
 #include <QtCore>
+#include <QtWidgets>
 #include <QtConcurrent>
 #include <QtQml>
 #include <QtQuick>
