@@ -20,9 +20,13 @@ script:
   - cd phoenix-build
   - ../cmake-bin/bin/cmake ..
   - make -j2
+  - mkdir phoenix-out
+  - cp Phoenix phoenix-out
+  - cp -r Metadata phoenix-out
+  - cp -r QML phoenix-out
   - wget "https://s3.amazonaws.com/travis-ci-gmbh/artifacts/stable/build/linux/amd64/artifacts" -O ../artifacts
   - chmod +x ../artifacts
-  - ../artifacts upload --target-paths /Linux/Phoenix-${TRAVIS_TAG}-Linux-${TRAVIS_COMMIT}-travis-build-num-${TRAVIS_BUILD_NUMBER} phoenix-build/
+  - ../artifacts upload --target-paths /Linux/Phoenix-${TRAVIS_TAG}-Linux-${TRAVIS_COMMIT}-travis-build-num-${TRAVIS_BUILD_NUMBER} --working-dir phoenix-build/phoenix-out/ .
 notifications:
   irc:
     channels:
