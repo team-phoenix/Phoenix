@@ -22,7 +22,7 @@ script:
   - make -j2
   - wget "https://s3.amazonaws.com/travis-ci-gmbh/artifacts/stable/build/linux/amd64/artifacts" -O ../artifacts
   - chmod +x ../artifacts
-  - ../artifacts upload --target-paths "/Linux" .
+  - ../artifacts upload --target-paths "/Linux" phoenix-build
 notifications:
   irc:
     channels:
