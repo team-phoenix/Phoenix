@@ -20,6 +20,9 @@ script:
   - cd phoenix-build
   - ../cmake-bin/bin/cmake ..
   - make -j2
+  - wget "https://s3.amazonaws.com/travis-ci-gmbh/artifacts/stable/build/linux/amd64/artifacts" -O ../artifacts
+  - chmod +x ../artifacts
+  - ../artifacts upload --target-paths "/Linux" .
 notifications:
   irc:
     channels:
