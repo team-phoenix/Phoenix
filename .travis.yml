@@ -4,22 +4,37 @@ dist: trusty
 git:
   submodules: false
 before_install:
-  - sudo add-apt-repository --yes ppa:beineri/opt-qt571-trusty
+  - export GCC_VERSION_MAJOR=4
+  - export GCC_VERSION_MINOR=8
+  - export GCC_VERSION_PATCH
+  - export GCC_VERSION="${GCC_VERSION_MAJOR}.${GCC_VERSION_MINOR}"
+  - export QT_VERSION_MAJOR=5
+  - export QT_VERSION_MINOR=7
+  - export QT_VERSION_PATCH=1
+  - export QT_VERSION_MAJORMINOR="${QT_VERSION_MAJOR}${QT_VERSION_MINOR}"
+  - export QT_VERSION_MAJORMINORPATCH="${QT_VERSION_MAJOR}${QT_VERSION_MINOR}${QT_VERSION_PATCH}"
+  - export QT_VERSION="${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}"
+  - export CMAKE_VERSION_MAJOR=3
+  - export CMAKE_VERSION_MINOR=7
+  - export CMAKE_VERSION_PATCH=2
+  - export CMAKE_VERSION="${CMAKE_VERSION_MAJOR}.${CMAKE_VERSION_MINOR}.${CMAKE_VERSION_PATCH}"
+  - export CMAKE_VERSION_MAJOR_DOT_MINOR="${CMAKE_VERSION_MAJOR}.${CMAKE_VERSION_MINOR}"
+  - sudo add-apt-repository --yes ppa:beineri/opt-qt${QT_VERSION_MAJORMINORPATCH}-trusty
   - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
   - sudo apt-get update -qq
-  - sudo apt-get install -qq g++-4.8 libsamplerate0-dev libquazip0-dev
-  - sudo apt-get install -qq -y qt57base qt57declarative qt57imageformats qt57location qt57multimedia qt57quickcontrols qt57script qt57svg qt57tools qt57translations libsdl2-dev
-  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
-  - wget https://cmake.org/files/v3.7/cmake-3.7.2-Linux-x86_64.sh
-  - chmod +x cmake-3.7.2-Linux-x86_64.sh
+  - sudo apt-get install -qq g++-${GCC_VERSION} libsamplerate0-dev libquazip0-dev
+  - sudo apt-get install -qq -y qt${QT_VERSION_MAJORMINOR}base qt${QT_VERSION_MAJORMINOR}declarative qt${QT_VERSION_MAJORMINOR}imageformats qt${QT_VERSION_MAJORMINOR}location qt${QT_VERSION_MAJORMINOR}multimedia qt${QT_VERSION_MAJORMINOR}quickcontrols qt${QT_VERSION_MAJORMINOR}script qt${QT_VERSION_MAJORMINOR}svg qt${QT_VERSION_MAJORMINOR}tools qt${QT_VERSION_MAJORMINOR}translations libsdl2-dev
+  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-${GCC_VERSION} 90
+  - wget https://cmake.org/files/v${CMAKE_VERSION_MAJOR_DOT_MINOR}/cmake-${CMAKE_VERSION}-Linux-x86_64.sh
+  - chmod +x cmake-${CMAKE_VERSION}-Linux-x86_64.sh
   - mkdir cmake-bin
-  - ./cmake-3.7.2-Linux-x86_64.sh --skip-license --prefix=`pwd`/cmake-bin
+  - ./cmake-${CMAKE_VERSION}-Linux-x86_64.sh --skip-license --prefix=`pwd`/cmake-bin
 script:
-  - source /opt/qt57/bin/qt57-env.sh
+  - source /opt/qt${QT_VERSION_MAJORMINOR}/bin/qt${QT_VERSION_MAJORMINOR}-env.sh
   - mkdir phoenix-build
   - cd phoenix-build
   - ../cmake-bin/bin/cmake ..
-  - make -j2
+  - make -j4
   - mkdir phoenix-out
   - cp Phoenix phoenix-out
   - cp -r Metadata phoenix-out
@@ -28,9 +43,8 @@ script:
   - chmod +x ../artifacts
   - export PATH=`pwd`/..:$PATH
   - cd phoenix-out
-  - pwd
-  - ls -la
-  - artifacts upload --target-paths /Linux/Phoenix-${TRAVIS_TAG}-Linux-${TRAVIS_COMMIT}-travis-build-num-${TRAVIS_BUILD_NUMBER} --working-dir `pwd` .
+  - export BUILD_TAG="Phoenix-${TRAVIS_BRANCH}-${TRAVIS_COMMIT:0:6}-travis${TRAVIS_BUILD_NUMBER}-Linux"
+  - artifacts upload --target-paths /Linux/${BUILD_TAG} --working-dir `pwd` .
 notifications:
   irc:
     channels:
