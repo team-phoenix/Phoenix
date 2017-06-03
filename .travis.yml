@@ -28,6 +28,8 @@ script:
   - chmod +x ../artifacts
   - export PATH=`pwd`/..:$PATH
   - cd phoenix-out
+  - pwd
+  - ls -la
   - artifacts upload --target-paths /Linux/Phoenix-${TRAVIS_TAG}-Linux-${TRAVIS_COMMIT}-travis-build-num-${TRAVIS_BUILD_NUMBER} .
 notifications:
   irc:
