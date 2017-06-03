@@ -30,7 +30,7 @@ script:
   - cd phoenix-out
   - pwd
   - ls -la
-  - artifacts upload --target-paths /Linux/Phoenix-${TRAVIS_TAG}-Linux-${TRAVIS_COMMIT}-travis-build-num-${TRAVIS_BUILD_NUMBER} --working-dir `pwd`
+  - artifacts upload --target-paths /Linux/Phoenix-${TRAVIS_TAG}-Linux-${TRAVIS_COMMIT}-travis-build-num-${TRAVIS_BUILD_NUMBER} --working-dir `pwd` .
 notifications:
   irc:
     channels:
