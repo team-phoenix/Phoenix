@@ -26,7 +26,9 @@ script:
   - cp -r QML phoenix-out
   - wget "https://s3.amazonaws.com/travis-ci-gmbh/artifacts/stable/build/linux/amd64/artifacts" -O ../artifacts
   - chmod +x ../artifacts
-  - ../artifacts upload --target-paths /Linux/Phoenix-${TRAVIS_TAG}-Linux-${TRAVIS_COMMIT}-travis-build-num-${TRAVIS_BUILD_NUMBER} --working-dir phoenix-build/phoenix-out/ .
+  - export PATH=`pwd`/..:$PATH
+  - cd phoenix-out
+  - artifacts upload --target-paths /Linux/Phoenix-${TRAVIS_TAG}-Linux-${TRAVIS_COMMIT}-travis-build-num-${TRAVIS_BUILD_NUMBER} .
 notifications:
   irc:
     channels:
