@@ -1,53 +1,59 @@
+# Special thanks to MuseScore
+
 language: cpp
-sudo: required
-dist: trusty
-git:
-  submodules: false
-before_install:
-  - export GCC_VERSION_MAJOR=4
-  - export GCC_VERSION_MINOR=8
-  - export GCC_VERSION_PATCH
-  - export GCC_VERSION="${GCC_VERSION_MAJOR}.${GCC_VERSION_MINOR}"
-  - export QT_VERSION_MAJOR=5
-  - export QT_VERSION_MINOR=9
-  - export QT_VERSION_PATCH
-  - export QT_VERSION_MAJORMINOR="${QT_VERSION_MAJOR}${QT_VERSION_MINOR}"
-  - export QT_VERSION_MAJORMINORPATCH="${QT_VERSION_MAJOR}${QT_VERSION_MINOR}${QT_VERSION_PATCH}"
-  - export QT_VERSION="${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}"
-  - export CMAKE_VERSION_MAJOR=3
-  - export CMAKE_VERSION_MINOR=8
-  - export CMAKE_VERSION_PATCH=2
-  - export CMAKE_VERSION="${CMAKE_VERSION_MAJOR}.${CMAKE_VERSION_MINOR}.${CMAKE_VERSION_PATCH}"
-  - export CMAKE_VERSION_MAJOR_DOT_MINOR="${CMAKE_VERSION_MAJOR}.${CMAKE_VERSION_MINOR}"
-  - sudo add-apt-repository --yes ppa:beineri/opt-qt${QT_VERSION_MAJORMINORPATCH}-trusty
-  - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq g++-${GCC_VERSION} libsamplerate0-dev libquazip0-dev
-  - sudo apt-get install -qq -y qt${QT_VERSION_MAJORMINOR}base qt${QT_VERSION_MAJORMINOR}declarative qt${QT_VERSION_MAJORMINOR}imageformats qt${QT_VERSION_MAJORMINOR}location qt${QT_VERSION_MAJORMINOR}multimedia qt${QT_VERSION_MAJORMINOR}quickcontrols qt${QT_VERSION_MAJORMINOR}script qt${QT_VERSION_MAJORMINOR}svg qt${QT_VERSION_MAJORMINOR}tools qt${QT_VERSION_MAJORMINOR}translations libsdl2-dev
-  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-${GCC_VERSION} 90
-  - wget https://cmake.org/files/v${CMAKE_VERSION_MAJOR_DOT_MINOR}/cmake-${CMAKE_VERSION}-Linux-x86_64.sh
-  - chmod +x cmake-${CMAKE_VERSION}-Linux-x86_64.sh
-  - mkdir cmake-bin
-  - ./cmake-${CMAKE_VERSION}-Linux-x86_64.sh --skip-license --prefix=`pwd`/cmake-bin
-script:
-  - source /opt/qt${QT_VERSION_MAJORMINOR}/bin/qt${QT_VERSION_MAJORMINOR}-env.sh
-  - mkdir phoenix-build
-  - cd phoenix-build
-  - ../cmake-bin/bin/cmake ..
-  - make -j4
-  - mkdir phoenix-out
-  - cp Phoenix phoenix-out
-  - cp -r Metadata phoenix-out
-  - cp -r QML phoenix-out
-  - wget "https://s3.amazonaws.com/travis-ci-gmbh/artifacts/stable/build/linux/amd64/artifacts" -O ../artifacts
-  - chmod +x ../artifacts
-  - export PATH=`pwd`/..:$PATH
-  - cd phoenix-out
-  - export BUILD_TAG="Phoenix-${TRAVIS_BRANCH}-${TRAVIS_COMMIT:0:6}-travis${TRAVIS_BUILD_NUMBER}-Linux"
-  - artifacts upload --target-paths /Linux/${BUILD_TAG} --working-dir `pwd` .
+sudo: false
+
+env:
+  global:
+    - "ARTIFACTS_AWS_REGION=us-east-1"
+    - secure: "XMKxvHKgJmvcadiENukV02OG5OnUUF7+LmKOTkQk2Fxa1LMNQqSRncIC9G0qqdFQPqjVXhDM3aBFUTxTkTk7rlsT4LO1+XlgZ6B4QBo22GfhPcgjJaUqVMmjoMNINiO32ED4mi+dhLYr7ewnZCEijYxpA0sqRbUiM1l0fUZwiHk="
+    - secure: "gLHgwDamFLrBVbb7LIiPgFhKmnNGLFTvsb0Dk146QS9LBtuYHDJRZbt1sv1ZC/704nCPk6zarqersRifcQAW46IaoW6sn+0UP9owUVvrmKjncKKTYzAkleuHx43pWq93T9bh1llhl/8EX1jOrVTsyTKRJkMgntD2vjPeDrZRGjQ="
+    - secure: "BdRerctcHfM4b3TDWPtkeHTv6WP/GioMO5gw4podQOlEYXMxDhwVrf9wqC+eIDl9KS6+FSvOfrQvTuGKrWWTWoTiP+tBuJaKhfzALXl7PcKlwL3ThVlr+8GSsVA20XHBD2i2Hk0azenzX6cXv+NXtHdkCVoj6sld8tnQ0/8fZbY="
+
+matrix:
+  fast_finish: true
+  # allow_failures:
+  #           - env: "JOB=AppImage_x86_64"
+  #           - env: "JOB=AppImage_i686"
+  #           - env: "JOB=AppImage_armhf"
+  #           - env: "JOB=MacOSX"
+
+  include:
+  # 1st parallel build job - debug build on Ubuntu
+    - env: "JOB=Tests"
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-4.9
+            - libsamplerate0-dev
+            - libquazip0-dev
+            - libsdl2-dev
+      cache:
+        directories:
+          - $HOME/.ccache
+      before_install:
+        - "source ./ci/travis/linux-env.sh"
+      install:
+        - "./ci/travis/linux-build.sh"
+      # before_script:
+      #   - "./build/travis/job1_Tests/before_script.sh"
+      # script:
+      #   - "./build/travis/job1_Tests/run_tests.sh"
+      after_script:
+        - cd phoenix-out
+        - export BUILD_TAG="Phoenix-${TRAVIS_BRANCH}-${TRAVIS_COMMIT:0:6}-travis${TRAVIS_BUILD_NUMBER}-Linux"
+        - artifacts upload --target-paths /Linux/${BUILD_TAG} --working-dir `pwd` .
+
 notifications:
   irc:
     channels:
       - "chat.freenode.net#phoenix-dev"
     use_notice: true
     skip_join: true
+
+dist: trusty
+git:
+  submodules: false
+  depth: 5
