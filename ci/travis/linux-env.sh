@@ -32,7 +32,7 @@ QT_VERSION_PATCH=0
 QT_VERSION_MAJORMINOR="${QT_VERSION_MAJOR}${QT_VERSION_MINOR}"
 QT_VERSION_MAJORMINORPATCH="${QT_VERSION_MAJOR}${QT_VERSION_MINOR}${QT_VERSION_PATCH}"
 QT_VERSION="${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}"
-mkdir "qt5" && travis_retry wget -O "qt5.tar.gz" "http://vg.phoenix.utils.s3.amazonaws.com/qt-${QT_VERSION}-linux-gcc_64.tar.gz"
+mkdir "qt5" && travis_retry wget -O "qt5.tar.gz" "http://s3.amazonaws.com/vg.phoenix.ci.utils/qt-${QT_VERSION}-linux-gcc_64.tar.gz"
 tar -xf "qt5.tar.gz" -C "qt5"
 export PATH="${PWD}/qt5/bin:$PATH"
 export QT_PLUGIN_PATH="${PWD}/qt5/plugins"
