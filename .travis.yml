@@ -36,6 +36,7 @@ matrix:
       before_install:
         - "source ./ci/travis/linux-env.sh"
       install:
+        - chmod +x "./ci/travis/linux-build.sh"
         - "./ci/travis/linux-build.sh"
       # before_script:
       #   - "./build/travis/job1_Tests/before_script.sh"
