@@ -34,8 +34,6 @@ matrix:
         directories:
           - $HOME/.ccache
       before_install:
-        - "git remote set-branches origin '*'"
-        - "git fetch --all"
         - "source ./ci/travis/linux-env.sh"
       install:
         - chmod +x "./ci/travis/linux-build.sh"
@@ -59,4 +57,4 @@ notifications:
 dist: trusty
 git:
   submodules: false
-  depth: 5
+  shallow: false
