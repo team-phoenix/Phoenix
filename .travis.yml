@@ -33,18 +33,14 @@ matrix:
       cache:
         directories:
           - $HOME/.ccache
-      before_install:
+      install:
         - "git fetch --unshallow"
         - "source ./ci/travis/linux-env.sh"
-      install:
+      script:
         - chmod +x "./ci/travis/linux-build.sh"
         - "./ci/travis/linux-build.sh"
-      # before_script:
-      #   - "./build/travis/job1_Tests/before_script.sh"
-      # script:
-      #   - "./build/travis/job1_Tests/run_tests.sh"
       after_script:
-        - cd phoenix-out
+        - cd ../install
         - export BUILD_TAG="Phoenix-${TRAVIS_BRANCH}-${TRAVIS_COMMIT:0:6}-travis${TRAVIS_BUILD_NUMBER}-Linux"
         - artifacts upload --target-paths /Linux/${BUILD_TAG} --working-dir `pwd` .
 
