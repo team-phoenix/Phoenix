@@ -3,9 +3,8 @@
 set -e # exit on error
 set -x # echo commands
 
-cd ..
 mkdir "build" "install"
 cd build
-cmake -DCMAKE_CXX_COMPILER_LAUNCHER="ccache" -DCMAKE_INSTALL_PREFIX="${PWD}/../install" ../Phoenix
-cmake --build .
+cmake -DCMAKE_CXX_COMPILER_LAUNCHER="ccache" -DCMAKE_INSTALL_PREFIX="${PWD}/../install" ..
+cmake --build . --target "all"
 cmake --build . --target "install"
