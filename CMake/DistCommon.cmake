@@ -7,6 +7,7 @@ endif()
 # Embed git tag in file
 include( externals/cmake-modules/GetGitRevisionDescription.cmake REQUIRED )
 git_describe( PHOENIX_VER_STR )
+message( "git_describe: " ${PHOENIX_VER_STR} )
 string( SUBSTRING ${PHOENIX_VER_STR} 1 -1 PHOENIX_VER_TUPLE )
 string( REGEX REPLACE "-[0-9a-z\\-]*" "" PHOENIX_VER_TUPLE ${PHOENIX_VER_TUPLE} )
 string( REPLACE "." "," PHOENIX_VER_TUPLE ${PHOENIX_VER_TUPLE} )
