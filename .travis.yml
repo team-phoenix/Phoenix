@@ -34,6 +34,7 @@ matrix:
         directories:
           - $HOME/.ccache
       before_install:
+        - "git fetch --unshallow"
         - "source ./ci/travis/linux-env.sh"
       install:
         - chmod +x "./ci/travis/linux-build.sh"
@@ -57,4 +58,3 @@ notifications:
 dist: trusty
 git:
   submodules: false
-  shallow: false
