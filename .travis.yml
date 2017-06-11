@@ -30,6 +30,7 @@ matrix:
             - libsamplerate0-dev
             - libquazip0-dev
             - libsdl2-dev
+            - p7zip-full
       cache:
         directories:
           - $HOME/.ccache
@@ -40,9 +41,8 @@ matrix:
         - chmod +x "./ci/travis/linux-build.sh"
         - "./ci/travis/linux-build.sh"
       after_script:
-        - cd install
-        - export BUILD_TAG="Phoenix-travis${TRAVIS_BUILD_NUMBER}-${TRAVIS_BRANCH}-${TRAVIS_COMMIT:0:6}-Linux"
-        - artifacts upload --target-paths /Linux/${BUILD_TAG} --working-dir `pwd` .
+        - chmod +x "./ci/travis/linux-upload.sh"
+        - "./ci/travis/linux-upload.sh"
 
 notifications:
   irc:
