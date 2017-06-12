@@ -1,6 +1,5 @@
-from sqlTableUpdater import SqlTableUpdater
-from sqldatabase import SqlDatabase
-
+from .sqlTableUpdater import SqlTableUpdater
+from .sqldatabase import SqlDatabase
 
 class SystemToCoreUpdater(SqlTableUpdater):
 
@@ -24,7 +23,7 @@ class SystemToCoreUpdater(SqlTableUpdater):
             libretroSystems = self.libretroSystemList()
 
             # Iterate through all cores available
-            for k, v in self.coreInfo['cores'].iteritems():
+            for k, v in self.coreInfo['cores'].items():
 
                 # Ignore anything that isn't an emulator
                 if "categories" not in v or v["categories"] != "Emulator":

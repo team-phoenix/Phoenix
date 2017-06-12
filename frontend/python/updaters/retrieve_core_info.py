@@ -3,7 +3,8 @@ import shlex
 import requests
 
 from tarfile import TarFile
-from cStringIO import StringIO
+from io import BytesIO
+from io import StringIO
 from collections import OrderedDict
 
 
@@ -11,10 +12,11 @@ def retrieveCoreInfo():
 
     DIR_PREFIX = 'libretro-super-master/dist/info/'
 
-    res = (requests.get('https://github.com/libretro/libretro-super/archive/master.tar.gz')).read()
+    response = requests.get('https://github.com/libretro/libretro-super/archive/master.tar.gz')
+    # res = ().read()
 
     # In memory string buffer
-    archive = StringIO(res)
+    archive = BytesIO(response.content)
 
     tf = TarFile.open(mode='r:gz', fileobj=archive)
     # filter files and sort them
@@ -30,7 +32,7 @@ def retrieveCoreInfo():
         for f in files:
             info = OrderedDict()
             for l in tf.extractfile(f).readlines():
-                s = shlex.shlex(l)
+                s = shlex.shlex(l.decode())
                 s.quotes = '"'
                 op = []
                 try:
@@ -61,8 +63,8 @@ def retrieveCoreInfo():
                                 op[2] = False
 
                             # Decode utf-8 into unicode
-                            if isinstance(op[2], str):
-                                op[2] = op[2].decode('utf-8')
+                            # if isinstance(op[2], str):
+                            #     op[2] = op[2].decode('utf-8')
 
                             info[op[0]] = op[2]
 
@@ -120,10 +122,10 @@ def infoString(output: dict = None):
 
     initializer_list = []
 
-    for k, v in output['cores'].iteritems():
+    for k, v in output['cores']:
         initializer_list.append("""    { %s, {
     %s
         } }""" % (
             cpprepr(k),
-            ',\n'.join(['        { %s, %s }' % (cpprepr(k2), cpprepr(v2)) for k2, v2 in v.iteritems()])
+            ',\n'.join(['        { %s, %s }' % (cpprepr(k2), cpprepr(v2)) for k2, v2 in v.items()])
         ))

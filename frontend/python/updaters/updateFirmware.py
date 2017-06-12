@@ -1,6 +1,5 @@
-from sqldatabase import SqlDatabase
-from sqlTableUpdater import SqlTableUpdater
-
+from .sqldatabase import SqlDatabase
+from .sqlTableUpdater import SqlTableUpdater
 
 class FirmwareUpdater(SqlTableUpdater):
 
@@ -29,7 +28,7 @@ class FirmwareUpdater(SqlTableUpdater):
             systems = self.phoenixSystems()
 
             # System, metadata
-            for s, m in systems.iteritems():
+            for s, m in systems.items():
 
                 firmware = self.getFirmwareTuple(s)
 

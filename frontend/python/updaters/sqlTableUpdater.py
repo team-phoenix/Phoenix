@@ -1,9 +1,9 @@
 import os
 
 from collections import OrderedDict
-from sqldatabase import SqlDatabase
-from retrieve_core_info import retrieveCoreInfo
 
+from .sqldatabase import SqlDatabase
+from .retrieve_core_info import retrieveCoreInfo
 
 # Root class that all SQL table updaters derive from
 class SqlTableUpdater():
@@ -35,7 +35,7 @@ class SqlTableUpdater():
 
     def libretroSystemList(self):
         systems = []
-        for k, v in self.coreInfo['cores'].iteritems():
+        for k, v in self.coreInfo['cores'].items():
 
             if "categories" not in v or v["categories"] != "Emulator":
                 continue
@@ -87,6 +87,7 @@ class SqlTableUpdater():
         "Atari - 2600":                                     {"enabled": True,  "defaultCore": "stella_libretro",                    "friendlyName": "",                    "shortName": "", "manufacturer": "Atari"           },
         "Capcom - CP System I":                             {"enabled": False, "defaultCore": "fb_alpha_cps1_libretro",             "friendlyName": "",                    "shortName": "", "manufacturer": "Capcom"          },
         "Capcom - CP System II":                            {"enabled": False, "defaultCore": "fb_alpha_cps2_libretro",             "friendlyName": "",                    "shortName": "", "manufacturer": "Capcom"          },
+        "Capcom - CP System III":                           {"enabled": False, "defaultCore": "fbalpha2012_cps3_libretro",          "friendlyName": "",                    "shortName": "", "manufacturer": "Capcom"          },
         "Capcom - CPS Changer":                             {"enabled": False, "defaultCore": "mess2014_libretro",                  "friendlyName": "",                    "shortName": "", "manufacturer": "Capcom"          },
         "CHIP-8":                                           {"enabled": False, "defaultCore": "emux_chip8_libretro",                "friendlyName": "",                    "shortName": "", "manufacturer": "(Various)"       },
         "DOS":                                              {"enabled": False, "defaultCore": "dosbox_libretro",                    "friendlyName": "",                    "shortName": "", "manufacturer": "(Various)"       },
@@ -218,7 +219,11 @@ class SqlTableUpdater():
         "Microsoft - Xbox One":                             {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Microsoft"       },
         "Nintendo - Wii U":                                 {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Nintendo"        },
         "Sony - PlayStation 4":                             {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Sony"            },
-        }
+        
+        # Ninth-generation consoles (circa 2017)
+        "Microsoft - Xbox One X":                           {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Microsoft"       },
+        "Nintendo - Switch":                                {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Nintendo"        },
+}
 
     def phoenixSystems(self):
         return OrderedDict(sorted(self.phoenixSystemDatabase.items(), key=lambda t: t[0]))
@@ -232,6 +237,7 @@ class SqlTableUpdater():
         "3DO":                                                      {"Panasonic - 3DO Interactive Multiplayer"},
         "Arcade (various)":                                         {"Arcade"},
         "Atari - 2600":                                             {"Atari - 2600"},
+        "Atari - 5200":                                             {"Atari - 5200"},
         "Atari - 7800":                                             {"Atari - 7800"},
         "Atari - Jaguar":                                           {"Atari - Jaguar"},
         "Atari - Lynx":                                             {"Atari - Lynx"},
@@ -240,14 +246,20 @@ class SqlTableUpdater():
         "Bandai - WonderSwan":                                      {"Bandai - WonderSwan"},
         "CHIP-8":                                                   {"CHIP-8"},
         "Commodore Amiga":                                          {"Commodore - Amiga"},
+        "Commodore - C128":                                         {"Arcade"},
+        "Commodore - 64":                                           {"Commodore - 64"},
         "CP System I":                                              {"Capcom - CP System I"},
         "CP System II":                                             {"Capcom - CP System II"},
+        "CP System III":                                            {"Capcom - CP System III"},
         "CPC":                                                      {"Amstrad - CPC"},
         "DOS":                                                      {"DOS"},
+        "FB Alpha - Arcade Games":                                  {"Arcade"},
         "GCE - Vectrex":                                            {"GCE - Vectrex"},
+        "Handheld Electronic Game":                                 {"Nintendo - Game & Watch"},
         "IBM PC compatible":                                        {"IBM PC compatible"},
         "Magnavox - Odyssey2":                                      {"Magnavox - Odyssey2"},
         "MAME":                                                     {"Arcade"},
+        "MAME2003":                                                 {"Arcade"},
         "Microsoft - MSX 2":                                        {"Microsoft - MSX 2"},
         "Microsoft - MSX2":                                         {"Microsoft - MSX 2"},
         "Microsoft - MSX":                                          {"Microsoft - MSX"},
@@ -284,9 +296,13 @@ class SqlTableUpdater():
                                                                     },
 
         "NEC - PC Engine - TurboGrafx 16":                          {"NEC - PC Engine - TurboGrafx 16"},
-        "NEC - Super Grafx":                                        {"NEC - Super Grafx"},
         "NEC - PC Engine SuperGrafx":                               {"NEC - Super Grafx"},
+        "NEC - PC Engine CD - TurboGrafx-CD":                       {"NEC - Super Grafx"},
+        "NEC - PC-FX":                                              {"NEC - PC-FX - PC-FXGA"},
+        "NEC - Super Grafx":                                        {"NEC - Super Grafx"},
         "Neo Geo":                                                  {"SNK - Neo Geo"},
+        "Nintendo - 3DS":                                           {"Nintendo - Nintendo 3DS"},
+        "Nintendo - Family Computer Disk System":                   {"Nintendo - Nintendo Entertainment System"},
         "Nintendo - Famicom Disk System":                           {"Nintendo - Nintendo Entertainment System"},
         "Nintendo - Game & Watch":                                  {"Nintendo - Game & Watch"},
         "Nintendo - Game Boy Advance (e-Cards)":                    {"Nintendo - Game Boy Advance (e-Cards)"},
@@ -295,30 +311,42 @@ class SqlTableUpdater():
         "Nintendo - Game Boy":                                      {"Nintendo - Game Boy"},
         "Nintendo - GameCube":                                      {"Nintendo - GameCube"},
         "Nintendo - Nintendo 64":                                   {"Nintendo - Nintendo 64"},
+        "Nintendo - Nintendo 64DD":                                 {"Nintendo - Nintendo 64"},
+        "Nintendo - Nintendo DS":                                   {"Nintendo - Nintendo DS"},
+        "Nintendo - Nintendo DS (Download Play)":                   {"Nintendo - Nintendo DS"},
         "Nintendo - Nintendo DS (Download Play) (BETA)":            {"Nintendo - Nintendo DS"},
         "Nintendo - Nintendo DS Decrypted":                         {"Nintendo - Nintendo DS"},
         "Nintendo - Nintendo Entertainment System":                 {"Nintendo - Nintendo Entertainment System"},
+        "Nintendo - Pokemon Mini":                                  {"Nintendo - Pokemon Mini"},
         "Nintendo - Sufami Turbo":                                  {"Nintendo - Sufami Turbo"},
         "Nintendo - Super Nintendo Entertainment System":           {"Nintendo - Super Nintendo Entertainment System"},
         "Nintendo - Virtual Boy":                                   {"Nintendo - Virtual Boy"},
         "Nintendo - Wii":                                           {"Nintendo - Wii"},
         "PC":                                                       {"IBM PC compatible"},
         "PC-FX":                                                    {"NEC - PC-FX - PC-FXGA"},
+        "PC-98":                                                    {"NEC - PC-98 series"},
+        "Phillips - Videopac+":                                     {"Philips - Videopac+"},
         "Sega - 32X":                                               {"Sega - 32X"},
         "Sega - Dreamcast":                                         {"Sega - Dreamcast"},
         "Sega - Game Gear":                                         {"Sega - Game Gear"},
         "Sega - Master System - Mark III":                          {"Sega - Master System - Mark III"},
         "Sega - Mega Drive - Genesis":                              {"Sega - Mega Drive - Genesis"},
+        "Sega - Mega-CD - Sega CD":                                 {"Sega - Mega-CD"},
         "Sega - NAOMI":                                             {"Sega - Naomi"},
         "Sega - PICO":                                              {"Sega - PICO"},
         "Sega - Saturn":                                            {"Sega - Saturn"},
         "Sega - SG-1000":                                           {"Sega - SG-1000"},
+        "Sharp - X68000":                                           {"Arcade"},
+        "Sinclair - ZX 81":                                         {"Sinclair - ZX81"},
+        "Sinclair - ZX Spectrum":                                   {"Sinclair - ZX Spectrum +3"},
+        "Sinclair - ZX Spectrum +3":                                {"Sinclair - ZX Spectrum +3"},
         "SNK - Neo Geo Pocket Color":                               {"SNK - Neo Geo Pocket Color"},
         "SNK - Neo Geo Pocket":                                     {"SNK - Neo Geo Pocket"},
         "Sony - PlayStation Portable":                              {"Sony - PlayStation Portable"},
         "Sony - PlayStation":                                       {"Sony - PlayStation"},
+        "The 3DO Company - 3DO":                                    {"Panasonic - 3DO Interactive Multiplayer"},
+        "Uzebox":                                                   {"Arcade"},
         "ZX Spectrum (various)":                                    {"Sinclair - ZX Spectrum +3"},
-        "ZX81":                                                     {"Sinclair - ZX81"},
     }
 
     # Not all Phoenix IDs are availble in OpenVGDB, fail silently and gracefully if a match isn't found

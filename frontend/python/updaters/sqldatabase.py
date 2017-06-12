@@ -1,6 +1,5 @@
 import sqlite3
 
-
 class SqlDatabase(object):
 
     def __init__(self, filePath: str, autoCommit: bool = True):
@@ -24,7 +23,7 @@ class SqlDatabase(object):
         if not rowsAndTypes:
             return False
 
-        statement = "CREATE TABLE {} ({} {})".format(tableName, ", ".join([k + " " + v for k, v in rowsAndTypes.iteritems()]), additionalStatement)
+        statement = "CREATE TABLE {} ({} {})".format(tableName, ", ".join([k + " " + v for k, v in rowsAndTypes.items()]), additionalStatement)
 
         print(statement)
 
@@ -67,6 +66,7 @@ class SqlDatabase(object):
 
         rowStatement = " ({}) ".format(",".join(i for i in rows))
         fullStatement = preStatement + rowStatement + "VALUES ({})".format(",".join("?" for i in values))
+        print(fullStatement, values)
 
         self.cursor.execute(fullStatement, values)
 

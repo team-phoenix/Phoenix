@@ -1,6 +1,5 @@
-from sqldatabase import SqlDatabase
-from sqlTableUpdater import SqlTableUpdater
-
+from .sqldatabase import SqlDatabase
+from .sqlTableUpdater import SqlTableUpdater
 
 class CoreUpdater(SqlTableUpdater):
 
@@ -31,7 +30,7 @@ class CoreUpdater(SqlTableUpdater):
             libretroSystems = self.libretroSystemList()
 
             # Iterate through all cores available
-            for k, v in self.coreInfo['cores'].iteritems():
+            for k, v in self.coreInfo['cores'].items():
 
                 # Ignore anything that isn't an emulator
                 if "categories" not in v or v["categories"] != "Emulator":
@@ -46,6 +45,8 @@ class CoreUpdater(SqlTableUpdater):
                     # Directly copy data for the other columns, their keys match the libretro .info file keys exactly
                     elif row in v:
                         values.append(v[row])
+                    elif row in ["UUID", "display_version", "license", "authors", "manufacturer"]:
+                        values.append("")
 
                 db.insert(self.tableName, self.columnsDict.keys(), values)
 

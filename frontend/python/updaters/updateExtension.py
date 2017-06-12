@@ -1,8 +1,7 @@
 from collections import OrderedDict, defaultdict
 
-from sqlTableUpdater import SqlTableUpdater
-from sqldatabase import SqlDatabase
-
+from .sqlTableUpdater import SqlTableUpdater
+from .sqldatabase import SqlDatabase
 
 class ExtensionUpdater(SqlTableUpdater):
 
@@ -25,7 +24,7 @@ class ExtensionUpdater(SqlTableUpdater):
 
             exts = defaultdict(lambda: set())
 
-            for k, v in self.coreInfo['cores'].iteritems():
+            for k, v in self.coreInfo['cores'].items():
 
                 if "categories" not in v or v["categories"] != "Emulator":
                     continue

@@ -1,5 +1,5 @@
-from sqldatabase import SqlDatabase
-from sqlTableUpdater import SqlTableUpdater
+from .sqldatabase import SqlDatabase
+from .sqlTableUpdater import SqlTableUpdater
 
 from .updateSystemToCore import SystemToCoreUpdater
 
@@ -23,7 +23,7 @@ class OpenVGDBToSystemUpdater(SqlTableUpdater):
             openVGDBToSystemMap = self.getOpenVGDBToPhoenixMap()
 
             # key, value
-            for k, v in openVGDBToSystemMap.iteritems():
+            for k, v in openVGDBToSystemMap.items():
                 values = [k, v]
                 db.insert(self.tableName, self.columnsDict.keys(), values, force=False)
 

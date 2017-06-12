@@ -1,7 +1,7 @@
-from sqlTableUpdater import SqlTableUpdater
-from sqldatabase import SqlDatabase
 from collections import OrderedDict
 
+from .sqlTableUpdater import SqlTableUpdater
+from .sqldatabase import SqlDatabase
 
 class SystemUpdater(SqlTableUpdater):
 
@@ -29,8 +29,7 @@ class SystemUpdater(SqlTableUpdater):
 
             systems = self.phoenixSystems()
 
-            for system, metadata in systems.iteritems():
-
+            for system, metadata in systems.items():
                 enabled = int(metadata["enabled"])
                 defaultCore = metadata["defaultCore"]
                 friendlyName = metadata["friendlyName"]

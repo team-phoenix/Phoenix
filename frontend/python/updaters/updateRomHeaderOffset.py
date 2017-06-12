@@ -1,5 +1,5 @@
-from sqlTableUpdater import SqlTableUpdater
-from sqldatabase import SqlDatabase
+from .sqlTableUpdater import SqlTableUpdater
+from .sqldatabase import SqlDatabase
 import hashlib
 
 
@@ -36,7 +36,7 @@ class RomHeaderOffsetUpdater(SqlTableUpdater):
             systems = self.phoenixSystems()
 
             # System, metadata
-            for s, m in systems.iteritems():
+            for s, m in systems.items():
 
                 offset = self.getHeaderData(s)
 
