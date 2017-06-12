@@ -49,12 +49,17 @@ set_target_properties( ${PROJECT_NAME} PROPERTIES AUTOMOC ON AUTORCC ON )
 find_package( Qt5 REQUIRED COMPONENTS Concurrent Core Multimedia Network Qml Quick Sql Svg )
 target_link_libraries( ${PROJECT_NAME} Qt5::Concurrent Qt5::Core Qt5::Multimedia Qt5::Network Qt5::Qml Qt5::Quick Qt5::Sql Qt5::Svg )
 
+# On macOS, we must use QtPlatformHeaders to grab the pointer to the main window's native OpenGL context (NSOpenGLContext)
+# http://doc.qt.io/qt-5/qtplatformheaders-index.html
 if( APPLE )
-	find_package( Qt5PlatformSupport REQUIRED )
-	include_directories( ${Qt5PlatformSupport_INCLUDE_DIR} )
-	target_link_libraries( ${PROJECT_NAME} ${Qt5PlatformSupport_LIBRARY} )
+	# QtPlatformHeaders is a header-only module, leaving us with no choice but to get its location in this hacky way
+	# FIXME: This is not necessary when using qmake, but is when using CMake?
+	set( _qt5_platform_headers ${_qt5_root_dir}/../../include )
+	get_filename_component( _qt5_platform_headers ${_qt5_platform_headers} ABSOLUTE )
+	message( "Found QtPlatformHeaders: " ${_qt5_platform_headers} )
+	target_include_directories( ${PROJECT_NAME} PUBLIC ${_qt5_platform_headers} )
 
-	# FIXME: For some reason this is necessary on OS X?
+	# FIXME: For some reason this is necessary on macOS?
 	find_library( FOUNDATION Foundation REQUIRED )
 	target_link_libraries( ${PROJECT_NAME} ${FOUNDATION} )
 endif()
