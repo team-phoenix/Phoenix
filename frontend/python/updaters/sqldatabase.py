@@ -66,7 +66,7 @@ class SqlDatabase(object):
 
         rowStatement = " ({}) ".format(",".join(i for i in rows))
         fullStatement = preStatement + rowStatement + "VALUES ({})".format(",".join("?" for i in values))
-        print(fullStatement, values)
+        # print(fullStatement, values)
 
         self.cursor.execute(fullStatement, values)
 
