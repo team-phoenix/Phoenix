@@ -1,30 +1,38 @@
-# -*- coding: utf-8 -*-
-from __future__ import print_function
-from tarfile import TarFile
-from cStringIO import StringIO
-from collections import OrderedDict
-from datetime import datetime
+import sys
+import shlex
+import requests
 
-import json, sys, shlex, urllib2
+from tarfile import TarFile
+from io import BytesIO
+from io import StringIO
+from collections import OrderedDict
+
 
 def retrieveCoreInfo():
+
     DIR_PREFIX = 'libretro-super-master/dist/info/'
 
-    res = urllib2.urlopen('https://github.com/libretro/libretro-super/archive/master.tar.gz')
+    response = requests.get('https://github.com/libretro/libretro-super/archive/master.tar.gz')
+    # res = ().read()
 
-    archive = StringIO(res.read())
+    # In memory string buffer
+    archive = BytesIO(response.content)
 
     tf = TarFile.open(mode='r:gz', fileobj=archive)
     # filter files and sort them
     files = [f for f in tf.getmembers() if f.name.startswith(DIR_PREFIX)]
     files = sorted(files, key=lambda m: m.name.split(DIR_PREFIX)[1])
 
-    def infoToDict( files=[]):
+    def infoToDict(files: list = None):
+        if not files:
+            files = []
+
         output = {'cores': OrderedDict()}
+
         for f in files:
             info = OrderedDict()
             for l in tf.extractfile(f).readlines():
-                s = shlex.shlex(l)
+                s = shlex.shlex(l.decode())
                 s.quotes = '"'
                 op = []
                 try:
@@ -34,13 +42,13 @@ def retrieveCoreInfo():
                             break
                         op.append(t)
 
-                        # 'var' '=' 'value'
-                        if len(op) == 3: 
-                            assert op[1] in ('=', ':')
+                        if len(op) == 3:
+                            check = op[1] in ('=', ':')
 
-                            # For: 'some:var = value' syntax
-                            # Merge 'some:var' into 'somevar' (?)
-                            if op[1] == ':': 
+                            if not check:
+                                raise Exception("op[1] not in ('=', ':')")
+
+                            if op[1] == ':':
                                 op = [''.join(op)]
                                 continue
 
@@ -49,16 +57,17 @@ def retrieveCoreInfo():
                                 op[2] = op[2][1:-1]
 
                             # Convert string to boolean
-                            if op[2] in ('true', 'True'):
+                            if op[2].lower() == 'true':
                                 op[2] = True
-                            elif op[2] in ('false', 'False'):
+                            elif op[2].lower() == "false":
                                 op[2] = False
 
                             # Decode utf-8 into unicode
-                            if isinstance(op[2], str):
-                                op[2] = op[2].decode('utf-8')
+                            # if isinstance(op[2], str):
+                            #     op[2] = op[2].decode('utf-8')
 
                             info[op[0]] = op[2]
+
                             break
 
                 except (ValueError, AssertionError) as e:
@@ -68,17 +77,19 @@ def retrieveCoreInfo():
         return output
     return infoToDict(files)
 
-#print(json.dumps(output, indent=4))
 
 def cpprepr(s):
     if isinstance(s, bool):
         return repr(s).lower()
 
     ret = []
+
     position = 0
 
     ret.append('"')
+
     position += 1
+
     for c in s:
         newline = False
         if c == "\n":
@@ -94,25 +105,27 @@ def cpprepr(s):
             to_add = c
 
         ret.append(to_add)
+
         position += len(to_add)
+
         if newline:
             position = 0
-
 
     ret.append('"')
 
     return "".join(ret)
 
 
-def infoString( output={} ):
+def infoString(output: dict = None):
+    if not output:
+        output = {}  # Avoid mutable defaults
+
     initializer_list = []
 
-    for k, v in output['cores'].iteritems():
+    for k, v in output['cores']:
         initializer_list.append("""    { %s, {
     %s
         } }""" % (
-            cpprepr(k), 
-            ',\n'.join(['        { %s, %s }' % (cpprepr(k2), cpprepr(v2)) for k2, v2 in v.iteritems()])
+            cpprepr(k),
+            ',\n'.join(['        { %s, %s }' % (cpprepr(k2), cpprepr(v2)) for k2, v2 in v.items()])
         ))
-
-
