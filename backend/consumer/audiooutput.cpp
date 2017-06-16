@@ -123,8 +123,9 @@ void AudioOutput::commandIn( Node::Command command, QVariant data, qint64 timeSt
             QAudioDeviceInfo info( QAudioDeviceInfo::defaultOutputDevice() );
             outputAudioFormat = info.nearestFormat( inputAudioFormat );
 
-            // If that got us a format with a worse sample rate, use preferred format
-            if( outputAudioFormat.sampleRate() <= inputAudioFormat.sampleRate() ) {
+            // If that got us a format with a worse sample rate or different endianness, use preferred format
+            if( ( outputAudioFormat.sampleRate() <= inputAudioFormat.sampleRate() )
+                || ( outputAudioFormat.byteOrder() != QAudioFormat::LittleEndian ) ) {
                 outputAudioFormat = info.preferredFormat();
             }
 
