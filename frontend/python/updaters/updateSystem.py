@@ -1,21 +1,26 @@
-from sqlTableUpdater import SqlTableUpdater
-from sqldatabase import SqlDatabase
 from collections import OrderedDict
+
+from .sqlTableUpdater import SqlTableUpdater
+from .sqldatabase import SqlDatabase
 
 class SystemUpdater(SqlTableUpdater):
 
-    def __init__(self, tableName="", tableColumns=[], coreInfo={}):
-        if len(tableColumns) == 0:
-            tableColumns = ( ("UUID", "TEXT PRIMARY KEY"),
-                             ("enabled", "INTEGER NOT NULL"),
-                             ("defaultCore", "TEXT"),
-                             ("friendlyName", "TEXT"),
-                             ("shortName", "TEXT"),
-                             ("manufacturer", "TEXT"),
-                             ("openvgdbSystemName", "TEXT"),
-                           )
+    def __init__(self, tableName: str = None, tableColumns: list = None, coreInfo: dict = None):
+        if not tableColumns:
+            tableColumns = (
+                ("UUID", "TEXT PRIMARY KEY"),
+                ("enabled", "INTEGER NOT NULL"),
+                ("defaultCore", "TEXT"),
+                ("friendlyName", "TEXT"),
+                ("shortName", "TEXT"),
+                ("manufacturer", "TEXT"),
+                ("openvgdbSystemName", "TEXT"),
+            )
 
-        SqlTableUpdater.__init__(self, tableName, tableColumns, coreInfo)
+        if not coreInfo:
+            coreInfo = {}
+
+        super().__init__(tableName if tableName else "", tableColumns, coreInfo)
 
     def updateTable(self):
 
@@ -24,16 +29,13 @@ class SystemUpdater(SqlTableUpdater):
 
             systems = self.phoenixSystems()
 
-            # System, metadata
-            for s, m in systems.iteritems():
-
-                system = s
-                enabled = int(m["enabled"])
-                defaultCore = m["defaultCore"]
-                friendlyName = m["friendlyName"]
-                shortName = m["shortName"]
-                manufacturer = m["manufacturer"]
-                openvgdbSystemName = self.phoenixToOpenVGDB(s)
+            for system, metadata in systems.items():
+                enabled = int(metadata["enabled"])
+                defaultCore = metadata["defaultCore"]
+                friendlyName = metadata["friendlyName"]
+                shortName = metadata["shortName"]
+                manufacturer = metadata["manufacturer"]
+                openvgdbSystemName = self.phoenixToOpenVGDB(system)
 
                 values = [system, enabled, defaultCore, friendlyName, shortName, manufacturer, openvgdbSystemName]
 
@@ -43,9 +45,3 @@ if __name__ == "__main__":
 
     updater = SystemUpdater(tableName="system")
     updater.updateTable()
-
-
-
-
-
-

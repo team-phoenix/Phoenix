@@ -1,9 +1,9 @@
-# coding=utf-8
+import os
 
 from collections import OrderedDict
-from sqldatabase import SqlDatabase
-from retrieve_core_info import retrieveCoreInfo
-import os
+
+from .sqldatabase import SqlDatabase
+from .retrieve_core_info import retrieveCoreInfo
 
 # Root class that all SQL table updaters derive from
 class SqlTableUpdater():
@@ -20,27 +20,26 @@ class SqlTableUpdater():
     def updateTable(self):
         pass
 
-
-    def updateColumns(self, database, additionalStatement = ""):
+    def updateColumns(self, database, additionalStatement: str = ""):
 
         if not self.dbFileExists:
-            database.createTable(self.tableName, self.columnsDict, additionalStatement )
+            database.createTable(self.tableName, self.columnsDict, additionalStatement)
         else:
             try:
                 database.deleteTable(self.tableName)
             except:
-                database.createTable(self.tableName, self.columnsDict, additionalStatement )
+                database.createTable(self.tableName, self.columnsDict, additionalStatement)
 
     def __del__(self):
         print("Updated " + self.tableName + " table.")
 
-    def libretroSystemList(self): 
+    def libretroSystemList(self):
         systems = []
-        for k, v in self.coreInfo['cores'].iteritems():
+        for k, v in self.coreInfo['cores'].items():
 
             if "categories" not in v or v["categories"] != "Emulator":
                 continue
-            
+
             if "database" in v:
                 name = v["database"].split("|")
 
@@ -54,11 +53,11 @@ class SqlTableUpdater():
                     ## "MAME"
                     #if len(tup) == 1:
                     #    systems.append(tup[0])
-                    #    
+                    #
                     ## Nearly every one
                     #elif len(tup) == 2:
                     #    systems.append(tup[1])
-                    #    
+                    #
                     ## Sega - Master System - Mark III
                     ## Sega - Mega Drive - Genesis
                     #elif len(tup) == 3:
@@ -79,7 +78,7 @@ class SqlTableUpdater():
     # friendlyName: North American console name without manufacturer
     # shortName: Abbreviation (typically 3 letters)
     # enabled: True iff a core is available, Phoenix can run it, and the game scanner can find it (extensions set)
-    
+
         # Everything else
         "Arcade":                                           {"enabled": False, "defaultCore": "mame_libretro",                      "friendlyName": "",                    "shortName": "", "manufacturer": "(Various)"       },
 
@@ -88,6 +87,7 @@ class SqlTableUpdater():
         "Atari - 2600":                                     {"enabled": True,  "defaultCore": "stella_libretro",                    "friendlyName": "",                    "shortName": "", "manufacturer": "Atari"           },
         "Capcom - CP System I":                             {"enabled": False, "defaultCore": "fb_alpha_cps1_libretro",             "friendlyName": "",                    "shortName": "", "manufacturer": "Capcom"          },
         "Capcom - CP System II":                            {"enabled": False, "defaultCore": "fb_alpha_cps2_libretro",             "friendlyName": "",                    "shortName": "", "manufacturer": "Capcom"          },
+        "Capcom - CP System III":                           {"enabled": False, "defaultCore": "fbalpha2012_cps3_libretro",          "friendlyName": "",                    "shortName": "", "manufacturer": "Capcom"          },
         "Capcom - CPS Changer":                             {"enabled": False, "defaultCore": "mess2014_libretro",                  "friendlyName": "",                    "shortName": "", "manufacturer": "Capcom"          },
         "CHIP-8":                                           {"enabled": False, "defaultCore": "emux_chip8_libretro",                "friendlyName": "",                    "shortName": "", "manufacturer": "(Various)"       },
         "DOS":                                              {"enabled": False, "defaultCore": "dosbox_libretro",                    "friendlyName": "",                    "shortName": "", "manufacturer": "(Various)"       },
@@ -177,7 +177,7 @@ class SqlTableUpdater():
         "VTech - CreatiVision":                             {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "VTech"           },
         "VTech - V.Smile":                                  {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "VTech"           },
         "Watara - Supervision":                             {"enabled": True,  "defaultCore": "mess2014_libretro",                  "friendlyName": "",                    "shortName": "", "manufacturer": "Watara"          },
- 
+
         # Redump.org (disc-based games)
         "Apple - Macintosh":                                {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Apple"           },
         "Bandai - Playdia":                                 {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Bandai"          },
@@ -203,7 +203,7 @@ class SqlTableUpdater():
         "Sega - Dreamcast":                                 {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Sega"            },
         "Sega - Lindbergh":                                 {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Sega"            },
         "Sega - Mega-CD":                                   {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Sega"            },
-        "Sega - Naomi":                                     {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Sega"            },  
+        "Sega - Naomi":                                     {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Sega"            },
         "Sega - Saturn":                                    {"enabled": True,  "defaultCore": "yabause_libretro",                   "friendlyName": "",                    "shortName": "", "manufacturer": "Sega"            },
         "SNK - Neo Geo CD":                                 {"enabled": False, "defaultCore": "mess2014_libretro",                  "friendlyName": "",                    "shortName": "", "manufacturer": "SNK"             },
         "Sony - PlayStation 2":                             {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Sony"            },
@@ -211,18 +211,22 @@ class SqlTableUpdater():
         "VTech - V.Flash":                                  {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "VTech"           },
 
         # Seventh-generation consoles (circa 2005)
-        "Microsoft - Xbox 360":                             {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Microsoft"       }, 
-        "Nintendo - Wii":                                   {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Nintendo"        }, 
-        "Sony - PlayStation 3":                             {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Sony"            }, 
-    
+        "Microsoft - Xbox 360":                             {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Microsoft"       },
+        "Nintendo - Wii":                                   {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Nintendo"        },
+        "Sony - PlayStation 3":                             {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Sony"            },
+
         # Eighth-generation consoles (circa 2012)
-        "Microsoft - Xbox One":                             {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Microsoft"       }, 
-        "Nintendo - Wii U":                                 {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Nintendo"        }, 
+        "Microsoft - Xbox One":                             {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Microsoft"       },
+        "Nintendo - Wii U":                                 {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Nintendo"        },
         "Sony - PlayStation 4":                             {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Sony"            },
-        }
+        
+        # Ninth-generation consoles (circa 2017)
+        "Microsoft - Xbox One X":                           {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Microsoft"       },
+        "Nintendo - Switch":                                {"enabled": False, "defaultCore": "",                                   "friendlyName": "",                    "shortName": "", "manufacturer": "Nintendo"        },
+}
 
     def phoenixSystems(self):
-        return OrderedDict(sorted(self.phoenixSystemDatabase.items(), key=lambda t: t[0]))              
+        return OrderedDict(sorted(self.phoenixSystemDatabase.items(), key=lambda t: t[0]))
 
     def libretroToPhoenix(self, libretroSystem):
         return self.libretroToPhoenixMap[libretroSystem]
@@ -233,6 +237,7 @@ class SqlTableUpdater():
         "3DO":                                                      {"Panasonic - 3DO Interactive Multiplayer"},
         "Arcade (various)":                                         {"Arcade"},
         "Atari - 2600":                                             {"Atari - 2600"},
+        "Atari - 5200":                                             {"Atari - 5200"},
         "Atari - 7800":                                             {"Atari - 7800"},
         "Atari - Jaguar":                                           {"Atari - Jaguar"},
         "Atari - Lynx":                                             {"Atari - Lynx"},
@@ -241,14 +246,20 @@ class SqlTableUpdater():
         "Bandai - WonderSwan":                                      {"Bandai - WonderSwan"},
         "CHIP-8":                                                   {"CHIP-8"},
         "Commodore Amiga":                                          {"Commodore - Amiga"},
+        "Commodore - C128":                                         {"Arcade"},
+        "Commodore - 64":                                           {"Commodore - 64"},
         "CP System I":                                              {"Capcom - CP System I"},
         "CP System II":                                             {"Capcom - CP System II"},
+        "CP System III":                                            {"Capcom - CP System III"},
         "CPC":                                                      {"Amstrad - CPC"},
         "DOS":                                                      {"DOS"},
+        "FB Alpha - Arcade Games":                                  {"Arcade"},
         "GCE - Vectrex":                                            {"GCE - Vectrex"},
+        "Handheld Electronic Game":                                 {"Nintendo - Game & Watch"},
         "IBM PC compatible":                                        {"IBM PC compatible"},
         "Magnavox - Odyssey2":                                      {"Magnavox - Odyssey2"},
         "MAME":                                                     {"Arcade"},
+        "MAME2003":                                                 {"Arcade"},
         "Microsoft - MSX 2":                                        {"Microsoft - MSX 2"},
         "Microsoft - MSX2":                                         {"Microsoft - MSX 2"},
         "Microsoft - MSX":                                          {"Microsoft - MSX"},
@@ -282,12 +293,16 @@ class SqlTableUpdater():
                                                                      "SNK - Neo Geo CD",
                                                                      "SNK - Neo Geo",
                                                                      "Watara - Supervision",
-                                                                    }, 
+                                                                    },
 
         "NEC - PC Engine - TurboGrafx 16":                          {"NEC - PC Engine - TurboGrafx 16"},
-        "NEC - Super Grafx":                                        {"NEC - Super Grafx"},
         "NEC - PC Engine SuperGrafx":                               {"NEC - Super Grafx"},
+        "NEC - PC Engine CD - TurboGrafx-CD":                       {"NEC - Super Grafx"},
+        "NEC - PC-FX":                                              {"NEC - PC-FX - PC-FXGA"},
+        "NEC - Super Grafx":                                        {"NEC - Super Grafx"},
         "Neo Geo":                                                  {"SNK - Neo Geo"},
+        "Nintendo - 3DS":                                           {"Nintendo - Nintendo 3DS"},
+        "Nintendo - Family Computer Disk System":                   {"Nintendo - Nintendo Entertainment System"},
         "Nintendo - Famicom Disk System":                           {"Nintendo - Nintendo Entertainment System"},
         "Nintendo - Game & Watch":                                  {"Nintendo - Game & Watch"},
         "Nintendo - Game Boy Advance (e-Cards)":                    {"Nintendo - Game Boy Advance (e-Cards)"},
@@ -296,30 +311,42 @@ class SqlTableUpdater():
         "Nintendo - Game Boy":                                      {"Nintendo - Game Boy"},
         "Nintendo - GameCube":                                      {"Nintendo - GameCube"},
         "Nintendo - Nintendo 64":                                   {"Nintendo - Nintendo 64"},
+        "Nintendo - Nintendo 64DD":                                 {"Nintendo - Nintendo 64"},
+        "Nintendo - Nintendo DS":                                   {"Nintendo - Nintendo DS"},
+        "Nintendo - Nintendo DS (Download Play)":                   {"Nintendo - Nintendo DS"},
         "Nintendo - Nintendo DS (Download Play) (BETA)":            {"Nintendo - Nintendo DS"},
         "Nintendo - Nintendo DS Decrypted":                         {"Nintendo - Nintendo DS"},
         "Nintendo - Nintendo Entertainment System":                 {"Nintendo - Nintendo Entertainment System"},
+        "Nintendo - Pokemon Mini":                                  {"Nintendo - Pokemon Mini"},
         "Nintendo - Sufami Turbo":                                  {"Nintendo - Sufami Turbo"},
         "Nintendo - Super Nintendo Entertainment System":           {"Nintendo - Super Nintendo Entertainment System"},
         "Nintendo - Virtual Boy":                                   {"Nintendo - Virtual Boy"},
         "Nintendo - Wii":                                           {"Nintendo - Wii"},
         "PC":                                                       {"IBM PC compatible"},
         "PC-FX":                                                    {"NEC - PC-FX - PC-FXGA"},
+        "PC-98":                                                    {"NEC - PC-98 series"},
+        "Phillips - Videopac+":                                     {"Philips - Videopac+"},
         "Sega - 32X":                                               {"Sega - 32X"},
         "Sega - Dreamcast":                                         {"Sega - Dreamcast"},
         "Sega - Game Gear":                                         {"Sega - Game Gear"},
         "Sega - Master System - Mark III":                          {"Sega - Master System - Mark III"},
         "Sega - Mega Drive - Genesis":                              {"Sega - Mega Drive - Genesis"},
+        "Sega - Mega-CD - Sega CD":                                 {"Sega - Mega-CD"},
         "Sega - NAOMI":                                             {"Sega - Naomi"},
         "Sega - PICO":                                              {"Sega - PICO"},
         "Sega - Saturn":                                            {"Sega - Saturn"},
         "Sega - SG-1000":                                           {"Sega - SG-1000"},
+        "Sharp - X68000":                                           {"Arcade"},
+        "Sinclair - ZX 81":                                         {"Sinclair - ZX81"},
+        "Sinclair - ZX Spectrum":                                   {"Sinclair - ZX Spectrum +3"},
+        "Sinclair - ZX Spectrum +3":                                {"Sinclair - ZX Spectrum +3"},
         "SNK - Neo Geo Pocket Color":                               {"SNK - Neo Geo Pocket Color"},
         "SNK - Neo Geo Pocket":                                     {"SNK - Neo Geo Pocket"},
         "Sony - PlayStation Portable":                              {"Sony - PlayStation Portable"},
         "Sony - PlayStation":                                       {"Sony - PlayStation"},
+        "The 3DO Company - 3DO":                                    {"Panasonic - 3DO Interactive Multiplayer"},
+        "Uzebox":                                                   {"Arcade"},
         "ZX Spectrum (various)":                                    {"Sinclair - ZX Spectrum +3"},
-        "ZX81":                                                     {"Sinclair - ZX81"},
     }
 
     # Not all Phoenix IDs are availble in OpenVGDB, fail silently and gracefully if a match isn't found
@@ -375,7 +402,7 @@ class SqlTableUpdater():
     }
 
     def getOpenVGDBToPhoenixMap(self):
-        return OrderedDict(sorted(self.openVGDBToPhoenixMap.items(), key=lambda t: t[0]))   
+        return OrderedDict(sorted(self.openVGDBToPhoenixMap.items(), key=lambda t: t[0]))
 
     openVGDBToPhoenixMap = {
         "3DO Interactive Multiplayer": "Panasonic - 3DO Interactive Multiplayer",
@@ -425,7 +452,7 @@ class SqlTableUpdater():
             if (
 
                 # No reason specified
-                #"4do_libretro" == key 
+                #"4do_libretro" == key
                 # or "81_libretro" == key
                 # or "bluemsx_libretro" == key
                 # or "bsnes_accuracy_libretro" == key
@@ -435,8 +462,8 @@ class SqlTableUpdater():
                 # or "catsfc_libretro" == key
                 # or "dosbox_libretro" == key
                 # or "emux_chip8_libretro" == key
-                # or "fb_alpha_cps1_libretro" == key 
-                # or "fb_alpha_cps2_libretro" == key 
+                # or "fb_alpha_cps1_libretro" == key
+                # or "fb_alpha_cps2_libretro" == key
                 # or "fmsx_libretro" == key
                 # or "gpsp_libretro" == key
                 # or "gw_libretro" == key
@@ -452,7 +479,7 @@ class SqlTableUpdater():
                 # or "puae_libretro" == key
                 # or "ume2014_libretro" == key
                 # or "vecx_libretro" == key
-                # or "virtualjaguar_libretro" == key 
+                # or "virtualjaguar_libretro" == key
 
                 # ARM cores
                  "pcsx" in key

@@ -1,30 +1,37 @@
-from sqlTableUpdater import SqlTableUpdater
-from sqldatabase import SqlDatabase
 from collections import OrderedDict, defaultdict
+
+from .sqlTableUpdater import SqlTableUpdater
+from .sqldatabase import SqlDatabase
 
 class ExtensionUpdater(SqlTableUpdater):
 
-    def __init__(self, tableName="", tableColumns=[], coreInfo={}):
-        if len(tableColumns) == 0:
-            tableColumns = ( ("system", "TEXT NOT NULL")
-                        , ("extension", "TEXT NOT NULL") )
+    def __init__(self, tableName: str = None, tableColumns: list = None, coreInfo: dict = None):
+        if not coreInfo:
+            coreInfo = {}
+        if not tableColumns:
+            tableColumns = (
+                ("system", "TEXT NOT NULL"),
+                ("extension", "TEXT NOT NULL")
+            )
 
-        SqlTableUpdater.__init__(self, tableName, tableColumns, coreInfo)
+        super().__init__(tableName if tableName else "", tableColumns, coreInfo)
 
     def updateTable(self):
 
         with SqlDatabase(self.dbFile, autoCommit=True) as db:
+
             self.updateColumns(db)
 
             exts = defaultdict(lambda: set())
 
-            for k, v in self.coreInfo['cores'].iteritems():
+            for k, v in self.coreInfo['cores'].items():
 
                 if "categories" not in v or v["categories"] != "Emulator":
                     continue
 
                 # Get the list of systems (Libretro IDs) this core supports
                 systems = []
+
                 if "database" in v:
                     name = v["database"].split("|")
 
