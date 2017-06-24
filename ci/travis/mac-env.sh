@@ -14,17 +14,19 @@ set -x # echo commands
 # Install packages
 brew update
 
-brew install cmake \
+brew install \
+ccache \
+cmake \
 curl \
 libsamplerate \
 ninja \
+p7zip \
 pkg-config \
 qt5 \
 quazip \
 sdl2 \
 xz \
 zsh \
-p7zip \
 
 # Don't pollute the source tree
 cd ..
