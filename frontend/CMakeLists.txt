@@ -39,7 +39,23 @@ foreach( filepath_full ${FRONTEND_QML} ${FRONTEND_QMLDIR} ${FRONTEND_ASSETS} )
 	# Debug
 	#message( ${filepath_relative_in} " -> " ${filepath_relative_out} )
 
-	configure_file( ${filepath_relative_in} ${filepath_relative_out} COPYONLY )
+	if( APPLE )
+		get_filename_component(filepath_relative_out_parent "${filepath_relative_out}" PATH)
+		set_source_files_properties(
+			${filepath_full}
+			PROPERTIES
+			MACOSX_PACKAGE_LOCATION Resources/${filepath_relative_out_parent}
+		)
+	else()
+
+	configure_file(
+		${filepath_relative_in}
+		${filepath_relative_out}
+		COPYONLY
+	)
+	endif()
+
+
 endforeach()
 
 ##

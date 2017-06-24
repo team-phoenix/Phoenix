@@ -44,6 +44,20 @@ matrix:
         - chmod +x "./ci/travis/linux-upload.sh"
         - "./ci/travis/linux-upload.sh"
 
+  # 2nd parallel build job - debug build on macOS
+    - env: "JOB=Tests"
+      os: osx
+      osx_image: xcode8.3
+      install:
+        - "git fetch --unshallow"
+        - "source ./ci/travis/mac-env.sh"
+      script:
+        - chmod +x "./ci/travis/mac-build.sh"
+        - "./ci/travis/mac-build.sh"
+      after_script:
+        - chmod +x "./ci/travis/mac-upload.sh"
+        - "./ci/travis/mac-upload.sh"
+
 notifications:
   irc:
     channels:

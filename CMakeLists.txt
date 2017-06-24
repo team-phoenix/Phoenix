@@ -6,7 +6,7 @@ list( APPEND CMAKE_MODULE_PATH
 )
 
 project( Phoenix )
-add_executable( ${PROJECT_NAME} "" )
+add_executable( ${PROJECT_NAME} MACOSX_BUNDLE "")
 
 ##
 ## Phoenix source

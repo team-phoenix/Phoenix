@@ -10,6 +10,7 @@ git_describe( PHOENIX_VER_STR )
 message( "git_describe: " ${PHOENIX_VER_STR} )
 string( SUBSTRING ${PHOENIX_VER_STR} 1 -1 PHOENIX_VER_TUPLE )
 string( REGEX REPLACE "-[0-9a-z\\-]*" "" PHOENIX_VER_TUPLE ${PHOENIX_VER_TUPLE} )
+set( PHOENIX_VER_DOTS ${PHOENIX_VER_TUPLE} )
 string( REPLACE "." "," PHOENIX_VER_TUPLE ${PHOENIX_VER_TUPLE} )
 configure_file( version.h.in version.h @ONLY )
 

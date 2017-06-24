@@ -61,6 +61,16 @@ int main( int argc, char *argv[] ) {
     // Figure out the right paths for the environment, and create user storage folders if not already there
     Library::PhxPaths::initPaths();
 
+    qDebug().noquote() << "Paths:";
+    qDebug().noquote() << "binLocation(): " << PhxPaths::binLocation();
+    qDebug().noquote() << "resourceLocation(): " << PhxPaths::resourceLocation();
+    qDebug().noquote() << "coreLocation(): " << PhxPaths::coreLocation();
+    qDebug().noquote() << "metadataLocation(): " << PhxPaths::metadataLocation();
+    qDebug().noquote() << "userDataLocation(): " << PhxPaths::userDataLocation();
+    qDebug().noquote() << "saveLocation(): " << PhxPaths::saveLocation();
+    qDebug().noquote() << "firmwareLocation(): " << PhxPaths::firmwareLocation();
+    qDebug().noquote() << "coverArtCacheLocation(): " << PhxPaths::coverArtCacheLocation();
+
     // For release builds, write to a log file along with the console
 #ifdef QT_NO_DEBUG
 
@@ -90,6 +100,9 @@ int main( int argc, char *argv[] ) {
     engine.addImportPath( app.applicationDirPath() + "/QML" );
 #if defined( Q_OS_LINUX )
     engine.addImportPath( QStringLiteral( "/usr/lib/phoenix/QML" ) );
+#endif
+#if defined( Q_OS_MACX )
+    engine.addImportPath( PhxPaths::resourceLocation() % QStringLiteral( "/QML" ) );
 #endif
 
     // Give the QML engine our command line args

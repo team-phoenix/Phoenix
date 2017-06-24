@@ -2,19 +2,60 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 	<dict>
-		<key>NSPrincipalClass</key>
-			<string>NSApplication</string>
-		<key>CFBundleIconFile</key>
-			<string>phoenix.icns</string>
-		<key>CFBundlePackageType</key>
-			<string>APPL</string>
-		<key>CFBundleGetInfoString</key>
-			<string>©2016 Team Phoenix. Licenced under GPL v2</string>
-		<key>CFBundleSignature</key>
-			<string>????</string>
-		<key>CFBundleExecutable</key>
+		<!-- Expected keys -->
+
+		<!-- (Bundle name) The short name for the bundle. The value for this key is usually the name of your application. Xcode sets the value of this key by default when you create a new project. -->
+		<key>CFBundleName</key>
 			<string>Phoenix</string>
+
+		<!-- (Bundle display name) The localized version of your application name. You typically include a localized value for this key in an InfoPlist.strings files in each of your language-specific resource directories. -->
+		<key>CFBundleDisplayName</key>
+			<string>Phoenix</string>
+
+		<!-- (Bundle identifier) The string that identifies your application to the system. This string must be a uniform type identifier (UTI) that contains only alphanumeric (A-Z,a-z,0-9), hyphen (-), and period (.) characters. The string should also be in reverse-DNS format. For example, if your company’s domain is Ajax.com and you create an application named Hello, you could assign the string com.Ajax.Hello as your application’s bundle identifier. The bundle identifier is used in validating the application signature. -->
 		<key>CFBundleIdentifier</key>
 			<string>vg.phoenix.Phoenix</string>
+
+		<!-- (Bundle version) The string that specifies the build version number of the bundle. This value is a monotonically increased string, comprised of one or more period-separated integers. This value can correspond to either released or unreleased versions of the application. This value cannot be localized. -->
+		<key>CFBundleVersion</key>
+			<string>@PHOENIX_VER_DOTS@</string>
+
+		<!-- (Bundle OS Type code) The type of bundle this is. For applications, the value of this key is always the four-character string APPL. -->
+		<key>CFBundlePackageType</key>
+			<string>APPL</string>
+
+		<!-- (Bundle creator OS Type code) The creator code for the bundle. This is a four-character string that is specific to the bundle. For example, the signature for the TextEdit application is ttxt. -->
+		<key>CFBundleSignature</key>
+			<string>tphx</string>
+
+		<!-- (Executable file) The name of the main executable file. This is the code that is executed when the user launches your application. Xcode typically sets the value of this key automatically at build time. -->
+		<key>CFBundleExecutable</key>
+			<string>Phoenix</string>
+
+		<!-- Recommended keys -->
+
+		<!-- (Document types) The document types supported by the application. This type consists of an array of dictionaries, each of which provides information about a specific document type. -->
+		<key>CFBundleDocumentTypes</key>
+			<array></array>
+
+		<!-- (Bundle versions string, short) The release version of the application. The value of this key is a string comprised of three period-separated integers. -->
+		<key>CFBundleShortVersionString</key>
+			<string>@PHOENIX_VER_DOTS@</string>
+
+		<!-- (Minimum system version) The minimum version of macOS required for this application to run. The value for this key is a string of the form n.n.n where each n is a number representing either the major or minor version number of macOS that is required. For example, the value 10.1.5 would represent macOS v10.1.5. -->
+		<key>LSMinimumSystemVersion</key>
+			<string>10.7.0</string>
+
+		<!-- (Copyright (human-readable)) The copyright notice for the application. This is a human readable string and can be localized by including the key in an InfoPlist.strings file in your language-specific project directories. -->
+		<key>NSHumanReadableCopyright</key>
+			<string>©2017 Team Phoenix. Licenced under GPLv2</string>
+
+		<!-- Other keys -->
+
+		<!-- A legacy way to specify the app’s icon. Use the CFBundleIcons or CFBundleIconFiles keys instead. See CFBundleIconFile for details. -->
+		<!-- The *only* way to set an app icon on macOS is via this "legacy" key... -->
+		<key>CFBundleIconFile</key>
+			<string>phoenix.icns</string>
+
 	</dict>
 </plist>

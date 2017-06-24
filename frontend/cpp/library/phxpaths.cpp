@@ -132,7 +132,7 @@ void PhxPaths::initPaths() {
         PhxPaths::mUserDataLocation = QStandardPaths::writableLocation( QStandardPaths::AppLocalDataLocation ) % '/' % QGuiApplication::applicationName();
 #endif
 #ifdef Q_OS_MACX
-        PhxPaths::mResourceLocation = PhxPaths::mBinLocation;
+        PhxPaths::mResourceLocation = PhxPaths::mBinLocation % QStringLiteral( "/../Resources" );
         PhxPaths::mCoreLocation = QStringLiteral( "/usr/local/lib/libretro" );
         PhxPaths::mMetadataLocation = PhxPaths::mResourceLocation % '/' % QStringLiteral( "Metadata" ) % '/';
 
