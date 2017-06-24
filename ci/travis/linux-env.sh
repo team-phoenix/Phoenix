@@ -11,10 +11,6 @@ initial_dir="${PWD}"
 set -e # exit on error
 set -x # echo commands
 
-# Set up compilers
-export CC=/usr/bin/gcc-4.9
-export CXX=/usr/bin/g++-4.9
-
 # Don't pollute the source tree
 cd ..
 
