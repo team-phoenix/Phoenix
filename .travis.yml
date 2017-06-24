@@ -12,15 +12,19 @@ env:
 
 matrix:
   fast_finish: true
-  # allow_failures:
-  #           - env: "JOB=AppImage_x86_64"
-  #           - env: "JOB=AppImage_i686"
-  #           - env: "JOB=AppImage_armhf"
-  #           - env: "JOB=MacOSX"
+
+  allow_failures:
+    - env: "JOB=ubuntu_debug"
+    - env: "JOB=macOS_debug"
 
   include:
   # 1st parallel build job - debug build on Ubuntu
     - env: "JOB=ubuntu_debug"
+      dist: trusty
+
+      # FIXME: Remove once Trusty beta doesn't fail 50% of the time due to some funny business post-install triggers involving udev or systemd or whatever
+      sudo: required
+      
       addons:
         apt:
           sources:
@@ -67,6 +71,5 @@ notifications:
     use_notice: true
     skip_join: true
 
-dist: trusty
 git:
   submodules: false

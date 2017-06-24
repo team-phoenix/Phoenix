@@ -4,7 +4,7 @@ if [ "$TRAVIS_SECURE_ENV_VARS" -eq "false" ]; then
 	exit;
 fi
 
-cd build
+cd install
 export BUILD_TAG="Phoenix-travis${TRAVIS_BUILD_NUMBER}-${TRAVIS_BRANCH}-${TRAVIS_COMMIT:0:6}-macOS"
 echo "Build tag: ${BUILD_TAG}"
 artifacts upload --target-paths /macOS/${BUILD_TAG} --working-dir `pwd` Phoenix.app
