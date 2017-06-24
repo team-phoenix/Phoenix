@@ -23,14 +23,14 @@ matrix:
       dist: trusty
 
       # FIXME: Remove once Trusty beta doesn't fail 50% of the time due to some funny business post-install triggers involving udev or systemd or whatever
-      sudo: required
+      # sudo: required
       
       addons:
         apt:
           sources:
             - ubuntu-toolchain-r-test
           packages:
-            - g++-4.9
+            # - g++-4.9
             - libsamplerate0-dev
             - libquazip0-dev
             - libsdl2-dev
