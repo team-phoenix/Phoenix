@@ -34,6 +34,9 @@ wget "https://s3.amazonaws.com/travis-ci-gmbh/artifacts/stable/build/darwin/amd6
 chmod +x artifacts
 export PATH=`pwd`:$PATH
 
+# Qt is keg-only
+export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:"/usr/local/opt/qt/lib/cmake/Qt5/"
+
 # Return shell to its initial state:
 set +x
 set +e

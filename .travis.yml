@@ -20,7 +20,7 @@ matrix:
 
   include:
   # 1st parallel build job - debug build on Ubuntu
-    - env: "JOB=Tests"
+    - env: "JOB=ubuntu_debug"
       addons:
         apt:
           sources:
@@ -43,9 +43,11 @@ matrix:
       after_script:
         - chmod +x "./ci/travis/linux-upload.sh"
         - "./ci/travis/linux-upload.sh"
+      addons:
+        artifacts: true
 
   # 2nd parallel build job - debug build on macOS
-    - env: "JOB=Tests"
+    - env: "JOB=macOS_debug"
       os: osx
       osx_image: xcode8.3
       install:
