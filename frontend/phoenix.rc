@@ -23,7 +23,7 @@ BEGIN
             VALUE "FileDescription", "Phoenix"
             VALUE "FileVersion", PHOENIX_VER_STR
             VALUE "InternalName", "Phoenix"
-            VALUE "LegalCopyright", "Copyright ©2016 Team Phoenix -- Licensed under GPLv2"
+            VALUE "LegalCopyright", "Copyright ©2017 Team Phoenix -- Licensed under GPLv2"
             VALUE "OriginalFilename", "Phoenix.exe"
             VALUE "ProductName", "Phoenix"
             VALUE "ProductVersion", PHOENIX_VER_STR
