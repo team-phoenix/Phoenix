@@ -4,66 +4,66 @@ language: cpp
 sudo: false
 
 env:
-    global:
-        - "ARTIFACTS_AWS_REGION=us-east-1"
-        - secure: "XMKxvHKgJmvcadiENukV02OG5OnUUF7+LmKOTkQk2Fxa1LMNQqSRncIC9G0qqdFQPqjVXhDM3aBFUTxTkTk7rlsT4LO1+XlgZ6B4QBo22GfhPcgjJaUqVMmjoMNINiO32ED4mi+dhLYr7ewnZCEijYxpA0sqRbUiM1l0fUZwiHk="
-        - secure: "gLHgwDamFLrBVbb7LIiPgFhKmnNGLFTvsb0Dk146QS9LBtuYHDJRZbt1sv1ZC/704nCPk6zarqersRifcQAW46IaoW6sn+0UP9owUVvrmKjncKKTYzAkleuHx43pWq93T9bh1llhl/8EX1jOrVTsyTKRJkMgntD2vjPeDrZRGjQ="
-        - secure: "BdRerctcHfM4b3TDWPtkeHTv6WP/GioMO5gw4podQOlEYXMxDhwVrf9wqC+eIDl9KS6+FSvOfrQvTuGKrWWTWoTiP+tBuJaKhfzALXl7PcKlwL3ThVlr+8GSsVA20XHBD2i2Hk0azenzX6cXv+NXtHdkCVoj6sld8tnQ0/8fZbY="
+  global:
+    - "ARTIFACTS_AWS_REGION=us-east-1"
+    - secure: "XMKxvHKgJmvcadiENukV02OG5OnUUF7+LmKOTkQk2Fxa1LMNQqSRncIC9G0qqdFQPqjVXhDM3aBFUTxTkTk7rlsT4LO1+XlgZ6B4QBo22GfhPcgjJaUqVMmjoMNINiO32ED4mi+dhLYr7ewnZCEijYxpA0sqRbUiM1l0fUZwiHk="
+    - secure: "gLHgwDamFLrBVbb7LIiPgFhKmnNGLFTvsb0Dk146QS9LBtuYHDJRZbt1sv1ZC/704nCPk6zarqersRifcQAW46IaoW6sn+0UP9owUVvrmKjncKKTYzAkleuHx43pWq93T9bh1llhl/8EX1jOrVTsyTKRJkMgntD2vjPeDrZRGjQ="
+    - secure: "BdRerctcHfM4b3TDWPtkeHTv6WP/GioMO5gw4podQOlEYXMxDhwVrf9wqC+eIDl9KS6+FSvOfrQvTuGKrWWTWoTiP+tBuJaKhfzALXl7PcKlwL3ThVlr+8GSsVA20XHBD2i2Hk0azenzX6cXv+NXtHdkCVoj6sld8tnQ0/8fZbY="
 
 matrix:
-    fast_finish: true
+  fast_finish: true
 
-    allow_failures:
-        - env: "JOB=ubuntu_debug"
-        - env: "JOB=macOS_debug"
+  allow_failures:
+    - env: "JOB=ubuntu_debug"
+    - env: "JOB=macOS_debug"
 
-    include:
-        # 1st parallel build job - debug build on Ubuntu
-        - env: "JOB=ubuntu_debug"
-            dist: trusty
-            sudo: required
-            cache:
-                directories:
-                    - $HOME/.ccache
+  include:
+    # 1st parallel build job - debug build on Ubuntu
+    - env: "JOB=ubuntu_debug"
+      dist: trusty
+      sudo: required
+      cache:
+        directories:
+          - $HOME/.ccache
 
-            before_install:
-                - "git fetch --unshallow"
-            install:
-                - "sudo apt update -qq"
-                - "sudo apt install libsamplerate0-dev libquazip0-dev libsdl2-dev p7zip-full"
-                - "source ./ci/travis/linux-env.sh"
-            script:
-                - chmod +x "./ci/travis/linux-build.sh"
-                - "./ci/travis/linux-build.sh"
-            after_success:
-                - chmod +x "./ci/travis/linux-upload.sh"
-                - "./ci/travis/linux-upload.sh"
+      before_install:
+        - "git fetch --unshallow"
+      install:
+        - "sudo apt update -qq"
+        - "sudo apt install libsamplerate0-dev libquazip0-dev libsdl2-dev p7zip-full"
+        - "source ./ci/travis/linux-env.sh"
+      script:
+        - chmod +x "./ci/travis/linux-build.sh"
+        - "./ci/travis/linux-build.sh"
+      after_success:
+        - chmod +x "./ci/travis/linux-upload.sh"
+        - "./ci/travis/linux-upload.sh"
 
-        # 2nd parallel build job - debug build on macOS
-        - env: "JOB=macOS_debug"
-            os: osx
-            osx_image: xcode8.3
-            cache:
-                directories:
-                    - $HOME/.ccache
+    # 2nd parallel build job - debug build on macOS
+    - env: "JOB=macOS_debug"
+      os: osx
+      osx_image: xcode8.3
+      cache:
+        directories:
+          - $HOME/.ccache
 
-            before_install:
-                - "git fetch --unshallow"
-            install:
-                - "source ./ci/travis/mac-env.sh"
-            script:
-                - chmod +x "./ci/travis/mac-build.sh"
-                - "./ci/travis/mac-build.sh"
-            after_success:
-                - chmod +x "./ci/travis/mac-upload.sh"
-                - "./ci/travis/mac-upload.sh"
+      before_install:
+        - "git fetch --unshallow"
+      install:
+        - "source ./ci/travis/mac-env.sh"
+      script:
+        - chmod +x "./ci/travis/mac-build.sh"
+        - "./ci/travis/mac-build.sh"
+      after_success:
+        - chmod +x "./ci/travis/mac-upload.sh"
+        - "./ci/travis/mac-upload.sh"
 
 notifications:
-    irc:
-        channels:
-            - "chat.freenode.net#phoenix-dev"
-        use_notice: true
-        skip_join: true
+  irc:
+    channels:
+      - "chat.freenode.net#phoenix-dev"
+    use_notice: true
+    skip_join: true
 
 git:
-    submodules: false
+  submodules: false
