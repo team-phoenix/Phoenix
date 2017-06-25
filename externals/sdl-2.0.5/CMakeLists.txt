@@ -2,7 +2,7 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
   message(FATAL_ERROR "Prevented in-tree built. Please create a build directory outside of the SDL source code and call cmake from there")
 endif()
 
-cmake_minimum_required(VERSION 2.8.5)
+cmake_minimum_required(VERSION 2.8.11)
 project(SDL2 C)
 
 # !!! FIXME: this should probably do "MACOSX_RPATH ON" as a target property
@@ -218,8 +218,6 @@ if(CYGWIN)
 endif()
 
 add_definitions(-DUSING_GENERATED_CONFIG_H)
-# General includes
-include_directories(${SDL2_BINARY_DIR}/include ${SDL2_SOURCE_DIR}/include)
 
 # All these ENABLED_BY_DEFAULT vars will default to ON if not specified, so
 #  you only need to have a platform override them if they are disabling.
@@ -1535,9 +1533,11 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EXTRA_CFLAGS}")
 # Always build SDLmain
 add_library(SDL2main STATIC ${SDLMAIN_SOURCES})
 set(_INSTALL_LIBS "SDL2main")
+target_include_directories(SDL2main PUBLIC ${SDL2_BINARY_DIR}/include PUBLIC ${SDL2_SOURCE_DIR}/include)
 
 if(SDL_SHARED)
   add_library(SDL2 SHARED ${SOURCE_FILES} ${VERSION_SOURCES})
+  target_include_directories(SDL2 PUBLIC ${SDL2_BINARY_DIR}/include PUBLIC ${SDL2_SOURCE_DIR}/include)
   if(UNIX)
     set_target_properties(SDL2 PROPERTIES
       VERSION ${LT_VERSION}
@@ -1562,6 +1562,7 @@ endif()
 if(SDL_STATIC)
   set (BUILD_SHARED_LIBS FALSE)
   add_library(SDL2-static STATIC ${SOURCE_FILES})
+  target_include_directories(SDL2-static PUBLIC ${SDL2_BINARY_DIR}/include PUBLIC ${SDL2_SOURCE_DIR}/include)
   set_target_properties(SDL2-static PROPERTIES OUTPUT_NAME "SDL2")
   set_target_properties(SDL2-static PROPERTIES POSITION_INDEPENDENT_CODE ${SDL_STATIC_PIC})
   if(MSVC)
