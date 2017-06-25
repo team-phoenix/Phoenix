@@ -18,49 +18,43 @@ matrix:
     - env: "JOB=macOS_debug"
 
   include:
-  # 1st parallel build job - debug build on Ubuntu
+    # 1st parallel build job - debug build on Ubuntu
     - env: "JOB=ubuntu_debug"
       dist: trusty
-
-      # FIXME: Remove once Trusty beta doesn't fail 50% of the time due to some funny business post-install triggers involving udev or systemd or whatever
-      # sudo: required
-      
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            # - g++-4.9
-            - libsamplerate0-dev
-            - libquazip0-dev
-            - libsdl2-dev
-            - p7zip-full
+      sudo: required
       cache:
         directories:
           - $HOME/.ccache
-      install:
+
+      before_install:
         - "git fetch --unshallow"
+      install:
+        - "sudo apt update -qq"
+        - "sudo apt install libsamplerate0-dev libquazip0-dev libsdl2-dev p7zip-full"
         - "source ./ci/travis/linux-env.sh"
       script:
         - chmod +x "./ci/travis/linux-build.sh"
         - "./ci/travis/linux-build.sh"
-      after_script:
+      after_success:
         - chmod +x "./ci/travis/linux-upload.sh"
         - "./ci/travis/linux-upload.sh"
-      addons:
-        artifacts: true
 
-  # 2nd parallel build job - debug build on macOS
+    # 2nd parallel build job - debug build on macOS
     - env: "JOB=macOS_debug"
       os: osx
       osx_image: xcode8.3
-      install:
+      cache:
+        directories:
+          - $HOME/.ccache
+
+      before_install:
         - "git fetch --unshallow"
+      install:
         - "source ./ci/travis/mac-env.sh"
       script:
         - chmod +x "./ci/travis/mac-build.sh"
         - "./ci/travis/mac-build.sh"
-      after_script:
+      after_success:
         - chmod +x "./ci/travis/mac-upload.sh"
         - "./ci/travis/mac-upload.sh"
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ "$TRAVIS_SECURE_ENV_VARS" -eq "false" ]; then
+if [[ "$TRAVIS_SECURE_ENV_VARS" == "false" ]]; then
 	exit;
 fi
 
