@@ -1,10 +1,3 @@
-# set all include directories for in and out of source builds
-include_directories(
-	${CMAKE_CURRENT_SOURCE_DIR}
-	${CMAKE_CURRENT_BINARY_DIR}
-	${ZLIB_INCLUDE_DIRS}
-)
-
 file(GLOB SRCS "*.c" "*.cpp")
 file(GLOB PUBLIC_HEADERS "*.h")
 
@@ -17,6 +10,21 @@ set(SRCS ${SRCS} ${MOC_SRCS})
 add_library(${QUAZIP_LIB_TARGET_NAME} SHARED ${SRCS})
 add_library(quazip_static STATIC ${SRCS})
  
+# set all include directories for in and out of source builds
+target_include_directories(${QUAZIP_LIB_TARGET_NAME} 
+	PUBLIC
+	${CMAKE_CURRENT_SOURCE_DIR}
+	${CMAKE_CURRENT_BINARY_DIR}
+	${ZLIB_INCLUDE_DIRS}
+)
+
+target_include_directories(quazip_static
+	PUBLIC
+	${CMAKE_CURRENT_SOURCE_DIR}
+	${CMAKE_CURRENT_BINARY_DIR}
+	${ZLIB_INCLUDE_DIRS}
+)
+
 # Windows uses .lib extension for both static and shared library
 # *nix systems use different extensions for SHARED and STATIC library and by convention both libraries have the same name
 if (NOT WIN32)
