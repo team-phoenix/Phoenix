@@ -118,26 +118,14 @@ void AudioOutput::commandIn( Node::Command command, QVariant data, qint64 timeSt
             inputAudioFormat.setSampleType( QAudioFormat::SignedInt );
             inputAudioFormat.setByteOrder( QAudioFormat::LittleEndian );
             inputAudioFormat.setCodec( "audio/pcm" );
+            inputAudioFormat.setSampleSize( 16 );
 
-            // Try using the nearest supported format
-            QAudioDeviceInfo info( QAudioDeviceInfo::defaultOutputDevice() );
-            outputAudioFormat = info.nearestFormat( inputAudioFormat );
+            outputAudioFormat = inputAudioFormat;
 
-            // If that got us a format with a worse sample rate or different endianness, use preferred format
-            if( ( outputAudioFormat.sampleRate() <= inputAudioFormat.sampleRate() )
-                || ( outputAudioFormat.byteOrder() != QAudioFormat::LittleEndian ) ) {
-                outputAudioFormat = info.preferredFormat();
-            }
+            sampleRateRatio = 1.0;
 
-            // Force 16-bit audio (for now)
-            outputAudioFormat.setSampleSize( 16 );
-
-            sampleRateRatio = static_cast<qreal>( outputAudioFormat.sampleRate() ) / inputAudioFormat.sampleRate();
-
-            qCDebug( phxAudioOutput ) << "audioFormatIn" << inputAudioFormat;
             qCDebug( phxAudioOutput ) << "audioFormatOut" << outputAudioFormat;
-            qCDebug( phxAudioOutput ) << "sampleRateRatio" << sampleRateRatio;
-            qCDebug( phxAudioOutput, "Using nearest format supported by sound card: %iHz %ibits",
+            qCDebug( phxAudioOutput, "Using format: %iHz %ibits",
                      outputAudioFormat.sampleRate(), outputAudioFormat.sampleSize() );
 
             resetAudio();
