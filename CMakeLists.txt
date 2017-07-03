@@ -5,6 +5,20 @@ list(APPEND CMAKE_MODULE_PATH
 	${CMAKE_CURRENT_LIST_DIR}/frontend
 )
 
+# A fix for Windows
+if(WIN32)
+	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${OUTPUT_DIRECTORY}")
+	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${OUTPUT_DIRECTORY}")
+	set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG "${OUTPUT_DIRECTORY}")
+	set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE "${OUTPUT_DIRECTORY}")
+	set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${OUTPUT_DIRECTORY}")
+	set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${OUTPUT_DIRECTORY}")
+endif()
+
+##
+## Phoenix executable
+##
+
 project(Phoenix)
 add_executable(${PROJECT_NAME} MACOSX_BUNDLE "")
 
@@ -18,6 +32,11 @@ include(backend/CMakeLists.txt)
 ##
 ## Externals
 ##
+
+find_package(Qt5 REQUIRED COMPONENTS Concurrent Core Multimedia Network Qml Quick Sql Svg)
+target_link_libraries(${PROJECT_NAME} Qt5::Concurrent Qt5::Core Qt5::Multimedia Qt5::Network Qt5::Qml Qt5::Quick Qt5::Sql Qt5::Svg)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set_target_properties(${PROJECT_NAME} PROPERTIES AUTOMOC ON AUTORCC ON)
 
 find_package(Libsamplerate)
 if(LIBSAMPLERATE_FOUND)
@@ -42,9 +61,23 @@ if(QUAZIP_FOUND)
 	include_directories(${QUAZIP_INCLUDE_DIR})
 	target_link_libraries(${PROJECT_NAME} ${QUAZIP_LIBRARIES})
 else()
-	add_definitions(-DQUAZIP_STATIC)
-	add_subdirectory(externals/quazip-0.7.3)
-	target_link_libraries(${PROJECT_NAME} quazip_static)
+        file(GLOB QUAZIP_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/externals/quazip-0.7.3/quazip/*.c ${CMAKE_CURRENT_SOURCE_DIR}/externals/quazip-0.7.3/quazip/*.cpp)
+        add_library(quazip STATIC ${QUAZIP_SOURCES})
+        target_compile_definitions(quazip PUBLIC -DQUAZIP_STATIC)
+
+        # QuaZIP depends on zlib
+        if(ZLIB_FOUND)
+            target_link_libraries(quazip ${ZLIB_LIBRARY_RELEASE})
+        else()
+            target_link_libraries(quazip zlibstatic)
+        endif()
+
+        # QuaZIP depends on Qt5
+        target_link_libraries(quazip Qt5::Core)
+        set_target_properties(quazip PROPERTIES AUTOMOC ON)
+
+        target_include_directories(quazip PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/externals/quazip-0.7.3/quazip)
+        target_link_libraries(${PROJECT_NAME} quazip)
 endif()
 
 find_package(SDL2)
@@ -57,12 +90,6 @@ else()
 	add_subdirectory(externals/sdl-2.0.5)
 	target_link_libraries(${PROJECT_NAME} SDL2-static SDL2main)
 endif()
-
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set_target_properties(${PROJECT_NAME} PROPERTIES AUTOMOC ON AUTORCC ON)
-
-find_package(Qt5 REQUIRED COMPONENTS Concurrent Core Multimedia Network Qml Quick Sql Svg)
-target_link_libraries(${PROJECT_NAME} Qt5::Concurrent Qt5::Core Qt5::Multimedia Qt5::Network Qt5::Qml Qt5::Quick Qt5::Sql Qt5::Svg)
 
 # On macOS, we must use QtPlatformHeaders to grab the pointer to the main window's native OpenGL context (NSOpenGLContext)
 # http://doc.qt.io/qt-5/qtplatformheaders-index.html
