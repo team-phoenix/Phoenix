@@ -45,3 +45,4 @@ Makefile*
 
 # CLion
 /.idea/
+/cmake-build*/
