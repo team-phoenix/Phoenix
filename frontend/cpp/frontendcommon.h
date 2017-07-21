@@ -7,21 +7,21 @@
 #include <QtGlobal>
 
 //#include <QtCore>
-#include <QString>
-#include <QStringBuilder>
-#include <QThread>
-#include <QStandardPaths>
 #include <QAbstractTableModel>
 #include <QDir>
 #include <QDirIterator>
+#include <QStandardPaths>
+#include <QString>
+#include <QStringBuilder>
+#include <QThread>
 #include <QtMath>
 
 //#include <QtConcurrent>
 #include <QtConcurrentMap>
 
 //#include <QtGui>
-#include <QTextDocument>
 #include <QGuiApplication>
+#include <QTextDocument>
 
 //#include <QtMultimedia>
 
@@ -30,19 +30,19 @@
 #include <QNetworkReply>
 
 //#include <QtQml>
-#include <QQmlEngine>
 #include <QJSEngine>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QQmlEngine>
 
 //#include <QtQuick>
 
 //#include <QtSql>
+#include <QSqlDriver>
+#include <QSqlError>
+#include <QSqlField>
 #include <QSqlQuery>
 #include <QSqlTableModel>
-#include <QSqlError>
-#include <QSqlDriver>
-#include <QSqlField>
 
 //#include <QtWidgets>
 #include <QApplication>
