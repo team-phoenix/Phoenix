@@ -1,4 +1,4 @@
-option( PORTABLE_MODE "Store all data in the same folder as the binary" ON )
+option( PORTABLE_MODE "Store all data in the same folder as the binary" OFF )
 
 if( PORTABLE_MODE )
 	file( WRITE ${CMAKE_CURRENT_BINARY_DIR}/PHOENIX-PORTABLE "" )
