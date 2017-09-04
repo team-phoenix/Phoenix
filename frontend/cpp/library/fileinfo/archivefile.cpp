@@ -13,31 +13,32 @@ const QString ArchiveFile::prefix() {
 }
 
 ArchiveFile::ParseData ArchiveFile::parse( const QString &file ) {
-    QuaZip zip( file );
-    zip.open( QuaZip::mdUnzip );
+    KZip zip( file );
+    zip.open( QIODevice::ReadOnly );
 
+    // FIXME: Handle bad zip files instead of just crashing!
     Q_ASSERT( zip.isOpen() );
 
     QStringList zipFileList;
     QHash<QString, QString> fileHashMap;
 
-    for( bool f = zip.goToFirstFile(); f; f = zip.goToNextFile() ) {
+    // TODO: Recurse
+    // TODO: Support other file types
+    for( const QString path : zip.directory()->entries() ) {
+        auto *entry = dynamic_cast<const KZipFileEntry *>( zip.directory()->entry( path ) );
+
         // Skip folders (the contents of the folders should still be recursed)
         // Apparently this is guarantied by the standard?
-        if( zip.getCurrentFileName().endsWith( '/' ) ) {
+        if( entry->isDirectory() ) {
             continue;
         }
 
         const QString absPath = ArchiveFile::prefix() % file
-                                % ArchiveFile::delimiter() % zip.getCurrentFileName();
+                                % ArchiveFile::delimiter() % entry->path();
         zipFileList.append( absPath );
 
-        // Grab CRC32 from archive
-        QuaZipFileInfo zipFileInfo;
-
-        if( zip.getCurrentFileInfo( &zipFileInfo ) ) {
-            fileHashMap.insert( absPath, QString::number( zipFileInfo.crc, 16 ).toUpper() );
-        }
+        // Record the CRC32 for this entry in our model
+        fileHashMap.insert( absPath, QString::number( entry->crc32(), 16 ).toUpper() );
     }
 
     ParseData data;

@@ -73,20 +73,63 @@ bool GameLauncher::verify( const QString system, QString rom ) {
 QString GameLauncher::trimmedGame( QString game ) {
 
     if( game.startsWith( QStringLiteral( "file://" ) ) ) {
+        // FIXME: Never executed?
         game.remove( QStringLiteral( "file://" ) );
+        return game;
     } else if( game.startsWith( QStringLiteral( "cue://" ) ) ) {
+        // FIXME: Never executed?
         game.remove( QStringLiteral( "cue://" ) );
+        return game;
     } else if( game.startsWith( QStringLiteral( "zip://" ) ) ) {
         game.remove( QStringLiteral( "zip://" ) );
         auto nameList = game.split( QStringLiteral( "|||" ) );
 
-        auto baseDestName = nameList.at( 1 );
+        if( nameList.length() != 2 ) {
+            qWarning() << "Malformed zip file path stored in database, unable to extract zip file";
+            return QStringLiteral("");
+        }
 
-        game = QDir::tempPath() + "/" + baseDestName;
+        QString outerPath = nameList.at( 0 );
+        QString innerPath = nameList.at( 1 );
 
-        qDebug() << "temp dir: " << game;
-        qDebug() << "return: " << JlCompress::extractFile( nameList.first(), nameList.at( 1 ), game );
+        QString tempPath = QDir::tempPath();
+        QString dest = tempPath + "/" + innerPath;
 
+        qDebug() << "Source file:" << outerPath;
+        qDebug() << "Inner path:" << innerPath;
+        qDebug() << "Extracting to:" << dest;
+
+        KZip archive( outerPath );
+
+        // Open the archive
+        if (!archive.open(QIODevice::ReadOnly)) {
+            qWarning() << "Unable to extract zip file: open() returned false";
+            return QStringLiteral("");
+        }
+
+        // Grab a handle to the root directory of the archive
+        const KArchiveDirectory *rootDirectory = archive.directory();
+        if( !rootDirectory ) {
+            qWarning() << "Unable to extract zip file: directory() returned NULL";
+            return QStringLiteral( "" );
+        }
+
+        // Grab a handle to the file we're looking for within the archive
+        const KArchiveFile *entry = dynamic_cast<const KArchiveFile *>( rootDirectory->entry( innerPath ) );
+        if( !entry ) {
+            qWarning() << "Unable to extract zip file: entry() returned NULL";
+            return QStringLiteral( "" );
+        }
+
+        // Extract this file to the temp path
+        bool ret = entry->copyTo( tempPath );
+        if( !ret ) {
+            qWarning() << "Unable to extract zip file: copyTo() returned NULL";
+            return QStringLiteral( "" );
+        }
+
+        archive.close();
+        return dest;
     }
 
     return game;
@@ -102,9 +145,9 @@ QString GameLauncher::trimmedGameNoExtract( QString game ) {
         game.remove( QStringLiteral( "zip://" ) );
         auto nameList = game.split( QStringLiteral( "|||" ) );
 
-        auto baseDestName = nameList.at( 1 );
+        auto innerPath = nameList.at( 1 );
 
-        game = QDir::tempPath() + "/" + baseDestName;
+        game = QDir::tempPath() + "/" + innerPath;
     }
 
     return game;

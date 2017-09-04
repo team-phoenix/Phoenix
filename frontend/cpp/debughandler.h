@@ -1,16 +1,6 @@
 #pragma once
 
-#pragma once
-
-#include <QString>
-#include <QtGlobal>
-#include <QMutex>
-#include <QMutexLocker>
-#include <QFileInfo>
-#include <QFile>
-
-#include "quazip.h"
-#include "quazipfile.h"
+#include "frontendcommon.h"
 
 static QString logFilePath;
 static QFile logFile;
@@ -37,12 +27,9 @@ namespace DebugHandler {
         logFile.seek( 0 );
         QFileInfo info( logFilePath );
 
-        QuaZip zip( info.canonicalPath() + "/" + info.baseName() + ".zip" );
-        zip.open( QuaZip::Mode::mdCreate );
-
-        QuaZipFile zipFile( &zip );
-        zipFile.open( QuaZipFile::WriteOnly, QuaZipNewInfo( info.baseName() + ".log" ) );
-        zipFile.write( logFile.readAll() );
+        KZip zip( info.canonicalPath() + "/" + info.baseName() + ".zip" );
+        zip.open( QIODevice::WriteOnly );
+        zip.writeFile( info.baseName() + ".log", logFile.readAll(), 0100644, QStringLiteral("owners"), QStringLiteral("users"));
 
         // Must remove the old file, or we are just wasting space.
         logFile.remove();

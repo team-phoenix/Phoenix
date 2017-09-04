@@ -2,10 +2,6 @@
 
 #include "frontendcommon.h"
 
-#include "logging.h"
-#include "quazipfile.h"
-#include "quazip.h"
-
 class ArchiveFile {
     public:
         ArchiveFile( const QString &file );

@@ -12,6 +12,7 @@ set -e # exit on error
 set -x # echo commands
 
 # Install packages
+brew tap haraldf/kf5
 brew update
 
 brew install \
@@ -23,10 +24,10 @@ ninja \
 p7zip \
 pkg-config \
 qt5 \
-quazip \
 sdl2 \
 xz \
 zsh \
+haraldf/kf5/kf5-karchive \
 
 # Don't pollute the source tree
 cd ..

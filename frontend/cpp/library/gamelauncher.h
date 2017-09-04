@@ -16,7 +16,11 @@ class GameLauncher : public QObject {
 
         static bool verify( const QString system, QString rom );
 
+        // Deserialize the provided game path (as stored in the database), extracting the file to a temp folder if
+        // within an archive.
         static QString trimmedGame( QString game );
+
+        // Deserialize the provided game path (as stored in the database)
         static QString trimmedGameNoExtract( QString game );
 };
 

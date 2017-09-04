@@ -30,7 +30,7 @@ matrix:
         - "git fetch --unshallow"
       install:
         - "sudo apt update -qq"
-        - "sudo apt install libsamplerate0-dev libquazip0-dev libsdl2-dev p7zip-full"
+        - "sudo apt install libsamplerate0-dev libkf5archive-dev libsdl2-dev p7zip-full"
         - "source ./ci/travis/linux-env.sh"
       script:
         - chmod +x "./ci/travis/linux-build.sh"

@@ -47,8 +47,7 @@
 //#include <QtWidgets>
 #include <QApplication>
 
-#include <quazip.h>
-#include <JlCompress.h>
+#include <KZip>
 #include <zlib.h>
 
 #include "logging.h"
