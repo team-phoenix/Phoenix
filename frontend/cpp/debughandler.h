@@ -29,7 +29,7 @@ namespace DebugHandler {
 
         KZip zip( info.canonicalPath() + "/" + info.baseName() + ".zip" );
         zip.open( QIODevice::WriteOnly );
-        zip.writeFile( info.baseName() + ".log", logFile.readAll(), 0100644, QStringLiteral("owners"), QStringLiteral("users"));
+        zip.writeFile( info.baseName() + ".log", logFile.readAll());
 
         // Must remove the old file, or we are just wasting space.
         logFile.remove();
