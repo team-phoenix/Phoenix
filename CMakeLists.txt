@@ -57,7 +57,7 @@ else()
 	target_link_libraries(Phoenix zlibstatic)
 endif()
 
-find_package(KF5Archive ${KF5_VERSION} REQUIRED)
+find_package(KF5Archive REQUIRED)
 target_link_libraries(Phoenix KF5::Archive)
 
 find_package(SDL2)
