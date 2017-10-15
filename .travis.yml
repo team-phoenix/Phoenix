@@ -50,6 +50,8 @@ matrix:
       before_install:
         - "git fetch --unshallow"
       install:
+        # https://github.com/travis-ci/travis-ci/issues/6307
+        - rvm get stable
         - "source ./ci/travis/mac-env.sh"
       script:
         - chmod +x "./ci/travis/mac-build.sh"
