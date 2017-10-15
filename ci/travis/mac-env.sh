@@ -13,9 +13,7 @@ set -x # echo commands
 
 # Install packages
 brew update
-brew upgrade ruby
 brew tap haraldf/kf5
-brew update
 
 brew install \
 ccache \
