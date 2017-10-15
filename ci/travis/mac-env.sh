@@ -17,19 +17,17 @@ brew tap haraldf/kf5
 
 brew install \
 ccache \
+cmake \
 curl \
 libsamplerate \
 ninja \
 p7zip \
+pkg-config \
 qt5 \
 sdl2 \
 xz \
 zsh \
 haraldf/kf5/kf5-karchive \
-
-brew upgrade \
-cmake \
-pkg-config \
 
 # Don't pollute the source tree
 cd ..
