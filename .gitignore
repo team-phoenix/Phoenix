@@ -46,3 +46,7 @@ Makefile*
 # CLion
 /.idea/
 /cmake-build*/
+
+# Visual Studio
+/.vs/
+/CMakeSettings.json
