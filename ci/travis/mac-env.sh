@@ -15,9 +15,10 @@ set -x # echo commands
 brew update
 brew tap haraldf/kf5
 
+brew upgrade cmake
+
 brew install \
 ccache \
-cmake \
 curl \
 libsamplerate \
 ninja \
