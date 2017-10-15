@@ -51,6 +51,7 @@ matrix:
         - "git fetch --unshallow"
       install:
         # https://github.com/travis-ci/travis-ci/issues/6307
+        - command curl -sSL https://rvm.io/mpapis.asc | gpg2 --import -
         - rvm get stable
         - "source ./ci/travis/mac-env.sh"
       script:
