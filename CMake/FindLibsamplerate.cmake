@@ -22,6 +22,13 @@ find_path(LIBSAMPLERATE_INCLUDE_DIR samplerate.h
 if(LIBSAMPLERATE_LIBRARY AND LIBSAMPLERATE_INCLUDE_DIR)
     set(LIBSAMPLERATE_FOUND TRUE)
     message(STATUS "Found libsamplerate ${LIBSAMPLERATE_LIBRARY}")
+    add_library(SRC::samplerate STATIC IMPORTED)
+    set_target_properties(SRC::samplerate PROPERTIES
+        INTERFACE_INCLUDE_DIRECTORIES "${LIBSAMPLERATE_INCLUDE_DIR}"
+    )
+    set_target_properties(SRC::samplerate PROPERTIES
+        IMPORTED_LOCATION ${LIBSAMPLERATE_LIBRARY}
+    )
 else(LIBSAMPLERATE_LIBRARY AND LIBSAMPLERATE_PLUGIN_PATH)
     message(STATUS "Could not find libsamplerate, get it http://www.mega-nerd.com/SRC/")
 endif(LIBSAMPLERATE_LIBRARY AND LIBSAMPLERATE_INCLUDE_DIR)
